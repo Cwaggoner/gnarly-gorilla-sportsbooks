@@ -39,6 +39,8 @@ main { max-width:1100px; margin:0 auto; padding:16px; }
 .stat b { display:block; color:var(--title); font-size:20px; }
 .stat span { color:var(--muted); font-size:12px; }
 .card { padding:14px; margin-top:14px; }
+.api-note { margin-top:18px; }
+.api-note a { color:var(--title); }
 h2 { margin:0 0 10px; font-size:16px; color:var(--title); }
 form, .row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:8px; }
 .break { grid-column:1 / -1; height:0; }
@@ -167,6 +169,7 @@ canvas { width:100%; height:220px; background:#0e0e0e; border:1px solid var(--li
 <thead><tr><th>Date</th><th>Book</th><th>Sport</th><th>Type</th><th>Pick</th><th>Odds</th><th>Close</th><th>CLV</th><th>Stake</th><th>Result</th><th>P/L</th><th>Grade</th></tr></thead>
 <tbody id="rows"></tbody>
 </table>
+<p class="api-note">Live odds and the pick list will not populate without a free or paid subscription to The Odds API. A key is required. Paste it in From Today's Card. <a href="https://the-odds-api.com/" target="_blank" rel="noopener noreferrer">Open The Odds API</a></p>
 </section>
 <section class="card" id="breaks"></section>
 <section class="card">
