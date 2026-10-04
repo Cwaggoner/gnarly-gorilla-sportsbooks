@@ -54,6 +54,9 @@ th { color:var(--title); background:#102010; }
 .tools { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
 pre.report { white-space:pre-wrap; color:var(--text); margin:0; }
 .charts { display:grid; grid-template-columns:1.4fr 1fr; gap:12px; }
+.cal { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
+.cal div { min-height:46px; background:#0e0e0e; border:1px solid var(--line); border-radius:6px; font-size:11px; padding:4px; }
+.cal .dow { min-height:0; color:var(--title); background:transparent; border:0; }
 canvas { width:100%; height:220px; background:#0e0e0e; border:1px solid var(--line); border-radius:8px; }
 @media (max-width:700px) { .charts { grid-template-columns:1fr; } }
 
@@ -120,14 +123,23 @@ canvas { width:100%; height:220px; background:#0e0e0e; border:1px solid var(--li
 <label>Type<select name="type"><option>Moneyline</option><option>Spread</option><option>Total</option><option>Prop</option><option>Parlay</option><option>SGP</option></select></label>
 <label>Pick<input name="pick" placeholder="Chiefs -3.5" required></label>
 <label>American odds<input name="odds" type="number" step="1" placeholder="-110" required></label>
+<label>Close odds<input name="close" type="number" step="1" placeholder="-120"></label>
+<input type="hidden" name="editId">
 <label>Stake $<input name="stake" type="number" step="0.01" min="0" value="10" required></label>
 <label>Result<select name="result"><option>pending</option><option>win</option><option>loss</option><option>push</option><option>void</option></select></label>
 <label>Notes<input name="notes" placeholder="High 62%"></label>
-<button type="submit">Save bet</button>
+<button type="submit" id="savebtn">Save bet</button>
+<button type="button" id="canceledit">Cancel edit</button>
 </form>
 </section>
 <section class="card">
 <h2>Slips</h2>
+<div class="tools">
+<label>Sport<select id="fSport"><option value="">All</option><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option></select></label>
+<label>Book<select id="fBook"><option value="">All</option><option>BetMGM</option><option>DraftKings</option><option>Fanatics</option><option>FantasySports</option><option>HardRock</option></select></label>
+<label>Market<select id="fType"><option value="">All</option><option>Moneyline</option><option>Spread</option><option>Total</option><option>Prop</option><option>Parlay</option><option>SGP</option></select></label>
+<label>Result<select id="fResult"><option value="">All</option><option>pending</option><option>win</option><option>loss</option><option>push</option></select></label>
+</div>
 <div class="tools">
 <button type="button" id="exportpdf">Export PDF</button>
 <button type="button" id="export">Export spreadsheet</button>
@@ -135,11 +147,16 @@ canvas { width:100%; height:220px; background:#0e0e0e; border:1px solid var(--li
 <button type="button" class="danger" id="clear">Clear all</button>
 </div>
 <table>
-<thead><tr><th>Date</th><th>Book</th><th>Sport</th><th>Type</th><th>Pick</th><th>Odds</th><th>Stake</th><th>Result</th><th>P/L</th><th>Grade</th></tr></thead>
+<thead><tr><th>Date</th><th>Book</th><th>Sport</th><th>Type</th><th>Pick</th><th>Odds</th><th>Close</th><th>CLV</th><th>Stake</th><th>Result</th><th>P/L</th><th>Grade</th></tr></thead>
 <tbody id="rows"></tbody>
 </table>
 </section>
 <section class="card" id="breaks"></section>
+<section class="card">
+<h2>Calendar</h2>
+<div class="tools"><button type="button" id="prevMonth">Prev</button><button type="button" id="nextMonth">Next</button></div>
+<div class="cal" id="calendar"></div>
+</section>
 <footer class="card">
 <h2>About this ledger</h2>
 <p>Gnarly Gorilla Sportsbooks is a free browser bet ledger for the daily Gnarly Gorilla pick cards. It tracks American-odds slips for NFL, NBA, NHL, MLB, college basketball, and college football at BetMGM, DraftKings, Fanatics, FantasySports, and HardRock. Bets stay in this browser. The page does not log into a sportsbook and does not place wagers.</p>
@@ -231,8 +248,52 @@ function drawBars(canvas, bets){
   });
 }
 
+
+function decimal(odds){
+  odds = Number(odds);
+  if (!odds) return 0;
+  return odds > 0 ? 1 + odds / 100 : 1 + 100 / Math.abs(odds);
+}
+function clv(b){
+  if (!b.close) return null;
+  const got = decimal(b.odds), closed = decimal(b.close);
+  if (!got || !closed) return null;
+  return (got / closed - 1) * 100;
+}
+function filtered(bets){
+  const sport = document.getElementById("fSport").value;
+  const book = document.getElementById("fBook").value;
+  const type = document.getElementById("fType").value;
+  const result = document.getElementById("fResult").value;
+  return bets.filter(b => (!sport || b.sport === sport) && (!book || b.book === book) && (!type || b.type === type) && (!result || b.result === result));
+}
+let monthCursor = new Date();
+function drawCalendar(bets){
+  const y = monthCursor.getFullYear(), m = monthCursor.getMonth();
+  const first = new Date(y, m, 1);
+  const start = first.getDay();
+  const days = new Date(y, m + 1, 0).getDate();
+  const byDay = {};
+  bets.forEach(b => {
+    const dt = new Date(b.date + "T12:00:00");
+    if (dt.getFullYear() !== y || dt.getMonth() !== m) return;
+    byDay[dt.getDate()] = (byDay[dt.getDate()] || 0) + profit(b);
+  });
+  const names = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  let html = "<div class='dow' style='grid-column:1/-1;color:#39ff14'>" + first.toLocaleString(undefined,{month:"long", year:"numeric"}) + "</div>";
+  html += names.map(n => "<div class='dow'>" + n + "</div>").join("");
+  for (let i = 0; i < start; i++) html += "<div></div>";
+  for (let d = 1; d <= days; d++) {
+    const v = byDay[d];
+    const cls = v > 0 ? "win" : v < 0 ? "loss" : "";
+    html += "<div><b>" + d + "</b><br><span class='" + cls + "'>" + (v == null ? "" : money(v)) + "</span></div>";
+  }
+  document.getElementById("calendar").innerHTML = html;
+}
+
 function render(){
-  const bets = load().sort((a,b) => b.date.localeCompare(a.date) || b.id - a.id);
+  const all = load().sort((a,b) => b.date.localeCompare(a.date) || b.id - a.id);
+  const bets = filtered(all);
   const settled = bets.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
   const pl = bets.reduce((s,b) => s + profit(b), 0);
   const staked = settled.reduce((s,b) => s + Number(b.stake), 0);
@@ -245,7 +306,8 @@ function render(){
     [money(pl), "Profit"],
     [staked ? (pl / staked * 100).toFixed(1) + "%" : dash, "ROI"],
     [(pl / UNIT).toFixed(2) + "u", "Units @ $10"],
-    [bets.filter(b => b.result === "pending").length, "Pending"]
+    [bets.filter(b => b.result === "pending").length, "Pending"],
+    [(() => { const xs = bets.map(clv).filter(v => v != null); return xs.length ? (xs.reduce((s,v)=>s+v,0)/xs.length).toFixed(1) + "%" : dash; })(), "Avg CLV"]
   ].map(x => "<div class='stat'><b>" + x[0] + "</b><span>" + x[1] + "</span></div>").join("");
   document.getElementById("rows").innerHTML = bets.map(b => {
     const p = profit(b);
@@ -253,10 +315,12 @@ function render(){
     const grade = b.result === "pending"
       ? "<button data-set='win' data-id='" + b.id + "'>Win</button> <button class='danger' data-set='loss' data-id='" + b.id + "'>Loss</button> <button class='amber' data-set='push' data-id='" + b.id + "'>Push</button>"
       : "<button data-set='pending' data-id='" + b.id + "'>Undo</button>";
-    return "<tr><td>" + b.date + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td>" + esc(b.pick) + "</td><td>" + b.odds + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='" + cls + "'>" + b.result + "</td><td class='" + cls + "'>" + (b.result === "pending" ? dash : money(p)) + "</td><td>" + grade + " <button class='danger' data-del='" + b.id + "'>Del</button></td></tr>";
-  }).join("") || "<tr><td colspan='10'>No bets yet.</td></tr>";
+    const cv = clv(b);
+    return "<tr><td>" + b.date + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td>" + esc(b.pick) + "</td><td>" + b.odds + "</td><td>" + (b.close || dash) + "</td><td class='" + (cv > 0 ? "win" : cv < 0 ? "loss" : "") + "'>" + (cv == null ? dash : cv.toFixed(1) + "%") + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='" + cls + "'>" + b.result + "</td><td class='" + cls + "'>" + (b.result === "pending" ? dash : money(p)) + "</td><td>" + grade + " <button data-edit='" + b.id + "'>Edit</button> <button class='danger' data-del='" + b.id + "'>Del</button></td></tr>";
+  }).join("") || "<tr><td colspan='12'>No bets yet.</td></tr>";
   drawCharts(bets);
-  document.getElementById("breaks").innerHTML = "<h2>By sport / book</h2>" + group(bets, "sport") + group(bets, "book");
+  drawCalendar(bets);
+  document.getElementById("breaks").innerHTML = "<h2>By sport / book</h2>" + group(bets, "sport") + group(bets, "book") + "<h2>Market split</h2>" + group(bets, "type");
   const y = yesterday();
   const day = bets.filter(b => b.date === y);
   const daySettled = day.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
@@ -286,12 +350,28 @@ form.onsubmit = e => {
   e.preventDefault();
   const d = Object.fromEntries(new FormData(form));
   const bets = load();
-  bets.push({id: Date.now(), ...d, odds: Number(d.odds), stake: Number(d.stake)});
+  const row = {...d, odds: Number(d.odds), stake: Number(d.stake), close: d.close ? Number(d.close) : ""};
+  delete row.editId;
+  if (d.editId) {
+    const bet = bets.find(b => String(b.id) === d.editId);
+    if (bet) Object.assign(bet, row, {id: bet.id});
+  } else bets.push({id: Date.now(), ...row, result: d.result || "pending"});
   save(bets);
-  form.pick.value = ""; form.notes.value = "";
+  form.pick.value = ""; form.notes.value = ""; form.close.value = ""; form.editId.value = "";
+  document.getElementById("savebtn").textContent = "Save bet";
 };
 document.getElementById("rows").onclick = e => {
   const t = e.target;
+  if (t.dataset.edit) {
+    const bet = load().find(b => String(b.id) === t.dataset.edit);
+    if (!bet) return;
+    ["date","book","sport","type","pick","odds","stake","result","notes"].forEach(k => { if (form[k]) form[k].value = bet[k] ?? ""; });
+    form.close.value = bet.close || "";
+    form.editId.value = bet.id;
+    document.getElementById("savebtn").textContent = "Update bet";
+    form.scrollIntoView();
+    return;
+  }
   if (t.dataset.del) save(load().filter(b => String(b.id) !== t.dataset.del));
   if (t.dataset.set) {
     const bets = load();
@@ -468,6 +548,10 @@ document.getElementById("import").onchange = e => {
   reader.readAsText(file);
 };
 document.getElementById("clear").onclick = () => { if (confirm("Delete every bet in this browser?")) save([]); };
+["fSport","fBook","fType","fResult"].forEach(id => document.getElementById(id).onchange = render);
+document.getElementById("canceledit").onclick = () => { form.editId.value = ""; form.pick.value = ""; form.close.value = ""; document.getElementById("savebtn").textContent = "Save bet"; };
+document.getElementById("prevMonth").onclick = () => { monthCursor.setMonth(monthCursor.getMonth()-1); render(); };
+document.getElementById("nextMonth").onclick = () => { monthCursor.setMonth(monthCursor.getMonth()+1); render(); };
 render();
 </script>
 </body>
