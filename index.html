@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gnarly Gorilla Sportsbooks</title>
+<style>
+:root { --bg:#0a0a0a; --card:#141414; --line:#243024; --title:#39ff14; --text:#d6ffd0; --muted:#8fb898; --amber:#f0e14a; --red:#ff6b6b; }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text); font:15px/1.4 system-ui, sans-serif; }
+header { padding:16px 20px 8px; border-bottom:1px solid var(--line); }
+h1 { margin:0; color:var(--title); font-size:22px; letter-spacing:.04em; }
+header p { margin:4px 0 0; color:var(--muted); }
+main { max-width:1100px; margin:0 auto; padding:16px; }
+.stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; }
+.stat, .card, table { background:var(--card); border:1px solid var(--line); border-radius:10px; }
+.stat { padding:12px; }
+.stat b { display:block; color:var(--title); font-size:20px; }
+.stat span { color:var(--muted); font-size:12px; }
+.card { padding:14px; margin-top:14px; }
+h2 { margin:0 0 10px; font-size:16px; color:var(--title); }
+form, .row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:8px; }
+label { display:flex; flex-direction:column; gap:4px; font-size:12px; color:var(--muted); }
+input, select, button { background:#0e0e0e; color:var(--text); border:1px solid var(--line); border-radius:8px; padding:8px; }
+button { cursor:pointer; color:var(--title); font-weight:700; }
+button.danger { color:var(--red); }
+table { width:100%; border-collapse:collapse; margin-top:8px; }
+th, td { text-align:left; padding:8px; border-bottom:1px solid var(--line); font-size:13px; }
+th { color:var(--title); }
+.win { color:var(--title); } .loss { color:var(--red); } .push { color:var(--amber); }
+.tools { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+@media (max-width:700px) { table { display:block; overflow-x:auto; } }
+</style>
+</head>
+<body>
+<header>
+<h1>GNARLY GORILLA SPORTSBOOKS</h1>
+<p>Manual tracker for the Chromebook. No sportsbook login. Data stays in this browser.</p>
+</header>
+<main>
+<section class="stats" id="stats"></section>
+<section class="card">
+<h2>Add a bet</h2>
+<form id="form">
+<label>Date<input type="date" name="date" required></label>
+<label>Book<input name="book" value="BetMGM" required></label>
+<label>Sport<input name="sport" placeholder="NFL" required></label>
+<label>Type<select name="type"><option>Moneyline</option><option>Spread</option><option>Total</option><option>Prop</option><option>Parlay</option><option>SGP</option></select></label>
+<label>Pick<input name="pick" placeholder="Chiefs -3.5" required></label>
+<label>American odds<input name="odds" type="number" step="1" placeholder="-110" required></label>
+<label>Stake $<input name="stake" type="number" step="0.01" min="0" value="10" required></label>
+<label>Result<select name="result"><option>pending</option><option>win</option><option>loss</option><option>push</option><option>void</option></select></label>
+<label>Notes<input name="notes" placeholder="optional"></label>
+<button type="submit">Save bet</button>
+</form>
+</section>
+<section class="card">
+<h2>Slips</h2>
+<div class="tools">
+<button type="button" id="export">Export CSV</button>
+<label>Import CSV<input type="file" id="import" accept=".csv,text/csv"></label>
+<button type="button" class="danger" id="clear">Clear all</button>
+</div>
+<table>
+<thead><tr><th>Date</th><th>Book</th><th>Sport</th><th>Type</th><th>Pick</th><th>Odds</th><th>Stake</th><th>Result</th><th>P/L</th><th></th></tr></thead>
+<tbody id="rows"></tbody>
+</table>
+</section>
+<section class="card" id="breaks"></section>
+</main>
+<script>
+const KEY = "gnarly-gorilla-sportsbooks-v1";
+const UNIT = 10;
+const form = document.getElementById("form");
+form.date.value = new Date().toISOString().slice(0,10);
+function load(){ try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch { return []; } }
+function save(bets){ localStorage.setItem(KEY, JSON.stringify(bets)); render(); }
+function profit(b){
+  if (b.result === "pending" || b.result === "void" || b.result === "push") return 0;
+  const odds = Number(b.odds), stake = Number(b.stake);
+  const winAmt = odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds);
+  return b.result === "win" ? winAmt : -stake;
+}
+function money(n){ return (n < 0 ? "-$" : "$") + Math.abs(n).toFixed(2); }
+function render(){
+  const bets = load().sort((a,b) => b.date.localeCompare(a.date) || b.id - a.id);
+  const settled = bets.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
+  const pl = bets.reduce((s,b) => s + profit(b), 0);
+  const staked = settled.reduce((s,b) => s + Number(b.stake), 0);
+  const wins = bets.filter(b => b.result === "win").length;
+  const losses = bets.filter(b => b.result === "loss").length;
+  const pushes = bets.filter(b => b.result === "push").length;
+  document.getElementById("stats").innerHTML = [
+    [wins + "-" + losses + (pushes ? "-" + pushes : ""), "Record"],
+    [money(pl), "Profit"],
+    [staked ? (pl / staked * 100).toFixed(1) + "%" : "—", "ROI"],
+    [(pl / UNIT).toFixed(2) + "u", "Units @ $10"],
+    [bets.filter(b => b.result === "pending").length, "Pending"]
+  ].map(x => "<div class='stat'><b>" + x[0] + "</b><span>" + x[1] + "</span></div>").join("");
+  document.getElementById("rows").innerHTML = bets.map(b => {
+    const p = profit(b);
+    const cls = b.result === "win" ? "win" : b.result === "loss" ? "loss" : "push";
+    return "<tr><td>" + b.date + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td>" + esc(b.pick) + "</td><td>" + b.odds + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='" + cls + "'>" + b.result + "</td><td class='" + cls + "'>" + (b.result === "pending" ? "—" : money(p)) + "</td><td><button data-id='" + b.id + "' class='danger'>Del</button></td></tr>";
+  }).join("") || "<tr><td colspan='10'>No bets yet.</td></tr>";
+  document.getElementById("breaks").innerHTML = "<h2>By sport / book</h2>" + group(bets, "sport") + group(bets, "book");
+}
+function group(bets, key){
+  const map = {};
+  bets.forEach(b => {
+    const k = b[key] || "?";
+    map[k] = map[k] || {pl:0, n:0};
+    map[k].pl += profit(b);
+    if (b.result !== "pending" && b.result !== "void") map[k].n++;
+  });
+  return "<p>" + Object.entries(map).map(([k,v]) => esc(k) + ": " + money(v.pl) + " (" + v.n + ")").join(" · ") + "</p>";
+}
+function esc(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+form.onsubmit = e => {
+  e.preventDefault();
+  const d = Object.fromEntries(new FormData(form));
+  const bets = load();
+  bets.push({id: Date.now(), ...d, odds: Number(d.odds), stake: Number(d.stake)});
+  save(bets);
+  form.pick.value = ""; form.notes.value = "";
+};
+document.getElementById("rows").onclick = e => {
+  if (!e.target.dataset.id) return;
+  save(load().filter(b => String(b.id) !== e.target.dataset.id));
+};
+document.getElementById("export").onclick = () => {
+  const bets = load();
+  const head = "date,book,sport,type,pick,odds,stake,result,notes";
+  const body = bets.map(b => [b.date,b.book,b.sport,b.type,b.pick,b.odds,b.stake,b.result,b.notes || ""].map(v => '"' + String(v).replace(/"/g,'""') + '"').join(",")).join("\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([head + "\n" + body], {type:"text/csv"}));
+  a.download = "gnarly-gorilla-sportsbooks.csv"; a.click();
+};
+document.getElementById("import").onchange = e => {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    const lines = String(reader.result).trim().split(/\r?\n/).slice(1);
+    const bets = load();
+    lines.forEach(line => {
+      const cols = line.match(/("([^"]|"")*"|[^,]*)/g).filter(Boolean).map(c => c.replace(/^"|"$/g,"").replace(/""/g,'"'));
+      if (cols.length < 8) return;
+      bets.push({id: Date.now() + Math.random(), date:cols[0], book:cols[1], sport:cols[2], type:cols[3], pick:cols[4], odds:Number(cols[5]), stake:Number(cols[6]), result:cols[7], notes:cols[8] || ""});
+    });
+    save(bets);
+  };
+  reader.readAsText(file);
+};
+document.getElementById("clear").onclick = () => { if (confirm("Delete every bet in this browser?")) save([]); };
+render();
+</script>
+</body>
+</html>
