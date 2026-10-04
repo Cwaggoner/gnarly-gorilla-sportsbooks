@@ -52,8 +52,8 @@ textarea { width:100%; min-height:120px; font:13px/1.4 ui-monospace, monospace; 
 button { cursor:pointer; color:var(--title); font-weight:700; }
 button.danger { color:var(--red); }
 button.amber { color:var(--amber); }
-table { width:100%; border-collapse:collapse; margin-top:8px; }
-th, td { text-align:left; padding:8px; border-bottom:1px solid var(--line); font-size:13px; }
+table { width:100%; border-collapse:separate; border-spacing:0; margin-top:8px; border:1px solid #39ff14; border-radius:10px; overflow:hidden; }
+th, td { text-align:left; padding:8px; border-bottom:1px solid #39ff14; font-size:13px; }
 th { color:var(--title); background:#102010; }
 .win { color:var(--title); } .loss { color:var(--red); } .push, .warn { color:var(--amber); }
 .tools { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
