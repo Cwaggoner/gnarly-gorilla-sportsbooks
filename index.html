@@ -111,7 +111,7 @@ const form = document.getElementById("form");
 form.date.value = new Date().toISOString().slice(0,10);
 function ymd(d){ return d.toISOString().slice(0,10); }
 function yesterday(){ const d = new Date(); d.setDate(d.getDate()-1); return ymd(d); }
-function load(){ try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch { return []; } }
+function load(){ try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { return []; } }
 function save(bets){ localStorage.setItem(KEY, JSON.stringify(bets)); render(); }
 function profit(b){
   if (b.result === "pending" || b.result === "void" || b.result === "push") return 0;
@@ -126,6 +126,9 @@ function rec(list){
   const p = list.filter(b => b.result === "push").length;
   return w + "-" + l + (p ? "-" + p : "");
 }
+function esc(s){
+  return String(s).replace(/&/g,"&").replace(/</g,"<").replace(/>/g,">");
+}
 function render(){
   const bets = load().sort((a,b) => b.date.localeCompare(a.date) || b.id - a.id);
   const settled = bets.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
@@ -134,10 +137,11 @@ function render(){
   const wins = bets.filter(b => b.result === "win").length;
   const losses = bets.filter(b => b.result === "loss").length;
   const pushes = bets.filter(b => b.result === "push").length;
+  const dash = "-";
   document.getElementById("stats").innerHTML = [
     [wins + "-" + losses + (pushes ? "-" + pushes : ""), "Record"],
     [money(pl), "Profit"],
-    [staked ? (pl / staked * 100).toFixed(1) + "%" : "\u2014", "ROI"],
+    [staked ? (pl / staked * 100).toFixed(1) + "%" : dash, "ROI"],
     [(pl / UNIT).toFixed(2) + "u", "Units @ $10"],
     [bets.filter(b => b.result === "pending").length, "Pending"]
   ].map(x => "<div class='stat'><b>" + x[0] + "</b><span>" + x[1] + "</span></div>").join("");
@@ -147,7 +151,7 @@ function render(){
     const grade = b.result === "pending"
       ? "<button data-set='win' data-id='" + b.id + "'>Win</button> <button class='danger' data-set='loss' data-id='" + b.id + "'>Loss</button> <button class='amber' data-set='push' data-id='" + b.id + "'>Push</button>"
       : "<button data-set='pending' data-id='" + b.id + "'>Undo</button>";
-    return "<tr><td>" + b.date + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td>" + esc(b.pick) + "</td><td>" + b.odds + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='" + cls + "'>" + b.result + "</td><td class='" + cls + "'>" + (b.result === "pending" ? "\u2014" : money(p)) + "</td><td>" + grade + " <button class='danger' data-del='" + b.id + "'>Del</button></td></tr>";
+    return "<tr><td>" + b.date + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td>" + esc(b.pick) + "</td><td>" + b.odds + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='" + cls + "'>" + b.result + "</td><td class='" + cls + "'>" + (b.result === "pending" ? dash : money(p)) + "</td><td>" + grade + " <button class='danger' data-del='" + b.id + "'>Del</button></td></tr>";
   }).join("") || "<tr><td colspan='10'>No bets yet.</td></tr>";
   document.getElementById("breaks").innerHTML = "<h2>By sport / book</h2>" + group(bets, "sport") + group(bets, "book");
   const y = yesterday();
@@ -159,7 +163,7 @@ function render(){
     "GNARLY GORILLA REPORT CARD",
     "Yesterday " + y,
     "Record " + rec(day) + "   P/L " + money(dayPl) + "   on $10 slips",
-    daySettled.length ? "Hit rate " + (day.filter(b => b.result === "win").length / daySettled.length * 100).toFixed(0) + "%" : "Hit rate \u2014",
+    daySettled.length ? "Hit rate " + (day.filter(b => b.result === "win").length / daySettled.length * 100).toFixed(0) + "%" : "Hit rate -",
     lines.length ? lines.join("\n") : "No slips dated yesterday.",
     "",
     "Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u"
@@ -173,9 +177,8 @@ function group(bets, key){
     map[k].pl += profit(b);
     if (b.result !== "pending" && b.result !== "void") map[k].n++;
   });
-  return "<p>" + Object.entries(map).map(([k,v]) => esc(k) + ": " + money(v.pl) + " (" + v.n + ")").join(" \u00b7 ") + "</p>";
+  return "<p>" + Object.entries(map).map(([k,v]) => esc(k) + ": " + money(v.pl) + " (" + v.n + ")").join(" | ") + "</p>";
 }
-function esc(s){ return String(s).replace(/[&<>\"]/g, c => ({'&':'&','<':'<','>':'>','\"':'"'}[c])); }
 form.onsubmit = e => {
   e.preventDefault();
   const d = Object.fromEntries(new FormData(form));
@@ -215,7 +218,7 @@ document.getElementById("copyreport").onclick = () => navigator.clipboard.writeT
 document.getElementById("export").onclick = () => {
   const bets = load();
   const head = "date,book,sport,type,pick,odds,stake,result,notes";
-  const body = bets.map(b => [b.date,b.book,b.sport,b.type,b.pick,b.odds,b.stake,b.result,b.notes || ""].map(v => '"' + String(v).replace(/"/g,'""') + '"').join(",")).join("\n");
+  const body = bets.map(b => [b.date,b.book,b.sport,b.type,b.pick,b.odds,b.stake,b.result,b.notes || ""].join(",")).join("\n");
   const a = document.createElement("a");
   a.href = URL.createObjectURL(new Blob([head + "\n" + body], {type:"text/csv"}));
   a.download = "gnarly-gorilla-sportsbooks.csv"; a.click();
@@ -227,7 +230,7 @@ document.getElementById("import").onchange = e => {
     const lines = String(reader.result).trim().split(/\r?\n/).slice(1);
     const bets = load();
     lines.forEach(line => {
-      const cols = line.match(/(\"([^\"]|\"\")*\"|[^,]*)/g).filter(Boolean).map(c => c.replace(/^\"|\"$/g,"").replace(/\"\"/g,'"'));
+      const cols = line.split(",");
       if (cols.length < 8) return;
       bets.push({id: Date.now() + Math.random(), date:cols[0], book:cols[1], sport:cols[2], type:cols[3], pick:cols[4], odds:Number(cols[5]), stake:Number(cols[6]), result:cols[7], notes:cols[8] || ""});
     });
