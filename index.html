@@ -107,7 +107,7 @@ canvas { width:100%; height:220px; background:#0e0e0e; border:1px solid var(--li
 </div>
 </section>
 <section class="card">
-<h2>Add a bet</h2>
+<h2>Add A Bet</h2>
 <form id="form">
 <label>Date<input type="date" name="date" required></label>
 <label>Book<select name="book" required>
@@ -126,7 +126,7 @@ canvas { width:100%; height:220px; background:#0e0e0e; border:1px solid var(--li
 <option>NHL</option>
 </select></label>
 <label>Type<select name="type"><option>Moneyline</option><option>Spread</option><option>Total</option><option>Prop</option><option>Parlay</option><option>SGP</option></select></label>
-<label>Pick<input name="pick" placeholder="Chiefs -3.5" required></label>
+<label>Pick<select name="pick" id="pickselect" required><option value="">Select a pick</option></select></label>
 <label>American odds<input name="odds" type="number" step="1" placeholder="-110" required></label>
 <label>Close odds<input name="close" type="number" step="1" placeholder="-120"></label>
 <input type="hidden" name="editId">
@@ -374,7 +374,9 @@ document.getElementById("rows").onclick = e => {
   if (t.dataset.edit) {
     const bet = load().find(b => String(b.id) === t.dataset.edit);
     if (!bet) return;
-    ["date","book","sport","type","pick","odds","stake","result","notes"].forEach(k => { if (form[k]) form[k].value = bet[k] ?? ""; });
+    ["date","book","sport","type","odds","stake","result","notes"].forEach(k => { if (form[k]) form[k].value = bet[k] ?? ""; });
+    if (![...form.pick.options].some(o => o.value === bet.pick)) { const opt = document.createElement("option"); opt.value = bet.pick; opt.textContent = bet.pick; form.pick.appendChild(opt); }
+    form.pick.value = bet.pick;
     form.close.value = bet.close || "";
     form.editId.value = bet.id;
     document.getElementById("savebtn").textContent = "Update bet";
@@ -530,6 +532,46 @@ async function repricePaste(){
   document.getElementById("paste").value = out.join("\n");
   note.textContent = priced + " lines repriced at " + book + (missed ? ". " + missed + " kept the card price." : ".");
 }
+
+async function fillPickBoard(){
+  const book = form.book.value;
+  const sport = form.sport.value;
+  const bookKey = BOOK_KEY[book];
+  const sportKey = SPORT_KEY[sport];
+  const key = oddskey.value.trim();
+  const sel = document.getElementById("pickselect");
+  const current = sel.value;
+  sel.innerHTML = "<option value=''>Select a pick</option>";
+  if (!bookKey || !sportKey || !key) return;
+  const games = await fetchBook(sportKey, bookKey, key);
+  games.forEach(game => {
+    const bk = (game.bookmakers || []).find(b => b.key === bookKey);
+    if (!bk) return;
+    (bk.markets || []).forEach(mk => {
+      (mk.outcomes || []).forEach(o => {
+        if (o.price == null) return;
+        let label = o.name;
+        if (mk.key === "spreads" && o.point != null) label = o.name.split(" ").slice(-1)[0] + " " + (o.point > 0 ? "+" : "") + o.point;
+        if (mk.key === "totals" && o.point != null) label = o.name + " " + o.point;
+        const opt = document.createElement("option");
+        opt.value = label;
+        opt.textContent = label + " (" + o.price + ")";
+        opt.dataset.price = o.price;
+        opt.dataset.close = o.price;
+        sel.appendChild(opt);
+      });
+    });
+  });
+  if (current) sel.value = current;
+}
+document.getElementById("pickselect").onchange = () => {
+  const opt = document.getElementById("pickselect").selectedOptions[0];
+  if (!opt || !opt.dataset.price) return;
+  form.odds.value = opt.dataset.price;
+  form.close.value = opt.dataset.close;
+};
+form.book.onchange = () => fillPickBoard().catch(err => { document.getElementById("pdfnote").textContent = err.message; });
+form.sport.onchange = () => fillPickBoard().catch(err => { document.getElementById("pdfnote").textContent = err.message; });
 document.getElementById("cardbook").onchange = () => { repricePaste().catch(err => { document.getElementById("pdfnote").textContent = err.message; }); };
 
 async function loadPending(){
