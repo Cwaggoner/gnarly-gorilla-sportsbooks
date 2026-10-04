@@ -406,7 +406,7 @@ function linesFromCard(text){
     }
     const bet = line.match(/((?:Over|Under)\s+\d+(?:\.\d+)?|(?:[A-Z][A-Za-z.'-]+(?:\s+[A-Z][A-Za-z.'-]+)*)\s+[+-]\d+(?:\.\d+)?)\s+([+-]\d{3})\b.*?((?:High|Medium|Low)\s+\d+%)/i);
     if (!bet) return;
-    const pick = bet[1].trim();
+    const pick = bet[1].trim().replace(/^(?:AM|PM)\s+/, "");
     const key = pick + bet[2];
     if (seen.has(key)) return;
     seen.add(key);
