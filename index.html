@@ -330,34 +330,40 @@ function pdfEscape(s){
   return String(s).replace(/[^\x20-\x7E]/g, " ").replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)");
 }
 function buildPdf(bets){
-  const lines = ["GNARLY GORILLA SPORTSBOOKS", "Bet ledger export", ""];
-  const settled = bets.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
+  const sorted = bets.slice().sort((a,b) => a.date.localeCompare(b.date) || a.id - b.id);
   const pl = bets.reduce((s,b) => s + profit(b), 0);
-  lines.push("Record " + rec(bets) + "   Profit " + money(pl) + "   Units " + (pl / UNIT).toFixed(2));
-  lines.push("");
-  lines.push("Date        Book            Sport  Type         Pick                     Odds   Stake   Result   P/L");
-  bets.slice().sort((a,b) => a.date.localeCompare(b.date)).forEach(b => {
-    lines.push([b.date, b.book, b.sport, b.type, b.pick, b.odds, Number(b.stake).toFixed(2), b.result, b.result === "pending" ? "-" : money(profit(b))].join("  "));
-  });
-  if (!bets.length) lines.push("No slips yet.");
-  const pages = [];
-  for (let i = 0; i < lines.length; i += 42) pages.push(lines.slice(i, i + 42));
   const objects = [];
   function add(body){ objects.push(body); return objects.length; }
-  const fontId = add("<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>");
+  const fontId = add("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>");
+  const boldId = add("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>");
+  const cols = [28, 72, 124, 156, 204, 330, 366, 402, 446, 492];
+  const heads = ["Date","Book","Sport","Type","Pick","Odds","Stake","Result","P/L","Notes"];
+  const pages = [];
+  for (let i = 0; i < Math.max(sorted.length, 1); i += 48) pages.push(sorted.slice(i, i + 48));
   const pageIds = [];
-  pages.forEach(chunk => {
-    let y = 760;
-    const cmds = ["0 0 0 rg", "0 0 612 792 re", "f", "0.22 1 0.08 rg", "BT", "/F1 10 Tf"];
-    chunk.forEach((line, idx) => {
-      if (idx === 1) cmds.push("0.84 1 0.82 rg");
-      cmds.push("1 0 0 1 36 " + y + " Tm (" + pdfEscape(line).slice(0, 95) + ") Tj");
-      y -= 16;
+  pages.forEach((chunk, pageIndex) => {
+    const cmds = [
+      "0.039 0.039 0.039 rg", "0 0 612 792 re", "f",
+      "0.063 0.125 0.063 rg", "0 760 612 32 re", "f",
+      "0.22 1 0.08 rg", "BT", "/F2 11 Tf", "1 0 0 1 28 772 Tm (GNARLY GORILLA SPORTSBOOKS) Tj", "ET",
+      "0.84 1 0.82 rg", "BT", "/F1 8 Tf", "1 0 0 1 250 772 Tm (Ledger card  |  daily pick companion) Tj", "ET",
+      "0.94 0.88 0.29 rg", "BT", "/F1 8 Tf", "1 0 0 1 28 742 Tm (" + pdfEscape("Record " + rec(bets) + "    Profit " + money(pl) + "    Units " + (pl / UNIT).toFixed(2) + "u    $10 slips") + ") Tj", "ET",
+      "0.063 0.125 0.063 rg", "28 724 556 14 re", "f",
+      "0.22 1 0.08 rg", "BT", "/F2 7 Tf"
+    ];
+    heads.forEach((h, i) => cmds.push("1 0 0 1 " + cols[i] + " 728 Tm (" + h + ") Tj"));
+    cmds.push("ET", "0.84 1 0.82 rg", "BT", "/F1 7 Tf");
+    if (!sorted.length && pageIndex === 0) cmds.push("1 0 0 1 28 708 Tm (No slips yet.) Tj");
+    chunk.forEach((b, i) => {
+      const y = 708 - i * 11;
+      const cells = [b.date, b.book, b.sport, b.type, b.pick, b.odds, Number(b.stake).toFixed(2), b.result, b.result === "pending" ? "-" : money(profit(b)), b.notes || ""];
+      cells.forEach((c, n) => cmds.push("1 0 0 1 " + cols[n] + " " + y + " Tm (" + pdfEscape(c).slice(0, n === 4 ? 22 : 14) + ") Tj"));
     });
     cmds.push("ET");
+    cmds.push("0.56 0.72 0.60 rg", "BT", "/F1 7 Tf", "1 0 0 1 28 24 Tm (Gnarly Gorilla Sportsbooks  |  page " + (pageIndex + 1) + "  |  not a sportsbook login) Tj", "ET");
     const stream = cmds.join("\n");
     const contentId = add("<< /Length " + stream.length + " >>\nstream\n" + stream + "\nendstream");
-    pageIds.push(add("<< /Type /Page /Parent PAGES /MediaBox [0 0 612 792] /Contents " + contentId + " 0 R /Resources << /Font << /F1 " + fontId + " 0 R >> >> >>"));
+    pageIds.push(add("<< /Type /Page /Parent PAGES /MediaBox [0 0 612 792] /Contents " + contentId + " 0 R /Resources << /Font << /F1 " + fontId + " 0 R /F2 " + boldId + " 0 R >> >> >>"));
   });
   const pagesId = add("<< /Type /Pages /Kids [" + pageIds.map(id => id + " 0 R").join(" ") + "] /Count " + pageIds.length + " >>");
   const catalogId = add("<< /Type /Catalog /Pages " + pagesId + " 0 R >>");
@@ -428,15 +434,18 @@ function zipStore(files){
   return new Blob(parts, {type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
 }
 function xmlEsc(s){ return String(s).replace(/&/g,"&").replace(/</g,"<").replace(/>/g,">"); }
+function xmlEsc(s){ return String(s).replace(/&/g,"&").replace(/</g,"<").replace(/>/g,">"); }
 function buildSheet(bets){
   const rows = [["Date","Book","Sport","Type","Pick","Odds","Stake","Result","Profit","Notes"]];
   bets.slice().sort((a,b) => a.date.localeCompare(b.date)).forEach(b => rows.push([b.date, b.book, b.sport, b.type, b.pick, b.odds, b.stake, b.result, b.result === "pending" ? "" : profit(b).toFixed(2), b.notes || ""]));
-  const sheet = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>' + rows.map((r,i) => "<row r=\"" + (i+1) + "\">" + r.map((c,j) => "<c r=\"" + String.fromCharCode(65+j) + (i+1) + "\" t=\"inlineStr\"><is><t>" + xmlEsc(c) + "</t></is></c>").join("") + "</row>").join("") + "</sheetData></worksheet>";
+  const sheet = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0" zoomScale="100"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><sheetFormatPr defaultRowHeight="12"/><cols><col min="1" max="1" width="12"/><col min="2" max="4" width="12"/><col min="5" max="5" width="22"/><col min="6" max="10" width="12"/></cols><sheetData>' + rows.map((r,i) => "<row r=\"" + (i+1) + "\" ht=\"12\" customHeight=\"1\">" + r.map((c,j) => "<c r=\"" + String.fromCharCode(65+j) + (i+1) + "\" t=\"inlineStr\" s=\"" + (i === 0 ? 2 : 1) + "\"><is><t>" + xmlEsc(c) + "</t></is></c>").join("") + "</row>").join("") + "</sheetData></worksheet>";
+  const styles = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="3"><font><sz val="8"/><name val="Calibri"/></font><font><sz val="8"/><color rgb="FFD6FFD0"/><name val="Calibri"/></font><font><b/><sz val="8"/><color rgb="FF39FF14"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF102010"/></patternFill></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="3"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/><xf numFmtId="0" fontId="2" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/></cellXfs></styleSheet>';
   return zipStore([
-    {name:"[Content_Types].xml", data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>'},
+    {name:"[Content_Types].xml", data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>'},
     {name:"_rels/.rels", data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'},
-    {name:"xl/workbook.xml", data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Slips" sheetId="1" r:id="rId1"/></sheets></workbook>'},
-    {name:"xl/_rels/workbook.xml.rels", data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/></Relationships>'},
+    {name:"xl/workbook.xml", data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Ledger card" sheetId="1" r:id="rId1"/></sheets></workbook>'},
+    {name:"xl/_rels/workbook.xml.rels", data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>'},
+    {name:"xl/styles.xml", data:styles},
     {name:"xl/worksheets/sheet1.xml", data:sheet}
   ]);
 }
