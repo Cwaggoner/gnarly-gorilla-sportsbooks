@@ -572,7 +572,51 @@ document.getElementById("pickselect").onchange = () => {
 };
 form.book.onchange = () => fillPickBoard().catch(err => { document.getElementById("pdfnote").textContent = err.message; });
 form.sport.onchange = () => fillPickBoard().catch(err => { document.getElementById("pdfnote").textContent = err.message; });
-document.getElementById("cardbook").onchange = () => { repricePaste().catch(err => { document.getElementById("pdfnote").textContent = err.message; }); };
+function findBookPrice(games, bookKey, type, pick){
+  const info = teamOf(pick);
+  const market = type === "Total" ? "totals" : type === "Moneyline" ? "h2h" : "spreads";
+  for (const game of games || []) {
+    const bk = (game.bookmakers || []).find(b => b.key === bookKey);
+    if (!bk) continue;
+    const mk = (bk.markets || []).find(m => m.key === market);
+    if (!mk) continue;
+    const outcome = matchOutcome(mk.outcomes, info.name || (game.home_team + " " + game.away_team), info.side);
+    if (!outcome || outcome.price == null) continue;
+    if (info.name && !(game.home_team + " " + game.away_team).toLowerCase().includes(info.name.toLowerCase()) && info.side !== "over" && info.side !== "under") continue;
+    return outcome;
+  }
+  return null;
+}
+async function repriceSlips(){
+  const note = document.getElementById("pdfnote");
+  const book = document.getElementById("cardbook").value;
+  const bookKey = BOOK_KEY[book];
+  const key = oddskey.value.trim();
+  const bets = load();
+  const pending = bets.filter(b => b.result === "pending");
+  pending.forEach(b => { b.book = book; });
+  save(bets);
+  if (!pending.length) { note.textContent = "No pending slips to reprice."; return; }
+  if (!bookKey || !key) { note.textContent = "Book set to " + book + " on " + pending.length + " pending slips. Add the odds key to pull that book's price."; return; }
+  const sports = [...new Set(pending.map(b => b.sport).filter(s => SPORT_KEY[s]))];
+  const boards = {};
+  for (const sport of sports) boards[sport] = await fetchBook(SPORT_KEY[sport], bookKey, key);
+  let priced = 0;
+  pending.forEach(b => {
+    if (b.type === "SGP") return;
+    const found = findBookPrice(boards[b.sport], bookKey, b.type, b.pick);
+    if (!found) return;
+    b.odds = Number(found.price);
+    if (found.point != null && b.type !== "Moneyline") {
+      const info = teamOf(b.pick);
+      b.pick = b.type === "Total" ? ((info.side === "under" ? "Under " : "Over ") + found.point) : (info.name + " " + (found.point > 0 ? "+" : "") + found.point);
+    }
+    priced++;
+  });
+  save(bets);
+  note.textContent = priced + " pending slips repriced at " + book + ".";
+}
+document.getElementById("cardbook").onchange = () => { repriceSlips().catch(err => { document.getElementById("pdfnote").textContent = err.message; }); };
 
 async function loadPending(){
   const note = document.getElementById("pdfnote");
