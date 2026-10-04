@@ -439,17 +439,20 @@ document.getElementById("cardpdf").onchange = async e => {
     const lines = linesFromCard(rows.join("\n"));
     if (!lines.length) throw new Error("No picks found. Paste the lines by hand.");
     document.getElementById("paste").value = lines.join("\n");
-    note.textContent = lines.length + " plays read. Check them, then Load card as pending.";
+    note.textContent = lines.length + " plays read. Loading as pending...";
+    loadPending();
   } catch (err) {
     note.textContent = err.message || "Could not read that PDF.";
   }
   e.target.value = "";
 };
 
-document.getElementById("loadcard").onclick = () => {
+function loadPending(){
+  const note = document.getElementById("pdfnote");
   const bets = load();
   const today = ymd(new Date());
   const book = document.getElementById("cardbook").value;
+  const before = bets.length;
   document.getElementById("paste").value.split(/\r?\n/).forEach(line => {
     line = line.trim();
     if (!line || line.startsWith("#")) return;
@@ -457,12 +460,21 @@ document.getElementById("loadcard").onclick = () => {
     let date = today, sport, type, pick, odds, notes;
     if (/^\d{4}-\d{2}-\d{2}$/.test(parts[0])) { date = parts.shift(); }
     [sport, type, pick, odds, notes] = parts;
-    if (!sport || !pick || !odds) return;
-    bets.push({id: Date.now() + Math.random(), date, book, sport, type: type || "Spread", pick, odds: Number(String(odds).replace("+","")), stake: 10, result: "pending", notes: notes || ""});
+    odds = String(odds || "").replace(/\u2212/g, "-").replace(/\+/g, "");
+    if (!sport || !pick || !odds || Number.isNaN(Number(odds))) return;
+    bets.push({id: Date.now() + Math.random(), date, book, sport, type: type || "Spread", pick, odds: Number(odds), stake: 10, result: "pending", notes: notes || ""});
   });
+  const added = bets.length - before;
+  if (!added) {
+    note.textContent = "Nothing loaded. Upload the pick-card PDF or paste Sport | Type | Pick | Odds lines first.";
+    return;
+  }
   save(bets);
   document.getElementById("paste").value = "";
-};
+  note.textContent = added + " pending slips loaded at " + book + ". They are in the Slips table.";
+  document.getElementById("rows").scrollIntoView({behavior:"smooth", block:"center"});
+}
+document.getElementById("loadcard").onclick = loadPending;
 document.getElementById("copyreport").onclick = () => navigator.clipboard.writeText(document.getElementById("report").textContent);
 
 function download(name, blob){
