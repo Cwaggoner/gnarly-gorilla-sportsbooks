@@ -421,13 +421,17 @@ function linesFromCard(text){
       lines.push(sport + " | SGP | " + sgp[1].trim() + " | " + sgp[2] + " | Card SGP");
       return;
     }
-    const bet = line.match(/((?:Over|Under)\s+\d+(?:\.\d+)?|(?:[A-Z][A-Za-z.'-]+(?:\s+[A-Z][A-Za-z.'-]+)*)\s+[+-]\d+(?:\.\d+)?)\s+([+-]\d{3})\b.*?((?:High|Medium|Low)\s+\d+%)/i);
+    const bet = line.match(/(.+?)\s+((?:Over|Under)\s+\d+(?:\.\d+)?|(?:[A-Z][A-Za-z.'-]+(?:\s+[A-Z][A-Za-z.'-]+)*)\s+[+-]\d+(?:\.\d+)?)\s+([+-]\d{3})\b.*?((?:High|Medium|Low)\s+\d+%)/i);
     if (!bet) return;
-    const pick = bet[1].trim().replace(/^(?:AM|PM)\s+/, "");
-    const key = pick + bet[2];
+    let pick = bet[2].trim().replace(/^(?:AM|PM)\s+/, "");
+    if (/^(over|under)\b/i.test(pick)) {
+      const game = bet[1].replace(/\([^)]*\)/g, "").replace(/,?\s*\d{1,2}:\d{2}\s*(?:AM|PM)?/ig, "").replace(/\s+/g, " ").trim();
+      if (game && !/^pick$/i.test(game)) pick = game + " " + pick;
+    }
+    const key = pick + bet[3];
     if (seen.has(key)) return;
     seen.add(key);
-    lines.push(sport + " | " + marketOf(pick) + " | " + pick + " | " + bet[2] + " | " + bet[3]);
+    lines.push(sport + " | " + marketOf(pick) + " | " + pick + " | " + bet[3] + " | " + bet[4]);
   });
   return lines;
 }
@@ -471,10 +475,19 @@ const oddskey = document.getElementById("oddskey");
 oddskey.value = localStorage.getItem("gg-odds-key") || "";
 oddskey.onchange = () => localStorage.setItem("gg-odds-key", oddskey.value.trim());
 function teamOf(pick){
-  const over = pick.match(/^(over|under)\b/i);
-  if (over) return {side: over[1].toLowerCase(), name: pick.replace(/^(over|under)\s+\d+(\.\d+)?/i, "").trim()};
-  const m = pick.match(/^(.+?)\s+([+-]\d+(?:\.\d+)?)$/);
-  return m ? {side:"spread", name:m[1]} : {side:"ml", name:pick};
+  const total = String(pick).match(/^(.*?)\s*(over|under)\s+\d+(?:\.\d+)?$/i);
+  if (total) return {side: total[2].toLowerCase(), name: total[1].trim(), game: total[1].trim()};
+  const m = String(pick).match(/^(.+?)\s+([+-]\d+(?:\.\d+)?)$/);
+  return m ? {side:"spread", name:m[1], game:m[1]} : {side:"ml", name:pick, game:pick};
+}
+function gameHits(game, name){
+  if (!name) return true;
+  const teams = (game.away_team + " " + game.home_team).toLowerCase();
+  return name.toLowerCase().split(/\s+/).filter(w => w.length > 3 && w !== "under" && w !== "over").some(w => teams.includes(w));
+}
+function totalLabel(game, side, point){
+  const who = game ? game.away_team + " at " + game.home_team + " " : "";
+  return who + (side === "under" ? "Under " : "Over ") + point;
 }
 function matchOutcome(outcomes, name, side){
   const n = name.toLowerCase();
@@ -515,23 +528,24 @@ async function repricePaste(){
     const games = boards[sport] || [];
     const info = teamOf(pick);
     const market = type === "Total" ? "totals" : type === "Moneyline" ? "h2h" : "spreads";
-    let found = null;
+    let found = null, matched = null;
     for (const game of games) {
       const bk = (game.bookmakers || []).find(b => b.key === bookKey);
       if (!bk) continue;
       const mk = (bk.markets || []).find(m => m.key === market);
       if (!mk) continue;
-      const outcome = matchOutcome(mk.outcomes, info.name || (game.home_team + " " + game.away_team), info.side);
+      const outcome = matchOutcome(mk.outcomes, info.name, info.side);
       if (!outcome) continue;
-      if (info.name && !(game.home_team + " " + game.away_team).toLowerCase().includes(info.name.toLowerCase()) && info.side !== "over" && info.side !== "under") continue;
+      if (!gameHits(game, info.game || info.name)) continue;
       found = outcome;
+      matched = game;
       break;
     }
     if (!found || found.price == null) { missed++; return line; }
     priced++;
     let newPick = pick;
     if (found.point != null && type !== "Moneyline") {
-      if (type === "Total") newPick = (info.side === "under" ? "Under " : "Over ") + found.point;
+      if (type === "Total") newPick = totalLabel(matched, info.side, found.point);
       else newPick = info.name + " " + (found.point > 0 ? "+" : "") + found.point;
     }
     parts[2] = newPick;
@@ -566,9 +580,9 @@ async function fillPickBoard(){
       if (want && mk.key !== want) return;
       (mk.outcomes || []).forEach(o => {
         if (o.price == null) return;
-        let label = o.name;
+        let label = game.away_team + " at " + game.home_team + " " + o.name;
         if (mk.key === "spreads" && o.point != null) label = o.name.split(" ").slice(-1)[0] + " " + (o.point > 0 ? "+" : "") + o.point;
-        if (mk.key === "totals" && o.point != null) label = o.name + " " + o.point;
+        if (mk.key === "totals" && o.point != null) label = totalLabel(game, o.name.toLowerCase(), o.point);
         const opt = document.createElement("option");
         opt.value = label;
         opt.textContent = label + " (" + o.price + ")";
@@ -603,8 +617,8 @@ function findBookPrice(games, bookKey, type, pick){
     if (!mk) continue;
     const outcome = matchOutcome(mk.outcomes, info.name || (game.home_team + " " + game.away_team), info.side);
     if (!outcome || outcome.price == null) continue;
-    if (info.name && !(game.home_team + " " + game.away_team).toLowerCase().includes(info.name.toLowerCase()) && info.side !== "over" && info.side !== "under") continue;
-    return outcome;
+    if (!gameHits(game, info.game || info.name)) continue;
+    return {outcome, game};
   }
   return null;
 }
@@ -625,12 +639,13 @@ async function repriceSlips(){
   let priced = 0;
   pending.forEach(b => {
     if (b.type === "SGP") return;
-    const found = findBookPrice(boards[b.sport], bookKey, b.type, b.pick);
-    if (!found) return;
+    const hit = findBookPrice(boards[b.sport], bookKey, b.type, b.pick);
+    if (!hit) return;
+    const found = hit.outcome;
     b.odds = Number(found.price);
     if (found.point != null && b.type !== "Moneyline") {
       const info = teamOf(b.pick);
-      b.pick = b.type === "Total" ? ((info.side === "under" ? "Under " : "Over ") + found.point) : (info.name + " " + (found.point > 0 ? "+" : "") + found.point);
+      b.pick = b.type === "Total" ? totalLabel(hit.game, info.side, found.point) : (info.name + " " + (found.point > 0 ? "+" : "") + found.point);
     }
     priced++;
   });
@@ -655,6 +670,7 @@ async function loadPending(){
     [sport, type, pick, odds, notes] = parts;
     odds = String(odds || "").replace(/\u2212/g, "-").replace(/\+/g, "");
     if (!sport || !pick || !odds || Number.isNaN(Number(odds))) return;
+    if (/^(over|under)\s+\d/i.test(pick)) { note.textContent = "Skipped " + pick + ". A total needs the game, such as Bruins at Rangers Under 5.5."; return; }
     bets.push({id: Date.now() + Math.random(), date, book, sport, type: type || "Spread", pick, odds: Number(odds), stake: 10, result: "pending", notes: notes || ""});
   });
   const added = bets.length - before;
