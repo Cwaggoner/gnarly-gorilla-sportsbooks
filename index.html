@@ -8,8 +8,9 @@
 :root { --bg:#0a0a0a; --card:#141414; --line:#243024; --title:#39ff14; --text:#d6ffd0; --muted:#8fb898; --amber:#f0e14a; --red:#ff6b6b; }
 * { box-sizing:border-box; }
 body { margin:0; background:var(--bg); color:var(--text); font:15px/1.4 system-ui, sans-serif; }
-header { padding:16px 20px 8px; border-bottom:1px solid var(--line); }
-h1 { margin:0; color:var(--title); font-size:22px; letter-spacing:.04em; }
+header { display:flex; align-items:center; gap:12px; padding:16px 20px 8px; border-bottom:1px solid var(--line); }
+header img { width:40px; height:40px; flex:0 0 40px; }
+header h1 { margin:0; color:var(--title); font-size:22px; letter-spacing:.04em; }
 header p { margin:4px 0 0; color:var(--muted); }
 main { max-width:1100px; margin:0 auto; padding:16px; }
 .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; }
@@ -37,8 +38,11 @@ pre.report { white-space:pre-wrap; color:var(--text); margin:0; }
 </head>
 <body>
 <header>
+<img src="gg-icon.png" alt="Gnarly Gorilla">
+<div>
 <h1>GNARLY GORILLA SPORTSBOOKS</h1>
 <p>Settled ledger for the daily cards. Paste the plays, grade them next day, copy the report. Colors unchanged.</p>
+</div>
 </header>
 <main>
 <section class="stats" id="stats"></section>
