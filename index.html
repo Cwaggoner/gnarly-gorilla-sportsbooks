@@ -344,7 +344,7 @@ function render(){
   }).join("") || "<tr><td colspan='12'>No bets yet.</td></tr>";
   drawCharts(bets);
   drawCalendar(bets);
-  document.getElementById("breaks").innerHTML = "<h2>By Sport / Book</h2>" + group(bets, "sport") + group(bets, "book") + "<h2>Market Split</h2>" + group(bets, "type");
+  document.getElementById("breaks").innerHTML = "<h2>By Sport / Book</h2>" + group(bets, "sport") + group(bets, "book") + "<h2>Market Split</h2>" + group(bets, "type") + "<p class='api-note'>This section fills from slips already saved. Load a card or use Add A Bet, then grade each slip Win, Loss, or Push. Pending slips stay at zero until graded.</p>";
   const y = yesterday();
   const day = bets.filter(b => b.date === y);
   const daySettled = day.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
