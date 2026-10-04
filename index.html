@@ -373,23 +373,76 @@ function buildPdf(bets){
   pdf += "trailer << /Size " + (objects.length + 1) + " /Root " + catalogId + " 0 R >>\nstartxref\n" + xref + "\n%%EOF";
   return new Blob([pdf], {type:"application/pdf"});
 }
+function crc32(bytes){
+  let c = 0xFFFFFFFF;
+  for (let i = 0; i < bytes.length; i++) {
+    c ^= bytes[i];
+    for (let k = 0; k < 8; k++) c = (c >>> 1) ^ (0xEDB88320 & -(c & 1));
+  }
+  return (~c) >>> 0;
+}
+function zipStore(files){
+  const enc = new TextEncoder();
+  const parts = [];
+  const central = [];
+  let offset = 0;
+  files.forEach(f => {
+    const name = enc.encode(f.name);
+    const data = enc.encode(f.data);
+    const crc = crc32(data);
+    const local = new Uint8Array(30 + name.length);
+    const v = new DataView(local.buffer);
+    v.setUint32(0, 0x04034b50, true);
+    v.setUint16(4, 20, true);
+    v.setUint32(14, crc, true);
+    v.setUint32(18, data.length, true);
+    v.setUint32(22, data.length, true);
+    v.setUint16(26, name.length, true);
+    local.set(name, 30);
+    parts.push(local, data);
+    const cen = new Uint8Array(46 + name.length);
+    const cv = new DataView(cen.buffer);
+    cv.setUint32(0, 0x02014b50, true);
+    cv.setUint16(4, 20, true);
+    cv.setUint16(6, 20, true);
+    cv.setUint32(16, crc, true);
+    cv.setUint32(20, data.length, true);
+    cv.setUint32(24, data.length, true);
+    cv.setUint16(28, name.length, true);
+    cv.setUint32(42, offset, true);
+    cen.set(name, 46);
+    central.push(cen);
+    offset += local.length + data.length;
+  });
+  const centralStart = offset;
+  let centralSize = 0;
+  central.forEach(c => { parts.push(c); centralSize += c.length; offset += c.length; });
+  const end = new Uint8Array(22);
+  const ev = new DataView(end.buffer);
+  ev.setUint32(0, 0x06054b50, true);
+  ev.setUint16(8, files.length, true);
+  ev.setUint16(10, files.length, true);
+  ev.setUint32(12, centralSize, true);
+  ev.setUint32(16, centralStart, true);
+  parts.push(end);
+  return new Blob(parts, {type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+}
+function xmlEsc(s){ return String(s).replace(/&/g,"&").replace(/</g,"<").replace(/>/g,">"); }
 function buildSheet(bets){
-  const escx = s => String(s).replace(/&/g,"&").replace(/</g,"<");
   const rows = [["Date","Book","Sport","Type","Pick","Odds","Stake","Result","Profit","Notes"]];
   bets.slice().sort((a,b) => a.date.localeCompare(b.date)).forEach(b => rows.push([b.date, b.book, b.sport, b.type, b.pick, b.odds, b.stake, b.result, b.result === "pending" ? "" : profit(b).toFixed(2), b.notes || ""]));
-  const xml = '<?xml version="1.0"?>\n<?mso-application progid="Excel.Sheet"?>\n<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Worksheet ss:Name="Slips"><Table>' + rows.map(r => "<Row>" + r.map(c => "<Cell><Data ss:Type=\"String\">" + escx(c) + "</Data></Cell>").join("") + "</Row>").join("") + "</Table></Worksheet></Workbook>";
-  return new Blob([xml], {type:"application/vnd.ms-excel"});
+  const sheet = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>' + rows.map((r,i) => "<row r=\"" + (i+1) + "\">" + r.map((c,j) => "<c r=\"" + String.fromCharCode(65+j) + (i+1) + "\" t=\"inlineStr\"><is><t>" + xmlEsc(c) + "</t></is></c>").join("") + "</row>").join("") + "</sheetData></worksheet>";
+  return zipStore([
+    {name:"[Content_Types].xml", data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>'},
+    {name:"_rels/.rels", data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'},
+    {name:"xl/workbook.xml", data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Slips" sheetId="1" r:id="rId1"/></sheets></workbook>'},
+    {name:"xl/_rels/workbook.xml.rels", data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/></Relationships>'},
+    {name:"xl/worksheets/sheet1.xml", data:sheet}
+  ]);
 }
 
 document.getElementById("exportpdf").onclick = () => download("gnarly-gorilla-sportsbooks.pdf", buildPdf(load()));
-document.getElementById("export").onclick = () => {
-  const bets = load();
-  const head = "date,book,sport,type,pick,odds,stake,result,notes";
-  const body = bets.map(b => [b.date,b.book,b.sport,b.type,b.pick,b.odds,b.stake,b.result,b.notes || ""].join(",")).join("\n");
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(new Blob([head + "\n" + body], {type:"text/csv"}));
-  download("gnarly-gorilla-sportsbooks.xls", buildSheet(load()));
-};
+document.getElementById("export").onclick = () => download("gnarly-gorilla-sportsbooks.xlsx", buildSheet(load()));
 document.getElementById("import").onchange = e => {
   const file = e.target.files[0]; if (!file) return;
   const reader = new FileReader();
