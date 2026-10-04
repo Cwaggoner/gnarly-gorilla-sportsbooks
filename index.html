@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Gnarly Gorilla Sportsbooks | Bet Ledger for NFL, NBA, NHL, MLB</title>
-<meta name="description" content="Gnarly Gorilla Sportsbooks is a free bet ledger for Chrome and Chromebook. Log BetMGM, DraftKings, Fanatics, FantasySports, and HardRock slips for NFL, NBA, NHL, MLB, CBB, and CFB, then grade them into a report card.">
+<meta name="description" content="Gnarly Gorilla Sportsbooks is a free bet ledger for Chrome and Chromebook. Log BetMGM, DraftKings, Fanatics, FanDuel, and HardRock slips for NFL, NBA, NHL, MLB, CBB, and CFB, then grade them into a report card.">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link rel="canonical" href="https://cwaggoner.github.io/gnarly-gorilla-sportsbooks/">
 <link rel="icon" href="gg-icon.png" type="image/png">
@@ -22,7 +22,7 @@
 <meta name="twitter:description" content="Free sports bet ledger for NFL, NBA, NHL, MLB, CBB, and CFB. Grade yesterday and copy the report.">
 <meta name="twitter:image" content="https://cwaggoner.github.io/gnarly-gorilla-sportsbooks/og-image.png">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebApplication","name":"Gnarly Gorilla Sportsbooks","url":"https://cwaggoner.github.io/gnarly-gorilla-sportsbooks/","applicationCategory":"SportsApplication","operatingSystem":"Chrome, ChromeOS","description":"Free bet ledger for logging and grading sports slips across BetMGM, DraftKings, Fanatics, FantasySports, and HardRock.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"image":"https://cwaggoner.github.io/gnarly-gorilla-sportsbooks/og-image.png"}
+{"@context":"https://schema.org","@type":"WebApplication","name":"Gnarly Gorilla Sportsbooks","url":"https://cwaggoner.github.io/gnarly-gorilla-sportsbooks/","applicationCategory":"SportsApplication","operatingSystem":"Chrome, ChromeOS","description":"Free bet ledger for logging and grading sports slips across BetMGM, DraftKings, Fanatics, FanDuel, and HardRock.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"image":"https://cwaggoner.github.io/gnarly-gorilla-sportsbooks/og-image.png"}
 </script>
 <style>
 :root { --bg:#0a0a0a; --card:#141414; --line:#243024; --title:#39ff14; --text:#d6ffd0; --muted:#8fb898; --amber:#f0e14a; --red:#ff6b6b; }
@@ -82,7 +82,7 @@ canvas { width:100%; height:220px; background:#0e0e0e; border:1px solid var(--li
 <option>BetMGM</option>
 <option>DraftKings</option>
 <option>Fanatics</option>
-<option>FantasySports</option>
+<option>FanDuel</option>
 <option>HardRock</option>
 </select></label>
 <label>Odds key<input id="oddskey" type="password" placeholder="Free key from the-odds-api.com" autocomplete="off"></label>
@@ -114,7 +114,7 @@ canvas { width:100%; height:220px; background:#0e0e0e; border:1px solid var(--li
 <option>BetMGM</option>
 <option>DraftKings</option>
 <option>Fanatics</option>
-<option>FantasySports</option>
+<option>FanDuel</option>
 <option>HardRock</option>
 </select></label>
 <label>Sport<select name="sport" required>
@@ -141,7 +141,7 @@ canvas { width:100%; height:220px; background:#0e0e0e; border:1px solid var(--li
 <h2>Slips</h2>
 <div class="tools">
 <label>Sport<select id="fSport"><option value="">All</option><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option></select></label>
-<label>Book<select id="fBook"><option value="">All</option><option>BetMGM</option><option>DraftKings</option><option>Fanatics</option><option>FantasySports</option><option>HardRock</option></select></label>
+<label>Book<select id="fBook"><option value="">All</option><option>BetMGM</option><option>DraftKings</option><option>Fanatics</option><option>FanDuel</option><option>HardRock</option></select></label>
 <label>Market<select id="fType"><option value="">All</option><option>Moneyline</option><option>Spread</option><option>Total</option><option>Prop</option><option>Parlay</option><option>SGP</option></select></label>
 <label>Result<select id="fResult"><option value="">All</option><option>pending</option><option>win</option><option>loss</option><option>push</option></select></label>
 </div>
@@ -164,7 +164,7 @@ canvas { width:100%; height:220px; background:#0e0e0e; border:1px solid var(--li
 </section>
 <footer class="card">
 <h2>About this ledger</h2>
-<p>Gnarly Gorilla Sportsbooks is a free browser bet ledger for the daily Gnarly Gorilla pick cards. It tracks American-odds slips for NFL, NBA, NHL, MLB, college basketball, and college football at BetMGM, DraftKings, Fanatics, FantasySports, and HardRock. Bets stay in this browser. The page does not log into a sportsbook and does not place wagers.</p>
+<p>Gnarly Gorilla Sportsbooks is a free browser bet ledger for the daily Gnarly Gorilla pick cards. It tracks American-odds slips for NFL, NBA, NHL, MLB, college basketball, and college football at BetMGM, DraftKings, Fanatics, FanDuel, and HardRock. Bets stay in this browser. The page does not log into a sportsbook and does not place wagers.</p>
 <p class="warn">Bet Responsibly. Gambling involves risk. Wagers can lose the full stake. This ledger is a record of picks and results, not a sportsbook, not betting advice, and not an offer to place a wager. You must be 21 or older where sports betting is legal. If gambling is causing problems, call or text 1-800-GAMBLER.</p>
 </footer>
 </main>
@@ -454,7 +454,7 @@ document.getElementById("cardpdf").onchange = async e => {
 };
 
 
-const BOOK_KEY = {BetMGM:"betmgm", DraftKings:"draftkings", Fanatics:"fanatics", HardRock:"hardrockbet"};
+const BOOK_KEY = {BetMGM:"betmgm", DraftKings:"draftkings", Fanatics:"fanatics", FanDuel:"fanduel", HardRock:"hardrockbet"};
 const SPORT_KEY = {NFL:"americanfootball_nfl", NHL:"icehockey_nhl", NBA:"basketball_nba", MLB:"baseball_mlb", CBB:"basketball_ncaab", CFB:"americanfootball_ncaaf"};
 const oddskey = document.getElementById("oddskey");
 oddskey.value = localStorage.getItem("gg-odds-key") || "";
