@@ -127,6 +127,7 @@ canvas { width:100%; height:220px; background:#0e0e0e; border:1px solid var(--li
 </select></label>
 <label>Type<select name="type"><option>Moneyline</option><option>Spread</option><option>Total</option><option>Prop</option><option>Parlay</option><option>SGP</option></select></label>
 <label>Pick<select name="pick" id="pickselect" required><option value="">Select a pick</option></select></label>
+<p id="picknote" class="warn"></p>
 <label>American odds<input name="odds" type="number" step="1" placeholder="-110" required></label>
 <label>Close odds<input name="close" type="number" step="1" placeholder="-120"></label>
 <input type="hidden" name="editId">
@@ -536,18 +537,25 @@ async function repricePaste(){
 async function fillPickBoard(){
   const book = form.book.value;
   const sport = form.sport.value;
+  const type = form.type.value;
   const bookKey = BOOK_KEY[book];
   const sportKey = SPORT_KEY[sport];
   const key = oddskey.value.trim();
   const sel = document.getElementById("pickselect");
+  const note = document.getElementById("picknote");
   const current = sel.value;
   sel.innerHTML = "<option value=''>Select a pick</option>";
-  if (!bookKey || !sportKey || !key) return;
+  if (!key) { note.textContent = "Add the odds key in From Today's Card. Then this list follows " + book + "."; return; }
+  if (!bookKey || !sportKey) { note.textContent = book + " has no live board."; return; }
+  note.textContent = "Loading " + book + " " + sport + " picks...";
   const games = await fetchBook(sportKey, bookKey, key);
+  const want = type === "Total" ? "totals" : type === "Moneyline" ? "h2h" : type === "Spread" ? "spreads" : "";
+  let count = 0;
   games.forEach(game => {
     const bk = (game.bookmakers || []).find(b => b.key === bookKey);
     if (!bk) return;
     (bk.markets || []).forEach(mk => {
+      if (want && mk.key !== want) return;
       (mk.outcomes || []).forEach(o => {
         if (o.price == null) return;
         let label = o.name;
@@ -558,11 +566,14 @@ async function fillPickBoard(){
         opt.textContent = label + " (" + o.price + ")";
         opt.dataset.price = o.price;
         opt.dataset.close = o.price;
+        opt.dataset.market = mk.key;
         sel.appendChild(opt);
+        count++;
       });
     });
   });
   if (current) sel.value = current;
+  note.textContent = count ? count + " picks from " + book + "." : "No " + book + " lines for " + sport + " " + type + ".";
 }
 document.getElementById("pickselect").onchange = () => {
   const opt = document.getElementById("pickselect").selectedOptions[0];
@@ -570,8 +581,10 @@ document.getElementById("pickselect").onchange = () => {
   form.odds.value = opt.dataset.price;
   form.close.value = opt.dataset.close;
 };
-form.book.onchange = () => fillPickBoard().catch(err => { document.getElementById("pdfnote").textContent = err.message; });
-form.sport.onchange = () => fillPickBoard().catch(err => { document.getElementById("pdfnote").textContent = err.message; });
+form.book.onchange = () => fillPickBoard().catch(err => { document.getElementById("picknote").textContent = err.message; });
+form.sport.onchange = () => fillPickBoard().catch(err => { document.getElementById("picknote").textContent = err.message; });
+form.type.onchange = () => fillPickBoard().catch(err => { document.getElementById("picknote").textContent = err.message; });
+fillPickBoard().catch(err => { document.getElementById("picknote").textContent = err.message; });
 function findBookPrice(games, bookKey, type, pick){
   const info = teamOf(pick);
   const market = type === "Total" ? "totals" : type === "Moneyline" ? "h2h" : "spreads";
