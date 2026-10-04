@@ -42,7 +42,10 @@ main { max-width:1100px; margin:0 auto; padding:16px; }
 h2 { margin:0 0 10px; font-size:16px; color:var(--title); }
 form, .row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:8px; }
 .break { grid-column:1 / -1; height:0; }
-.stack { display:flex; flex-direction:column; gap:8px; }
+.stack { display:flex; flex-direction:column; gap:8px; flex:0 0 160px; }
+.action-row { grid-column:1 / -1; display:flex; align-items:stretch; gap:8px; }
+.notes-field { flex:1; display:flex; flex-direction:column; }
+.notes-field textarea { flex:1; min-height:72px; height:100%; }
 label { display:flex; flex-direction:column; gap:4px; font-size:12px; color:var(--muted); }
 input, select, button, textarea { background:#0e0e0e; color:var(--text); border:1px solid var(--line); border-radius:8px; padding:8px; }
 textarea { width:100%; min-height:120px; font:13px/1.4 ui-monospace, monospace; }
@@ -136,11 +139,13 @@ canvas { width:100%; height:220px; background:#0e0e0e; border:1px solid var(--li
 <input type="hidden" name="editId">
 <label>Stake $<input name="stake" type="number" step="0.01" min="0" value="10" required></label>
 <label>Result<select name="result"><option>pending</option><option>win</option><option>loss</option><option>push</option><option>void</option></select></label>
+<div class="action-row">
 <div class="stack">
 <button type="submit" id="savebtn">Save Bet</button>
 <button type="button" id="canceledit">Cancel Edit</button>
 </div>
-<label>Notes<input name="notes" placeholder="High 62%"></label>
+<label class="notes-field">Notes<textarea name="notes" placeholder="High 62%"></textarea></label>
+</div>
 </form>
 </section>
 <section class="card">
