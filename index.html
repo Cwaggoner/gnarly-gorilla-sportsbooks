@@ -85,6 +85,7 @@ canvas { width:100%; height:220px; background:#0e0e0e; border:1px solid var(--li
 <option>FantasySports</option>
 <option>HardRock</option>
 </select></label>
+<label>Odds key<input id="oddskey" type="password" placeholder="Free key from the-odds-api.com" autocomplete="off"></label>
 <textarea id="paste" placeholder="NFL | Spread | Chiefs -3.5 | -110 | High 62%"></textarea>
 <div class="tools">
 <label>Upload pick-card PDF<input type="file" id="cardpdf" accept="application/pdf,.pdf"></label>
@@ -452,11 +453,91 @@ document.getElementById("cardpdf").onchange = async e => {
   e.target.value = "";
 };
 
-function loadPending(){
+
+const BOOK_KEY = {BetMGM:"betmgm", DraftKings:"draftkings", Fanatics:"fanatics", HardRock:"hardrockbet"};
+const SPORT_KEY = {NFL:"americanfootball_nfl", NHL:"icehockey_nhl", NBA:"basketball_nba", MLB:"baseball_mlb", CBB:"basketball_ncaab", CFB:"americanfootball_ncaaf"};
+const oddskey = document.getElementById("oddskey");
+oddskey.value = localStorage.getItem("gg-odds-key") || "";
+oddskey.onchange = () => localStorage.setItem("gg-odds-key", oddskey.value.trim());
+function teamOf(pick){
+  const over = pick.match(/^(over|under)\b/i);
+  if (over) return {side: over[1].toLowerCase(), name: pick.replace(/^(over|under)\s+\d+(\.\d+)?/i, "").trim()};
+  const m = pick.match(/^(.+?)\s+([+-]\d+(?:\.\d+)?)$/);
+  return m ? {side:"spread", name:m[1]} : {side:"ml", name:pick};
+}
+function matchOutcome(outcomes, name, side){
+  const n = name.toLowerCase();
+  return outcomes.find(o => {
+    const on = o.name.toLowerCase();
+    if (side === "over") return on === "over";
+    if (side === "under") return on === "under";
+    return on === n || on.endsWith(" " + n) || n.endsWith(on);
+  });
+}
+async function fetchBook(sport, bookKey, key){
+  const url = "https://api.the-odds-api.com/v4/sports/" + sport + "/odds?apiKey=" + encodeURIComponent(key) + "&regions=us,us2&markets=spreads,totals,h2h&oddsFormat=american&bookmakers=" + bookKey;
+  let res;
+  try { res = await fetch(url); }
+  catch (e) { res = await fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(url)); }
+  if (!res.ok) throw new Error("Odds feed returned " + res.status);
+  return res.json();
+}
+async function repricePaste(){
+  const note = document.getElementById("pdfnote");
+  const book = document.getElementById("cardbook").value;
+  const bookKey = BOOK_KEY[book];
+  const key = oddskey.value.trim();
+  localStorage.setItem("gg-odds-key", key);
+  const raw = document.getElementById("paste").value.trim();
+  if (!raw) return;
+  if (!bookKey) { note.textContent = book + " has no live board. Card odds kept."; return; }
+  if (!key) { note.textContent = "Card odds kept. Paste a free key from the-odds-api.com once to pull " + book + "."; return; }
+  const lines = raw.split(/\r?\n/);
+  const sports = [...new Set(lines.map(l => l.split("|")[0].trim()).filter(s => SPORT_KEY[s]))];
+  const boards = {};
+  for (const sport of sports) boards[sport] = await fetchBook(SPORT_KEY[sport], bookKey, key);
+  let priced = 0, missed = 0;
+  const out = lines.map(line => {
+    const parts = line.split("|").map(s => s.trim());
+    if (parts.length < 4 || parts[1] === "SGP") return line;
+    const [sport, type, pick] = parts;
+    const games = boards[sport] || [];
+    const info = teamOf(pick);
+    const market = type === "Total" ? "totals" : type === "Moneyline" ? "h2h" : "spreads";
+    let found = null;
+    for (const game of games) {
+      const bk = (game.bookmakers || []).find(b => b.key === bookKey);
+      if (!bk) continue;
+      const mk = (bk.markets || []).find(m => m.key === market);
+      if (!mk) continue;
+      const outcome = matchOutcome(mk.outcomes, info.name || (game.home_team + " " + game.away_team), info.side);
+      if (!outcome) continue;
+      if (info.name && !(game.home_team + " " + game.away_team).toLowerCase().includes(info.name.toLowerCase()) && info.side !== "over" && info.side !== "under") continue;
+      found = outcome;
+      break;
+    }
+    if (!found || found.price == null) { missed++; return line; }
+    priced++;
+    let newPick = pick;
+    if (found.point != null && type !== "Moneyline") {
+      if (type === "Total") newPick = (info.side === "under" ? "Under " : "Over ") + found.point;
+      else newPick = info.name + " " + (found.point > 0 ? "+" : "") + found.point;
+    }
+    parts[2] = newPick;
+    parts[3] = String(found.price);
+    return parts.join(" | ");
+  });
+  document.getElementById("paste").value = out.join("\n");
+  note.textContent = priced + " lines repriced at " + book + (missed ? ". " + missed + " kept the card price." : ".");
+}
+document.getElementById("cardbook").onchange = () => { repricePaste().catch(err => { document.getElementById("pdfnote").textContent = err.message; }); };
+
+async function loadPending(){
   const note = document.getElementById("pdfnote");
   const bets = load();
   const today = ymd(new Date());
   const book = document.getElementById("cardbook").value;
+  await repricePaste().catch(err => { document.getElementById("pdfnote").textContent = err.message; });
   const before = bets.length;
   document.getElementById("paste").value.split(/\r?\n/).forEach(line => {
     line = line.trim();
@@ -479,7 +560,7 @@ function loadPending(){
   note.textContent = added + " pending slips loaded at " + book + ". They are in the Slips table.";
   document.getElementById("rows").scrollIntoView({behavior:"smooth", block:"center"});
 }
-document.getElementById("loadcard").onclick = loadPending;
+document.getElementById("loadcard").onclick = () => loadPending();
 document.getElementById("copyreport").onclick = async () => {
   const text = document.getElementById("report").textContent;
   const note = document.getElementById("copynote");
