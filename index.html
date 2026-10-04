@@ -28,13 +28,13 @@
 :root { --bg:#0a0a0a; --card:#141414; --line:#243024; --title:#39ff14; --text:#d6ffd0; --muted:#8fb898; --amber:#f0e14a; --red:#ff6b6b; }
 * { box-sizing:border-box; }
 body { margin:0; background:var(--bg); color:var(--text); font:15px/1.4 system-ui, sans-serif; }
-header { display:flex; align-items:center; gap:12px; padding:16px 20px 8px; border-bottom:1px solid var(--line); }
+header { display:flex; align-items:center; gap:12px; margin:14px 0 0; padding:16px 20px; border:1px solid #39ff14; border-radius:10px; }
 header img { width:50px; height:50px; flex:0 0 50px; position:relative; top:-10px; }
 header h1 { margin:0; color:var(--title); font-size:22px; letter-spacing:.04em; }
 header p { margin:4px 0 0; color:var(--muted); }
 main { max-width:1100px; margin:0 auto; padding:16px; }
 .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; }
-.stat, .card, table { background:var(--card); border:1px solid var(--line); border-radius:10px; }
+.stat, .card, table { background:var(--card); border:1px solid #39ff14; border-radius:10px; }
 .stat { padding:12px; }
 .stat b { display:block; color:var(--title); font-size:20px; }
 .stat span { color:var(--muted); font-size:12px; }
