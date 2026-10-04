@@ -129,7 +129,8 @@ canvas { width:100%; height:220px; background:#0e0e0e; border:1px solid var(--li
 <section class="card">
 <h2>Slips</h2>
 <div class="tools">
-<button type="button" id="export">Export CSV</button>
+<button type="button" id="exportpdf">Export PDF</button>
+<button type="button" id="export">Export spreadsheet</button>
 <label>Import CSV<input type="file" id="import" accept=".csv,text/csv"></label>
 <button type="button" class="danger" id="clear">Clear all</button>
 </div>
@@ -317,13 +318,77 @@ document.getElementById("loadcard").onclick = () => {
   document.getElementById("paste").value = "";
 };
 document.getElementById("copyreport").onclick = () => navigator.clipboard.writeText(document.getElementById("report").textContent);
+
+function download(name, blob){
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+function pdfEscape(s){
+  return String(s).replace(/[^\x20-\x7E]/g, " ").replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)");
+}
+function buildPdf(bets){
+  const lines = ["GNARLY GORILLA SPORTSBOOKS", "Bet ledger export", ""];
+  const settled = bets.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
+  const pl = bets.reduce((s,b) => s + profit(b), 0);
+  lines.push("Record " + rec(bets) + "   Profit " + money(pl) + "   Units " + (pl / UNIT).toFixed(2));
+  lines.push("");
+  lines.push("Date        Book            Sport  Type         Pick                     Odds   Stake   Result   P/L");
+  bets.slice().sort((a,b) => a.date.localeCompare(b.date)).forEach(b => {
+    lines.push([b.date, b.book, b.sport, b.type, b.pick, b.odds, Number(b.stake).toFixed(2), b.result, b.result === "pending" ? "-" : money(profit(b))].join("  "));
+  });
+  if (!bets.length) lines.push("No slips yet.");
+  const pages = [];
+  for (let i = 0; i < lines.length; i += 42) pages.push(lines.slice(i, i + 42));
+  const objects = [];
+  function add(body){ objects.push(body); return objects.length; }
+  const fontId = add("<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>");
+  const pageIds = [];
+  pages.forEach(chunk => {
+    let y = 760;
+    const cmds = ["0 0 0 rg", "0 0 612 792 re", "f", "0.22 1 0.08 rg", "BT", "/F1 10 Tf"];
+    chunk.forEach((line, idx) => {
+      if (idx === 1) cmds.push("0.84 1 0.82 rg");
+      cmds.push("1 0 0 1 36 " + y + " Tm (" + pdfEscape(line).slice(0, 95) + ") Tj");
+      y -= 16;
+    });
+    cmds.push("ET");
+    const stream = cmds.join("\n");
+    const contentId = add("<< /Length " + stream.length + " >>\nstream\n" + stream + "\nendstream");
+    pageIds.push(add("<< /Type /Page /Parent PAGES /MediaBox [0 0 612 792] /Contents " + contentId + " 0 R /Resources << /Font << /F1 " + fontId + " 0 R >> >> >>"));
+  });
+  const pagesId = add("<< /Type /Pages /Kids [" + pageIds.map(id => id + " 0 R").join(" ") + "] /Count " + pageIds.length + " >>");
+  const catalogId = add("<< /Type /Catalog /Pages " + pagesId + " 0 R >>");
+  let pdf = "%PDF-1.4\n";
+  const offsets = [0];
+  objects.forEach((body, i) => {
+    offsets.push(pdf.length);
+    pdf += (i + 1) + " 0 obj\n" + body.replace("PAGES", pagesId + " 0 R") + "\nendobj\n";
+  });
+  const xref = pdf.length;
+  pdf += "xref\n0 " + (objects.length + 1) + "\n0000000000 65535 f \n";
+  offsets.slice(1).forEach(off => { pdf += String(off).padStart(10, "0") + " 00000 n \n"; });
+  pdf += "trailer << /Size " + (objects.length + 1) + " /Root " + catalogId + " 0 R >>\nstartxref\n" + xref + "\n%%EOF";
+  return new Blob([pdf], {type:"application/pdf"});
+}
+function buildSheet(bets){
+  const escx = s => String(s).replace(/&/g,"&").replace(/</g,"<");
+  const rows = [["Date","Book","Sport","Type","Pick","Odds","Stake","Result","Profit","Notes"]];
+  bets.slice().sort((a,b) => a.date.localeCompare(b.date)).forEach(b => rows.push([b.date, b.book, b.sport, b.type, b.pick, b.odds, b.stake, b.result, b.result === "pending" ? "" : profit(b).toFixed(2), b.notes || ""]));
+  const xml = '<?xml version="1.0"?>\n<?mso-application progid="Excel.Sheet"?>\n<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"><Worksheet ss:Name="Slips"><Table>' + rows.map(r => "<Row>" + r.map(c => "<Cell><Data ss:Type=\"String\">" + escx(c) + "</Data></Cell>").join("") + "</Row>").join("") + "</Table></Worksheet></Workbook>";
+  return new Blob([xml], {type:"application/vnd.ms-excel"});
+}
+
+document.getElementById("exportpdf").onclick = () => download("gnarly-gorilla-sportsbooks.pdf", buildPdf(load()));
 document.getElementById("export").onclick = () => {
   const bets = load();
   const head = "date,book,sport,type,pick,odds,stake,result,notes";
   const body = bets.map(b => [b.date,b.book,b.sport,b.type,b.pick,b.odds,b.stake,b.result,b.notes || ""].join(",")).join("\n");
   const a = document.createElement("a");
   a.href = URL.createObjectURL(new Blob([head + "\n" + body], {type:"text/csv"}));
-  a.download = "gnarly-gorilla-sportsbooks.csv"; a.click();
+  download("gnarly-gorilla-sportsbooks.xls", buildSheet(load()));
 };
 document.getElementById("import").onchange = e => {
   const file = e.target.files[0]; if (!file) return;
