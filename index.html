@@ -143,6 +143,7 @@ canvas { width:100%; height:220px; background:#0e0e0e; border:1px solid var(--li
 <div class="stack">
 <button type="submit" id="savebtn">Save Bet</button>
 <button type="button" id="canceledit">Cancel Edit</button>
+<span id="editnote" class="warn"></span>
 </div>
 </form>
 </section>
@@ -851,7 +852,15 @@ document.getElementById("import").onchange = e => {
 };
 document.getElementById("clear").onclick = () => { if (confirm("Delete every bet in this browser?")) save([]); };
 ["fSport","fBook","fType","fResult"].forEach(id => document.getElementById(id).onchange = render);
-document.getElementById("canceledit").onclick = () => { form.editId.value = ""; form.pick.value = ""; form.close.value = ""; document.getElementById("savebtn").textContent = "Save Bet"; };
+document.getElementById("canceledit").onclick = event => {
+  event.preventDefault();
+  form.reset();
+  form.date.value = new Date().toISOString().slice(0,10);
+  form.editId.value = "";
+  document.getElementById("savebtn").textContent = "Save Bet";
+  document.getElementById("editnote").textContent = "Edit cancelled.";
+  document.getElementById("picknote").textContent = "";
+};
 document.getElementById("prevMonth").onclick = () => { monthCursor.setMonth(monthCursor.getMonth()-1); render(); };
 document.getElementById("nextMonth").onclick = () => { monthCursor.setMonth(monthCursor.getMonth()+1); render(); };
 render();
