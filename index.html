@@ -95,7 +95,7 @@ canvas { width:100%; height:220px; background:#0e0e0e; border:1px solid var(--li
 <section class="card">
 <h2>Report card</h2>
 <pre class="report" id="report"></pre>
-<div class="tools"><button type="button" id="copyreport">Copy report</button></div>
+<div class="tools"><button type="button" id="copyreport">Copy report</button><span id="copynote" class="warn"></span></div>
 </section>
 <section class="card" id="charts">
 <h2>Charts</h2>
@@ -479,7 +479,22 @@ function loadPending(){
   document.getElementById("rows").scrollIntoView({behavior:"smooth", block:"center"});
 }
 document.getElementById("loadcard").onclick = loadPending;
-document.getElementById("copyreport").onclick = () => navigator.clipboard.writeText(document.getElementById("report").textContent);
+document.getElementById("copyreport").onclick = async () => {
+  const text = document.getElementById("report").textContent;
+  const note = document.getElementById("copynote");
+  try {
+    await navigator.clipboard.writeText(text);
+    note.textContent = "Copied.";
+  } catch (err) {
+    const box = document.createElement("textarea");
+    box.value = text;
+    document.body.appendChild(box);
+    box.select();
+    const ok = document.execCommand("copy");
+    box.remove();
+    note.textContent = ok ? "Copied." : "Select the report and copy it by hand.";
+  }
+};
 
 function download(name, blob){
   const a = document.createElement("a");
