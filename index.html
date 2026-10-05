@@ -123,7 +123,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </section>
 <section class="card" id="charts">
 <div class="section-head"><h2>Charts</h2><button type="button" id="plot">Plot</button></div>
-<p class="warn">Settled slips only. Pending tickets are not plotted. <span id="plotnote"></span></p>
+<p class="warn">Profit uses settled slips. CLV uses every saved close, including pending. <span id="plotnote"></span></p>
 <div class="charts">
 <div><h2>Cumulative Profit</h2><canvas id="profitChart" width="640" height="220"></canvas></div>
 <div><h2>Profit By Sport And CLV</h2><canvas id="sportChart" width="420" height="220"></canvas></div>
@@ -272,10 +272,11 @@ function drawBars(canvas, bets){
   const ctx = canvas.getContext("2d");
   const map = {};
   bets.forEach(b => {
-    if (b.result === "pending" || b.result === "void") return;
-    const row = map[b.sport] || {pl:0, clv:[], n:0};
-    row.pl += profit(b);
+    if (b.result === "void") return;
     const c = clv(b);
+    if ((b.result === "pending") && c == null) return;
+    const row = map[b.sport] || {pl:0, clv:[], n:0};
+    if (b.result !== "pending") row.pl += profit(b);
     if (c != null) row.clv.push(c);
     map[b.sport] = row;
   });
