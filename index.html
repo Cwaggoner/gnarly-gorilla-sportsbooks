@@ -319,7 +319,7 @@ function decimal(odds){
   return odds > 0 ? 1 + odds / 100 : 1 + 100 / Math.abs(odds);
 }
 function clv(b){
-  if (!b.close) return null;
+  if (b.close === "" || b.close == null || Number(b.close) === Number(b.odds)) return null;
   const got = decimal(b.odds), closed = decimal(b.close);
   if (!got || !closed) return null;
   return (got / closed - 1) * 100;
@@ -362,7 +362,11 @@ function drawCalendar(bets){
 }
 
 function render(){
-  const all = load().sort((a,b) => b.date.localeCompare(a.date) || b.id - a.id);
+  const stored = load();
+  let cleaned = false;
+  stored.forEach(b => { if (b.close && Number(b.close) === Number(b.odds)) { b.close = ""; cleaned = true; } });
+  if (cleaned) localStorage.setItem(KEY, JSON.stringify(stored));
+  const all = stored.sort((a,b) => b.date.localeCompare(a.date) || b.id - a.id);
   const bets = filtered(all);
   const settled = bets.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
   const pl = bets.reduce((s,b) => s + profit(b), 0);
@@ -713,9 +717,10 @@ function applyCloses(bets, games, bookKey){
     const hit = findBookPrice(games, bookKey, b.type, b.pick);
     if (hit) b.lastPrice = Number(hit.outcome.price);
     const started = hit && hit.game.commence_time && Date.parse(hit.game.commence_time) <= Date.now();
-    const gone = !hit && b.date && b.date <= today;
+    const gone = !hit && b.lastPrice && b.date && b.date <= today;
     if (!started && !gone) return;
-    b.close = b.lastPrice || Number(b.odds);
+    if (!b.lastPrice || Number(b.lastPrice) === Number(b.odds)) return;
+    b.close = Number(b.lastPrice);
     filled++;
   });
   return filled;
