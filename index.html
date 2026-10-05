@@ -643,9 +643,12 @@ async function fillPickBoard(){
   if (!bookKey || !sportKey) { note.textContent = book + " has no live board."; return; }
   note.textContent = "Loading " + book + " " + sport + " picks...";
   const games = await fetchBook(sportKey, bookKey, key);
+  const day = form.date.value;
   const want = type === "Total" ? "totals" : type === "Moneyline" ? "h2h" : type === "Spread" ? "spreads" : "";
   let count = 0;
   games.forEach(game => {
+    const gameDay = game.commence_time ? new Date(game.commence_time).toLocaleDateString("en-CA", {timeZone:"America/New_York"}) : "";
+    if (day && gameDay && gameDay !== day) return;
     const bk = (game.bookmakers || []).find(b => b.key === bookKey);
     if (!bk) return;
     (bk.markets || []).forEach(mk => {
@@ -670,7 +673,7 @@ async function fillPickBoard(){
   const bets = load();
   const closed = applyCloses(bets, games, bookKey);
   if (closed) save(bets);
-  const msg = count ? "Loaded " + count + " " + book + " " + sport + " picks." : "Load failed. No " + book + " lines for " + sport + " " + type + ".";
+  const msg = count ? "Loaded " + count + " " + book + " " + sport + " picks for " + day + "." : "No " + book + " lines for " + sport + " on " + day + ".";
   note.textContent = msg + (closed ? " " + closed + " closes saved." : "");
   document.getElementById("loadnote").textContent = count ? "Load successful." : "Load failed.";
 }
@@ -687,7 +690,12 @@ document.getElementById("loadpicks").onclick = () => {
     document.getElementById("loadnote").textContent = "Load failed.";
   });
 };
-document.getElementById("picknote").textContent = "Press Load Picks. A refresh does not call the odds feed.";
+form.date.onchange = () => {
+  const games = cachedBoard(form.sport.value, BOOK_KEY[form.book.value]);
+  if (!games) { document.getElementById("picknote").textContent = "Press Load Picks for this date. The saved board is not here yet."; return; }
+  fillPickBoard().catch(err => { document.getElementById("picknote").textContent = err.message; });
+};
+document.getElementById("picknote").textContent = "Press Load Picks. The list follows the date in Add A Bet.";
 function findBookPrice(games, bookKey, type, pick){
   const info = teamOf(pick);
   const market = type === "Total" ? "totals" : type === "Moneyline" ? "h2h" : "spreads";
