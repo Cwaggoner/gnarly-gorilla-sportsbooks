@@ -538,7 +538,8 @@ function teamOf(pick){
 function gameHits(game, name){
   if (!name) return true;
   const teams = (game.away_team + " " + game.home_team).toLowerCase();
-  return name.toLowerCase().split(/\s+/).filter(w => w.length > 3 && w !== "under" && w !== "over").some(w => teams.includes(w));
+  const words = name.toLowerCase().split(/\s+/).filter(w => w.length > 2 && !["under","over","at","the","ml"].includes(w));
+  return words.some(w => teams.includes(w) || teams.split(/\s+/).some(t => t.startsWith(w)));
 }
 function totalLabel(game, side, point){
   const who = game ? game.away_team + " at " + game.home_team + " " : "";
@@ -702,11 +703,15 @@ function cachedBoard(sport, bookKey){
 }
 function applyCloses(bets, games, bookKey){
   let filled = 0;
+  const today = ymd(new Date());
   bets.forEach(b => {
     if (b.close || b.type === "SGP" || BOOK_KEY[b.book] !== bookKey) return;
     const hit = findBookPrice(games, bookKey, b.type, b.pick);
-    if (!hit || !hit.game.commence_time || Date.parse(hit.game.commence_time) > Date.now()) return;
-    b.close = Number(hit.outcome.price);
+    if (hit) b.lastPrice = Number(hit.outcome.price);
+    const started = hit && hit.game.commence_time && Date.parse(hit.game.commence_time) <= Date.now();
+    const gone = !hit && b.date && b.date <= today;
+    if (!started && !gone) return;
+    b.close = b.lastPrice || Number(b.odds);
     filled++;
   });
   return filled;
