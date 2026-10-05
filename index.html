@@ -628,7 +628,7 @@ async function repricePaste(){
   note.textContent = priced + " lines repriced at " + book + (missed ? ". " + missed + " kept the card price." : ".");
 }
 
-async function fillPickBoard(){
+async function fillPickBoard(useSaved){
   const book = form.book.value;
   const sport = form.sport.value;
   const type = form.type.value;
@@ -642,7 +642,7 @@ async function fillPickBoard(){
   if (!key) { note.textContent = "Add the odds key in From Today's Card. Then this list follows " + book + "."; return; }
   if (!bookKey || !sportKey) { note.textContent = book + " has no live board."; return; }
   note.textContent = "Loading " + book + " " + sport + " picks...";
-  const games = await fetchBook(sportKey, bookKey, key);
+  const games = useSaved ? (cachedBoard(sport, bookKey) || []) : await fetchBook(sportKey, bookKey, key);
   const day = form.date.value;
   const want = type === "Total" ? "totals" : type === "Moneyline" ? "h2h" : type === "Spread" ? "spreads" : "";
   let count = 0;
@@ -693,7 +693,7 @@ document.getElementById("loadpicks").onclick = () => {
 form.date.onchange = () => {
   const games = cachedBoard(form.sport.value, BOOK_KEY[form.book.value]);
   if (!games) { document.getElementById("picknote").textContent = "Press Load Picks for this date. The saved board is not here yet."; return; }
-  fillPickBoard().catch(err => { document.getElementById("picknote").textContent = err.message; });
+  fillPickBoard(true).catch(err => { document.getElementById("picknote").textContent = err.message; });
 };
 document.getElementById("picknote").textContent = "Press Load Picks. The list follows the date in Add A Bet.";
 function findBookPrice(games, bookKey, type, pick){
