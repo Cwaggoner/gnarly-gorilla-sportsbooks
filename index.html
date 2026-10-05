@@ -371,10 +371,11 @@ function render(){
   const day = bets.filter(b => b.date === y);
   const daySettled = day.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
   const dayPl = day.reduce((s,b) => s + profit(b), 0);
+  const sortedDay = day.slice().sort((a,b) => (a.result === "pending" ? 0 : 1) - (b.result === "pending" ? 0 : 1) || String(a.sport).localeCompare(String(b.sport)) || String(a.result).localeCompare(String(b.result)));
   const hit = daySettled.length ? (day.filter(b => b.result === "win").length / daySettled.length * 100).toFixed(0) + "%" : "-";
   const copy = ["GNARLY GORILLA REPORT CARD", "Yesterday " + y, "Record " + rec(day) + "   P/L " + money(dayPl) + "   on $10 slips", "Hit rate " + hit];
-  const body = day.map(b => "<tr><td>" + esc(b.result.toUpperCase()) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.pick) + "</td><td>" + esc(b.odds) + "</td><td>" + (b.result === "pending" ? "OPEN" : money(profit(b))) + "</td></tr>").join("");
-  day.forEach(b => copy.push([b.result.toUpperCase(), b.sport, b.pick, b.odds, b.result === "pending" ? "OPEN" : money(profit(b))].join("  ")));
+  const body = sortedDay.map(b => "<tr><td>" + esc(b.result.toUpperCase()) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.pick) + "</td><td>" + esc(b.odds) + "</td><td>" + (b.result === "pending" ? "OPEN" : money(profit(b))) + "</td></tr>").join("");
+  sortedDay.forEach(b => copy.push([b.result.toUpperCase(), b.sport, b.pick, b.odds, b.result === "pending" ? "OPEN" : money(profit(b))].join("  ")));
   if (!day.length) copy.push("No slips dated yesterday.");
   copy.push("", "Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u");
   const report = document.getElementById("report");
