@@ -641,9 +641,24 @@ async function fillPickBoard(useSaved){
   sel.innerHTML = "<option value=''>Select a pick</option>";
   if (!key) { note.textContent = "Add the odds key in From Today's Card. Then this list follows " + book + "."; return; }
   if (!bookKey || !sportKey) { note.textContent = book + " has no live board."; return; }
-  note.textContent = "Loading " + book + " " + sport + " picks...";
-  const games = useSaved ? (cachedBoard(sport, bookKey) || []) : await fetchBook(sportKey, bookKey, key);
   const day = form.date.value;
+  const today = new Date().toLocaleDateString("en-CA", {timeZone:"America/New_York"});
+  const dayKey = "gg-day-" + day + "-" + sportKey + "-" + bookKey;
+  note.textContent = "Loading " + book + " " + sport + " picks for " + day + "...";
+  let games;
+  if (day && day < today) {
+    try { games = JSON.parse(localStorage.getItem(dayKey) || "null") || []; } catch (e) { games = []; }
+    if (!games.length) { note.textContent = "No saved board for " + day + ". The free feed does not return a past date."; document.getElementById("loadnote").textContent = "Load failed."; return; }
+  } else {
+    games = useSaved ? (cachedBoard(sport, bookKey) || []) : await fetchBook(sportKey, bookKey, key);
+    const byDay = {};
+    games.forEach(game => {
+      const gameDay = game.commence_time ? new Date(game.commence_time).toLocaleDateString("en-CA", {timeZone:"America/New_York"}) : day;
+      byDay[gameDay] = byDay[gameDay] || [];
+      byDay[gameDay].push(game);
+    });
+    Object.entries(byDay).forEach(([d, list]) => localStorage.setItem("gg-day-" + d + "-" + sportKey + "-" + bookKey, JSON.stringify(list)));
+  }
   const want = type === "Total" ? "totals" : type === "Moneyline" ? "h2h" : type === "Spread" ? "spreads" : "";
   let count = 0;
   games.forEach(game => {
