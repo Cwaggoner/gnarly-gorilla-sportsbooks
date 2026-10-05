@@ -240,7 +240,10 @@ function drawLine(canvas, settled){
   const x = i => pad + (w - pad * 2) * (pts.length === 1 ? 0.5 : i / (pts.length - 1));
   const y = v => pad + (h - pad * 2) * (1 - (v - min) / span);
   ctx.strokeStyle = "#243024";
-  ctx.beginPath(); ctx.moveTo(pad, y(0)); ctx.lineTo(w - pad, y(0)); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pad, y(0)); ctx.lineTo(w - 36, y(0)); ctx.stroke();
+  ctx.fillStyle = "#d6ffd0";
+  ctx.font = "12px sans-serif";
+  ctx.fillText("$0", w - 28, y(0) + 4);
   ctx.strokeStyle = "#39ff14";
   ctx.lineWidth = 2;
   ctx.beginPath();
