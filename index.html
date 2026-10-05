@@ -178,7 +178,9 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <label>Result<select id="fResult"><option value="">All</option><option>pending</option><option>win</option><option>loss</option><option>push</option></select></label>
 </div>
 <div class="tools">
+<label>Load Ledger<input type="file" id="loadledger" accept=".json,application/json"></label>
 <button type="button" id="saveledger">Save Ledger</button>
+<span id="ledgernote" class="warn"></span>
 <button type="button" id="exportpdf">Export PDF</button>
 <button type="button" id="export">Export Spreadsheet</button>
 <label>Import CSV<input type="file" id="import" accept=".csv,text/csv"></label>
@@ -1054,10 +1056,26 @@ function buildSheet(bets){
   ]);
 }
 
+document.getElementById("loadledger").onchange = async e => {
+  const file = e.target.files[0];
+  const note = document.getElementById("ledgernote");
+  if (!file) return;
+  try {
+    const data = JSON.parse(await file.text());
+    const bets = Array.isArray(data) ? data : data.bets;
+    if (!Array.isArray(bets)) throw new Error("That file has no slips.");
+    save(bets);
+    note.textContent = "Loaded " + bets.length + " slips.";
+  } catch (err) {
+    note.textContent = "Load failed. Use a Save Ledger JSON file.";
+  }
+  e.target.value = "";
+};
 document.getElementById("saveledger").onclick = () => {
   const bets = load();
   const blob = new Blob([JSON.stringify({saved: new Date().toISOString(), bets}, null, 2)], {type:"application/json"});
   download("GG-LEDGER-" + ymd(new Date()) + ".json", blob);
+  document.getElementById("ledgernote").textContent = bets.length + " slips saved.";
 };
 document.getElementById("exportpdf").onclick = () => download("gnarly-gorilla-sportsbooks.pdf", buildPdf(load()));
 document.getElementById("export").onclick = () => download("gnarly-gorilla-sportsbooks.xlsx", buildSheet(load()));
