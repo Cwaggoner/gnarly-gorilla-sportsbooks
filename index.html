@@ -69,7 +69,7 @@ pre.report { white-space:pre-wrap; color:var(--text); margin:0; }
 .cal div { min-height:46px; background:#0e0e0e; border:1px solid var(--line); border-radius:6px; font-size:11px; padding:4px; }
 .cal div.today { border:1px solid #39ff14; box-shadow:0 0 0 1px #39ff14 inset; }
 .cal .dow { min-height:0; color:var(--title); background:transparent; border:0; }
-canvas { width:100%; height:220px; background:#0e0e0e; border:1px solid var(--line); border-radius:8px; }
+canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--line); border-radius:8px; display:block; }
 @media (max-width:700px) { .charts { grid-template-columns:1fr; } }
 
 @media (max-width:700px) { table { display:block; overflow-x:auto; } }
@@ -250,25 +250,34 @@ function drawLine(canvas, settled){
 }
 function drawBars(canvas, bets){
   const ctx = canvas.getContext("2d");
-  const w = canvas.width, h = canvas.height;
-  ctx.clearRect(0,0,w,h);
-  ctx.fillStyle = "#0e0e0e";
-  ctx.fillRect(0,0,w,h);
   const map = {};
   bets.forEach(b => { if (b.result === "pending" || b.result === "void") return; map[b.sport] = (map[b.sport] || 0) + profit(b); });
-  const rows = Object.entries(map);
-  if (!rows.length){ ctx.fillStyle = "#8fb898"; ctx.font = "14px sans-serif"; ctx.fillText("No settled slips yet.", 16, 32); return; }
+  const rows = Object.entries(map).sort((a,b) => a[0].localeCompare(b[0]));
+  const cssW = Math.max(280, canvas.clientWidth || 420);
+  const rowH = 28;
+  const h = Math.max(120, rows.length * rowH + 24);
+  canvas.width = cssW;
+  canvas.height = h;
+  ctx.clearRect(0,0,cssW,h);
+  ctx.fillStyle = "#0e0e0e";
+  ctx.fillRect(0,0,cssW,h);
+  ctx.font = "12px sans-serif";
+  if (!rows.length){ ctx.fillStyle = "#8fb898"; ctx.fillText("No settled slips yet.", 16, 32); return; }
+  const labelW = Math.max(...rows.map(r => ctx.measureText(r[0]).width), 36);
+  const valueW = Math.max(...rows.map(r => ctx.measureText(money(r[1])).width), 48);
+  const left = 12 + labelW + 8;
+  const right = 12 + valueW;
+  const maxBar = Math.max(24, cssW - left - right - 8);
   const max = Math.max(...rows.map(r => Math.abs(r[1])), 1);
-  const rowH = Math.min(28, (h - 16) / rows.length);
   rows.forEach((r,i) => {
     const [name, val] = r;
-    const bw = (w - 110) * Math.abs(val) / max;
+    const y = 16 + i * rowH;
+    const bw = Math.max(2, maxBar * Math.abs(val) / max);
     ctx.fillStyle = val < 0 ? "#ff6b6b" : "#39ff14";
-    ctx.fillRect(90, 12 + i * rowH, bw, rowH - 8);
+    ctx.fillRect(left, y, bw, 14);
     ctx.fillStyle = "#d6ffd0";
-    ctx.font = "12px sans-serif";
-    ctx.fillText(name, 8, 24 + i * rowH);
-    ctx.fillText(money(val), 96 + bw, 24 + i * rowH);
+    ctx.fillText(name, 12, y + 12);
+    ctx.fillText(money(val), cssW - right, y + 12);
   });
 }
 
