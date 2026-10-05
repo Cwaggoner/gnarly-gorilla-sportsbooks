@@ -1054,6 +1054,11 @@ function buildSheet(bets){
   ]);
 }
 
+document.getElementById("saveledger").onclick = () => {
+  const bets = load();
+  const blob = new Blob([JSON.stringify({saved: new Date().toISOString(), bets}, null, 2)], {type:"application/json"});
+  download("GG-LEDGER-" + ymd(new Date()) + ".json", blob);
+};
 document.getElementById("exportpdf").onclick = () => download("gnarly-gorilla-sportsbooks.pdf", buildPdf(load()));
 document.getElementById("export").onclick = () => download("gnarly-gorilla-sportsbooks.xlsx", buildSheet(load()));
 document.getElementById("import").onchange = e => {
