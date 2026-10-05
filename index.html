@@ -665,6 +665,28 @@ function findBookPrice(games, bookKey, type, pick){
   }
   return null;
 }
+async function captureCloses(){
+  if (sessionStorage.getItem("gg-close-scan")) return;
+  const key = oddskey.value.trim();
+  if (!key) return;
+  const bets = load();
+  const open = bets.filter(b => !b.close && BOOK_KEY[b.book] && SPORT_KEY[b.sport] && b.type !== "SGP");
+  if (!open.length) return;
+  sessionStorage.setItem("gg-close-scan", "1");
+  const groups = {};
+  open.forEach(b => { groups[b.sport + "|" + b.book] = [b.sport, b.book]; });
+  let filled = 0;
+  for (const [sport, book] of Object.values(groups)) {
+    const games = await fetchBook(SPORT_KEY[sport], BOOK_KEY[book], key);
+    open.filter(b => b.sport === sport && b.book === book).forEach(b => {
+      const hit = findBookPrice(games, BOOK_KEY[book], b.type, b.pick);
+      if (!hit || !hit.game.commence_time || Date.parse(hit.game.commence_time) > Date.now()) return;
+      b.close = Number(hit.outcome.price);
+      filled++;
+    });
+  }
+  if (filled) save(bets);
+}
 async function repriceSlips(){
   const note = document.getElementById("pdfnote");
   const book = document.getElementById("cardbook").value;
