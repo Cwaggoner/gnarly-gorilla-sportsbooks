@@ -673,27 +673,38 @@ function findBookPrice(games, bookKey, type, pick){
   }
   return null;
 }
-async function captureCloses(){
-  if (sessionStorage.getItem("gg-close-scan")) return;
-  const key = oddskey.value.trim();
-  if (!key) return;
-  const bets = load();
-  const open = bets.filter(b => !b.close && BOOK_KEY[b.book] && SPORT_KEY[b.sport] && b.type !== "SGP");
-  if (!open.length) return;
-  sessionStorage.setItem("gg-close-scan", "1");
-  const groups = {};
-  open.forEach(b => { groups[b.sport + "|" + b.book] = [b.sport, b.book]; });
+function cachedBoard(sport, bookKey){
+  try {
+    const cached = JSON.parse(sessionStorage.getItem("gg-odds-" + SPORT_KEY[sport] + "-" + bookKey) || "null");
+    if (cached && Date.now() - cached.at < 15 * 60 * 1000) return cached.games;
+  } catch (e) {}
+  return null;
+}
+function applyCloses(bets, games, bookKey){
   let filled = 0;
-  for (const [sport, book] of Object.values(groups)) {
-    const games = await fetchBook(SPORT_KEY[sport], BOOK_KEY[book], key);
-    open.filter(b => b.sport === sport && b.book === book).forEach(b => {
-      const hit = findBookPrice(games, BOOK_KEY[book], b.type, b.pick);
-      if (!hit || !hit.game.commence_time || Date.parse(hit.game.commence_time) > Date.now()) return;
-      b.close = Number(hit.outcome.price);
-      filled++;
-    });
-  }
+  bets.forEach(b => {
+    if (b.close || b.type === "SGP" || BOOK_KEY[b.book] !== bookKey) return;
+    const hit = findBookPrice(games, bookKey, b.type, b.pick);
+    if (!hit || !hit.game.commence_time || Date.parse(hit.game.commence_time) > Date.now()) return;
+    b.close = Number(hit.outcome.price);
+    filled++;
+  });
+  return filled;
+}
+function captureCloses(){
+  const bets = load();
+  const open = bets.filter(b => !b.close && BOOK_KEY[b.book] && SPORT_KEY[b.sport]);
+  let filled = 0;
+  const seen = new Set();
+  open.forEach(b => {
+    const key = b.sport + "|" + b.book;
+    if (seen.has(key)) return;
+    seen.add(key);
+    const games = cachedBoard(b.sport, BOOK_KEY[b.book]);
+    if (games) filled += applyCloses(bets, games, BOOK_KEY[b.book]);
+  });
   if (filled) save(bets);
+  return filled;
 }
 async function repriceSlips(){
   const note = document.getElementById("pdfnote");
@@ -722,6 +733,8 @@ async function repriceSlips(){
     }
     priced++;
   });
+  applyCloses(bets, boards[sports[0]] || [], bookKey);
+  sports.forEach(sport => applyCloses(bets, boards[sport] || [], bookKey));
   save(bets);
   note.textContent = priced + " pending slips repriced at " + book + ".";
 }
