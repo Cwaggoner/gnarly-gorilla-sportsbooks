@@ -118,7 +118,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <p class="warn">Settled slips only. Pending tickets are not plotted. <span id="plotnote"></span></p>
 <div class="charts">
 <div><h2>Cumulative Profit</h2><canvas id="profitChart" width="640" height="220"></canvas></div>
-<div><h2>Profit By Sport</h2><canvas id="sportChart" width="420" height="220"></canvas></div>
+<div><h2>Profit By Sport And CLV</h2><canvas id="sportChart" width="420" height="220"></canvas></div>
 </div>
 </section>
 <section class="card">
@@ -261,9 +261,16 @@ function drawLine(canvas, settled){
 function drawBars(canvas, bets){
   const ctx = canvas.getContext("2d");
   const map = {};
-  bets.forEach(b => { if (b.result === "pending" || b.result === "void") return; map[b.sport] = (map[b.sport] || 0) + profit(b); });
+  bets.forEach(b => {
+    if (b.result === "pending" || b.result === "void") return;
+    const row = map[b.sport] || {pl:0, clv:[], n:0};
+    row.pl += profit(b);
+    const c = clv(b);
+    if (c != null) row.clv.push(c);
+    map[b.sport] = row;
+  });
   const rows = Object.entries(map).sort((a,b) => a[0].localeCompare(b[0]));
-  const cssW = Math.max(280, canvas.clientWidth || 420);
+  const cssW = Math.max(320, canvas.clientWidth || 420);
   const rowH = 28;
   const h = Math.max(120, rows.length * rowH + 24);
   canvas.width = cssW;
@@ -273,21 +280,22 @@ function drawBars(canvas, bets){
   ctx.fillRect(0,0,cssW,h);
   ctx.font = "12px sans-serif";
   if (!rows.length){ ctx.fillStyle = "#8fb898"; ctx.fillText("No settled slips yet.", 16, 32); return; }
+  const label = r => { const xs = r[1].clv; return xs.length ? "CLV " + (xs.reduce((s,v)=>s+v,0)/xs.length).toFixed(1) + "%" : "CLV -"; };
   const labelW = Math.max(...rows.map(r => ctx.measureText(r[0]).width), 36);
-  const valueW = Math.max(...rows.map(r => ctx.measureText(money(r[1])).width), 48);
+  const valueW = Math.max(...rows.map(r => ctx.measureText(money(r[1].pl) + "  " + label(r)).width), 90);
   const left = 12 + labelW + 8;
   const right = 12 + valueW;
   const maxBar = Math.max(24, cssW - left - right - 8);
-  const max = Math.max(...rows.map(r => Math.abs(r[1])), 1);
+  const max = Math.max(...rows.map(r => Math.abs(r[1].pl)), 1);
   rows.forEach((r,i) => {
-    const [name, val] = r;
+    const [name, row] = r;
     const y = 16 + i * rowH;
-    const bw = Math.max(2, maxBar * Math.abs(val) / max);
-    ctx.fillStyle = val < 0 ? "#ff6b6b" : "#39ff14";
+    const bw = Math.max(2, maxBar * Math.abs(row.pl) / max);
+    ctx.fillStyle = row.pl < 0 ? "#ff6b6b" : "#39ff14";
     ctx.fillRect(left, y, bw, 14);
     ctx.fillStyle = "#d6ffd0";
     ctx.fillText(name, 12, y + 12);
-    ctx.fillText(money(val), cssW - right, y + 12);
+    ctx.fillText(money(row.pl) + "  " + label(r), cssW - right, y + 12);
   });
 }
 
