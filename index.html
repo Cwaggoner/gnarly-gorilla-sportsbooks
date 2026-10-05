@@ -28,7 +28,7 @@
 :root { --bg:#0a0a0a; --card:#141414; --line:#243024; --title:#39ff14; --text:#d6ffd0; --muted:#8fb898; --amber:#f0e14a; --red:#ff6b6b; }
 * { box-sizing:border-box; }
 body { margin:0; background:var(--bg); color:var(--text); font:15px/1.4 system-ui, sans-serif; }
-header { display:flex; align-items:center; gap:12px; margin:14px 0 0; padding:16px 20px; border:1px solid #39ff14; border-radius:10px; }
+header { display:flex; align-items:center; gap:12px; width:100%; box-sizing:border-box; margin:0 0 14px; padding:16px 20px; border:1px solid #39ff14; border-radius:10px; }
 header img { width:50px; height:50px; flex:0 0 50px; position:relative; top:-10px; }
 header h1 { margin:0; color:var(--title); font-size:22px; letter-spacing:.04em; }
 header p { margin:4px 0 0; color:var(--muted); }
@@ -83,6 +83,8 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
 <body>
+
+<div class="page">
 <header>
 <img src="gg-icon.png" alt="Gnarly Gorilla">
 <div>
@@ -90,7 +92,6 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <p>Settled Ledger for Gnarly Gorilla Sports Decks. Paste the plays, grade them next day, copy the report.</p>
 </div>
 </header>
-<div class="page">
 <main>
 <section class="stats" id="stats"></section>
 <section class="card">
