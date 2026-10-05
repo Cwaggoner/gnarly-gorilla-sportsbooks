@@ -194,6 +194,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <h2>Calendar</h2>
 <div class="tools"><button type="button" id="prevMonth">Prev</button><button type="button" id="nextMonth">Next</button></div>
 <div class="cal" id="calendar"></div>
+<p class="api-note">This calendar is saved in this browser only. Every day with a slip keeps its profit and slip count.</p>
 </section>
 </main>
 <footer class="card">
@@ -340,7 +341,10 @@ function drawCalendar(bets){
   bets.forEach(b => {
     const dt = new Date(b.date + "T12:00:00");
     if (dt.getFullYear() !== y || dt.getMonth() !== m) return;
-    byDay[dt.getDate()] = (byDay[dt.getDate()] || 0) + profit(b);
+    const day = byDay[dt.getDate()] || {pl:0, n:0};
+    day.pl += profit(b);
+    day.n += 1;
+    byDay[dt.getDate()] = day;
   });
   const names = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
   let html = "<div class='dow' style='grid-column:1/-1;color:#39ff14'>" + first.toLocaleString(undefined,{month:"long", year:"numeric"}) + "</div>";
@@ -349,10 +353,10 @@ function drawCalendar(bets){
   const now = new Date();
   const isThisMonth = now.getFullYear() === y && now.getMonth() === m;
   for (let d = 1; d <= days; d++) {
-    const v = byDay[d];
-    const cls = v > 0 ? "win" : v < 0 ? "loss" : "";
+    const day = byDay[d];
+    const cls = day && day.pl > 0 ? "win" : day && day.pl < 0 ? "loss" : "";
     const today = isThisMonth && d === now.getDate();
-    html += "<div class='" + (today ? "today" : "") + "'><b>" + d + (today ? " today" : "") + "</b><br><span class='" + cls + "'>" + (v == null ? "" : money(v)) + "</span></div>";
+    html += "<div class='" + (today ? "today" : "") + "'><b>" + d + (today ? " today" : "") + "</b><br><span class='" + cls + "'>" + (day ? money(day.pl) + " · " + day.n : "") + "</span></div>";
   }
   document.getElementById("calendar").innerHTML = html;
 }
@@ -392,7 +396,7 @@ function render(){
   }).join("") || "<tr><td colspan='12'>No bets yet.</td></tr>";
   drawCharts(bets);
   document.getElementById("plotnote").textContent = settled.length + " settled slips plotted. " + bets.filter(b => b.result === "pending").length + " slips left to settle.";
-  drawCalendar(bets);
+  drawCalendar(all);
   document.getElementById("breaks").innerHTML = "<h2>By Sport / Book</h2>" + group(bets, "sport") + group(bets, "book") + "<h2>Market Split</h2>" + group(bets, "type") + "<p class='api-note'>This section fills from slips already saved. Load a card or use Add A Bet, then grade each slip Win, Loss, or Push. Pending slips stay at zero until graded.</p>";
   const y = yesterday();
   const day = bets.filter(b => b.date === y);
