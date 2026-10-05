@@ -659,7 +659,13 @@ async function fillPickBoard(useSaved){
     });
     Object.entries(byDay).forEach(([d, list]) => localStorage.setItem("gg-day-" + d + "-" + sportKey + "-" + bookKey, JSON.stringify(list)));
   }
-  const want = type === "Total" ? "totals" : type === "Moneyline" ? "h2h" : type === "Spread" ? "spreads" : "";
+  const marketFor = {Moneyline:"h2h", Spread:"spreads", Total:"totals"};
+  const want = marketFor[type] || "";
+  if (!want) {
+    note.textContent = type + " has no board lines. Moneyline, Spread, and Total update from the saved board.";
+    document.getElementById("loadnote").textContent = "No board lines for " + type + ".";
+    return;
+  }
   let count = 0;
   games.forEach(game => {
     const gameDay = game.commence_time ? new Date(game.commence_time).toLocaleDateString("en-CA", {timeZone:"America/New_York"}) : "";
@@ -670,8 +676,8 @@ async function fillPickBoard(useSaved){
       if (want && mk.key !== want) return;
       (mk.outcomes || []).forEach(o => {
         if (o.price == null) return;
-        let label = game.away_team + " at " + game.home_team + " " + o.name;
-        if (mk.key === "spreads" && o.point != null) label = o.name.split(" ").slice(-1)[0] + " " + (o.point > 0 ? "+" : "") + o.point;
+        let label = game.away_team + " at " + game.home_team + " " + o.name + (mk.key === "h2h" ? " ML" : "");
+        if (mk.key === "spreads" && o.point != null) label = game.away_team + " at " + game.home_team + " " + o.name.split(" ").slice(-1)[0] + " " + (o.point > 0 ? "+" : "") + o.point;
         if (mk.key === "totals" && o.point != null) label = totalLabel(game, o.name.toLowerCase(), o.point);
         const opt = document.createElement("option");
         opt.value = label;
@@ -705,11 +711,15 @@ document.getElementById("loadpicks").onclick = () => {
     document.getElementById("loadnote").textContent = "Load failed.";
   });
 };
-form.date.onchange = () => {
+function refreshPicks(){
   const games = cachedBoard(form.sport.value, BOOK_KEY[form.book.value]);
   if (!games) { document.getElementById("picknote").textContent = "Press Load Picks for this date. The saved board is not here yet."; return; }
   fillPickBoard(true).catch(err => { document.getElementById("picknote").textContent = err.message; });
-};
+}
+form.date.onchange = refreshPicks;
+form.type.onchange = refreshPicks;
+form.book.onchange = refreshPicks;
+form.sport.onchange = refreshPicks;
 document.getElementById("picknote").textContent = "Press Load Picks. The list follows the date in Add A Bet.";
 function findBookPrice(games, bookKey, type, pick){
   const info = teamOf(pick);
