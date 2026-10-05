@@ -64,7 +64,9 @@ tr.type td { color:#d6ffd0; font-weight:700; background:#0e0e0e; padding-left:16
 th { color:var(--title); background:#102010; }
 .win { color:var(--title); } .loss { color:var(--red); } .push, .warn { color:var(--amber); }
 .tools { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
-pre.report { white-space:pre-wrap; color:var(--text); margin:0; }
+#report table, #report th, #report td { border:0; background:transparent; box-shadow:none; }
+#report th { color:var(--title); font-weight:700; }
+#report td, #report th { padding:4px 16px 4px 0; }
 .charts { display:grid; grid-template-columns:1.4fr 1fr; gap:12px; }
 .cal { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
 .cal div { min-height:46px; background:#0e0e0e; border:1px solid var(--line); border-radius:6px; font-size:11px; padding:4px; }
@@ -107,7 +109,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </section>
 <section class="card">
 <h2>Report Card</h2>
-<pre class="report" id="report"></pre>
+<div id="report"></div>
 <div class="tools"><button type="button" id="copyreport">Copy Report</button><span id="copynote" class="warn"></span></div>
 </section>
 <section class="card" id="charts">
@@ -369,16 +371,15 @@ function render(){
   const day = bets.filter(b => b.date === y);
   const daySettled = day.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
   const dayPl = day.reduce((s,b) => s + profit(b), 0);
-  const lines = day.map(b => b.result.toUpperCase() + "  " + b.sport + "  " + b.pick + "  " + b.odds + "  " + (b.result === "pending" ? "OPEN" : money(profit(b))));
-  document.getElementById("report").textContent = [
-    "GNARLY GORILLA REPORT CARD",
-    "Yesterday " + y,
-    "Record " + rec(day) + "   P/L " + money(dayPl) + "   on $10 slips",
-    daySettled.length ? "Hit rate " + (day.filter(b => b.result === "win").length / daySettled.length * 100).toFixed(0) + "%" : "Hit rate -",
-    lines.length ? lines.join("\n") : "No slips dated yesterday.",
-    "",
-    "Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u"
-  ].join("\n");
+  const hit = daySettled.length ? (day.filter(b => b.result === "win").length / daySettled.length * 100).toFixed(0) + "%" : "-";
+  const copy = ["GNARLY GORILLA REPORT CARD", "Yesterday " + y, "Record " + rec(day) + "   P/L " + money(dayPl) + "   on $10 slips", "Hit rate " + hit];
+  const body = day.map(b => "<tr><td>" + esc(b.result.toUpperCase()) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.pick) + "</td><td>" + esc(b.odds) + "</td><td>" + (b.result === "pending" ? "OPEN" : money(profit(b))) + "</td></tr>").join("");
+  day.forEach(b => copy.push([b.result.toUpperCase(), b.sport, b.pick, b.odds, b.result === "pending" ? "OPEN" : money(profit(b))].join("  ")));
+  if (!day.length) copy.push("No slips dated yesterday.");
+  copy.push("", "Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u");
+  const report = document.getElementById("report");
+  report.dataset.copy = copy.join("\n");
+  report.innerHTML = "<p>Yesterday " + y + "</p><p>Record " + rec(day) + "   P/L " + money(dayPl) + "   Hit rate " + hit + "</p>" + (day.length ? "<table><thead><tr><th>Result</th><th>Sport</th><th>Pick</th><th>Odds</th><th>P/L</th></tr></thead><tbody>" + body + "</tbody></table>" : "<p>No slips dated yesterday.</p>") + "<p>Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u</p>";
 }
 function group(bets, key){
   const map = {};
@@ -719,7 +720,7 @@ async function loadPending(){
 }
 document.getElementById("loadcard").onclick = () => loadPending();
 document.getElementById("copyreport").onclick = async () => {
-  const text = document.getElementById("report").textContent;
+  const text = document.getElementById("report").dataset.copy || document.getElementById("report").textContent;
   const note = document.getElementById("copynote");
   try {
     await navigator.clipboard.writeText(text);
