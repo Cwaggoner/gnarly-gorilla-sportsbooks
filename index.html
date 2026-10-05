@@ -33,6 +33,7 @@ header img { width:50px; height:50px; flex:0 0 50px; position:relative; top:-10p
 header h1 { margin:0; color:var(--title); font-size:22px; letter-spacing:.04em; }
 header p { margin:4px 0 0; color:var(--muted); }
 main { max-width:1100px; margin:0 auto; padding:16px; }
+footer.card { max-width:1100px; margin:0 auto 16px; }
 .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; }
 .stat, .card, table { background:var(--card); border:1px solid #39ff14; border-radius:10px; }
 .stat { padding:12px; }
@@ -180,12 +181,12 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <div class="tools"><button type="button" id="prevMonth">Prev</button><button type="button" id="nextMonth">Next</button></div>
 <div class="cal" id="calendar"></div>
 </section>
+</main>
 <footer class="card">
 <h2>About This Ledger</h2>
 <p>Gnarly Gorilla Sportsbooks is a free browser bet ledger for the daily Gnarly Gorilla pick cards. It tracks American-odds slips for NFL, NBA, NHL, MLB, college basketball, and college football at BetMGM, DraftKings, Fanatics, FanDuel, and HardRock. Bets stay in this browser. The page does not log into a sportsbook and does not place wagers.</p>
 <p class="warn">Bet Responsibly. Gambling involves risk. Wagers can lose the full stake. This ledger is a record of picks and results, not a sportsbook, not betting advice, and not an offer to place a wager. You must be 21 or older where sports betting is legal. If gambling is causing problems, call or text 1-800-GAMBLER.</p>
 </footer>
-</main>
 <script>
 const KEY = "gnarly-gorilla-sportsbooks-v1";
 const UNIT = 10;
