@@ -570,7 +570,9 @@ async function fetchBook(sport, bookKey, key){
   catch (e) { res = await fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(url)); }
   if (!res.ok) throw new Error("Odds feed returned " + res.status);
   const games = await res.json();
-  sessionStorage.setItem(cacheKey, JSON.stringify({at: Date.now(), games}));
+  const pack = JSON.stringify({at: Date.now(), games});
+  sessionStorage.setItem(cacheKey, pack);
+  localStorage.setItem("gg-board-" + sport + "-" + bookKey, pack);
   return games;
 }
 async function repricePaste(){
@@ -699,10 +701,13 @@ function findBookPrice(games, bookKey, type, pick){
   return null;
 }
 function cachedBoard(sport, bookKey){
-  try {
-    const cached = JSON.parse(sessionStorage.getItem("gg-odds-" + SPORT_KEY[sport] + "-" + bookKey) || "null");
-    if (cached && Date.now() - cached.at < 15 * 60 * 1000) return cached.games;
-  } catch (e) {}
+  const keys = ["gg-odds-" + SPORT_KEY[sport] + "-" + bookKey, "gg-board-" + SPORT_KEY[sport] + "-" + bookKey];
+  for (const key of keys) {
+    try {
+      const cached = JSON.parse(sessionStorage.getItem(key) || localStorage.getItem(key) || "null");
+      if (cached && cached.games) return cached.games;
+    } catch (e) {}
+  }
   return null;
 }
 function applyCloses(bets, games, bookKey){
