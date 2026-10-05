@@ -45,6 +45,8 @@ footer.card { width:100%; max-width:none; margin:14px 0 0; box-sizing:border-box
 .section-head h2 { margin:0; }
 .api-note { margin-top:18px; }
 .api-note a { color:var(--title); }
+.print-preview { margin-top:12px; }
+.print-preview img { width:100%; height:auto; border:1px solid #39ff14; border-radius:10px; background:#0a0a0a; }
 h2 { margin:0 0 10px; font-size:16px; color:var(--title); }
 form, .row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:8px; }
 .break { grid-column:1 / -1; height:0; }
@@ -113,7 +115,11 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <section class="card">
 <h2>Report Card</h2>
 <div id="report"></div>
-<div class="tools"><button type="button" id="copyreport">Copy Report</button><span id="copynote" class="warn"></span></div>
+<div class="tools"><button type="button" id="copyreport">Copy Report</button><button type="button" id="printreport">Print Report</button><span id="copynote" class="warn"></span></div>
+<div id="printpreview" class="print-preview" hidden>
+<img id="printimg" alt="Report card print preview">
+<div class="tools"><button type="button" id="saveprint">Save PDF</button><span id="printnote" class="warn"></span></div>
+</div>
 </section>
 <section class="card" id="charts">
 <div class="section-head"><h2>Charts</h2><button type="button" id="plot">Plot</button></div>
@@ -782,6 +788,106 @@ async function loadPending(){
   document.getElementById("rows").scrollIntoView({behavior:"smooth", block:"center"});
 }
 document.getElementById("loadcard").onclick = () => loadPending();
+
+let printBlob = null;
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+async function jpegPdf(canvas) {
+  const jpeg = new Uint8Array(await (await new Promise(r => canvas.toBlob(r, "image/jpeg", 0.92))).arrayBuffer());
+  const w = 792, h = 612;
+  const parts = [];
+  const add = s => parts.push(new TextEncoder().encode(s));
+  add("%PDF-1.4\n");
+  const xref = [0];
+  const mark = () => { xref.push(parts.reduce((n, p) => n + p.length, 0)); };
+  mark(); add("1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n");
+  mark(); add("2 0 obj\n<< /Type /Pages /Count 1 /Kids [3 0 R] >>\nendobj\n");
+  mark(); add("3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 792 612] /Contents 4 0 R /Resources << /XObject << /Im0 5 0 R >> >> >>\nendobj\n");
+  mark(); add("4 0 obj\n<< /Length 44 >>\nstream\nq 792 0 0 612 0 0 cm /Im0 Do Q\nendstream\nendobj\n");
+  mark(); add("5 0 obj\n<< /Type /XObject /Subtype /Image /Width " + canvas.width + " /Height " + canvas.height + " /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length " + jpeg.length + " >>\nstream\n");
+  parts.push(jpeg);
+  add("\nendstream\nendobj\n");
+  const start = parts.reduce((n, p) => n + p.length, 0);
+  add("xref\n0 6\n0000000000 65535 f \n");
+  xref.slice(1).forEach(o => add(String(o).padStart(10, "0") + " 00000 n \n"));
+  add("trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n" + start + "\n%%EOF");
+  return new Blob(parts, {type:"application/pdf"});
+}
+async function buildPrintForm() {
+  const note = document.getElementById("printnote");
+  const report = document.getElementById("report");
+  const rows = [...report.querySelectorAll("tbody tr")].map(tr => [...tr.children].map(td => td.textContent));
+  const summary = [...report.querySelectorAll("p")].map(p => p.textContent);
+  const canvas = document.createElement("canvas");
+  canvas.width = 1584; canvas.height = 1224;
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = "#0a0a0a";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.strokeStyle = "#39ff14";
+  ctx.lineWidth = 3;
+  roundRect(ctx, 28, 28, 1528, 1168, 24);
+  ctx.stroke();
+  const icon = new Image();
+  icon.src = "gg-icon.png";
+  await new Promise((res, rej) => { icon.onload = res; icon.onerror = rej; });
+  ctx.save();
+  roundRect(ctx, 1428, 52, 108, 108, 16);
+  ctx.stroke();
+  ctx.clip();
+  ctx.drawImage(icon, 1432, 56, 100, 100);
+  ctx.restore();
+  ctx.fillStyle = "#39ff14";
+  ctx.font = "28px sans-serif";
+  ctx.fillText("Gnarly Gorilla Report Card", 56, 96);
+  ctx.fillStyle = "#d6ffd0";
+  ctx.font = "18px sans-serif";
+  ctx.fillText("8.5 x 11 in landscape", 56, 128);
+  summary.forEach((line, i) => ctx.fillText(line, 56, 176 + i * 28));
+  const heads = ["Result", "Sport", "Pick", "Odds", "P/L"];
+  const xs = [56, 220, 360, 1180, 1320];
+  let y = 176 + summary.length * 28 + 20;
+  ctx.fillStyle = "#39ff14";
+  ctx.font = "18px sans-serif";
+  heads.forEach((h, i) => ctx.fillText(h, xs[i], y));
+  ctx.fillStyle = "#d6ffd0";
+  rows.forEach(row => {
+    y += 28;
+    if (y > 1140) return;
+    row.forEach((cell, i) => ctx.fillText(cell.slice(0, i === 2 ? 62 : 18), xs[i], y));
+  });
+  if (!rows.length) ctx.fillText("No slips on this report.", 56, y + 28);
+  document.getElementById("printimg").src = canvas.toDataURL("image/jpeg", 0.92);
+  document.getElementById("printpreview").hidden = false;
+  printBlob = await jpegPdf(canvas);
+  note.textContent = "Preview ready. Save PDF asks where to put the file.";
+}
+document.getElementById("printreport").onclick = () => buildPrintForm().catch(err => { document.getElementById("printnote").textContent = err.message || "Preview failed."; });
+document.getElementById("saveprint").onclick = async () => {
+  const note = document.getElementById("printnote");
+  if (!printBlob) { note.textContent = "Press Print Report first."; return; }
+  const name = "GG-Report-Card.pdf";
+  try {
+    if (window.showSaveFilePicker) {
+      const handle = await showSaveFilePicker({suggestedName: name, types: [{description: "PDF", accept: {"application/pdf": [".pdf"]}}]});
+      const writable = await handle.createWritable();
+      await writable.write(printBlob);
+      await writable.close();
+      note.textContent = "Saved.";
+      return;
+    }
+  } catch (err) {
+    if (err.name === "AbortError") { note.textContent = "Save cancelled."; return; }
+  }
+  download(name, printBlob);
+  note.textContent = "Save dialog is not available here. The file was downloaded instead.";
+};
 document.getElementById("copyreport").onclick = async () => {
   const text = document.getElementById("report").dataset.copy || document.getElementById("report").textContent;
   const note = document.getElementById("copynote");
