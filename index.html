@@ -145,6 +145,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <label>Pick<select name="pick" id="pickselect" required><option value="">Select a pick</option></select></label>
 <p id="picknote" class="warn"></p>
 <button type="button" id="loadpicks">Load Picks</button>
+<span id="loadnote" class="warn"></span>
 <div class="break"></div>
 <label>American Odds<input name="odds" type="number" step="1" placeholder="-110" required></label>
 <label>Close Odds<input name="close" type="number" step="1" placeholder="-120"></label>
@@ -645,7 +646,12 @@ async function fillPickBoard(){
     });
   });
   if (current) sel.value = current;
-  note.textContent = count ? count + " picks from " + book + "." : "No " + book + " lines for " + sport + " " + type + ".";
+  const bets = load();
+  const closed = applyCloses(bets, games, bookKey);
+  if (closed) save(bets);
+  const msg = count ? "Loaded " + count + " " + book + " " + sport + " picks." : "Load failed. No " + book + " lines for " + sport + " " + type + ".";
+  note.textContent = msg + (closed ? " " + closed + " closes saved." : "");
+  document.getElementById("loadnote").textContent = count ? "Load successful." : "Load failed.";
 }
 document.getElementById("pickselect").onchange = () => {
   const opt = document.getElementById("pickselect").selectedOptions[0];
@@ -653,11 +659,14 @@ document.getElementById("pickselect").onchange = () => {
   form.odds.value = opt.dataset.price;
   form.close.value = opt.dataset.close;
 };
-form.book.onchange = () => document.getElementById("loadpicks").onclick = () => fillPickBoard().catch(err => { document.getElementById("picknote").textContent = err.message; });
-document.getElementById("picknote").textContent = "Refresh does not use an odds credit. Press Load Picks when you want this book.";
-form.sport.onchange = () => fillPickBoard().catch(err => { document.getElementById("picknote").textContent = err.message; });
-form.type.onchange = () => fillPickBoard().catch(err => { document.getElementById("picknote").textContent = err.message; });
-fillPickBoard().catch(err => { document.getElementById("picknote").textContent = err.message; });
+document.getElementById("loadpicks").onclick = () => {
+  document.getElementById("loadnote").textContent = "Loading...";
+  fillPickBoard().catch(err => {
+    document.getElementById("picknote").textContent = "Load failed. " + err.message;
+    document.getElementById("loadnote").textContent = "Load failed.";
+  });
+};
+document.getElementById("picknote").textContent = "Press Load Picks. A refresh does not call the odds feed.";
 function findBookPrice(games, bookKey, type, pick){
   const info = teamOf(pick);
   const market = type === "Total" ? "totals" : type === "Moneyline" ? "h2h" : "spreads";
