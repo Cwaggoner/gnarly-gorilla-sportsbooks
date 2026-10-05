@@ -239,11 +239,13 @@ function drawLine(canvas, settled){
   const pad = 28;
   const x = i => pad + (w - pad * 2) * (pts.length === 1 ? 0.5 : i / (pts.length - 1));
   const y = v => pad + (h - pad * 2) * (1 - (v - min) / span);
-  ctx.strokeStyle = "#243024";
-  ctx.beginPath(); ctx.moveTo(pad, y(0)); ctx.lineTo(w - 36, y(0)); ctx.stroke();
   ctx.fillStyle = "#d6ffd0";
   ctx.font = "12px sans-serif";
-  ctx.fillText("$0", w - 28, y(0) + 4);
+  const zeroLabel = "Break Even - $0";
+  const zeroW = ctx.measureText(zeroLabel).width;
+  ctx.strokeStyle = "#243024";
+  ctx.beginPath(); ctx.moveTo(pad, y(0)); ctx.lineTo(w - zeroW - 16, y(0)); ctx.stroke();
+  ctx.fillText(zeroLabel, w - zeroW - 8, y(0) + 4);
   ctx.strokeStyle = "#39ff14";
   ctx.lineWidth = 2;
   ctx.beginPath();
