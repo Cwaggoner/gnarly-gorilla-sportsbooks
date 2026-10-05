@@ -273,12 +273,12 @@ function drawBars(canvas, bets){
   const map = {};
   bets.forEach(b => {
     if (b.result === "void") return;
+    const sport = String(b.sport || "Other").trim().toUpperCase();
     const c = clv(b);
-    if ((b.result === "pending") && c == null) return;
-    const row = map[b.sport] || {pl:0, clv:[], n:0};
+    const row = map[sport] || {pl:0, clv:[]};
     if (b.result !== "pending") row.pl += profit(b);
     if (c != null) row.clv.push(c);
-    map[b.sport] = row;
+    map[sport] = row;
   });
   const rows = Object.entries(map).sort((a,b) => a[0].localeCompare(b[0]));
   const cssW = Math.max(320, canvas.clientWidth || 420);
@@ -1056,12 +1056,35 @@ document.getElementById("import").onchange = e => {
 };
 document.getElementById("clear").onclick = () => { if (confirm("Delete every bet in this browser?")) save([]); };
 ["fSport","fBook","fType","fResult"].forEach(id => document.getElementById(id).onchange = render);
+async function fillChartCloses(){
+  const key = oddskey.value.trim();
+  const bets = load();
+  const seen = new Set();
+  let filled = 0;
+  for (const b of bets) {
+    if (b.close || b.type === "SGP" || !BOOK_KEY[b.book] || !SPORT_KEY[b.sport]) continue;
+    const id = b.sport + "|" + b.book;
+    if (seen.has(id)) continue;
+    seen.add(id);
+    let games = cachedBoard(b.sport, BOOK_KEY[b.book]);
+    if (!games && key) games = await fetchBook(SPORT_KEY[b.sport], BOOK_KEY[b.book], key);
+    if (!games) continue;
+    filled += applyCloses(bets.filter(x => x.sport === b.sport), games, BOOK_KEY[b.book]);
+  }
+  if (filled) save(bets);
+  return filled;
+}
 document.getElementById("plot").onclick = () => {
-  const bets = filtered(load());
-  const settled = bets.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
-  drawCharts(bets);
-  const pending = bets.filter(b => b.result === "pending").length;
-  document.getElementById("plotnote").textContent = (settled.length ? settled.length + " settled slips plotted." : "No settled slips yet.") + " " + pending + " slips left to settle.";
+  const note = document.getElementById("plotnote");
+  note.textContent = "Updating CLV for every sport...";
+  fillChartCloses().then(filled => {
+    const bets = filtered(load());
+    const settled = bets.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
+    drawCharts(bets);
+    const pending = bets.filter(b => b.result === "pending").length;
+    const sports = [...new Set(bets.map(b => String(b.sport || "").trim().toUpperCase()))].filter(Boolean);
+    note.textContent = (settled.length ? settled.length + " settled slips plotted." : "No settled slips yet.") + " " + pending + " slips left to settle. CLV checked for " + sports.join(", ") + "." + (filled ? " " + filled + " closes saved." : "");
+  }).catch(err => { note.textContent = err.message || "CLV update failed."; });
 };
 document.getElementById("canceledit").onclick = event => {
   event.preventDefault();
