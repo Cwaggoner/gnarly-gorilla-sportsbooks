@@ -1,0 +1,24 @@
+2026-10-07 | NBA | Spread | Timberwolves at Pacers Timberwolves -2.5 | -110 | Medium 57%
+2026-10-07 | NBA | Spread | Magic at Grizzlies Grizzlies +2.5 | -108 | Medium 58%
+2026-10-07 | NBA | Spread | Bucks at Thunder Bucks +14.5 | -110 | High 66%
+2026-10-07 | NBA | Spread | Suns at Bulls Bulls +2.5 | -110 | Medium 56%
+2026-10-07 | NBA | Spread | Warriors at Trail Blazers Warriors +14.5 | -110 | High 64%
+2026-10-07 | NBA | SGP | Bucks at Thunder Bucks +14.5 and Bucks at Thunder Under 218.5 | +190 | SGP 1
+2026-10-07 | NBA | SGP | Warriors at Trail Blazers Warriors +14.5 and Warriors at Trail Blazers Under 214.5 | +190 | SGP 2
+2026-10-07 | NBA | SGP | Magic at Grizzlies Grizzlies +2.5 and Magic at Grizzlies Under 234.5 | +188 | SGP 3
+2026-10-07 | NHL | Moneyline | Penguins at Capitals Penguins ML | +135 | Medium 55%
+2026-10-07 | NHL | Moneyline | Avalanche at Jets Jets ML | +155 | Medium 54%
+2026-10-07 | NHL | Moneyline | Oilers at Ducks Ducks ML | +110 | Medium 54%
+2026-10-07 | NHL | SGP | Penguins at Capitals Penguins ML and Penguins at Capitals Under 6.5 | +349 | SGP 1
+2026-10-07 | NHL | SGP | Avalanche at Jets Jets ML and Avalanche at Jets Under 6.5 | +377 | SGP 2
+2026-10-07 | NHL | SGP | Oilers at Ducks Ducks ML and Oilers at Ducks Under 7 | +266 | SGP 3
+2026-10-07 | MLB | Moneyline | Guardians at White Sox White Sox ML | -120 | Medium 57%
+2026-10-07 | MLB | Spread | Dodgers at Braves Dodgers -1.5 | +120 | Medium 56%
+2026-10-07 | MLB | Moneyline | Rays at Yankees Rays ML | +135 | Medium 58%
+2026-10-07 | MLB | Moneyline | Brewers at Padres Brewers ML | -105 | Medium 56%
+2026-10-07 | CFB | Spread | Jacksonville State at Kennesaw State Kennesaw State +2.5 | -100 | Medium 57%
+2026-10-07 | CFB | Total | Jacksonville State at Kennesaw State Under 48.5 | -105 | Medium 56%
+2026-10-07 | CFB | Spread | New Mexico State at FIU New Mexico State +6.5 | -106 | Medium 58%
+2026-10-07 | CFB | Total | New Mexico State at FIU Under 47.5 | -114 | Medium 55%
+2026-10-07 | CFB | SGP | Jacksonville State at Kennesaw State Kennesaw State +2.5 and Jacksonville State at Kennesaw State Under 48.5 | +290 | SGP 1
+2026-10-07 | CFB | SGP | New Mexico State at FIU New Mexico State +6.5 and New Mexico State at FIU Under 47.5 | +275 | SGP 2

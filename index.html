@@ -110,6 +110,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <div class="tools">
 <label>Upload pick-card PDF<input type="file" id="cardpdf" accept="application/pdf,.pdf"></label>
 <button type="button" id="loadcard">Load Card As Pending</button>
+<button type="button" id="loaddrive">Load Drive Card</button>
 </div>
 <p id="pdfnote" class="warn"></p>
 </section>
@@ -840,6 +841,38 @@ async function loadPending(){
   note.textContent = added + " pending slips loaded at " + book + ". They are in the Slips table.";
   document.getElementById("rows").scrollIntoView({behavior:"smooth", block:"center"});
 }
+function slipKey(b){ return [b.date, b.sport, b.pick].join("|"); }
+function addCardLines(text, book){
+  const bets = load();
+  const seen = new Set(bets.map(slipKey));
+  let added = 0;
+  text.split(/\r?\n/).forEach(line => {
+    line = line.trim();
+    if (!line || line.startsWith("#")) return;
+    const parts = line.split("|").map(s => s.trim());
+    let date = ymd(new Date()), sport, type, pick, odds, notes;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(parts[0])) date = parts.shift();
+    [sport, type, pick, odds, notes] = parts;
+    odds = String(odds || "").replace(/\u2212/g, "-");
+    if (!sport || !pick || !odds || Number.isNaN(Number(odds))) return;
+    const row = {id: Date.now() + Math.random(), date, book: book || "BetMGM", sport, type: type || "Spread", pick, odds: Number(odds), stake: 10, result: "pending", notes: notes || ""};
+    if (seen.has(slipKey(row))) return;
+    seen.add(slipKey(row));
+    bets.push(row);
+    added++;
+  });
+  if (added) save(bets);
+  return added;
+}
+async function loadDriveCard(){
+  const note = document.getElementById("pdfnote");
+  const res = await fetch("cards/today.txt?ts=" + Date.now());
+  if (!res.ok) { note.textContent = "Drive card file is not on the site yet."; return; }
+  const added = addCardLines(await res.text(), document.getElementById("cardbook").value || "BetMGM");
+  note.textContent = added ? added + " slips added from the Drive card." : "Drive card already in Slips.";
+}
+document.getElementById("loaddrive").onclick = () => loadDriveCard().catch(err => { document.getElementById("pdfnote").textContent = err.message; });
+loadDriveCard().catch(() => {});
 document.getElementById("loadcard").onclick = () => loadPending();
 
 let printBlob = null;
