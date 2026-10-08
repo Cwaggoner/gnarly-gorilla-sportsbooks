@@ -357,23 +357,21 @@ function drawLine(canvas, settled){
 }
 function drawBars(canvas, bets){
   const ctx = canvas.getContext("2d");
+  const sports = ["CBB","CFB","MLB","NBA","NFL","NHL"];
   const map = {};
+  sports.forEach(sport => { map[sport] = {pl:0, clv:[], n:0, yday:0}; });
+  const day = yesterday();
   bets.forEach(b => {
-    if (b.result === "void") return;
-    const sport = String(b.sport || "Other").trim().toUpperCase();
-    const c = clv(b);
-    const row = map[sport] || {pl:0, clv:[], n:0, yday:0};
-    row.n = (row.n || 0) + 1;
-    const played = String(b.date || "").slice(0, 10) === yesterday();
+    const sport = String(b.sport || "").trim().toUpperCase();
+    if (!map[sport]) return;
     const settled = b.result === "win" || b.result === "loss" || b.result === "push";
-    if (played && settled && sport === String(b.sport || "").trim().toUpperCase()) {
-      row.yday = (row.yday || 0) + 1;
-      row.pl += profit(b);
-      if (c != null) row.clv.push(c);
-    }
-    map[sport] = row;
+    if (String(b.date || "").slice(0, 10) !== day || !settled) return;
+    const row = map[sport];
+    row.yday += 1;
+    row.pl += profit(b);
+    const c = clv(b);
+    if (c != null) row.clv.push(c);
   });
-  ["CBB","CFB","MLB","NBA","NFL","NHL"].forEach(sport => { if (!map[sport]) map[sport] = {pl:0, clv:[], n:0, yday:0}; });
   const rows = ["CBB","CFB","MLB","NBA","NFL","NHL"].map(sport => [sport, map[sport]]);
   const cssW = Math.max(320, canvas.clientWidth || 420);
   const rowH = 28;
@@ -1450,7 +1448,7 @@ document.getElementById("plot").onclick = () => {
   fillChartCloses().then(filled => {
     const bets = filtered(load());
     const settled = bets.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
-    drawCharts(bets);
+    drawCharts(load().concat(loadGrade()));
     const pending = bets.filter(b => b.result === "pending").length;
     const sports = [...new Set(bets.map(b => String(b.sport || "").trim().toUpperCase()))].filter(Boolean);
     note.textContent = (settled.length ? settled.length + " settled slips plotted." : "No settled slips yet.") + " " + pending + " slips left to settle. CLV checked for " + sports.join(", ") + "." + (filled ? " " + filled + " closes saved." : "");
