@@ -522,8 +522,8 @@ function drawCalendar(){
     const key = [date, b.sport, b.pick].join("|");
     if (seen.has(key)) return;
     seen.add(key);
-    const row = board[date] || {pl:0, n:0};
-    if (!row.keys) row.keys = {};
+    const row = board[date] || {pl:0, n:0, keys:{}};
+    if (!row.keys || !Object.keys(row.keys).length) { row.pl = 0; row.n = 0; row.keys = {}; }
     if (row.keys[key]) return;
     row.keys[key] = 1;
     row.pl += profit(b);
