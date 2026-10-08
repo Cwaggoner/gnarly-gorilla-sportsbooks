@@ -580,7 +580,7 @@ function render(){
       if (!rows.length) { copy.push("NO PICKS"); body += "<tr><td></td><td>NO PICKS</td><td>" + sport + "</td><td>NO PICKS</td><td></td><td></td></tr>"; return; }
       rows.forEach(b => {
         const plCell = b.result === "pending" ? "OPEN" : money(profit(b));
-        const edge = /edge/i.test(b.notes || "") || /^high\b/i.test(b.notes || "") || (clv(b) != null && clv(b) > 0.05);
+        const edge = markEdge(b).edge;
         copy.push([b.date, b.result.toUpperCase(), b.sport, b.pick, b.odds, plCell].join("  "));
         body += "<tr" + (edge ? " class='edge'" : "") + "><td>" + esc(b.date) + "</td><td>" + esc(b.result.toUpperCase()) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.pick) + "</td><td>" + esc(b.odds) + "</td><td>" + plCell + "</td></tr>";
       });
@@ -1027,6 +1027,11 @@ async function loadPending(){
   document.getElementById("rows").scrollIntoView({behavior:"smooth", block:"center"});
 }
 function slipKey(b){ return [b.date, b.sport, b.pick].join("|"); }
+function markEdge(b){
+  const cv = clv(b);
+  b.edge = b.edge === true || /edge/i.test(b.notes || "") || /^high\b/i.test(b.notes || "") || (cv != null && cv > 0.05);
+  return b;
+}
 function addCardLines(text, book){
   const bets = load();
   const seen = new Set(bets.map(slipKey));
@@ -1040,7 +1045,7 @@ function addCardLines(text, book){
     [sport, type, pick, odds, notes] = parts;
     odds = String(odds || "").replace(/\u2212/g, "-");
     if (!sport || !pick || !odds || Number.isNaN(Number(odds))) return;
-    const row = {id: Date.now() + Math.random(), date, book: book || "BetMGM", sport, type: type || "Spread", pick, odds: Number(odds), stake: 10, result: "pending", notes: notes || ""};
+    const row = markEdge({id: Date.now() + Math.random(), date, book: book || "BetMGM", sport, type: type || "Spread", pick, odds: Number(odds), stake: 10, result: "pending", notes: notes || ""});
     if (seen.has(slipKey(row))) return;
     seen.add(slipKey(row));
     bets.push(row);
@@ -1404,6 +1409,7 @@ document.getElementById("loadledger").onchange = async e => {
     const data = JSON.parse(await file.text());
     const bets = Array.isArray(data) ? data : data.bets;
     if (!Array.isArray(bets)) throw new Error("That file has no slips.");
+    bets.forEach(markEdge);
     save(bets);
     localStorage.setItem("gg-hold-ledger", "1");
     note.textContent = "Loaded " + bets.length + " slips.";
@@ -1429,7 +1435,7 @@ document.getElementById("import").onchange = e => {
     lines.forEach(line => {
       const cols = line.split(",");
       if (cols.length < 8) return;
-      bets.push({id: Date.now() + Math.random(), date:cols[0], book:cols[1], sport:cols[2], type:cols[3], pick:cols[4], odds:Number(cols[5]), stake:Number(cols[6]), result:cols[7], notes:cols[8] || ""});
+      bets.push(markEdge({id: Date.now() + Math.random(), date:cols[0], book:cols[1], sport:cols[2], type:cols[3], pick:cols[4], odds:Number(cols[5]), stake:Number(cols[6]), result:cols[7], notes:cols[8] || ""}));
     });
     save(bets);
   };
