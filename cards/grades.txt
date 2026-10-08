@@ -1,25 +1,26 @@
 # file: GG-GRADES-2026-10-07
-2026-10-07 | Timberwolves at Pacers Timberwolves -2.5 | loss
-2026-10-07 | Magic at Grizzlies Grizzlies +2.5 | loss
-2026-10-07 | Bucks at Thunder Bucks +14.5 | win
-2026-10-07 | Suns at Bulls Bulls +2.5 | win
-2026-10-07 | Warriors at Trail Blazers Warriors +14.5 | win
-2026-10-07 | Bucks at Thunder Bucks +14.5 and Bucks at Thunder Under 218.5 | loss
-2026-10-07 | Warriors at Trail Blazers Warriors +14.5 and Warriors at Trail Blazers Under 214.5 | loss
-2026-10-07 | Magic at Grizzlies Grizzlies +2.5 and Magic at Grizzlies Under 234.5 | loss
-2026-10-07 | Penguins at Capitals Penguins ML | loss
-2026-10-07 | Avalanche at Jets Jets ML | win
-2026-10-07 | Oilers at Ducks Ducks ML | loss
-2026-10-07 | Penguins at Capitals Penguins ML and Penguins at Capitals Under 6.5 | loss
-2026-10-07 | Avalanche at Jets Jets ML and Avalanche at Jets Under 6.5 | win
-2026-10-07 | Oilers at Ducks Ducks ML and Oilers at Ducks Under 7 | loss
-2026-10-07 | Guardians at White Sox White Sox ML | loss
-2026-10-07 | Dodgers at Braves Dodgers -1.5 | win
-2026-10-07 | Rays at Yankees Rays ML | win
-2026-10-07 | Brewers at Padres Brewers ML | win
-2026-10-07 | Jacksonville State at Kennesaw State Kennesaw State +2.5 | win
-2026-10-07 | Jacksonville State at Kennesaw State Under 48.5 | loss
-2026-10-07 | New Mexico State at FIU New Mexico State +6.5 | loss
-2026-10-07 | New Mexico State at FIU Under 47.5 | win
-2026-10-07 | Jacksonville State at Kennesaw State Kennesaw State +2.5 and Jacksonville State at Kennesaw State Under 48.5 | loss
-2026-10-07 | New Mexico State at FIU New Mexico State +6.5 and New Mexico State at FIU Under 47.5 | loss
+# Graded 2026-10-08 from finals. Closing American odds matched the card price. Stake $10. No finished game left pending.
+2026-10-07 | NBA | Timberwolves at Pacers Timberwolves -2.5 | close -110 | loss | IND 123 MIN 112 | -$10.00
+2026-10-07 | NBA | Magic at Grizzlies Grizzlies +2.5 | close -108 | loss | ORL 122 MEM 118 | -$10.00
+2026-10-07 | NBA | Bucks at Thunder Bucks +14.5 | close -110 | win | MIL 128 OKC 126 | +$9.09
+2026-10-07 | NBA | Suns at Bulls Bulls +2.5 | close -110 | win | CHI 124 PHX 117 | +$9.09
+2026-10-07 | NBA | Warriors at Trail Blazers Warriors +14.5 | close -110 | win | POR 123 GS 118 | +$9.09
+2026-10-07 | NBA | Bucks at Thunder Bucks +14.5 and Bucks at Thunder Under 218.5 | close +190 | loss | MIL 128 OKC 126, total 254 | -$10.00
+2026-10-07 | NBA | Warriors at Trail Blazers Warriors +14.5 and Warriors at Trail Blazers Under 214.5 | close +190 | loss | POR 123 GS 118, total 241 | -$10.00
+2026-10-07 | NBA | Magic at Grizzlies Grizzlies +2.5 and Magic at Grizzlies Under 234.5 | close +188 | loss | ORL 122 MEM 118, total 240 | -$10.00
+2026-10-07 | NHL | Penguins at Capitals Penguins ML | close +135 | loss | WSH 5 PIT 3 | -$10.00
+2026-10-07 | NHL | Avalanche at Jets Jets ML | close +155 | win | WPG 3 COL 2 | +$15.50
+2026-10-07 | NHL | Oilers at Ducks Ducks ML | close +110 | loss | EDM 5 ANA 2 | -$10.00
+2026-10-07 | NHL | Penguins at Capitals Penguins ML and Penguins at Capitals Under 6.5 | close +349 | loss | WSH 5 PIT 3, total 8 | -$10.00
+2026-10-07 | NHL | Avalanche at Jets Jets ML and Avalanche at Jets Under 6.5 | close +377 | win | WPG 3 COL 2, total 5 | +$37.70
+2026-10-07 | NHL | Oilers at Ducks Ducks ML and Oilers at Ducks Under 7 | close +266 | loss | EDM 5 ANA 2, total 7 | -$10.00
+2026-10-07 | MLB | Guardians at White Sox White Sox ML | close -120 | loss | CLE 9 CHW 3 | -$10.00
+2026-10-07 | MLB | Dodgers at Braves Dodgers -1.5 | close +120 | win | LAD 4 ATL 1 | +$12.00
+2026-10-07 | MLB | Rays at Yankees Rays ML | close +135 | win | TB 4 NYY 3 | +$13.50
+2026-10-07 | MLB | Brewers at Padres Brewers ML | close -105 | win | MIL 3 SD 1 | +$9.52
+2026-10-07 | CFB | Jacksonville State at Kennesaw State Kennesaw State +2.5 | close -100 | win | JSU 27 KENN 26 | +$10.00
+2026-10-07 | CFB | Jacksonville State at Kennesaw State Under 48.5 | close -105 | loss | JSU 27 KENN 26, total 53 | -$10.00
+2026-10-07 | CFB | New Mexico State at FIU New Mexico State +6.5 | close -106 | loss | FIU 22 NMSU 3 | -$10.00
+2026-10-07 | CFB | New Mexico State at FIU Under 47.5 | close -114 | win | FIU 22 NMSU 3, total 25 | +$8.77
+2026-10-07 | CFB | Jacksonville State at Kennesaw State Kennesaw State +2.5 and Jacksonville State at Kennesaw State Under 48.5 | close +290 | loss | JSU 27 KENN 26, total 53 | -$10.00
+2026-10-07 | CFB | New Mexico State at FIU New Mexico State +6.5 and New Mexico State at FIU Under 47.5 | close +275 | loss | FIU 22 NMSU 3 | -$10.00
