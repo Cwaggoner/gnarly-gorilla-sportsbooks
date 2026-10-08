@@ -104,6 +104,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </table>
 <div class="tools">
 <button type="button" id="savedash">Save Dashboard</button>
+<button type="button" id="resetdash">Reset</button>
 <label>Load Dashboard<input type="file" id="loaddash" accept=".txt,text/plain"></label>
 <span id="dashnote" class="warn"></span>
 </div>
@@ -257,7 +258,7 @@ function esc(s){
 }
 
 
-function drawDashboard(history){
+function drawDashboard(history, manual){
   const seed = [
     {date:"2026-10-04", record:"13-15-3", profit:1.04, roi:"0.3%", units:"0.10u", pending:0, clv:"-"},
     {date:"2026-10-05", record:"8-13", profit:-76.64, roi:"-19.2%", units:"-7.66u", pending:0, clv:"-"},
@@ -265,10 +266,10 @@ function drawDashboard(history){
     {date:"2026-10-07", record:"10-14", profit:-5.74, roi:"-2.4%", units:"-0.57u", pending:0, clv:"0.0%"}
   ];
   const byDate = {};
-  seed.concat(history).forEach(row => { byDate[row.date] = row; });
-  const rows = Object.values(byDate).sort((a,b) => a.date.localeCompare(b.date));
-  localStorage.setItem("gg-dashboard-v1", JSON.stringify(rows));
-  const shown = rows.slice(-7);
+  if (!manual) seed.concat(history).forEach(row => { byDate[row.date] = row; });
+  const rows = manual ? history.slice().sort((a,b) => a.date.localeCompare(b.date)) : Object.values(byDate).sort((a,b) => a.date.localeCompare(b.date));
+  if (!manual) localStorage.setItem("gg-dashboard-v1", JSON.stringify(rows));
+  const shown = manual ? rows : rows.slice(-7);
   document.getElementById("dashrows").innerHTML = shown.map(row => "<tr><td>" + row.date + "</td><td>" + row.record + "</td><td>" + money(Number(row.profit)) + "</td><td>" + row.roi + "</td><td>" + row.units + "</td><td>" + row.pending + "</td><td>" + row.clv + "</td></tr>").join("");
   const canvas = document.getElementById("dashChart");
   const ctx = canvas.getContext("2d");
@@ -1020,13 +1021,18 @@ document.getElementById("loaddash").onchange = async e => {
       return {date, record, profit: Number(profit), roi, units, pending, clv};
     }).filter(row => row.date);
     if (!rows.length) throw new Error("empty");
-    localStorage.setItem("gg-dashboard-v1", JSON.stringify(rows));
-    drawDashboard(rows);
-    note.textContent = "Loaded " + label + ". " + rows.length + " days saved, last 7 shown.";
+    sessionStorage.setItem("gg-dashboard-manual", JSON.stringify(rows));
+    drawDashboard(rows, true);
+    note.textContent = "Loaded " + label + ". " + rows.length + " days shown.";
   } catch (err) {
     note.textContent = "Load failed for " + label + ".";
   }
   e.target.value = "";
+};
+document.getElementById("resetdash").onclick = () => {
+  sessionStorage.removeItem("gg-dashboard-manual");
+  drawDashboard(JSON.parse(localStorage.getItem("gg-dashboard-v1") || "[]"));
+  document.getElementById("dashnote").textContent = "Reset. Last 7 days restored.";
 };
 document.getElementById("loaddrive").onclick = () => loadDriveCard().then(applyGrades).catch(err => { document.getElementById("pdfnote").textContent = err.message; });
 applyGrades().then(() => loadDriveCard()).catch(() => {});
