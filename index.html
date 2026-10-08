@@ -502,7 +502,9 @@ function render(){
   document.getElementById("rows").innerHTML = grouped.map(b => {
     const p = profit(b);
     const cls = b.result === "win" ? "win" : b.result === "loss" ? "loss" : "push";
-    const grade = b.result === "pending"
+    const finished = b.date < todayEt();
+    const grade = !finished ? "Game not finished"
+      : b.result === "pending"
       ? "<button data-set='win' data-id='" + b.id + "'>Win</button> <button class='danger' data-set='loss' data-id='" + b.id + "'>Loss</button> <button class='amber' data-set='push' data-id='" + b.id + "'>Push</button>"
       : "<button data-set='pending' data-id='" + b.id + "'>Undo</button>";
     const cv = clv(b);
@@ -562,6 +564,10 @@ form.onsubmit = e => {
   e.preventDefault();
   const d = Object.fromEntries(new FormData(form));
   const bets = load();
+  if (d.result && d.result !== "pending" && d.date >= todayEt()) {
+    document.getElementById("editnote").textContent = "Game not finished. Result stays pending until the game date has passed.";
+    return;
+  }
   const row = {...d, odds: Number(d.odds), stake: Number(d.stake), close: d.close ? Number(d.close) : ""};
   delete row.editId;
   if (d.editId) {
@@ -590,6 +596,10 @@ document.getElementById("rows").onclick = e => {
   if (t.dataset.set) {
     const bets = load();
     const bet = bets.find(b => String(b.id) === t.dataset.id);
+    if (bet && t.dataset.set !== "pending" && bet.date >= todayEt()) {
+      document.getElementById("editnote").textContent = "Game not finished. Result stays pending until the game date has passed.";
+      return;
+    }
     if (bet) bet.result = t.dataset.set;
     save(bets);
   }
