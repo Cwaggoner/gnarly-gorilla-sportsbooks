@@ -522,13 +522,12 @@ function drawCalendar(){
     const key = [date, b.sport, b.pick].join("|");
     if (seen.has(key)) return;
     seen.add(key);
-    const row = board[date] || {pl:0, n:0, keys:{}};
-    if (!row.keys || !Object.keys(row.keys).length) { row.pl = 0; row.n = 0; row.keys = {}; }
+    if (!board[date] || !board[date].rebuilt) board[date] = {pl:0, n:0, keys:{}, rebuilt:1};
+    const row = board[date];
     if (row.keys[key]) return;
     row.keys[key] = 1;
     row.pl += profit(b);
     row.n += 1;
-    board[date] = row;
   });
   const seed = {"2026-10-01":8.20,"2026-10-02":-12.40,"2026-10-03":18.10,"2026-10-04":1.04,"2026-10-05":-76.64,"2026-10-06":-152.48,"2026-10-07":-5.74};
   Object.entries(seed).forEach(([date, pl]) => {
