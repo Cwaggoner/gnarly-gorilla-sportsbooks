@@ -1,0 +1,9 @@
+# file: GG-TOTALS-2026-10-08
+Date: 2026-10-08
+Record: 10-14
+Profit: -$5.74
+ROI: -2.4%
+Units: -0.57u
+Pending: 0
+Avg CLV: 0.0%
+Source: graded slips through 2026-10-07
