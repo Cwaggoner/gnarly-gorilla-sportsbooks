@@ -386,12 +386,14 @@ function render(){
   clearStalePending();
   const all = load().sort((a,b) => b.date.localeCompare(a.date) || b.id - a.id);
   const bets = filtered(all);
-  const settled = bets.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
-  const pl = bets.reduce((s,b) => s + profit(b), 0);
+  const seen = new Set(bets.map(b => [b.date, b.sport, b.pick].join("|")));
+  const totals = bets.concat(loadGrade().filter(b => !seen.has([b.date, b.sport, b.pick].join("|"))));
+  const settled = totals.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
+  const pl = totals.reduce((s,b) => s + profit(b), 0);
   const staked = settled.reduce((s,b) => s + Number(b.stake), 0);
-  const wins = bets.filter(b => b.result === "win").length;
-  const losses = bets.filter(b => b.result === "loss").length;
-  const pushes = bets.filter(b => b.result === "push").length;
+  const wins = totals.filter(b => b.result === "win").length;
+  const losses = totals.filter(b => b.result === "loss").length;
+  const pushes = totals.filter(b => b.result === "push").length;
   const dash = "-";
   document.getElementById("stats").innerHTML = [
     [wins + "-" + losses + (pushes ? "-" + pushes : ""), "Record"],
@@ -399,7 +401,7 @@ function render(){
     [staked ? (pl / staked * 100).toFixed(1) + "%" : dash, "ROI"],
     [(pl / UNIT).toFixed(2) + "u", "Units @ $10"],
     [bets.filter(b => b.result === "pending" && b.date === todayEt()).length, "Pending"],
-    [(() => { const xs = bets.map(clv).filter(v => v != null); return xs.length ? (xs.reduce((s,v)=>s+v,0)/xs.length).toFixed(1) + "%" : dash; })(), "Avg CLV"]
+    [(() => { const xs = totals.map(clv).filter(v => v != null); return xs.length ? (xs.reduce((s,v)=>s+v,0)/xs.length).toFixed(1) + "%" : dash; })(), "Avg CLV"]
   ].map(x => "<div class='stat'><b>" + x[0] + "</b><span>" + x[1] + "</span></div>").join("");
   const typeRank = t => t === "SGP" ? 99 : ["Moneyline","Parlay","Prop","Spread","Total"].indexOf(t) + 1 || 50;
   const grouped = bets.slice().sort((a,b) => String(a.sport).localeCompare(String(b.sport)) || typeRank(a.type) - typeRank(b.type) || b.date.localeCompare(a.date) || b.id - a.id);
