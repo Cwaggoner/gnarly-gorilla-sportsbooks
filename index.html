@@ -372,24 +372,43 @@ function drawLine(canvas, settled){
   ctx.fillStyle = "#39ff14";
   ctx.fillText(money(pts[pts.length-1].y), pad, 16);
 }
+let gradeFile = [];
+function chartClv(b){
+  if (b.close === "" || b.close == null || Number(b.close) === Number(b.odds)) return 0;
+  const got = decimal(b.odds), closed = decimal(b.close);
+  if (!got || !closed) return 0;
+  return (got / closed - 1) * 100;
+}
+function yesterdayGraded(bets){
+  const day = yesterday();
+  const seen = new Set();
+  const rows = [];
+  bets.concat(load()).concat(loadGrade()).concat(gradeFile).forEach(b => {
+    const sport = String(b.sport || "").trim().toUpperCase();
+    const date = String(b.date || "").slice(0, 10);
+    const settled = b.result === "win" || b.result === "loss" || b.result === "push";
+    if (!sport || date !== day || !settled) return;
+    const key = [date, sport, b.pick].join("|");
+    if (seen.has(key)) return;
+    seen.add(key);
+    rows.push(b);
+  });
+  return rows;
+}
 function drawBars(canvas, bets){
   const ctx = canvas.getContext("2d");
   const sports = ["CBB","CFB","MLB","NBA","NFL","NHL"];
   const map = {};
   sports.forEach(sport => { map[sport] = {pl:0, clv:[], n:0, yday:0}; });
-  const day = yesterday();
-  bets.forEach(b => {
+  yesterdayGraded(bets).forEach(b => {
     const sport = String(b.sport || "").trim().toUpperCase();
     if (!map[sport]) return;
-    const settled = b.result === "win" || b.result === "loss" || b.result === "push";
-    if (String(b.date || "").slice(0, 10) !== day || !settled) return;
     const row = map[sport];
     row.yday += 1;
     row.pl += profit(b);
-    const c = clv(b);
-    if (c != null) row.clv.push(c);
+    row.clv.push(chartClv(b));
   });
-  const rows = ["CBB","CFB","MLB","NBA","NFL","NHL"].map(sport => [sport, map[sport]]);
+  const rows = sports.map(sport => [sport, map[sport]]);
   const cssW = Math.max(320, canvas.clientWidth || 420);
   const rowH = 28;
   const h = 192;
@@ -399,7 +418,7 @@ function drawBars(canvas, bets){
   ctx.fillStyle = "#0e0e0e";
   ctx.fillRect(0,0,cssW,h);
   ctx.font = "12px sans-serif";
-  const label = r => { if (!r[1].yday) return seasonText(r[0]); const xs = r[1].clv.filter(v => Math.abs(v) >= 0.05); return "CLV " + (xs.length ? (xs.reduce((s,v)=>s+v,0)/xs.length).toFixed(1) + "%" : "-"); };
+  const label = r => { if (!r[1].yday) return seasonText(r[0]); return "CLV " + (r[1].clv.reduce((s,v)=>s+v,0) / r[1].clv.length).toFixed(1) + "%"; };
   const labelW = Math.max(...rows.map(r => ctx.measureText(r[0]).width), 36);
   const valueW = Math.max(...rows.map(r => ctx.measureText(money(r[1].pl) + "  " + label(r)).width), 90);
   const left = 12 + labelW + 8;
@@ -1604,6 +1623,17 @@ document.getElementById("prevMonth").onclick = () => { monthCursor.setMonth(mont
 document.getElementById("nextMonth").onclick = () => { monthCursor.setMonth(monthCursor.getMonth()+1); render(); };
 render();
 loadSeasons();
+fetch("cards/grades.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
+  gradeFile = text.split(/\n/).map(line => {
+    const parts = line.split("|").map(s => s.trim());
+    if (parts.length < 5 || !/^\d{4}-\d{2}-\d{2}$/.test(parts[0])) return null;
+    const close = (parts[3].match(/-?\d+/) || [""])[0];
+    const result = (parts[4].match(/win|loss|push/i) || ["loss"])[0].toLowerCase();
+    const money = parts[parts.length - 1].replace(/[$,]/g, "");
+    return {date: parts[0], sport: parts[1], pick: parts[2], odds: close, close: close, result: result, stake: 10, profit: Number(money) || 0};
+  }).filter(Boolean);
+  render();
+}).catch(() => {});
 </script>
 </body>
 </html>
