@@ -35,7 +35,7 @@ header p { margin:4px 0 0; color:var(--muted); }
 .page { max-width:1100px; margin:0 auto; padding:16px; }
 main { margin:0; padding:0; }
 footer.card { width:100%; max-width:none; margin:14px 0 0; box-sizing:border-box; }
-.stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; }
+.stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; margin:12px 0 16px; }
 .stat, .card, table { background:var(--card); border:1px solid #39ff14; border-radius:10px; }
 .stat { padding:12px; }
 .stat b { display:block; color:var(--title); font-size:20px; }
@@ -107,9 +107,9 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </header>
 <div id="seasons" class="card"><h2>Season Dates</h2><p class="warn">Checked in the month each league publishes its schedule.</p></div>
 <main>
-<section class="stats" id="stats"></section>
 <section class="card" id="dashboard">
 <h2>Dashboard</h2>
+<section class="stats" id="stats"></section>
 <p class="warn">Last 7 days on this card. The full history stays in the saved file.</p>
 <canvas id="dashChart" width="640" height="180"></canvas>
 <table>
