@@ -428,13 +428,13 @@ function render(){
     copy.push("", title);
     body += "<h2>" + title + "</h2>";
     if (!sorted.length) { copy.push("None"); body += "<p>None</p>"; return; }
-    body += "<table><thead><tr><th>Result</th><th>Sport</th><th>Pick</th><th>Odds</th><th>P/L</th></tr></thead><tbody>";
+    body += "<table><thead><tr><th>Date</th><th>Result</th><th>Sport</th><th>Pick</th><th>Odds</th><th>P/L</th></tr></thead><tbody>";
     let sport = "";
     sorted.forEach(b => {
-      if (b.sport !== sport) { sport = b.sport; copy.push(sport); body += "<tr class='sport'><td colspan='5'>" + esc(sport) + "</td></tr>"; }
+      if (b.sport !== sport) { sport = b.sport; copy.push(sport); body += "<tr class='sport'><td colspan='6'>" + esc(sport) + "</td></tr>"; }
       const plCell = b.result === "pending" ? "OPEN" : money(profit(b));
-      copy.push([b.result.toUpperCase(), b.sport, b.pick, b.odds, plCell].join("  "));
-      body += "<tr><td>" + esc(b.result.toUpperCase()) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.pick) + "</td><td>" + esc(b.odds) + "</td><td>" + plCell + "</td></tr>";
+      copy.push([b.date, b.result.toUpperCase(), b.sport, b.pick, b.odds, plCell].join("  "));
+      body += "<tr><td>" + esc(b.date) + "</td><td>" + esc(b.result.toUpperCase()) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.pick) + "</td><td>" + esc(b.odds) + "</td><td>" + plCell + "</td></tr>";
     });
     body += "</tbody></table>";
   });
@@ -996,8 +996,8 @@ async function buildPrintForm() {
   ctx.font = "18px sans-serif";
   ctx.fillText("8.5 x 11 in landscape", 56, 128);
   summary.forEach((line, i) => ctx.fillText(line, 56, 176 + i * 28));
-  const heads = ["Result", "Sport", "Pick", "Odds", "P/L"];
-  const xs = [56, 220, 360, 1180, 1320];
+  const heads = ["Date", "Result", "Sport", "Pick", "Odds", "P/L"];
+  const xs = [56, 190, 330, 450, 1180, 1320];
   let y = 176 + summary.length * 28 + 20;
   ctx.fillStyle = "#39ff14";
   ctx.font = "18px sans-serif";
