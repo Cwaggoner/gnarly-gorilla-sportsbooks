@@ -1,3 +1,4 @@
+# file: GG-CARD-2026-10-07
 2026-10-07 | NBA | Spread | Timberwolves at Pacers Timberwolves -2.5 | -110 | Medium 57%
 2026-10-07 | NBA | Spread | Magic at Grizzlies Grizzlies +2.5 | -108 | Medium 58%
 2026-10-07 | NBA | Spread | Bucks at Thunder Bucks +14.5 | -110 | High 66%

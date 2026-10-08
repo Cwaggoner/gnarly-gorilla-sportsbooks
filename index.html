@@ -209,12 +209,21 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </div>
 <script>
 const KEY = "gnarly-gorilla-sportsbooks-v1";
+const GRADE_KEY = "gnarly-gorilla-grading-v1";
 const UNIT = 10;
 const form = document.getElementById("form");
 form.date.value = new Date().toISOString().slice(0,10);
 function ymd(d){ return d.toISOString().slice(0,10); }
 function yesterday(){ const d = new Date(); d.setDate(d.getDate()-1); return ymd(d); }
 function load(){ try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { return []; } }
+function loadGrade(){ try { return JSON.parse(localStorage.getItem(GRADE_KEY) || "[]"); } catch (e) { return []; } }
+function archiveSlips(bets){
+  const prior = loadGrade();
+  const seen = new Set(prior.map(b => [b.date, b.sport, b.pick].join("|")));
+  bets.forEach(b => { const k = [b.date, b.sport, b.pick].join("|"); if (!seen.has(k)) { prior.push(b); seen.add(k); } });
+  localStorage.setItem(GRADE_KEY, JSON.stringify(prior));
+  return prior.length;
+}
 function save(bets){ localStorage.setItem(KEY, JSON.stringify(bets)); render(); }
 function profit(b){
   if (b.result === "pending" || b.result === "void" || b.result === "push") return 0;
@@ -403,7 +412,8 @@ function render(){
   drawCalendar(all);
   document.getElementById("breaks").innerHTML = "<h2>By Sport / Book</h2>" + group(bets, "sport") + group(bets, "book") + "<h2>Market Split</h2>" + group(bets, "type") + "<p class='api-note'>This section fills from slips already saved. Load a card or use Add A Bet, then grade each slip Win, Loss, or Push. Pending slips stay at zero until graded.</p>";
   const y = yesterday();
-  const day = bets.filter(b => b.date === y);
+  const graded = loadGrade();
+  const day = graded.filter(b => b.date === y).concat(bets.filter(b => b.date === y));
   const daySettled = day.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
   const dayPl = day.reduce((s,b) => s + profit(b), 0);
   const sortedDay = day.slice().sort((a,b) => (a.result === "pending" ? 0 : 1) - (b.result === "pending" ? 0 : 1) || String(a.sport).localeCompare(String(b.sport)) || String(a.result).localeCompare(String(b.result)));
@@ -868,8 +878,14 @@ async function loadDriveCard(){
   const note = document.getElementById("pdfnote");
   const res = await fetch("cards/today.txt?ts=" + Date.now());
   if (!res.ok) { note.textContent = "Drive card file is not on the site yet."; return; }
-  const added = addCardLines(await res.text(), document.getElementById("cardbook").value || "BetMGM");
-  note.textContent = added ? added + " slips added from the Drive card." : "Drive card already in Slips.";
+  const text = await res.text();
+  const named = text.match(/^#\s*file:\s*(.+)$/m);
+  const fileName = (named ? named[1] : "Drive card").replace(/\.(txt|pdf)$/i, "");
+  const current = load();
+  if (current.length) archiveSlips(current);
+  localStorage.setItem(KEY, JSON.stringify([]));
+  const added = addCardLines(text, document.getElementById("cardbook").value || "BetMGM");
+  note.textContent = "Saved " + current.length + " slips for grading. Read " + fileName + ". " + (added || 0) + " slips loaded.";
 }
 document.getElementById("loaddrive").onclick = () => loadDriveCard().catch(err => { document.getElementById("pdfnote").textContent = err.message; });
 loadDriveCard().catch(() => {});
