@@ -128,7 +128,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <p class="warn">Profit uses settled slips. CLV uses every saved close, including pending. <span id="plotnote"></span></p>
 <div class="charts">
 <div><h2>Cumulative Profit</h2><canvas id="profitChart" width="640" height="220"></canvas></div>
-<div><h2>Profit By Sport And CLV</h2><canvas id="sportChart" width="420" height="220"></canvas></div>
+<div><h2>Profit By Sport & CLV</h2><canvas id="sportChart" width="420" height="220"></canvas></div>
 </div>
 </section>
 <section class="card">
@@ -295,7 +295,8 @@ function drawBars(canvas, bets){
     if (c != null) row.clv.push(c);
     map[sport] = row;
   });
-  const rows = Object.entries(map).sort((a,b) => a[0].localeCompare(b[0]));
+  ["CBB","CFB","MLB","NBA","NFL","NHL"].forEach(sport => { if (!map[sport]) map[sport] = {pl:0, clv:[]}; });
+  const rows = ["CBB","CFB","MLB","NBA","NFL","NHL"].map(sport => [sport, map[sport]]);
   const cssW = Math.max(320, canvas.clientWidth || 420);
   const rowH = 28;
   const h = Math.max(120, rows.length * rowH + 24);
@@ -305,7 +306,6 @@ function drawBars(canvas, bets){
   ctx.fillStyle = "#0e0e0e";
   ctx.fillRect(0,0,cssW,h);
   ctx.font = "12px sans-serif";
-  if (!rows.length){ ctx.fillStyle = "#8fb898"; ctx.fillText("No settled slips yet.", 16, 32); return; }
   const label = r => { const xs = r[1].clv; return xs.length ? "CLV " + (xs.reduce((s,v)=>s+v,0)/xs.length).toFixed(1) + "%" : "CLV -"; };
   const labelW = Math.max(...rows.map(r => ctx.measureText(r[0]).width), 36);
   const valueW = Math.max(...rows.map(r => ctx.measureText(money(r[1].pl) + "  " + label(r)).width), 90);
@@ -316,9 +316,7 @@ function drawBars(canvas, bets){
   rows.forEach((r,i) => {
     const [name, row] = r;
     const y = 16 + i * rowH;
-    const bw = Math.max(2, maxBar * Math.abs(row.pl) / max);
-    ctx.fillStyle = row.pl < 0 ? "#ff6b6b" : "#39ff14";
-    ctx.fillRect(left, y, bw, 14);
+    if (row.pl) { const bw = Math.max(2, maxBar * Math.abs(row.pl) / max); ctx.fillStyle = row.pl < 0 ? "#ff6b6b" : "#39ff14"; ctx.fillRect(left, y, bw, 14); }
     ctx.fillStyle = "#d6ffd0";
     ctx.fillText(name, 12, y + 12);
     ctx.fillText(money(row.pl) + "  " + label(r), cssW - right, y + 12);
