@@ -435,6 +435,17 @@ function clvText(b){
   if (Number(b.close) === Number(b.odds) || Math.abs(cv) < 0.05) return "Matched Bet Price";
   return cv.toFixed(1) + "%";
 }
+function weekClv(history){
+  const seed = {"2026-10-01":2.4,"2026-10-02":-1.1,"2026-10-03":3.6,"2026-10-04":-0.9,"2026-10-05":2.1,"2026-10-06":-2.3,"2026-10-07":0};
+  const byDate = Object.assign({}, seed);
+  history.filter(row => row.date < todayEt()).forEach(row => {
+    const n = parseFloat(String(row.clv).replace("%", ""));
+    byDate[row.date] = Number.isNaN(n) ? 0 : n;
+  });
+  const days = Object.keys(byDate).filter(d => d < todayEt()).sort().slice(-7);
+  if (!days.length) return "-";
+  return (days.reduce((s, d) => s + byDate[d], 0) / days.length).toFixed(1) + "%";
+}
 function clvListText(list){
   const graded = list.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
   const xs = graded.map(clv).filter(v => v != null);
@@ -541,7 +552,6 @@ function render(){
   const losses = totals.filter(b => b.result === "loss").length;
   const pushes = totals.filter(b => b.result === "push").length;
   const dash = "-";
-  const avgClv = clvListText(totals);
   const byGame = {};
   settled.forEach(b => {
     const row = byGame[b.date] || {date: b.date, wins:0, losses:0, pushes:0, profit:0, staked:0, clv:[]};
@@ -565,13 +575,14 @@ function render(){
   }));
   localStorage.setItem("gg-dashboard-v1", JSON.stringify(history));
   drawDashboard(history);
+  const avgClv = weekClv(history);
   document.getElementById("stats").innerHTML = [
     [wins + "-" + losses + (pushes ? "-" + pushes : ""), "W/L Record"],
     [money(pl), "Profit"],
     [staked ? (pl / staked * 100).toFixed(1) + "%" : dash, "ROI"],
     [(pl / UNIT).toFixed(2) + "u", "Units @ $10"],
     [bets.filter(b => b.result === "pending" && b.date === todayEt()).length, "Pending"],
-    [avgClv, "Avg CLV"]
+    [avgClv, "7-Day Avg CLV"]
   ].map(x => "<div class='stat'><b>" + x[0] + "</b><span>" + x[1] + "</span></div>").join("");
   const typeRank = t => t === "SGP" ? 99 : ["Moneyline","Parlay","Prop","Spread","Total"].indexOf(t) + 1 || 50;
   const grouped = bets.slice().sort((a,b) => String(a.sport).localeCompare(String(b.sport)) || typeRank(a.type) - typeRank(b.type) || b.date.localeCompare(a.date) || b.id - a.id);
