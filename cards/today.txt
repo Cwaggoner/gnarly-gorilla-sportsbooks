@@ -23,3 +23,12 @@
 2026-10-07 | CFB | Total | New Mexico State at FIU Under 47.5 | -114 | Medium 55%
 2026-10-07 | CFB | SGP | Jacksonville State at Kennesaw State Kennesaw State +2.5 and Jacksonville State at Kennesaw State Under 48.5 | +290 | SGP 1
 2026-10-07 | CFB | SGP | New Mexico State at FIU New Mexico State +6.5 and New Mexico State at FIU Under 47.5 | +275 | SGP 2
+2026-10-08 | NBA | Spread | Cavaliers +3.5 | -110 | Medium 56%
+2026-10-08 | NBA | Spread | Pelicans +7.5 | -110 | High 64%
+2026-10-08 | NBA | Spread | Nets +8.5 | -112 | High 65%
+2026-10-08 | NBA | Spread | Wizards +6.5 | -110 | High 63%
+2026-10-08 | NBA | Spread | Hawks +9.5 | -110 | High 66%
+2026-10-08 | NBA | Spread | Kings +12.5 | -115 | High 67%
+2026-10-08 | NBA | SGP | Nets +8.5 and 76ers at Nets Under 218.5 | +190 | SGP 1
+2026-10-08 | NBA | SGP | Hawks +9.5 and Hawks at Spurs Under 224 | +190 | SGP 2
+2026-10-08 | NBA | SGP | Kings +12.5 and Kings at Lakers Under 229.5 | +188 | SGP 3
