@@ -532,7 +532,7 @@ function render(){
   const dayPl = day.reduce((s,b) => s + profit(b), 0);
   const hit = daySettled.length ? (day.filter(b => b.result === "win").length / daySettled.length * 100).toFixed(0) + "%" : "-";
   const blocks = [
-    ["Pending", day.filter(b => b.result === "pending" && b.date === todayEt())],
+    ["Pending", bets.filter(b => b.result === "pending" && b.date === todayEt())],
     ["Graded", day.filter(b => b.result !== "pending")]
   ];
   const copy = ["GNARLY GORILLA REPORT CARD", "Yesterday " + y, "W/L Record " + rec(day) + "   P/L " + money(dayPl) + "   on $10 slips", "Hit rate " + hit];
