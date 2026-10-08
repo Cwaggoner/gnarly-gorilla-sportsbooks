@@ -887,7 +887,34 @@ async function loadDriveCard(){
   const added = addCardLines(text, document.getElementById("cardbook").value || "BetMGM");
   note.textContent = "Saved " + current.length + " slips for grading. Read " + fileName + ". " + (added || 0) + " slips loaded.";
 }
-document.getElementById("loaddrive").onclick = () => loadDriveCard().catch(err => { document.getElementById("pdfnote").textContent = err.message; });
+async function applyGrades(){
+  const res = await fetch("cards/grades.txt?ts=" + Date.now());
+  if (!res.ok) return;
+  const text = await res.text();
+  const named = (text.match(/^#\s*file:\s*(.+)$/m) || [, "grades"])[1].replace(/\.(txt|pdf)$/i, "");
+  const rules = text.split(/\n/).map(l => l.trim()).filter(l => l && !l.startsWith("#")).map(l => l.split("|").map(s => s.trim()));
+  function gradeList(list){
+    let n = 0;
+    list.forEach(b => {
+      const hit = rules.find(r => b.date === r[0] && String(b.pick).includes(r[1]));
+      if (!hit) return;
+      b.result = hit[2];
+      n++;
+    });
+    return n;
+  }
+  const bets = load();
+  const graded = loadGrade();
+  const n = gradeList(bets) + gradeList(graded);
+  if (n) {
+    localStorage.setItem(KEY, JSON.stringify(bets));
+    localStorage.setItem(GRADE_KEY, JSON.stringify(graded));
+    render();
+    document.getElementById("pdfnote").textContent = "Graded from " + named + ".";
+  }
+}
+document.getElementById("loaddrive").onclick = () => loadDriveCard().then(applyGrades).catch(err => { document.getElementById("pdfnote").textContent = err.message; });
+applyGrades().catch(() => {});
 loadDriveCard().catch(() => {});
 document.getElementById("loadcard").onclick = () => loadPending();
 

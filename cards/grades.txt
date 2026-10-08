@@ -1,0 +1,23 @@
+# file: GG-GRADES-2026-10-07
+2026-10-07 | Timberwolves -2.5 | loss
+2026-10-07 | Grizzlies +2.5 | win
+2026-10-07 | Bucks +14.5 | win
+2026-10-07 | Bulls +2.5 | win
+2026-10-07 | Warriors +14.5 | win
+2026-10-07 | Bucks at Thunder Under 218.5 | loss
+2026-10-07 | Warriors at Trail Blazers Under 214.5 | loss
+2026-10-07 | Magic at Grizzlies Under 234.5 | loss
+2026-10-07 | Penguins ML | loss
+2026-10-07 | Jets ML | win
+2026-10-07 | Ducks ML | loss
+2026-10-07 | Penguins at Capitals Under 6.5 | loss
+2026-10-07 | Avalanche at Jets Under 6.5 | win
+2026-10-07 | Oilers at Ducks Under 7 | loss
+2026-10-07 | White Sox ML | loss
+2026-10-07 | Dodgers -1.5 | win
+2026-10-07 | Rays ML | win
+2026-10-07 | Brewers ML | win
+2026-10-07 | Kennesaw State +2.5 | win
+2026-10-07 | Jacksonville State at Kennesaw State Under 48.5 | loss
+2026-10-07 | New Mexico State +6.5 | loss
+2026-10-07 | New Mexico State at FIU Under 47.5 | win
