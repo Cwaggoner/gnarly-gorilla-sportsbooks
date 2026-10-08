@@ -1027,32 +1027,31 @@ async function loadDriveCard(){
   const added = addCardLines(text, document.getElementById("cardbook").value || "BetMGM");
   note.textContent = "Saved " + current.length + " slips for grading. Read " + fileName + ". " + (added || 0) + " slips loaded.";
 }
+function gradeRows(text){
+  return text.split(/\n/).map(l => l.trim()).filter(l => l && !l.startsWith("#")).map(l => {
+    const r = l.split("|").map(s => s.trim());
+    const wide = r.length >= 5 && /^(NBA|NHL|NFL|MLB|CBB|CFB)$/.test(r[1]);
+    const close = Number(String(wide ? r[3] : r[3]).replace(/[^\d+-]/g, ""));
+    return {date: r[0], sport: wide ? r[1] : "", pick: wide ? r[2] : r[1], result: (wide ? r[4] : r[2] || "").toLowerCase(), close: Number.isNaN(close) ? "" : close, odds: Number.isNaN(close) ? -110 : close};
+  }).filter(row => row.date && row.pick && row.result);
+}
 async function applyGrades(){
   const res = await fetch("cards/grades.txt?ts=" + Date.now());
   if (!res.ok) return;
   const text = await res.text();
   const named = (text.match(/^#\s*file:\s*(.+)$/m) || [, "grades"])[1].replace(/\.(txt|pdf)$/i, "");
-  const rules = text.split(/\n/).map(l => l.trim()).filter(l => l && !l.startsWith("#")).map(l => l.split("|").map(s => s.trim()));
-  function gradeList(list){
-    let n = 0;
-    list.forEach(b => {
-      const hit = rules.find(r => b.date === r[0] && String(b.pick).includes(r[1]));
-      if (!hit) return;
-      b.result = hit[2];
-      if (hit[3] && !Number.isNaN(Number(hit[3]))) b.close = Number(hit[3]);
-      n++;
-    });
-    return n;
-  }
+  const rules = gradeRows(text);
   const bets = load();
   const graded = loadGrade();
-  const n = gradeList(bets) + gradeList(graded);
-  if (n) {
-    localStorage.setItem(KEY, JSON.stringify(bets));
-    localStorage.setItem(GRADE_KEY, JSON.stringify(graded));
-    render();
-    document.getElementById("pdfnote").textContent = "Graded from " + named + ".";
-  }
+  rules.forEach(rule => {
+    [bets, graded].forEach(list => list.forEach(b => {
+      if (b.date === rule.date && String(b.pick).includes(rule.pick)) { b.result = rule.result; if (rule.close !== "") b.close = rule.close; }
+    }));
+    if (!graded.some(b => b.date === rule.date && b.pick === rule.pick)) graded.push({id: Date.now() + Math.random(), date: rule.date, book: "BetMGM", sport: rule.sport, type: / and /i.test(rule.pick) ? "SGP" : "Spread", pick: rule.pick, odds: rule.odds, close: rule.close, stake: 10, result: rule.result, notes: "Graded"});
+  });
+  localStorage.setItem(GRADE_KEY, JSON.stringify(graded));
+  localStorage.setItem(KEY, JSON.stringify(bets));
+  render();
 }
 document.getElementById("savedash").onclick = () => {
   const rows = JSON.parse(localStorage.getItem("gg-dashboard-v1") || "[]");
