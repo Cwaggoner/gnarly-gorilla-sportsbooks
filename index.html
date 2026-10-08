@@ -69,7 +69,9 @@ tr.sport td { color:#39ff14; font-weight:700; background:#102010; }
 tr.type td { color:#d6ffd0; font-weight:700; background:#0e0e0e; padding-left:16px; }
 th { color:var(--title); background:#102010; }
 .win { color:var(--title); } .loss { color:var(--red); } .push, .warn { color:var(--amber); }
-.tools { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+.tools { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; align-items:flex-end; }
+#dashboard { display:flex; flex-direction:column; }
+#dashboard .dash-tools { margin-top:14px; }
 #report table, #report th, #report td { border:0; background:transparent; box-shadow:none; }
 #report th { color:var(--title); font-weight:700; }
 #report td, #report th { padding:4px 16px 4px 0; }
@@ -104,8 +106,8 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <table>
 <thead><tr><th>Date</th><th>W/L Record</th><th>Profit</th><th>ROI</th><th>Units</th><th>Pending</th><th>Avg CLV</th></tr></thead>
 <tbody id="dashrows"></tbody>
-</table></div>
-<div class="tools">
+</table>
+<div class="tools dash-tools">
 <button type="button" id="savedash">Save Dashboard</button>
 <button type="button" id="resetdash">Reset</button>
 <label>Load Dashboard<input type="file" id="loaddash" accept=".txt,text/plain"></label>
