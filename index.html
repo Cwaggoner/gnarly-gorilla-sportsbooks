@@ -104,7 +104,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <p>Settled Ledger for Gnarly Gorilla Sports Decks. Paste the plays, grade them next day, copy the report.</p>
 </div>
 </header>
-<p id="seasons" class="warn">Season dates load at the top. Checked each January.</p>
+<div id="seasons" class="card"><h2>Season Dates</h2><p class="warn">Checked each January.</p></div>
 <main>
 <section class="stats" id="stats"></section>
 <section class="card" id="dashboard">
@@ -258,8 +258,7 @@ function archiveSlips(bets){
   localStorage.setItem(GRADE_KEY, JSON.stringify(prior));
   return prior.length;
 }
-function save(bets){ localStorage.setItem(KEY, JSON.stringify(bets)); loadSeasons();
-render(); }
+function save(bets){ localStorage.setItem(KEY, JSON.stringify(bets)); render(); }
 function profit(b){
   if (b.result === "pending" || b.result === "void" || b.result === "push") return 0;
   const odds = Number(b.odds), stake = Number(b.stake);
@@ -507,10 +506,11 @@ function seasonEnded(sport){ const end = SEASON_END[String(sport || "").toUpperC
 function showSeasons(checked){
   const box = document.getElementById("seasons");
   if (!box) return;
-  const line = ["CBB","CFB","MLB","NBA","NFL","NHL"].map(s => s + " " + SEASON_START[s] + " to " + SEASON_END[s] + (seasonEnded(s) ? " Season Ended" : "")).join(" | ");
-  box.textContent = "Season dates checked " + (checked || "2026-10-08") + ". " + line;
+  const rows = ["CBB","CFB","MLB","NBA","NFL","NHL"].map(s => "<tr><td>" + s + "</td><td>" + SEASON_START[s] + "</td><td>" + SEASON_END[s] + "</td><td>" + (seasonEnded(s) ? "Season Ended" : "Open") + "</td></tr>").join("");
+  box.innerHTML = "<h2>Season Dates</h2><p class='warn'>Checked " + (checked || "2026-10-08") + ". Next check is January 2.</p><table><thead><tr><th>Sport</th><th>Start</th><th>Last Card</th><th>Status</th></tr></thead><tbody>" + rows + "</tbody></table>";
 }
 async function loadSeasons(){
+  showSeasons();
   try {
     const res = await fetch("cards/seasons.json?ts=" + Date.now());
     if (!res.ok) return;
@@ -1558,6 +1558,7 @@ document.getElementById("canceledit").onclick = event => {
 document.getElementById("prevMonth").onclick = () => { monthCursor.setMonth(monthCursor.getMonth()-1); render(); };
 document.getElementById("nextMonth").onclick = () => { monthCursor.setMonth(monthCursor.getMonth()+1); render(); };
 render();
+loadSeasons();
 </script>
 </body>
 </html>
