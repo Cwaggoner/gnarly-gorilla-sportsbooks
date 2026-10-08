@@ -136,6 +136,10 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </section>
 <section class="card">
 <h2>Report Card</h2>
+<div class="tools">
+<label>Day<input type="date" id="reportDay"></label>
+<label>Show<select id="reportShow"><option value="both">Both</option><option value="pending">Pending</option><option value="graded">Graded</option></select></label>
+</div>
 <div id="report"></div>
 <div class="tools"><button type="button" id="copyreport">Copy Report</button><button type="button" id="printreport">Print Report</button><span id="copynote" class="warn"></span></div>
 <div id="printpreview" class="print-preview" hidden>
@@ -527,15 +531,19 @@ function render(){
   document.getElementById("breaks").innerHTML = "<h2>By Sport / Book</h2>" + group(bets, "sport") + group(bets, "book") + "<h2>Market Split</h2>" + group(bets, "type") + "<p class='api-note'>This section fills from slips already saved. Load a card or use Add A Bet, then grade each slip Win, Loss, or Push. Pending slips stay at zero until graded.</p>";
   const y = yesterday();
   const graded = loadGrade();
-  const day = graded.filter(b => b.date === y).concat(bets.filter(b => b.date === y));
-  const daySettled = day.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
-  const dayPl = day.reduce((s,b) => s + profit(b), 0);
-  const hit = daySettled.length ? (day.filter(b => b.result === "win").length / daySettled.length * 100).toFixed(0) + "%" : "-";
-  const blocks = [
-    ["Pending", bets.filter(b => b.result === "pending" && b.date === todayEt())],
-    ["Graded", day.filter(b => b.result !== "pending")]
-  ];
-  const copy = ["GNARLY GORILLA REPORT CARD", "Yesterday " + y, "W/L Record " + rec(day) + "   P/L " + money(dayPl) + "   on $10 slips", "Hit rate " + hit];
+  const picked = document.getElementById("reportDay").value;
+  const show = document.getElementById("reportShow").value || "both";
+  const pool = bets.concat(graded);
+  const pending = pool.filter(b => b.result === "pending" && b.date === (picked || todayEt()));
+  const gradedDay = pool.filter(b => b.result !== "pending" && b.date === (picked || y));
+  const day = picked ? pool.filter(b => b.date === picked) : gradedDay;
+  const daySettled = gradedDay.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
+  const dayPl = gradedDay.reduce((s,b) => s + profit(b), 0);
+  const hit = daySettled.length ? (gradedDay.filter(b => b.result === "win").length / daySettled.length * 100).toFixed(0) + "%" : "-";
+  const blocks = [];
+  if (show !== "graded") blocks.push(["Pending", pending]);
+  if (show !== "pending") blocks.push(["Graded", gradedDay]);
+  const copy = ["GNARLY GORILLA REPORT CARD", (picked || y), "W/L Record " + rec(gradedDay) + "   P/L " + money(dayPl) + "   on $10 slips", "Hit rate " + hit];
   let body = "";
   blocks.forEach(([title, list]) => {
     const sorted = list.slice().sort((a,b) => String(a.sport).localeCompare(String(b.sport)) || String(a.result).localeCompare(String(b.result)) || String(a.pick).localeCompare(String(b.pick)));
@@ -556,7 +564,7 @@ function render(){
   copy.push("", "Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u");
   const report = document.getElementById("report");
   report.dataset.copy = copy.join("\n");
-  report.innerHTML = "<p>Yesterday " + y + "</p><p>W/L Record " + rec(day) + "   P/L " + money(dayPl) + "   Hit rate " + hit + "</p>" + body + "<p>Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u</p>";
+  report.innerHTML = "<p>" + (picked ? picked : "Pending " + todayEt() + " and graded " + y) + "</p><p>W/L Record " + rec(gradedDay) + "   P/L " + money(dayPl) + "   Hit rate " + hit + "</p>" + body + "<p>Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u</p>";
 }
 function group(bets, key){
   const map = {};
@@ -1376,7 +1384,7 @@ document.getElementById("import").onchange = e => {
   reader.readAsText(file);
 };
 document.getElementById("clear").onclick = () => { if (confirm("Delete every bet in this browser?")) save([]); };
-["fSport","fBook","fType","fResult"].forEach(id => document.getElementById(id).onchange = render);
+["fSport","fBook","fType","fResult","reportDay","reportShow"].forEach(id => document.getElementById(id).onchange = render);
 async function fillChartCloses(){
   const key = oddskey.value.trim();
   const bets = load();
