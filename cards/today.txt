@@ -1,34 +1,44 @@
-# file: GG-CARD-2026-10-07
-2026-10-07 | NBA | Spread | Timberwolves at Pacers Timberwolves -2.5 | -110 | Medium 57%
-2026-10-07 | NBA | Spread | Magic at Grizzlies Grizzlies +2.5 | -108 | Medium 58%
-2026-10-07 | NBA | Spread | Bucks at Thunder Bucks +14.5 | -110 | High 66%
-2026-10-07 | NBA | Spread | Suns at Bulls Bulls +2.5 | -110 | Medium 56%
-2026-10-07 | NBA | Spread | Warriors at Trail Blazers Warriors +14.5 | -110 | High 64%
-2026-10-07 | NBA | SGP | Bucks at Thunder Bucks +14.5 and Bucks at Thunder Under 218.5 | +190 | SGP 1
-2026-10-07 | NBA | SGP | Warriors at Trail Blazers Warriors +14.5 and Warriors at Trail Blazers Under 214.5 | +190 | SGP 2
-2026-10-07 | NBA | SGP | Magic at Grizzlies Grizzlies +2.5 and Magic at Grizzlies Under 234.5 | +188 | SGP 3
-2026-10-07 | NHL | Moneyline | Penguins at Capitals Penguins ML | +135 | Medium 55%
-2026-10-07 | NHL | Moneyline | Avalanche at Jets Jets ML | +155 | Medium 54%
-2026-10-07 | NHL | Moneyline | Oilers at Ducks Ducks ML | +110 | Medium 54%
-2026-10-07 | NHL | SGP | Penguins at Capitals Penguins ML and Penguins at Capitals Under 6.5 | +349 | SGP 1
-2026-10-07 | NHL | SGP | Avalanche at Jets Jets ML and Avalanche at Jets Under 6.5 | +377 | SGP 2
-2026-10-07 | NHL | SGP | Oilers at Ducks Ducks ML and Oilers at Ducks Under 7 | +266 | SGP 3
-2026-10-07 | MLB | Moneyline | Guardians at White Sox White Sox ML | -120 | Medium 57%
-2026-10-07 | MLB | Spread | Dodgers at Braves Dodgers -1.5 | +120 | Medium 56%
-2026-10-07 | MLB | Moneyline | Rays at Yankees Rays ML | +135 | Medium 58%
-2026-10-07 | MLB | Moneyline | Brewers at Padres Brewers ML | -105 | Medium 56%
-2026-10-07 | CFB | Spread | Jacksonville State at Kennesaw State Kennesaw State +2.5 | -100 | Medium 57%
-2026-10-07 | CFB | Total | Jacksonville State at Kennesaw State Under 48.5 | -105 | Medium 56%
-2026-10-07 | CFB | Spread | New Mexico State at FIU New Mexico State +6.5 | -106 | Medium 58%
-2026-10-07 | CFB | Total | New Mexico State at FIU Under 47.5 | -114 | Medium 55%
-2026-10-07 | CFB | SGP | Jacksonville State at Kennesaw State Kennesaw State +2.5 and Jacksonville State at Kennesaw State Under 48.5 | +290 | SGP 1
-2026-10-07 | CFB | SGP | New Mexico State at FIU New Mexico State +6.5 and New Mexico State at FIU Under 47.5 | +275 | SGP 2
+# file: GG-CARD-2026-10-08
+2026-10-08 | NFL | Spread | Dallas Cowboys -8.5 | -108 | Medium 58%
+2026-10-08 | NFL | Total | Buccaneers at Cowboys Over 49 | -110 | Medium 55%
+2026-10-08 | NFL | SGP | Dallas Cowboys -8.5 and Buccaneers at Cowboys Over 49 | 268 | SGP 1
+2026-10-08 | NFL | SGP | Tampa Bay Buccaneers +8.5 and Buccaneers at Cowboys Under 49 | 261 | SGP 2
+2026-10-08 | NFL | SGP | Tampa Bay Buccaneers moneyline and Buccaneers at Cowboys Under 49 | 778 | SGP 3
+2026-10-08 | CFB | Spread | Sam Houston +14 | -112 | Medium 56%
+2026-10-08 | CFB | Total | Sam Houston at Liberty Under 53.5 | -105 | Medium 55%
+2026-10-08 | CFB | Spread | Missouri State +1.5 | -112 | Medium 57%
+2026-10-08 | CFB | Total | Missouri State at Western Kentucky Under 57.5 | -108 | Low 52%
+2026-10-08 | CFB | Spread | South Alabama +3 | -115 | Medium 55%
+2026-10-08 | CFB | Total | South Alabama at Arkansas State Under 62.5 | -112 | Low 52%
+2026-10-08 | CFB | Spread | South Florida +6.5 | -105 | Medium 58%
+2026-10-08 | CFB | Total | South Florida at UTSA Under 50.5 | -110 | Medium 54%
+2026-10-08 | CFB | SGP | Sam Houston +14 and Sam Houston at Liberty Under 53.5 | 285 | SGP 1
+2026-10-08 | CFB | SGP | Missouri State +1.5 and Missouri State at Western Kentucky Under 57.5 | 280 | SGP 2
+2026-10-08 | CFB | SGP | South Florida +6.5 and South Florida at UTSA Under 50.5 | 270 | SGP 3
+2026-10-08 | MLB | Moneyline | White Sox ML | -102 | Medium 56%
+2026-10-08 | MLB | Total | Guardians at White Sox Under 7.5 | -120 | Medium 55%
+2026-10-08 | MLB | SGP | White Sox ML and Guardians at White Sox Under 7.5 | 263 | SGP 1
+2026-10-08 | MLB | SGP | White Sox +1.5 and Guardians at White Sox Under 7.5 | -315 | SGP 2
+2026-10-08 | MLB | SGP | Guardians -1.5 and Guardians at White Sox Over 7.5 | 400 | SGP 3
+2026-10-08 | NHL | Moneyline | Flyers ML | 145 | Medium 54%
+2026-10-08 | NHL | Moneyline | Bruins ML | 105 | Medium 53%
+2026-10-08 | NHL | Moneyline | Sabres ML | 100 | Medium 53%
+2026-10-08 | NHL | Moneyline | Predators ML | 145 | Medium 54%
+2026-10-08 | NHL | Moneyline | Wild ML | 120 | Medium 53%
+2026-10-08 | NHL | Moneyline | Canucks ML | 275 | Low 42%
+2026-10-08 | NHL | Moneyline | Blackhawks ML | 154 | Medium 54%
+2026-10-08 | NHL | Moneyline | Sharks ML | 125 | Medium 54%
+2026-10-08 | NHL | Moneyline | Flames ML | 200 | Medium 52%
+2026-10-08 | NHL | Moneyline | Maple Leafs ML | 140 | Medium 54%
+2026-10-08 | NHL | SGP | Flyers ML and Flyers at Senators Under 6 | 349 | SGP 1
+2026-10-08 | NHL | SGP | Predators ML and Predators at Canadiens Under 6.5 | 349 | SGP 2
+2026-10-08 | NHL | SGP | Blackhawks ML and Blackhawks at Islanders Under 6 | 366 | SGP 3
 2026-10-08 | NBA | Spread | Cavaliers +3.5 | -110 | Medium 56%
 2026-10-08 | NBA | Spread | Pelicans +7.5 | -110 | High 64%
 2026-10-08 | NBA | Spread | Nets +8.5 | -112 | High 65%
 2026-10-08 | NBA | Spread | Wizards +6.5 | -110 | High 63%
 2026-10-08 | NBA | Spread | Hawks +9.5 | -110 | High 66%
 2026-10-08 | NBA | Spread | Kings +12.5 | -115 | High 67%
-2026-10-08 | NBA | SGP | Nets +8.5 and 76ers at Nets Under 218.5 | +190 | SGP 1
-2026-10-08 | NBA | SGP | Hawks +9.5 and Hawks at Spurs Under 224 | +190 | SGP 2
-2026-10-08 | NBA | SGP | Kings +12.5 and Kings at Lakers Under 229.5 | +188 | SGP 3
+2026-10-08 | NBA | SGP | Nets +8.5 and 76ers at Nets Under 218.5 | 190 | SGP 1
+2026-10-08 | NBA | SGP | Hawks +9.5 and Hawks at Spurs Under 224 | 190 | SGP 2
+2026-10-08 | NBA | SGP | Kings +12.5 and Kings at Lakers Under 229.5 | 188 | SGP 3
