@@ -239,7 +239,7 @@ const UNIT = 10;
 const form = document.getElementById("form");
 form.date.value = new Date().toISOString().slice(0,10);
 function ymd(d){ return d.toISOString().slice(0,10); }
-function yesterday(){ const d = new Date(); d.setDate(d.getDate()-1); return ymd(d); }
+function yesterday(){ const d = new Date(Date.now() - 86400000); return d.toLocaleDateString("en-CA", {timeZone:"America/New_York"}); }
 function load(){ try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { return []; } }
 function loadGrade(){ try { return JSON.parse(localStorage.getItem(GRADE_KEY) || "[]"); } catch (e) { return []; } }
 function archiveSlips(bets){
@@ -364,9 +364,11 @@ function drawBars(canvas, bets){
     const c = clv(b);
     const row = map[sport] || {pl:0, clv:[], n:0, yday:0};
     row.n = (row.n || 0) + 1;
-    if (b.date === yesterday()) {
+    const played = String(b.date || "").slice(0, 10) === yesterday();
+    const settled = b.result === "win" || b.result === "loss" || b.result === "push";
+    if (played && settled && sport === String(b.sport || "").trim().toUpperCase()) {
       row.yday = (row.yday || 0) + 1;
-      if (b.result !== "pending") row.pl += profit(b);
+      row.pl += profit(b);
       if (c != null) row.clv.push(c);
     }
     map[sport] = row;
