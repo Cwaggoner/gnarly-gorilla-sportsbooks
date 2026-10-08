@@ -1,25 +1,25 @@
 # file: GG-GRADES-2026-10-07
-2026-10-07 | Timberwolves at Pacers Timberwolves -2.5 | loss
-2026-10-07 | Magic at Grizzlies Grizzlies +2.5 | loss
-2026-10-07 | Bucks at Thunder Bucks +14.5 | win
-2026-10-07 | Suns at Bulls Bulls +2.5 | win
-2026-10-07 | Warriors at Trail Blazers Warriors +14.5 | win
-2026-10-07 | Bucks at Thunder Bucks +14.5 and Bucks at Thunder Under 218.5 | loss
-2026-10-07 | Warriors at Trail Blazers Warriors +14.5 and Warriors at Trail Blazers Under 214.5 | loss
-2026-10-07 | Magic at Grizzlies Grizzlies +2.5 and Magic at Grizzlies Under 234.5 | loss
-2026-10-07 | Penguins at Capitals Penguins ML | loss
-2026-10-07 | Avalanche at Jets Jets ML | win
-2026-10-07 | Oilers at Ducks Ducks ML | loss
-2026-10-07 | Penguins at Capitals Penguins ML and Penguins at Capitals Under 6.5 | loss
-2026-10-07 | Avalanche at Jets Jets ML and Avalanche at Jets Under 6.5 | win
-2026-10-07 | Oilers at Ducks Ducks ML and Oilers at Ducks Under 7 | loss
-2026-10-07 | Guardians at White Sox White Sox ML | loss
-2026-10-07 | Dodgers at Braves Dodgers -1.5 | win
-2026-10-07 | Rays at Yankees Rays ML | win
-2026-10-07 | Brewers at Padres Brewers ML | win
-2026-10-07 | Jacksonville State at Kennesaw State Kennesaw State +2.5 | win
-2026-10-07 | Jacksonville State at Kennesaw State Under 48.5 | loss
-2026-10-07 | New Mexico State at FIU New Mexico State +6.5 | loss
-2026-10-07 | New Mexico State at FIU Under 47.5 | win
-2026-10-07 | Jacksonville State at Kennesaw State Kennesaw State +2.5 and Jacksonville State at Kennesaw State Under 48.5 | loss
-2026-10-07 | New Mexico State at FIU New Mexico State +6.5 and New Mexico State at FIU Under 47.5 | loss
+2026-10-07 | Timberwolves at Pacers Timberwolves -2.5 | loss | 
+2026-10-07 | Magic at Grizzlies Grizzlies +2.5 | loss | 
+2026-10-07 | Bucks at Thunder Bucks +14.5 | win | 
+2026-10-07 | Suns at Bulls Bulls +2.5 | win | 
+2026-10-07 | Warriors at Trail Blazers Warriors +14.5 | win | 
+2026-10-07 | Bucks at Thunder Bucks +14.5 and Bucks at Thunder Under 218.5 | loss | 
+2026-10-07 | Warriors at Trail Blazers Warriors +14.5 and Warriors at Trail Blazers Under 214.5 | loss | 
+2026-10-07 | Magic at Grizzlies Grizzlies +2.5 and Magic at Grizzlies Under 234.5 | loss | 
+2026-10-07 | Penguins at Capitals Penguins ML | loss | 
+2026-10-07 | Avalanche at Jets Jets ML | win | 
+2026-10-07 | Oilers at Ducks Ducks ML | loss | 
+2026-10-07 | Penguins at Capitals Penguins ML and Penguins at Capitals Under 6.5 | loss | 
+2026-10-07 | Avalanche at Jets Jets ML and Avalanche at Jets Under 6.5 | win | 
+2026-10-07 | Oilers at Ducks Ducks ML and Oilers at Ducks Under 7 | loss | 
+2026-10-07 | Guardians at White Sox White Sox ML | loss | 
+2026-10-07 | Dodgers at Braves Dodgers -1.5 | win | 
+2026-10-07 | Rays at Yankees Rays ML | win | 
+2026-10-07 | Brewers at Padres Brewers ML | win | 
+2026-10-07 | Jacksonville State at Kennesaw State Kennesaw State +2.5 | win | 
+2026-10-07 | Jacksonville State at Kennesaw State Under 48.5 | loss | 
+2026-10-07 | New Mexico State at FIU New Mexico State +6.5 | loss | 
+2026-10-07 | New Mexico State at FIU Under 47.5 | win | 
+2026-10-07 | Jacksonville State at Kennesaw State Kennesaw State +2.5 and Jacksonville State at Kennesaw State Under 48.5 | loss | 
+2026-10-07 | New Mexico State at FIU New Mexico State +6.5 and New Mexico State at FIU Under 47.5 | loss | 
