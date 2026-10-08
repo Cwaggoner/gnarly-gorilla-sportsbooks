@@ -74,6 +74,7 @@ th { color:var(--title); background:#102010; }
 #dashboard .dash-tools { margin-top:14px; }
 #report table, #report th, #report td { border:0; background:transparent; box-shadow:none; }
 #report th { color:var(--title); font-weight:700; }
+#report hr.split { border:0; border-top:2px solid #39ff14; margin:16px 0 12px; }
 #report td, #report th { padding:4px 16px 4px 0; }
 .charts { display:grid; grid-template-columns:1.4fr 1fr; gap:12px; }
 .cal { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
@@ -554,6 +555,7 @@ function render(){
   blocks.forEach(([title, list]) => {
     const sorted = list.slice().sort((a,b) => String(a.sport).localeCompare(String(b.sport)) || String(a.result).localeCompare(String(b.result)) || String(a.pick).localeCompare(String(b.pick)));
     copy.push("", title);
+    if (title === "Graded" && show !== "graded") body += "<hr class='split'>";
     body += "<h2>" + title + "</h2>";
     if (!sorted.length) { copy.push("None"); body += "<p>None</p>"; return; }
     body += "<table><thead><tr><th>Date</th><th>Result</th><th>Sport</th><th>Pick</th><th>Odds</th><th>P/L</th></tr></thead><tbody>";
@@ -1173,6 +1175,7 @@ async function buildPrintForm() {
   rows.forEach(row => {
     y += 26;
     if (y > 1140) return;
+    if (row.length === 1 && row[0] === "Graded") { ctx.strokeStyle = "#39ff14"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(56, y - 16); ctx.lineTo(1460, y - 16); ctx.stroke(); }
     if (row.length === 1) { ctx.fillStyle = "#39ff14"; ctx.fillText(row[0], 56, y); ctx.fillStyle = "#d6ffd0"; return; }
     row.forEach((cell, i) => ctx.fillText(cell.slice(0, i === 2 ? 62 : 18), xs[i], y));
   });
