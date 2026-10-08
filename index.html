@@ -94,6 +94,15 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </header>
 <main>
 <section class="stats" id="stats"></section>
+<section class="card" id="dashboard">
+<h2>Dashboard</h2>
+<p class="warn">Record, Profit, ROI, Units, Pending, and Avg CLV by day.</p>
+<canvas id="dashChart" width="640" height="180"></canvas>
+<table>
+<thead><tr><th>Date</th><th>Record</th><th>Profit</th><th>ROI</th><th>Units</th><th>Pending</th><th>Avg CLV</th></tr></thead>
+<tbody id="dashrows"></tbody>
+</table>
+</section>
 <section class="card">
 <h2>From Today's Card</h2>
 <p class="warn">One play per line: Sport | Type | Pick | American odds | Confidence. Stake is $10. Book is the dropdown below. Pending until graded.</p>
@@ -242,6 +251,45 @@ function esc(s){
   return String(s).replace(/&/g,"&").replace(/</g,"<").replace(/>/g,">");
 }
 
+
+function drawDashboard(history){
+  const seed = [
+    {date:"2026-10-04", record:"13-15-3", profit:1.04, roi:"0.3%", units:"0.10u", pending:0, clv:"-"},
+    {date:"2026-10-05", record:"8-13", profit:-76.64, roi:"-19.2%", units:"-7.66u", pending:0, clv:"-"},
+    {date:"2026-10-06", record:"4-12", profit:-152.48, roi:"-38.1%", units:"-15.25u", pending:0, clv:"-"},
+    {date:"2026-10-07", record:"10-14", profit:-5.74, roi:"-2.4%", units:"-0.57u", pending:0, clv:"0.0%"}
+  ];
+  const byDate = {};
+  seed.concat(history).forEach(row => { byDate[row.date] = row; });
+  const rows = Object.values(byDate).sort((a,b) => a.date.localeCompare(b.date));
+  document.getElementById("dashrows").innerHTML = rows.map(row => "<tr><td>" + row.date + "</td><td>" + row.record + "</td><td>" + money(Number(row.profit)) + "</td><td>" + row.roi + "</td><td>" + row.units + "</td><td>" + row.pending + "</td><td>" + row.clv + "</td></tr>").join("");
+  const canvas = document.getElementById("dashChart");
+  const ctx = canvas.getContext("2d");
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle = "#0e0e0e";
+  ctx.fillRect(0,0,w,h);
+  let run = 0;
+  const pts = rows.map(row => { run += Number(row.profit) || 0; return {date: row.date, y: run}; });
+  if (!pts.length) return;
+  const vals = pts.map(p => p.y);
+  const min = Math.min(0, ...vals), max = Math.max(0, ...vals);
+  const span = (max - min) || 1;
+  const x = i => 28 + (w - 56) * (pts.length === 1 ? 0.5 : i / (pts.length - 1));
+  const y = v => 16 + (h - 36) * (1 - (v - min) / span);
+  ctx.strokeStyle = "#243024";
+  ctx.beginPath(); ctx.moveTo(28, y(0)); ctx.lineTo(w - 16, y(0)); ctx.stroke();
+  ctx.fillStyle = "#8fb898";
+  ctx.font = "12px sans-serif";
+  ctx.fillText("Break Even - $0", w - 110, y(0) - 4);
+  ctx.strokeStyle = "#39ff14";
+  ctx.beginPath();
+  pts.forEach((p,i) => i ? ctx.lineTo(x(i), y(p.y)) : ctx.moveTo(x(i), y(p.y)));
+  ctx.stroke();
+  ctx.fillStyle = "#d6ffd0";
+  ctx.fillText(pts[0].date, 28, h - 6);
+  ctx.fillText(pts[pts.length-1].date, w - 90, h - 6);
+}
 function drawCharts(bets){
   const settled = bets.filter(b => b.result === "win" || b.result === "loss" || b.result === "push").slice().sort((a,b) => a.date.localeCompare(b.date) || a.id - b.id);
   const line = document.getElementById("profitChart");
@@ -393,13 +441,19 @@ function render(){
   const losses = totals.filter(b => b.result === "loss").length;
   const pushes = totals.filter(b => b.result === "push").length;
   const dash = "-";
+  const avgClv = (() => { const xs = totals.map(clv).filter(v => v != null); return xs.length ? (xs.reduce((s,v)=>s+v,0)/xs.length).toFixed(1) + "%" : dash; })();
+  const snap = {date: todayEt(), record: wins + "-" + losses + (pushes ? "-" + pushes : ""), profit: pl, roi: staked ? (pl / staked * 100).toFixed(1) + "%" : dash, units: (pl / UNIT).toFixed(2) + "u", pending: bets.filter(b => b.result === "pending" && b.date === todayEt()).length, clv: avgClv};
+  const history = JSON.parse(localStorage.getItem("gg-dashboard-v1") || "[]").filter(row => row.date !== snap.date);
+  history.push(snap);
+  localStorage.setItem("gg-dashboard-v1", JSON.stringify(history));
+  drawDashboard(history);
   document.getElementById("stats").innerHTML = [
     [wins + "-" + losses + (pushes ? "-" + pushes : ""), "Record"],
     [money(pl), "Profit"],
     [staked ? (pl / staked * 100).toFixed(1) + "%" : dash, "ROI"],
     [(pl / UNIT).toFixed(2) + "u", "Units @ $10"],
     [bets.filter(b => b.result === "pending" && b.date === todayEt()).length, "Pending"],
-    [(() => { const xs = totals.map(clv).filter(v => v != null); return xs.length ? (xs.reduce((s,v)=>s+v,0)/xs.length).toFixed(1) + "%" : dash; })(), "Avg CLV"]
+    [avgClv, "Avg CLV"]
   ].map(x => "<div class='stat'><b>" + x[0] + "</b><span>" + x[1] + "</span></div>").join("");
   const typeRank = t => t === "SGP" ? 99 : ["Moneyline","Parlay","Prop","Spread","Total"].indexOf(t) + 1 || 50;
   const grouped = bets.slice().sort((a,b) => String(a.sport).localeCompare(String(b.sport)) || typeRank(a.type) - typeRank(b.type) || b.date.localeCompare(a.date) || b.id - a.id);
