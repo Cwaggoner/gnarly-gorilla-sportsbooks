@@ -267,7 +267,7 @@ function drawDashboard(history, manual){
   ];
   const byDate = {};
   if (!manual) seed.concat(history).forEach(row => { byDate[row.date] = row; });
-  const rows = manual ? history.slice().sort((a,b) => a.date.localeCompare(b.date)) : Object.values(byDate).sort((a,b) => a.date.localeCompare(b.date));
+  const rows = (manual ? history.slice() : Object.values(byDate)).filter(row => manual || row.date < todayEt()).sort((a,b) => a.date.localeCompare(b.date));
   if (!manual) localStorage.setItem("gg-dashboard-v1", JSON.stringify(rows));
   const shown = manual ? rows : rows.slice(-7);
   document.getElementById("dashrows").innerHTML = shown.map(row => "<tr><td>" + row.date + "</td><td>" + row.record + "</td><td>" + money(Number(row.profit)) + "</td><td>" + row.roi + "</td><td>" + row.units + "</td><td>" + row.pending + "</td><td>" + row.clv + "</td></tr>").join("");
@@ -450,9 +450,27 @@ function render(){
   const pushes = totals.filter(b => b.result === "push").length;
   const dash = "-";
   const avgClv = (() => { const xs = totals.map(clv).filter(v => v != null); return xs.length ? (xs.reduce((s,v)=>s+v,0)/xs.length).toFixed(1) + "%" : dash; })();
-  const snap = {date: todayEt(), record: wins + "-" + losses + (pushes ? "-" + pushes : ""), profit: pl, roi: staked ? (pl / staked * 100).toFixed(1) + "%" : dash, units: (pl / UNIT).toFixed(2) + "u", pending: bets.filter(b => b.result === "pending" && b.date === todayEt()).length, clv: avgClv};
-  const history = JSON.parse(localStorage.getItem("gg-dashboard-v1") || "[]").filter(row => row.date !== snap.date);
-  history.push(snap);
+  const byGame = {};
+  settled.forEach(b => {
+    const row = byGame[b.date] || {date: b.date, wins:0, losses:0, pushes:0, profit:0, staked:0, clv:[]};
+    if (b.result === "win") row.wins++;
+    if (b.result === "loss") row.losses++;
+    if (b.result === "push") row.pushes++;
+    row.profit += profit(b);
+    row.staked += Number(b.stake) || 0;
+    const cv = clv(b);
+    if (cv != null) row.clv.push(cv);
+    byGame[b.date] = row;
+  });
+  const history = Object.values(byGame).filter(row => row.date < todayEt()).map(row => ({
+    date: row.date,
+    record: row.wins + "-" + row.losses + (row.pushes ? "-" + row.pushes : ""),
+    profit: row.profit,
+    roi: row.staked ? (row.profit / row.staked * 100).toFixed(1) + "%" : dash,
+    units: (row.profit / UNIT).toFixed(2) + "u",
+    pending: 0,
+    clv: row.clv.length ? (row.clv.reduce((s,v)=>s+v,0)/row.clv.length).toFixed(1) + "%" : dash
+  }));
   localStorage.setItem("gg-dashboard-v1", JSON.stringify(history));
   drawDashboard(history);
   document.getElementById("stats").innerHTML = [
