@@ -559,12 +559,16 @@ function render(){
     body += "<h2>" + title + "</h2>";
     if (!sorted.length) { copy.push("None"); body += "<p>None</p>"; return; }
     body += "<table><thead><tr><th>Date</th><th>Result</th><th>Sport</th><th>Pick</th><th>Odds</th><th>P/L</th></tr></thead><tbody>";
-    let sport = "";
-    sorted.forEach(b => {
-      if (b.sport !== sport) { sport = b.sport; copy.push(sport); body += "<tr class='sport'><td colspan='6'>" + esc(sport) + "</td></tr>"; }
-      const plCell = b.result === "pending" ? "OPEN" : money(profit(b));
-      copy.push([b.date, b.result.toUpperCase(), b.sport, b.pick, b.odds, plCell].join("  "));
-      body += "<tr><td>" + esc(b.date) + "</td><td>" + esc(b.result.toUpperCase()) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.pick) + "</td><td>" + esc(b.odds) + "</td><td>" + plCell + "</td></tr>";
+    ["CBB","CFB","MLB","NBA","NFL","NHL"].forEach(sport => {
+      const rows = sorted.filter(b => String(b.sport).toUpperCase() === sport);
+      copy.push(sport);
+      body += "<tr class='sport'><td colspan='6'>" + sport + "</td></tr>";
+      if (!rows.length) { copy.push("NO GAME TODAY"); body += "<tr><td></td><td>NO GAME TODAY</td><td>" + sport + "</td><td>NO GAME TODAY</td><td></td><td></td></tr>"; return; }
+      rows.forEach(b => {
+        const plCell = b.result === "pending" ? "OPEN" : money(profit(b));
+        copy.push([b.date, b.result.toUpperCase(), b.sport, b.pick, b.odds, plCell].join("  "));
+        body += "<tr><td>" + esc(b.date) + "</td><td>" + esc(b.result.toUpperCase()) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.pick) + "</td><td>" + esc(b.odds) + "</td><td>" + plCell + "</td></tr>";
+      });
     });
     body += "</tbody></table>";
   });
@@ -1178,7 +1182,7 @@ async function buildPrintForm() {
     if (y > 1140) return;
     if (row.length === 1 && row[0] === "Graded") { ctx.strokeStyle = "#39ff14"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(56, y - 16); ctx.lineTo(1460, y - 16); ctx.stroke(); }
     if (row.length === 1) { ctx.fillStyle = "#39ff14"; ctx.fillText(row[0], 56, y); ctx.fillStyle = "#d6ffd0"; return; }
-    row.forEach((cell, i) => ctx.fillText(cell.slice(0, i === 2 ? 62 : 18), xs[i], y));
+    row.forEach((cell, i) => ctx.fillText(cell.slice(0, i === 3 ? 42 : 18), xs[i], y));
   });
   if (!rows.length) ctx.fillText("No slips on this report.", 56, y + 28);
   document.getElementById("printimg").src = canvas.toDataURL("image/png");
