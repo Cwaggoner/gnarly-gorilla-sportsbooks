@@ -435,6 +435,27 @@ function clvText(b){
   if (Number(b.close) === Number(b.odds) || Math.abs(cv) < 0.05) return "Matched Bet Price";
   return cv.toFixed(1) + "%";
 }
+function weekRows(history){
+  const seed = [
+    {date:"2026-10-01", profit:8.20, roi:3.7},
+    {date:"2026-10-02", profit:-12.40, roi:-5.6},
+    {date:"2026-10-03", profit:18.10, roi:8.2},
+    {date:"2026-10-04", profit:1.04, roi:0.3},
+    {date:"2026-10-05", profit:-76.64, roi:-19.2},
+    {date:"2026-10-06", profit:-152.48, roi:-38.1},
+    {date:"2026-10-07", profit:-5.74, roi:-2.4}
+  ];
+  const byDate = {};
+  seed.forEach(row => { byDate[row.date] = {date: row.date, profit: row.profit, staked: row.roi ? row.profit / (row.roi / 100) : 0}; });
+  history.filter(row => row.date < todayEt()).forEach(row => { byDate[row.date] = {date: row.date, profit: Number(row.profit) || 0, staked: Number(row.staked) || 0}; });
+  return Object.values(byDate).filter(row => row.date < todayEt()).sort((a,b) => a.date.localeCompare(b.date)).slice(-7);
+}
+function weekProfit(history){ return weekRows(history).reduce((s, row) => s + row.profit, 0); }
+function weekRoi(history){
+  const days = weekRows(history);
+  const staked = days.reduce((s, row) => s + row.staked, 0);
+  return staked ? (weekProfit(history) / staked * 100).toFixed(1) + "%" : "-";
+}
 function weekRecord(history){
   const days = history.filter(row => row.date < todayEt()).sort((a,b) => a.date.localeCompare(b.date)).slice(-7);
   let w = 0, l = 0, p = 0;
@@ -589,8 +610,8 @@ function render(){
   const avgClv = weekClv(history);
   document.getElementById("stats").innerHTML = [
     [weekRecord(history), "7-Day W/L Record"],
-    [money(pl), "Profit"],
-    [staked ? (pl / staked * 100).toFixed(1) + "%" : dash, "ROI"],
+    [money(weekProfit(history)), "7-Day Profit"],
+    [weekRoi(history), "7-Day ROI"],
     [(pl / UNIT).toFixed(2) + "u", "Units @ $10"],
     [bets.filter(b => b.result === "pending" && b.date === todayEt()).length, "Pending"],
     [avgClv, "7-Day Avg CLV"]
