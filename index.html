@@ -1085,8 +1085,8 @@ document.getElementById("resetdash").onclick = () => {
   drawDashboard(JSON.parse(localStorage.getItem("gg-dashboard-v1") || "[]"));
   document.getElementById("dashnote").textContent = "Reset. Last 7 days restored.";
 };
-document.getElementById("loaddrive").onclick = () => loadDriveCard().then(applyGrades).catch(err => { document.getElementById("pdfnote").textContent = err.message; });
-applyGrades().then(() => loadDriveCard()).catch(() => {});
+document.getElementById("loaddrive").onclick = () => { localStorage.removeItem("gg-hold-ledger"); loadDriveCard().then(applyGrades).catch(err => { document.getElementById("pdfnote").textContent = err.message; }); };
+applyGrades().then(() => { if (localStorage.getItem("gg-hold-ledger") === "1") return; return loadDriveCard(); }).catch(() => {});
 document.getElementById("loadcard").onclick = () => loadPending();
 
 let printBlob = null;
@@ -1346,6 +1346,7 @@ document.getElementById("loadledger").onchange = async e => {
     const bets = Array.isArray(data) ? data : data.bets;
     if (!Array.isArray(bets)) throw new Error("That file has no slips.");
     save(bets);
+    localStorage.setItem("gg-hold-ledger", "1");
     note.textContent = "Loaded " + bets.length + " slips.";
   } catch (err) {
     note.textContent = "Load failed. Use a Save Ledger JSON file.";
