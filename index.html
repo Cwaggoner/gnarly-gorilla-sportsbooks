@@ -99,7 +99,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <p class="warn">Last 7 days on this card. The full history stays in the saved file.</p>
 <canvas id="dashChart" width="640" height="180"></canvas>
 <table>
-<thead><tr><th>Date</th><th>Record</th><th>Profit</th><th>ROI</th><th>Units</th><th>Pending</th><th>Avg CLV</th></tr></thead>
+<thead><tr><th>Date</th><th>W/L Record</th><th>Profit</th><th>ROI</th><th>Units</th><th>Pending</th><th>Avg CLV</th></tr></thead>
 <tbody id="dashrows"></tbody>
 </table>
 <div class="tools">
@@ -489,7 +489,7 @@ function render(){
   localStorage.setItem("gg-dashboard-v1", JSON.stringify(history));
   drawDashboard(history);
   document.getElementById("stats").innerHTML = [
-    [wins + "-" + losses + (pushes ? "-" + pushes : ""), "Record"],
+    [wins + "-" + losses + (pushes ? "-" + pushes : ""), "W/L Record"],
     [money(pl), "Profit"],
     [staked ? (pl / staked * 100).toFixed(1) + "%" : dash, "ROI"],
     [(pl / UNIT).toFixed(2) + "u", "Units @ $10"],
@@ -525,7 +525,7 @@ function render(){
     ["Pending", day.filter(b => b.result === "pending" && b.date === todayEt())],
     ["Graded", day.filter(b => b.result !== "pending")]
   ];
-  const copy = ["GNARLY GORILLA REPORT CARD", "Yesterday " + y, "Record " + rec(day) + "   P/L " + money(dayPl) + "   on $10 slips", "Hit rate " + hit];
+  const copy = ["GNARLY GORILLA REPORT CARD", "Yesterday " + y, "W/L Record " + rec(day) + "   P/L " + money(dayPl) + "   on $10 slips", "Hit rate " + hit];
   let body = "";
   blocks.forEach(([title, list]) => {
     const sorted = list.slice().sort((a,b) => String(a.sport).localeCompare(String(b.sport)) || String(a.result).localeCompare(String(b.result)) || String(a.pick).localeCompare(String(b.pick)));
@@ -546,7 +546,7 @@ function render(){
   copy.push("", "Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u");
   const report = document.getElementById("report");
   report.dataset.copy = copy.join("\n");
-  report.innerHTML = "<p>Yesterday " + y + "</p><p>Record " + rec(day) + "   P/L " + money(dayPl) + "   Hit rate " + hit + "</p>" + body + "<p>Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u</p>";
+  report.innerHTML = "<p>Yesterday " + y + "</p><p>W/L Record " + rec(day) + "   P/L " + money(dayPl) + "   Hit rate " + hit + "</p>" + body + "<p>Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u</p>";
 }
 function group(bets, key){
   const map = {};
@@ -1216,7 +1216,7 @@ function buildPdf(bets){
       "0.063 0.125 0.063 rg", "0 760 612 32 re", "f",
       "0.22 1 0.08 rg", "BT", "/F2 11 Tf", "1 0 0 1 28 772 Tm (GNARLY GORILLA SPORTSBOOKS) Tj", "ET",
       "0.84 1 0.82 rg", "BT", "/F1 8 Tf", "1 0 0 1 250 772 Tm (Ledger card  |  daily pick companion) Tj", "ET",
-      "0.94 0.88 0.29 rg", "BT", "/F1 8 Tf", "1 0 0 1 28 742 Tm (" + pdfEscape("Record " + rec(bets) + "    Profit " + money(pl) + "    Units " + (pl / UNIT).toFixed(2) + "u    $10 slips") + ") Tj", "ET",
+      "0.94 0.88 0.29 rg", "BT", "/F1 8 Tf", "1 0 0 1 28 742 Tm (" + pdfEscape("W/L Record " + rec(bets) + "    Profit " + money(pl) + "    Units " + (pl / UNIT).toFixed(2) + "u    $10 slips") + ") Tj", "ET",
       "0.063 0.125 0.063 rg", "28 724 556 14 re", "f",
       "0.22 1 0.08 rg", "BT", "/F2 7 Tf"
     ];
