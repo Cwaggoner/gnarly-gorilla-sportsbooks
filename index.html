@@ -374,7 +374,16 @@ function drawCalendar(bets){
   document.getElementById("calendar").innerHTML = html;
 }
 
+function todayEt(){ return new Date().toLocaleDateString("en-CA", {timeZone:"America/New_York"}); }
+function clearStalePending(){
+  const today = todayEt();
+  const bets = load().filter(b => b.result !== "pending" || b.date >= today);
+  const graded = loadGrade().filter(b => b.result !== "pending" || b.date >= today);
+  localStorage.setItem(KEY, JSON.stringify(bets));
+  localStorage.setItem(GRADE_KEY, JSON.stringify(graded));
+}
 function render(){
+  clearStalePending();
   const all = load().sort((a,b) => b.date.localeCompare(a.date) || b.id - a.id);
   const bets = filtered(all);
   const settled = bets.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
@@ -389,7 +398,7 @@ function render(){
     [money(pl), "Profit"],
     [staked ? (pl / staked * 100).toFixed(1) + "%" : dash, "ROI"],
     [(pl / UNIT).toFixed(2) + "u", "Units @ $10"],
-    [bets.filter(b => b.result === "pending").length, "Pending"],
+    [bets.filter(b => b.result === "pending" && b.date === todayEt()).length, "Pending"],
     [(() => { const xs = bets.map(clv).filter(v => v != null); return xs.length ? (xs.reduce((s,v)=>s+v,0)/xs.length).toFixed(1) + "%" : dash; })(), "Avg CLV"]
   ].map(x => "<div class='stat'><b>" + x[0] + "</b><span>" + x[1] + "</span></div>").join("");
   const typeRank = t => t === "SGP" ? 99 : ["Moneyline","Parlay","Prop","Spread","Total"].indexOf(t) + 1 || 50;
@@ -418,7 +427,7 @@ function render(){
   const dayPl = day.reduce((s,b) => s + profit(b), 0);
   const hit = daySettled.length ? (day.filter(b => b.result === "win").length / daySettled.length * 100).toFixed(0) + "%" : "-";
   const blocks = [
-    ["Pending", day.filter(b => b.result === "pending")],
+    ["Pending", day.filter(b => b.result === "pending" && b.date === todayEt())],
     ["Graded", day.filter(b => b.result !== "pending")]
   ];
   const copy = ["GNARLY GORILLA REPORT CARD", "Yesterday " + y, "Record " + rec(day) + "   P/L " + money(dayPl) + "   on $10 slips", "Hit rate " + hit];
@@ -855,6 +864,7 @@ async function loadPending(){
     [sport, type, pick, odds, notes] = parts;
     odds = String(odds || "").replace(/\u2212/g, "-").replace(/\+/g, "");
     if (!sport || !pick || !odds || Number.isNaN(Number(odds))) return;
+    if (date < todayEt()) return;
     if (/^(over|under)\s+\d/i.test(pick)) { note.textContent = "Skipped " + pick + ". A total needs the game, such as Bruins at Rangers Under 5.5."; return; }
     bets.push({id: Date.now() + Math.random(), date, book, sport, type: type || "Spread", pick, odds: Number(odds), stake: 10, result: "pending", notes: notes || ""});
   });
