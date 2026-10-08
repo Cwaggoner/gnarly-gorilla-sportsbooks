@@ -395,7 +395,7 @@ function drawBars(canvas, bets){
   ctx.fillStyle = "#0e0e0e";
   ctx.fillRect(0,0,cssW,h);
   ctx.font = "12px sans-serif";
-  const label = r => { if (!r[1].yday) return "No Picks"; const xs = r[1].clv; return "CLV " + (xs.length ? (xs.every(v => Math.abs(v) < 0.05) ? "Matched Bet Price" : (xs.reduce((s,v)=>s+v,0)/xs.length).toFixed(1) + "%") : "-"); };
+  const label = r => { if (!r[1].yday) return seasonText(r[0]); const xs = r[1].clv; return "CLV " + (xs.length ? (xs.every(v => Math.abs(v) < 0.05) ? "Matched Bet Price" : (xs.reduce((s,v)=>s+v,0)/xs.length).toFixed(1) + "%") : "-"); };
   const labelW = Math.max(...rows.map(r => ctx.measureText(r[0]).width), 36);
   const valueW = Math.max(...rows.map(r => ctx.measureText(money(r[1].pl) + "  " + label(r)).width), 90);
   const left = 12 + labelW + 8;
@@ -495,6 +495,9 @@ function drawCalendar(){
 }
 
 function todayEt(){ return new Date().toLocaleDateString("en-CA", {timeZone:"America/New_York"}); }
+const SEASON_END = {MLB:"2026-10-31", CFB:"2027-01-25", NFL:"2027-02-14", CBB:"2027-04-05", NHL:"2027-04-10", NBA:"2027-04-11"};
+function seasonEnded(sport){ const end = SEASON_END[String(sport || "").toUpperCase()]; return !!end && todayEt() > end; }
+function seasonText(sport){ return seasonEnded(sport) ? "Season Ended" : "No Picks"; }
 function clearStalePending(){
   const today = todayEt();
   const bets = load().filter(b => b.result !== "pending" || b.date >= today);
@@ -560,7 +563,7 @@ function render(){
       : "<button data-set='pending' data-id='" + b.id + "'>Undo</button>";
     const cv = clv(b);
     let head = "";
-    if (b.sport !== lastSport) { lastSport = b.sport; lastType = ""; head += "<tr class='sport'><td colspan='12'>" + esc(b.sport || "Other") + "</td></tr>"; }
+    if (b.sport !== lastSport) { lastSport = b.sport; lastType = ""; head += "<tr class='sport'><td colspan='12'>" + esc(b.sport || "Other") + (seasonEnded(b.sport) ? " Season Ended" : "") + "</td></tr>"; }
     if (b.type !== lastType) { lastType = b.type; head += "<tr class='type'><td colspan='12'>" + esc(b.type || "Other") + "</td></tr>"; }
     return head + "<tr><td>" + b.date + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td>" + esc(b.pick) + "</td><td>" + b.odds + "</td><td>" + (b.close || b.lastPrice || dash) + "</td><td class='" + (cv > 0 ? "win" : cv < 0 ? "loss" : "") + "'>" + clvText(b) + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='" + cls + "'>" + b.result + "</td><td class='" + cls + "'>" + (b.result === "pending" ? dash : money(p)) + "</td><td>" + grade + " <button data-edit='" + b.id + "'>Edit</button> <button class='danger' data-del='" + b.id + "'>Delete</button></td></tr>";
   }).join("") || "<tr><td colspan='12'>No bets yet.</td></tr>";
@@ -601,7 +604,7 @@ function render(){
       const rows = sorted.filter(b => String(b.sport).toUpperCase() === sport);
       copy.push(sport);
       body += "<tr class='sport'><td colspan='6'>" + sport + "</td></tr>";
-      if (!rows.length) { copy.push("NO PICKS"); body += "<tr><td></td><td>NO PICKS</td><td>" + sport + "</td><td>NO PICKS</td><td></td><td></td></tr>"; return; }
+      if (!rows.length) { const label = seasonText(sport); copy.push(label); body += "<tr><td></td><td>" + label + "</td><td>" + sport + "</td><td>" + label + "</td><td></td><td></td></tr>"; return; }
       rows.forEach(b => {
         const plCell = b.result === "pending" ? "OPEN" : money(profit(b));
         const edge = markEdge(b).edge;
@@ -628,7 +631,7 @@ function group(bets, key){
     map[k].n++;
   });
   const rows = Object.entries(map).sort((a,b) => a[0].localeCompare(b[0]));
-  return "<p>" + rows.map(([k,v]) => esc(k) + ": " + (v.n ? money(v.pl) + " (" + v.n + ")" : "No Picks")).join(" | ") + "</p>";
+  return "<p>" + rows.map(([k,v]) => esc(k) + ": " + (v.n ? money(v.pl) + " (" + v.n + ")" : seasonText(k))).join(" | ") + "</p>";
 }
 form.onsubmit = e => {
   e.preventDefault();
