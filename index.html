@@ -563,7 +563,7 @@ function render(){
       const rows = sorted.filter(b => String(b.sport).toUpperCase() === sport);
       copy.push(sport);
       body += "<tr class='sport'><td colspan='6'>" + sport + "</td></tr>";
-      if (!rows.length) { copy.push("NO GAME TODAY"); body += "<tr><td></td><td>NO GAME TODAY</td><td>" + sport + "</td><td>NO GAME TODAY</td><td></td><td></td></tr>"; return; }
+      if (!rows.length) { copy.push("NO PICKS"); body += "<tr><td></td><td>NO PICKS</td><td>" + sport + "</td><td>NO PICKS</td><td></td><td></td></tr>"; return; }
       rows.forEach(b => {
         const plCell = b.result === "pending" ? "OPEN" : money(profit(b));
         copy.push([b.date, b.result.toUpperCase(), b.sport, b.pick, b.odds, plCell].join("  "));
