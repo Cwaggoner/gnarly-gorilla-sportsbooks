@@ -96,12 +96,17 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <section class="stats" id="stats"></section>
 <section class="card" id="dashboard">
 <h2>Dashboard</h2>
-<p class="warn">Record, Profit, ROI, Units, Pending, and Avg CLV by day.</p>
+<p class="warn">Last 7 days on this card. The full history stays in the saved file.</p>
 <canvas id="dashChart" width="640" height="180"></canvas>
 <table>
 <thead><tr><th>Date</th><th>Record</th><th>Profit</th><th>ROI</th><th>Units</th><th>Pending</th><th>Avg CLV</th></tr></thead>
 <tbody id="dashrows"></tbody>
 </table>
+<div class="tools">
+<button type="button" id="savedash">Save Dashboard</button>
+<label>Load Dashboard<input type="file" id="loaddash" accept=".txt,text/plain"></label>
+<span id="dashnote" class="warn"></span>
+</div>
 </section>
 <section class="card">
 <h2>From Today's Card</h2>
@@ -262,7 +267,9 @@ function drawDashboard(history){
   const byDate = {};
   seed.concat(history).forEach(row => { byDate[row.date] = row; });
   const rows = Object.values(byDate).sort((a,b) => a.date.localeCompare(b.date));
-  document.getElementById("dashrows").innerHTML = rows.map(row => "<tr><td>" + row.date + "</td><td>" + row.record + "</td><td>" + money(Number(row.profit)) + "</td><td>" + row.roi + "</td><td>" + row.units + "</td><td>" + row.pending + "</td><td>" + row.clv + "</td></tr>").join("");
+  localStorage.setItem("gg-dashboard-v1", JSON.stringify(rows));
+  const shown = rows.slice(-7);
+  document.getElementById("dashrows").innerHTML = shown.map(row => "<tr><td>" + row.date + "</td><td>" + row.record + "</td><td>" + money(Number(row.profit)) + "</td><td>" + row.roi + "</td><td>" + row.units + "</td><td>" + row.pending + "</td><td>" + row.clv + "</td></tr>").join("");
   const canvas = document.getElementById("dashChart");
   const ctx = canvas.getContext("2d");
   const w = canvas.width, h = canvas.height;
@@ -270,7 +277,7 @@ function drawDashboard(history){
   ctx.fillStyle = "#0e0e0e";
   ctx.fillRect(0,0,w,h);
   let run = 0;
-  const pts = rows.map(row => { run += Number(row.profit) || 0; return {date: row.date, y: run}; });
+  const pts = shown.map(row => { run += Number(row.profit) || 0; return {date: row.date, y: run}; });
   if (!pts.length) return;
   const vals = pts.map(p => p.y);
   const min = Math.min(0, ...vals), max = Math.max(0, ...vals);
@@ -995,6 +1002,32 @@ async function applyGrades(){
     document.getElementById("pdfnote").textContent = "Graded from " + named + ".";
   }
 }
+document.getElementById("savedash").onclick = () => {
+  const rows = JSON.parse(localStorage.getItem("gg-dashboard-v1") || "[]");
+  const name = "GG-DASHBOARD-" + todayEt();
+  const lines = ["# file: " + name].concat(rows.map(row => [row.date, row.record, row.profit, row.roi, row.units, row.pending, row.clv].join(" | ")));
+  download(name + ".txt", new Blob([lines.join("\n") + "\n"], {type:"text/plain"}));
+  document.getElementById("dashnote").textContent = rows.length ? "Saved " + name + "." : "Save failed. No dashboard rows.";
+};
+document.getElementById("loaddash").onchange = async e => {
+  const file = e.target.files[0];
+  const note = document.getElementById("dashnote");
+  const label = file ? file.name.replace(/\.(txt|pdf|json)$/i, "") : "Dashboard";
+  if (!file) { note.textContent = "Load failed."; return; }
+  try {
+    const rows = (await file.text()).split(/\n/).map(l => l.trim()).filter(l => l && !l.startsWith("#")).map(l => {
+      const [date, record, profit, roi, units, pending, clv] = l.split("|").map(s => s.trim());
+      return {date, record, profit: Number(profit), roi, units, pending, clv};
+    }).filter(row => row.date);
+    if (!rows.length) throw new Error("empty");
+    localStorage.setItem("gg-dashboard-v1", JSON.stringify(rows));
+    drawDashboard(rows);
+    note.textContent = "Loaded " + label + ". " + rows.length + " days saved, last 7 shown.";
+  } catch (err) {
+    note.textContent = "Load failed for " + label + ".";
+  }
+  e.target.value = "";
+};
 document.getElementById("loaddrive").onclick = () => loadDriveCard().then(applyGrades).catch(err => { document.getElementById("pdfnote").textContent = err.message; });
 applyGrades().then(() => loadDriveCard()).catch(() => {});
 document.getElementById("loadcard").onclick = () => loadPending();
