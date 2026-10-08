@@ -612,7 +612,7 @@ function render(){
     [weekRecord(history), "7-Day W/L Record"],
     [money(weekProfit(history)), "7-Day Profit"],
     [weekRoi(history), "7-Day ROI"],
-    [(pl / UNIT).toFixed(2) + "u", "Units @ $10"],
+    [(weekProfit(history) / UNIT).toFixed(2) + "u", "7-Day Units"],
     [bets.filter(b => b.result === "pending" && b.date === todayEt()).length, "Pending"],
     [avgClv, "7-Day Avg CLV"]
   ].map(x => "<div class='stat'><b>" + x[0] + "</b><span>" + x[1] + "</span></div>").join("");
