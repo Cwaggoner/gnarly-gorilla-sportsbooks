@@ -533,7 +533,13 @@ function render(){
   const graded = loadGrade();
   const picked = document.getElementById("reportDay").value;
   const show = document.getElementById("reportShow").value || "both";
-  const pool = bets.concat(graded);
+  const poolMap = {};
+  bets.concat(graded).forEach(b => {
+    const key = [b.date, b.sport, b.pick].join("|");
+    const prior = poolMap[key];
+    if (!prior || (prior.result === "pending" && b.result !== "pending")) poolMap[key] = b;
+  });
+  const pool = Object.values(poolMap);
   const pending = pool.filter(b => b.result === "pending" && b.date === (picked || todayEt()));
   const gradedDay = pool.filter(b => b.result !== "pending" && b.date === (picked || y));
   const day = picked ? pool.filter(b => b.date === picked) : gradedDay;
