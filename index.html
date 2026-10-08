@@ -210,6 +210,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </div>
 <div class="tools">
 <label>Load Ledger<input type="file" id="loadledger" accept=".json,application/json"></label>
+<button type="button" id="syncledger">Sync Ledger</button>
 <button type="button" id="saveledger">Save Ledger</button>
 <span id="ledgernote" class="warn"></span>
 <label>Import CSV<input type="file" id="import" accept=".csv,text/csv"></label>
@@ -1447,6 +1448,23 @@ document.getElementById("loadledger").onchange = async e => {
     note.textContent = "Load failed. Use a Save Ledger JSON file.";
   }
   e.target.value = "";
+};
+document.getElementById("syncledger").onclick = async () => {
+  const note = document.getElementById("ledgernote");
+  note.textContent = "Syncing ledger...";
+  try {
+    const res = await fetch("cards/ledger.json?ts=" + Date.now());
+    if (!res.ok) throw new Error("missing");
+    const data = await res.json();
+    const bets = Array.isArray(data) ? data : data.bets;
+    if (!Array.isArray(bets) || !bets.length) throw new Error("empty");
+    bets.forEach(markEdge);
+    save(bets);
+    localStorage.setItem("gg-hold-ledger", "1");
+    note.textContent = "Synced ledger. " + bets.length + " slips loaded.";
+  } catch (err) {
+    note.textContent = "Sync failed. Ledger is not on the site yet.";
+  }
 };
 document.getElementById("saveledger").onclick = () => {
   const bets = load();
