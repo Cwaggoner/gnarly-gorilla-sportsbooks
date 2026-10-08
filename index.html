@@ -384,10 +384,9 @@ function drawBars(canvas, bets){
   const rows = ["CBB","CFB","MLB","NBA","NFL","NHL"].map(sport => [sport, map[sport]]);
   const cssW = Math.max(320, canvas.clientWidth || 420);
   const rowH = 28;
-  const h = Math.max(120, rows.length * rowH + 24);
+  const h = 192;
   canvas.width = cssW;
-  canvas.height = 192;
-  h = 192;
+  canvas.height = h;
   ctx.clearRect(0,0,cssW,h);
   ctx.fillStyle = "#0e0e0e";
   ctx.fillRect(0,0,cssW,h);
