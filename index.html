@@ -319,12 +319,16 @@ function drawCharts(bets){
   const settled = bets.filter(b => b.result === "win" || b.result === "loss" || b.result === "push").slice().sort((a,b) => a.date.localeCompare(b.date) || a.id - b.id);
   const line = document.getElementById("profitChart");
   const bars = document.getElementById("sportChart");
-  drawLine(line, settled);
   drawBars(bars, bets);
+  line.height = bars.height;
+  line.style.height = bars.getBoundingClientRect().height + "px";
+  drawLine(line, settled);
 }
 function drawLine(canvas, settled){
   const ctx = canvas.getContext("2d");
-  const w = canvas.width, h = canvas.height;
+  const w = Math.max(320, canvas.clientWidth || 640);
+  const h = canvas.height;
+  canvas.width = w;
   ctx.clearRect(0,0,w,h);
   ctx.fillStyle = "#0e0e0e";
   ctx.fillRect(0,0,w,h);
