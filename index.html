@@ -461,7 +461,10 @@ function drawCalendar(){
     board[date] = row;
   });
   const seed = {"2026-10-01":8.20,"2026-10-02":-12.40,"2026-10-03":18.10,"2026-10-04":1.04,"2026-10-05":-76.64,"2026-10-06":-152.48,"2026-10-07":-5.74};
-  Object.entries(seed).forEach(([date, pl]) => { if (!board[date]) board[date] = {pl, n:0, keys:{}}; });
+  Object.entries(seed).forEach(([date, pl]) => {
+    const row = board[date];
+    if (!row || !row.keys || !Object.keys(row.keys).length) board[date] = {pl, n: row && row.n || 0, keys: {}};
+  });
   localStorage.setItem("gg-calendar-v1", JSON.stringify(board));
   const y = monthCursor.getFullYear(), m = monthCursor.getMonth();
   const first = new Date(y, m, 1);
