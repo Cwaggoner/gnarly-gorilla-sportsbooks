@@ -566,7 +566,7 @@ function render(){
   try { drawCharts(bets.concat(loadGrade())); } catch (err) { document.getElementById("plotnote").textContent = "Chart failed. The rest of the page is still live."; }
   document.getElementById("plotnote").textContent = settled.length + " settled slips plotted. " + bets.filter(b => b.result === "pending").length + " slips left to settle.";
   drawCalendar();
-  document.getElementById("breaks").innerHTML = "<h2>By Sport / Book</h2>" + group(bets, "sport") + group(bets, "book") + "<h2>Market Split</h2>" + group(bets, "type") + "<p class='api-note'>This section fills from slips already saved. Load a card or use Add A Bet, then grade each slip Win, Loss, or Push. Pending slips stay at zero until graded.</p>";
+  document.getElementById("breaks").innerHTML = "<h2>By Sport / Book</h2>" + group(settled, "sport") + group(settled, "book") + "<h2>Market Split</h2>" + group(settled, "type") + "<p class='api-note'>This card uses graded slips only. Pending slips are not counted. A sport with no graded slips says No Picks.</p>";
   const y = yesterday();
   const graded = loadGrade();
   const picked = document.getElementById("reportDay").value;
@@ -618,13 +618,16 @@ function render(){
 }
 function group(bets, key){
   const map = {};
+  if (key === "sport") ["CBB","CFB","MLB","NBA","NFL","NHL"].forEach(s => map[s] = {pl:0, n:0});
   bets.forEach(b => {
-    const k = b[key] || "?";
+    if (b.result !== "win" && b.result !== "loss" && b.result !== "push") return;
+    const k = String(b[key] || "").trim() || "?";
     map[k] = map[k] || {pl:0, n:0};
     map[k].pl += profit(b);
-    if (b.result !== "pending" && b.result !== "void") map[k].n++;
+    map[k].n++;
   });
-  return "<p>" + Object.entries(map).map(([k,v]) => esc(k) + ": " + money(v.pl) + " (" + v.n + ")").join(" | ") + "</p>";
+  const rows = Object.entries(map).sort((a,b) => a[0].localeCompare(b[0]));
+  return "<p>" + rows.map(([k,v]) => esc(k) + ": " + (v.n ? money(v.pl) + " (" + v.n + ")" : "No Picks")).join(" | ") + "</p>";
 }
 form.onsubmit = e => {
   e.preventDefault();
