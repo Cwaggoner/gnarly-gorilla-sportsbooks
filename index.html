@@ -364,9 +364,11 @@ function drawBars(canvas, bets){
     const c = clv(b);
     const row = map[sport] || {pl:0, clv:[], n:0, yday:0};
     row.n = (row.n || 0) + 1;
-    if (b.date === yesterday()) row.yday = (row.yday || 0) + 1;
-    if (b.result !== "pending") row.pl += profit(b);
-    if (c != null) row.clv.push(c);
+    if (b.date === yesterday()) {
+      row.yday = (row.yday || 0) + 1;
+      if (b.result !== "pending") row.pl += profit(b);
+      if (c != null) row.clv.push(c);
+    }
     map[sport] = row;
   });
   ["CBB","CFB","MLB","NBA","NFL","NHL"].forEach(sport => { if (!map[sport]) map[sport] = {pl:0, clv:[], n:0, yday:0}; });
