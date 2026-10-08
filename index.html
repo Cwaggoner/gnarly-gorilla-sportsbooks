@@ -1062,10 +1062,12 @@ async function loadDriveCard(){
   const named = text.match(/^#\s*file:\s*(.+)$/m);
   const fileName = (named ? named[1] : "Drive card").replace(/\.(txt|pdf)$/i, "");
   const current = load();
-  if (current.length) archiveSlips(current);
-  localStorage.setItem(KEY, JSON.stringify([]));
+  const finished = current.filter(b => b.date < todayEt() && b.result === "pending");
+  if (finished.length) archiveSlips(finished);
   const added = addCardLines(text, document.getElementById("cardbook").value || "BetMGM");
-  note.textContent = "Saved " + current.length + " slips for grading. Read " + fileName + ". " + (added || 0) + " slips loaded.";
+  load().forEach(markEdge);
+  save(load());
+  note.textContent = "Read " + fileName + ". " + (added || 0) + " slips added. Ledger has every sport loaded for the day.";
 }
 function gradeRows(text){
   return text.split(/\n/).map(l => l.trim()).filter(l => l && !l.startsWith("#")).map(l => {
@@ -1411,6 +1413,8 @@ document.getElementById("loadledger").onchange = async e => {
     if (!Array.isArray(bets)) throw new Error("That file has no slips.");
     bets.forEach(markEdge);
     save(bets);
+    document.getElementById("reportDay").value = "";
+    render();
     localStorage.setItem("gg-hold-ledger", "1");
     note.textContent = "Loaded " + bets.length + " slips.";
   } catch (err) {
