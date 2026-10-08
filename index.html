@@ -427,13 +427,15 @@ function clv(b){
   return (got / closed - 1) * 100;
 }
 function clvText(b){
+  if (b.result === "pending" || b.result === "void") return "-";
   const cv = clv(b);
   if (cv == null) return "-";
   if (Number(b.close) === Number(b.odds) || Math.abs(cv) < 0.05) return "Matched Bet Price";
   return cv.toFixed(1) + "%";
 }
 function clvListText(list){
-  const xs = list.map(clv).filter(v => v != null);
+  const graded = list.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
+  const xs = graded.map(clv).filter(v => v != null);
   if (!xs.length) return "-";
   if (xs.every(v => Math.abs(v) < 0.05)) return "Matched Bet Price";
   return (xs.reduce((s,v)=>s+v,0)/xs.length).toFixed(1) + "%";
