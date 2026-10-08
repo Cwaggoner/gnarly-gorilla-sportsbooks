@@ -279,7 +279,10 @@ function drawDashboard(history, manual){
   document.getElementById("dashrows").innerHTML = shown.map(row => "<tr><td>" + row.date + "</td><td>" + row.record + "</td><td>" + money(Number(row.profit)) + "</td><td>" + row.roi + "</td><td>" + row.units + "</td><td>" + row.pending + "</td><td>" + row.clv + "</td></tr>").join("");
   const canvas = document.getElementById("dashChart");
   const ctx = canvas.getContext("2d");
-  const w = canvas.width, h = canvas.height;
+  const w = Math.max(320, canvas.clientWidth || 640);
+  const h = 160;
+  canvas.width = w;
+  canvas.height = h;
   ctx.clearRect(0,0,w,h);
   ctx.fillStyle = "#0e0e0e";
   ctx.fillRect(0,0,w,h);
@@ -294,8 +297,8 @@ function drawDashboard(history, manual){
   ctx.strokeStyle = "#243024";
   ctx.beginPath(); ctx.moveTo(28, y(0)); ctx.lineTo(w - 16, y(0)); ctx.stroke();
   ctx.fillStyle = "#8fb898";
-  ctx.font = "12px sans-serif";
-  ctx.fillText("Break Even - $0", w - 110, y(0) - 4);
+  ctx.font = "11px sans-serif";
+  ctx.fillText("Break Even - $0", w - 108, y(0) - 4);
   ctx.strokeStyle = "#39ff14";
   ctx.beginPath();
   pts.forEach((p,i) => i ? ctx.lineTo(x(i), y(p.y)) : ctx.moveTo(x(i), y(p.y)));
