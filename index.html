@@ -103,6 +103,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <p>Settled Ledger for Gnarly Gorilla Sports Decks. Paste the plays, grade them next day, copy the report.</p>
 </div>
 </header>
+<p id="seasons" class="warn">Season dates load at the top. Checked each January.</p>
 <main>
 <section class="stats" id="stats"></section>
 <section class="card" id="dashboard">
@@ -255,7 +256,8 @@ function archiveSlips(bets){
   localStorage.setItem(GRADE_KEY, JSON.stringify(prior));
   return prior.length;
 }
-function save(bets){ localStorage.setItem(KEY, JSON.stringify(bets)); render(); }
+function save(bets){ localStorage.setItem(KEY, JSON.stringify(bets)); loadSeasons();
+render(); }
 function profit(b){
   if (b.result === "pending" || b.result === "void" || b.result === "push") return 0;
   const odds = Number(b.odds), stake = Number(b.stake);
@@ -495,8 +497,24 @@ function drawCalendar(){
 }
 
 function todayEt(){ return new Date().toLocaleDateString("en-CA", {timeZone:"America/New_York"}); }
-const SEASON_END = {MLB:"2026-10-31", CFB:"2027-01-25", NFL:"2027-02-14", CBB:"2027-04-05", NHL:"2027-04-10", NBA:"2027-04-11"};
+let SEASON_END = {MLB:"2026-10-31", CFB:"2027-01-25", NFL:"2027-02-14", CBB:"2027-04-05", NHL:"2027-04-10", NBA:"2027-04-11"};
+let SEASON_START = {MLB:"2026-03-25", CFB:"2026-08-27", NFL:"2026-09-09", CBB:"2026-11-02", NHL:"2026-09-29", NBA:"2026-10-20"};
 function seasonEnded(sport){ const end = SEASON_END[String(sport || "").toUpperCase()]; return !!end && todayEt() > end; }
+function showSeasons(checked){
+  const box = document.getElementById("seasons");
+  if (!box) return;
+  const line = ["CBB","CFB","MLB","NBA","NFL","NHL"].map(s => s + " " + SEASON_START[s] + " to " + SEASON_END[s] + (seasonEnded(s) ? " Season Ended" : "")).join(" | ");
+  box.textContent = "Season dates checked " + (checked || "2026-10-08") + ". " + line;
+}
+async function loadSeasons(){
+  try {
+    const res = await fetch("cards/seasons.json?ts=" + Date.now());
+    if (!res.ok) return;
+    const data = await res.json();
+    (data.sports || []).forEach(s => { SEASON_START[s.sport] = s.start; SEASON_END[s.sport] = s.end; });
+    showSeasons(data.checked);
+  } catch (err) { showSeasons(); }
+}
 function seasonText(sport){ return seasonEnded(sport) ? "Season Ended" : "No Picks"; }
 function clearStalePending(){
   const today = todayEt();

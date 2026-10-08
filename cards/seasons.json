@@ -1,0 +1,41 @@
+{
+  "checked": "2026-10-08",
+  "sports": [
+    {
+      "sport": "MLB",
+      "start": "2026-03-25",
+      "end": "2026-10-31",
+      "note": "Regular season ended Sep 27. Cards run through World Series."
+    },
+    {
+      "sport": "CFB",
+      "start": "2026-08-27",
+      "end": "2027-01-25",
+      "note": "Through the national championship."
+    },
+    {
+      "sport": "NFL",
+      "start": "2026-09-09",
+      "end": "2027-02-14",
+      "note": "Regular season ends Jan 10. Cards run through the Super Bowl."
+    },
+    {
+      "sport": "CBB",
+      "start": "2026-11-02",
+      "end": "2027-04-05",
+      "note": "Through the men's championship."
+    },
+    {
+      "sport": "NHL",
+      "start": "2026-09-29",
+      "end": "2027-04-10",
+      "note": "Regular season."
+    },
+    {
+      "sport": "NBA",
+      "start": "2026-10-20",
+      "end": "2027-04-11",
+      "note": "Regular season."
+    }
+  ]
+}
