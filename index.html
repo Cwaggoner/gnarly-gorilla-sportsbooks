@@ -399,7 +399,7 @@ function drawBars(canvas, bets){
   ctx.fillStyle = "#0e0e0e";
   ctx.fillRect(0,0,cssW,h);
   ctx.font = "12px sans-serif";
-  const label = r => { if (!r[1].yday) return seasonText(r[0]); const xs = r[1].clv; return "CLV " + (xs.length ? (xs.reduce((s,v)=>s+v,0)/xs.length).toFixed(1) + "%" : "-"); };
+  const label = r => { if (!r[1].yday) return seasonText(r[0]); const xs = r[1].clv.filter(v => Math.abs(v) >= 0.05); return "CLV " + (xs.length ? (xs.reduce((s,v)=>s+v,0)/xs.length).toFixed(1) + "%" : "-"); };
   const labelW = Math.max(...rows.map(r => ctx.measureText(r[0]).width), 36);
   const valueW = Math.max(...rows.map(r => ctx.measureText(money(r[1].pl) + "  " + label(r)).width), 90);
   const left = 12 + labelW + 8;
@@ -424,6 +424,7 @@ function decimal(odds){
 }
 function clv(b){
   if (b.close === "" || b.close == null) return null;
+  if (Number(b.close) === Number(b.odds)) return null;
   const got = decimal(b.odds), closed = decimal(b.close);
   if (!got || !closed) return null;
   return (got / closed - 1) * 100;
