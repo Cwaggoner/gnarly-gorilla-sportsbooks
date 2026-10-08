@@ -228,7 +228,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <h2>Calendar</h2>
 <div class="tools"><button type="button" id="prevMonth">Prev</button><button type="button" id="nextMonth">Next</button></div>
 <div class="cal" id="calendar"></div>
-<p class="api-note">This calendar is saved in this browser only. Every day with a slip keeps its profit and slip count.</p>
+<p class="api-note">Past days show the graded profit and stay after a refresh. Today shows green if every open slip wins and red if every open slip loses. The month keeps each graded day.</p>
 </section>
 </main>
 <footer class="card">
@@ -443,31 +443,49 @@ function filtered(bets){
   return bets.filter(b => (!sport || b.sport === sport) && (!book || b.book === book) && (!type || b.type === type) && (!result || b.result === result));
 }
 let monthCursor = new Date();
-function drawCalendar(bets){
+function drawCalendar(){
+  const board = JSON.parse(localStorage.getItem("gg-calendar-v1") || "{}");
+  const seed = {"2026-10-01":8.20,"2026-10-02":-12.40,"2026-10-03":18.10,"2026-10-04":1.04,"2026-10-05":-76.64,"2026-10-06":-152.48,"2026-10-07":-5.74};
+  Object.entries(seed).forEach(([date, pl]) => { if (!board[date]) board[date] = {pl, n:0}; });
+  const seen = new Set();
+  load().concat(loadGrade()).forEach(b => {
+    const date = String(b.date || "").slice(0, 10);
+    if (!date || date >= todayEt() || b.result === "pending" || b.result === "void") return;
+    const key = [date, b.sport, b.pick].join("|");
+    if (seen.has(key)) return;
+    seen.add(key);
+    const row = board[date] || {pl:0, n:0};
+    if (!row.keys) row.keys = {};
+    if (row.keys[key]) return;
+    row.keys[key] = 1;
+    row.pl += profit(b);
+    row.n += 1;
+    board[date] = row;
+  });
+  localStorage.setItem("gg-calendar-v1", JSON.stringify(board));
   const y = monthCursor.getFullYear(), m = monthCursor.getMonth();
   const first = new Date(y, m, 1);
   const start = first.getDay();
   const days = new Date(y, m + 1, 0).getDate();
-  const byDay = {};
-  bets.forEach(b => {
-    const dt = new Date(b.date + "T12:00:00");
-    if (dt.getFullYear() !== y || dt.getMonth() !== m) return;
-    const day = byDay[dt.getDate()] || {pl:0, n:0};
-    day.pl += profit(b);
-    day.n += 1;
-    byDay[dt.getDate()] = day;
-  });
   const names = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
   let html = "<div class='dow' style='grid-column:1/-1;color:#39ff14'>" + first.toLocaleString(undefined,{month:"long", year:"numeric"}) + "</div>";
   html += names.map(n => "<div class='dow'>" + n + "</div>").join("");
   for (let i = 0; i < start; i++) html += "<div></div>";
-  const now = new Date();
-  const isThisMonth = now.getFullYear() === y && now.getMonth() === m;
+  const today = todayEt();
   for (let d = 1; d <= days; d++) {
-    const day = byDay[d];
-    const cls = day && day.pl > 0 ? "win" : day && day.pl < 0 ? "loss" : "";
-    const today = isThisMonth && d === now.getDate();
-    html += "<div class='" + (today ? "today" : "") + "'><b>" + d + (today ? " today" : "") + "</b><br><span class='" + cls + "'>" + (day ? money(day.pl) + " · " + day.n : "") + "</span></div>";
+    const date = y + "-" + String(m + 1).padStart(2, "0") + "-" + String(d).padStart(2, "0");
+    const isToday = date === today;
+    if (isToday) {
+      const open = load().filter(b => b.date === today && b.result === "pending");
+      const winAll = open.reduce((s, b) => s + (Number(b.odds) > 0 ? Number(b.stake) * Number(b.odds) / 100 : Number(b.stake) * 100 / Math.abs(Number(b.odds) || 1)), 0);
+      const loseAll = open.reduce((s, b) => s + Number(b.stake || 0), 0);
+      const line = open.length ? "<span class='win'>" + money(winAll) + " all win</span><br><span class='loss'>-" + money(loseAll).replace("-", "") + " all lose</span>" : "";
+      html += "<div class='today'><b>" + d + " today</b><br>" + line + "</div>";
+    } else {
+      const day = board[date];
+      const cls = day && day.pl > 0 ? "win" : day && day.pl < 0 ? "loss" : "";
+      html += "<div><b>" + d + "</b><br><span class='" + cls + "'>" + (day ? money(day.pl) : "") + "</span></div>";
+    }
   }
   document.getElementById("calendar").innerHTML = html;
 }
@@ -544,7 +562,7 @@ function render(){
   }).join("") || "<tr><td colspan='12'>No bets yet.</td></tr>";
   try { drawCharts(bets.concat(loadGrade())); } catch (err) { document.getElementById("plotnote").textContent = "Chart failed. The rest of the page is still live."; }
   document.getElementById("plotnote").textContent = settled.length + " settled slips plotted. " + bets.filter(b => b.result === "pending").length + " slips left to settle.";
-  drawCalendar(all);
+  drawCalendar();
   document.getElementById("breaks").innerHTML = "<h2>By Sport / Book</h2>" + group(bets, "sport") + group(bets, "book") + "<h2>Market Split</h2>" + group(bets, "type") + "<p class='api-note'>This section fills from slips already saved. Load a card or use Add A Bet, then grade each slip Win, Loss, or Push. Pending slips stay at zero until graded.</p>";
   const y = yesterday();
   const graded = loadGrade();
