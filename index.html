@@ -142,7 +142,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <label>Show<select id="reportShow"><option value="both">Both</option><option value="pending">Pending</option><option value="graded">Graded</option></select></label>
 </div>
 <div id="report"></div>
-<div class="tools"><button type="button" id="copyreport">Copy Report</button><button type="button" id="printreport">Print Report</button><span id="copynote" class="warn"></span></div>
+<div class="tools"><button type="button" id="copyreport">Copy Report</button><button type="button" id="printreport">Print Report</button><button type="button" id="savepng">Save PNG</button><span id="copynote" class="warn"></span></div>
 <div id="printpreview" class="print-preview" hidden>
 <img id="printimg" alt="Report card print preview">
 <div class="tools"><button type="button" id="saveprint">Save PDF</button><span id="printnote" class="warn"></span></div>
@@ -1105,6 +1105,7 @@ applyGrades().then(() => { if (localStorage.getItem("gg-hold-ledger") === "1") r
 document.getElementById("loadcard").onclick = () => loadPending();
 
 let printBlob = null;
+let printPng = null;
 function roundRect(ctx, x, y, w, h, r) {
   ctx.beginPath();
   ctx.moveTo(x + r, y);
@@ -1180,12 +1181,33 @@ async function buildPrintForm() {
     row.forEach((cell, i) => ctx.fillText(cell.slice(0, i === 2 ? 62 : 18), xs[i], y));
   });
   if (!rows.length) ctx.fillText("No slips on this report.", 56, y + 28);
-  document.getElementById("printimg").src = canvas.toDataURL("image/jpeg", 0.92);
+  document.getElementById("printimg").src = canvas.toDataURL("image/png");
+  printPng = await new Promise(r => canvas.toBlob(r, "image/png"));
   document.getElementById("printpreview").hidden = false;
   printBlob = await jpegPdf(canvas);
   note.textContent = "Preview ready. Save PDF asks where to put the file.";
 }
 document.getElementById("printreport").onclick = () => buildPrintForm().catch(err => { document.getElementById("printnote").textContent = err.message || "Preview failed."; });
+document.getElementById("savepng").onclick = async () => {
+  const note = document.getElementById("printnote");
+  if (!printPng) { try { await buildPrintForm(); } catch (err) { note.textContent = err.message || "Preview failed."; return; } }
+  if (!printPng) { note.textContent = "Press Print Report first."; return; }
+  const name = "GG-Report-Card.png";
+  try {
+    if (window.showSaveFilePicker) {
+      const handle = await showSaveFilePicker({suggestedName: name, types: [{description: "PNG", accept: {"image/png": [".png"]}}]});
+      const writable = await handle.createWritable();
+      await writable.write(printPng);
+      await writable.close();
+      note.textContent = "PNG saved.";
+      return;
+    }
+  } catch (err) {
+    if (err.name === "AbortError") { note.textContent = "Save cancelled."; return; }
+  }
+  download(name, printPng);
+  note.textContent = "PNG downloaded.";
+};
 document.getElementById("saveprint").onclick = async () => {
   const note = document.getElementById("printnote");
   if (!printBlob) { note.textContent = "Press Print Report first."; return; }
