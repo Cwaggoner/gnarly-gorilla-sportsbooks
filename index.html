@@ -416,16 +416,33 @@ function render(){
   const day = graded.filter(b => b.date === y).concat(bets.filter(b => b.date === y));
   const daySettled = day.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
   const dayPl = day.reduce((s,b) => s + profit(b), 0);
-  const sortedDay = day.slice().sort((a,b) => (a.result === "pending" ? 0 : 1) - (b.result === "pending" ? 0 : 1) || String(a.sport).localeCompare(String(b.sport)) || String(a.result).localeCompare(String(b.result)));
   const hit = daySettled.length ? (day.filter(b => b.result === "win").length / daySettled.length * 100).toFixed(0) + "%" : "-";
+  const blocks = [
+    ["Pending", day.filter(b => b.result === "pending")],
+    ["Graded", day.filter(b => b.result !== "pending")]
+  ];
   const copy = ["GNARLY GORILLA REPORT CARD", "Yesterday " + y, "Record " + rec(day) + "   P/L " + money(dayPl) + "   on $10 slips", "Hit rate " + hit];
-  const body = sortedDay.map(b => "<tr><td>" + esc(b.result.toUpperCase()) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.pick) + "</td><td>" + esc(b.odds) + "</td><td>" + (b.result === "pending" ? "OPEN" : money(profit(b))) + "</td></tr>").join("");
-  sortedDay.forEach(b => copy.push([b.result.toUpperCase(), b.sport, b.pick, b.odds, b.result === "pending" ? "OPEN" : money(profit(b))].join("  ")));
+  let body = "";
+  blocks.forEach(([title, list]) => {
+    const sorted = list.slice().sort((a,b) => String(a.sport).localeCompare(String(b.sport)) || String(a.result).localeCompare(String(b.result)) || String(a.pick).localeCompare(String(b.pick)));
+    copy.push("", title);
+    body += "<h2>" + title + "</h2>";
+    if (!sorted.length) { copy.push("None"); body += "<p>None</p>"; return; }
+    body += "<table><thead><tr><th>Result</th><th>Sport</th><th>Pick</th><th>Odds</th><th>P/L</th></tr></thead><tbody>";
+    let sport = "";
+    sorted.forEach(b => {
+      if (b.sport !== sport) { sport = b.sport; copy.push(sport); body += "<tr class='sport'><td colspan='5'>" + esc(sport) + "</td></tr>"; }
+      const plCell = b.result === "pending" ? "OPEN" : money(profit(b));
+      copy.push([b.result.toUpperCase(), b.sport, b.pick, b.odds, plCell].join("  "));
+      body += "<tr><td>" + esc(b.result.toUpperCase()) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.pick) + "</td><td>" + esc(b.odds) + "</td><td>" + plCell + "</td></tr>";
+    });
+    body += "</tbody></table>";
+  });
   if (!day.length) copy.push("No slips dated yesterday.");
   copy.push("", "Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u");
   const report = document.getElementById("report");
   report.dataset.copy = copy.join("\n");
-  report.innerHTML = "<p>Yesterday " + y + "</p><p>Record " + rec(day) + "   P/L " + money(dayPl) + "   Hit rate " + hit + "</p>" + (day.length ? "<table><thead><tr><th>Result</th><th>Sport</th><th>Pick</th><th>Odds</th><th>P/L</th></tr></thead><tbody>" + body + "</tbody></table>" : "<p>No slips dated yesterday.</p>") + "<p>Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u</p>";
+  report.innerHTML = "<p>Yesterday " + y + "</p><p>Record " + rec(day) + "   P/L " + money(dayPl) + "   Hit rate " + hit + "</p>" + body + "<p>Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u</p>";
 }
 function group(bets, key){
   const map = {};
@@ -952,8 +969,8 @@ async function jpegPdf(canvas) {
 async function buildPrintForm() {
   const note = document.getElementById("printnote");
   const report = document.getElementById("report");
-  const rows = [...report.querySelectorAll("tbody tr")].map(tr => [...tr.children].map(td => td.textContent));
-  const summary = [...report.querySelectorAll("p")].map(p => p.textContent);
+  const rows = [...report.querySelectorAll("h2, tbody tr")].map(el => el.tagName === "H2" ? [el.textContent] : [...el.children].map(td => td.textContent));
+  const summary = [...report.querySelectorAll(":scope > p")].map(p => p.textContent);
   const canvas = document.createElement("canvas");
   canvas.width = 1584; canvas.height = 1224;
   const ctx = canvas.getContext("2d");
@@ -987,8 +1004,9 @@ async function buildPrintForm() {
   heads.forEach((h, i) => ctx.fillText(h, xs[i], y));
   ctx.fillStyle = "#d6ffd0";
   rows.forEach(row => {
-    y += 28;
+    y += 26;
     if (y > 1140) return;
+    if (row.length === 1) { ctx.fillStyle = "#39ff14"; ctx.fillText(row[0], 56, y); ctx.fillStyle = "#d6ffd0"; return; }
     row.forEach((cell, i) => ctx.fillText(cell.slice(0, i === 2 ? 62 : 18), xs[i], y));
   });
   if (!rows.length) ctx.fillText("No slips on this report.", 56, y + 28);
