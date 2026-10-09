@@ -152,10 +152,10 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <label>Show<select id="reportShow"><option value="both">Both</option><option value="pending">Pending</option><option value="graded">Graded</option></select></label>
 </div>
 <div id="report"></div>
-<div class="tools"><button type="button" id="copyreport">Copy Report</button><button type="button" id="printreport">Print Report</button><button type="button" id="savepng">Save PNG</button><span id="copynote" class="warn"></span></div>
+<div class="tools"><button type="button" id="copyreport">Copy Report</button><button type="button" id="printreport">Print Report</button><button type="button" id="savepng">Save PNG</button><span id="copynote" class="warn"></span><span id="printnote" class="warn"></span></div>
 <div id="printpreview" class="print-preview" hidden>
 <img id="printimg" alt="Report card print preview">
-<div class="tools"><button type="button" id="saveprint">Save PDF</button><span id="printnote" class="warn"></span></div>
+<div class="tools"><button type="button" id="saveprint">Save PDF</button></div>
 </div>
 </section>
 <section class="card" id="charts">
@@ -661,7 +661,7 @@ function render(){
   const dayPl = gradedDay.reduce((s,b) => s + profit(b), 0);
   const hit = daySettled.length ? (gradedDay.filter(b => b.result === "win").length / daySettled.length * 100).toFixed(0) + "%" : "-";
   const blocks = [];
-  if (show !== "graded") blocks.push(["Pending", pending]);
+  if (show !== "graded") blocks.push(["Date", pending]);
   if (show !== "pending") blocks.push(["Graded", gradedDay]);
   const copy = ["GNARLY GORILLA REPORT CARD", (picked || y), "W/L Record " + rec(gradedDay) + "   P/L " + money(dayPl) + "   on $10 slips", "Hit rate " + hit];
   let body = "";
@@ -1282,13 +1282,15 @@ async function buildPrintForm() {
   ctx.stroke();
   const icon = new Image();
   icon.src = "gg-icon.png";
-  await new Promise((res, rej) => { icon.onload = res; icon.onerror = rej; });
-  ctx.save();
-  roundRect(ctx, 1428, 52, 108, 108, 16);
-  ctx.stroke();
-  ctx.clip();
-  ctx.drawImage(icon, 1432, 56, 100, 100);
-  ctx.restore();
+  const iconReady = await new Promise(res => { icon.onload = () => res(true); icon.onerror = () => res(false); });
+  if (iconReady) {
+    ctx.save();
+    roundRect(ctx, 1428, 52, 108, 108, 16);
+    ctx.stroke();
+    ctx.clip();
+    ctx.drawImage(icon, 1432, 56, 100, 100);
+    ctx.restore();
+  }
   ctx.fillStyle = "#39ff14";
   ctx.font = "28px sans-serif";
   ctx.fillText("Gnarly Gorilla Report Card", 56, 96);
@@ -1307,7 +1309,7 @@ async function buildPrintForm() {
   rows.forEach(row => {
     y += rowH;
     const cells = row.cells || row;
-    if (cells.length === 1 && cells[0] === "Graded") { ctx.strokeStyle = "#39ff14"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(56, y - 16); ctx.lineTo(1460, y - 16); ctx.stroke(); }
+    if (cells.length === 1 && (cells[0] === "Graded" || cells[0] === "Date")) { ctx.strokeStyle = "#39ff14"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(56, y - 16); ctx.lineTo(1460, y - 16); ctx.stroke(); }
     if (cells.length === 1) { ctx.fillStyle = "#39ff14"; ctx.fillText(cells[0], 56, y); ctx.fillStyle = "#d6ffd0"; return; }
     ctx.fillStyle = row.edge ? "#f0e14a" : "#d6ffd0";
     cells.forEach((cell, i) => ctx.fillText(cell.slice(0, i === 3 ? 42 : 18), xs[i], y));
@@ -1319,7 +1321,23 @@ async function buildPrintForm() {
   printBlob = await jpegPdf(canvas);
   note.textContent = "Preview ready. Save PDF asks where to put the file.";
 }
-document.getElementById("printreport").onclick = () => buildPrintForm().catch(err => { document.getElementById("printnote").textContent = err.message || "Preview failed."; });
+document.getElementById("printreport").onclick = async () => {
+  const note = document.getElementById("printnote");
+  note.textContent = "Building the report...";
+  try {
+    await buildPrintForm();
+    note.textContent = "Preview ready.";
+    const frame = document.getElementById("printimg");
+    const popup = window.open("", "gg-report");
+    if (!popup) { note.textContent = "Preview is below. Allow pop-ups to print."; return; }
+    popup.document.write("<title>Gnarly Gorilla Report Card</title><img src='" + frame.src + "' style='width:100%'>");
+    popup.document.close();
+    popup.focus();
+    popup.print();
+  } catch (err) {
+    note.textContent = err.message || "Print failed.";
+  }
+};
 document.getElementById("savepng").onclick = async () => {
   const note = document.getElementById("printnote");
   if (!printPng) { try { await buildPrintForm(); } catch (err) { note.textContent = err.message || "Preview failed."; return; } }
