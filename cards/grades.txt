@@ -1,7 +1,7 @@
 # file: GG-GRADES-2026-10-08
 # Graded 2026-10-09 from finals. Stake $10. Close left blank when no separate published closing price was found. Equal-to-bet closes were not saved.
-# Edge rows: note says Edge, confidence is High, or a measured close beat the bet price.
-2026-10-08 | NFL | Dallas Cowboys -8.5 | close | loss | TB 24 DAL 16 | -$10.00
+# Cowboys spread closed -9.5 (consensus) against a -8.5 card. TNF total closed 49, same number as the card, so close left blank.
+2026-10-08 | NFL | Dallas Cowboys -8.5 | close -9.5 | loss | TB 24 DAL 16 | -$10.00
 2026-10-08 | NFL | Buccaneers at Cowboys Over 49 | close | loss | TB 24 DAL 16, total 40 | -$10.00
 2026-10-08 | NFL | Dallas Cowboys -8.5 and Buccaneers at Cowboys Over 49 | close | loss | TB 24 DAL 16, total 40 | -$10.00
 2026-10-08 | NFL | Tampa Bay Buccaneers +8.5 and Buccaneers at Cowboys Under 49 | close | win | TB 24 DAL 16, total 40 | +$26.10
@@ -12,8 +12,8 @@
 2026-10-08 | CFB | Missouri State at Western Kentucky Under 57.5 | close | win | WKU 34 MOST 13, total 47 | +$9.26
 2026-10-08 | CFB | South Alabama +3 | close | win | USA 56 ARST 49 | +$8.70
 2026-10-08 | CFB | South Alabama at Arkansas State Under 62.5 | close | loss | USA 56 ARST 49, total 105 | -$10.00
-2026-10-08 | CFB | South Florida +6.5 | close | loss | UTSA 31 USF 24 | -$10.00
-2026-10-08 | CFB | South Florida at UTSA Under 50.5 | close | loss | UTSA 31 USF 24, total 55 | -$10.00
+2026-10-08 | CFB | South Florida +6.5 | close +5.5 | loss | UTSA 31 USF 24 | -$10.00
+2026-10-08 | CFB | South Florida at UTSA Under 50.5 | close 49.5 | loss | UTSA 31 USF 24, total 55 | -$10.00
 2026-10-08 | CFB | Sam Houston +14 and Sam Houston at Liberty Under 53.5 | close | loss | LIB 35 SHSU 3, total 38 | -$10.00
 2026-10-08 | CFB | Missouri State +1.5 and Missouri State at Western Kentucky Under 57.5 | close | loss | WKU 34 MOST 13, total 47 | -$10.00
 2026-10-08 | CFB | South Florida +6.5 and South Florida at UTSA Under 50.5 | close | loss | UTSA 31 USF 24, total 55 | -$10.00
@@ -26,10 +26,10 @@
 2026-10-08 | NHL | Bruins ML | close | win | BOS 6 UTA 1 | +$10.50
 2026-10-08 | NHL | Sabres ML | close | loss | DAL 4 BUF 0 | -$10.00
 2026-10-08 | NHL | Predators ML | close | win | NSH 5 MTL 2 | +$14.50
-2026-10-08 | NHL | Wild ML | close | loss | TBL 3 MIN 2 | -$10.00
+2026-10-08 | NHL | Wild ML | close | loss | TB 3 MIN 2 | -$10.00
 2026-10-08 | NHL | Canucks ML | close | loss | CAR 7 VAN 2 | -$10.00
 2026-10-08 | NHL | Blackhawks ML | close | loss | NYI 4 CHI 1 | -$10.00
-2026-10-08 | NHL | Sharks ML | close | win | SJS 3 STL 2 OT | +$12.50
+2026-10-08 | NHL | Sharks ML | close | win | SJ 3 STL 2 OT | +$12.50
 2026-10-08 | NHL | Flames ML | close | loss | COL 7 CGY 3 | -$10.00
 2026-10-08 | NHL | Maple Leafs ML | close | loss | VGK 4 TOR 3 SO | -$10.00
 2026-10-08 | NHL | Flyers ML and Flyers at Senators Under 6 | close | loss | OTT 2 PHI 1, total 3 | -$10.00
@@ -45,4 +45,4 @@
 2026-10-08 | NBA | Hawks +9.5 and Hawks at Spurs Under 224 | close | loss | ATL 123 SAS 116, total 239 | -$10.00
 2026-10-08 | NBA | Kings +12.5 and Kings at Lakers Under 229.5 | close | win | LAL 114 SAC 110, total 224 | +$18.80
 2026-10-08 | CBB | No Picks
-# Season stop dates from cards/seasons.json. None ended on 2026-10-08.
+# Season stop dates from cards/seasons.json. None ended on 2026-10-08. CBB has not started (2026-11-02).
