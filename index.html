@@ -521,18 +521,28 @@ let monthCursor = new Date();
 function drawCalendar(){
   const board = JSON.parse(localStorage.getItem("gg-calendar-v1") || "{}");
   const seen = new Set();
-  load().concat(loadGrade()).concat(gradeFile).forEach(b => {
+  const gradedDates = new Set(gradeFile.map(b => String(b.date || "").slice(0, 10)));
+  gradeFile.forEach(b => {
     const date = String(b.date || "").slice(0, 10);
-    if (!date || date >= todayEt() || b.result === "pending" || b.result === "void") return;
+    if (!date || date >= todayEt() || /no picks|season ended/i.test(b.pick || "")) return;
+    if (!board[date] || board[date].built !== todayEt()) board[date] = {pl:0, n:0, keys:{}, built: todayEt()};
+    const key = [date, b.sport, b.pick].join("|");
+    if (board[date].keys[key]) return;
+    board[date].keys[key] = 1;
+    board[date].pl += Number(b.profit) || 0;
+    board[date].n += 1;
+  });
+  load().concat(loadGrade()).forEach(b => {
+    const date = String(b.date || "").slice(0, 10);
+    if (!date || date >= todayEt() || gradedDates.has(date) || b.result === "pending" || b.result === "void") return;
     const key = [date, b.sport, b.pick].join("|");
     if (seen.has(key)) return;
     seen.add(key);
     if (!board[date] || board[date].built !== todayEt()) board[date] = {pl:0, n:0, keys:{}, built: todayEt()};
-    const row = board[date];
-    if (row.keys[key]) return;
-    row.keys[key] = 1;
-    row.pl += Number.isFinite(b.profit) ? b.profit : profit(b);
-    row.n += 1;
+    if (board[date].keys[key]) return;
+    board[date].keys[key] = 1;
+    board[date].pl += profit(b);
+    board[date].n += 1;
   });
   const seed = {"2026-10-01":8.20,"2026-10-02":-12.40,"2026-10-03":18.10,"2026-10-04":1.04,"2026-10-05":-76.64,"2026-10-06":-152.48,"2026-10-07":-5.74};
   Object.entries(seed).forEach(([date, pl]) => {
