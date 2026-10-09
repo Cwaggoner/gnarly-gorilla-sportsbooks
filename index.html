@@ -521,17 +521,17 @@ let monthCursor = new Date();
 function drawCalendar(){
   const board = JSON.parse(localStorage.getItem("gg-calendar-v1") || "{}");
   const seen = new Set();
-  load().concat(loadGrade()).forEach(b => {
+  load().concat(loadGrade()).concat(gradeFile).forEach(b => {
     const date = String(b.date || "").slice(0, 10);
     if (!date || date >= todayEt() || b.result === "pending" || b.result === "void") return;
     const key = [date, b.sport, b.pick].join("|");
     if (seen.has(key)) return;
     seen.add(key);
-    if (!board[date] || !board[date].rebuilt) board[date] = {pl:0, n:0, keys:{}, rebuilt:1};
+    if (!board[date] || board[date].built !== todayEt()) board[date] = {pl:0, n:0, keys:{}, built: todayEt()};
     const row = board[date];
     if (row.keys[key]) return;
     row.keys[key] = 1;
-    row.pl += profit(b);
+    row.pl += Number.isFinite(b.profit) ? b.profit : profit(b);
     row.n += 1;
   });
   const seed = {"2026-10-01":8.20,"2026-10-02":-12.40,"2026-10-03":18.10,"2026-10-04":1.04,"2026-10-05":-76.64,"2026-10-06":-152.48,"2026-10-07":-5.74};
@@ -1633,8 +1633,9 @@ fetch("cards/grades.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(
     if (parts.length < 5 || !/^\d{4}-\d{2}-\d{2}$/.test(parts[0])) return null;
     const close = (parts[3].match(/-?\d+/) || [""])[0];
     const result = (parts[4].match(/win|loss|push/i) || ["loss"])[0].toLowerCase();
-    const money = parts[parts.length - 1].replace(/[$,]/g, "");
-    return {date: parts[0], sport: parts[1], pick: parts[2], odds: close, close: close, result: result, stake: 10, profit: Number(money) || 0};
+    const dollars = parts[parts.length - 1].replace(/[$,+]/g, "");
+    const profit = Number(dollars);
+    return {date: parts[0], sport: parts[1], pick: parts[2], odds: close || -110, close: close, result: result, stake: 10, profit: Number.isFinite(profit) ? profit : 0};
   }).filter(Boolean);
   render();
 }).catch(() => {});
