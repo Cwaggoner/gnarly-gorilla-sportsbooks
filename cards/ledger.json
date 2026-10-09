@@ -1,5 +1,7 @@
 {
-  "saved": "2026-10-08T19:13:00.000Z",
+  "saved": "2026-10-09T12:21:00.000Z",
+  "graded_slate": "2026-10-08",
+  "clv_note": "Close left blank unless a published closing price differed from the bet price. No equal-price close was saved.",
   "bets": [
     {
       "id": 42,
@@ -10,9 +12,10 @@
       "pick": "Dallas Cowboys -8.5",
       "odds": -108,
       "stake": 10,
-      "result": "pending",
+      "result": "loss",
       "notes": "Medium 58%",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 43,
@@ -23,9 +26,10 @@
       "pick": "Buccaneers at Cowboys Over 49",
       "odds": -110,
       "stake": 10,
-      "result": "pending",
+      "result": "loss",
       "notes": "Medium 55%",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 44,
@@ -36,9 +40,10 @@
       "pick": "Dallas Cowboys -8.5 and Buccaneers at Cowboys Over 49",
       "odds": 268,
       "stake": 10,
-      "result": "pending",
+      "result": "loss",
       "notes": "SGP 1",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 45,
@@ -49,9 +54,10 @@
       "pick": "Tampa Bay Buccaneers +8.5 and Buccaneers at Cowboys Under 49",
       "odds": 261,
       "stake": 10,
-      "result": "pending",
+      "result": "win",
       "notes": "SGP 2",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 46,
@@ -62,9 +68,10 @@
       "pick": "Tampa Bay Buccaneers moneyline and Buccaneers at Cowboys Under 49",
       "odds": 778,
       "stake": 10,
-      "result": "pending",
+      "result": "win",
       "notes": "SGP 3",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 47,
@@ -75,9 +82,10 @@
       "pick": "Sam Houston +14",
       "odds": -112,
       "stake": 10,
-      "result": "pending",
+      "result": "loss",
       "notes": "Medium 56%",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 48,
@@ -88,9 +96,10 @@
       "pick": "Sam Houston at Liberty Under 53.5",
       "odds": -105,
       "stake": 10,
-      "result": "pending",
+      "result": "win",
       "notes": "Medium 55%",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 49,
@@ -101,9 +110,10 @@
       "pick": "Missouri State +1.5",
       "odds": -112,
       "stake": 10,
-      "result": "pending",
+      "result": "loss",
       "notes": "Medium 57%",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 50,
@@ -114,9 +124,10 @@
       "pick": "Missouri State at Western Kentucky Under 57.5",
       "odds": -108,
       "stake": 10,
-      "result": "pending",
+      "result": "win",
       "notes": "Low 52%",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 51,
@@ -127,9 +138,10 @@
       "pick": "South Alabama +3",
       "odds": -115,
       "stake": 10,
-      "result": "pending",
+      "result": "win",
       "notes": "Medium 55%",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 52,
@@ -140,9 +152,10 @@
       "pick": "South Alabama at Arkansas State Under 62.5",
       "odds": -112,
       "stake": 10,
-      "result": "pending",
+      "result": "loss",
       "notes": "Low 52%",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 53,
@@ -153,9 +166,10 @@
       "pick": "South Florida +6.5",
       "odds": -105,
       "stake": 10,
-      "result": "pending",
+      "result": "loss",
       "notes": "Medium 58%",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 54,
@@ -166,9 +180,10 @@
       "pick": "South Florida at UTSA Under 50.5",
       "odds": -110,
       "stake": 10,
-      "result": "pending",
+      "result": "loss",
       "notes": "Medium 54%",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 55,
@@ -179,9 +194,10 @@
       "pick": "Sam Houston +14 and Sam Houston at Liberty Under 53.5",
       "odds": 285,
       "stake": 10,
-      "result": "pending",
+      "result": "loss",
       "notes": "SGP 1",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 56,
@@ -192,9 +208,10 @@
       "pick": "Missouri State +1.5 and Missouri State at Western Kentucky Under 57.5",
       "odds": 280,
       "stake": 10,
-      "result": "pending",
+      "result": "loss",
       "notes": "SGP 2",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 57,
@@ -205,9 +222,10 @@
       "pick": "South Florida +6.5 and South Florida at UTSA Under 50.5",
       "odds": 270,
       "stake": 10,
-      "result": "pending",
+      "result": "loss",
       "notes": "SGP 3",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 58,
@@ -218,9 +236,10 @@
       "pick": "White Sox ML",
       "odds": -102,
       "stake": 10,
-      "result": "pending",
+      "result": "loss",
       "notes": "Medium 56%",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 59,
@@ -231,9 +250,10 @@
       "pick": "Guardians at White Sox Under 7.5",
       "odds": -120,
       "stake": 10,
-      "result": "pending",
+      "result": "loss",
       "notes": "Medium 55%",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 60,
@@ -244,9 +264,10 @@
       "pick": "White Sox ML and Guardians at White Sox Under 7.5",
       "odds": 263,
       "stake": 10,
-      "result": "pending",
+      "result": "loss",
       "notes": "SGP 1",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 61,
@@ -257,9 +278,10 @@
       "pick": "White Sox +1.5 and Guardians at White Sox Under 7.5",
       "odds": -315,
       "stake": 10,
-      "result": "pending",
+      "result": "loss",
       "notes": "SGP 2",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 62,
@@ -270,9 +292,10 @@
       "pick": "Guardians -1.5 and Guardians at White Sox Over 7.5",
       "odds": 400,
       "stake": 10,
-      "result": "pending",
+      "result": "win",
       "notes": "SGP 3",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 63,
@@ -283,9 +306,10 @@
       "pick": "Flyers ML",
       "odds": 145,
       "stake": 10,
-      "result": "pending",
+      "result": "loss",
       "notes": "Medium 54%",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 64,
@@ -296,9 +320,10 @@
       "pick": "Bruins ML",
       "odds": 105,
       "stake": 10,
-      "result": "pending",
+      "result": "win",
       "notes": "Medium 53%",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 65,
@@ -309,9 +334,10 @@
       "pick": "Sabres ML",
       "odds": 100,
       "stake": 10,
-      "result": "pending",
+      "result": "loss",
       "notes": "Medium 53%",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 66,
@@ -322,9 +348,10 @@
       "pick": "Predators ML",
       "odds": 145,
       "stake": 10,
-      "result": "pending",
+      "result": "win",
       "notes": "Medium 54%",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 67,
@@ -335,9 +362,10 @@
       "pick": "Wild ML",
       "odds": 120,
       "stake": 10,
-      "result": "pending",
+      "result": "loss",
       "notes": "Medium 53%",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 68,
@@ -348,9 +376,10 @@
       "pick": "Canucks ML",
       "odds": 275,
       "stake": 10,
-      "result": "pending",
+      "result": "loss",
       "notes": "Low 42%",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 69,
@@ -361,9 +390,10 @@
       "pick": "Blackhawks ML",
       "odds": 154,
       "stake": 10,
-      "result": "pending",
+      "result": "loss",
       "notes": "Medium 54%",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 70,
@@ -374,9 +404,10 @@
       "pick": "Sharks ML",
       "odds": 125,
       "stake": 10,
-      "result": "pending",
+      "result": "win",
       "notes": "Medium 54%",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 71,
@@ -387,9 +418,10 @@
       "pick": "Flames ML",
       "odds": 200,
       "stake": 10,
-      "result": "pending",
+      "result": "loss",
       "notes": "Medium 52%",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 72,
@@ -400,9 +432,10 @@
       "pick": "Maple Leafs ML",
       "odds": 140,
       "stake": 10,
-      "result": "pending",
+      "result": "loss",
       "notes": "Medium 54%",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 73,
@@ -413,9 +446,10 @@
       "pick": "Flyers ML and Flyers at Senators Under 6",
       "odds": 349,
       "stake": 10,
-      "result": "pending",
+      "result": "loss",
       "notes": "SGP 1",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 74,
@@ -426,9 +460,10 @@
       "pick": "Predators ML and Predators at Canadiens Under 6.5",
       "odds": 349,
       "stake": 10,
-      "result": "pending",
+      "result": "loss",
       "notes": "SGP 2",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 75,
@@ -439,9 +474,10 @@
       "pick": "Blackhawks ML and Blackhawks at Islanders Under 6",
       "odds": 366,
       "stake": 10,
-      "result": "pending",
+      "result": "loss",
       "notes": "SGP 3",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 76,
@@ -452,9 +488,10 @@
       "pick": "Cavaliers +3.5",
       "odds": -110,
       "stake": 10,
-      "result": "pending",
+      "result": "loss",
       "notes": "Medium 56%",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 77,
@@ -465,9 +502,10 @@
       "pick": "Pelicans +7.5",
       "odds": -110,
       "stake": 10,
-      "result": "pending",
+      "result": "loss",
       "notes": "High 64%",
-      "close": ""
+      "close": "",
+      "edge": true
     },
     {
       "id": 78,
@@ -478,9 +516,10 @@
       "pick": "Nets +8.5",
       "odds": -112,
       "stake": 10,
-      "result": "pending",
+      "result": "win",
       "notes": "High 65%",
-      "close": ""
+      "close": "",
+      "edge": true
     },
     {
       "id": 79,
@@ -491,9 +530,10 @@
       "pick": "Wizards +6.5",
       "odds": -110,
       "stake": 10,
-      "result": "pending",
+      "result": "win",
       "notes": "High 63%",
-      "close": ""
+      "close": "",
+      "edge": true
     },
     {
       "id": 80,
@@ -504,9 +544,10 @@
       "pick": "Hawks +9.5",
       "odds": -110,
       "stake": 10,
-      "result": "pending",
+      "result": "win",
       "notes": "High 66%",
-      "close": ""
+      "close": "",
+      "edge": true
     },
     {
       "id": 81,
@@ -517,9 +558,10 @@
       "pick": "Kings +12.5",
       "odds": -115,
       "stake": 10,
-      "result": "pending",
+      "result": "win",
       "notes": "High 67%",
-      "close": ""
+      "close": "",
+      "edge": true
     },
     {
       "id": 82,
@@ -530,9 +572,10 @@
       "pick": "Nets +8.5 and 76ers at Nets Under 218.5",
       "odds": 190,
       "stake": 10,
-      "result": "pending",
+      "result": "loss",
       "notes": "SGP 1",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 83,
@@ -543,9 +586,10 @@
       "pick": "Hawks +9.5 and Hawks at Spurs Under 224",
       "odds": 190,
       "stake": 10,
-      "result": "pending",
+      "result": "loss",
       "notes": "SGP 2",
-      "close": ""
+      "close": "",
+      "edge": false
     },
     {
       "id": 84,
@@ -556,9 +600,10 @@
       "pick": "Kings +12.5 and Kings at Lakers Under 229.5",
       "odds": 188,
       "stake": 10,
-      "result": "pending",
+      "result": "win",
       "notes": "SGP 3",
-      "close": ""
+      "close": "",
+      "edge": false
     }
   ]
 }

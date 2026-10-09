@@ -1,13 +1,13 @@
-# file: GG-TOTALS-2026-10-08
-Date: 2026-10-08
-Slate: 2026-10-07
-Record: 10-14
-Profit: -$5.74
-ROI: -2.4%
-Units: -0.57u
+# file: GG-TOTALS-2026-10-09
+Date: 2026-10-09
+Slate: 2026-10-08
+Record: 14-29
+Profit: $-26.51
+ROI: -6.2%
+Units: -2.65u
 Pending: 0
-Hit rate: 41.7%
-Avg CLV: 0.0%
-Close: matched card American odds
+Hit rate: 32.6%
+Avg CLV: n/a
+Close: blank — no separate published close saved
 Stake: $10
-Source: graded slips through 2026-10-07
+Source: graded slips for 2026-10-08

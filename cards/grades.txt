@@ -1,26 +1,48 @@
-# file: GG-GRADES-2026-10-07
-# Graded 2026-10-08 from finals. Closing American odds matched the card price. Stake $10. No finished game left pending.
-2026-10-07 | NBA | Timberwolves at Pacers Timberwolves -2.5 | close -110 | loss | IND 123 MIN 112 | -$10.00
-2026-10-07 | NBA | Magic at Grizzlies Grizzlies +2.5 | close -108 | loss | ORL 122 MEM 118 | -$10.00
-2026-10-07 | NBA | Bucks at Thunder Bucks +14.5 | close -110 | win | MIL 128 OKC 126 | +$9.09
-2026-10-07 | NBA | Suns at Bulls Bulls +2.5 | close -110 | win | CHI 124 PHX 117 | +$9.09
-2026-10-07 | NBA | Warriors at Trail Blazers Warriors +14.5 | close -110 | win | POR 123 GS 118 | +$9.09
-2026-10-07 | NBA | Bucks at Thunder Bucks +14.5 and Bucks at Thunder Under 218.5 | close +190 | loss | MIL 128 OKC 126, total 254 | -$10.00
-2026-10-07 | NBA | Warriors at Trail Blazers Warriors +14.5 and Warriors at Trail Blazers Under 214.5 | close +190 | loss | POR 123 GS 118, total 241 | -$10.00
-2026-10-07 | NBA | Magic at Grizzlies Grizzlies +2.5 and Magic at Grizzlies Under 234.5 | close +188 | loss | ORL 122 MEM 118, total 240 | -$10.00
-2026-10-07 | NHL | Penguins at Capitals Penguins ML | close +135 | loss | WSH 5 PIT 3 | -$10.00
-2026-10-07 | NHL | Avalanche at Jets Jets ML | close +155 | win | WPG 3 COL 2 | +$15.50
-2026-10-07 | NHL | Oilers at Ducks Ducks ML | close +110 | loss | EDM 5 ANA 2 | -$10.00
-2026-10-07 | NHL | Penguins at Capitals Penguins ML and Penguins at Capitals Under 6.5 | close +349 | loss | WSH 5 PIT 3, total 8 | -$10.00
-2026-10-07 | NHL | Avalanche at Jets Jets ML and Avalanche at Jets Under 6.5 | close +377 | win | WPG 3 COL 2, total 5 | +$37.70
-2026-10-07 | NHL | Oilers at Ducks Ducks ML and Oilers at Ducks Under 7 | close +266 | loss | EDM 5 ANA 2, total 7 | -$10.00
-2026-10-07 | MLB | Guardians at White Sox White Sox ML | close -120 | loss | CLE 9 CHW 3 | -$10.00
-2026-10-07 | MLB | Dodgers at Braves Dodgers -1.5 | close +120 | win | LAD 4 ATL 1 | +$12.00
-2026-10-07 | MLB | Rays at Yankees Rays ML | close +135 | win | TB 4 NYY 3 | +$13.50
-2026-10-07 | MLB | Brewers at Padres Brewers ML | close -105 | win | MIL 3 SD 1 | +$9.52
-2026-10-07 | CFB | Jacksonville State at Kennesaw State Kennesaw State +2.5 | close -100 | win | JSU 27 KENN 26 | +$10.00
-2026-10-07 | CFB | Jacksonville State at Kennesaw State Under 48.5 | close -105 | loss | JSU 27 KENN 26, total 53 | -$10.00
-2026-10-07 | CFB | New Mexico State at FIU New Mexico State +6.5 | close -106 | loss | FIU 22 NMSU 3 | -$10.00
-2026-10-07 | CFB | New Mexico State at FIU Under 47.5 | close -114 | win | FIU 22 NMSU 3, total 25 | +$8.77
-2026-10-07 | CFB | Jacksonville State at Kennesaw State Kennesaw State +2.5 and Jacksonville State at Kennesaw State Under 48.5 | close +290 | loss | JSU 27 KENN 26, total 53 | -$10.00
-2026-10-07 | CFB | New Mexico State at FIU New Mexico State +6.5 and New Mexico State at FIU Under 47.5 | close +275 | loss | FIU 22 NMSU 3 | -$10.00
+# file: GG-GRADES-2026-10-08
+# Graded 2026-10-09 from finals. Stake $10. Close left blank when no separate published closing price was found. Equal-to-bet closes were not saved.
+# Edge rows: note says Edge, confidence is High, or a measured close beat the bet price.
+2026-10-08 | NFL | Dallas Cowboys -8.5 | close | loss | TB 24 DAL 16 | -$10.00
+2026-10-08 | NFL | Buccaneers at Cowboys Over 49 | close | loss | TB 24 DAL 16, total 40 | -$10.00
+2026-10-08 | NFL | Dallas Cowboys -8.5 and Buccaneers at Cowboys Over 49 | close | loss | TB 24 DAL 16, total 40 | -$10.00
+2026-10-08 | NFL | Tampa Bay Buccaneers +8.5 and Buccaneers at Cowboys Under 49 | close | win | TB 24 DAL 16, total 40 | +$26.10
+2026-10-08 | NFL | Tampa Bay Buccaneers moneyline and Buccaneers at Cowboys Under 49 | close | win | TB 24 DAL 16, total 40 | +$77.80
+2026-10-08 | CFB | Sam Houston +14 | close | loss | LIB 35 SHSU 3 | -$10.00
+2026-10-08 | CFB | Sam Houston at Liberty Under 53.5 | close | win | LIB 35 SHSU 3, total 38 | +$9.52
+2026-10-08 | CFB | Missouri State +1.5 | close | loss | WKU 34 MOST 13 | -$10.00
+2026-10-08 | CFB | Missouri State at Western Kentucky Under 57.5 | close | win | WKU 34 MOST 13, total 47 | +$9.26
+2026-10-08 | CFB | South Alabama +3 | close | win | USA 56 ARST 49 | +$8.70
+2026-10-08 | CFB | South Alabama at Arkansas State Under 62.5 | close | loss | USA 56 ARST 49, total 105 | -$10.00
+2026-10-08 | CFB | South Florida +6.5 | close | loss | UTSA 31 USF 24 | -$10.00
+2026-10-08 | CFB | South Florida at UTSA Under 50.5 | close | loss | UTSA 31 USF 24, total 55 | -$10.00
+2026-10-08 | CFB | Sam Houston +14 and Sam Houston at Liberty Under 53.5 | close | loss | LIB 35 SHSU 3, total 38 | -$10.00
+2026-10-08 | CFB | Missouri State +1.5 and Missouri State at Western Kentucky Under 57.5 | close | loss | WKU 34 MOST 13, total 47 | -$10.00
+2026-10-08 | CFB | South Florida +6.5 and South Florida at UTSA Under 50.5 | close | loss | UTSA 31 USF 24, total 55 | -$10.00
+2026-10-08 | MLB | White Sox ML | close | loss | CLE 9 CHW 5 | -$10.00
+2026-10-08 | MLB | Guardians at White Sox Under 7.5 | close | loss | CLE 9 CHW 5, total 14 | -$10.00
+2026-10-08 | MLB | White Sox ML and Guardians at White Sox Under 7.5 | close | loss | CLE 9 CHW 5, total 14 | -$10.00
+2026-10-08 | MLB | White Sox +1.5 and Guardians at White Sox Under 7.5 | close | loss | CLE 9 CHW 5, total 14 | -$10.00
+2026-10-08 | MLB | Guardians -1.5 and Guardians at White Sox Over 7.5 | close | win | CLE 9 CHW 5, total 14 | +$40.00
+2026-10-08 | NHL | Flyers ML | close | loss | OTT 2 PHI 1 | -$10.00
+2026-10-08 | NHL | Bruins ML | close | win | BOS 6 UTA 1 | +$10.50
+2026-10-08 | NHL | Sabres ML | close | loss | DAL 4 BUF 0 | -$10.00
+2026-10-08 | NHL | Predators ML | close | win | NSH 5 MTL 2 | +$14.50
+2026-10-08 | NHL | Wild ML | close | loss | TBL 3 MIN 2 | -$10.00
+2026-10-08 | NHL | Canucks ML | close | loss | CAR 7 VAN 2 | -$10.00
+2026-10-08 | NHL | Blackhawks ML | close | loss | NYI 4 CHI 1 | -$10.00
+2026-10-08 | NHL | Sharks ML | close | win | SJS 3 STL 2 OT | +$12.50
+2026-10-08 | NHL | Flames ML | close | loss | COL 7 CGY 3 | -$10.00
+2026-10-08 | NHL | Maple Leafs ML | close | loss | VGK 4 TOR 3 SO | -$10.00
+2026-10-08 | NHL | Flyers ML and Flyers at Senators Under 6 | close | loss | OTT 2 PHI 1, total 3 | -$10.00
+2026-10-08 | NHL | Predators ML and Predators at Canadiens Under 6.5 | close | loss | NSH 5 MTL 2, total 7 | -$10.00
+2026-10-08 | NHL | Blackhawks ML and Blackhawks at Islanders Under 6 | close | loss | NYI 4 CHI 1, total 5 | -$10.00
+2026-10-08 | NBA | Cavaliers +3.5 | close | loss | BOS 124 CLE 113 | -$10.00
+2026-10-08 | NBA | Pelicans +7.5 | close | loss | MIA 128 NOP 118 | -$10.00
+2026-10-08 | NBA | Nets +8.5 | close | win | BKN 114 PHI 108 | +$8.93
+2026-10-08 | NBA | Wizards +6.5 | close | win | WSH 111 NYK 109 | +$9.09
+2026-10-08 | NBA | Hawks +9.5 | close | win | ATL 123 SAS 116 | +$9.09
+2026-10-08 | NBA | Kings +12.5 | close | win | LAL 114 SAC 110 | +$8.70
+2026-10-08 | NBA | Nets +8.5 and 76ers at Nets Under 218.5 | close | loss | BKN 114 PHI 108, total 222 | -$10.00
+2026-10-08 | NBA | Hawks +9.5 and Hawks at Spurs Under 224 | close | loss | ATL 123 SAS 116, total 239 | -$10.00
+2026-10-08 | NBA | Kings +12.5 and Kings at Lakers Under 229.5 | close | win | LAL 114 SAC 110, total 224 | +$18.80
+2026-10-08 | CBB | No Picks
+# Season stop dates from cards/seasons.json. None ended on 2026-10-08.

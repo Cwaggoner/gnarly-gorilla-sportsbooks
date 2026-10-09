@@ -375,9 +375,9 @@ function drawLine(canvas, settled){
 }
 let gradeFile = [];
 function chartClv(b){
-  if (b.close === "" || b.close == null || Number(b.close) === Number(b.odds)) return 0;
+  if (b.close === "" || b.close == null || Number(b.close) === Number(b.odds)) return null;
   const got = decimal(b.odds), closed = decimal(b.close);
-  if (!got || !closed) return 0;
+  if (!got || !closed) return null;
   return (got / closed - 1) * 100;
 }
 function yesterdayGraded(bets){
@@ -407,7 +407,8 @@ function drawBars(canvas, bets){
     const row = map[sport];
     row.yday += 1;
     row.pl += profit(b);
-    row.clv.push(chartClv(b));
+    const cv = chartClv(b);
+    if (cv != null) row.clv.push(cv);
   });
   const rows = sports.map(sport => [sport, map[sport]]);
   const cssW = Math.max(320, canvas.clientWidth || 420);
@@ -419,7 +420,7 @@ function drawBars(canvas, bets){
   ctx.fillStyle = "#0e0e0e";
   ctx.fillRect(0,0,cssW,h);
   ctx.font = "12px sans-serif";
-  const label = r => { if (!r[1].yday) return seasonText(r[0]); return "CLV " + (r[1].clv.reduce((s,v)=>s+v,0) / r[1].clv.length).toFixed(1) + "%"; };
+  const label = r => { if (!r[1].yday) return seasonText(r[0]); if (!r[1].clv.length) return "CLV n/a"; return "CLV " + (r[1].clv.reduce((s,v)=>s+v,0) / r[1].clv.length).toFixed(1) + "%"; };
   const labelW = Math.max(...rows.map(r => ctx.measureText(r[0]).width), 36);
   const valueW = Math.max(...rows.map(r => ctx.measureText(money(r[1].pl) + "  " + label(r)).width), 90);
   const left = 12 + labelW + 8;
