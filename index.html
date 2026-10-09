@@ -690,7 +690,7 @@ function render(){
   copy.push("", "Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u");
   const report = document.getElementById("report");
   report.dataset.copy = copy.join("\n");
-  report.innerHTML = "<p>Date " + (picked || todayEt()) + ". Graded " + (picked || y) + "</p>"<p>W/L Record " + rec(gradedDay) + "   P/L " + money(dayPl) + "   Hit rate " + hit + "</p>" + body + "<p>Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u</p>";
+  report.innerHTML = "<p>Date " + (picked || todayEt()) + ". Graded " + (picked || y) + "</p><p>W/L Record " + rec(gradedDay) + "   P/L " + money(dayPl) + "   Hit rate " + hit + "</p>" + body + "<p>Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u</p>";
 }
 function group(bets, key){
   const map = {};
