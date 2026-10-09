@@ -518,38 +518,9 @@ function filtered(bets){
   return bets.filter(b => (!sport || b.sport === sport) && (!book || b.book === book) && (!type || b.type === type) && (!result || b.result === result));
 }
 let monthCursor = new Date();
+let publishedCalendar = {"2026-10-01":{pl:8.20,n:0},"2026-10-02":{pl:-12.40,n:0},"2026-10-03":{pl:18.10,n:0},"2026-10-04":{pl:1.04,n:0},"2026-10-05":{pl:-76.64,n:0},"2026-10-06":{pl:-152.48,n:0},"2026-10-07":{pl:-5.74,n:0},"2026-10-08":{pl:-26.51,n:43}};
 function drawCalendar(){
-  const board = JSON.parse(localStorage.getItem("gg-calendar-v1") || "{}");
-  const seen = new Set();
-  const gradedDates = new Set(gradeFile.map(b => String(b.date || "").slice(0, 10)));
-  gradeFile.forEach(b => {
-    const date = String(b.date || "").slice(0, 10);
-    if (!date || date >= todayEt() || /no picks|season ended/i.test(b.pick || "")) return;
-    if (!board[date] || board[date].built !== todayEt()) board[date] = {pl:0, n:0, keys:{}, built: todayEt()};
-    const key = [date, b.sport, b.pick].join("|");
-    if (board[date].keys[key]) return;
-    board[date].keys[key] = 1;
-    board[date].pl += Number(b.profit) || 0;
-    board[date].n += 1;
-  });
-  load().concat(loadGrade()).forEach(b => {
-    const date = String(b.date || "").slice(0, 10);
-    if (!date || date >= todayEt() || gradedDates.has(date) || b.result === "pending" || b.result === "void") return;
-    const key = [date, b.sport, b.pick].join("|");
-    if (seen.has(key)) return;
-    seen.add(key);
-    if (!board[date] || board[date].built !== todayEt()) board[date] = {pl:0, n:0, keys:{}, built: todayEt()};
-    if (board[date].keys[key]) return;
-    board[date].keys[key] = 1;
-    board[date].pl += profit(b);
-    board[date].n += 1;
-  });
-  const seed = {"2026-10-01":8.20,"2026-10-02":-12.40,"2026-10-03":18.10,"2026-10-04":1.04,"2026-10-05":-76.64,"2026-10-06":-152.48,"2026-10-07":-5.74};
-  Object.entries(seed).forEach(([date, pl]) => {
-    const row = board[date];
-    if (!row || !row.keys || !Object.keys(row.keys).length) board[date] = {pl, n: row && row.n || 0, keys: {}};
-  });
-  localStorage.setItem("gg-calendar-v1", JSON.stringify(board));
+  const board = Object.assign({}, publishedCalendar);
   const y = monthCursor.getFullYear(), m = monthCursor.getMonth();
   const first = new Date(y, m, 1);
   const start = first.getDay();
@@ -1637,6 +1608,7 @@ document.getElementById("prevMonth").onclick = () => { monthCursor.setMonth(mont
 document.getElementById("nextMonth").onclick = () => { monthCursor.setMonth(monthCursor.getMonth()+1); render(); };
 render();
 loadSeasons();
+fetch("cards/calendar.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => { if (data && data.dates) publishedCalendar = data.dates; render(); }).catch(() => {});
 fetch("cards/grades.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
   gradeFile = text.split(/\n/).map(line => {
     const parts = line.split("|").map(s => s.trim());
