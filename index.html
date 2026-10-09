@@ -263,20 +263,21 @@ function archiveSlips(bets){
 function save(bets){ localStorage.setItem(KEY, JSON.stringify(bets)); render(); }
 function profit(b){
   if (b.result === "pending" || b.result === "void" || b.result === "push") return 0;
-  const odds = Number(b.odds), stake = Number(b.stake);
+  const odds = Number(b.odds), stake = Number(b.stake) || 0;
+  if (!Number.isFinite(stake)) return 0;
+  if (b.result !== "win") return -stake;
+  if (!Number.isFinite(odds) || odds === 0) return 0;
   const winAmt = odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds);
-  return b.result === "win" ? winAmt : -stake;
+  return Number.isFinite(winAmt) ? winAmt : 0;
 }
-function money(n){ return (n < 0 ? "-$" : "$") + Math.abs(n).toFixed(2); }
+function money(n){ n = Number(n); if (!Number.isFinite(n)) return "-"; return (n < 0 ? "-$" : "$") + Math.abs(n).toFixed(2); }
 function rec(list){
   const w = list.filter(b => b.result === "win").length;
   const l = list.filter(b => b.result === "loss").length;
   const p = list.filter(b => b.result === "push").length;
   return w + "-" + l + (p ? "-" + p : "");
 }
-function esc(s){
-  return String(s).replace(/&/g,"&").replace(/</g,"<").replace(/>/g,">");
-}
+function esc(s){ return String(s == null ? "" : s).replace(/&/g,"&").replace(/</g,"<").replace(/>/g,">"); }
 
 
 function drawDashboard(history, manual){
@@ -476,7 +477,7 @@ function weekProfit(history){ return weekRows(history).reduce((s, row) => s + ro
 function weekRoi(history){
   const days = weekRows(history);
   const staked = days.reduce((s, row) => s + row.staked, 0);
-  return staked ? (weekProfit(history) / staked * 100).toFixed(1) + "%" : "-";
+  return staked && Number.isFinite(staked) ? (weekProfit(history) / staked * 100).toFixed(1) + "%" : "-";
 }
 function weekRecord(history){
   const seed = {"2026-10-01":"6-5","2026-10-02":"5-6","2026-10-03":"7-4","2026-10-04":"13-15-3","2026-10-05":"8-13","2026-10-06":"4-12","2026-10-07":"10-14"};
@@ -535,7 +536,7 @@ function drawCalendar(){
     const isToday = date === today;
     if (isToday) {
       const open = load().filter(b => b.date === today && b.result === "pending");
-      const winAll = open.reduce((s, b) => s + (Number(b.odds) > 0 ? Number(b.stake) * Number(b.odds) / 100 : Number(b.stake) * 100 / Math.abs(Number(b.odds) || 1)), 0);
+      const winAll = open.reduce((s, b) => { const odds = Number(b.odds), stake = Number(b.stake) || 0; if (!Number.isFinite(odds) || odds === 0) return s; return s + (odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds)); }, 0);
       const loseAll = open.reduce((s, b) => s + Number(b.stake || 0), 0);
       const line = open.length ? "<span class='win'>" + money(winAll) + " all win</span><br><span class='loss'>-" + money(loseAll).replace("-", "") + " all lose</span>" : "";
       html += "<div class='today'><b>" + d + " today</b><br>" + line + "</div>";
