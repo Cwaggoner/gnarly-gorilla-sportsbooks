@@ -690,7 +690,7 @@ function render(){
   copy.push("", "Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u");
   const report = document.getElementById("report");
   report.dataset.copy = copy.join("\n");
-  report.innerHTML = "<p>" + (picked ? picked : "Pending " + todayEt() + " and graded " + y) + "</p><p>W/L Record " + rec(gradedDay) + "   P/L " + money(dayPl) + "   Hit rate " + hit + "</p>" + body + "<p>Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u</p>";
+  report.innerHTML = "<p>Date " + (picked || todayEt()) + ". Graded " + (picked || y) + "</p>"<p>W/L Record " + rec(gradedDay) + "   P/L " + money(dayPl) + "   Hit rate " + hit + "</p>" + body + "<p>Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u</p>";
 }
 function group(bets, key){
   const map = {};
@@ -1269,14 +1269,16 @@ async function buildPrintForm() {
   const report = document.getElementById("report");
   const rows = [...report.querySelectorAll("h2, tbody tr")].map(el => el.tagName === "H2" ? {cells:[el.textContent], edge:false} : {cells:[...el.children].map(td => td.textContent), edge:el.classList.contains("edge")});
   const summary = [...report.querySelectorAll(":scope > p")].map(p => p.textContent);
+  const rowH = 22;
   const canvas = document.createElement("canvas");
-  canvas.width = 1584; canvas.height = 1224;
+  canvas.width = 1584;
+  canvas.height = Math.max(1224, 280 + rows.length * rowH + 80);
   const ctx = canvas.getContext("2d");
   ctx.fillStyle = "#0a0a0a";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.strokeStyle = "#39ff14";
   ctx.lineWidth = 3;
-  roundRect(ctx, 28, 28, 1528, 1168, 24);
+  roundRect(ctx, 28, 28, canvas.width - 56, canvas.height - 56, 24);
   ctx.stroke();
   const icon = new Image();
   icon.src = "gg-icon.png";
@@ -1291,19 +1293,19 @@ async function buildPrintForm() {
   ctx.font = "28px sans-serif";
   ctx.fillText("Gnarly Gorilla Report Card", 56, 96);
   ctx.fillStyle = "#d6ffd0";
-  ctx.font = "18px sans-serif";
+  ctx.font = "16px sans-serif";
   ctx.fillText("8.5 x 11 in landscape", 56, 128);
-  summary.forEach((line, i) => ctx.fillText(line, 56, 176 + i * 28));
+  summary.forEach((line, i) => ctx.fillText(line, 56, 176 + i * 24));
   const heads = ["Date", "Result", "Sport", "Pick", "Odds", "P/L"];
   const xs = [56, 190, 330, 450, 1180, 1320];
-  let y = 176 + summary.length * 28 + 20;
+  let y = 176 + summary.length * 24 + 20;
   ctx.fillStyle = "#39ff14";
-  ctx.font = "18px sans-serif";
+  ctx.font = "16px sans-serif";
   heads.forEach((h, i) => ctx.fillText(h, xs[i], y));
   ctx.fillStyle = "#d6ffd0";
+  ctx.font = "16px sans-serif";
   rows.forEach(row => {
-    y += 26;
-    if (y > 1140) return;
+    y += rowH;
     const cells = row.cells || row;
     if (cells.length === 1 && cells[0] === "Graded") { ctx.strokeStyle = "#39ff14"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(56, y - 16); ctx.lineTo(1460, y - 16); ctx.stroke(); }
     if (cells.length === 1) { ctx.fillStyle = "#39ff14"; ctx.fillText(cells[0], 56, y); ctx.fillStyle = "#d6ffd0"; return; }
