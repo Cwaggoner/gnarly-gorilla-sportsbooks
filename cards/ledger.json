@@ -1,1 +1,21 @@
-PLACEHOLDER_REPLACE
+{
+  "saved": "2026-10-10T13:30:00.000Z",
+  "graded_slate": "2026-10-09",
+  "clv_note": "Closes left blank. Today's games not graded. Edge true for High confidence dogs on 5.5+ spreads.",
+  "bets": [
+    {
+      "id": 42,
+      "date": "2026-10-08",
+      "book": "BetMGM",
+      "sport": "NFL",
+      "type": "Spread",
+      "pick": "Dallas Cowboys -8.5",
+      "odds": -108,
+      "stake": 10,
+      "result": "loss",
+      "notes": "Medium 58%",
+      "close": "",
+      "edge": false
+    }
+  ]
+}
