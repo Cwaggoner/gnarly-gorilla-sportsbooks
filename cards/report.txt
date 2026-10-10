@@ -1,1 +1,39 @@
-PLACEHOLDER_REPORT
+# GG report 2026-10-10
+# Yesterday 2026-10-09 graded. No pick cards created for 2026-10-10 in this run.
+
+Record 14-15  Profit $15.13  Units +1.51u  CLV n/a
+
+CFB | win | Florida A&M +14.5 | -115 | +$8.70
+CFB | loss | Florida A&M at Alabama State Under 47.5 | -125 | -$10.00
+CFB | loss | Florida State +3.5 | -108 | -$10.00
+CFB | loss | Florida State at Louisville Under 59.5 | -108 | -$10.00
+CFB | loss | Marist +1.5 | -110 | -$10.00
+CFB | loss | Columbia at Marist Under 43.5 | -110 | -$10.00
+CFB | win | Iowa +2.5 | -105 | +$9.52 EDGE
+CFB | loss | Iowa at Washington Under 41.5 | -115 | -$10.00 EDGE
+CFB | win | Washington State +5.5 | -110 | +$9.09
+CFB | win | Washington State at Utah State Under 43.5 | -105 | +$9.52
+CFB | win | Wyoming +4.5 | -110 | +$9.09
+CFB | win | Wyoming at San Jose State Under 42.5 | -110 | +$9.09
+CFB | loss | Iowa State +10.5 | -112 | -$10.00
+CFB | win | Iowa State at BYU Under 46.5 | -112 | +$8.93
+CFB | loss | Iowa +2.5 and Iowa at Washington Under 41.5 | 265 | -$10.00 EDGE
+CFB | loss | Florida State +3.5 and Florida State at Louisville Under 59.5 | 280 | -$10.00
+CFB | loss | Iowa State +10.5 and Iowa State at BYU Under 46.5 | 275 | -$10.00
+NHL | win | Kraken ML | 120 | +$12.00
+NHL | loss | Rangers ML | 120 | -$10.00 EDGE
+NHL | loss | Penguins ML | 102 | -$10.00
+NHL | win | Ducks ML | 105 | +$10.50
+NHL | loss | Rangers ML and Rangers at Capitals Under 5.5 | 351 | -$10.00 EDGE
+NHL | loss | Kraken ML and Kraken at Red Wings Under 6.5 | 289 | -$10.00
+NHL | win | Ducks ML and Ducks at Jets Under 6.5 | 279 | +$27.90
+NBA | win | Grizzlies +3.5 | -115 | +$8.70
+NBA | win | Grizzlies at Bulls Under 239.5 | -110 | +$9.09
+NBA | win | Grizzlies +3.5 and Grizzlies at Bulls Under 239.5 | 190 | +$19.00
+NBA | loss | Bulls -3.5 and Grizzlies at Bulls Over 239.5 | 185 | -$10.00
+NBA | win | Grizzlies +3.5 and Grizzlies ML | 140 | +$14.00
+
+2026-10-09 | MLB | No Picks
+2026-10-09 | NFL | No Picks
+2026-10-09 | CBB | No Picks
+No sport is Season Ended. MLB last card date 2026-10-31. CFB 2027-01-25. NFL 2027-02-14. CBB 2027-04-05. NHL 2027-04-10. NBA 2027-04-11.
