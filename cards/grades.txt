@@ -1,1 +1,36 @@
-PLACEHOLDER_GRADES
+# file: GG-GRADES-2026-10-09
+# Graded 2026-10-10 from finals. Stake $10. Close left blank when no separate published closing price was found. Equal-to-bet closes were not saved.
+# No separate published closing lines differing from the card price were located for the 2026-10-09 slate.
+2026-10-09 | CFB | Florida A&M +14.5 | close | win | FAMU 28 ALST 27 | +$8.70
+2026-10-09 | CFB | Florida A&M at Alabama State Under 47.5 | close | loss | FAMU 28 ALST 27, total 55 | -$10.00
+2026-10-09 | CFB | Florida State +3.5 | close | loss | LOU 44 FSU 20 | -$10.00
+2026-10-09 | CFB | Florida State at Louisville Under 59.5 | close | loss | LOU 44 FSU 20, total 64 | -$10.00
+2026-10-09 | CFB | Marist +1.5 | close | loss | COL 41 MAR 28 | -$10.00
+2026-10-09 | CFB | Columbia at Marist Under 43.5 | close | loss | COL 41 MAR 28, total 69 | -$10.00
+2026-10-09 | CFB | Iowa +2.5 | close | win | IOWA 41 WASH 24 | +$9.52 EDGE
+2026-10-09 | CFB | Iowa at Washington Under 41.5 | close | loss | IOWA 41 WASH 24, total 65 | -$10.00 EDGE
+2026-10-09 | CFB | Washington State +5.5 | close | win | USU 17 WSU 16 | +$9.09
+2026-10-09 | CFB | Washington State at Utah State Under 43.5 | close | win | USU 17 WSU 16, total 33 | +$9.52
+2026-10-09 | CFB | Wyoming +4.5 | close | win | WYO 16 SJSU 13 OT | +$9.09
+2026-10-09 | CFB | Wyoming at San Jose State Under 42.5 | close | win | WYO 16 SJSU 13, total 29 | +$9.09
+2026-10-09 | CFB | Iowa State +10.5 | close | loss | BYU 24 ISU 10 | -$10.00
+2026-10-09 | CFB | Iowa State at BYU Under 46.5 | close | win | BYU 24 ISU 10, total 34 | +$8.93
+2026-10-09 | CFB | Iowa +2.5 and Iowa at Washington Under 41.5 | close | loss | IOWA 41 WASH 24, total 65 | -$10.00 EDGE
+2026-10-09 | CFB | Florida State +3.5 and Florida State at Louisville Under 59.5 | close | loss | LOU 44 FSU 20, total 64 | -$10.00
+2026-10-09 | CFB | Iowa State +10.5 and Iowa State at BYU Under 46.5 | close | loss | BYU 24 ISU 10, total 34 | -$10.00
+2026-10-09 | NHL | Kraken ML | close | win | SEA 6 DET 3 | +$12.00
+2026-10-09 | NHL | Rangers ML | close | loss | WSH 3 NYR 1 | -$10.00 EDGE
+2026-10-09 | NHL | Penguins ML | close | loss | CBJ 3 PIT 2 SO | -$10.00
+2026-10-09 | NHL | Ducks ML | close | win | ANA 5 WPG 1 | +$10.50
+2026-10-09 | NHL | Rangers ML and Rangers at Capitals Under 5.5 | close | loss | WSH 3 NYR 1, total 4 | -$10.00 EDGE
+2026-10-09 | NHL | Kraken ML and Kraken at Red Wings Under 6.5 | close | loss | SEA 6 DET 3, total 9 | -$10.00
+2026-10-09 | NHL | Ducks ML and Ducks at Jets Under 6.5 | close | win | ANA 5 WPG 1, total 6 | +$27.90
+2026-10-09 | NBA | Grizzlies +3.5 | close | win | MEM 104 CHI 100 | +$8.70
+2026-10-09 | NBA | Grizzlies at Bulls Under 239.5 | close | win | MEM 104 CHI 100, total 204 | +$9.09
+2026-10-09 | NBA | Grizzlies +3.5 and Grizzlies at Bulls Under 239.5 | close | win | MEM 104 CHI 100, total 204 | +$19.00
+2026-10-09 | NBA | Bulls -3.5 and Grizzlies at Bulls Over 239.5 | close | loss | MEM 104 CHI 100, total 204 | -$10.00
+2026-10-09 | NBA | Grizzlies +3.5 and Grizzlies ML | close | win | MEM 104 CHI 100 | +$14.00
+2026-10-09 | MLB | No Picks
+2026-10-09 | NFL | No Picks
+2026-10-09 | CBB | No Picks
+# Season stop dates from cards/seasons.json. None ended on 2026-10-09. CBB has not started (2026-11-02). MLB cards through 2026-10-31.
