@@ -1,1 +1,13 @@
-PLACEHOLDER_DASH
+# GG dashboard 2026-10-10
+Date | Record | Profit | ROI | Units | Pending | Avg CLV
+2026-10-09 | 14-15 | $15.13 | 5.2% | +1.51u | 0 | n/a
+
+Profit by sport | record | profit | CLV
+CBB | No Picks | — | n/a
+CFB | 7-10 | $-36.06 | n/a
+MLB | No Picks | — | n/a
+NBA | 4-1 | $40.79 | n/a
+NFL | No Picks | — | n/a
+NHL | 3-4 | $10.40 | n/a
+
+CLV is n/a because no published closing price differed from the bet price. Blank closes are not plotted as 0.0%.
