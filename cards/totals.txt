@@ -1,1 +1,13 @@
-PLACEHOLDER_TOTALS
+# file: GG-TOTALS-2026-10-10
+Date: 2026-10-10
+Slate: 2026-10-09
+Record: 14-15
+Profit: $15.13
+ROI: 5.2%
+Units: +1.51u
+Pending: 0
+Hit rate: 48.3%
+Avg CLV: n/a
+Close: blank — no separate published close saved
+Stake: $10
+Source: graded slips for 2026-10-09
