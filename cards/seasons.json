@@ -1,1 +1,48 @@
-PLACEHOLDER_SEASONS
+{
+  "checked": "2026-10-10",
+  "check_note": "2026-10-10 is not a first Monday of a schedule-publication month (NFL May, NHL/MLB July, NBA/CFB August, CBB September). No sport was due for check. MLB end 2026-10-31 confirmed previously. CFB 2027-01-25, NFL 2027-02-14, CBB 2027-04-05, NHL 2027-04-10, and NBA 2027-04-11 remain unconfirmed this run.",
+  "sports": [
+    {
+      "sport": "MLB",
+      "start": "2026-03-25",
+      "end": "2026-10-31",
+      "note": "Regular season ended Sep 27. Cards run through World Series. Game 7 published for 2026-10-31.",
+      "checked": "2026-10-09"
+    },
+    {
+      "sport": "CFB",
+      "start": "2026-08-27",
+      "end": "2027-01-25",
+      "note": "Through the national championship. End date not rechecked 2026-10-10.",
+      "checked": "2026-10-08"
+    },
+    {
+      "sport": "NFL",
+      "start": "2026-09-09",
+      "end": "2027-02-14",
+      "note": "Regular season ends Jan 10. Cards run through the Super Bowl. End date not rechecked 2026-10-10.",
+      "checked": "2026-10-08"
+    },
+    {
+      "sport": "CBB",
+      "start": "2026-11-02",
+      "end": "2027-04-05",
+      "note": "Through the men's championship. End date not rechecked 2026-10-10.",
+      "checked": "2026-10-08"
+    },
+    {
+      "sport": "NHL",
+      "start": "2026-09-29",
+      "end": "2027-04-10",
+      "note": "Regular season. End date not rechecked 2026-10-10.",
+      "checked": "2026-10-08"
+    },
+    {
+      "sport": "NBA",
+      "start": "2026-10-20",
+      "end": "2027-04-11",
+      "note": "Regular season. End date not rechecked 2026-10-10.",
+      "checked": "2026-10-08"
+    }
+  ]
+}
