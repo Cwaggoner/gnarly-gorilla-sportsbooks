@@ -1,9 +1,12 @@
-2026-10-10 Sport Cards Summary
+2026-10-11 Sport Cards Summary
 
-NBA: GG-NBA-2026-10-10.txt uploaded. Preseason slate carded under rules. Dogs on 5.5+ spreads. Spreads preferred over short MLs. Edge on High confidence dogs.
+No pick cards created in this run (first task of the day, before report and pick cards).
 
-CFB: GG-CFB-2026-10-10.txt exists. Multiple High edge spreads.
+Graded yesterday's (2026-10-10) NBA and CFB slips from finals. Ledger GG-LEDGER-2026-10-11.json uploaded to Tracking folder.
 
-CBB: GG-CBB-2026-10-10.txt | No Picks
+CBB: No Picks (season not started)
+MLB: No Picks (through 2026-10-31)
+NFL: No Picks
+NHL: No Picks
 
-No other sports. Season not ended. Ledger closed with today's NBA picks added as open (not graded).
+Season not ended for any sport. MLB last card date 2026-10-31 confirmed. Others unconfirmed this run.
