@@ -1,50 +1,68 @@
 # file: GG-GRADES-2026-10-10
-# Graded 2026-10-11 from finals. Stake $10. Close left blank when no separate published closing price was found. Equal-to-bet closes were not saved.
-# No separate published closing lines differing from the card price were located for the 2026-10-10 slate.
-2026-10-10 | NBA | Clippers +4.5 | close | loss | TOR 114 LAC 106 | -$10.00
-2026-10-10 | NBA | Hawks +2.5 | close | win | ATL 119 IND 117 | +$9.09
-2026-10-10 | NBA | Wizards +5.5 | close | win | WAS 114 DET 108 OT | +$9.09 EDGE
-2026-10-10 | NBA | Heat +1.5 | close | win | MIN 125 MIA 124 | +$9.09
-2026-10-10 | NBA | 76ers +5.5 | close | loss | BOS 144 PHI 106 | -$10.00 EDGE
-2026-10-10 | NBA | Kings +5.5 | close | win | GS 111 SAC 106 | +$9.09 EDGE
-2026-10-10 | NBA | Suns +7.5 | close | win | PHO 102 SA 98 | +$9.09 EDGE
-2026-10-10 | NBA | Clippers at Raptors Under 217.5 | close | loss | total 220 | -$10.00
-2026-10-10 | NBA | Pistons at Wizards Under 222.5 | close | win | total 222 | +$9.09
-2026-10-10 | NBA | 76ers at Celtics Under 222.5 | close | loss | total 250 | -$10.00
-2026-10-10 | NBA | Kings at Warriors Under 229.5 | close | win | total 217 | +$9.09
-2026-10-10 | NBA | Spurs at Suns Under 221.5 | close | win | total 200 | +$9.09
-2026-10-10 | NBA | Wizards +5.5 and Pistons at Wizards Under 222.5 | close | win | WAS 114 DET 108 OT, total 222 | +$19.00 EDGE
-2026-10-10 | NBA | 76ers +5.5 and 76ers at Celtics Under 222.5 | close | loss | BOS 144 PHI 106, total 250 | -$10.00 EDGE
-2026-10-10 | NBA | Kings +5.5 and Kings at Warriors Under 229.5 | close | win | GS 111 SAC 106, total 217 | +$19.00 EDGE
-2026-10-10 | NBA | Suns +7.5 and Spurs at Suns Under 221.5 | close | win | PHO 102 SA 98, total 200 | +$19.00 EDGE
-2026-10-10 | CFB | Indiana -8.5 | close | loss | IU 20 NEB 17 | -$10.00 EDGE
-2026-10-10 | CFB | Missouri -3.5 | close | win | MIZ 27 TA&M 6 | +$9.09
-2026-10-10 | CFB | Oklahoma State -10.5 | close | win | OKST 42 UCF 28 | +$9.09
-2026-10-10 | CFB | Pittsburgh -3.5 | close | loss | UNC 21 PITT 17 | -$10.00 EDGE
-2026-10-10 | CFB | Arizona -3.5 | close | win | ARIZ 52 WVU 31 | +$9.09
-2026-10-10 | CFB | Wake Forest -3.5 | close | win | WAKE 38 NCSU 14 | +$9.09
-2026-10-10 | CFB | Army -3.5 | close | loss | ARMY 20 TUL 17 | -$10.00
-2026-10-10 | CFB | Florida -10.5 | close | loss | SC 38 FLA 19 | -$10.00
-2026-10-10 | CFB | Texas -7.5 | close | loss | TEX 24 OU 27 | -$10.00 EDGE
-2026-10-10 | CFB | Notre Dame -39.5 | close | win | ND 58 STAN 7 | +$9.09 EDGE
-2026-10-10 | CFB | Ole Miss -9.5 | close | win | MISS 52 VAN 17 | +$9.09
-2026-10-10 | CFB | Oregon -10.5 | close | loss | UCLA 17 ORE 15 | -$10.00
-2026-10-10 | CFB | Kansas State -2.5 | close | loss | HOU 35 KSU 16 | -$10.00
-2026-10-10 | CFB | Duke -6.5 | close | loss | GT 28 DUKE 25 | -$10.00
-2026-10-10 | CFB | Virginia Tech -10 | close | loss | CAL 25 VT 20 | -$10.00
-2026-10-10 | CFB | Illinois -2.5 | close | loss | ILL 38 MSU 37 OT | -$10.00
-2026-10-10 | CFB | Ohio State -33.5 | close | loss | OSU 45 MD 16 | -$10.00 EDGE
-2026-10-10 | CFB | Tennessee -13.5 | close | loss | TENN 24 ARK 17 | -$10.00
-2026-10-10 | CFB | LSU -8.5 | close | loss | UK 35 LSU 34 OT | -$10.00
-2026-10-10 | CFB | Alabama -2.5 | close | loss | UGA 20 ALA 17 | -$10.00 EDGE
-2026-10-10 | CFB | Penn State -1.5 | close | loss | USC 31 PSU 23 | -$10.00
-2026-10-10 | CFB | Utah -15 | close | win | UTAH 41 KU 24 | +$9.09
-2026-10-10 | CFB | Boise State -6.5 | close | win | BOIS 38 FRES 31 | +$9.09
-2026-10-10 | CFB | Minnesota -2.5 | close | loss | PUR 41 MINN 13 | -$10.00
-2026-10-10 | CFB | Arizona State -20.5 | close | loss | ASU 30 HAW 12 | -$10.00
-2026-10-10 | MLB | No Picks
+
 2026-10-10 | NFL | No Picks
 2026-10-10 | CBB | No Picks
-2026-10-10 | NHL | No Picks
-# Season stop dates from cards/seasons.json. None ended on 2026-10-10. CBB has not started (2026-11-02). MLB cards through 2026-10-31.
-# Full ledger with all SGPs and edge flags in GG-LEDGER-2026-10-11.json in Tracking folder.
+
+2026-10-10 | NBA | Clippers +4.5 |  | loss | TOR 114 LAC 106 | -10.00
+2026-10-10 | NBA | Hawks +2.5 |  | win | ATL 119 IND 117 | 9.09
+2026-10-10 | NBA | Wizards +5.5 |  | win | WSH 114 DET 108 OT | 9.09
+2026-10-10 | NBA | Heat +1.5 |  | win | MIN 125 MIA 124 | 9.09
+2026-10-10 | NBA | 76ers +5.5 |  | loss | PHI 106 BOS 144 | -10.00
+2026-10-10 | NBA | Kings +5.5 |  | win | SAC 106 GS 111 | 9.09
+2026-10-10 | NBA | Suns +7.5 |  | win | PHX 102 SA 98 | 9.09
+2026-10-10 | NBA | Clippers at Raptors Under 217.5 |  | loss | TOR 114 LAC 106 | -10.00
+2026-10-10 | NBA | Pistons at Wizards Under 222.5 |  | win | DET 108 WSH 114 | 9.09
+2026-10-10 | NBA | 76ers at Celtics Under 222.5 |  | loss | PHI 106 BOS 144 | -10.00
+2026-10-10 | NBA | Kings at Warriors Under 229.5 |  | win | SAC 106 GS 111 | 9.09
+2026-10-10 | NBA | Spurs at Suns Under 221.5 |  | win | SA 98 PHX 102 | 9.09
+2026-10-10 | NBA | SGP Wizards +5.5 and Under 222.5 |  | win | DET 108 WSH 114 | 19.00
+2026-10-10 | NBA | SGP 76ers +5.5 and Under 222.5 |  | loss | PHI 106 BOS 144 | -10.00
+2026-10-10 | NBA | SGP Kings +5.5 and Under 229.5 |  | win | SAC 106 GS 111 | 19.00
+2026-10-10 | NBA | SGP Suns +7.5 and Under 221.5 |  | win | SA 98 PHX 102 | 19.00
+
+2026-10-10 | MLB | CHW ML +118 |  | loss | CHW 0 CLE 2 | -10.00
+2026-10-10 | MLB | Under 7.0 |  | win | CHW 0 CLE 2 | 10.00
+2026-10-10 | MLB | SGP CHW ML + Jose Ramirez Over 0.5 Hits |  | loss | CHW 0 CLE 2 | -10.00
+
+2026-10-10 | NHL | Boston Bruins ML |  | win | PHI 1 BOS 5 | 7.41
+2026-10-10 | NHL | New Jersey Devils -1.5 |  | win | VAN 1 NJD 4 | 9.09
+2026-10-10 | NHL | Edmonton Oilers -1.5 |  | win | EDM 3 SJS 1 | 15.00
+2026-10-10 | NHL | Florida Panthers ML |  | loss | MIN 4 FLA 1 | -10.00
+2026-10-10 | NHL | St. Louis Blues ML |  | win | CBJ 3 STL 5 | 7.69
+2026-10-10 | NHL | Carolina Hurricanes -1.5 |  | win | CAR 5 CHI 2 | 9.52
+2026-10-10 | NHL | Ottawa Senators -1.5 |  | loss | NSH 2 OTT 3 SO | -10.00
+2026-10-10 | NHL | Utah Mammoth ML |  | win | UTA 4 BUF 1 | 9.26
+2026-10-10 | NHL | Detroit Red Wings +1.5 |  | win | DET 0 MTL 1 SO | 7.14
+2026-10-10 | NHL | Dallas Stars -1.5 |  | loss | DAL 1 PIT 2 SO | -10.00
+2026-10-10 | NHL | Colorado Avalanche -1.5 |  | loss | TOR 6 COL 3 | -10.00
+2026-10-10 | NHL | New York Islanders ML |  | loss | TB 5 NYI 3 | -10.00
+2026-10-10 | NHL | Anaheim Ducks ML |  | win | ANA 4 CGY 2 | 8.20
+2026-10-10 | NHL | Vegas Golden Knights -1.5 |  | loss | LA 1 VGK 2 OT | -10.00
+2026-10-10 | NHL | SGP CAR -1.5 and Over 5.5 |  | win | CAR 5 CHI 2 | 19.00
+2026-10-10 | NHL | Over 6.5 EDM/SJS |  | loss | EDM 3 SJS 1 | -10.00
+
+2026-10-10 | CFB | Indiana -8.5 |  | loss | IND 20 NEB 17 | -10.00
+2026-10-10 | CFB | Missouri -3.5 |  | win | MIZ 27 TA&M 6 | 9.09
+2026-10-10 | CFB | Oklahoma State -10.5 |  | win | OKST 42 UCF 28 | 9.09
+2026-10-10 | CFB | Pittsburgh -3.5 |  | loss | UNC 21 PITT 17 | -10.00
+2026-10-10 | CFB | Arizona -3.5 |  | win | ARIZ 52 WVU 31 | 9.09
+2026-10-10 | CFB | Wake Forest -3.5 |  | win | WF 38 NCSU 14 | 9.09
+2026-10-10 | CFB | Army -3.5 |  | win | ARMY 20 TUL 17 | 9.09
+2026-10-10 | CFB | Florida -10.5 |  | loss | SC 38 FLA 19 | -10.00
+2026-10-10 | CFB | Texas -7.5 |  | loss | TEX 24 OU 27 | -10.00
+2026-10-10 | CFB | Notre Dame -39.5 |  | win | ND 58 STAN 7 | 9.09
+2026-10-10 | CFB | Ole Miss -9.5 |  | win | MISS 52 VAN 17 | 9.09
+2026-10-10 | CFB | Oregon -10.5 |  | loss | UCLA 17 ORE 15 | -10.00
+2026-10-10 | CFB | Kansas State -2.5 |  | loss | HOU 35 KSU 16 | -10.00
+2026-10-10 | CFB | Duke -6.5 |  | loss | DUKE 25 GT 28 | -10.00
+2026-10-10 | CFB | Virginia Tech -10 |  | loss | VT 20 CAL 25 | -10.00
+2026-10-10 | CFB | Illinois -2.5 |  | win | ILL 38 MSU 37 OT | 9.09
+2026-10-10 | CFB | Ohio State -33.5 |  | win | OSU 45 MD 16 | 9.09
+2026-10-10 | CFB | Tennessee -13.5 |  | loss | TENN 24 ARK 17 | -10.00
+2026-10-10 | CFB | LSU -8.5 |  | loss | LSU 34 UK 35 OT | -10.00
+2026-10-10 | CFB | Alabama -2.5 |  | loss | UGA 20 ALA 17 | -10.00
+2026-10-10 | CFB | Penn State -1.5 |  | loss | USC 31 PSU 23 | -10.00
+2026-10-10 | CFB | Utah -15 |  | win | UTAH 41 KU 24 | 9.09
+2026-10-10 | CFB | Boise State -6.5 |  | win | BOIS 38 FRES 31 | 9.09
+2026-10-10 | CFB | Minnesota -2.5 |  | loss | MINN 13 PUR 41 | -10.00
+2026-10-10 | CFB | Arizona State -20.5 |  | loss | ASU 30 HAW 12 | -10.00
