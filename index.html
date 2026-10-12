@@ -291,6 +291,11 @@ function archiveSlips(bets){
   return prior.length;
 }
 function save(bets){ localStorage.setItem(KEY, JSON.stringify(bets)); render(); }
+function slipMoney(b){
+  if (!b || b.result === "pending") return 0;
+  if ((b.result === "win" || b.result === "loss" || b.result === "push") && Number.isFinite(Number(b.profit))) return Number(b.profit);
+  return profit(b);
+}
 function profit(b){
   if (b.result === "pending" || b.result === "void" || b.result === "push") return 0;
   if ((b.result === "win" || b.result === "loss") && Number.isFinite(Number(b.profit))) return Number(b.profit);
@@ -760,12 +765,12 @@ function render(){
   const gradedDay = pool.filter(b => b.result !== "pending" && b.date === (picked || y));
   const day = picked ? pool.filter(b => b.date === picked) : gradedDay;
   const daySettled = gradedDay.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
-  const dayPl = gradedDay.reduce((s,b) => s + (Number.isFinite(Number(b.profit)) ? Number(b.profit) : profit(b)), 0);
+  const dayPl = gradedDay.reduce((s,b) => s + slipMoney(b), 0);
   const hit = daySettled.length ? (gradedDay.filter(b => b.result === "win").length / daySettled.length * 100).toFixed(0) + "%" : "-";
   const blocks = [];
   if (show !== "graded") blocks.push(["Date", pending]);
   if (show !== "pending") blocks.push(["Graded", gradedDay]);
-  const copy = ["GNARLY GORILLA REPORT CARD", (picked || y), "W/L Record " + rec(gradedDay) + "   P/L " + money(dayPl) + "   on $10 slips", "Hit rate " + hit];
+  const copy = ["GNARLY GORILLA REPORT CARD", (picked || y), "W/L Record " + rec(gradedDay) + "   P/L " + money(dayPl) + "   on $10 slips", "Hit rate " + hit, "Row sum " + money(dayPl)];
   let body = "";
   blocks.forEach(([title, list]) => {
     const sorted = list.slice().sort((a,b) => String(a.sport).localeCompare(String(b.sport)) || String(a.result).localeCompare(String(b.result)) || String(a.pick).localeCompare(String(b.pick)));
@@ -780,7 +785,7 @@ function render(){
       body += "<tr class='sport'><td colspan='6'>" + sport + "</td></tr>";
       if (!rows.length) { const label = seasonText(sport); copy.push(label); body += "<tr><td></td><td>" + label + "</td><td>" + sport + "</td><td>" + label + "</td><td></td><td></td></tr>"; return; }
       rows.forEach(b => {
-        const plCell = b.result === "pending" ? "OPEN" : money(Number.isFinite(Number(b.profit)) ? Number(b.profit) : profit(b));
+        const plCell = b.result === "pending" ? "OPEN" : money(slipMoney(b));
         const edge = markEdge(b).edge;
         copy.push([b.date, b.result.toUpperCase(), b.sport, b.pick, b.odds, plCell].join("  "));
         body += "<tr" + (edge ? " class='edge'" : "") + "><td>" + esc(b.date) + "</td><td>" + esc(b.result.toUpperCase()) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.pick) + "</td><td>" + esc(b.odds) + "</td><td>" + plCell + "</td></tr>";
@@ -792,7 +797,7 @@ function render(){
   copy.push("", "Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u");
   const report = document.getElementById("report");
   report.dataset.copy = copy.join("\n");
-  report.innerHTML = "<p>Date " + (picked || todayEt()) + ". Graded " + (picked || y) + "</p><p>W/L Record " + rec(gradedDay) + "   P/L " + money(dayPl) + "   Hit rate " + hit + "</p>" + body + "<p>Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u</p>";
+  report.innerHTML = "<p>Date " + (picked || todayEt()) + ". Graded " + (picked || y) + "</p><p>W/L Record " + rec(gradedDay) + "   P/L " + money(dayPl) + "   Hit rate " + hit + "   Row sum " + money(dayPl) + "</p>" + body + "<p>Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u</p>";
 }
 function group(bets, key){
   const map = {};
@@ -1471,6 +1476,7 @@ async function buildReportPages(mode) {
 }
 async function buildPrintForm() {
   const note = document.getElementById("printnote");
+  render();
   const printPages = await buildReportPages("print");
   const pngPages = await buildReportPages("png");
   document.getElementById("printimg").src = printPages[0].toDataURL("image/png");
