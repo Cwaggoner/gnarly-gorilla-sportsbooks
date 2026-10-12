@@ -54,7 +54,7 @@ form, .row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1f
 .break { grid-column:1 / -1; height:0; }
 .stack { display:flex; flex-direction:row; gap:8px; grid-column:1 / -1; align-items:center; }
 #picknote, #loadnote, #editnote { display:flex; align-items:center; min-height:38px; margin:0; padding:8px 12px; border:1px solid var(--line); border-radius:8px; box-sizing:border-box; }
-#betnotes { grid-column:2 / -1; justify-self:end; display:flex; flex-direction:column; gap:8px; width:max-content; max-width:100%; padding:10px; border:1px solid #39ff14; border-radius:10px; }
+#betnotes { grid-column:2 / -1; justify-self:end; align-self:start; display:flex; flex-direction:column; gap:8px; width:max-content; max-width:100%; padding:10px; border:1px solid #39ff14; border-radius:10px; }
 .notes-field { grid-column:1 / -1; }
 .notes-field textarea { width:100%; min-height:64px; }
 
