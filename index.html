@@ -56,7 +56,8 @@ form, .row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1f
 #picknote, #loadnote, #editnote { display:flex; align-items:center; min-height:38px; margin:0; padding:8px 12px; border:1px solid var(--line); border-radius:8px; box-sizing:border-box; }
 .bet-top { grid-column:1 / -1; display:grid; grid-template-columns:1.6fr auto auto; gap:10px; align-items:stretch; }
 .bet-box { border:1px solid #39ff14; border-radius:10px; padding:10px; box-sizing:border-box; }
-#betfields { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:8px; }
+#betfields { display:grid; grid-template-columns:repeat(6,minmax(110px,1fr)); gap:8px; }
+#betfields label:nth-child(n+7) { grid-column:span 2; }
 #betload { display:flex; align-items:flex-start; justify-content:center; }
 #betnotes { display:flex; flex-direction:column; gap:8px; }
 .notes-field { grid-column:1 / -1; }
@@ -229,11 +230,11 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </select></label>
 <label>Type<select name="type"><option>Moneyline</option><option>Spread</option><option>Total</option><option>Prop</option><option>Parlay</option><option>SGP</option></select></label>
 <label>Pick<select name="pick" id="pickselect" required><option value="">Select a pick</option></select></label>
+<label>Result<select name="result"><option>pending</option><option>win</option><option>loss</option><option>push</option><option>void</option></select></label>
 <label>American Odds<input name="odds" type="number" step="1" placeholder="-110" required></label>
 <label>Close Odds<input name="close" type="number" step="1" placeholder="-120"></label>
 <input type="hidden" name="editId">
 <label>Stake $<input name="stake" type="number" step="0.01" min="0" value="10" required></label>
-<label>Result<select name="result"><option>pending</option><option>win</option><option>loss</option><option>push</option><option>void</option></select></label>
 </div>
 <div class="bet-box" id="betload"><button type="button" id="loadpicks">Load Picks</button></div>
 <div class="bet-box" id="betnotes">
