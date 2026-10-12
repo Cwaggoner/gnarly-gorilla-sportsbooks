@@ -588,8 +588,7 @@ function showSeasons(checked){
     [90, 210, 330].forEach(x => { wave += " H" + x + " L" + (x + 2) + " 18 L" + (x + 3) + " 14 L" + (x + 4) + " 22 L" + (x + 5) + " 18"; });
     wave += " H448";
   } else wave += " H448";
-  const dot = "<span class='ekg-dot' style='background:" + (open ? color : "#ff6b6b") + "'></span>";
-  const ekg = "<span class='ekg' data-ms='" + (parseFloat(pulse) * 1000) + "'><svg viewBox='0 0 448 36' preserveAspectRatio='none' aria-label='Season pulse'><path class='base' d='" + wave + "'></path><path class='trace' d='" + wave + "' style='stroke:" + color + "'></path></svg>" + dot + "</span>";
+  const ekg = "<span class='ekg' data-ms='" + (parseFloat(pulse) * 1000) + "'><svg viewBox='0 0 448 36' preserveAspectRatio='none' aria-label='Season pulse'><path class='base' d='" + wave + "'></path><path class='trace' d='" + wave + "' style='stroke:" + color + "'></path></svg></span>";
   box.innerHTML = "<h2>Season Dates</h2><p class='warn'>Checked " + (checked || "2026-10-08") + ". NFL May, NHL July, MLB July, NBA August, CFB August, CBB September.</p><table><thead><tr><th style='min-width:280px'>Sport" + ekg + "</th><th>Start</th><th>Last Card</th><th>Status</th></tr></thead><tbody>" + rows + "</tbody></table>";
   startPulse();
 }
@@ -598,8 +597,7 @@ function startPulse(){
   cancelAnimationFrame(pulseFrame);
   const root = document.querySelector("#seasons .ekg");
   const trace = root && root.querySelector(".trace");
-  const dot = root && root.querySelector(".ekg-dot");
-  if (!trace || !dot) return;
+  if (!trace) return;
   const len = trace.getTotalLength();
   const ms = Number(root.dataset.ms) || 1600;
   const began = performance.now();
@@ -607,27 +605,15 @@ function startPulse(){
   const fade = 350;
   const tick = now => {
     const cycle = (now - began) % (ms + fade);
-    const atX = x => {
-      let lo = 0, hi = len;
-      for (let i = 0; i < 16; i++) {
-        const mid = (lo + hi) / 2;
-        if (trace.getPointAtLength(mid).x < x) lo = mid; else hi = mid;
-      }
-      return hi;
-    };
     if (cycle <= ms) {
-      const x = Math.max(0.5, cycle / ms * 448);
-      const drawn = atX(Math.min(448, x + 18));
+      const drawn = Math.max(0.5, cycle / ms * len);
       trace.style.strokeDasharray = drawn + " " + len;
       trace.style.strokeDashoffset = "0";
       trace.style.opacity = "1";
-      dot.style.opacity = "1";
-      dot.style.left = (x / 448 * 100) + "%";
     } else {
-      dot.style.left = "100%";
+      trace.style.strokeDasharray = len + " " + len;
       const fadeOut = 1 - (cycle - ms) / fade;
       trace.style.opacity = String(fadeOut);
-      dot.style.opacity = String(fadeOut);
     }
     pulseFrame = requestAnimationFrame(tick);
   };
