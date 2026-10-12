@@ -164,6 +164,9 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <img id="printimg" alt="Report card print preview">
 <div class="tools"><button type="button" id="saveprint">Save PDF</button></div>
 </div>
+<div id="printpreview2" class="print-preview" hidden>
+<img id="printimg2" alt="Report card second page">
+</div>
 </section>
 <section class="card" id="charts">
 <div class="section-head"><h2>Charts</h2><button type="button" id="plot">Plot</button></div>
@@ -1452,6 +1455,9 @@ async function buildPrintForm() {
   const pngPages = await buildReportPages("png");
   document.getElementById("printimg").src = printPages[0].toDataURL("image/png");
   document.getElementById("printpreview").hidden = false;
+  const second = document.getElementById("printpreview2");
+  if (printPages[1]) { document.getElementById("printimg2").src = printPages[1].toDataURL("image/png"); second.hidden = false; }
+  else second.hidden = true;
   printPng = await new Promise(r => pngPages[0].toBlob(r, "image/png"));
   printPngPages = pngPages;
   printPagesAll = printPages;
