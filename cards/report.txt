@@ -1,54 +1,22 @@
-# GG report 2026-10-11
-# Yesterday 2026-10-10 graded. No pick cards created for 2026-10-11 in this run.
+# GG report 2026-10-12
+# Yesterday 2026-10-11 graded. No pick cards created for 2026-10-12 in this run.
 
-Record 18-25  Profit $-35.00  Units -3.50u  CLV n/a
+Record 3-6  Profit $-32.73  Units -3.27u  CLV n/a
 
-NBA | loss | Clippers +4.5 | -110 | -$10.00
-NBA | win | Hawks +2.5 | -110 | +$9.09
-NBA | win | Wizards +5.5 | -110 | +$9.09 EDGE
-NBA | win | Heat +1.5 | -110 | +$9.09
-NBA | loss | 76ers +5.5 | -110 | -$10.00 EDGE
-NBA | win | Kings +5.5 | -110 | +$9.09 EDGE
-NBA | win | Suns +7.5 | -110 | +$9.09 EDGE
-NBA | loss | Clippers at Raptors Under 217.5 | -110 | -$10.00
-NBA | win | Pistons at Wizards Under 222.5 | -110 | +$9.09
-NBA | loss | 76ers at Celtics Under 222.5 | -110 | -$10.00
-NBA | win | Kings at Warriors Under 229.5 | -110 | +$9.09
-NBA | win | Spurs at Suns Under 221.5 | -110 | +$9.09
-NBA | win | Wizards +5.5 and Under | +190 | +$19.00 EDGE
-NBA | loss | 76ers +5.5 and Under | +190 | -$10.00 EDGE
-NBA | win | Kings +5.5 and Under | +190 | +$19.00 EDGE
-NBA | win | Suns +7.5 and Under | +190 | +$19.00 EDGE
+NBA | loss | Magic +5.5 | -110 | -$10.00 EDGE
+NBA | loss | Bucks +4.5 | -110 | -$10.00
+NBA | win | Bulls +8.5 | -110 | +$9.09 EDGE
+NBA | win | Magic at Cavaliers Under 227.5 | -110 | +$9.09
+NBA | win | Bucks at Hornets Under 221.5 | -110 | +$9.09
+NBA | loss | Bulls at Nuggets Under 233.5 | -110 | -$10.00
+NBA | loss | Magic +5.5 and Under | +190 | -$10.00 EDGE
+NBA | loss | Bulls +8.5 and Under | +190 | -$10.00 EDGE
+NBA | loss | Bucks +4.5 and Under | +190 | -$10.00
 
-CFB | loss | Indiana -8.5 | -110 | -$10.00 EDGE
-CFB | win | Missouri -3.5 | -110 | +$9.09
-CFB | win | Oklahoma State -10.5 | -110 | +$9.09
-CFB | loss | Pittsburgh -3.5 | -110 | -$10.00 EDGE
-CFB | win | Arizona -3.5 | -110 | +$9.09
-CFB | win | Wake Forest -3.5 | -110 | +$9.09
-CFB | loss | Army -3.5 | -110 | -$10.00
-CFB | loss | Florida -10.5 | -110 | -$10.00
-CFB | loss | Texas -7.5 | -110 | -$10.00 EDGE
-CFB | win | Notre Dame -39.5 | -110 | +$9.09 EDGE
-CFB | win | Ole Miss -9.5 | -110 | +$9.09
-CFB | loss | Oregon -10.5 | -110 | -$10.00
-CFB | loss | Kansas State -2.5 | -110 | -$10.00
-CFB | loss | Duke -6.5 | -110 | -$10.00
-CFB | loss | Virginia Tech -10 | -110 | -$10.00
-CFB | loss | Illinois -2.5 | -110 | -$10.00
-CFB | loss | Ohio State -33.5 | -110 | -$10.00 EDGE
-CFB | loss | Tennessee -13.5 | -110 | -$10.00
-CFB | loss | LSU -8.5 | -110 | -$10.00
-CFB | loss | Alabama -2.5 | -110 | -$10.00 EDGE
-CFB | loss | Penn State -1.5 | -110 | -$10.00
-CFB | win | Utah -15 | -110 | +$9.09
-CFB | win | Boise State -6.5 | -110 | +$9.09
-CFB | loss | Minnesota -2.5 | -110 | -$10.00
-CFB | loss | Arizona State -20.5 | -110 | -$10.00
-
-2026-10-10 | MLB | No Picks
-2026-10-10 | NFL | No Picks
-2026-10-10 | CBB | No Picks
-2026-10-10 | NHL | No Picks
+2026-10-11 | MLB | No Picks
+2026-10-11 | NFL | No Picks
+2026-10-11 | CBB | No Picks
+2026-10-11 | CFB | No Picks
+2026-10-11 | NHL | No Picks
 No sport is Season Ended. MLB last card date 2026-10-31. CFB 2027-01-25. NFL 2027-02-14. CBB 2027-04-05. NHL 2027-04-10. NBA 2027-04-11.
 Unconfirmed end dates: CFB 2027-01-25, NFL 2027-02-14, CBB 2027-04-05, NHL 2027-04-10, NBA 2027-04-11.

@@ -1,7 +1,7 @@
 {
-  "saved": "2026-10-11T13:25:00.000Z",
-  "graded_slate": "2026-10-10",
-  "clv_note": "Closes left blank. Today's games not graded. Edge true for High confidence or Edge notes. Yellow #F0E14A on Edge rows.",
+  "saved": "2026-10-12T12:22:00.000Z",
+  "graded_slate": "2026-10-11",
+  "clv_note": "Closes left blank. No published closing line different from the bet price was found. Edge true for High confidence or Edge notes. Yellow #F0E14A on Edge rows.",
   "bets": [
     {
       "id": 103,
@@ -12,11 +12,11 @@
       "pick": "Magic +5.5",
       "odds": -110,
       "stake": 10,
-      "result": "",
+      "result": "loss",
       "notes": "High 61% Edge: Dog on 5.5+ preseason spread.",
       "close": "",
       "edge": true,
-      "score": ""
+      "score": "CLE 119 ORL 105"
     },
     {
       "id": 104,
@@ -27,11 +27,11 @@
       "pick": "Bucks +4.5",
       "odds": -110,
       "stake": 10,
-      "result": "",
+      "result": "loss",
       "notes": "Medium 55%",
       "close": "",
       "edge": false,
-      "score": ""
+      "score": "CHA 105 MIL 90"
     },
     {
       "id": 105,
@@ -42,11 +42,11 @@
       "pick": "Bulls +8.5",
       "odds": -110,
       "stake": 10,
-      "result": "",
+      "result": "win",
       "notes": "High 62% Edge: Dog on 8.5+ preseason spread.",
       "close": "",
       "edge": true,
-      "score": ""
+      "score": "DEN 133 CHI 128"
     },
     {
       "id": 106,
@@ -57,11 +57,11 @@
       "pick": "Magic at Cavaliers Under 227.5",
       "odds": -110,
       "stake": 10,
-      "result": "",
+      "result": "win",
       "notes": "Medium 54% Named game",
       "close": "",
       "edge": false,
-      "score": ""
+      "score": "CLE 119 ORL 105"
     },
     {
       "id": 107,
@@ -72,11 +72,11 @@
       "pick": "Bucks at Hornets Under 221.5",
       "odds": -110,
       "stake": 10,
-      "result": "",
+      "result": "win",
       "notes": "Medium 53% Named game",
       "close": "",
       "edge": false,
-      "score": ""
+      "score": "CHA 105 MIL 90"
     },
     {
       "id": 108,
@@ -87,11 +87,11 @@
       "pick": "Bulls at Nuggets Under 233.5",
       "odds": -110,
       "stake": 10,
-      "result": "",
+      "result": "loss",
       "notes": "Medium 55% Named game",
       "close": "",
       "edge": false,
-      "score": ""
+      "score": "DEN 133 CHI 128"
     },
     {
       "id": 109,
@@ -102,11 +102,11 @@
       "pick": "Magic +5.5 and Under 227.5",
       "odds": 190,
       "stake": 10,
-      "result": "",
+      "result": "loss",
       "notes": "Estimated +190. Dog and under. Edge.",
       "close": "",
       "edge": true,
-      "score": ""
+      "score": "CLE 119 ORL 105"
     },
     {
       "id": 110,
@@ -117,11 +117,11 @@
       "pick": "Bulls +8.5 and Under 233.5",
       "odds": 190,
       "stake": 10,
-      "result": "",
+      "result": "loss",
       "notes": "Estimated +190. Dog and under. Edge.",
       "close": "",
       "edge": true,
-      "score": ""
+      "score": "DEN 133 CHI 128"
     },
     {
       "id": 111,
@@ -132,11 +132,11 @@
       "pick": "Bucks +4.5 and Under 221.5",
       "odds": 190,
       "stake": 10,
-      "result": "",
+      "result": "loss",
       "notes": "Estimated +190.",
       "close": "",
       "edge": false,
-      "score": ""
+      "score": "CHA 105 MIL 90"
     }
   ]
 }

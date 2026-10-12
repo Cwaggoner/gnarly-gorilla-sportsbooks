@@ -1,11 +1,12 @@
-2026-10-11 Sport Cards Summary
+2026-10-12 Sport Cards Summary
 
-NBA: Picks created. GG-NBA-2026-10-11.txt and GG-NBA-2026-10-11.pdf uploaded to folder 1hpBQfTzLGWibYve_Chq3NVVj4Enjf98I. Three preseason games: Magic +5.5 (High Edge), Bucks +4.5 (Medium), Bulls +8.5 (High Edge), plus named-game Unders and three SGPs. No ML -150 or shorter. Dogs carded on 5.5+.
+No pick cards created in this run (first daily action: ledger, grades, dashboard, report).
 
+NBA: Yesterday graded 3-6 -$32.73. Season continues.
 CBB: 2026-10-11 | CBB | No Picks
 CFB: 2026-10-11 | CFB | No Picks
-MLB: Missing file, skipped
-NFL: Missing file, skipped
-NHL: Missing file, skipped
+MLB: 2026-10-11 | MLB | No Picks
+NFL: 2026-10-11 | NFL | No Picks
+NHL: 2026-10-11 | NHL | No Picks
 
-No Season Ended lines. NBA season through 2027-04-11. Today's games not graded. Notice held until report card confirmed present with pick files.
+No Season Ended lines. All seasons active per cards/seasons.json. Unconfirmed ends: CFB 2027-01-25, NFL 2027-02-14, CBB 2027-04-05, NHL 2027-04-10, NBA 2027-04-11. MLB 2026-10-31 confirmed.

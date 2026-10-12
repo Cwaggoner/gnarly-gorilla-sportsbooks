@@ -1,3 +1,22 @@
+# file: GG-GRADES-2026-10-11
+
+2026-10-11 | NFL | No Picks
+2026-10-11 | CBB | No Picks
+2026-10-11 | CFB | No Picks
+2026-10-11 | MLB | No Picks
+2026-10-11 | NHL | No Picks
+
+2026-10-11 | NBA | Magic +5.5 |  | loss | CLE 119 ORL 105 | -10.00
+2026-10-11 | NBA | Bucks +4.5 |  | loss | CHA 105 MIL 90 | -10.00
+2026-10-11 | NBA | Bulls +8.5 |  | win | DEN 133 CHI 128 | 9.09
+2026-10-11 | NBA | Magic at Cavaliers Under 227.5 |  | win | CLE 119 ORL 105 | 9.09
+2026-10-11 | NBA | Bucks at Hornets Under 221.5 |  | win | CHA 105 MIL 90 | 9.09
+2026-10-11 | NBA | Bulls at Nuggets Under 233.5 |  | loss | DEN 133 CHI 128 | -10.00
+2026-10-11 | NBA | SGP Magic +5.5 and Under 227.5 |  | loss | CLE 119 ORL 105 | -10.00
+2026-10-11 | NBA | SGP Bulls +8.5 and Under 233.5 |  | loss | DEN 133 CHI 128 | -10.00
+2026-10-11 | NBA | SGP Bucks +4.5 and Under 221.5 |  | loss | CHA 105 MIL 90 | -10.00
+
+# Previous grades retained below for history
 # file: GG-GRADES-2026-10-10
 
 2026-10-10 | NFL | No Picks
