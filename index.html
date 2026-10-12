@@ -93,11 +93,11 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 @media (max-width:700px) { .charts { grid-template-columns:1fr; } }
 
 @media (max-width:700px) { table { display:block; overflow-x:auto; } }
-.ekg{display:block;width:100%;height:22px;margin-top:4px}
-.ekg svg{width:100%;height:22px}
+.ekg{display:block;width:100%;height:36px;margin-top:4px}
+.ekg svg{width:100%;height:36px}
 .ekg-dot{fill:#fff}
-.ekg .base{fill:none;stroke:#163016;stroke-width:2}
-.ekg .trace{fill:none;stroke:#39ff14;stroke-width:2;stroke-linecap:round;stroke-dasharray:448;stroke-dashoffset:448;animation:ekg var(--pulse,1.6s) linear infinite}
+.ekg .base{fill:none;stroke:#163016;stroke-width:1.5;vector-effect:non-scaling-stroke}
+.ekg .trace{fill:none;stroke:#39ff14;stroke-width:1.5;stroke-linecap:round;vector-effect:non-scaling-stroke;stroke-dasharray:448;stroke-dashoffset:448;animation:ekg var(--pulse,1.6s) linear infinite}
 @keyframes ekg{to{stroke-dashoffset:0}}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -581,16 +581,16 @@ function showSeasons(checked){
   const open = ["CBB","CFB","MLB","NBA","NFL","NHL"].filter(s => !seasonEnded(s)).length;
   const pulse = open === 6 ? "1.1s" : open >= 4 ? "1.8s" : open >= 2 ? "3s" : open === 1 ? "7s" : "9s";
   const color = open === 6 ? "#39ff14" : open >= 3 ? "#f0e14a" : "#ff6b6b";
-  let wave = "M0 11";
+  let wave = "M0 18";
   if (open > 1) {
-    [90, 210, 330].forEach(x => { wave += " H" + x + " L" + (x + 4) + " 11 L" + (x + 8) + " 3 L" + (x + 12) + " 19 L" + (x + 16) + " 11"; });
+    [90, 210, 330].forEach(x => { wave += " H" + x + " L" + (x + 2) + " 18 L" + (x + 4) + " 2 L" + (x + 6) + " 34 L" + (x + 8) + " 18"; });
     wave += " H448";
   } else if (open === 1) {
-    [90, 210, 330].forEach(x => { wave += " H" + x + " L" + (x + 3) + " 11 L" + (x + 5) + " 9 L" + (x + 7) + " 13 L" + (x + 9) + " 11"; });
+    [90, 210, 330].forEach(x => { wave += " H" + x + " L" + (x + 2) + " 18 L" + (x + 3) + " 14 L" + (x + 4) + " 22 L" + (x + 5) + " 18"; });
     wave += " H448";
   } else wave += " H448";
-  const dot = "<circle class='ekg-dot' cx='0' cy='11' r='3.2' style='fill:" + (open ? color : "#ff6b6b") + "'><animate attributeName='cx' from='0' to='448' dur='" + pulse + "' repeatCount='indefinite'></animate></circle>";
-  const ekg = "<span class='ekg' style='--pulse:" + pulse + "'><svg viewBox='0 0 448 22' preserveAspectRatio='none' aria-label='Season pulse'><path class='base' d='" + wave + "'></path><path class='trace' d='" + wave + "' style='stroke:" + color + "'></path>" + dot + "</svg></span>";
+  const dot = "<circle class='ekg-dot' cx='0' cy='18' r='3.2' style='fill:" + (open ? color : "#ff6b6b") + "'><animate attributeName='cx' from='0' to='448' dur='" + pulse + "' repeatCount='indefinite'></animate></circle>";
+  const ekg = "<span class='ekg' style='--pulse:" + pulse + "'><svg viewBox='0 0 448 36' preserveAspectRatio='none' aria-label='Season pulse'><path class='base' d='" + wave + "'></path><path class='trace' d='" + wave + "' style='stroke:" + color + "'></path>" + dot + "</svg></span>";
   box.innerHTML = "<h2>Season Dates</h2><p class='warn'>Checked " + (checked || "2026-10-08") + ". NFL May, NHL July, MLB July, NBA August, CFB August, CBB September.</p><table><thead><tr><th style='min-width:280px'>Sport" + ekg + "</th><th>Start</th><th>Last Card</th><th>Status</th></tr></thead><tbody>" + rows + "</tbody></table>";
 }
 async function loadSeasons(){
