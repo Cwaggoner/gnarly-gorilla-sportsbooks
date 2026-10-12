@@ -1212,6 +1212,13 @@ function betType(b){
   return given || "Spread";
 }
 function isNoPick(b){ return /no picks|season ended/i.test([b && b.pick, b && b.sport, b && b.type, b && b.result, b && b.notes].join(" ")); }
+function keepClose(b){
+  b.type = betType(b);
+  if (b.close !== "" && b.close != null) return b;
+  const hit = (gradeFile || []).find(g => g.date === b.date && g.pick === b.pick && g.close !== "" && g.close != null);
+  if (hit) b.close = hit.close;
+  return b;
+}
 function markEdge(b){
   const cv = clv(b);
   b.edge = b.edge === true || /edge/i.test(b.notes || "") || /^high\b/i.test(b.notes || "") || (cv != null && cv > 0.05);
@@ -1618,7 +1625,7 @@ document.getElementById("loadledger").onchange = async e => {
     const bets = Array.isArray(data) ? data : data.bets;
     if (!Array.isArray(bets)) throw new Error("That file has no slips.");
     const kept = bets.filter(b => !isNoPick(b) && inSlipWindow(b.date));
-    kept.forEach(markEdge);
+    kept.forEach(b => { keepClose(b); markEdge(b); });
     save(kept);
     document.getElementById("reportDay").value = "";
     render();
@@ -1638,7 +1645,7 @@ document.getElementById("syncledger").onclick = async () => {
     const data = await res.json();
     const bets = Array.isArray(data) ? data : data.bets;
     if (!Array.isArray(bets) || !bets.length) throw new Error("empty");
-    bets.forEach(b => { b.type = betType(b); markEdge(b); });
+    bets.forEach(b => { keepClose(b); markEdge(b); });
     save(bets);
     localStorage.setItem("gg-hold-ledger", "1");
     const grades = await fetch("cards/grades.txt?ts=" + Date.now());
@@ -1652,7 +1659,7 @@ document.getElementById("syncledger").onclick = async () => {
         const dollars = parts[parts.length - 1].replace(/[$,+]/g, "");
         const profit = Number(dollars);
         const row = {date: parts[0], sport: parts[1], pick: parts[2], odds: close || -110, close: close, result: result, stake: 10, profit: Number.isFinite(profit) ? profit : 0};
-        row.type = betType(row);
+        keepClose(row);
         return row;
       }).filter(Boolean);
     }
@@ -1680,7 +1687,7 @@ document.getElementById("import").onchange = e => {
     lines.forEach(line => {
       const cols = line.split(",");
       if (cols.length < 8) return;
-      bets.push(markEdge({id: Date.now() + Math.random(), date:cols[0], book:cols[1], sport:cols[2], type:cols[3], pick:cols[4], odds:Number(cols[5]), stake:Number(cols[6]), result:cols[7], notes:cols[8] || ""}));
+      bets.push(markEdge(keepClose({id: Date.now() + Math.random(), date:cols[0], book:cols[1], sport:cols[2], type:cols[3], pick:cols[4], odds:Number(cols[5]), close: cols[9] || "", stake:Number(cols[6]), result:cols[7], notes:cols[8] || ""})));
     });
     save(bets);
   };
