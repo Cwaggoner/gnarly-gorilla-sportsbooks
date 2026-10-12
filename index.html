@@ -605,14 +605,22 @@ function startPulse(){
   const fade = 350;
   const tick = now => {
     const cycle = (now - began) % (ms + fade);
+    const atX = x => {
+      let lo = 0, hi = len;
+      for (let i = 0; i < 18; i++) {
+        const mid = (lo + hi) / 2;
+        if (trace.getPointAtLength(mid).x < x) lo = mid; else hi = mid;
+      }
+      return hi;
+    };
     if (cycle <= ms) {
       const progress = cycle / ms;
-      const drawn = Math.max(0.5, progress * len);
-      trace.style.strokeDasharray = drawn + " " + (len * 2);
+      const drawn = atX(Math.max(0.5, progress * 448));
+      trace.style.strokeDasharray = drawn + " " + (len + 20);
       trace.style.strokeDashoffset = "0";
       trace.style.opacity = String(0.35 + progress * 0.65);
     } else {
-      trace.style.strokeDasharray = len + " " + (len * 2);
+      trace.style.strokeDasharray = (len + 20) + " 0";
       const fadeOut = 1 - (cycle - ms) / fade;
       trace.style.opacity = String(Math.max(0, fadeOut));
     }
