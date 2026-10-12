@@ -1155,7 +1155,7 @@ async function loadPending(){
   document.getElementById("rows").scrollIntoView({behavior:"smooth", block:"center"});
 }
 function slipKey(b){ return [b.date, b.sport, b.pick].join("|"); }
-function isNoPick(b){ return /no picks|season ended/i.test([b && b.pick, b && b.sport, b && b.type, b && b.notes].join(" ")); }
+function isNoPick(b){ return /no picks|season ended/i.test([b && b.pick, b && b.sport, b && b.type, b && b.result, b && b.notes].join(" ")); }
 function markEdge(b){
   const cv = clv(b);
   b.edge = b.edge === true || /edge/i.test(b.notes || "") || /^high\b/i.test(b.notes || "") || (cv != null && cv > 0.05);
@@ -1204,7 +1204,7 @@ function gradeRows(text){
     const wide = r.length >= 5 && /^(NBA|NHL|NFL|MLB|CBB|CFB)$/.test(r[1]);
     const close = Number(String(wide ? r[3] : r[3]).replace(/[^\d+-]/g, ""));
     return {date: r[0], sport: wide ? r[1] : "", pick: wide ? r[2] : r[1], result: (wide ? r[4] : r[2] || "").toLowerCase(), close: Number.isNaN(close) ? "" : close, odds: Number.isNaN(close) ? -110 : close};
-  }).filter(row => row.date && row.pick && row.result && !/no picks|season ended/i.test(row.pick));
+  }).filter(row => row.date && row.pick && row.result && !/no picks|season ended/i.test(row.pick + " " + row.result));
 }
 async function applyGrades(){
   const res = await fetch("cards/grades.txt?ts=" + Date.now());
