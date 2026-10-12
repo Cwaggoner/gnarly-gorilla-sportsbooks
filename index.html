@@ -95,7 +95,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 @media (max-width:700px) { table { display:block; overflow-x:auto; } }
 .ekg{display:block;position:relative;width:100%;height:36px;margin-top:4px}
 .ekg svg{width:100%;height:36px}
-.ekg-dot{position:absolute;top:14px;width:10px;height:10px;margin-left:-5px;border-radius:50%;background:#fff}
+.ekg-dot{position:absolute;top:13px;width:10px;height:10px;border-radius:50%;background:#fff;transform:translateX(-50%)}
 .ekg .base{fill:none;stroke:#163016;stroke-width:1.5;vector-effect:non-scaling-stroke}
 .ekg .trace{fill:none;stroke:#39ff14;stroke-width:1.5;stroke-linecap:round;vector-effect:non-scaling-stroke}
 </style>
@@ -617,7 +617,7 @@ function startPulse(){
     };
     if (cycle <= ms) {
       const x = Math.max(0.5, cycle / ms * 448);
-      const drawn = atX(x);
+      const drawn = atX(Math.min(448, x + 18));
       trace.style.strokeDasharray = drawn + " " + len;
       trace.style.strokeDashoffset = "0";
       trace.style.opacity = "1";
