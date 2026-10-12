@@ -591,7 +591,7 @@ function clearStalePending(){
 }
 function render(){
   clearStalePending();
-  const all = load().concat(loadGrade()).concat(gradeFile).filter(b => b && b.pick && !/no picks|season ended/i.test(b.pick));
+  const all = load().concat(loadGrade()).concat(gradeFile).filter(b => b && b.pick && !isNoPick(b));
   const unique = [];
   const seen = new Set();
   all.forEach(b => {
@@ -1152,6 +1152,7 @@ async function loadPending(){
   document.getElementById("rows").scrollIntoView({behavior:"smooth", block:"center"});
 }
 function slipKey(b){ return [b.date, b.sport, b.pick].join("|"); }
+function isNoPick(b){ return /no picks|season ended/i.test([b && b.pick, b && b.sport, b && b.type, b && b.notes].join(" ")); }
 function markEdge(b){
   const cv = clv(b);
   b.edge = b.edge === true || /edge/i.test(b.notes || "") || /^high\b/i.test(b.notes || "") || (cv != null && cv > 0.05);
@@ -1169,7 +1170,7 @@ function addCardLines(text, book){
     if (/^\d{4}-\d{2}-\d{2}$/.test(parts[0])) date = parts.shift();
     [sport, type, pick, odds, notes] = parts;
     odds = String(odds || "").replace(/\u2212/g, "-");
-    if (!sport || !pick || !odds || Number.isNaN(Number(odds))) return;
+    if (!sport || !pick || !odds || Number.isNaN(Number(odds)) || /no picks|season ended/i.test(pick)) return;
     const row = markEdge({id: Date.now() + Math.random(), date, book: book || "BetMGM", sport, type: type || "Spread", pick, odds: Number(odds), stake: 10, result: "pending", notes: notes || ""});
     if (seen.has(slipKey(row))) return;
     seen.add(slipKey(row));
@@ -1200,7 +1201,7 @@ function gradeRows(text){
     const wide = r.length >= 5 && /^(NBA|NHL|NFL|MLB|CBB|CFB)$/.test(r[1]);
     const close = Number(String(wide ? r[3] : r[3]).replace(/[^\d+-]/g, ""));
     return {date: r[0], sport: wide ? r[1] : "", pick: wide ? r[2] : r[1], result: (wide ? r[4] : r[2] || "").toLowerCase(), close: Number.isNaN(close) ? "" : close, odds: Number.isNaN(close) ? -110 : close};
-  }).filter(row => row.date && row.pick && row.result);
+  }).filter(row => row.date && row.pick && row.result && !/no picks|season ended/i.test(row.pick));
 }
 async function applyGrades(){
   const res = await fetch("cards/grades.txt?ts=" + Date.now());
@@ -1214,6 +1215,7 @@ async function applyGrades(){
     [bets, graded].forEach(list => list.forEach(b => {
       if (b.date === rule.date && String(b.pick).includes(rule.pick)) { b.result = rule.result; if (rule.close !== "") b.close = rule.close; }
     }));
+    if (/no picks|season ended/i.test(rule.pick)) return;
     if (!graded.some(b => b.date === rule.date && b.pick === rule.pick)) graded.push({id: Date.now() + Math.random(), date: rule.date, book: "BetMGM", sport: rule.sport, type: / and /i.test(rule.pick) ? "SGP" : "Spread", pick: rule.pick, odds: rule.odds, close: rule.close, stake: 10, result: rule.result, notes: "Graded"});
   });
   localStorage.setItem(GRADE_KEY, JSON.stringify(graded));
@@ -1556,8 +1558,8 @@ document.getElementById("loadledger").onchange = async e => {
     const data = JSON.parse(await file.text());
     const bets = Array.isArray(data) ? data : data.bets;
     if (!Array.isArray(bets)) throw new Error("That file has no slips.");
-    bets.forEach(markEdge);
-    save(bets);
+    bets.filter(b => !isNoPick(b)).forEach(markEdge);
+    save(bets.filter(b => !isNoPick(b)));
     document.getElementById("reportDay").value = "";
     render();
     localStorage.setItem("gg-hold-ledger", "1");
@@ -1584,7 +1586,7 @@ document.getElementById("syncledger").onclick = async () => {
       const text = await grades.text();
       gradeFile = text.split(/\n/).map(line => {
         const parts = line.split("|").map(s => s.trim());
-        if (parts.length < 5 || !/^\d{4}-\d{2}-\d{2}$/.test(parts[0]) || /no picks|season ended/i.test(parts[2] || "")) return null;
+        if (parts.length < 5 || !/^\d{4}-\d{2}-\d{2}$/.test(parts[0]) || /no picks|season ended/i.test([parts[1], parts[2], parts[4]].join(" "))) return null;
         const close = (parts[3].match(/-?\d+/) || [""])[0];
         const result = (parts[4].match(/win|loss|push/i) || ["loss"])[0].toLowerCase();
         const dollars = parts[parts.length - 1].replace(/[$,+]/g, "");
@@ -1671,7 +1673,7 @@ fetch("cards/calendar.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).
 fetch("cards/grades.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
   gradeFile = text.split(/\n/).map(line => {
     const parts = line.split("|").map(s => s.trim());
-    if (parts.length < 5 || !/^\d{4}-\d{2}-\d{2}$/.test(parts[0]) || /no picks|season ended/i.test(parts[2] || "")) return null;
+    if (parts.length < 5 || !/^\d{4}-\d{2}-\d{2}$/.test(parts[0]) || /no picks|season ended/i.test([parts[1], parts[2], parts[4]].join(" "))) return null;
     const close = (parts[3].match(/-?\d+/) || [""])[0];
     const result = (parts[4].match(/win|loss|push/i) || ["loss"])[0].toLowerCase();
     const dollars = parts[parts.length - 1].replace(/[$,+]/g, "");
