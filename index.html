@@ -591,10 +591,21 @@ function clearStalePending(){
 }
 function render(){
   clearStalePending();
-  const all = load().sort((a,b) => b.date.localeCompare(a.date) || b.id - a.id);
-  const bets = filtered(all);
-  const seen = new Set(bets.map(b => [b.date, b.sport, b.pick].join("|")));
-  const totals = bets.concat(loadGrade().filter(b => !seen.has([b.date, b.sport, b.pick].join("|"))));
+  const all = load().concat(loadGrade()).concat(gradeFile).filter(b => b && b.pick && !/no picks|season ended/i.test(b.pick));
+  const unique = [];
+  const seen = new Set();
+  all.forEach(b => {
+    const key = [b.date, b.sport, b.pick].join("|");
+    if (seen.has(key)) return;
+    seen.add(key);
+    if (!b.id) b.id = key;
+    if (!b.book) b.book = "BetMGM";
+    if (!b.type) b.type = / and /i.test(b.pick) ? "SGP" : "Spread";
+    if (!b.stake) b.stake = 10;
+    unique.push(b);
+  });
+  const bets = filtered(unique.sort((a,b) => String(b.date).localeCompare(String(a.date))));
+  const totals = bets;
   const settled = totals.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
   const pl = totals.reduce((s,b) => s + profit(b), 0);
   const staked = settled.reduce((s,b) => s + Number(b.stake), 0);
@@ -1645,7 +1656,7 @@ fetch("cards/calendar.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).
 fetch("cards/grades.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
   gradeFile = text.split(/\n/).map(line => {
     const parts = line.split("|").map(s => s.trim());
-    if (parts.length < 5 || !/^\d{4}-\d{2}-\d{2}$/.test(parts[0])) return null;
+    if (parts.length < 5 || !/^\d{4}-\d{2}-\d{2}$/.test(parts[0]) || /no picks|season ended/i.test(parts[2] || "")) return null;
     const close = (parts[3].match(/-?\d+/) || [""])[0];
     const result = (parts[4].match(/win|loss|push/i) || ["loss"])[0].toLowerCase();
     const dollars = parts[parts.length - 1].replace(/[$,+]/g, "");
