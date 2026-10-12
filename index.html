@@ -271,10 +271,11 @@ function archiveSlips(bets){
 function save(bets){ localStorage.setItem(KEY, JSON.stringify(bets)); render(); }
 function profit(b){
   if (b.result === "pending" || b.result === "void" || b.result === "push") return 0;
+  if ((b.result === "win" || b.result === "loss") && Number.isFinite(Number(b.profit))) return Number(b.profit);
   const odds = Number(b.odds), stake = Number(b.stake) || 0;
   if (!Number.isFinite(stake)) return 0;
   if (b.result !== "win") return -stake;
-  if (!Number.isFinite(odds) || odds === 0) return Number.isFinite(Number(b.profit)) ? Number(b.profit) : 0;
+  if (!Number.isFinite(odds) || odds === 0) return 0;
   const winAmt = odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds);
   return Number.isFinite(winAmt) ? winAmt : 0;
 }
@@ -1289,7 +1290,7 @@ async function applyGrades(){
       if (b.date === rule.date && String(b.pick).includes(rule.pick)) { b.result = rule.result; if (rule.close !== "") b.close = rule.close; }
     }));
     if (/no picks|season ended/i.test(rule.pick) || !inSlipWindow(rule.date)) return;
-    if (!graded.some(b => b.date === rule.date && b.pick === rule.pick)) graded.push({id: Date.now() + Math.random(), date: rule.date, book: "BetMGM", sport: rule.sport, type: betType({pick: rule.pick}), pick: rule.pick, odds: rule.odds, close: rule.close, stake: 10, result: rule.result, notes: "Graded"});
+    if (!graded.some(b => b.date === rule.date && b.pick === rule.pick)) graded.push({id: Date.now() + Math.random(), date: rule.date, book: "BetMGM", sport: rule.sport, type: betType({pick: rule.pick}), pick: rule.pick, odds: rule.odds, close: rule.close, stake: 10, result: rule.result, profit: rule.profit, notes: "Graded"});
   });
   localStorage.setItem(GRADE_KEY, JSON.stringify(graded));
   localStorage.setItem(KEY, JSON.stringify(bets));
