@@ -583,7 +583,7 @@ function showSeasons(checked){
   const wave = open > 1 ? "M0 11 H28 L34 11 L40 3 L46 19 L52 11 H120" : open === 1 ? "M0 11 H34 L38 11 L40 9 L42 13 L44 11 H120" : "M0 11 H120";
   const dot = open ? "" : "<circle class='ekg-dot' cx='0' cy='11' r='3'><animate attributeName='cx' from='0' to='120' dur='" + pulse + "' repeatCount='indefinite'></animate></circle>";
   const ekg = "<span class='ekg' style='--pulse:" + pulse + "'><svg viewBox='0 0 120 22' preserveAspectRatio='none' aria-label='Season pulse'><path d='" + wave + "' style='stroke:" + color + "'></path>" + dot + "</svg></span>";
-  box.innerHTML = "<h2>Season Dates</h2><p class='warn'>Checked " + (checked || "2026-10-08") + ". NFL May, NHL July, MLB July, NBA August, CFB August, CBB September.</p><table><thead><tr><th style="min-width:280px">Sport" + ekg + "</th><th>Start</th><th>Last Card</th><th>Status</th></tr></thead><tbody>" + rows + "</tbody></table>";
+  box.innerHTML = "<h2>Season Dates</h2><p class='warn'>Checked " + (checked || "2026-10-08") + ". NFL May, NHL July, MLB July, NBA August, CFB August, CBB September.</p><table><thead><tr><th style='min-width:280px'>Sport" + ekg + "</th><th>Start</th><th>Last Card</th><th>Status</th></tr></thead><tbody>" + rows + "</tbody></table>";
 }
 async function loadSeasons(){
   showSeasons();
