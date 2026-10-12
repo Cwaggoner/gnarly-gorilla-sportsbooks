@@ -76,6 +76,8 @@ tr.type td { color:#d6ffd0; font-weight:700; background:#0e0e0e; padding-left:16
 th { color:var(--title); background:#102010; }
 .win { color:var(--title); } .loss { color:var(--red); } .push, .warn { color:var(--amber); }
 .tools { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; align-items:flex-end; }
+.jump { display:flex; gap:6px; margin:6px 0; }
+.jump button { padding:4px 8px; font-size:12px; }
 #loadcal { height:38px; box-sizing:border-box; padding:6px 8px; }
 label:has(#loadcal) { gap:0; }
 #dashboard { display:flex; flex-direction:column; }
@@ -152,8 +154,9 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </div>
 <p id="pdfnote" class="warn"></p>
 </section>
-<section class="card">
+<section class="card" id="reportcard">
 <h2>Report Card</h2>
+<div class="jump"><button type="button" data-jump="printpreview">Page 1</button><button type="button" data-jump="printpreview2">Page 2</button></div>
 <div class="tools">
 <label>Day<input type="date" id="reportDay"></label>
 <label>Show<select id="reportShow"><option value="both">Both</option><option value="pending">Pending</option><option value="graded">Graded</option></select></label>
@@ -161,10 +164,12 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <div id="report"></div>
 <div class="tools"><button type="button" id="copyreport">Copy Report</button><button type="button" id="printreport">Print Report</button><button type="button" id="savepng">Save PNG</button><span id="copynote" class="warn"></span><span id="printnote" class="warn"></span></div>
 <div id="printpreview" class="print-preview" hidden>
+<div class="jump"><button type="button" data-jump="reportcard">Report</button><button type="button" data-jump="printpreview2">Page 2</button></div>
 <img id="printimg" alt="Report card print preview">
 <div class="tools"><button type="button" id="saveprint">Save PDF</button></div>
 </div>
 <div id="printpreview2" class="print-preview" hidden>
+<div class="jump"><button type="button" data-jump="reportcard">Report</button><button type="button" data-jump="printpreview">Page 1</button></div>
 <img id="printimg2" alt="Report card second page">
 </div>
 </section>
@@ -1528,6 +1533,10 @@ document.getElementById("saveprint").onclick = async () => {
   download(name, printBlob);
   note.textContent = "Save dialog is not available here. The file was downloaded instead.";
 };
+document.querySelectorAll("[data-jump]").forEach(btn => btn.onclick = () => {
+  const box = document.getElementById(btn.dataset.jump);
+  if (box) box.scrollIntoView({behavior:"smooth", block:"start"});
+});
 document.getElementById("copyreport").onclick = async () => {
   const text = document.getElementById("report").dataset.copy || document.getElementById("report").textContent;
   const note = document.getElementById("copynote");
