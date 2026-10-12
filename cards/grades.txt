@@ -1,3 +1,43 @@
+# file: GG-GRADES-2026-10-12
+
+2026-10-11 | CBB | No Picks
+2026-10-11 | CFB | No Picks
+
+2026-10-11 | MLB | Under 6 |  | win | MIL 2 LAD 1 | 9.09
+2026-10-11 | MLB | Brewers ML |  | win | MIL 2 LAD 1 | 8.85
+2026-10-11 | MLB | SGP Brewers ML and Under 6 |  | win | MIL 2 LAD 1 | 20.00
+
+2026-10-11 | NBA | Magic +5.5 |  | loss | CLE 119 ORL 105 | -10.00
+2026-10-11 | NBA | Bucks +4.5 |  | loss | CHA 105 MIL 90 | -10.00
+2026-10-11 | NBA | Bulls +8.5 |  | win | DEN 133 CHI 128 | 9.09
+2026-10-11 | NBA | Magic at Cavaliers Under 227.5 |  | win | CLE 119 ORL 105 | 9.09
+2026-10-11 | NBA | Bucks at Hornets Under 221.5 |  | win | CHA 105 MIL 90 | 9.09
+2026-10-11 | NBA | Bulls at Nuggets Under 233.5 |  | loss | DEN 133 CHI 128 | -10.00
+2026-10-11 | NBA | SGP Magic +5.5 and Under 227.5 |  | loss | CLE 119 ORL 105 | -10.00
+2026-10-11 | NBA | SGP Bulls +8.5 and Under 233.5 |  | loss | DEN 133 CHI 128 | -10.00
+2026-10-11 | NBA | SGP Bucks +4.5 and Under 221.5 |  | loss | CHA 105 MIL 90 | -10.00
+
+2026-10-11 | NHL | Seattle Kraken +1.5 |  | win | SEA 5 WSH 3 | 7.14
+2026-10-11 | NHL | Vancouver Canucks +1.5 |  | loss | NYR 6 VAN 2 | -10.00
+2026-10-11 | NHL | Carolina Hurricanes -1.5 |  | win | CAR 4 PHI 1 | 14.00
+2026-10-11 | NHL | SGP CAR -1.5 and Over 5.5 |  | loss | CAR 4 PHI 1 | -10.00
+2026-10-11 | NHL | Under 6.5 SEA/WSH |  | loss | SEA 5 WSH 3 | -10.00
+
+2026-10-11 | NFL | JAX -7.5 |  | loss | JAX 19 PHI 17 | -10.00
+2026-10-11 | NFL | CIN -7 |  | push | CIN 31 MIA 24 | 0.00
+2026-10-11 | NFL | CHI -1.5 |  | loss | GB 31 CHI 7 | -10.00
+2026-10-11 | NFL | CLE +2.5 |  | loss | NYJ 17 CLE 12 | -10.00
+2026-10-11 | NFL | HOU -7 |  | win | HOU 26 TEN 3 | 9.09
+2026-10-11 | NFL | PIT -2.5 |  | win | PIT 34 IND 22 | 9.09
+2026-10-11 | NFL | LV +3.5 |  | loss | NE 45 LV 17 | -10.00
+2026-10-11 | NFL | MIN -2.5 |  | win | MIN 23 NO 13 | 9.09
+2026-10-11 | NFL | NYG +3.5 |  | win | NYG 27 WSH 27 OT | 9.09
+2026-10-11 | NFL | DEN -3.5 |  | win | DEN 23 LAC 17 | 9.09
+2026-10-11 | NFL | DET -5.5 |  | win | DET 45 ARI 21 | 9.09
+2026-10-11 | NFL | SEA -3 |  | push | SF 32 SEA 29 | 0.00
+2026-10-11 | NFL | BAL +3.5 |  | loss | BAL 30 ATL 23 OT | -10.00
+
+# Previous grades retained below for history
 # file: GG-GRADES-2026-10-11
 
 2026-10-11 | NFL | No Picks
