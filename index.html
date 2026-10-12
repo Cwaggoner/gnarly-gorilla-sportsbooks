@@ -58,7 +58,8 @@ form, .row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1f
 .bet-box { border:1px solid #39ff14; border-radius:10px; padding:10px; box-sizing:border-box; }
 #betfields { display:grid; grid-template-columns:repeat(6,minmax(110px,1fr)); gap:8px; }
 #betfields label:nth-child(n+7) { grid-column:span 2; }
-#betload { display:flex; align-items:flex-start; justify-content:center; }
+#betload { display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:8px; }
+#betload img { width:100%; max-width:160px; height:auto; flex:1 1 auto; object-fit:contain; border-radius:12px; }
 #betnotes { display:flex; flex-direction:column; gap:8px; }
 .notes-field { grid-column:1 / -1; }
 .notes-field textarea { width:100%; min-height:64px; }
@@ -105,7 +106,7 @@ label:has(#loadcal) { gap:0; }
 .cal .dow { min-height:0; color:var(--title); background:transparent; border:0; }
 canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--line); border-radius:8px; display:block; }
 .charts canvas { width:100%; height:192px; }
-@media (max-width:700px) { .charts { grid-template-columns:1fr; } }
+@media (max-width:700px) { .charts { grid-template-columns:1fr; } .bet-top { grid-template-columns:1fr; } #betfields { grid-template-columns:1fr 1fr; } #betload img { max-width:120px; } }
 
 @media (max-width:700px) { table { display:block; overflow-x:auto; } }
 .ekg{display:block;width:100%;height:36px;margin:0 auto}
@@ -236,7 +237,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <input type="hidden" name="editId">
 <label>Stake $<input name="stake" type="number" step="0.01" min="0" value="10" required></label>
 </div>
-<div class="bet-box" id="betload"><button type="button" id="loadpicks">Load Picks</button></div>
+<div class="bet-box" id="betload"><button type="button" id="loadpicks">Load Picks</button><img src="gg-icon.png" alt="Gnarly Gorilla"></div>
 <div class="bet-box" id="betnotes">
 <p id="picknote" class="warn"></p>
 <span id="loadnote" class="warn"></span>
