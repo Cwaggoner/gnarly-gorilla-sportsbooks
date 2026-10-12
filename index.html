@@ -578,7 +578,7 @@ function showSeasons(checked){
   const names = {CBB:"CBB - College Basketball", CFB:"CFB - College Football", MLB:"MLB - Major League Baseball", NBA:"NBA - National Basketball Association", NFL:"NFL - National Football League", NHL:"NHL - National Hockey League"};
   const rows = ["CBB","CFB","MLB","NBA","NFL","NHL"].map(s => "<tr><td>" + names[s] + "</td><td>" + SEASON_START[s] + "</td><td>" + SEASON_END[s] + "</td><td>" + (seasonEnded(s) ? "Season Ended" : "Open") + "</td></tr>").join("");
   const open = ["CBB","CFB","MLB","NBA","NFL","NHL"].filter(s => !seasonEnded(s)).length;
-  const pulse = open === 6 ? "1.6s" : open >= 4 ? "2.4s" : open >= 2 ? "4s" : open === 1 ? "8s" : "10s";
+  const pulse = open === 6 ? "4.6s" : open >= 4 ? "5.4s" : open >= 2 ? "7s" : open === 1 ? "11s" : "13s";
   const color = open === 6 ? "#39ff14" : open >= 3 ? "#f0e14a" : "#ff6b6b";
   let wave = "M0 18";
   if (open > 1) {
