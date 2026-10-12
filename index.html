@@ -301,7 +301,7 @@ function drawDashboard(history, manual){
   const rows = (manual ? history.slice() : Object.values(byDate)).filter(row => manual || row.date < todayEt()).sort((a,b) => a.date.localeCompare(b.date));
   if (!manual) localStorage.setItem("gg-dashboard-v1", JSON.stringify(rows));
   const shown = manual ? rows : rows.slice(-7);
-  document.getElementById("dashrows").innerHTML = shown.map(row => "<tr><td>" + row.date + "</td><td>" + row.record + "</td><td>" + money(Number(row.profit)) + "</td><td>" + row.roi + "</td><td>" + row.units + "</td><td>" + row.pending + "</td><td>" + row.clv + "</td></tr>").join("");
+  document.getElementById("dashrows").innerHTML = shown.map(row => "<tr><td>" + row.date + "</td><td>" + row.record + "</td><td>" + money(Number(row.profit)) + "</td><td>" + row.roi + "</td><td>" + row.units + "</td><td>" + row.pending + "</td><td>" + (row.clv === "-" || row.clv == null || row.clv === "" ? "No Close Saved" : row.clv) + "</td></tr>").join("");
   const canvas = document.getElementById("dashChart");
   const ctx = canvas.getContext("2d");
   const w = Math.max(320, canvas.clientWidth || 640);
@@ -458,10 +458,10 @@ function clv(b){
   return (got / closed - 1) * 100;
 }
 function clvText(b){
+  if (b.close === "" || b.close == null) return "No Close Saved";
   if (b.result === "pending" || b.result === "void") return "-";
   const cv = clv(b);
-  if (cv == null) return "-";
-  if (Number(b.close) === Number(b.odds) || Math.abs(cv) < 0.05) return "Matched Bet Price";
+  if (cv == null || Math.abs(cv) < 0.05) return "Matched Bet Price";
   return cv.toFixed(1) + "%";
 }
 function weekRows(history){
@@ -519,14 +519,16 @@ function weekClv(history){
     byDate[row.date] = Number.isNaN(n) ? 0 : n;
   });
   const days = Object.keys(byDate).filter(d => d < todayEt()).sort().slice(-7);
-  if (!days.length) return "-";
+  if (!days.length) return "No Close Saved";
   return (days.reduce((s, d) => s + byDate[d], 0) / days.length).toFixed(1) + "%";
 }
 function clvListText(list){
   const graded = list.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
-  const xs = graded.map(clv).filter(v => v != null);
-  if (!xs.length) return "-";
-  if (xs.every(v => Math.abs(v) < 0.05)) return "Matched Bet Price";
+  if (!graded.length) return "No Close Saved";
+  const withClose = graded.filter(b => b.close !== "" && b.close != null);
+  if (!withClose.length) return "No Close Saved";
+  const xs = withClose.map(clv).filter(v => v != null);
+  if (!xs.length || xs.every(v => Math.abs(v) < 0.05)) return "Matched Bet Price";
   return (xs.reduce((s,v)=>s+v,0)/xs.length).toFixed(1) + "%";
 }
 function filtered(bets){
