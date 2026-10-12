@@ -604,12 +604,26 @@ function startPulse(){
   const ms = Number(root.dataset.ms) || 1600;
   const began = performance.now();
   trace.style.strokeDasharray = len;
+  const fade = 350;
   const tick = now => {
-    const drawn = ((now - began) % ms) / ms * len;
-    trace.style.strokeDashoffset = String(len - drawn);
-    const tip = trace.getPointAtLength(drawn);
-    dot.setAttribute("cx", tip.x);
-    dot.setAttribute("cy", tip.y);
+    const cycle = (now - began) % (ms + fade);
+    if (cycle <= ms) {
+      const drawn = Math.max(0.5, cycle / ms * len);
+      trace.style.strokeDasharray = drawn + " " + len;
+      trace.style.strokeDashoffset = "0";
+      trace.style.opacity = "1";
+      dot.style.opacity = "1";
+      const tip = trace.getPointAtLength(Math.min(len, drawn));
+      dot.setAttribute("cx", tip.x);
+      dot.setAttribute("cy", tip.y);
+    } else {
+      const tip = trace.getPointAtLength(len);
+      dot.setAttribute("cx", tip.x);
+      dot.setAttribute("cy", tip.y);
+      const fadeOut = 1 - (cycle - ms) / fade;
+      trace.style.opacity = String(fadeOut);
+      dot.style.opacity = String(fadeOut);
+    }
     pulseFrame = requestAnimationFrame(tick);
   };
   pulseFrame = requestAnimationFrame(tick);
