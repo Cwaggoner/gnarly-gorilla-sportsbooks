@@ -1664,7 +1664,10 @@ document.getElementById("syncledger").onclick = async () => {
       }).filter(Boolean);
     }
     await applyGrades();
-    const graded = load().concat(loadGrade()).concat(gradeFile).filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
+    const filled = load();
+    filled.forEach(keepClose);
+    save(filled);
+    const graded = filled.concat(loadGrade()).concat(gradeFile).filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
     note.textContent = "Synced ledger. " + bets.length + " slips loaded. " + graded.length + " graded slips are in the Slips card.";
   } catch (err) {
     note.textContent = "Sync failed. Ledger is not on the site yet.";
