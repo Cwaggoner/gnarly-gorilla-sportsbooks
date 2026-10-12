@@ -473,10 +473,22 @@ function weekRows(history){
   history.filter(row => row.date < todayEt()).forEach(row => { byDate[row.date] = {date: row.date, profit: Number(row.profit) || 0, staked: Number(row.staked) || 0}; });
   return Object.values(byDate).filter(row => row.date < todayEt()).sort((a,b) => a.date.localeCompare(b.date)).slice(-7);
 }
-function weekProfit(history){ return weekRows(history).reduce((s, row) => s + row.profit, 0); }
+function publishedWeek(){
+  return Object.entries(publishedCalendar).filter(([date]) => date < todayEt()).sort(([a],[b]) => a.localeCompare(b)).slice(-7);
+}
+function weekProfit(history){
+  const days = publishedWeek();
+  if (days.length) return days.reduce((s, [, row]) => s + Number(row.pl) || 0, 0);
+  return weekRows(history).reduce((s, row) => s + row.profit, 0);
+}
 function weekRoi(history){
-  const days = weekRows(history);
-  const staked = days.reduce((s, row) => s + row.staked, 0);
+  const days = publishedWeek();
+  if (days.length) {
+    const staked = days.reduce((s, [, row]) => s + (Number(row.n) || 0) * 10, 0);
+    return staked ? (weekProfit(history) / staked * 100).toFixed(1) + "%" : "-";
+  }
+  const rows = weekRows(history);
+  const staked = rows.reduce((s, row) => s + row.staked, 0);
   return staked && Number.isFinite(staked) ? (weekProfit(history) / staked * 100).toFixed(1) + "%" : "-";
 }
 function weekRecord(history){
