@@ -578,7 +578,7 @@ function showSeasons(checked){
   const names = {CBB:"CBB - College Basketball", CFB:"CFB - College Football", MLB:"MLB - Major League Baseball", NBA:"NBA - National Basketball Association", NFL:"NFL - National Football League", NHL:"NHL - National Hockey League"};
   const rows = ["CBB","CFB","MLB","NBA","NFL","NHL"].map(s => "<tr><td>" + names[s] + "</td><td>" + SEASON_START[s] + "</td><td>" + SEASON_END[s] + "</td><td>" + (seasonEnded(s) ? "Season Ended" : "Open") + "</td></tr>").join("");
   const open = ["CBB","CFB","MLB","NBA","NFL","NHL"].filter(s => !seasonEnded(s)).length;
-  const pulse = open === 6 ? "4.6s" : open >= 4 ? "5.4s" : open >= 2 ? "7s" : open === 1 ? "11s" : "13s";
+  const pulse = open === 6 ? "7.6s" : open >= 4 ? "8.4s" : open >= 2 ? "10s" : open === 1 ? "14s" : "16s";
   const color = open === 6 ? "#39ff14" : open >= 3 ? "#f0e14a" : "#ff6b6b";
   let wave = "M0 18";
   if (open > 1) {
@@ -615,11 +615,11 @@ function startPulse(){
       dot.style.opacity = "1";
       const tip = trace.getPointAtLength(Math.min(len, drawn));
       dot.setAttribute("cx", tip.x);
-      dot.setAttribute("cy", tip.y);
+      dot.setAttribute("cy", "18");
     } else {
       const tip = trace.getPointAtLength(len);
       dot.setAttribute("cx", tip.x);
-      dot.setAttribute("cy", tip.y);
+      dot.setAttribute("cy", "18");
       const fadeOut = 1 - (cycle - ms) / fade;
       trace.style.opacity = String(fadeOut);
       dot.style.opacity = String(fadeOut);
