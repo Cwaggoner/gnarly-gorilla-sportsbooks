@@ -78,6 +78,9 @@ th { color:var(--title); background:#102010; }
 .tools { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; align-items:flex-end; }
 .jump { display:flex; gap:6px; margin:6px 0; }
 .jump button { padding:4px 8px; font-size:12px; }
+.sitenav { position:sticky; top:0; z-index:5; display:flex; gap:6px; flex-wrap:wrap; background:#0a0a0a; border:1px solid var(--line); border-radius:8px; padding:6px; margin:8px 0; }
+.sitenav button { padding:4px 8px; font-size:12px; }
+.card { scroll-margin-top:52px; }
 #loadcal { height:38px; box-sizing:border-box; padding:6px 8px; }
 label:has(#loadcal) { gap:0; }
 #dashboard { display:flex; flex-direction:column; }
@@ -115,6 +118,17 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <p>Free bet ledger for Gnarly Gorilla Sports Decks. Log NFL, NBA, NHL, MLB, CBB, and CFB slips, grade them the next day, and copy the report card.</p>
 </div>
 </header>
+<nav class="sitenav" id="sitenav">
+<button type="button" data-jump="seasons">Seasons</button>
+<button type="button" data-jump="dashboard">Dashboard</button>
+<button type="button" data-jump="todaycard">Today</button>
+<button type="button" data-jump="slips">Slips</button>
+<button type="button" data-jump="reportcard">Report</button>
+<button type="button" data-jump="charts">Charts</button>
+<button type="button" data-jump="breaks">Books</button>
+<button type="button" data-jump="addbet">Add</button>
+<button type="button" data-jump="calendarcard">Calendar</button>
+</nav>
 <div id="seasons" class="card"><h2>Season Dates</h2><p class="warn">Checked in the month each league publishes its schedule.</p></div>
 <main>
 <section class="card" id="dashboard">
@@ -133,7 +147,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <span id="dashnote" class="warn"></span>
 </div>
 </section>
-<section class="card">
+<section class="card" id="todaycard">
 <h2>From Today's Card</h2>
 <p class="warn">One play per line: Sport | Type | Pick | American odds | Confidence. Stake is $10. Book is the dropdown below. Pending until graded.</p>
 <label>Book<select id="cardbook">
@@ -182,7 +196,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </div>
 </section>
 <section class="card" id="breaks"></section>
-<section class="card">
+<section class="card" id="addbet">
 <h2>Add A Bet</h2>
 <form id="form">
 <label>Date<input type="date" name="date" required></label>
@@ -221,7 +235,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </div>
 </form>
 </section>
-<section class="card">
+<section class="card" id="slips">
 <h2>Slips</h2>
 <p class="warn">This card keeps today and yesterday only. Older days stay on the calendar and in the published files.</p>
 <div class="tools">
@@ -246,7 +260,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </table></div>
 <p class="api-note">Live odds and the pick list will not populate without a free or paid subscription to The Odds API. A key is required. Paste it in From Today's Card.<br><a href="https://the-odds-api.com/" target="_blank" rel="noopener noreferrer">Open The Odds API</a></p>
 </section>
-<section class="card">
+<section class="card" id="calendarcard">
 <h2>Calendar</h2>
 <div class="tools"><button type="button" id="prevMonth">Prev</button><button type="button" id="nextMonth">Next</button><label>Load My Calendar<input type="file" id="loadcal" accept=".json,application/json"></label><button type="button" id="resetcal">Use Shared Calendar</button><span id="calnote" class="warn"></span></div>
 <div class="cal" id="calendar"></div>
@@ -1704,6 +1718,7 @@ document.getElementById("loadledger").onchange = e => {
       render();
       requestAnimationFrame(render);
     note.textContent = "Loaded " + bets.length + " slips.";
+      document.getElementById("slips").scrollIntoView({behavior:"smooth", block:"start"});
     } catch (err) {
       note.textContent = "Load failed. Use a Save Ledger JSON file.";
     }
@@ -1744,6 +1759,7 @@ document.getElementById("syncledger").onclick = async () => {
     save(filled);
     const graded = filled.concat(loadGrade()).concat(gradeFile).filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
     note.textContent = "Synced ledger. " + bets.length + " slips loaded. " + graded.length + " graded slips are in the Slips card.";
+    document.getElementById("slips").scrollIntoView({behavior:"smooth", block:"start"});
   } catch (err) {
     note.textContent = "Sync failed. Ledger is not on the site yet.";
   }
@@ -1842,6 +1858,7 @@ document.getElementById("loadcal").onchange = e => {
       localStorage.setItem("gg-calendar-personal", JSON.stringify(dates));
       drawCalendar();
       note.textContent = "Private calendar loaded. Only this browser can see it.";
+      document.getElementById("calendarcard").scrollIntoView({behavior:"smooth", block:"start"});
     } catch (err) {
       note.textContent = "Load failed. Use a calendar JSON or a ledger JSON.";
     }
