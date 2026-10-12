@@ -93,9 +93,9 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 @media (max-width:700px) { .charts { grid-template-columns:1fr; } }
 
 @media (max-width:700px) { table { display:block; overflow-x:auto; } }
-.ekg{display:block;width:100%;height:36px;margin-top:4px}
+.ekg{display:block;position:relative;width:100%;height:36px;margin-top:4px}
 .ekg svg{width:100%;height:36px}
-.ekg-dot{fill:#fff}
+.ekg-dot{position:absolute;top:14px;width:10px;height:10px;margin-left:-5px;border-radius:50%;background:#fff}
 .ekg .base{fill:none;stroke:#163016;stroke-width:1.5;vector-effect:non-scaling-stroke}
 .ekg .trace{fill:none;stroke:#39ff14;stroke-width:1.5;stroke-linecap:round;vector-effect:non-scaling-stroke}
 </style>
@@ -588,8 +588,8 @@ function showSeasons(checked){
     [90, 210, 330].forEach(x => { wave += " H" + x + " L" + (x + 2) + " 18 L" + (x + 3) + " 14 L" + (x + 4) + " 22 L" + (x + 5) + " 18"; });
     wave += " H448";
   } else wave += " H448";
-  const dot = "<circle class='ekg-dot' r='3.2' cx='0' cy='18' style='fill:" + (open ? color : "#ff6b6b") + "'></circle>";
-  const ekg = "<span class='ekg' data-ms='" + (parseFloat(pulse) * 1000) + "'><svg viewBox='0 0 448 36' preserveAspectRatio='none' aria-label='Season pulse'><path class='base' d='" + wave + "'></path><path class='trace' d='" + wave + "' style='stroke:" + color + "'></path>" + dot + "</svg></span>";
+  const dot = "<span class='ekg-dot' style='background:" + (open ? color : "#ff6b6b") + "'></span>";
+  const ekg = "<span class='ekg' data-ms='" + (parseFloat(pulse) * 1000) + "'><svg viewBox='0 0 448 36' preserveAspectRatio='none' aria-label='Season pulse'><path class='base' d='" + wave + "'></path><path class='trace' d='" + wave + "' style='stroke:" + color + "'></path></svg>" + dot + "</span>";
   box.innerHTML = "<h2>Season Dates</h2><p class='warn'>Checked " + (checked || "2026-10-08") + ". NFL May, NHL July, MLB July, NBA August, CFB August, CBB September.</p><table><thead><tr><th style='min-width:280px'>Sport" + ekg + "</th><th>Start</th><th>Last Card</th><th>Status</th></tr></thead><tbody>" + rows + "</tbody></table>";
   startPulse();
 }
@@ -607,19 +607,24 @@ function startPulse(){
   const fade = 350;
   const tick = now => {
     const cycle = (now - began) % (ms + fade);
+    const atX = x => {
+      let lo = 0, hi = len;
+      for (let i = 0; i < 16; i++) {
+        const mid = (lo + hi) / 2;
+        if (trace.getPointAtLength(mid).x < x) lo = mid; else hi = mid;
+      }
+      return hi;
+    };
     if (cycle <= ms) {
-      const drawn = Math.max(0.5, cycle / ms * len);
+      const x = Math.max(0.5, cycle / ms * 448);
+      const drawn = atX(x);
       trace.style.strokeDasharray = drawn + " " + len;
       trace.style.strokeDashoffset = "0";
       trace.style.opacity = "1";
       dot.style.opacity = "1";
-      const tip = trace.getPointAtLength(Math.min(len, drawn));
-      dot.setAttribute("cx", tip.x);
-      dot.setAttribute("cy", "18");
+      dot.style.left = (x / 448 * 100) + "%";
     } else {
-      const tip = trace.getPointAtLength(len);
-      dot.setAttribute("cx", tip.x);
-      dot.setAttribute("cy", "18");
+      dot.style.left = "100%";
       const fadeOut = 1 - (cycle - ms) / fade;
       trace.style.opacity = String(fadeOut);
       dot.style.opacity = String(fadeOut);
