@@ -1672,7 +1672,13 @@ document.getElementById("import").onchange = e => {
   reader.readAsText(file);
 };
 document.getElementById("clear").onclick = () => { if (confirm("Delete every bet in this browser?")) save([]); };
-["fSport","fBook","fType","fResult","reportDay","reportShow"].forEach(id => document.getElementById(id).onchange = render);
+["fSport","fBook","fType","fResult"].forEach(id => {
+  const el = document.getElementById(id);
+  const apply = () => { el.offsetHeight; requestAnimationFrame(render); };
+  el.addEventListener("input", apply);
+  el.addEventListener("change", apply);
+});
+["reportDay","reportShow"].forEach(id => document.getElementById(id).onchange = render);
 async function fillChartCloses(){
   const key = oddskey.value.trim();
   const bets = load();
