@@ -1,12 +1,10 @@
 2026-10-12 Sport Cards Summary
 
-No pick cards created in this run (first daily action: ledger, grades, dashboard, report).
+NBA: Preseason slate. Carded dogs on 5.5+ (Thunder +8.5) and smaller spreads. Unders named. Three SGPs. Season continues through 2027-04-11.
+CBB: 2026-10-12 | CBB | No Picks
+CFB: 2026-10-12 | CFB | No Picks
+MLB: NLCS Game 2 Under 6.5 (High Edge) and ALCS Game 1 Rays -1.5. Two SGPs.
+NFL: Week 5 MNF BUF +3.5 (High Edge) and Over 54.5. One SGP.
+NHL: Three MLs (OTT High Edge), one Under, one SGP.
 
-NBA: Yesterday graded 3-6 -$32.73. Season continues.
-CBB: 2026-10-11 | CBB | No Picks
-CFB: 2026-10-11 | CFB | No Picks
-MLB: 2026-10-11 | MLB | No Picks
-NFL: 2026-10-11 | NFL | No Picks
-NHL: 2026-10-11 | NHL | No Picks
-
-No Season Ended lines. All seasons active per cards/seasons.json. Unconfirmed ends: CFB 2027-01-25, NFL 2027-02-14, CBB 2027-04-05, NHL 2027-04-10, NBA 2027-04-11. MLB 2026-10-31 confirmed.
+No Season Ended lines. All seasons active. Do not grade today's games.
