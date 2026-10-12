@@ -1616,25 +1616,31 @@ function buildSheet(bets){
   ]);
 }
 
-document.getElementById("loadledger").onchange = async e => {
+document.getElementById("loadledger").onchange = e => {
   const file = e.target.files[0];
   const note = document.getElementById("ledgernote");
   if (!file) return;
-  try {
-    const data = JSON.parse(await file.text());
-    const bets = Array.isArray(data) ? data : data.bets;
-    if (!Array.isArray(bets)) throw new Error("That file has no slips.");
-    const kept = bets.filter(b => !isNoPick(b) && inSlipWindow(b.date));
-    kept.forEach(b => { keepClose(b); markEdge(b); });
-    save(kept);
-    document.getElementById("reportDay").value = "";
-    render();
-    localStorage.setItem("gg-hold-ledger", "1");
+  note.textContent = "Loading " + file.name.replace(/\.[^.]+$/, "") + "...";
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(String(reader.result));
+      const bets = Array.isArray(data) ? data : data.bets;
+      if (!Array.isArray(bets)) throw new Error("That file has no slips.");
+      const kept = bets.filter(b => !isNoPick(b) && inSlipWindow(b.date));
+      kept.forEach(b => { keepClose(b); markEdge(b); });
+      save(kept);
+      document.getElementById("reportDay").value = "";
+      localStorage.setItem("gg-hold-ledger", "1");
+      render();
+      requestAnimationFrame(render);
     note.textContent = "Loaded " + bets.length + " slips.";
-  } catch (err) {
-    note.textContent = "Load failed. Use a Save Ledger JSON file.";
-  }
-  e.target.value = "";
+    } catch (err) {
+      note.textContent = "Load failed. Use a Save Ledger JSON file.";
+    }
+    e.target.value = "";
+  };
+  reader.readAsText(file);
 };
 document.getElementById("syncledger").onclick = async () => {
   const note = document.getElementById("ledgernote");
