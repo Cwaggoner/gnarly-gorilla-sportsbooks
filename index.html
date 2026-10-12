@@ -589,8 +589,8 @@ function showSeasons(checked){
     [90, 210, 330].forEach(x => { wave += " H" + x + " L" + (x + 2) + " 18 L" + (x + 3) + " 14 L" + (x + 4) + " 22 L" + (x + 5) + " 18"; });
     wave += " H448";
   } else wave += " H448";
-  const dot = "<circle class='ekg-dot' cx='0' cy='18' r='3.2' style='fill:" + (open ? color : "#ff6b6b") + "'><animate attributeName='cx' from='0' to='448' dur='" + pulse + "' repeatCount='indefinite'></animate></circle>";
-  const ekg = "<span class='ekg' style='--pulse:" + pulse + "'><svg viewBox='0 0 448 36' preserveAspectRatio='none' aria-label='Season pulse'><path class='base' d='" + wave + "'></path><path class='trace' d='" + wave + "' style='stroke:" + color + "'></path>" + dot + "</svg></span>";
+  const dot = "<circle class='ekg-dot' r='3.2' style='fill:" + (open ? color : "#ff6b6b") + "'><animateMotion dur='" + pulse + "' repeatCount='indefinite' path='" + wave + "'></animateMotion></circle>";
+  const ekg = "<span class='ekg' style='--pulse:" + pulse + "'><svg viewBox='0 0 448 36' preserveAspectRatio='none' aria-label='Season pulse'><path class='base' pathLength='448' d='" + wave + "'></path><path class='trace' pathLength='448' d='" + wave + "' style='stroke:" + color + "'></path>" + dot + "</svg></span>";
   box.innerHTML = "<h2>Season Dates</h2><p class='warn'>Checked " + (checked || "2026-10-08") + ". NFL May, NHL July, MLB July, NBA August, CFB August, CBB September.</p><table><thead><tr><th style='min-width:280px'>Sport" + ekg + "</th><th>Start</th><th>Last Card</th><th>Status</th></tr></thead><tbody>" + rows + "</tbody></table>";
 }
 async function loadSeasons(){
