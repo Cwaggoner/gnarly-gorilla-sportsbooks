@@ -725,17 +725,18 @@ function render(){
   const picked = document.getElementById("reportDay").value;
   const show = document.getElementById("reportShow").value || "both";
   const poolMap = {};
-  bets.concat(graded).forEach(b => {
+  bets.concat(graded).concat(gradeFile).forEach(b => {
     const key = [b.date, b.sport, b.pick].join("|");
     const prior = poolMap[key];
-    if (!prior || (prior.result === "pending" && b.result !== "pending")) poolMap[key] = b;
+    const better = !prior || (prior.result === "pending" && b.result !== "pending") || (Number.isFinite(Number(b.profit)) && !Number.isFinite(Number(prior.profit)));
+    if (better) poolMap[key] = b;
   });
   const pool = Object.values(poolMap);
   const pending = pool.filter(b => b.result === "pending" && b.date === (picked || todayEt()));
   const gradedDay = pool.filter(b => b.result !== "pending" && b.date === (picked || y));
   const day = picked ? pool.filter(b => b.date === picked) : gradedDay;
   const daySettled = gradedDay.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
-  const dayPl = gradedDay.reduce((s,b) => s + profit(b), 0);
+  const dayPl = gradedDay.reduce((s,b) => s + (Number.isFinite(Number(b.profit)) ? Number(b.profit) : profit(b)), 0);
   const hit = daySettled.length ? (gradedDay.filter(b => b.result === "win").length / daySettled.length * 100).toFixed(0) + "%" : "-";
   const blocks = [];
   if (show !== "graded") blocks.push(["Date", pending]);
@@ -755,7 +756,7 @@ function render(){
       body += "<tr class='sport'><td colspan='6'>" + sport + "</td></tr>";
       if (!rows.length) { const label = seasonText(sport); copy.push(label); body += "<tr><td></td><td>" + label + "</td><td>" + sport + "</td><td>" + label + "</td><td></td><td></td></tr>"; return; }
       rows.forEach(b => {
-        const plCell = b.result === "pending" ? "OPEN" : money(profit(b));
+        const plCell = b.result === "pending" ? "OPEN" : money(Number.isFinite(Number(b.profit)) ? Number(b.profit) : profit(b));
         const edge = markEdge(b).edge;
         copy.push([b.date, b.result.toUpperCase(), b.sport, b.pick, b.odds, plCell].join("  "));
         body += "<tr" + (edge ? " class='edge'" : "") + "><td>" + esc(b.date) + "</td><td>" + esc(b.result.toUpperCase()) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.pick) + "</td><td>" + esc(b.odds) + "</td><td>" + plCell + "</td></tr>";
