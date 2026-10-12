@@ -1335,6 +1335,8 @@ document.getElementById("loadcard").onclick = () => loadPending();
 
 let printBlob = null;
 let printPng = null;
+let printPngPages = [];
+let printPagesAll = [];
 function roundRect(ctx, x, y, w, h, r) {
   ctx.beginPath();
   ctx.moveTo(x + r, y);
@@ -1365,84 +1367,120 @@ async function jpegPdf(canvas) {
   add("trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n" + start + "\n%%EOF");
   return new Blob(parts, {type:"application/pdf"});
 }
-async function buildPrintForm() {
-  const note = document.getElementById("printnote");
+async function buildReportPages(mode) {
   const report = document.getElementById("report");
-  const rows = [...report.querySelectorAll("h2, tbody tr")].map(el => el.tagName === "H2" ? {cells:[el.textContent], edge:false} : {cells:[...el.children].map(td => td.textContent), edge:el.classList.contains("edge")});
+  const rows = [...report.querySelectorAll("h2, tbody tr")].map(el => el.tagName === "H2" ? {cells:[el.textContent], edge:false, head:true} : {cells:[...el.children].map(td => td.textContent), edge:el.classList.contains("edge"), head:false});
   const summary = [...report.querySelectorAll(":scope > p")].map(p => p.textContent);
-  const rowH = 22;
-  const canvas = document.createElement("canvas");
-  canvas.width = 1584;
-  canvas.height = Math.max(1224, 280 + rows.length * rowH + 80);
-  const ctx = canvas.getContext("2d");
-  ctx.fillStyle = "#0a0a0a";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.strokeStyle = "#39ff14";
-  ctx.lineWidth = 3;
-  roundRect(ctx, 28, 28, canvas.width - 56, canvas.height - 56, 24);
-  ctx.stroke();
+  const landscape = mode === "print";
+  const dpi = 120;
+  const pageW = Math.round((landscape ? 17 : 11) * dpi);
+  const pageH = Math.round((landscape ? 11 : 17) * dpi);
+  const margin = 48;
+  const rowH = 28;
+  const usable = pageH - margin * 2 - 150;
+  const perPage = Math.max(8, Math.floor(usable / rowH));
+  const pages = [];
+  for (let i = 0; i < Math.max(1, rows.length); i += perPage) pages.push(rows.slice(i, i + perPage));
+  if (!pages.length) pages.push([]);
   const icon = new Image();
   icon.src = "gg-icon.png";
   const iconReady = await new Promise(res => { icon.onload = () => res(true); icon.onerror = () => res(false); });
-  if (iconReady) {
-    ctx.save();
-    roundRect(ctx, 1428, 52, 108, 108, 16);
+  const canvases = pages.map((pageRows, pageIndex) => {
+    const canvas = document.createElement("canvas");
+    canvas.width = pageW;
+    canvas.height = pageH;
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#0a0a0a";
+    ctx.fillRect(0, 0, pageW, pageH);
+    ctx.strokeStyle = "#39ff14";
+    ctx.lineWidth = 3;
+    roundRect(ctx, 24, 24, pageW - 48, pageH - 48, 24);
     ctx.stroke();
-    ctx.clip();
-    ctx.drawImage(icon, 1432, 56, 100, 100);
-    ctx.restore();
-  }
-  ctx.fillStyle = "#39ff14";
-  ctx.font = "28px sans-serif";
-  ctx.fillText("Gnarly Gorilla Report Card", 56, 96);
-  ctx.fillStyle = "#d6ffd0";
-  ctx.font = "16px sans-serif";
-  ctx.fillText("8.5 x 11 in landscape", 56, 128);
-  summary.forEach((line, i) => ctx.fillText(line, 56, 176 + i * 24));
-  const heads = ["Date", "Result", "Sport", "Pick", "Odds", "P/L"];
-  const xs = [56, 190, 330, 450, 1180, 1320];
-  let y = 176 + summary.length * 24 + 20;
-  ctx.fillStyle = "#39ff14";
-  ctx.font = "16px sans-serif";
-  heads.forEach((h, i) => ctx.fillText(h, xs[i], y));
-  ctx.fillStyle = "#d6ffd0";
-  ctx.font = "16px sans-serif";
-  rows.forEach(row => {
-    y += rowH;
-    const cells = row.cells || row;
-    if (cells.length === 1 && (cells[0] === "Graded" || cells[0] === "Date")) { ctx.strokeStyle = "#39ff14"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(56, y - 16); ctx.lineTo(1460, y - 16); ctx.stroke(); }
-    if (cells.length === 1) { ctx.fillStyle = "#39ff14"; ctx.fillText(cells[0], 56, y); ctx.fillStyle = "#d6ffd0"; return; }
-    ctx.fillStyle = row.edge ? "#f0e14a" : "#d6ffd0";
-    cells.forEach((cell, i) => ctx.fillText(cell.slice(0, i === 3 ? 42 : 18), xs[i], y));
+    if (iconReady) {
+      ctx.save();
+      roundRect(ctx, pageW - 156, 40, 108, 108, 16);
+      ctx.stroke();
+      ctx.clip();
+      ctx.drawImage(icon, pageW - 152, 44, 100, 100);
+      ctx.restore();
+    }
+    ctx.fillStyle = "#39ff14";
+    ctx.font = "28px sans-serif";
+    ctx.fillText("Gnarly Gorilla Report Card", margin, 78);
+    ctx.fillStyle = "#d6ffd0";
+    ctx.font = "16px sans-serif";
+    ctx.fillText((landscape ? "Ledger landscape" : "Ledger portrait") + "  " + (pageIndex + 1) + " of " + pages.length, margin, 108);
+    let y = 140;
+    if (pageIndex === 0) summary.forEach(line => { ctx.fillText(line, margin, y); y += 24; });
+    const heads = ["Date", "Result", "Sport", "Pick", "Odds", "P/L"];
+    const xs = landscape ? [margin, 220, 380, 520, pageW - 280, pageW - 150] : [margin, 180, 300, 420, pageW - 240, pageW - 120];
+    ctx.fillStyle = "#39ff14";
+    ctx.font = "16px sans-serif";
+    heads.forEach((h, i) => ctx.fillText(h, xs[i], y));
+    ctx.font = "15px sans-serif";
+    pageRows.forEach(row => {
+      y += rowH;
+      const cells = row.cells || [];
+      if (cells.length === 1) {
+        ctx.strokeStyle = "#39ff14";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(margin, y - 18);
+        ctx.lineTo(pageW - margin, y - 18);
+        ctx.stroke();
+        ctx.fillStyle = "#39ff14";
+        ctx.fillText(cells[0], margin, y);
+        return;
+      }
+      ctx.fillStyle = row.edge ? "#f0e14a" : "#d6ffd0";
+      cells.forEach((cell, i) => ctx.fillText(String(cell), xs[i], y));
+    });
+    if (!pageRows.length) { ctx.fillStyle = "#d6ffd0"; ctx.fillText("No slips on this report.", margin, y + 28); }
+    return canvas;
   });
-  if (!rows.length) ctx.fillText("No slips on this report.", 56, y + 28);
-  document.getElementById("printimg").src = canvas.toDataURL("image/png");
-  printPng = await new Promise(r => canvas.toBlob(r, "image/png"));
+  return canvases;
+}
+async function buildPrintForm() {
+  const note = document.getElementById("printnote");
+  const printPages = await buildReportPages("print");
+  const pngPages = await buildReportPages("png");
+  document.getElementById("printimg").src = printPages[0].toDataURL("image/png");
   document.getElementById("printpreview").hidden = false;
-  printBlob = await jpegPdf(canvas);
-  note.textContent = "Preview ready. Save PDF asks where to put the file.";
+  printPng = await new Promise(r => pngPages[0].toBlob(r, "image/png"));
+  printPngPages = pngPages;
+  printPagesAll = printPages;
+  printBlob = await jpegPdf(printPages[0]);
+  note.textContent = "Preview ready. " + printPages.length + " print page" + (printPages.length === 1 ? "" : "s") + ". Nothing is cut off.";
 }
 document.getElementById("printreport").onclick = async () => {
   const note = document.getElementById("printnote");
   note.textContent = "Building the report...";
   try {
     await buildPrintForm();
-    note.textContent = "Preview ready.";
-    const frame = document.getElementById("printimg");
     const popup = window.open("", "gg-report");
     if (!popup) { note.textContent = "Preview is below. Allow pop-ups to print."; return; }
-    popup.document.write("<title>Gnarly Gorilla Report Card</title><img src='" + frame.src + "' style='width:100%'>");
+    const imgs = printPagesAll.map(c => "<img src='" + c.toDataURL("image/png") + "' style='width:100%;page-break-after:always'>").join("");
+    popup.document.write("<title>Gnarly Gorilla Report Card</title><style>@page{size:ledger landscape;margin:0.4in}body{margin:0;background:#0a0a0a}</style>" + imgs);
     popup.document.close();
     popup.focus();
     popup.print();
+    note.textContent = "Print dialog open. Ledger landscape, " + printPagesAll.length + " page" + (printPagesAll.length === 1 ? "" : "s") + ".";
   } catch (err) {
     note.textContent = err.message || "Print failed.";
   }
 };
 document.getElementById("savepng").onclick = async () => {
   const note = document.getElementById("printnote");
-  if (!printPng) { try { await buildPrintForm(); } catch (err) { note.textContent = err.message || "Preview failed."; return; } }
-  if (!printPng) { note.textContent = "Press Print Report first."; return; }
+  try { await buildPrintForm(); } catch (err) { note.textContent = err.message || "Preview failed."; return; }
+  if (!printPngPages.length) { note.textContent = "No report to save."; return; }
+  const page = printPngPages.length > 1 ? printPngPages : [printPngPages[0]];
+  for (let i = 0; i < page.length; i++) {
+    const blob = await new Promise(r => page[i].toBlob(r, "image/png"));
+    const name = page.length === 1 ? "GG-Report-Card.png" : "GG-Report-Card-" + (i + 1) + ".png";
+    download(name, blob);
+  }
+  note.textContent = "PNG saved in portrait. " + page.length + " file" + (page.length === 1 ? "" : "s") + ".";
+  return;
   const name = "GG-Report-Card.png";
   try {
     if (window.showSaveFilePicker) {
