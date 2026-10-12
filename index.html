@@ -59,7 +59,7 @@ form, .row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1f
 #betfields { display:grid; grid-template-columns:repeat(6,minmax(110px,1fr)); gap:8px; }
 #betfields label:nth-child(n+7) { grid-column:span 2; }
 #betload { display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:8px; }
-#betload img { width:100%; max-width:160px; height:auto; flex:1 1 auto; object-fit:contain; border-radius:12px; }
+#betload img { width:100%; max-width:160px; height:auto; flex:1 1 auto; object-fit:contain; border:1px solid var(--line); border-radius:8px; padding:8px; box-sizing:border-box; background:#0e0e0e; }
 #betnotes { display:flex; flex-direction:column; gap:8px; }
 .notes-field { grid-column:1 / -1; }
 .notes-field textarea { width:100%; min-height:64px; }
