@@ -600,7 +600,7 @@ function startPulse(){
   if (!trace || !clip) return;
   const ms = Number(root.dataset.ms) || 1600;
   const began = performance.now();
-  const fade = 350;
+  const fade = 1200;
   const tick = now => {
     const cycle = (now - began) % (ms + fade);
     if (cycle <= ms) {
