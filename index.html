@@ -582,10 +582,11 @@ function showSeasons(checked){
   const color = open === 6 ? "#39ff14" : open >= 3 ? "#f0e14a" : "#ff6b6b";
   let wave = "M0 11";
   if (open > 1) {
-    for (let x = 24; x < 440; x += 56) wave += " H" + x + " L" + (x + 3) + " 11 L" + (x + 6) + " 3 L" + (x + 9) + " 19 L" + (x + 12) + " 11";
+    [90, 210, 330].forEach(x => { wave += " H" + x + " L" + (x + 4) + " 11 L" + (x + 8) + " 3 L" + (x + 12) + " 19 L" + (x + 16) + " 11"; });
     wave += " H448";
   } else if (open === 1) {
-    wave += " H210 L213 11 L215 9 L217 13 L219 11 H448";
+    [90, 210, 330].forEach(x => { wave += " H" + x + " L" + (x + 3) + " 11 L" + (x + 5) + " 9 L" + (x + 7) + " 13 L" + (x + 9) + " 11"; });
+    wave += " H448";
   } else wave += " H448";
   const dot = open ? "" : "<circle class='ekg-dot' cx='0' cy='11' r='3'><animate attributeName='cx' from='0' to='448' dur='" + pulse + "' repeatCount='indefinite'></animate></circle>";
   const ekg = "<span class='ekg' style='--pulse:" + pulse + "'><svg viewBox='0 0 448 22' preserveAspectRatio='none' aria-label='Season pulse'><path d='" + wave + "' style='stroke:" + color + "'></path>" + dot + "</svg></span>";
