@@ -238,9 +238,9 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </section>
 <section class="card">
 <h2>Calendar</h2>
-<div class="tools"><button type="button" id="prevMonth">Prev</button><button type="button" id="nextMonth">Next</button></div>
+<div class="tools"><button type="button" id="prevMonth">Prev</button><button type="button" id="nextMonth">Next</button><label>Load My Calendar<input type="file" id="loadcal" accept=".json,application/json"></label><button type="button" id="resetcal">Use Shared Calendar</button><span id="calnote" class="warn"></span></div>
 <div class="cal" id="calendar"></div>
-<p class="api-note">Past days show the graded profit and stay after a refresh. Today shows green if every open slip wins and red if every open slip loses. The month keeps each graded day.</p>
+<p class="api-note">Everyone sees the shared $10 calendar until they upload a file. An uploaded file stays in this browser only. Other users do not see it. Use Shared Calendar to go back.</p>
 </section>
 </main>
 <footer class="card">
@@ -540,8 +540,12 @@ function filtered(bets){
 }
 let monthCursor = new Date();
 let publishedCalendar = {"2026-10-01":{pl:8.20,n:0},"2026-10-02":{pl:-12.40,n:0},"2026-10-03":{pl:18.10,n:0},"2026-10-04":{pl:1.04,n:0},"2026-10-05":{pl:-76.64,n:0},"2026-10-06":{pl:-152.48,n:0},"2026-10-07":{pl:-5.74,n:0},"2026-10-08":{pl:-26.51,n:43}};
+function personalCalendar(){
+  try { return JSON.parse(localStorage.getItem("gg-calendar-personal") || "null"); } catch (err) { return null; }
+}
 function drawCalendar(){
-  const board = Object.assign({}, publishedCalendar);
+  const mine = personalCalendar();
+  const board = Object.assign({}, mine || publishedCalendar);
   const y = monthCursor.getFullYear(), m = monthCursor.getMonth();
   const first = new Date(y, m, 1);
   const start = first.getDay();
@@ -1748,6 +1752,42 @@ document.getElementById("canceledit").onclick = event => {
   document.getElementById("savebtn").textContent = "Save Bet";
   document.getElementById("editnote").textContent = "Edit cancelled.";
   document.getElementById("picknote").textContent = "";
+};
+document.getElementById("loadcal").onchange = e => {
+  const file = e.target.files[0];
+  const note = document.getElementById("calnote");
+  if (!file) return;
+  note.textContent = "Loading " + file.name.replace(/\.[^.]+$/, "") + "...";
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(String(reader.result));
+      let dates = data && data.dates;
+      if (!dates && Array.isArray(data && data.bets || data)) {
+        dates = {};
+        (data.bets || data).forEach(b => {
+          if (!b || !b.date || b.result === "pending" || isNoPick(b)) return;
+          const row = dates[b.date] || {pl: 0, n: 0};
+          row.pl += profit(b);
+          row.n += 1;
+          dates[b.date] = row;
+        });
+      }
+      if (!dates || !Object.keys(dates).length) throw new Error("empty");
+      localStorage.setItem("gg-calendar-personal", JSON.stringify(dates));
+      drawCalendar();
+      note.textContent = "Private calendar loaded. Only this browser can see it.";
+    } catch (err) {
+      note.textContent = "Load failed. Use a calendar JSON or a ledger JSON.";
+    }
+    e.target.value = "";
+  };
+  reader.readAsText(file);
+};
+document.getElementById("resetcal").onclick = () => {
+  localStorage.removeItem("gg-calendar-personal");
+  drawCalendar();
+  document.getElementById("calnote").textContent = "Showing the shared $10 calendar.";
 };
 document.getElementById("prevMonth").onclick = () => { monthCursor.setMonth(monthCursor.getMonth()-1); render(); };
 document.getElementById("nextMonth").onclick = () => { monthCursor.setMonth(monthCursor.getMonth()+1); render(); };
