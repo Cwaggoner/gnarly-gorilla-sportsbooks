@@ -1569,7 +1569,7 @@ document.getElementById("loadledger").onchange = async e => {
 };
 document.getElementById("syncledger").onclick = async () => {
   const note = document.getElementById("ledgernote");
-  note.textContent = "Syncing ledger...";
+  note.textContent = "Syncing ledger and graded slips...";
   try {
     const res = await fetch("cards/ledger.json?ts=" + Date.now());
     if (!res.ok) throw new Error("missing");
@@ -1579,7 +1579,22 @@ document.getElementById("syncledger").onclick = async () => {
     bets.forEach(markEdge);
     save(bets);
     localStorage.setItem("gg-hold-ledger", "1");
-    note.textContent = "Synced ledger. " + bets.length + " slips loaded.";
+    const grades = await fetch("cards/grades.txt?ts=" + Date.now());
+    if (grades.ok) {
+      const text = await grades.text();
+      gradeFile = text.split(/\n/).map(line => {
+        const parts = line.split("|").map(s => s.trim());
+        if (parts.length < 5 || !/^\d{4}-\d{2}-\d{2}$/.test(parts[0]) || /no picks|season ended/i.test(parts[2] || "")) return null;
+        const close = (parts[3].match(/-?\d+/) || [""])[0];
+        const result = (parts[4].match(/win|loss|push/i) || ["loss"])[0].toLowerCase();
+        const dollars = parts[parts.length - 1].replace(/[$,+]/g, "");
+        const profit = Number(dollars);
+        return {date: parts[0], sport: parts[1], pick: parts[2], odds: close || -110, close: close, result: result, stake: 10, profit: Number.isFinite(profit) ? profit : 0};
+      }).filter(Boolean);
+    }
+    await applyGrades();
+    const graded = load().concat(loadGrade()).concat(gradeFile).filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
+    note.textContent = "Synced ledger. " + bets.length + " slips loaded. " + graded.length + " graded slips are in the Slips card.";
   } catch (err) {
     note.textContent = "Sync failed. Ledger is not on the site yet.";
   }
