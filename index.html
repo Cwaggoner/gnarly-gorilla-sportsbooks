@@ -645,7 +645,7 @@ function render(){
     seen.add(key);
     if (!b.id) b.id = key;
     if (!b.book) b.book = "BetMGM";
-    if (!b.type) b.type = / and /i.test(b.pick) ? "SGP" : "Spread";
+    b.type = betType(b);
     if (!b.stake) b.stake = 10;
     unique.push(b);
   });
@@ -1198,6 +1198,17 @@ async function loadPending(){
   document.getElementById("rows").scrollIntoView({behavior:"smooth", block:"center"});
 }
 function slipKey(b){ return [b.date, b.sport, b.pick].join("|"); }
+function betType(b){
+  const pick = String(b && b.pick || "");
+  const given = String(b && b.type || "");
+  if (/\band\b/i.test(pick) || /^sgp\b/i.test(pick) || /^sgp$/i.test(given)) return "SGP";
+  if (/\b(over|under)\b/i.test(pick) || /^total$/i.test(given)) return "Total";
+  if (/\bml\b|moneyline/i.test(pick) || /^moneyline$/i.test(given)) return "Moneyline";
+  if (/parlay/i.test(pick) || /^parlay$/i.test(given)) return "Parlay";
+  if (/prop/i.test(pick) || /^prop$/i.test(given)) return "Prop";
+  if (/[+-]\d/.test(pick) || /run line|puck line|spread/i.test(given + " " + pick)) return "Spread";
+  return given || "Spread";
+}
 function isNoPick(b){ return /no picks|season ended/i.test([b && b.pick, b && b.sport, b && b.type, b && b.result, b && b.notes].join(" ")); }
 function markEdge(b){
   const cv = clv(b);
@@ -1262,7 +1273,7 @@ async function applyGrades(){
       if (b.date === rule.date && String(b.pick).includes(rule.pick)) { b.result = rule.result; if (rule.close !== "") b.close = rule.close; }
     }));
     if (/no picks|season ended/i.test(rule.pick) || !inSlipWindow(rule.date)) return;
-    if (!graded.some(b => b.date === rule.date && b.pick === rule.pick)) graded.push({id: Date.now() + Math.random(), date: rule.date, book: "BetMGM", sport: rule.sport, type: / and /i.test(rule.pick) ? "SGP" : "Spread", pick: rule.pick, odds: rule.odds, close: rule.close, stake: 10, result: rule.result, notes: "Graded"});
+    if (!graded.some(b => b.date === rule.date && b.pick === rule.pick)) graded.push({id: Date.now() + Math.random(), date: rule.date, book: "BetMGM", sport: rule.sport, type: betType({pick: rule.pick}), pick: rule.pick, odds: rule.odds, close: rule.close, stake: 10, result: rule.result, notes: "Graded"});
   });
   localStorage.setItem(GRADE_KEY, JSON.stringify(graded));
   localStorage.setItem(KEY, JSON.stringify(bets));
