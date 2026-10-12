@@ -1377,10 +1377,15 @@ async function buildReportPages(mode) {
   const pageH = Math.round((landscape ? 11 : 17) * dpi);
   const margin = 48;
   const rowH = 28;
-  const usable = pageH - margin * 2 - 150;
-  const perPage = Math.max(8, Math.floor(usable / rowH));
-  const pages = [];
-  for (let i = 0; i < Math.max(1, rows.length); i += perPage) pages.push(rows.slice(i, i + perPage));
+  const show = document.getElementById("reportShow").value || "both";
+  const sections = [];
+  let current = [];
+  rows.forEach(row => {
+    if (row.head && current.length) { sections.push(current); current = [row]; }
+    else current.push(row);
+  });
+  if (current.length) sections.push(current);
+  const pages = show === "both" && sections.length > 1 ? sections : [rows];
   if (!pages.length) pages.push([]);
   const icon = new Image();
   icon.src = "gg-icon.png";
@@ -1409,7 +1414,8 @@ async function buildReportPages(mode) {
     ctx.fillText("Gnarly Gorilla Report Card", margin, 78);
     ctx.fillStyle = "#d6ffd0";
     ctx.font = "16px sans-serif";
-    ctx.fillText((landscape ? "Ledger landscape" : "Ledger portrait") + "  " + (pageIndex + 1) + " of " + pages.length, margin, 108);
+    const label = (pageRows.find(r => r.head) || {}).cells ? (pageRows.find(r => r.head).cells[0] || "") : "";
+    ctx.fillText((landscape ? "Ledger landscape" : "Ledger portrait") + "  " + (label || ("Page " + (pageIndex + 1))) + "  " + (pageIndex + 1) + " of " + pages.length, margin, 108);
     let y = 140;
     if (pageIndex === 0) summary.forEach(line => { ctx.fillText(line, margin, y); y += 24; });
     const heads = ["Date", "Result", "Sport", "Pick", "Odds", "P/L"];
