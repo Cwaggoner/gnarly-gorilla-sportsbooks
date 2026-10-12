@@ -384,6 +384,7 @@ function drawLine(canvas, settled){
   ctx.fillText(money(pts[pts.length-1].y), pad, 16);
 }
 let gradeFile = [];
+let edgePicks = new Set();
 function chartClv(b){
   if (b.close === "" || b.close == null || Number(b.close) === Number(b.odds)) return null;
   const got = decimal(b.odds), closed = decimal(b.close);
@@ -1229,7 +1230,8 @@ function keepClose(b){
 }
 function markEdge(b){
   const cv = clv(b);
-  b.edge = b.edge === true || /edge/i.test(b.notes || "") || /^high\b/i.test(b.notes || "") || (cv != null && cv > 0.05);
+  const key = [b.date, b.sport, b.pick].join("|").toLowerCase();
+  b.edge = b.edge === true || edgePicks.has(key) || /edge/i.test(b.notes || "") || /^high\b/i.test(b.notes || "") || (cv != null && cv > 0.05);
   return b;
 }
 function addCardLines(text, book){
@@ -1798,6 +1800,16 @@ document.getElementById("nextMonth").onclick = () => { monthCursor.setMonth(mont
 render();
 loadSeasons();
 fetch("cards/calendar.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => { if (data && data.dates) publishedCalendar = data.dates; render(); }).catch(() => {});
+fetch("cards/report.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
+  const day = ((text.match(/Yesterday\s+(\d{4}-\d{2}-\d{2})/) || [])[1]) || "";
+  text.split(/\n/).forEach(line => {
+    if (!/\bEDGE\b/.test(line)) return;
+    const parts = line.split("|").map(s => s.trim());
+    if (parts.length < 3) return;
+    edgePicks.add([day, parts[0], parts[2]].join("|").toLowerCase());
+  });
+  if (edgePicks.size) render();
+}).catch(() => {});
 fetch("cards/grades.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
   gradeFile = text.split(/\n/).map(line => {
     const parts = line.split("|").map(s => s.trim());
