@@ -678,7 +678,7 @@ function render(){
     roi: row.staked ? (row.profit / row.staked * 100).toFixed(1) + "%" : dash,
     units: (row.profit / UNIT).toFixed(2) + "u",
     pending: 0,
-    clv: row.clv.length ? (row.clv.every(v => Math.abs(v) < 0.05) ? "Matched Bet Price" : (row.clv.reduce((s,v)=>s+v,0)/row.clv.length).toFixed(1) + "%") : dash
+    clv: row.clv.length ? (row.clv.every(v => Math.abs(v) < 0.05) ? "Matched Bet Price" : (row.clv.reduce((s,v)=>s+v,0)/row.clv.length).toFixed(1) + "%") : "No Close Saved"
   }));
   localStorage.setItem("gg-dashboard-v1", JSON.stringify(history));
   drawDashboard(history);
