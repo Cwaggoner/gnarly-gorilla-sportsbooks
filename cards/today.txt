@@ -1,10 +1,24 @@
-2026-10-12 Sport Cards Summary
-
-NBA: Preseason slate. Carded dogs on 5.5+ (Thunder +8.5) and smaller spreads. Unders named. Three SGPs. Season continues through 2027-04-11.
-CBB: 2026-10-12 | CBB | No Picks
-CFB: 2026-10-12 | CFB | No Picks
-MLB: NLCS Game 2 Under 6.5 (High Edge) and ALCS Game 1 Rays -1.5. Two SGPs.
-NFL: Week 5 MNF BUF +3.5 (High Edge) and Over 54.5. One SGP.
-NHL: Three MLs (OTT High Edge), one Under, one SGP.
-
-No Season Ended lines. All seasons active. Do not grade today's games.
+# file: GG-CARD-2026-10-12
+2026-10-12 | NBA | Spread | Thunder +8.5 | -110 | High 62% Edge: Dog on 8.5+ preseason spread.
+2026-10-12 | NBA | Spread | Nets +3.5 | -110 | Medium 54%
+2026-10-12 | NBA | Spread | Timberwolves +2.5 | -110 | Medium 55%
+2026-10-12 | NBA | Spread | Jazz +3.5 | -110 | Medium 53%
+2026-10-12 | NBA | Total | Thunder at Hawks Under 223.5 | -110 | Medium 54% Named game
+2026-10-12 | NBA | Total | Nets at Wizards Under 222.5 | -110 | Medium 52% Named game
+2026-10-12 | NBA | Total | Timberwolves at Knicks Under 227.5 | -110 | Medium 55% Named game
+2026-10-12 | NBA | Total | Spurs at Jazz Under 226.5 | -110 | Medium 53% Named game
+2026-10-12 | NBA | SGP | Thunder +8.5 and Under 223.5 | 190 | Estimated +190. Dog and under. Edge.
+2026-10-12 | NBA | SGP | Timberwolves +2.5 and Under 227.5 | 190 | Estimated +190.
+2026-10-12 | NBA | SGP | Nets +3.5 and Under 222.5 | 190 | Estimated +190.
+2026-10-12 | NHL | Moneyline | Buffalo Sabres ML | -108 | Medium
+2026-10-12 | NHL | Moneyline | Ottawa Senators ML | 114 | High Edge: 4-1 start, strong D vs NJ; dog value
+2026-10-12 | NHL | Moneyline | Vegas Golden Knights ML | -102 | Medium
+2026-10-12 | NHL | Total | Under 5.5 FLA/BUF | 114 | Medium Named game
+2026-10-12 | NHL | SGP | OTT ML and Under 5.5 OTT/NJ | 220 | High Edge. Same game.
+2026-10-12 | MLB | Total | Dodgers at Brewers Under 6.5 | -110 | High 61% Edge. Yamamoto and Henderson.
+2026-10-12 | MLB | Run Line | Rays -1.5 | 130 | Medium 56%. ML short so buy the run line.
+2026-10-12 | MLB | SGP | Under 6.5 and Brewers +1.5 | -280 | Medium. Same game.
+2026-10-12 | MLB | SGP | Rays -1.5 and Under 6.5 | 120 | Medium. Same game.
+2026-10-12 | NFL | Spread | Bills +3.5 | -110 | High Edge: road dog value, avoid short Rams ML.
+2026-10-12 | NFL | Total | Bills at Rams Over 54.5 | -110 | Medium Named game
+2026-10-12 | NFL | SGP | Bills +3.5 and Over 54.5 | 190 | Same game. Two legs.

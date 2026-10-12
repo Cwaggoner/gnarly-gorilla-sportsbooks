@@ -1,12 +1,10 @@
-# file: GG-GRADES-2026-10-12
+# file: GG-GRADES-2026-10-11
 
 2026-10-11 | CBB | No Picks
 2026-10-11 | CFB | No Picks
-
-2026-10-11 | MLB | Under 6 |  | win | MIL 2 LAD 1 | 9.09
+2026-10-11 | MLB | Dodgers at Brewers Under 6 |  | win | MIL 2 LAD 1 | 9.09
 2026-10-11 | MLB | Brewers ML |  | win | MIL 2 LAD 1 | 8.85
-2026-10-11 | MLB | SGP Brewers ML and Under 6 |  | win | MIL 2 LAD 1 | 20.00
-
+2026-10-11 | MLB | SGP Brewers ML and Dodgers at Brewers Under 6 |  | win | MIL 2 LAD 1 | 20.00
 2026-10-11 | NBA | Magic +5.5 |  | loss | CLE 119 ORL 105 | -10.00
 2026-10-11 | NBA | Bucks +4.5 |  | loss | CHA 105 MIL 90 | -10.00
 2026-10-11 | NBA | Bulls +8.5 |  | win | DEN 133 CHI 128 | 9.09
@@ -16,13 +14,11 @@
 2026-10-11 | NBA | SGP Magic +5.5 and Under 227.5 |  | loss | CLE 119 ORL 105 | -10.00
 2026-10-11 | NBA | SGP Bulls +8.5 and Under 233.5 |  | loss | DEN 133 CHI 128 | -10.00
 2026-10-11 | NBA | SGP Bucks +4.5 and Under 221.5 |  | loss | CHA 105 MIL 90 | -10.00
-
 2026-10-11 | NHL | Seattle Kraken +1.5 |  | win | SEA 5 WSH 3 | 7.14
 2026-10-11 | NHL | Vancouver Canucks +1.5 |  | loss | NYR 6 VAN 2 | -10.00
 2026-10-11 | NHL | Carolina Hurricanes -1.5 |  | win | CAR 4 PHI 1 | 14.00
 2026-10-11 | NHL | SGP CAR -1.5 and Over 5.5 |  | loss | CAR 4 PHI 1 | -10.00
 2026-10-11 | NHL | Under 6.5 SEA/WSH |  | loss | SEA 5 WSH 3 | -10.00
-
 2026-10-11 | NFL | JAX -7.5 |  | loss | JAX 19 PHI 17 | -10.00
 2026-10-11 | NFL | CIN -7 |  | push | CIN 31 MIA 24 | 0.00
 2026-10-11 | NFL | CHI -1.5 |  | loss | GB 31 CHI 7 | -10.00
@@ -36,32 +32,12 @@
 2026-10-11 | NFL | DET -5.5 |  | win | DET 45 ARI 21 | 9.09
 2026-10-11 | NFL | SEA -3 |  | push | SF 32 SEA 29 | 0.00
 2026-10-11 | NFL | BAL +3.5 |  | loss | BAL 30 ATL 23 OT | -10.00
-
 # Previous grades retained below for history
-# file: GG-GRADES-2026-10-11
-
 2026-10-11 | NFL | No Picks
-2026-10-11 | CBB | No Picks
-2026-10-11 | CFB | No Picks
 2026-10-11 | MLB | No Picks
 2026-10-11 | NHL | No Picks
-
-2026-10-11 | NBA | Magic +5.5 |  | loss | CLE 119 ORL 105 | -10.00
-2026-10-11 | NBA | Bucks +4.5 |  | loss | CHA 105 MIL 90 | -10.00
-2026-10-11 | NBA | Bulls +8.5 |  | win | DEN 133 CHI 128 | 9.09
-2026-10-11 | NBA | Magic at Cavaliers Under 227.5 |  | win | CLE 119 ORL 105 | 9.09
-2026-10-11 | NBA | Bucks at Hornets Under 221.5 |  | win | CHA 105 MIL 90 | 9.09
-2026-10-11 | NBA | Bulls at Nuggets Under 233.5 |  | loss | DEN 133 CHI 128 | -10.00
-2026-10-11 | NBA | SGP Magic +5.5 and Under 227.5 |  | loss | CLE 119 ORL 105 | -10.00
-2026-10-11 | NBA | SGP Bulls +8.5 and Under 233.5 |  | loss | DEN 133 CHI 128 | -10.00
-2026-10-11 | NBA | SGP Bucks +4.5 and Under 221.5 |  | loss | CHA 105 MIL 90 | -10.00
-
-# Previous grades retained below for history
-# file: GG-GRADES-2026-10-10
-
 2026-10-10 | NFL | No Picks
 2026-10-10 | CBB | No Picks
-
 2026-10-10 | NBA | Clippers +4.5 |  | loss | TOR 114 LAC 106 | -10.00
 2026-10-10 | NBA | Hawks +2.5 |  | win | ATL 119 IND 117 | 9.09
 2026-10-10 | NBA | Wizards +5.5 |  | win | WSH 114 DET 108 OT | 9.09
@@ -78,11 +54,9 @@
 2026-10-10 | NBA | SGP 76ers +5.5 and Under 222.5 |  | loss | PHI 106 BOS 144 | -10.00
 2026-10-10 | NBA | SGP Kings +5.5 and Under 229.5 |  | win | SAC 106 GS 111 | 19.00
 2026-10-10 | NBA | SGP Suns +7.5 and Under 221.5 |  | win | SA 98 PHX 102 | 19.00
-
 2026-10-10 | MLB | CHW ML +118 |  | loss | CHW 0 CLE 2 | -10.00
-2026-10-10 | MLB | Under 7.0 |  | win | CHW 0 CLE 2 | 10.00
+2026-10-10 | MLB | White Sox at Guardians Under 7 |  | win | CHW 0 CLE 2 | 10.00
 2026-10-10 | MLB | SGP CHW ML + Jose Ramirez Over 0.5 Hits |  | loss | CHW 0 CLE 2 | -10.00
-
 2026-10-10 | NHL | Boston Bruins ML |  | win | PHI 1 BOS 5 | 7.41
 2026-10-10 | NHL | New Jersey Devils -1.5 |  | win | VAN 1 NJD 4 | 9.09
 2026-10-10 | NHL | Edmonton Oilers -1.5 |  | win | EDM 3 SJS 1 | 15.00
@@ -99,7 +73,6 @@
 2026-10-10 | NHL | Vegas Golden Knights -1.5 |  | loss | LA 1 VGK 2 OT | -10.00
 2026-10-10 | NHL | SGP CAR -1.5 and Over 5.5 |  | win | CAR 5 CHI 2 | 19.00
 2026-10-10 | NHL | Over 6.5 EDM/SJS |  | loss | EDM 3 SJS 1 | -10.00
-
 2026-10-10 | CFB | Indiana -8.5 |  | loss | IND 20 NEB 17 | -10.00
 2026-10-10 | CFB | Missouri -3.5 |  | win | MIZ 27 TA&M 6 | 9.09
 2026-10-10 | CFB | Oklahoma State -10.5 |  | win | OKST 42 UCF 28 | 9.09
