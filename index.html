@@ -1228,6 +1228,7 @@ async function loadPending(){
   save(bets);
   document.getElementById("paste").value = "";
   note.textContent = added + " pending slips loaded at " + book + ". They are in the Slips table.";
+  document.getElementById("slips").scrollIntoView({behavior:"smooth", block:"start"});
   document.getElementById("rows").scrollIntoView({behavior:"smooth", block:"center"});
 }
 function slipKey(b){ return [b.date, b.sport, b.pick].join("|"); }
