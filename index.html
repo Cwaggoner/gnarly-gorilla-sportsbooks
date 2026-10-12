@@ -1636,7 +1636,7 @@ document.getElementById("syncledger").onclick = async () => {
     const data = await res.json();
     const bets = Array.isArray(data) ? data : data.bets;
     if (!Array.isArray(bets) || !bets.length) throw new Error("empty");
-    bets.forEach(markEdge);
+    bets.forEach(b => { b.type = betType(b); markEdge(b); });
     save(bets);
     localStorage.setItem("gg-hold-ledger", "1");
     const grades = await fetch("cards/grades.txt?ts=" + Date.now());
@@ -1649,7 +1649,9 @@ document.getElementById("syncledger").onclick = async () => {
         const result = (parts[4].match(/win|loss|push/i) || ["loss"])[0].toLowerCase();
         const dollars = parts[parts.length - 1].replace(/[$,+]/g, "");
         const profit = Number(dollars);
-        return {date: parts[0], sport: parts[1], pick: parts[2], odds: close || -110, close: close, result: result, stake: 10, profit: Number.isFinite(profit) ? profit : 0};
+        const row = {date: parts[0], sport: parts[1], pick: parts[2], odds: close || -110, close: close, result: result, stake: 10, profit: Number.isFinite(profit) ? profit : 0};
+        row.type = betType(row);
+        return row;
       }).filter(Boolean);
     }
     await applyGrades();
