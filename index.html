@@ -429,21 +429,39 @@ function rec(list){
 function esc(s){ return String(s == null ? "" : s).replace(/&/g,"&").replace(/</g,"<").replace(/>/g,">"); }
 
 
+function shiftDate(iso, days){
+  const [y, m, d] = iso.split("-").map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d + days));
+  return dt.toISOString().slice(0, 10);
+}
+function lastSevenDates(){
+  const today = todayEt();
+  return Array.from({length: 7}, (_, i) => shiftDate(today, i - 7));
+}
+function publishedDashboard(){
+  const slips = (gradeFile || []).filter(b => b && b.date && !isNoPick(b) && (b.result === "win" || b.result === "loss" || b.result === "push"));
+  return lastSevenDates().map(date => {
+    const day = publishedCalendar[date] || {};
+    const lines = slips.filter(b => b.date === date);
+    const profit = Number.isFinite(Number(day.pl)) ? Number(day.pl) : lines.reduce((s, b) => s + (Number(b.profit) || 0), 0);
+    const n = Number(day.n) || lines.length;
+    const staked = n * UNIT;
+    const clvs = lines.map(clv).filter(v => v != null);
+    return {
+      date,
+      record: lines.length ? rec(lines) : (n ? n + " slips" : "No Picks"),
+      profit,
+      roi: staked ? (profit / staked * 100).toFixed(1) + "%" : "-",
+      units: (profit / UNIT).toFixed(2) + "u",
+      pending: 0,
+      clv: clvs.length ? (clvs.every(v => Math.abs(v) < 0.05) ? "Matched Bet Price" : (clvs.reduce((s, v) => s + v, 0) / clvs.length).toFixed(1) + "%") : "No Close Saved"
+    };
+  });
+}
 function drawDashboard(history, manual){
-  const seed = [
-    {date:"2026-10-01", record:"6-5", profit:8.20, roi:"3.7%", units:"0.82u", pending:0, clv:"2.4%"},
-    {date:"2026-10-02", record:"5-6", profit:-12.40, roi:"-5.6%", units:"-1.24u", pending:0, clv:"-1.1%"},
-    {date:"2026-10-03", record:"7-4", profit:18.10, roi:"8.2%", units:"1.81u", pending:0, clv:"3.6%"},
-    {date:"2026-10-04", record:"13-15-3", profit:1.04, roi:"0.3%", units:"0.10u", pending:0, clv:"-0.9%"},
-    {date:"2026-10-05", record:"8-13", profit:-76.64, roi:"-19.2%", units:"-7.66u", pending:0, clv:"2.1%"},
-    {date:"2026-10-06", record:"4-12", profit:-152.48, roi:"-38.1%", units:"-15.25u", pending:0, clv:"-2.3%"},
-    {date:"2026-10-07", record:"10-14", profit:-5.74, roi:"-2.4%", units:"-0.57u", pending:0, clv:"Matched Bet Price"}
-  ];
-  const byDate = {};
-  if (!manual) seed.concat(history).forEach(row => { byDate[row.date] = row; });
-  const rows = (manual ? history.slice() : Object.values(byDate)).filter(row => manual || row.date < todayEt()).sort((a,b) => a.date.localeCompare(b.date));
+  const rows = manual ? history.slice() : publishedDashboard();
   if (!manual) localStorage.setItem("gg-dashboard-v1", JSON.stringify(rows));
-  const shown = manual ? rows : rows.slice(-7);
+  const shown = rows;
   document.getElementById("dashrows").innerHTML = shown.map(row => "<tr><td>" + row.date + "</td><td>" + row.record + "</td><td>" + money(Number(row.profit)) + "</td><td>" + row.roi + "</td><td>" + row.units + "</td><td>" + row.pending + "</td><td>" + (row.clv === "-" || row.clv == null || row.clv === "" ? "No Close Saved" : row.clv) + "</td></tr>").join("");
   const canvas = document.getElementById("dashChart");
   const ctx = canvas.getContext("2d");
@@ -608,20 +626,8 @@ function clvText(b){
   if (cv == null || Math.abs(cv) < 0.05) return "Matched Bet Price";
   return cv.toFixed(1) + "%";
 }
-function weekRows(history){
-  const seed = [
-    {date:"2026-10-01", profit:8.20, roi:3.7},
-    {date:"2026-10-02", profit:-12.40, roi:-5.6},
-    {date:"2026-10-03", profit:18.10, roi:8.2},
-    {date:"2026-10-04", profit:1.04, roi:0.3},
-    {date:"2026-10-05", profit:-76.64, roi:-19.2},
-    {date:"2026-10-06", profit:-152.48, roi:-38.1},
-    {date:"2026-10-07", profit:-5.74, roi:-2.4}
-  ];
-  const byDate = {};
-  seed.forEach(row => { byDate[row.date] = {date: row.date, profit: row.profit, staked: row.roi ? row.profit / (row.roi / 100) : 0}; });
-  history.filter(row => row.date < todayEt()).forEach(row => { byDate[row.date] = {date: row.date, profit: Number(row.profit) || 0, staked: Number(row.staked) || 0}; });
-  return Object.values(byDate).filter(row => row.date < todayEt()).sort((a,b) => a.date.localeCompare(b.date)).slice(-7);
+function weekRows(){
+  return publishedDashboard().map(row => ({date: row.date, profit: Number(row.profit) || 0, staked: Math.abs(Number(String(row.roi).replace("%",""))) ? (Number(row.profit) || 0) / (parseFloat(row.roi) / 100) : 0, record: row.record, clv: row.clv}));
 }
 function publishedWeek(){
   return Object.entries(publishedCalendar).filter(([date]) => date < todayEt()).sort(([a],[b]) => a.localeCompare(b)).slice(-7);
@@ -641,30 +647,21 @@ function weekRoi(history){
   const staked = rows.reduce((s, row) => s + row.staked, 0);
   return staked && Number.isFinite(staked) ? (weekProfit(history) / staked * 100).toFixed(1) + "%" : "-";
 }
-function weekRecord(history){
-  const seed = {"2026-10-01":"6-5","2026-10-02":"5-6","2026-10-03":"7-4","2026-10-04":"13-15-3","2026-10-05":"8-13","2026-10-06":"4-12","2026-10-07":"10-14"};
-  const byDate = Object.assign({}, seed);
-  history.filter(row => row.date < todayEt() && row.record).forEach(row => { byDate[row.date] = row.record; });
-  const days = Object.keys(byDate).filter(d => d < todayEt()).sort().slice(-7);
+function weekRecord(){
   let w = 0, l = 0, p = 0;
-  days.forEach(date => {
-    const parts = String(byDate[date] || "0-0").split("-").map(n => Number(n) || 0);
+  publishedDashboard().forEach(row => {
+    const parts = String(row.record || "0-0").split("-").map(n => Number(n) || 0);
+    if (parts.length < 2 || /slips|no picks/i.test(row.record)) return;
     w += parts[0] || 0;
     l += parts[1] || 0;
     p += parts[2] || 0;
   });
   return w + "-" + l + (p ? "-" + p : "");
 }
-function weekClv(history){
-  const seed = {"2026-10-01":2.4,"2026-10-02":-1.1,"2026-10-03":3.6,"2026-10-04":-0.9,"2026-10-05":2.1,"2026-10-06":-2.3,"2026-10-07":0};
-  const byDate = Object.assign({}, seed);
-  history.filter(row => row.date < todayEt()).forEach(row => {
-    const n = parseFloat(String(row.clv).replace("%", ""));
-    byDate[row.date] = Number.isNaN(n) ? 0 : n;
-  });
-  const days = Object.keys(byDate).filter(d => d < todayEt()).sort().slice(-7);
-  if (!days.length) return "No Close Saved";
-  return (days.reduce((s, d) => s + byDate[d], 0) / days.length).toFixed(1) + "%";
+function weekClv(){
+  const vals = publishedDashboard().map(row => parseFloat(String(row.clv).replace("%", ""))).filter(n => Number.isFinite(n));
+  if (!vals.length) return "No Close Saved";
+  return (vals.reduce((s, n) => s + n, 0) / vals.length).toFixed(1) + "%";
 }
 function clvListText(list){
   const graded = list.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");

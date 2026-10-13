@@ -1,14 +1,9 @@
-# GG dashboard 2026-10-12
+# GG dashboard 2026-10-13
 Date | Record | Profit | ROI | Units | Pending | Avg CLV
-2026-10-11 | 3-6 | $-32.73 | -36.4% | -3.27u | 0 | n/a
-
-Profit by sport | record | profit | CLV
-CBB | No Picks | — | n/a
-CFB | No Picks | — | n/a
-MLB | No Picks | — | n/a
-NBA | 3-6 | $-32.73 | n/a
-NFL | No Picks | — | n/a
-NHL | No Picks | — | n/a
-
-CLV is n/a because no published closing price differed from the bet price. Blank closes are not plotted as 0.0%.
-Edge rows would be highlighted yellow #F0E14A on the site for High confidence or Edge notes.
+2026-10-06 | 16 slips | $-152.48 | -95.3% | -15.25u | 0 | No Close Saved
+2026-10-07 | 24 slips | $-5.74 | -2.4% | -0.57u | 0 | No Close Saved
+2026-10-08 | 43 slips | $-26.51 | -6.2% | -2.65u | 0 | No Close Saved
+2026-10-09 | 29 slips | $15.13 | 5.2% | 1.51u | 0 | No Close Saved
+2026-10-10 | 32-28 | $52.02 | 8.7% | 5.20u | 0 | No Close Saved
+2026-10-11 | 14-14-2 | $0.89 | 0.3% | 0.09u | 0 | No Close Saved
+2026-10-12 | 14-9 | $92.38 | 42.0% | 9.24u | 0 | No Close Saved
