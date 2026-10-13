@@ -78,7 +78,8 @@ input, select, button, textarea { background:#0e0e0e; color:var(--text); border:
 .btn-pair { display:flex; flex-direction:column; align-items:center; gap:4px; }
 .btn-pair span { font-size:12px; color:var(--muted); text-align:center; width:100%; }
 .btn-pair div { display:flex; gap:8px; }
-#oddskeybox { display:block; margin:16px 0; }
+.book-key { display:flex; align-items:flex-end; gap:12px; }
+#oddskeybox { display:flex; margin:0; }
 #seasons { margin-bottom:18px; }
 #seasons table { margin-bottom:28px; }
 .season-hold, .season-hold td { border:0; background:transparent; box-shadow:none; width:100%; }
@@ -184,6 +185,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <section class="card" id="todaycard">
 <h2>Today's Card</h2>
 <p class="warn">One play per line: Sport | Type | Pick | American odds | Confidence. Stake is $10. Book is the dropdown below. Pending until graded.</p>
+<div class="book-key">
 <label>Book<select id="cardbook">
 <option>BetMGM</option>
 <option>Caesars</option>
@@ -193,6 +195,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <option>HardRock</option>
 </select></label>
 <label id="oddskeybox">Odds key<input id="oddskey" type="password" placeholder="Free key from the-odds-api.com" autocomplete="off"></label>
+</div>
 <p class="api-note">Paste a free or paid Odds API key here. Load Picks in Add A Bet uses this key. Add A Bet Book drives the list. This Book only stamps a card you load from this section.<br><a href="https://the-odds-api.com/" target="_blank" rel="noopener noreferrer">Open The Odds API</a></p>
 <textarea id="paste" placeholder="NFL | Spread | Chiefs -3.5 | -110 | High 62%"></textarea>
 <div class="tools">
