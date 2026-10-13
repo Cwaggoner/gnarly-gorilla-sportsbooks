@@ -819,7 +819,7 @@ function render(){
   blocks.forEach(([title, list]) => {
     const sorted = list.slice().sort((a,b) => String(a.sport).localeCompare(String(b.sport)) || String(a.result).localeCompare(String(b.result)) || String(a.pick).localeCompare(String(b.pick)));
     copy.push("", title);
-    if (title === "Graded" && show !== "graded") body += "<hr class='split'>";
+    if (title === "Pending" || (title === "Graded" && show !== "graded")) body += "<hr class='split'>";
     body += "<h2>" + title + "</h2>";
     if (!sorted.length) { copy.push("None"); body += "<p>None</p>"; return; }
     body += "<table><thead><tr><th>Date</th><th>Result</th><th>Sport</th><th>Pick</th><th>Odds</th><th>P/L</th></tr></thead><tbody>";
