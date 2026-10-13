@@ -1099,14 +1099,18 @@ async function loadSeasons(){
   } catch (err) { showSeasons(); }
 }
 function seasonText(sport){ return seasonEnded(sport) ? "Season Ended" : "No Picks"; }
+const TEAM_ALIAS = {fla:"panthers", buf:"sabres", ott:"senators", nj:"devils", njd:"devils", tb:"rays", tor:"blue jays", lad:"dodgers", mil:"brewers", okc:"thunder", atl:"hawks", bkn:"nets", wsh:"wizards", min:"timberwolves", ny:"knicks", utah:"jazz", sa:"spurs", vgk:"golden knights", buf2:"sabres"};
+function expandTeams(text){
+  return String(text || "").toLowerCase().replace(/\b[a-z]{2,4}\b/g, w => TEAM_ALIAS[w] || w);
+}
 function pickTokens(pick){
-  return String(pick || "").toLowerCase().replace(/[^a-z0-9.+-]+/g, " ").split(/\s+/).filter(w => w.length > 1);
+  return expandTeams(pick).replace(/[^a-z0-9.+-]+/g, " ").split(/\s+/).filter(w => w.length > 1);
 }
 function samePick(a, b){
-  const left = String(a || "").toLowerCase(), right = String(b || "").toLowerCase();
+  const left = expandTeams(a), right = expandTeams(b);
   if (!left || !right) return false;
   if (left === right || left.includes(right) || right.includes(left)) return true;
-  const parts = pickTokens(left);
+  const parts = pickTokens(a);
   return parts.filter(w => right.includes(w)).length >= Math.min(3, parts.length);
 }
 function dropMatchedPending(rows){
