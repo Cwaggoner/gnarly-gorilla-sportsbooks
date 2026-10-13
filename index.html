@@ -98,7 +98,7 @@ tr.manual td { color:#00e5ff; }
 .jump button { padding:4px 8px; font-size:12px; }
 .sitenav { position:relative; z-index:5; display:flex; gap:6px; flex-wrap:wrap; justify-content:center; align-items:center; background:#0a0a0a; border:1px solid var(--line); border-radius:8px; padding:6px; margin:8px 0 0; }
 .sitenav button { padding:4px 8px; font-size:12px; }
-.card { scroll-margin-top:124px; }
+.card { scroll-margin-top:0; }
 #loadcal { height:38px; box-sizing:border-box; padding:6px 8px; }
 label:has(#loadcal) { gap:0; }
 #dashboard { display:flex; flex-direction:column; }
@@ -1619,7 +1619,10 @@ document.getElementById("saveprint").onclick = async () => {
 };
 document.querySelectorAll("[data-jump]").forEach(btn => btn.onclick = () => {
   const box = document.getElementById(btn.dataset.jump);
-  if (box) box.scrollIntoView({behavior:"smooth", block:"start"});
+  if (!box) return;
+  const bar = document.querySelector(".topbar");
+  const top = box.getBoundingClientRect().top + window.scrollY - (bar ? bar.offsetHeight : 0);
+  window.scrollTo({top: Math.max(0, top), behavior:"smooth"});
 });
 document.getElementById("copyreport").onclick = async () => {
   const text = document.getElementById("report").dataset.copy || document.getElementById("report").textContent;
