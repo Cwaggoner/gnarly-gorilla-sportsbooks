@@ -231,7 +231,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <section class="card" id="dashboard">
 <div class="section-head"><h2>Dashboard</h2><p class="warn slips-side">Last 7 days on this card. The full history stays in the saved file.</p></div>
 <section class="stats" id="stats"></section>
-<canvas id="dashChart" width="640" height="180"></canvas>
+<canvas id="dashChart" width="640" height="320"></canvas>
 <table>
 <thead><tr><th>Date</th><th>W/L Record</th><th>Profit</th><th>ROI</th><th>Units</th><th>Pending</th><th>Avg CLV</th></tr></thead>
 <tbody id="dashrows"></tbody>
@@ -494,7 +494,7 @@ function drawDashboard(history, manual){
   const canvas = document.getElementById("dashChart");
   const ctx = canvas.getContext("2d");
   const w = Math.max(320, canvas.clientWidth || 640);
-  const h = 160;
+  const h = 320;
   canvas.width = w;
   canvas.height = h;
   ctx.clearRect(0,0,w,h);
@@ -502,25 +502,40 @@ function drawDashboard(history, manual){
   ctx.fillRect(0,0,w,h);
   if (!shown.length) return;
   let run = 0;
-  const pts = [{date: shown[0].date, y: 0}];
-  shown.forEach(row => { run += Number(row.profit) || 0; pts.push({date: row.date, y: run}); });
-  const vals = pts.map(p => p.y);
-  const min = Math.min(0, ...vals), max = Math.max(0, ...vals);
-  const span = (max - min) || 1;
-  const x = i => 28 + (w - 56) * (pts.length === 1 ? 0.5 : i / (pts.length - 1));
-  const y = v => 16 + (h - 36) * (1 - (v - min) / span);
-  ctx.strokeStyle = "#243024";
-  ctx.beginPath(); ctx.moveTo(28, y(0)); ctx.lineTo(w - 16, y(0)); ctx.stroke();
+  const pts = shown.map(row => { run += Number(row.profit) || 0; return {date: row.date, y: run}; });
+  const min = -1000, max = 1000, span = max - min;
+  const left = 62, right = 62, top = 14, bottom = 22;
+  const x = i => left + (w - left - right) * (pts.length === 1 ? 0.5 : i / (pts.length - 1));
+  const y = v => top + (h - top - bottom) * (1 - (v - min) / span);
+  ctx.font = "10px sans-serif";
+  ctx.textAlign = "right";
+  for (let v = min; v <= max; v += 100) {
+    const yy = y(v);
+    ctx.strokeStyle = v === 0 ? "#39ff14" : "#243024";
+    ctx.lineWidth = v === 0 ? 1.5 : 1;
+    ctx.beginPath(); ctx.moveTo(left, yy); ctx.lineTo(w - right, yy); ctx.stroke();
+    const label = v === 0 ? "$0" : (v < 0 ? "-$" + Math.abs(v) : "$" + v);
+    ctx.fillStyle = v === 0 ? "#39ff14" : (v < 0 ? "#ff6b6b" : "#8fd18a");
+    ctx.textAlign = "right";
+    ctx.fillText(label, left - 6, yy + 3);
+    ctx.textAlign = "left";
+    ctx.fillText(label, w - right + 6, yy + 3);
+  }
   ctx.fillStyle = "#8fb898";
+  ctx.textAlign = "left";
   ctx.font = "11px sans-serif";
-  ctx.fillText("Break Even - $0", w - 108, y(0) - 4);
+  ctx.fillText("Break Even - $0", left + 8, y(0) - 6);
   ctx.strokeStyle = "#39ff14";
+  ctx.lineWidth = 2;
   ctx.beginPath();
   pts.forEach((p,i) => i ? ctx.lineTo(x(i), y(p.y)) : ctx.moveTo(x(i), y(p.y)));
   ctx.stroke();
   ctx.fillStyle = "#d6ffd0";
-  ctx.fillText(pts[0].date, 28, h - 6);
-  ctx.fillText(pts[pts.length-1].date, w - 90, h - 6);
+  ctx.font = "11px sans-serif";
+  ctx.fillText(pts[0].date, left, h - 6);
+  ctx.textAlign = "right";
+  ctx.fillText(pts[pts.length-1].date, w - right, h - 6);
+  ctx.textAlign = "left";
 }
 function drawCharts(bets){
   const settled = bets.filter(b => b.result === "win" || b.result === "loss" || b.result === "push").slice().sort((a,b) => a.date.localeCompare(b.date) || a.id - b.id);
