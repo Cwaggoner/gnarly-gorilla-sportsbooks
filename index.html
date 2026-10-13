@@ -790,7 +790,7 @@ function clearStalePending(){
 }
 function render(){
   clearStalePending();
-  const all = load().concat(loadGrade()).concat(gradeFile).filter(b => b && b.pick && !isNoPick(b));
+  const all = load().concat(loadGrade()).concat(gradeFile).filter(b => b && b.pick && !isNoPick(b) && !/^RANGE$/i.test(b.pick) && !/^all win/i.test(b.result || ""));
   const unique = [];
   const seen = new Set();
   const byKey = {};
@@ -1466,10 +1466,11 @@ async function loadDriveCard(){
 function gradeRows(text){
   return text.split(/\n/).map(l => l.trim()).filter(l => l && !l.startsWith("#")).map(l => {
     const r = l.split("|").map(s => s.trim());
+    if (/^RANGE$/i.test(r[1] || "") || /all win|all lose/i.test(l)) return null;
     const wide = r.length >= 5 && /^(NBA|NHL|NFL|MLB|CBB|CFB)$/.test(r[1]);
     const close = Number(String(wide ? r[3] : r[3]).replace(/[^\d+-]/g, ""));
     return {date: r[0], sport: wide ? r[1] : "", pick: wide ? r[2] : r[1], result: (wide ? r[4] : r[2] || "").toLowerCase(), close: Number.isNaN(close) ? "" : close, odds: Number.isNaN(close) ? -110 : close};
-  }).filter(row => row.date && row.pick && row.result && !/no picks|season ended/i.test(row.pick + " " + row.result));
+  }).filter(row => row && row.date && row.pick && row.result && !/no picks|season ended|^range$/i.test(row.pick + " " + row.result));
 }
 async function applyGrades(){
   const res = await fetch("cards/grades.txt?ts=" + Date.now());
@@ -1925,7 +1926,7 @@ document.getElementById("syncledger").onclick = async () => {
       const text = await grades.text();
       gradeFile = text.split(/\n/).map(line => {
         const parts = line.split("|").map(s => s.trim());
-        if (parts.length < 5 || !/^\d{4}-\d{2}-\d{2}$/.test(parts[0]) || /no picks|season ended/i.test([parts[1], parts[2], parts[4]].join(" "))) return null;
+        if (parts.length < 5 || !/^\d{4}-\d{2}-\d{2}$/.test(parts[0]) || /^RANGE$/i.test(parts[1] || "") || /no picks|season ended|all win|all lose/i.test([parts[1], parts[2], parts[4]].join(" "))) return null;
         const close = (parts[3].match(/-?\d+/) || [""])[0];
         const result = (parts[4].match(/win|loss|push/i) || ["loss"])[0].toLowerCase();
         const dollars = parts[parts.length - 1].replace(/[$,+]/g, "");
