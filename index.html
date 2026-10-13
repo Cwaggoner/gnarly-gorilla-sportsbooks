@@ -813,12 +813,13 @@ async function dayGames(date){
   }
   return games;
 }
-let openDate = "";
+let openDate = sessionStorage.getItem("gg-open-day") || "";
 async function openDay(date){
   openDate = date;
+  sessionStorage.setItem("gg-open-day", date);
   const box = document.getElementById("calendar");
   box.innerHTML = "<div class='dayzoom'><div class='dayzoom-head'><h3>" + dayTitle(date) + "</h3><button type='button' id='closeday'>Close</button></div><p>Loading games and weather...</p></div>";
-  document.getElementById("closeday").onclick = () => { openDate = ""; drawCalendar(); };
+  document.getElementById("closeday").onclick = () => { openDate = ""; sessionStorage.removeItem("gg-open-day"); drawCalendar(); };
   const games = await dayGames(date);
   if (!document.getElementById("closeday")) return;
   const rows = games.length ? games.map(game => {
@@ -829,7 +830,7 @@ async function openDay(date){
     return "<div class='daygame'><div><b>" + game.sport + "</b> " + game.name + "<div class='daymeta'>" + (SPORT_NAME[game.sport] || game.sport) + " · " + formatTime(game.start, false) + (game.venue ? " · " + game.venue : "") + (game.city || game.state ? " · " + [game.city, stateName(game.state)].filter(Boolean).join(", ") : "") + "</div></div><span class='daytags'>" + (tags.join(" · ") || "Clear") + "</span><span class='wx " + rate + "'>" + rate[0].toUpperCase() + rate.slice(1) + " · " + temp + "</span></div>";
   }).join("") : "<p>No games scheduled.</p>";
   box.innerHTML = "<div class='dayzoom'><div class='dayzoom-head'><h3>" + dayTitle(date) + "</h3><button type='button' id='closeday'>Close</button></div>" + rows + "</div>";
-  document.getElementById("closeday").onclick = () => { openDate = ""; drawCalendar(); };
+  document.getElementById("closeday").onclick = () => { openDate = ""; sessionStorage.removeItem("gg-open-day"); drawCalendar(); };
 }
 document.getElementById("calendar").onclick = ev => {
   const day = ev.target.closest(".daycell");
