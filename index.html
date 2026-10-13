@@ -147,6 +147,9 @@ label:has(#loadcal) { gap:0; }
 .analysis-cell b { color:#39ff14; font-size:12px; }
 .analysis-cell .meta { color:#f0e14a; font-size:11px; }
 .analysis-cell p { margin:2px 0 0; color:#d6ffd0; font-size:11px; line-height:1.25; }
+.sharp-read { margin-top:10px; }
+.sharp-read b { color:#39ff14; font-size:12px; }
+.sharp-read p { margin:4px 0 0; color:#d6ffd0; font-size:12px; line-height:1.35; }
 @media (max-width:700px) { .analysis-grid { grid-template-columns:1fr 1fr; } }
 #dashboard { display:flex; flex-direction:column; }
 #dashboard .dash-tools { margin-top:14px; }
@@ -258,7 +261,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </section>
 <section class="card" id="todaycard">
 <div class="section-head"><h2>Today's Card</h2><p class="warn slips-side">One play per line: Sport | Type | Pick | American odds | Confidence. Stake is $10. Book is the dropdown below. Pending until graded.</p></div>
-<div class="card-analysis" id="cardanalysis"><h3>Analysis</h3><div class="analysis-grid" id="analysisgrid"></div></div>
+<div class="card-analysis" id="cardanalysis"><h3>Analysis</h3><div class="analysis-grid" id="analysisgrid"></div><div class="sharp-read"><b>Analysis:</b><p id="sharpread"></p></div></div>
 <div class="book-key">
 <label>Book<select id="cardbook" class="book-select">
 <option>BetMGM</option>
@@ -624,6 +627,15 @@ function drawCardAnalysis(text){
   }).join("");
   const title = document.querySelector("#cardanalysis h3");
   if (title) title.textContent = "Analysis" + (day ? " · " + day : "");
+  const read = document.getElementById("sharpread");
+  if (read) read.textContent = sharpRead(rows);
+}
+function sharpRead(rows){
+  if (!rows.length) return "No card is live yet. Wait for the posted picks, then play only a number with a reason.";
+  const edges = rows.filter(r => /edge/i.test(r[5] || "") || /^high\b/i.test(r[5] || ""));
+  const names = edges.map(r => r[1] + " " + r[3]);
+  const best = names.slice(0, 4).join(", ");
+  return "Play the price, not the name. The card is built the sharp way: dogs, named totals, and no short favorite. Best use of the card: " + (best || "the posted edges") + ". Those are the only plays with a real number and a reason. Pass a medium dog under 5 points and pass an estimated same-game parlay unless the straight leg is already the play. Shop the -110. If the book is -115 or shorter, pass it. Two legs in the same game is the max. This is a read of the card, not a guarantee.";
 }
 function drawCharts(bets){
   const settled = bets.filter(b => b.result === "win" || b.result === "loss" || b.result === "push").slice().sort((a,b) => a.date.localeCompare(b.date) || a.id - b.id);
