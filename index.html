@@ -492,7 +492,7 @@ function publishedDashboard(){
     else dayClv = "Matched Bet Price";
     return {
       date,
-      record: lines.length ? rec(lines) : "0-0-0",
+      record: lines.length ? rec(lines) : (n ? "Split Not On File" : "0-0-0"),
       profit,
       roi: staked ? (profit / staked * 100).toFixed(1) + "%" : "-",
       units: (profit / UNIT).toFixed(2) + "u",
@@ -503,6 +503,7 @@ function publishedDashboard(){
 }
 function ruleRow(row){
   const record = String(row.record || "0-0-0");
+  if (/split not on file/i.test(record)) return Object.assign({}, row, {record: "Split Not On File", clv: row.clv || "No Close Saved"});
   const parts = record.split("-").map(n => Number(n) || 0);
   const empty = parts.length < 3 || (parts[0] === 0 && parts[1] === 0 && parts[2] === 0);
   const clv = empty ? "No Close Saved" : (row.clv === "No Close Saved" || !row.clv ? "Close Not On File" : row.clv);
