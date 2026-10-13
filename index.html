@@ -105,8 +105,9 @@ tr.fromcard td { color:#b0b0b0; }
 .sitenav { position:relative; z-index:5; display:flex; gap:6px; flex-wrap:wrap; justify-content:center; align-items:center; background:#0a0a0a; border:1px solid var(--line); border-radius:8px; padding:6px; margin:8px 0 0; }
 .sitenav button { padding:4px 8px; font-size:12px; }
 .card { scroll-margin-top:0; }
-input[type=file] { height:38px; box-sizing:border-box; text-align:center; text-align-last:center; line-height:22px; padding:6px 8px; display:inline-flex; align-items:center; justify-content:center; }
-input[type=file]::file-selector-button { margin:0 8px 0 0; }
+input[type=file] { position:absolute; width:1px; height:1px; opacity:0; }
+.file-face { display:flex; align-items:center; justify-content:center; text-align:center; height:38px; min-width:140px; padding:6px 10px; box-sizing:border-box; background:#0e0e0e; color:var(--text); border:1px solid var(--line); border-radius:8px; cursor:pointer; }
+label:has(input[type=file]) { position:relative; }
 #loadcal { height:38px; }
 label:has(#loadcal) { gap:0; }
 #dashboard { display:flex; flex-direction:column; }
@@ -172,7 +173,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <div class="tools dash-tools">
 <button type="button" id="savedash">Save Dashboard</button>
 <button type="button" id="resetdash">Reset</button>
-<label>Load Dashboard<input type="file" id="loaddash" accept=".txt,text/plain"></label>
+<label>Load Dashboard<input type="file" id="loaddash" accept=".txt,text/plain"><span class="file-face">No File Chosen</span></label>
 <span id="dashnote" class="warn"></span>
 </div>
 </section>
@@ -191,7 +192,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <p class="api-note">Paste a free or paid Odds API key here. Load Picks in Add A Bet uses this key. Add A Bet Book drives the list. This Book only stamps a card you load from this section.<br><a href="https://the-odds-api.com/" target="_blank" rel="noopener noreferrer">Open The Odds API</a></p>
 <textarea id="paste" placeholder="NFL | Spread | Chiefs -3.5 | -110 | High 62%"></textarea>
 <div class="tools">
-<label>Upload pick-card PDF<input type="file" id="cardpdf" accept="application/pdf,.pdf"></label>
+<label>Upload pick-card PDF<input type="file" id="cardpdf" accept="application/pdf,.pdf"><span class="file-face">No File Chosen</span></label>
 <button type="button" id="loadcard">Load Card As Pending</button>
 <button type="button" id="loaddrive">Load Drive Card</button>
 </div>
@@ -279,11 +280,11 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <label>Result<select id="fResult"><option value="">All</option><option>pending</option><option>win</option><option>loss</option><option>push</option></select></label>
 </div>
 <div class="tools">
-<label>Load Ledger<input type="file" id="loadledger" accept=".json,application/json"></label>
+<label>Load Ledger<input type="file" id="loadledger" accept=".json,application/json"><span class="file-face">No File Chosen</span></label>
 <button type="button" id="syncledger">Sync Ledger</button>
 <button type="button" id="saveledger">Save Ledger</button>
 <span id="ledgernote" class="warn"></span>
-<label>Import CSV<input type="file" id="import" accept=".csv,text/csv"></label>
+<label>Import CSV<input type="file" id="import" accept=".csv,text/csv"><span class="file-face">No File Chosen</span></label>
 <button type="button" id="exportpdf">Export PDF</button>
 <button type="button" id="export">Export Spreadsheet</button>
 <button type="button" class="danger" id="clear">Clear All</button>
@@ -296,7 +297,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </section>
 <section class="card" id="calendarcard">
 <h2>Calendar</h2>
-<div class="tools"><button type="button" id="prevMonth">Prev</button><button type="button" id="nextMonth">Next</button><label>Load My Calendar<input type="file" id="loadcal" accept=".json,application/json"></label><button type="button" id="resetcal">Use Shared Calendar</button><span id="calnote" class="warn"></span></div>
+<div class="tools"><button type="button" id="prevMonth">Prev</button><button type="button" id="nextMonth">Next</button><label>Load My Calendar<input type="file" id="loadcal" accept=".json,application/json"><span class="file-face">No File Chosen</span></label><button type="button" id="resetcal">Use Shared Calendar</button><span id="calnote" class="warn"></span></div>
 <div class="cal" id="calendar"></div>
 <p class="api-note">Everyone sees the shared $10 calendar until they upload a file. An uploaded file stays in this browser only. Other users do not see it. Use Shared Calendar to go back.</p>
 </section>
@@ -1936,6 +1937,7 @@ document.getElementById("canceledit").onclick = event => {
   document.getElementById("editnote").textContent = "Edit cancelled.";
   document.getElementById("picknote").textContent = "";
 };
+document.querySelectorAll("input[type=file]").forEach(input => input.addEventListener("change", () => { const face = input.parentElement.querySelector(".file-face"); if (face) face.textContent = input.files && input.files[0] ? input.files[0].name : "No File Chosen"; }));
 document.getElementById("loadcal").onchange = e => {
   const file = e.target.files[0];
   const note = document.getElementById("calnote");
