@@ -710,7 +710,8 @@ function render(){
   all.forEach(b => {
     const key = [b.date, b.sport, b.pick].join("|");
     const prior = byKey[key];
-    const better = !prior || (prior.result === "pending" && b.result !== "pending") || (Number.isFinite(Number(b.profit)) && Number(b.profit) !== 0 && !Number.isFinite(Number(prior.profit)));
+    const incoming = Number(b.profit), had = Number(prior && prior.profit);
+    const better = !prior || (prior.result === "pending" && b.result !== "pending") || (Number.isFinite(incoming) && incoming !== 0 && (!Number.isFinite(had) || had === 0));
     if (!better) return;
     if (!b.id) b.id = key;
     if (!b.book) b.book = "BetMGM";
