@@ -360,7 +360,7 @@ function hour12(){ return localStorage.getItem("gg-hour") === "12"; }
 function formatTime(value){
   const date = value instanceof Date ? value : new Date(value);
   if (Number.isNaN(date.getTime())) return "";
-  return date.toLocaleTimeString("en-US", {timeZone: siteZone(), hour:"numeric", minute:"2-digit", hour12: hour12()});
+  return date.toLocaleTimeString("en-US", {timeZone: siteZone(), hour:"numeric", minute:"2-digit", second:"2-digit", hour12: hour12()});
 }
 function showClock(){
   const now = new Date();
