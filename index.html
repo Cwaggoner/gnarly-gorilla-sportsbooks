@@ -876,11 +876,12 @@ function drawCalendar(){
       const line = open.length ? "<span class='win'>All Win " + money(winAll) + "</span><span class='slash'> / </span><span class='loss'>All Lose -" + money(loseAll).replace("-", "") + "</span>" : "<br><span class='wait'>Picks Not Loaded Until " + formatTime(firstPickAt(), false) + "</span>";
       html += "<div class='today daycell' data-date='" + date + "'><b>" + d + "</b><br>" + line + "</div>";
     } else {
+      const live = load().concat(loadGrade()).concat(gradeFile).filter(b => b.date === date && b.result !== "pending" && !isNoPick(b));
+      const seen = new Set();
+      const slips = live.filter(b => { const k = [b.sport, b.pick].join("|"); if (seen.has(k)) return false; seen.add(k); return true; });
       let day = board[date];
-      if (!day && date < today) {
-        const slips = load().concat(loadGrade()).filter(b => b.date === date && b.result !== "pending");
-        if (slips.length) day = {pl: slips.reduce((s, b) => s + slipMoney(b), 0)};
-      }
+      if (slips.length && date < today) day = Object.assign({}, day || {}, {pl: slips.reduce((s, b) => s + slipMoney(b), 0), n: slips.length});
+      else if (!day && date < today && slips.length) day = {pl: slips.reduce((s, b) => s + slipMoney(b), 0)};
       const cls = day && day.pl > 0 ? "win" : day && day.pl < 0 ? "loss" : "";
       const range = day && Number.isFinite(Number(day.allWin)) ? "<br><span class='range'><span class='win'>All Win " + money(day.allWin) + "</span><span class='slash'> / </span><span class='loss'>All Lose " + money(day.allLose) + "</span></span>" : "";
       html += "<div class='daycell' data-date='" + date + "'><b>" + d + "</b><br><span class='" + cls + "'>" + (day ? money(day.pl) : "") + "</span>" + range + "</div>";
