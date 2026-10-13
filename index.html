@@ -1914,6 +1914,11 @@ fetch("cards/state-rules.json?ts=" + Date.now()).then(r => r.ok ? r.json() : nul
   stateRules = (data && data.states) || {};
   return fetch("https://ipapi.co/json/").then(r => r.ok ? r.json() : null);
 }).then(data => {
+  const code = String(data && data.country_code || "").toUpperCase();
+  if (code && code !== "US") {
+    document.body.innerHTML = "<div class='page' style='padding:48px 20px;text-align:center'><h1 style='color:#39ff14'>United States Only</h1><p style='color:#d6ffd0'>This site is available only to devices in the United States.</p></div>";
+    return;
+  }
   const place = data && (data.region || data.country_name);
   if (place) applyState(place);
 }).catch(() => {});
