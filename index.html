@@ -553,7 +553,7 @@ function drawDashboard(history, manual){
   pts.forEach((p, i) => {
     const parts = String(p.date).split("-");
     const label = parts.length === 3 ? parts[1] + "/" + parts[2] : p.date;
-    ctx.textAlign = i === 0 ? "right" : i === pts.length - 1 ? "left" : "center";
+    ctx.textAlign = i === 0 ? "left" : i === pts.length - 1 ? "right" : "center";
     ctx.fillText(label, x(i), h - 6);
   });
   ctx.textAlign = "left";
