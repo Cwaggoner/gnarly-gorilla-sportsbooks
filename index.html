@@ -105,7 +105,8 @@ label:has(#loadcal) { gap:0; }
 #report td, #report th { padding:4px 16px 4px 0; }
 .charts { display:grid; grid-template-columns:1.4fr 1fr; gap:12px; }
 .cal { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
-.cal div { min-height:46px; background:#0e0e0e; border:1px solid var(--line); border-radius:6px; font-size:11px; padding:4px; display:flex; flex-direction:column; justify-content:center; }
+.cal div { height:52px; background:#0e0e0e; border:1px solid var(--line); border-radius:6px; font-size:11px; padding:4px; line-height:1.15; overflow:hidden; }
+.cal .dow { height:auto; }
 .cal div.today { border:1px solid #39ff14; box-shadow:0 0 0 1px #39ff14 inset; }
 .cal .dow { min-height:0; color:var(--title); background:transparent; border:0; }
 canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--line); border-radius:8px; display:block; }
@@ -613,8 +614,8 @@ function drawCalendar(){
       const open = load().filter(b => b.date === today && b.result === "pending");
       const winAll = open.reduce((s, b) => { const odds = Number(b.odds), stake = Number(b.stake) || 0; if (!Number.isFinite(odds) || odds === 0) return s; return s + (odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds)); }, 0);
       const loseAll = open.reduce((s, b) => s + Number(b.stake || 0), 0);
-      const line = open.length ? "<span class='win'>" + money(winAll) + " all win</span><br><span class='loss'>-" + money(loseAll).replace("-", "") + " all lose</span>" : "";
-      html += "<div class='today'><b>" + d + " today</b><br>" + line + "</div>";
+      const line = open.length ? "<span class='win'>" + money(winAll) + " all win</span> <span class='loss'>-" + money(loseAll).replace("-", "") + " all lose</span>" : "";
+      html += "<div class='today'><b>" + d + "</b><br>" + line + "</div>";
     } else {
       const day = board[date];
       const cls = day && day.pl > 0 ? "win" : day && day.pl < 0 ? "loss" : "";
