@@ -120,12 +120,13 @@ tr.fromcard td { color:#b0b0b0; }
 .tools { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; align-items:flex-end; }
 .jump { display:flex; gap:6px; margin:6px 0; justify-content:center; align-items:center; }
 .jump button { padding:4px 8px; font-size:12px; }
-.sitenav { position:relative; z-index:5; display:grid; grid-template-columns:max-content minmax(0,1fr) max-content; align-items:center; gap:8px; background:#0a0a0a; border:1px solid var(--line); border-radius:8px; padding:3px 8px; margin:8px 0 0; }
+.sitenav { position:relative; z-index:5; display:grid; grid-template-columns:max-content minmax(0,1fr) max-content; align-items:center; gap:8px; background:#0a0a0a; border:1px solid var(--line); border-radius:8px; padding:3px 8px; margin:8px 0 0; overflow-x:auto; }
 .nav-cell { display:flex; align-items:center; justify-content:center; min-width:0; gap:6px; flex-wrap:nowrap; }
+.nav-cell.right { min-width:230px; }
 .nav-cell.left { color:var(--title); white-space:nowrap; }
 .sitenav button, .sitenav select { height:26px; padding:2px 6px; font-size:12px; box-sizing:border-box; }
 .sitenav .tz { display:flex; align-items:center; justify-content:center; gap:6px; color:var(--muted); font-size:12px; white-space:nowrap; flex-wrap:nowrap; }
-.sitenav .tz select { width:12ch; min-width:12ch; max-width:12ch; height:26px; }
+.sitenav .tz select { width:110px; min-width:110px; max-width:110px; height:26px; flex:0 0 110px; }
 .sitenav .tz button { min-width:5ch; }
 .sitenav .clock { color:var(--title); white-space:nowrap; }
 .card { scroll-margin-top:0; }
