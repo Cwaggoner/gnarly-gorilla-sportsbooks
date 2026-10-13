@@ -150,6 +150,7 @@ label:has(#loadcal) { gap:0; }
 .sharp-read { margin-top:10px; }
 .sharp-read b { color:#39ff14; font-size:12px; }
 .sharp-read p { margin:4px 0 0; color:#d6ffd0; font-size:12px; line-height:1.35; }
+.card-rest { margin-top:10px; border:1px solid #39ff14; border-radius:8px; padding:10px; }
 @media (max-width:700px) { .analysis-grid { grid-template-columns:1fr 1fr; } }
 #dashboard { display:flex; flex-direction:column; }
 #dashboard .dash-tools { margin-top:14px; }
@@ -262,6 +263,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <section class="card" id="todaycard">
 <div class="section-head"><h2>Today's Card</h2><p class="warn slips-side">One play per line: Sport | Type | Pick | American odds | Confidence. Stake is $10. Book is the dropdown below. Pending until graded.</p></div>
 <div class="card-analysis" id="cardanalysis"><h3>Analysis</h3><div class="analysis-grid" id="analysisgrid"></div><div class="sharp-read"><b>Analysis:</b><p id="sharpread"></p></div></div>
+<div class="card-rest">
 <div class="book-key">
 <label>Book<select id="cardbook" class="book-select">
 <option>BetMGM</option>
@@ -280,6 +282,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <div class="btn-pair"><span>Loaders</span><div><button type="button" id="loadcard">Load Card As Pending</button><button type="button" id="loaddrive">Load Drive Card</button></div></div>
 </div>
 <p id="pdfnote" class="warn"></p>
+</div>
 </section>
 <section class="card" id="reportcard">
 <h2>Report Card</h2>
