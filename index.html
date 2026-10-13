@@ -57,7 +57,7 @@ h2.split-title { margin:16px 0 12px; border:1px solid #39ff14; border-radius:10p
 h2 { margin:0 0 10px; font-size:16px; color:var(--title); }
 form, .row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:8px; align-items:center; }
 .break { grid-column:1 / -1; height:0; }
-.stack { display:flex; flex-direction:row; gap:8px; grid-column:1 / -1; align-items:center; }
+.stack { display:flex; flex-direction:row; gap:8px; grid-column:1 / -1; align-items:flex-end; }
 #picknote, #loadnote, #editnote { display:flex; align-items:center; min-height:38px; margin:0; padding:8px 12px; border:1px solid var(--line); border-radius:8px; box-sizing:border-box; }
 .bet-top { grid-column:1 / -1; display:grid; grid-template-columns:1.6fr auto auto; gap:10px; align-items:stretch; }
 .bet-box { border:1px solid #39ff14; border-radius:10px; padding:10px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:center; }
@@ -74,6 +74,7 @@ form, .row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1f
 
 label { display:flex; flex-direction:column; gap:4px; font-size:12px; color:var(--muted); }
 input, select, button, textarea { background:#0e0e0e; color:var(--text); border:1px solid var(--line); border-radius:8px; padding:8px; }
+.tools > button, .stack > button, .file-face, .tools select { height:38px; box-sizing:border-box; }
 #oddskeybox { display:block; margin:16px 0; }
 #seasons { margin-bottom:18px; }
 #seasons table { margin-bottom:28px; }
@@ -99,7 +100,7 @@ th { color:var(--title); background:#102010; }
 .win { color:var(--title); } .loss { color:var(--red); } .push, .warn { color:var(--amber); }
 tr.manual td { color:#00e5ff; }
 tr.fromcard td { color:#b0b0b0; }
-.tools { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; align-items:center; }
+.tools { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; align-items:flex-end; }
 .jump { display:flex; gap:6px; margin:6px 0; justify-content:center; align-items:center; }
 .jump button { padding:4px 8px; font-size:12px; }
 .sitenav { position:relative; z-index:5; display:flex; gap:6px; flex-wrap:wrap; justify-content:center; align-items:center; background:#0a0a0a; border:1px solid var(--line); border-radius:8px; padding:6px; margin:8px 0 0; }
