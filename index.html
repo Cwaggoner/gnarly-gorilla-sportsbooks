@@ -323,7 +323,9 @@ function archiveSlips(bets){
 function save(bets){ localStorage.setItem(KEY, JSON.stringify(bets)); render(); }
 function slipMoney(b){
   if (!b || b.result === "pending") return 0;
-  if ((b.result === "win" || b.result === "loss" || b.result === "push") && Number.isFinite(Number(b.profit))) return Number(b.profit);
+  const published = Number(b.profit);
+  if ((b.result === "loss" || b.result === "push") && Number.isFinite(published)) return published;
+  if (b.result === "win" && Number.isFinite(published) && published !== 0) return published;
   return profit(b);
 }
 function profit(b){
