@@ -532,7 +532,7 @@ function drawDashboard(history, manual){
     [shown.reduce((s, row) => s + (Number(row.pending) || 0), 0), "Pending"],
     [clvs.length ? (clvs.reduce((s, n) => s + n, 0) / clvs.length).toFixed(1) + "%" : "No Close Saved", "7-Day Avg CLV"]
   ].map(x => "<div class='stat'><b>" + x[0] + "</b><span>" + x[1] + "</span></div>").join("");
-  document.getElementById("dashrows").innerHTML = shown.map(row => "<tr><td>" + row.date + "</td><td>" + row.record + "</td><td>" + money(Number(row.profit)) + "</td><td>" + row.roi + "</td><td>" + row.units + "</td><td>" + row.pending + "</td><td>" + (row.clv === "-" || row.clv == null || row.clv === "" ? "No Close Saved" : row.clv) + "</td></tr>").join("");
+  document.getElementById("dashrows").innerHTML = shown.map(row => "<tr><td>" + row.date + "</td><td>" + row.record + "</td><td>" + money(Number(row.profit)) + "</td><td>" + row.roi + "</td><td>" + row.units + "</td><td>" + (Number(row.pending) === 0 ? "0 - All Pending Has Been Graded" : row.pending) + "</td><td>" + (row.clv === "-" || row.clv == null || row.clv === "" ? "No Close Saved" : row.clv) + "</td></tr>").join("");
   const canvas = document.getElementById("dashChart");
   const ctx = canvas.getContext("2d");
   const w = Math.max(320, canvas.clientWidth || 640);
