@@ -501,8 +501,7 @@ function drawDashboard(history, manual){
   ctx.fillStyle = "#0e0e0e";
   ctx.fillRect(0,0,w,h);
   if (!shown.length) return;
-  let run = 0;
-  const pts = shown.map(row => { run += Number(row.profit) || 0; return {date: row.date, y: run}; });
+  const pts = shown.map(row => ({date: row.date, y: Number(row.profit) || 0}));
   const min = -1000, max = 1000, span = max - min;
   const left = 62, right = 62, top = 14, bottom = 22;
   const x = i => left + (w - left - right) * (pts.length === 1 ? 0.5 : i / (pts.length - 1));
