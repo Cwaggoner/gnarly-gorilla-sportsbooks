@@ -204,6 +204,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <div class="head-text">
 <h1>Gnarly Gorilla Sportsbooks</h1>
 <p>Free bet ledger for Gnarly Gorilla Sports Decks. Log NFL, NBA, NHL, MLB, CBB, and CFB slips, grade them the next day, and copy the report card.</p>
+<p id="liveline" class="warn" style="margin:6px 0 0;font-size:12px;"></p>
 </div>
 <div class="head-flag" aria-label="United States"><svg viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg" role="img"><defs><linearGradient id="flaggloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".45" stop-color="#fff" stop-opacity=".08"/><stop offset="1" stop-color="#000" stop-opacity=".25"/></linearGradient></defs><rect width="28" height="18" fill="#b22234"/><g fill="#fff"><rect y="1.38" width="28" height="1.38"/><rect y="4.15" width="28" height="1.38"/><rect y="6.92" width="28" height="1.38"/><rect y="9.69" width="28" height="1.38"/><rect y="12.46" width="28" height="1.38"/><rect y="15.23" width="28" height="1.38"/></g><rect width="11.2" height="9.7" fill="#3c3b6e"/><rect width="28" height="18" fill="url(#flaggloss)"/></svg><span>USA</span><span id="headregion"></span><span id="headrules">BETTING RULES</span></div>
 <div class="head-icon right"><img src="gg-icon.png" alt="Gnarly Gorilla"></div>
@@ -390,7 +391,7 @@ const UNIT = 10;
 const form = document.getElementById("form");
 form.date.value = new Date().toLocaleDateString("en-CA", {timeZone: localStorage.getItem("gg-timezone") || "America/New_York"});
 function ymd(d){ return d.toISOString().slice(0,10); }
-function siteZone(){ return localStorage.getItem("gg-timezone") || "America/New_York"; }
+function siteZone(){ return localStorage.getItem("gg-timezone") || Intl.DateTimeFormat().resolvedOptions().timeZone || "America/New_York"; }
 function hour12(){ return localStorage.getItem("gg-hour") !== "24"; }
 function formatTime(value, seconds){
   const date = value instanceof Date ? value : new Date(value);
@@ -399,12 +400,26 @@ function formatTime(value, seconds){
   if (seconds !== false) opt.second = "2-digit";
   return date.toLocaleTimeString("en-US", opt);
 }
+function liveByText(){
+  const zone = siteZone();
+  const day = new Date().toLocaleDateString("en-CA", {timeZone: "America/New_York"});
+  const guess = new Date(day + "T13:30:00Z");
+  const parts = new Intl.DateTimeFormat("en-US", {timeZone: "America/New_York", hour:"numeric", minute:"numeric", hourCycle:"h23"}).formatToParts(guess);
+  const h = Number(parts.find(p => p.type === "hour").value);
+  const m = Number(parts.find(p => p.type === "minute").value);
+  const instant = new Date(guess.getTime() + ((9 * 60 + 30) - (h * 60 + m)) * 60000);
+  const clock = instant.toLocaleTimeString("en-US", {timeZone: zone, hour:"numeric", minute:"2-digit", hour12: hour12()});
+  const place = zone.replace(/_/g, " ").split("/").pop();
+  return "All picks live by " + clock + " " + place + ". Cards post at 9:00 AM Eastern. The extra 30 minutes is the buffer.";
+}
 function showClock(){
   const now = new Date();
   const date = document.getElementById("zonedate");
   const time = document.getElementById("zonetime");
   if (date) date.textContent = now.toLocaleDateString("en-US", {timeZone: siteZone(), weekday:"long", month:"long", day:"numeric", year:"numeric"});
   if (time) time.textContent = formatTime(now, true);
+  const live = document.getElementById("liveline");
+  if (live) live.textContent = liveByText();
 }
 function yesterday(){ const d = new Date(todayEt() + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() - 1); return d.toISOString().slice(0,10); }
 function load(){ try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { return []; } }
