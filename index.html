@@ -1133,7 +1133,14 @@ function refreshPicks(){
 }
 form.date.onchange = refreshPicks;
 form.type.onchange = refreshPicks;
-form.book.onchange = refreshPicks;
+form.book.onchange = () => {
+  const book = form.book.value;
+  const filter = document.getElementById("fBook");
+  if (filter && [...filter.options].some(o => o.value === book)) filter.value = book;
+  refreshPicks();
+  render();
+  repriceSlips().catch(err => { document.getElementById("picknote").textContent = err.message; });
+};
 form.sport.onchange = refreshPicks;
 document.getElementById("picknote").textContent = "Press Load Picks. The list follows the date in Add A Bet.";
 try {
@@ -1211,7 +1218,7 @@ function captureCloses(){
 }
 async function repriceSlips(){
   const note = document.getElementById("pdfnote");
-  const book = document.getElementById("cardbook").value;
+  const book = form.book.value;
   const bookKey = BOOK_KEY[book];
   const key = oddskey.value.trim();
   const bets = load();
@@ -1242,13 +1249,7 @@ async function repriceSlips(){
   note.textContent = priced + " pending slips repriced at " + book + ".";
 }
 document.getElementById("cardbook").onchange = () => {
-  const book = document.getElementById("cardbook").value;
-  if (form.book.value !== book) form.book.value = book;
-  const filter = document.getElementById("fBook");
-  if (filter && [...filter.options].some(o => o.value === book)) filter.value = book;
-  refreshPicks();
-  render();
-  repriceSlips().catch(err => { document.getElementById("pdfnote").textContent = err.message; });
+  document.getElementById("pdfnote").textContent = document.getElementById("cardbook").value + " will be used when this card is loaded. Add A Bet drives the pick list.";
 };
 
 async function loadPending(){
