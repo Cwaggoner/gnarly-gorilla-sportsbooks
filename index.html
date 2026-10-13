@@ -368,7 +368,8 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <footer class="card">
 <h2>About This Ledger</h2>
 <p>Gnarly Gorilla Sportsbooks is a free browser bet ledger for the daily Gnarly Gorilla pick cards. It tracks American-odds slips for NFL, NBA, NHL, MLB, college basketball, and college football at BetMGM, Caesars, DraftKings, Fanatics, FanDuel, and HardRock. Bets stay in this browser. The page does not log into a sportsbook and does not place wagers.</p>
-<p class="warn">Bet Responsibly. Gambling involves risk. Wagers can lose the full stake. This ledger is a record of picks and results, not a sportsbook, not betting advice, and not an offer to place a wager. You must be 21 or older where sports betting is legal. If gambling is causing problems, call or text 1-800-GAMBLER.</p>
+<p class="warn" id="staterule">Bet Responsibly. Gambling involves risk. Wagers can lose the full stake. This ledger is a record of picks and results, not a sportsbook, not betting advice, and not an offer to place a wager. You must be 21 or older where sports betting is legal. If gambling is causing problems, call or text 1-800-GAMBLER.</p>
+<p class="warn" id="statebooks">State rules load from the visitor location.</p>
 </footer>
 <div class="page-end"></div>
 </div>
@@ -1803,10 +1804,40 @@ async function catchUp(){
   render();
 }
 catchUp();
-fetch("https://ipapi.co/json/").then(r => r.ok ? r.json() : null).then(data => {
-  const place = data && (data.region || data.country_name);
+let stateRules = {};
+let visitorState = "";
+function applyState(name){
+  visitorState = name || "";
   const line = document.getElementById("headregion");
-  if (line && place) line.textContent = String(place).toUpperCase();
+  if (line && name) line.textContent = String(name).toUpperCase();
+  const rule = stateRules[name];
+  const note = document.getElementById("staterule");
+  const books = document.getElementById("statebooks");
+  if (!rule) {
+    if (note) note.textContent = "Bet Responsibly. Gambling involves risk. Wagers can lose the full stake. This ledger is a record of picks and results, not a sportsbook, not betting advice, and not an offer to place a wager. You must be 21 or older where sports betting is legal. If gambling is causing problems, call or text 1-800-GAMBLER.";
+    return;
+  }
+  if (note) note.textContent = rule.rule + " This is a summary of published state rules as of October 2026, not legal advice. Confirm with the state regulator before you bet. If gambling is causing problems, call or text 1-800-GAMBLER.";
+  if (books) books.textContent = rule.books.length ? "Listed books for " + name + ": " + rule.books.join(", ") + ". A book not on that list is not treated as available here. The posted line is the book line, not a state-adjusted price." : "No listed book from this site is available in " + name + ".";
+  document.querySelectorAll("select.book-select").forEach(sel => {
+    [...sel.options].forEach(opt => {
+      if (!opt.value && opt.textContent === "All") return;
+      const ok = rule.books.includes(opt.value || opt.textContent);
+      opt.disabled = !ok;
+      opt.textContent = (opt.value || opt.textContent).replace(/ \(not listed\)$/, "") + (ok ? "" : " (not listed)");
+    });
+    if (sel.selectedOptions[0] && sel.selectedOptions[0].disabled) {
+      const open = [...sel.options].find(opt => !opt.disabled && opt.value !== "");
+      if (open) sel.value = open.value || open.textContent;
+    }
+  });
+}
+fetch("cards/state-rules.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => {
+  stateRules = (data && data.states) || {};
+  return fetch("https://ipapi.co/json/").then(r => r.ok ? r.json() : null);
+}).then(data => {
+  const place = data && (data.region || data.country_name);
+  if (place) applyState(place);
 }).catch(() => {});
 document.getElementById("loadcard").onclick = () => loadPending();
 

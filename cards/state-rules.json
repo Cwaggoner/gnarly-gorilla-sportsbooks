@@ -1,0 +1,526 @@
+{
+  "checked": "2026-10-13",
+  "source": "American Gaming Association and published book availability, reviewed October 2026",
+  "states": {
+    "Alabama": {
+      "code": "AL",
+      "status": "not-legal",
+      "age": 21,
+      "books": [],
+      "rule": "Alabama does not have legal sports betting. Do not use a book here. The ledger can still record picks, but it is not an offer to bet."
+    },
+    "Alaska": {
+      "code": "AK",
+      "status": "not-legal",
+      "age": 21,
+      "books": [],
+      "rule": "Alaska does not have legal sports betting. Do not use a book here. The ledger can still record picks, but it is not an offer to bet."
+    },
+    "Arizona": {
+      "code": "AZ",
+      "status": "online",
+      "age": 21,
+      "books": [
+        "BetMGM",
+        "Caesars",
+        "DraftKings",
+        "Fanatics",
+        "FanDuel",
+        "HardRock"
+      ],
+      "rule": "Arizona has legal online sports betting. You must be 21 or older and physically in the state. Listed books here: BetMGM, Caesars, DraftKings, Fanatics, FanDuel, HardRock."
+    },
+    "Arkansas": {
+      "code": "AR",
+      "status": "online",
+      "age": 21,
+      "books": [
+        "DraftKings",
+        "FanDuel"
+      ],
+      "rule": "Arkansas has legal online sports betting. You must be 21 or older and physically in the state. Listed books here: DraftKings, FanDuel."
+    },
+    "California": {
+      "code": "CA",
+      "status": "not-legal",
+      "age": 21,
+      "books": [],
+      "rule": "California does not have legal sports betting. Do not use a book here. The ledger can still record picks, but it is not an offer to bet."
+    },
+    "Colorado": {
+      "code": "CO",
+      "status": "online",
+      "age": 21,
+      "books": [
+        "BetMGM",
+        "Caesars",
+        "DraftKings",
+        "Fanatics",
+        "FanDuel",
+        "HardRock"
+      ],
+      "rule": "Colorado has legal online sports betting. You must be 21 or older and physically in the state. Listed books here: BetMGM, Caesars, DraftKings, Fanatics, FanDuel, HardRock."
+    },
+    "Connecticut": {
+      "code": "CT",
+      "status": "online",
+      "age": 21,
+      "books": [
+        "DraftKings",
+        "Fanatics",
+        "FanDuel"
+      ],
+      "rule": "Connecticut has legal online sports betting. You must be 21 or older and physically in the state. Listed books here: DraftKings, Fanatics, FanDuel."
+    },
+    "Delaware": {
+      "code": "DE",
+      "status": "online",
+      "age": 21,
+      "books": [],
+      "rule": "Delaware has legal online sports betting. You must be 21 or older and physically in the state. Listed books here: no listed book from this site."
+    },
+    "District of Columbia": {
+      "code": "DC",
+      "status": "online",
+      "age": 18,
+      "books": [
+        "BetMGM",
+        "Caesars",
+        "DraftKings",
+        "Fanatics",
+        "FanDuel"
+      ],
+      "rule": "District of Columbia has legal online sports betting. You must be 21 or older and physically in the state. Listed books here: BetMGM, Caesars, DraftKings, Fanatics, FanDuel. District of Columbia has legal online sports betting. You must be 18 or older."
+    },
+    "Florida": {
+      "code": "FL",
+      "status": "online",
+      "age": 21,
+      "books": [
+        "HardRock"
+      ],
+      "rule": "Florida has legal online sports betting. You must be 21 or older and physically in the state. Listed books here: HardRock. Florida online sports betting is limited to Hard Rock Bet."
+    },
+    "Georgia": {
+      "code": "GA",
+      "status": "not-legal",
+      "age": 21,
+      "books": [],
+      "rule": "Georgia does not have legal sports betting. Do not use a book here. The ledger can still record picks, but it is not an offer to bet."
+    },
+    "Hawaii": {
+      "code": "HI",
+      "status": "not-legal",
+      "age": 21,
+      "books": [],
+      "rule": "Hawaii does not have legal sports betting. Do not use a book here. The ledger can still record picks, but it is not an offer to bet."
+    },
+    "Idaho": {
+      "code": "ID",
+      "status": "not-legal",
+      "age": 21,
+      "books": [],
+      "rule": "Idaho does not have legal sports betting. Do not use a book here. The ledger can still record picks, but it is not an offer to bet."
+    },
+    "Illinois": {
+      "code": "IL",
+      "status": "online",
+      "age": 21,
+      "books": [
+        "BetMGM",
+        "Caesars",
+        "DraftKings",
+        "Fanatics",
+        "FanDuel",
+        "HardRock"
+      ],
+      "rule": "Illinois has legal online sports betting. You must be 21 or older and physically in the state. Listed books here: BetMGM, Caesars, DraftKings, Fanatics, FanDuel, HardRock."
+    },
+    "Indiana": {
+      "code": "IN",
+      "status": "online",
+      "age": 21,
+      "books": [
+        "BetMGM",
+        "Caesars",
+        "DraftKings",
+        "Fanatics",
+        "FanDuel",
+        "HardRock"
+      ],
+      "rule": "Indiana has legal online sports betting. You must be 21 or older and physically in the state. Listed books here: BetMGM, Caesars, DraftKings, Fanatics, FanDuel, HardRock."
+    },
+    "Iowa": {
+      "code": "IA",
+      "status": "online",
+      "age": 21,
+      "books": [
+        "BetMGM",
+        "Caesars",
+        "DraftKings",
+        "Fanatics",
+        "FanDuel"
+      ],
+      "rule": "Iowa has legal online sports betting. You must be 21 or older and physically in the state. Listed books here: BetMGM, Caesars, DraftKings, Fanatics, FanDuel."
+    },
+    "Kansas": {
+      "code": "KS",
+      "status": "online",
+      "age": 21,
+      "books": [
+        "BetMGM",
+        "Caesars",
+        "DraftKings",
+        "Fanatics",
+        "FanDuel"
+      ],
+      "rule": "Kansas has legal online sports betting. You must be 21 or older and physically in the state. Listed books here: BetMGM, Caesars, DraftKings, Fanatics, FanDuel."
+    },
+    "Kentucky": {
+      "code": "KY",
+      "status": "online",
+      "age": 21,
+      "books": [
+        "BetMGM",
+        "Caesars",
+        "DraftKings",
+        "Fanatics",
+        "FanDuel"
+      ],
+      "rule": "Kentucky has legal online sports betting. You must be 21 or older and physically in the state. Listed books here: BetMGM, Caesars, DraftKings, Fanatics, FanDuel."
+    },
+    "Louisiana": {
+      "code": "LA",
+      "status": "online",
+      "age": 21,
+      "books": [
+        "BetMGM",
+        "Caesars",
+        "DraftKings",
+        "Fanatics",
+        "FanDuel"
+      ],
+      "rule": "Louisiana has legal online sports betting. You must be 21 or older and physically in the state. Listed books here: BetMGM, Caesars, DraftKings, Fanatics, FanDuel. Louisiana mobile betting is limited to parishes that authorized it."
+    },
+    "Maine": {
+      "code": "ME",
+      "status": "online",
+      "age": 21,
+      "books": [
+        "Caesars",
+        "DraftKings"
+      ],
+      "rule": "Maine has legal online sports betting. You must be 21 or older and physically in the state. Listed books here: Caesars, DraftKings."
+    },
+    "Maryland": {
+      "code": "MD",
+      "status": "online",
+      "age": 21,
+      "books": [
+        "BetMGM",
+        "Caesars",
+        "DraftKings",
+        "Fanatics",
+        "FanDuel"
+      ],
+      "rule": "Maryland has legal online sports betting. You must be 21 or older and physically in the state. Listed books here: BetMGM, Caesars, DraftKings, Fanatics, FanDuel."
+    },
+    "Massachusetts": {
+      "code": "MA",
+      "status": "online",
+      "age": 21,
+      "books": [
+        "BetMGM",
+        "Caesars",
+        "DraftKings",
+        "Fanatics",
+        "FanDuel"
+      ],
+      "rule": "Massachusetts has legal online sports betting. You must be 21 or older and physically in the state. Listed books here: BetMGM, Caesars, DraftKings, Fanatics, FanDuel."
+    },
+    "Michigan": {
+      "code": "MI",
+      "status": "online",
+      "age": 21,
+      "books": [
+        "BetMGM",
+        "Caesars",
+        "DraftKings",
+        "Fanatics",
+        "FanDuel",
+        "HardRock"
+      ],
+      "rule": "Michigan has legal online sports betting. You must be 21 or older and physically in the state. Listed books here: BetMGM, Caesars, DraftKings, Fanatics, FanDuel, HardRock."
+    },
+    "Minnesota": {
+      "code": "MN",
+      "status": "not-legal",
+      "age": 21,
+      "books": [],
+      "rule": "Minnesota does not have legal sports betting. Do not use a book here. The ledger can still record picks, but it is not an offer to bet."
+    },
+    "Mississippi": {
+      "code": "MS",
+      "status": "retail-only",
+      "age": 21,
+      "books": [],
+      "rule": "Mississippi allows sports betting only at a licensed retail or tribal location. Statewide mobile betting is not available. You must be 21 or older."
+    },
+    "Missouri": {
+      "code": "MO",
+      "status": "online",
+      "age": 21,
+      "books": [
+        "BetMGM",
+        "Caesars",
+        "DraftKings",
+        "Fanatics",
+        "FanDuel"
+      ],
+      "rule": "Missouri has legal online sports betting. You must be 21 or older and physically in the state. Listed books here: BetMGM, Caesars, DraftKings, Fanatics, FanDuel."
+    },
+    "Montana": {
+      "code": "MT",
+      "status": "retail-only",
+      "age": 21,
+      "books": [],
+      "rule": "Montana allows sports betting only at a licensed retail or tribal location. Statewide mobile betting is not available. You must be 21 or older."
+    },
+    "Nebraska": {
+      "code": "NE",
+      "status": "retail-only",
+      "age": 21,
+      "books": [],
+      "rule": "Nebraska allows sports betting only at a licensed retail or tribal location. Statewide mobile betting is not available. You must be 21 or older."
+    },
+    "Nevada": {
+      "code": "NV",
+      "status": "online",
+      "age": 21,
+      "books": [
+        "BetMGM"
+      ],
+      "rule": "Nevada has legal online sports betting. You must be 21 or older and physically in the state. Listed books here: BetMGM. Nevada is a retail-first market. BetMGM is the listed online book here."
+    },
+    "New Hampshire": {
+      "code": "NH",
+      "status": "online",
+      "age": 21,
+      "books": [
+        "DraftKings"
+      ],
+      "rule": "New Hampshire has legal online sports betting. You must be 21 or older and physically in the state. Listed books here: DraftKings."
+    },
+    "New Jersey": {
+      "code": "NJ",
+      "status": "online",
+      "age": 21,
+      "books": [
+        "BetMGM",
+        "Caesars",
+        "DraftKings",
+        "Fanatics",
+        "FanDuel",
+        "HardRock"
+      ],
+      "rule": "New Jersey has legal online sports betting. You must be 21 or older and physically in the state. Listed books here: BetMGM, Caesars, DraftKings, Fanatics, FanDuel, HardRock."
+    },
+    "New Mexico": {
+      "code": "NM",
+      "status": "retail-only",
+      "age": 21,
+      "books": [],
+      "rule": "New Mexico allows sports betting only at a licensed retail or tribal location. Statewide mobile betting is not available. You must be 21 or older."
+    },
+    "New York": {
+      "code": "NY",
+      "status": "online",
+      "age": 21,
+      "books": [
+        "BetMGM",
+        "Caesars",
+        "DraftKings",
+        "Fanatics",
+        "FanDuel"
+      ],
+      "rule": "New York has legal online sports betting. You must be 21 or older and physically in the state. Listed books here: BetMGM, Caesars, DraftKings, Fanatics, FanDuel."
+    },
+    "North Carolina": {
+      "code": "NC",
+      "status": "online",
+      "age": 21,
+      "books": [
+        "BetMGM",
+        "Caesars",
+        "DraftKings",
+        "Fanatics",
+        "FanDuel"
+      ],
+      "rule": "North Carolina has legal online sports betting. You must be 21 or older and physically in the state. Listed books here: BetMGM, Caesars, DraftKings, Fanatics, FanDuel."
+    },
+    "North Dakota": {
+      "code": "ND",
+      "status": "retail-only",
+      "age": 21,
+      "books": [],
+      "rule": "North Dakota allows sports betting only at a licensed retail or tribal location. Statewide mobile betting is not available. You must be 21 or older."
+    },
+    "Ohio": {
+      "code": "OH",
+      "status": "online",
+      "age": 21,
+      "books": [
+        "BetMGM",
+        "Caesars",
+        "DraftKings",
+        "Fanatics",
+        "FanDuel",
+        "HardRock"
+      ],
+      "rule": "Ohio has legal online sports betting. You must be 21 or older and physically in the state. Listed books here: BetMGM, Caesars, DraftKings, Fanatics, FanDuel, HardRock."
+    },
+    "Oklahoma": {
+      "code": "OK",
+      "status": "not-legal",
+      "age": 21,
+      "books": [],
+      "rule": "Oklahoma does not have legal sports betting. Do not use a book here. The ledger can still record picks, but it is not an offer to bet."
+    },
+    "Oregon": {
+      "code": "OR",
+      "status": "online",
+      "age": 21,
+      "books": [
+        "DraftKings"
+      ],
+      "rule": "Oregon has legal online sports betting. You must be 21 or older and physically in the state. Listed books here: DraftKings."
+    },
+    "Pennsylvania": {
+      "code": "PA",
+      "status": "online",
+      "age": 21,
+      "books": [
+        "BetMGM",
+        "Caesars",
+        "DraftKings",
+        "Fanatics",
+        "FanDuel"
+      ],
+      "rule": "Pennsylvania has legal online sports betting. You must be 21 or older and physically in the state. Listed books here: BetMGM, Caesars, DraftKings, Fanatics, FanDuel."
+    },
+    "Rhode Island": {
+      "code": "RI",
+      "status": "online",
+      "age": 21,
+      "books": [],
+      "rule": "Rhode Island has legal online sports betting. You must be 21 or older and physically in the state. Listed books here: no listed book from this site."
+    },
+    "South Carolina": {
+      "code": "SC",
+      "status": "not-legal",
+      "age": 21,
+      "books": [],
+      "rule": "South Carolina does not have legal sports betting. Do not use a book here. The ledger can still record picks, but it is not an offer to bet."
+    },
+    "South Dakota": {
+      "code": "SD",
+      "status": "retail-only",
+      "age": 21,
+      "books": [],
+      "rule": "South Dakota allows sports betting only at a licensed retail or tribal location. Statewide mobile betting is not available. You must be 21 or older."
+    },
+    "Tennessee": {
+      "code": "TN",
+      "status": "online",
+      "age": 21,
+      "books": [
+        "BetMGM",
+        "Caesars",
+        "DraftKings",
+        "Fanatics",
+        "FanDuel",
+        "HardRock"
+      ],
+      "rule": "Tennessee has legal online sports betting. You must be 21 or older and physically in the state. Listed books here: BetMGM, Caesars, DraftKings, Fanatics, FanDuel, HardRock."
+    },
+    "Texas": {
+      "code": "TX",
+      "status": "not-legal",
+      "age": 21,
+      "books": [],
+      "rule": "Texas does not have legal sports betting. Do not use a book here. The ledger can still record picks, but it is not an offer to bet."
+    },
+    "Utah": {
+      "code": "UT",
+      "status": "not-legal",
+      "age": 21,
+      "books": [],
+      "rule": "Utah does not have legal sports betting. Do not use a book here. The ledger can still record picks, but it is not an offer to bet."
+    },
+    "Vermont": {
+      "code": "VT",
+      "status": "online",
+      "age": 21,
+      "books": [
+        "DraftKings",
+        "Fanatics",
+        "FanDuel"
+      ],
+      "rule": "Vermont has legal online sports betting. You must be 21 or older and physically in the state. Listed books here: DraftKings, Fanatics, FanDuel."
+    },
+    "Virginia": {
+      "code": "VA",
+      "status": "online",
+      "age": 21,
+      "books": [
+        "BetMGM",
+        "Caesars",
+        "DraftKings",
+        "Fanatics",
+        "FanDuel",
+        "HardRock"
+      ],
+      "rule": "Virginia has legal online sports betting. You must be 21 or older and physically in the state. Listed books here: BetMGM, Caesars, DraftKings, Fanatics, FanDuel, HardRock."
+    },
+    "Washington": {
+      "code": "WA",
+      "status": "retail-only",
+      "age": 21,
+      "books": [],
+      "rule": "Washington allows sports betting only at a licensed retail or tribal location. Statewide mobile betting is not available. You must be 21 or older."
+    },
+    "West Virginia": {
+      "code": "WV",
+      "status": "online",
+      "age": 21,
+      "books": [
+        "BetMGM",
+        "Caesars",
+        "DraftKings",
+        "Fanatics",
+        "FanDuel"
+      ],
+      "rule": "West Virginia has legal online sports betting. You must be 21 or older and physically in the state. Listed books here: BetMGM, Caesars, DraftKings, Fanatics, FanDuel."
+    },
+    "Wisconsin": {
+      "code": "WI",
+      "status": "retail-only",
+      "age": 21,
+      "books": [],
+      "rule": "Wisconsin allows sports betting only at a licensed retail or tribal location. Statewide mobile betting is not available. You must be 21 or older."
+    },
+    "Wyoming": {
+      "code": "WY",
+      "status": "online",
+      "age": 21,
+      "books": [
+        "BetMGM",
+        "Caesars",
+        "DraftKings",
+        "Fanatics",
+        "FanDuel"
+      ],
+      "rule": "Wyoming has legal online sports betting. You must be 21 or older and physically in the state. Listed books here: BetMGM, Caesars, DraftKings, Fanatics, FanDuel."
+    }
+  }
+}
