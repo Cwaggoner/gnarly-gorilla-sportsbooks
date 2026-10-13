@@ -1061,7 +1061,7 @@ async function fillPickBoard(useSaved){
   let games;
   if (day && day < today) {
     try { games = JSON.parse(localStorage.getItem(dayKey) || "null") || []; } catch (e) { games = []; }
-    if (!games.length) { note.textContent = "No saved board for " + day + ". The free feed does not return a past date."; document.getElementById("loadnote").textContent = "Load failed."; return; }
+    if (!games.length) { note.textContent = "No saved board for " + day + "."; document.getElementById("loadnote").textContent = "No Past Board"; return; }
   } else {
     games = useSaved ? (cachedBoard(sport, bookKey) || []) : await fetchBook(sportKey, bookKey, key);
     const byDay = {};
@@ -1118,7 +1118,7 @@ async function fillPickBoard(useSaved){
   if (closed) save(bets);
   const msg = count ? "Loaded " + count + " " + book + " " + sport + " picks for " + day + "." + (started.length ? " " + started.length + " started games closed." : "") : "No " + book + " lines for " + sport + " on " + day + ".";
   note.textContent = msg + (closed ? " " + closed + " closes saved." : "");
-  document.getElementById("loadnote").textContent = count ? "Load successful." : "Load failed.";
+  document.getElementById("loadnote").textContent = count ? "Load successful." : "No Lines";
   if (count) localStorage.setItem("gg-pick-board", JSON.stringify({book, sport, day, value: sel.value, options: [...sel.options].map(o => ({value:o.value, text:o.textContent, price:o.dataset.price || "", close:o.dataset.close || ""}))}));
 }
 document.getElementById("pickselect").onchange = () => {
@@ -1131,8 +1131,8 @@ document.getElementById("loadicon").onclick = () => document.getElementById("loa
 document.getElementById("loadpicks").onclick = () => {
   document.getElementById("loadnote").textContent = "Loading...";
   fillPickBoard().catch(err => {
-    document.getElementById("picknote").textContent = "Load failed. " + err.message;
-    document.getElementById("loadnote").textContent = "Load failed.";
+    document.getElementById("picknote").textContent = err.message || "Feed error.";
+    document.getElementById("loadnote").textContent = /key|401|403/i.test(err.message || "") ? "Bad Key" : "Feed Error";
   });
 };
 function refreshPicks(){
