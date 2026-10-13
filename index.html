@@ -29,9 +29,10 @@
 :root { --bg:#0a0a0a; --card:#141414; --line:#243024; --title:#39ff14; --text:#d6ffd0; --muted:#8fb898; --amber:#f0e14a; --red:#ff6b6b; }
 * { box-sizing:border-box; }
 body { margin:0; background:var(--bg); color:var(--text); font:15px/1.4 system-ui, sans-serif; }
-header { display:grid; grid-template-columns:96px 1fr; align-items:stretch; gap:12px; width:100%; box-sizing:border-box; margin:0; padding:6px 10px; border:1px solid #39ff14; border-radius:10px; background:#0a0a0a; }
+header { display:grid; grid-template-columns:96px 1fr 96px; align-items:stretch; gap:12px; width:100%; box-sizing:border-box; margin:0; padding:6px 10px; border:1px solid #39ff14; border-radius:10px; background:#0a0a0a; }
 .topbar { position:sticky; top:0; z-index:6; background:#0a0a0a; padding-bottom:8px; }
 .head-icon { display:flex; align-items:center; justify-content:center; border-right:1px solid #39ff14; padding-right:6px; }
+.head-icon.right { border-right:0; border-left:1px solid #39ff14; padding-right:0; padding-left:6px; }
 header img { width:72px; height:72px; border-radius:12px; display:block; }
 header .head-text { display:flex; flex-direction:column; justify-content:center; }
 header h1 { margin:0; color:var(--title); font-size:22px; letter-spacing:.04em; }
@@ -165,6 +166,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <h1>Gnarly Gorilla Sportsbooks</h1>
 <p>Free bet ledger for Gnarly Gorilla Sports Decks. Log NFL, NBA, NHL, MLB, CBB, and CFB slips, grade them the next day, and copy the report card.</p>
 </div>
+<div class="head-icon right"><img src="gg-icon.png" alt="Gnarly Gorilla"></div>
 </header>
 <nav class="sitenav" id="sitenav">
 <button type="button" data-jump="seasons">Seasons</button>
