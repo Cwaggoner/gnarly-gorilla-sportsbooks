@@ -644,7 +644,11 @@ function drawCalendar(){
       const line = open.length ? "All Win <span class='win'>" + money(winAll) + "</span><span class='slash'> / </span>All Lose <span class='loss'>-" + money(loseAll).replace("-", "") + "</span>" : "";
       html += "<div class='today'><b>" + d + "</b><br>" + line + "</div>";
     } else {
-      const day = board[date];
+      let day = board[date];
+      if (!day && date < today) {
+        const slips = load().concat(loadGrade()).filter(b => b.date === date && b.result !== "pending");
+        if (slips.length) day = {pl: slips.reduce((s, b) => s + slipMoney(b), 0)};
+      }
       const cls = day && day.pl > 0 ? "win" : day && day.pl < 0 ? "loss" : "";
       html += "<div><b>" + d + "</b><br><span class='" + cls + "'>" + (day ? money(day.pl) : "") + "</span></div>";
     }
@@ -653,6 +657,13 @@ function drawCalendar(){
 }
 
 function todayEt(){ return new Date().toLocaleDateString("en-CA", {timeZone:"America/New_York"}); }
+function msUntilMidnightEt(){
+  const parts = new Intl.DateTimeFormat("en-US", {timeZone:"America/New_York", hour:"numeric", minute:"numeric", second:"numeric", hourCycle:"h23"}).formatToParts(new Date());
+  const get = k => Number(parts.find(p => p.type === k).value);
+  return ((23 - get("hour")) * 3600 + (59 - get("minute")) * 60 + (60 - get("second"))) * 1000 + 2000;
+}
+function armMidnight(){ setTimeout(() => { render(); armMidnight(); }, msUntilMidnightEt()); }
+armMidnight();
 function inSlipWindow(date){ date = String(date || "").slice(0, 10); return date === todayEt() || date === yesterday(); }
 let SEASON_END = {MLB:"2026-10-31", CFB:"2027-01-25", NFL:"2027-02-14", CBB:"2027-04-05", NHL:"2027-04-10", NBA:"2027-04-11"};
 let SEASON_START = {MLB:"2026-03-25", CFB:"2026-08-27", NFL:"2026-09-09", CBB:"2026-11-02", NHL:"2026-09-29", NBA:"2026-10-20"};
