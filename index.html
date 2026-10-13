@@ -145,7 +145,7 @@ label:has(#loadcal) { gap:0; }
 #report tr.edge td { color:#f0e14a; }
 #report td, #report th { padding:4px 16px 4px 0; }
 .charts { display:grid; grid-template-columns:1.4fr 1fr; gap:12px; }
-.cal { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
+.cal { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; text-transform:uppercase; }
 .cal div { height:72px; background:#0e0e0e; border:1px solid var(--line); border-radius:6px; font-size:13px; padding:4px; line-height:1.2; overflow:hidden; }
 .cal .range { color:#8fd18a; font-size:11px; line-height:1.15; display:block; white-space:nowrap; overflow:hidden; }
 .cal .wait { color:#f0e14a; font-size:11px; line-height:1.15; display:block; }
@@ -153,7 +153,7 @@ label:has(#loadcal) { gap:0; }
 .cal div.today { border:1px solid #39ff14; box-shadow:0 0 0 1px #39ff14 inset; }
 .cal .daycell { cursor:pointer; }
 .cal .daycell:hover { border-color:#39ff14; }
-.cal .dayzoom { height:auto; overflow:visible; grid-column:1 / -1; border:1px solid #39ff14; border-radius:8px; padding:10px; background:#0e0e0e; font-size:13px; line-height:1.4; }
+.cal .dayzoom { height:auto; overflow:visible; grid-column:1 / -1; border:1px solid #39ff14; border-radius:8px; padding:10px; background:#0e0e0e; font-size:13px; line-height:1.4; text-transform:none; }
 .cal .dayzoom div { height:auto; overflow:visible; background:transparent; border:0; border-radius:0; padding:0; font-size:13px; line-height:1.4; }
 .dayzoom-head { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px; }
 .dayzoom-head h3 { margin:0; color:var(--title); font-size:16px; white-space:nowrap; }
