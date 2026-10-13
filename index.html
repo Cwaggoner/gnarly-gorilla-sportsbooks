@@ -366,7 +366,7 @@ function showClock(){
   const now = new Date();
   const date = document.getElementById("zonedate");
   const time = document.getElementById("zonetime");
-  if (date) date.textContent = now.toLocaleDateString("en-US", {timeZone: siteZone(), weekday:"short", month:"short", day:"numeric", year:"numeric"});
+  if (date) date.textContent = now.toLocaleDateString("en-US", {timeZone: siteZone(), weekday:"long", month:"long", day:"numeric", year:"numeric"});
   if (time) time.textContent = formatTime(now);
 }
 function yesterday(){ const d = new Date(todayEt() + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() - 1); return d.toISOString().slice(0,10); }
