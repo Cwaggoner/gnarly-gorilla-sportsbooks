@@ -80,6 +80,7 @@ input, select, button, textarea { background:#0e0e0e; color:var(--text); border:
 .btn-pair { display:flex; flex-direction:column; align-items:center; gap:4px; }
 .btn-pair span { font-size:12px; color:var(--muted); text-align:center; width:100%; }
 .btn-pair div { display:flex; gap:8px; }
+.book-select { width:12ch; min-width:12ch; max-width:12ch; box-sizing:content-box; }
 .book-key { display:flex; align-items:flex-end; gap:12px; }
 #oddskeybox { display:flex; margin:0; }
 #seasons { margin-bottom:18px; }
@@ -188,7 +189,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <h2>Today's Card</h2>
 <p class="warn">One play per line: Sport | Type | Pick | American odds | Confidence. Stake is $10. Book is the dropdown below. Pending until graded.</p>
 <div class="book-key">
-<label>Book<select id="cardbook">
+<label>Book<select id="cardbook" class="book-select">
 <option>BetMGM</option>
 <option>Caesars</option>
 <option>DraftKings</option>
@@ -241,7 +242,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <div class="bet-top">
 <div class="bet-box" id="betfields">
 <label>Date<input type="date" name="date" required></label>
-<label>Book<select name="book" required>
+<label>Book<select name="book" class="book-select" required>
 <option>BetMGM</option>
 <option>Caesars</option>
 <option>DraftKings</option>
@@ -284,7 +285,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <p class="warn">This card keeps today and yesterday only. Older days stay on the calendar and in the published files.</p>
 <div class="tools">
 <label>Sport<select id="fSport"><option value="">All</option><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option></select></label>
-<label>Book<select id="fBook"><option value="">All</option><option>BetMGM</option><option>Caesars</option><option>DraftKings</option><option>Fanatics</option><option>FanDuel</option><option>HardRock</option></select></label>
+<label>Book<select id="fBook" class="book-select"><option value="">All</option><option>BetMGM</option><option>Caesars</option><option>DraftKings</option><option>Fanatics</option><option>FanDuel</option><option>HardRock</option></select></label>
 <label>Market<select id="fType"><option value="">All</option><option>Moneyline</option><option>Spread</option><option>Total</option><option>Prop</option><option>Parlay</option><option>SGP</option></select></label>
 <label>Result<select id="fResult"><option value="">All</option><option>pending</option><option>win</option><option>loss</option><option>push</option></select></label>
 </div>
