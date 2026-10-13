@@ -140,6 +140,14 @@ input[type=file] { position:absolute; width:1px; height:1px; opacity:0; }
 label:has(input[type=file]) { position:relative; }
 #loadcal { height:38px; }
 label:has(#loadcal) { gap:0; }
+.card-analysis { margin:8px 0 10px; border:1px solid #39ff14; border-radius:8px; padding:8px 10px; background:#0e0e0e; }
+.card-analysis h3 { margin:0 0 6px; color:#39ff14; font-size:13px; letter-spacing:.04em; }
+.analysis-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; }
+.analysis-cell { border:1px solid #243024; border-radius:6px; padding:6px 8px; min-height:0; }
+.analysis-cell b { color:#39ff14; font-size:12px; }
+.analysis-cell .meta { color:#f0e14a; font-size:11px; }
+.analysis-cell p { margin:2px 0 0; color:#d6ffd0; font-size:11px; line-height:1.25; }
+@media (max-width:700px) { .analysis-grid { grid-template-columns:1fr 1fr; } }
 #dashboard { display:flex; flex-direction:column; }
 #dashboard .dash-tools { margin-top:14px; }
 #dashChart { border:1px solid #39ff14; border-radius:8px; margin:0 0 16px; }
@@ -249,6 +257,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </section>
 <section class="card" id="todaycard">
 <div class="section-head"><h2>Today's Card</h2><p class="warn slips-side">One play per line: Sport | Type | Pick | American odds | Confidence. Stake is $10. Book is the dropdown below. Pending until graded.</p></div>
+<div class="card-analysis" id="cardanalysis"><h3>Analysis</h3><div class="analysis-grid" id="analysisgrid"></div></div>
 <div class="book-key">
 <label>Book<select id="cardbook" class="book-select">
 <option>BetMGM</option>
@@ -569,6 +578,38 @@ function drawDashboard(history, manual){
     ctx.fillText(label, x(i), h - 6);
   });
   ctx.textAlign = "left";
+}
+
+function cardLines(text){
+  return String(text || "").split(/\r?\n/).map(line => line.split("|").map(s => s.trim())).filter(p => p.length >= 4 && /^[A-Z]{2,4}$/.test(p[1] || ""));
+}
+function sportLean(rows){
+  const types = rows.map(r => (r[2] || "").toLowerCase());
+  const picks = rows.map(r => (r[3] || "").toLowerCase());
+  const bits = [];
+  if (types.some(t => t === "spread") || picks.some(p => /[+]\d/.test(p))) bits.push("dogs");
+  if (types.some(t => t === "total") || picks.some(p => /under|over/.test(p))) bits.push(picks.some(p => /under/.test(p)) ? "unders" : "totals");
+  if (types.some(t => t === "moneyline")) bits.push("moneylines");
+  if (types.some(t => /run line|puck line/.test(t))) bits.push("alt line");
+  if (types.some(t => t === "sgp")) bits.push("SGP");
+  return bits.length ? bits.join(" and ") : "posted plays";
+}
+function drawCardAnalysis(text){
+  const grid = document.getElementById("analysisgrid");
+  if (!grid) return;
+  const rows = cardLines(text);
+  const sports = ["CBB","CFB","MLB","NBA","NFL","NHL"];
+  const day = (rows[0] && rows[0][0]) || "";
+  grid.innerHTML = sports.map(sport => {
+    const mine = rows.filter(r => r[1] === sport);
+    if (!mine.length) return "<div class='analysis-cell'><b>" + sport + "</b><div class='meta'>No Picks</div><p>No card for this sport.</p></div>";
+    const edges = mine.filter(r => /edge/i.test(r[5] || ""));
+    const edge = edges[0];
+    const note = edge ? (edge[3] + " is the edge.") : (mine[0][3] + " leads the card.");
+    return "<div class='analysis-cell'><b>" + sport + "</b><div class='meta'>" + mine.length + " plays" + (edges.length ? " · " + edges.length + " edge" : "") + "</div><p>" + sportLean(mine) + ". " + note + "</p></div>";
+  }).join("");
+  const title = document.querySelector("#cardanalysis h3");
+  if (title) title.textContent = "Analysis" + (day ? " · " + day : "");
 }
 function drawCharts(bets){
   const settled = bets.filter(b => b.result === "win" || b.result === "loss" || b.result === "push").slice().sort((a,b) => a.date.localeCompare(b.date) || a.id - b.id);
@@ -1290,6 +1331,7 @@ document.getElementById("cardpdf").onchange = async e => {
     const lines = linesFromCard(rows.join("\n"));
     if (!lines.length) throw new Error("No picks found. Paste the lines by hand.");
     document.getElementById("paste").value = lines.join("\n");
+    drawCardAnalysis(lines.join("\n"));
     note.textContent = lines.length + " plays read. Loading as pending...";
     loadPending();
   } catch (err) {
@@ -2419,6 +2461,7 @@ fetch("cards/report.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(
   });
   if (edgePicks.size) render();
 }).catch(() => {});
+fetch("cards/today.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(drawCardAnalysis).catch(() => {});
 fetch("cards/grades.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
   gradeFile = text.split(/\n/).map(line => {
     const parts = line.split("|").map(s => s.trim());
