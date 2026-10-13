@@ -706,16 +706,19 @@ function render(){
   const all = load().concat(loadGrade()).concat(gradeFile).filter(b => b && b.pick && !isNoPick(b));
   const unique = [];
   const seen = new Set();
+  const byKey = {};
   all.forEach(b => {
     const key = [b.date, b.sport, b.pick].join("|");
-    if (seen.has(key)) return;
-    seen.add(key);
+    const prior = byKey[key];
+    const better = !prior || (prior.result === "pending" && b.result !== "pending") || (Number.isFinite(Number(b.profit)) && Number(b.profit) !== 0 && !Number.isFinite(Number(prior.profit)));
+    if (!better) return;
     if (!b.id) b.id = key;
     if (!b.book) b.book = "BetMGM";
     b.type = betType(b);
     if (!b.stake) b.stake = 10;
-    unique.push(b);
+    byKey[key] = b;
   });
+  unique.push(...Object.values(byKey));
   const windowed = unique.filter(b => inSlipWindow(b.date));
   const bets = filtered(windowed.sort((a,b) => String(b.date).localeCompare(String(a.date))));
   const totals = bets;
@@ -762,7 +765,7 @@ function render(){
   const grouped = bets.slice().sort((a,b) => String(a.sport).localeCompare(String(b.sport)) || typeRank(a.type) - typeRank(b.type) || b.date.localeCompare(a.date) || b.id - a.id);
   let lastSport = "", lastType = "";
   document.getElementById("rows").innerHTML = grouped.map(b => {
-    const p = profit(b);
+    const p = slipMoney(b);
     const cls = b.result === "win" ? "win" : b.result === "loss" ? "loss" : "push";
     const finished = b.date < todayEt();
     const grade = !finished ? "Game not finished"
@@ -836,7 +839,7 @@ function group(bets, key){
     if (b.result !== "win" && b.result !== "loss" && b.result !== "push") return;
     const k = String(b[key] || "").trim() || "?";
     map[k] = map[k] || {pl:0, n:0};
-    map[k].pl += profit(b);
+    map[k].pl += slipMoney(b);
     map[k].n++;
   });
   const rows = Object.entries(map).sort((a,b) => a[0].localeCompare(b[0]));
