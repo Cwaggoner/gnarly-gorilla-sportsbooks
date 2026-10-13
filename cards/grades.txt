@@ -1,4 +1,4 @@
-# file: GG-GRADES-2026-10-11
+# file: grades
 
 2026-10-11 | CBB | No Picks
 2026-10-11 | CFB | No Picks
@@ -32,7 +32,6 @@
 2026-10-11 | NFL | DET -5.5 |  | win | DET 45 ARI 21 | 9.09
 2026-10-11 | NFL | SEA -3 |  | push | SF 32 SEA 29 | 0.00
 2026-10-11 | NFL | BAL +3.5 |  | loss | BAL 30 ATL 23 OT | -10.00
-# Previous grades retained below for history
 2026-10-11 | NFL | No Picks
 2026-10-11 | MLB | No Picks
 2026-10-11 | NHL | No Picks
@@ -98,8 +97,6 @@
 2026-10-10 | CFB | Boise State -6.5 |  | win | BOIS 38 FRES 31 | 9.09
 2026-10-10 | CFB | Minnesota -2.5 |  | loss | MINN 13 PUR 41 | -10.00
 2026-10-10 | CFB | Arizona State -20.5 |  | loss | ASU 30 HAW 12 | -10.00
-
-# file: GG-GRADES-2026-10-12
 2026-10-12 | NBA | Thunder +8.5 | -110 | win | ATL 113 OKC 110 | 9.09
 2026-10-12 | NBA | Nets +3.5 | -110 | win | BKN 131 WSH 122 | 9.09
 2026-10-12 | NBA | Timberwolves +2.5 | -110 | win | MIN 122 NY 104 | 9.09
