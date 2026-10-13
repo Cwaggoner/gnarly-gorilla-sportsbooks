@@ -713,9 +713,8 @@ async function loadSeasons(){
 }
 function seasonText(sport){ return seasonEnded(sport) ? "Season Ended" : "No Picks"; }
 function clearStalePending(){
-  const today = todayEt();
-  const bets = load().filter(b => b.result !== "pending" || b.date >= today);
-  const graded = loadGrade().filter(b => b.result !== "pending" || b.date >= today);
+  const bets = load().filter(b => b.result !== "pending" || inSlipWindow(b.date));
+  const graded = loadGrade().filter(b => b.result !== "pending" || inSlipWindow(b.date));
   localStorage.setItem(KEY, JSON.stringify(bets));
   localStorage.setItem(GRADE_KEY, JSON.stringify(graded));
 }
