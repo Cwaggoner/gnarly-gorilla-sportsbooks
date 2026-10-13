@@ -1080,9 +1080,18 @@ async function fillPickBoard(useSaved){
     return;
   }
   let count = 0;
-  games.forEach(game => {
-    const gameDay = game.commence_time ? new Date(game.commence_time).toLocaleDateString("en-CA", {timeZone:"America/New_York"}) : "";
-    if (day && gameDay && gameDay !== day) return;
+  const dayGames = games.filter(game => {
+    const gameDay = game.commence_time ? new Date(game.commence_time).toLocaleDateString("en-CA", {timeZone:"America/New_York"}) : day;
+    return !day || !gameDay || gameDay === day;
+  });
+  const started = dayGames.filter(game => game.commence_time && Date.parse(game.commence_time) <= Date.now());
+  const openGames = dayGames.filter(game => !game.commence_time || Date.parse(game.commence_time) > Date.now());
+  if (dayGames.length && !openGames.length) {
+    note.textContent = sport + " Bet Window Closed. Games have started and no bets can be taken.";
+    document.getElementById("loadnote").textContent = "Bet Window Closed";
+    return;
+  }
+  openGames.forEach(game => {
     const bk = (game.bookmakers || []).find(b => b.key === bookKey);
     if (!bk) return;
     (bk.markets || []).forEach(mk => {
@@ -1107,7 +1116,7 @@ async function fillPickBoard(useSaved){
   const bets = load();
   const closed = applyCloses(bets, games, bookKey);
   if (closed) save(bets);
-  const msg = count ? "Loaded " + count + " " + book + " " + sport + " picks for " + day + "." : "No " + book + " lines for " + sport + " on " + day + ".";
+  const msg = count ? "Loaded " + count + " " + book + " " + sport + " picks for " + day + "." + (started.length ? " " + started.length + " started games closed." : "") : "No " + book + " lines for " + sport + " on " + day + ".";
   note.textContent = msg + (closed ? " " + closed + " closes saved." : "");
   document.getElementById("loadnote").textContent = count ? "Load successful." : "Load failed.";
   if (count) localStorage.setItem("gg-pick-board", JSON.stringify({book, sport, day, value: sel.value, options: [...sel.options].map(o => ({value:o.value, text:o.textContent, price:o.dataset.price || "", close:o.dataset.close || ""}))}));
