@@ -173,7 +173,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <button type="button" data-jump="calendarcard">Calendar</button>
 </nav>
 </div>
-<div id="seasons" class="card"><h2>Season Dates</h2><p class="warn">Checked in the month each league publishes its schedule.</p></div>
+<div id="seasons" class="card"><div class="section-head"><h2>Season Dates</h2><p class="warn slips-side">Checked in the month each league publishes its schedule.</p></div></div>
 <main>
 <section class="card" id="dashboard">
 <h2>Dashboard</h2>
@@ -674,7 +674,7 @@ function showSeasons(checked){
   });
   wave += " H448";
   const ekg = "<span class='ekg' data-ms='" + (parseFloat(pulse) * 1000) + "'><svg viewBox='0 0 448 36' preserveAspectRatio='none' aria-label='Season pulse'><defs><clipPath id='ekgclip'><rect class='ekg-clip' x='0' y='0' width='0' height='36'></rect></clipPath></defs><path class='trace' clip-path='url(#ekgclip)' d='" + wave + "' style='stroke:" + color + "'></path></svg></span>";
-  box.innerHTML = "<h2>Season Dates</h2><p class='warn'>Checked " + (checked || "2026-10-08") + ". NFL May, NHL July, MLB July, NBA August, CFB August, CBB September.</p><table><thead><tr><th colspan='4' style='text-align:center'>" + ekg + "</th></tr><tr><th>Sport</th><th>Start</th><th>Last Card</th><th>Status</th></tr></thead><tbody>" + rows + "</tbody></table><table class='season-hold'><tbody><tr><td></td><td></td></tr><tr><td></td><td></td></tr></tbody></table>";
+  box.innerHTML = "<div class='section-head'><h2>Season Dates</h2><p class='warn slips-side'>Checked " + (checked || "2026-10-08") + ". NFL May, NHL July, MLB July, NBA August, CFB August, CBB September.</p></div><table><thead><tr><th colspan='4' style='text-align:center'>" + ekg + "</th></tr><tr><th>Sport</th><th>Start</th><th>Last Card</th><th>Status</th></tr></thead><tbody>" + rows + "</tbody></table><table class='season-hold'><tbody><tr><td></td><td></td></tr><tr><td></td><td></td></tr></tbody></table>";
   startPulse();
 }
 let pulseFrame = 0;
