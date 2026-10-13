@@ -196,7 +196,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <h1>Gnarly Gorilla Sportsbooks</h1>
 <p>Free bet ledger for Gnarly Gorilla Sports Decks. Log NFL, NBA, NHL, MLB, CBB, and CFB slips, grade them the next day, and copy the report card.</p>
 </div>
-<div class="head-flag" aria-label="United States"><svg viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg" role="img"><defs><linearGradient id="flaggloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".45" stop-color="#fff" stop-opacity=".08"/><stop offset="1" stop-color="#000" stop-opacity=".25"/></linearGradient></defs><rect width="28" height="18" fill="#b22234"/><g fill="#fff"><rect y="1.38" width="28" height="1.38"/><rect y="4.15" width="28" height="1.38"/><rect y="6.92" width="28" height="1.38"/><rect y="9.69" width="28" height="1.38"/><rect y="12.46" width="28" height="1.38"/><rect y="15.23" width="28" height="1.38"/></g><rect width="11.2" height="9.7" fill="#3c3b6e"/><rect width="28" height="18" fill="url(#flaggloss)"/></svg><span>USA</span></div>
+<div class="head-flag" aria-label="United States"><svg viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg" role="img"><defs><linearGradient id="flaggloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".45" stop-color="#fff" stop-opacity=".08"/><stop offset="1" stop-color="#000" stop-opacity=".25"/></linearGradient></defs><rect width="28" height="18" fill="#b22234"/><g fill="#fff"><rect y="1.38" width="28" height="1.38"/><rect y="4.15" width="28" height="1.38"/><rect y="6.92" width="28" height="1.38"/><rect y="9.69" width="28" height="1.38"/><rect y="12.46" width="28" height="1.38"/><rect y="15.23" width="28" height="1.38"/></g><rect width="11.2" height="9.7" fill="#3c3b6e"/><rect width="28" height="18" fill="url(#flaggloss)"/></svg><span>USA</span><span id="headregion"></span></div>
 <div class="head-icon right"><img src="gg-icon.png" alt="Gnarly Gorilla"></div>
 </header>
 <nav class="sitenav" id="sitenav">
@@ -1803,6 +1803,11 @@ async function catchUp(){
   render();
 }
 catchUp();
+fetch("https://ipapi.co/json/").then(r => r.ok ? r.json() : null).then(data => {
+  const place = data && (data.region || data.country_name);
+  const line = document.getElementById("headregion");
+  if (line && place) line.textContent = String(place).toUpperCase() + " BETTING RULES";
+}).catch(() => {});
 document.getElementById("loadcard").onclick = () => loadPending();
 
 let printBlob = null;
