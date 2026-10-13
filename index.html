@@ -1620,6 +1620,7 @@ document.getElementById("saveprint").onclick = async () => {
 document.querySelectorAll("[data-jump]").forEach(btn => btn.onclick = () => {
   const box = document.getElementById(btn.dataset.jump);
   if (!box) return;
+  if (btn.dataset.jump === "seasons") { window.scrollTo({top: 0, behavior:"smooth"}); return; }
   const bar = document.querySelector(".topbar");
   const top = box.getBoundingClientRect().top + window.scrollY - (bar ? bar.offsetHeight : 0);
   window.scrollTo({top: Math.max(0, top), behavior:"smooth"});
