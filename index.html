@@ -977,9 +977,10 @@ async function loadSeasons(){
 function seasonText(sport){ return seasonEnded(sport) ? "Season Ended" : "No Picks"; }
 function clearStalePending(){
   const bets = load();
-  const older = bets.filter(b => b.result === "pending" && !inSlipWindow(b.date));
+  const older = bets.filter(b => !inSlipWindow(b.date));
   if (!older.length) return;
-  archiveSlips(older);
+  archiveSlips(older.filter(b => b.result !== "pending"));
+  save(bets.filter(b => inSlipWindow(b.date)));
 }
 function render(){
   clearStalePending();
@@ -1717,7 +1718,41 @@ document.getElementById("resetdash").onclick = () => {
   document.getElementById("dashnote").textContent = "Reset. Last 7 days restored.";
 };
 document.getElementById("loaddrive").onclick = () => { localStorage.removeItem("gg-hold-ledger"); loadDriveCard().then(applyGrades).catch(err => { document.getElementById("pdfnote").textContent = err.message; }); };
-applyGrades().then(() => { if (localStorage.getItem("gg-hold-ledger") === "1") return; return loadDriveCard(); }).catch(() => {});
+async function catchUp(){
+  try {
+    const [cal, grades, dash] = await Promise.all([
+      fetch("cards/calendar.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).catch(() => null),
+      fetch("cards/grades.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").catch(() => ""),
+      fetch("cards/dashboard.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").catch(() => "")
+    ]);
+    if (cal && cal.dates) {
+      publishedCalendar = cal.dates;
+      localStorage.setItem("gg-calendar-published", JSON.stringify(publishedCalendar));
+    }
+    if (grades) {
+      gradeFile = grades.split(/\n/).map(line => {
+        const parts = line.split("|").map(s => s.trim());
+        if (parts.length < 5 || !/^\d{4}-\d{2}-\d{2}$/.test(parts[0]) || /^RANGE$/i.test(parts[1] || "") || /no picks|season ended|all win|all lose/i.test([parts[1], parts[2], parts[4]].join(" "))) return null;
+        const close = (parts[3].match(/-?\d+/) || [""])[0];
+        const result = (parts[4].match(/win|loss|push/i) || ["loss"])[0].toLowerCase();
+        const dollars = parts[parts.length - 1].replace(/[$,+]/g, "");
+        const profit = Number(dollars);
+        return {date: parts[0], sport: parts[1], pick: parts[2], odds: close || -110, close: close, result: result, stake: 10, profit: Number.isFinite(profit) ? profit : 0};
+      }).filter(Boolean);
+    }
+    if (dash) localStorage.setItem("gg-dashboard-published", dash);
+  } catch (err) {}
+  clearStalePending();
+  const held = localStorage.getItem("gg-hold-ledger") === "1";
+  const inWindow = load().some(b => inSlipWindow(b.date));
+  if (!held || !inWindow) {
+    localStorage.removeItem("gg-hold-ledger");
+    await loadDriveCard().catch(() => {});
+  }
+  await applyGrades().catch(() => {});
+  render();
+}
+catchUp();
 document.getElementById("loadcard").onclick = () => loadPending();
 
 let printBlob = null;
