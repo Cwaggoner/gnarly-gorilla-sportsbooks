@@ -132,3 +132,5 @@
 2026-10-12 | NFL | Bills +3.5 | -110 | win | BUF 37 LAR 34 | 9.09
 2026-10-12 | NFL | Bills at Rams Over 54.5 | -110 | win | 71 | 9.09
 2026-10-12 | NFL | Bills +3.5 and Bills at Rams Over 54.5 | 190 | win | BUF 37 LAR 34 | 19.00
+2026-10-12 | CFB | No Picks
+2026-10-12 | CBB | No Picks
