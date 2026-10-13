@@ -29,9 +29,11 @@
 :root { --bg:#0a0a0a; --card:#141414; --line:#243024; --title:#39ff14; --text:#d6ffd0; --muted:#8fb898; --amber:#f0e14a; --red:#ff6b6b; }
 * { box-sizing:border-box; }
 body { margin:0; background:var(--bg); color:var(--text); font:15px/1.4 system-ui, sans-serif; }
-header { display:flex; align-items:center; gap:12px; width:100%; box-sizing:border-box; margin:0; padding:16px 20px; border:1px solid #39ff14; border-radius:10px; background:#0a0a0a; }
+header { display:grid; grid-template-columns:96px 1fr; align-items:stretch; gap:12px; width:100%; box-sizing:border-box; margin:0; padding:16px 20px; border:1px solid #39ff14; border-radius:10px; background:#0a0a0a; }
 .topbar { position:sticky; top:0; z-index:6; background:#0a0a0a; padding-bottom:8px; }
-header img { width:72px; height:72px; flex:0 0 72px; position:relative; top:-10px; border-radius:12px; }
+.head-icon { display:flex; align-items:center; justify-content:center; }
+header img { width:72px; height:72px; border-radius:12px; display:block; }
+header .head-text { display:flex; flex-direction:column; justify-content:center; }
 header h1 { margin:0; color:var(--title); font-size:22px; letter-spacing:.04em; }
 header p { margin:4px 0 0; color:var(--muted); }
 .page { max-width:1100px; margin:0 auto; padding:16px; }
@@ -127,8 +129,8 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <div class="page">
 <div class="topbar">
 <header>
-<img src="gg-icon.png" alt="Gnarly Gorilla">
-<div>
+<div class="head-icon"><img src="gg-icon.png" alt="Gnarly Gorilla"></div>
+<div class="head-text">
 <h1>Gnarly Gorilla Sportsbooks</h1>
 <p>Free bet ledger for Gnarly Gorilla Sports Decks. Log NFL, NBA, NHL, MLB, CBB, and CFB slips, grade them the next day, and copy the report card.</p>
 </div>
