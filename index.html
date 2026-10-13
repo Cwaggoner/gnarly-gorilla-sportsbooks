@@ -847,6 +847,22 @@ async function loadCalendarFile(){
     drawCalendar();
   } catch (err) {}
 }
+let driveCard = {date: "", lines: [], loaded: false};
+async function loadDriveCardForCalendar(){
+  try {
+    const res = await fetch("cards/today.txt?ts=" + Date.now());
+    if (!res.ok) return;
+    const text = await res.text();
+    const today = todayEt();
+    const lines = text.split(/\n/).map(l => l.trim()).filter(l => l && !l.startsWith("#")).map(l => {
+      const parts = l.split("|").map(s => s.trim());
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(parts[0])) return null;
+      return {date: parts[0], sport: parts[1], type: parts[2], pick: parts[3], odds: Number(String(parts[4] || "").replace(/\u2212/g, "-")), stake: 10};
+    }).filter(row => row && row.date === today && row.pick && Number.isFinite(row.odds) && !/no picks|season ended/i.test(row.pick));
+    driveCard = {date: today, lines: lines, loaded: true};
+    drawCalendar();
+  } catch (err) {}
+}
 function drawCalendar(){
   const mine = personalCalendar() || {};
   const board = Object.assign({}, publishedCalendar);
@@ -870,9 +886,11 @@ function drawCalendar(){
     const date = y + "-" + String(m + 1).padStart(2, "0") + "-" + String(d).padStart(2, "0");
     const isToday = date === today;
     if (isToday) {
-      const open = load().filter(b => b.date === today && b.result === "pending");
-      const winAll = open.reduce((s, b) => { const odds = Number(b.odds), stake = Number(b.stake) || 0; if (!Number.isFinite(odds) || odds === 0) return s; return s + (odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds)); }, 0);
-      const loseAll = open.reduce((s, b) => s + Number(b.stake || 0), 0);
+      const drive = driveCard.date === today ? driveCard.lines : [];
+      const local = load().filter(b => b.date === today && b.result === "pending");
+      const open = drive.length ? drive : local;
+      const winAll = open.reduce((s, b) => { const odds = Number(b.odds), stake = Number(b.stake) || 10; if (!Number.isFinite(odds) || odds === 0) return s; return s + (odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds)); }, 0);
+      const loseAll = open.reduce((s, b) => s + Number(b.stake || 10), 0);
       const line = open.length ? "<span class='win'>All Win " + money(winAll) + "</span><span class='slash'> / </span><span class='loss'>All Lose -" + money(loseAll).replace("-", "") + "</span>" : "<br><span class='wait'>Picks Not Loaded Until " + formatTime(firstPickAt(), false) + "</span>";
       html += "<div class='today daycell' data-date='" + date + "'><b>" + d + "</b><br>" + line + "</div>";
     } else {
@@ -2523,6 +2541,8 @@ fetch("cards/report.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(
   if (edgePicks.size) render();
 }).catch(() => {});
 fetch("cards/today.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(drawCardAnalysis).catch(() => {});
+loadDriveCardForCalendar();
+setInterval(loadDriveCardForCalendar, 60000);
 fetch("cards/grades.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
   gradeFile = text.split(/\n/).map(line => {
     const parts = line.split("|").map(s => s.trim());
