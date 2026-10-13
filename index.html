@@ -798,6 +798,8 @@ async function loadSchedule(){
   return window.ggSchedule;
 }
 const SPORT_NAME = {NFL:"Pro Football", NBA:"Pro Basketball", NHL:"Pro Hockey", MLB:"Pro Baseball", CBB:"College Basketball", CFB:"College Football"};
+const STATE_NAME = {AL:"Alabama", AK:"Alaska", AZ:"Arizona", AR:"Arkansas", CA:"California", CO:"Colorado", CT:"Connecticut", DE:"Delaware", DC:"District of Columbia", FL:"Florida", GA:"Georgia", HI:"Hawaii", ID:"Idaho", IL:"Illinois", IN:"Indiana", IA:"Iowa", KS:"Kansas", KY:"Kentucky", LA:"Louisiana", ME:"Maine", MD:"Maryland", MA:"Massachusetts", MI:"Michigan", MN:"Minnesota", MS:"Mississippi", MO:"Missouri", MT:"Montana", NE:"Nebraska", NV:"Nevada", NH:"New Hampshire", NJ:"New Jersey", NM:"New Mexico", NY:"New York", NC:"North Carolina", ND:"North Dakota", OH:"Ohio", OK:"Oklahoma", OR:"Oregon", PA:"Pennsylvania", RI:"Rhode Island", SC:"South Carolina", SD:"South Dakota", TN:"Tennessee", TX:"Texas", UT:"Utah", VT:"Vermont", VA:"Virginia", WA:"Washington", WV:"West Virginia", WI:"Wisconsin", WY:"Wyoming", AB:"Alberta", BC:"British Columbia", MB:"Manitoba", ON:"Ontario", PQ:"Quebec", QC:"Quebec"};
+function stateName(code){ return STATE_NAME[code] || code; }
 async function dayGames(date){
   const board = await loadSchedule();
   const games = board.filter(g => g.date === date).map(g => Object.assign({}, g));
@@ -822,7 +824,7 @@ async function openDay(date){
     if (game.flag) tags.unshift(game.flag);
     const rate = weatherRate(tags, game.flag);
     const temp = game.wx && game.wx.temp != null ? Math.round(game.wx.temp) + "°F" : "Weather unavailable";
-    return "<div class='daygame'><div><b>" + game.sport + "</b> " + game.name + "<div class='daymeta'>" + (SPORT_NAME[game.sport] || game.sport) + " · " + formatTime(game.start, false) + (game.venue ? " · " + game.venue : "") + (game.city || game.state ? " · " + [game.city, game.state].filter(Boolean).join(", ") : "") + "</div></div><span class='daytags'>" + (tags.join(" · ") || "Clear") + "</span><span class='wx " + rate + "'>" + rate[0].toUpperCase() + rate.slice(1) + " · " + temp + "</span></div>";
+    return "<div class='daygame'><div><b>" + game.sport + "</b> " + game.name + "<div class='daymeta'>" + (SPORT_NAME[game.sport] || game.sport) + " · " + formatTime(game.start, false) + (game.venue ? " · " + game.venue : "") + (game.city || game.state ? " · " + [game.city, stateName(game.state)].filter(Boolean).join(", ") : "") + "</div></div><span class='daytags'>" + (tags.join(" · ") || "Clear") + "</span><span class='wx " + rate + "'>" + rate[0].toUpperCase() + rate.slice(1) + " · " + temp + "</span></div>";
   }).join("") : "<p>No games scheduled.</p>";
   box.innerHTML = "<div class='dayzoom'><div class='dayzoom-head'><h3>" + dayTitle(date) + "</h3><button type='button' id='closeday'>Close</button></div>" + rows + "</div>";
   document.getElementById("closeday").onclick = () => { openDate = ""; drawCalendar(); };
