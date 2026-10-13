@@ -148,6 +148,19 @@ label:has(#loadcal) { gap:0; }
 .cal .range { color:#8fd18a; font-size:9px; line-height:1.1; display:block; white-space:nowrap; overflow:hidden; }
 .cal .dow { height:auto; }
 .cal div.today { border:1px solid #39ff14; box-shadow:0 0 0 1px #39ff14 inset; }
+.cal .daycell { cursor:pointer; }
+.cal .daycell:hover { border-color:#39ff14; }
+.dayzoom { border:1px solid #39ff14; border-radius:8px; padding:10px; background:#0e0e0e; }
+.dayzoom-head { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px; }
+.dayzoom-head h3 { margin:0; color:var(--title); font-size:16px; }
+.daygame { display:grid; grid-template-columns:70px 1fr auto; gap:6px 10px; align-items:center; border-top:1px solid var(--line); padding:8px 0; }
+.daygame b { color:var(--title); }
+.daymeta { color:var(--muted); font-size:12px; }
+.wx { justify-self:end; font-size:12px; padding:2px 8px; border-radius:8px; border:1px solid var(--line); }
+.wx.good { color:#39ff14; border-color:#39ff14; }
+.wx.fair { color:#f0e14a; border-color:#f0e14a; }
+.wx.poor { color:#ff6b6b; border-color:#ff6b6b; }
+.daytags { grid-column:2 / -1; color:var(--text); font-size:12px; }
 .slash { color:#39ff14; }
 .cal .dow { min-height:0; color:var(--title); background:transparent; border:0; }
 canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--line); border-radius:8px; display:block; }
@@ -700,7 +713,7 @@ function drawCalendar(){
       const winAll = open.reduce((s, b) => { const odds = Number(b.odds), stake = Number(b.stake) || 0; if (!Number.isFinite(odds) || odds === 0) return s; return s + (odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds)); }, 0);
       const loseAll = open.reduce((s, b) => s + Number(b.stake || 0), 0);
       const line = open.length ? "All Win <span class='win'>" + money(winAll) + "</span><span class='slash'> / </span>All Lose <span class='loss'>-" + money(loseAll).replace("-", "") + "</span>" : "";
-      html += "<div class='today'><b>" + d + "</b><br>" + line + "</div>";
+      html += "<div class='today daycell' data-date='" + date + "'><b>" + d + "</b><br>" + line + "</div>";
     } else {
       let day = board[date];
       if (!day && date < today) {
@@ -709,11 +722,115 @@ function drawCalendar(){
       }
       const cls = day && day.pl > 0 ? "win" : day && day.pl < 0 ? "loss" : "";
       const range = day && Number.isFinite(Number(day.allWin)) ? "<br><span class='range'>All Win " + money(day.allWin) + " / All Lose " + money(day.allLose) + "</span>" : "";
-      html += "<div><b>" + d + "</b><br><span class='" + cls + "'>" + (day ? money(day.pl) : "") + "</span>" + range + "</div>";
+      html += "<div class='daycell' data-date='" + date + "'><b>" + d + "</b><br><span class='" + cls + "'>" + (day ? money(day.pl) : "") + "</span>" + range + "</div>";
     }
   }
   document.getElementById("calendar").innerHTML = html;
 }
+
+
+const ESPN_PATH = {NFL:"football/nfl", NBA:"basketball/nba", NHL:"hockey/nhl", MLB:"baseball/mlb", CBB:"basketball/mens-college-basketball", CFB:"football/college-football"};
+function dayTitle(date){
+  const d = new Date(date + "T12:00:00");
+  return d.toLocaleDateString("en-US", {weekday:"long", month:"long", day:"numeric", year:"numeric"});
+}
+function weatherWords(code, temp, wind, precip){
+  const tags = [];
+  if (code === 0) tags.push("Clear", "Sunny");
+  else if (code === 1) tags.push("Sunny");
+  else if (code === 2) tags.push("Clear");
+  else if (code === 3) tags.push("Overcast");
+  else if (code >= 45 && code <= 48) tags.push("Overcast");
+  if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82) || precip >= 0.05) tags.push("Rainy");
+  if ((code >= 71 && code <= 77) || (code >= 85 && code <= 86)) tags.push("Snow");
+  if (code >= 95) tags.push("Rainy");
+  if (temp != null && temp <= 32 && precip > 0) tags.push("Ice");
+  if (temp != null && temp < 45) tags.push("Cold");
+  if (temp != null && temp > 85) tags.push("Hot");
+  if (wind != null && wind >= 15) tags.push("Windy " + Math.round(wind) + " mph");
+  return [...new Set(tags)];
+}
+function weatherRate(tags, status){
+  if (/rained out|postponed|cancelled|canceled/i.test(status)) return "poor";
+  if (tags.some(t => /rainy|snow|ice|hot|cold/i.test(t) || /windy (\d+)/i.test(t) && Number(t.match(/\d+/)[0]) >= 25)) return "poor";
+  if (tags.some(t => /overcast|windy/i.test(t))) return "fair";
+  return "good";
+}
+async function venueWeather(city, state, iso){
+  if (!city) return null;
+  const geoRes = await fetch("https://geocoding-api.open-meteo.com/v1/search?count=5&name=" + encodeURIComponent(city));
+  const geo = await geoRes.json();
+  const hit = (geo.results || []).find(r => !state || String(r.admin1 || "").toLowerCase().startsWith(String(state).toLowerCase().slice(0, 2))) || (geo.results || [])[0];
+  if (!hit) return null;
+  const day = iso.slice(0, 10);
+  const past = new Date(iso).getTime() < Date.now() - 3 * 3600000;
+  const base = past ? "https://archive-api.open-meteo.com/v1/archive" : "https://api.open-meteo.com/v1/forecast";
+  const wxRes = await fetch(base + "?latitude=" + hit.latitude + "&longitude=" + hit.longitude + "&hourly=temperature_2m,precipitation,weathercode,windspeed_10m&temperature_unit=fahrenheit&windspeed_unit=mph&timezone=auto&start_date=" + day + "&end_date=" + day);
+  const wx = await wxRes.json();
+  const hours = (wx.hourly && wx.hourly.time) || [];
+  if (!hours.length) return null;
+  const target = new Date(iso).getTime();
+  let best = 0, gap = Infinity;
+  hours.forEach((t, i) => { const g = Math.abs(new Date(t).getTime() - target); if (g < gap) { gap = g; best = i; } });
+  return {
+    temp: wx.hourly.temperature_2m[best],
+    precip: wx.hourly.precipitation[best],
+    code: wx.hourly.weathercode[best],
+    wind: wx.hourly.windspeed_10m[best]
+  };
+}
+async function dayGames(date){
+  const key = "gg-dayzoom-" + date;
+  try { const saved = JSON.parse(sessionStorage.getItem(key) || "null"); if (saved) return saved; } catch (e) {}
+  const stamp = date.replace(/-/g, "");
+  const games = [];
+  for (const [sport, path] of Object.entries(ESPN_PATH)) {
+    try {
+      const res = await fetch("https://site.api.espn.com/apis/site/v2/sports/" + path + "/scoreboard?dates=" + stamp);
+      if (!res.ok) continue;
+      const data = await res.json();
+      for (const ev of data.events || []) {
+        const comp = (ev.competitions || [])[0] || {};
+        const venue = comp.venue || {};
+        const addr = venue.address || {};
+        const status = (ev.status && ev.status.type) || {};
+        const name = status.name || "";
+        const detail = status.shortDetail || status.detail || "";
+        let flag = "";
+        if (/CANCEL/i.test(name)) flag = "Cancelled";
+        else if (/POSTPON|DELAY|SUSPEND/i.test(name)) flag = /weather|rain|snow|storm/i.test(detail) ? "Rained Out" : "Postponed";
+        games.push({sport, name: ev.shortName || ev.name, start: ev.date, city: addr.city || "", state: addr.state || "", venue: venue.fullName || "", flag, detail});
+      }
+    } catch (e) {}
+  }
+  games.sort((a, b) => String(a.start).localeCompare(String(b.start)));
+  for (const game of games) {
+    try { game.wx = await venueWeather(game.city, game.state, game.start); } catch (e) { game.wx = null; }
+    if (!game.flag && game.wx && game.wx.precip >= 0.4 && game.wx.code >= 51) game.flag = "Rained Out";
+  }
+  try { sessionStorage.setItem(key, JSON.stringify(games)); } catch (e) {}
+  return games;
+}
+async function openDay(date){
+  const box = document.getElementById("calendar");
+  box.innerHTML = "<div class='dayzoom'><div class='dayzoom-head'><h3>" + dayTitle(date) + "</h3><button type='button' id='closeday'>Close</button></div><p>Loading games and weather...</p></div>";
+  document.getElementById("closeday").onclick = () => drawCalendar();
+  const games = await dayGames(date);
+  if (!document.getElementById("closeday")) return;
+  const rows = games.length ? games.map(game => {
+    const tags = game.wx ? weatherWords(game.wx.code, game.wx.temp, game.wx.wind, game.wx.precip) : [];
+    if (game.flag) tags.unshift(game.flag);
+    const rate = weatherRate(tags, game.flag);
+    const temp = game.wx && game.wx.temp != null ? Math.round(game.wx.temp) + "°F" : "Weather unavailable";
+    return "<div class='daygame'><b>" + game.sport + "</b><div>" + game.name + "<div class='daymeta'>" + formatTime(game.start) + (game.venue ? " · " + game.venue : "") + "</div></div><span class='wx " + rate + "'>" + rate[0].toUpperCase() + rate.slice(1) + " · " + temp + "</span><div class='daytags'>" + (tags.join(" · ") || "Clear") + "</div></div>";
+  }).join("") : "<p>No games scheduled.</p>";
+  box.innerHTML = "<div class='dayzoom'><div class='dayzoom-head'><h3>" + dayTitle(date) + "</h3><button type='button' id='closeday'>Close</button></div>" + rows + "</div>";
+  document.getElementById("closeday").onclick = () => drawCalendar();
+}
+document.getElementById("calendar").onclick = ev => {
+  const day = ev.target.closest(".daycell");
+  if (day && day.dataset.date) openDay(day.dataset.date);
+};
 
 function todayEt(){ return new Date().toLocaleDateString("en-CA", {timeZone: siteZone()}); }
 function msUntilMidnightEt(){
