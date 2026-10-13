@@ -618,7 +618,8 @@ function filtered(bets){
   return bets.filter(b => (!sport || b.sport === sport) && (!book || b.book === book) && (!type || b.type === type) && (!result || b.result === result));
 }
 let monthCursor = new Date();
-let publishedCalendar = {"2026-10-01":{pl:8.20,n:0},"2026-10-02":{pl:-12.40,n:0},"2026-10-03":{pl:18.10,n:0},"2026-10-04":{pl:1.04,n:0},"2026-10-05":{pl:-76.64,n:0},"2026-10-06":{pl:-152.48,n:0},"2026-10-07":{pl:-5.74,n:0},"2026-10-08":{pl:-26.51,n:43}};
+let publishedCalendar = {};
+try { publishedCalendar = JSON.parse(localStorage.getItem("gg-calendar-published") || "{}"); } catch (err) { publishedCalendar = {}; }
 function personalCalendar(){
   try { return JSON.parse(localStorage.getItem("gg-calendar-personal") || "null"); } catch (err) { return null; }
 }
@@ -627,13 +628,18 @@ async function loadCalendarFile(){
     const res = await fetch("cards/calendar.json?ts=" + Date.now());
     if (!res.ok) return;
     const data = await res.json();
-    Object.assign(publishedCalendar, data.dates || data);
+    const dates = data.dates || data;
+    Object.keys(dates).forEach(date => {
+      if (dates[date] && Number.isFinite(Number(dates[date].pl))) publishedCalendar[date] = dates[date];
+    });
+    localStorage.setItem("gg-calendar-published", JSON.stringify(publishedCalendar));
     drawCalendar();
   } catch (err) {}
 }
 function drawCalendar(){
-  const mine = personalCalendar();
-  const board = Object.assign({}, publishedCalendar, mine || {});
+  const mine = personalCalendar() || {};
+  const board = Object.assign({}, publishedCalendar);
+  Object.keys(mine).forEach(date => { if (mine[date] && Number.isFinite(Number(mine[date].pl))) board[date] = mine[date]; });
   const y = monthCursor.getFullYear(), m = monthCursor.getMonth();
   const first = new Date(y, m, 1);
   const start = first.getDay();
