@@ -61,12 +61,13 @@ form, .row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1f
 .stack { display:flex; flex-direction:row; gap:8px; grid-column:1 / -1; align-items:flex-end; }
 #picknote, #loadnote, #editnote { display:flex; align-items:center; min-height:38px; margin:0; padding:8px 12px; border:1px solid var(--line); border-radius:8px; box-sizing:border-box; }
 .bet-top { grid-column:1 / -1; display:grid; grid-template-columns:1.6fr auto auto; gap:10px; align-items:stretch; }
-.bet-box { border:1px solid #39ff14; border-radius:10px; padding:10px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:center; }
-#betfields { display:grid; grid-template-columns:auto auto auto auto 1fr auto; gap:4px; align-content:center; }
-#betfields label input, #betfields label select { padding-left:6px; padding-right:6px; }
+.bet-box { border:1px solid #39ff14; border-radius:10px; padding:8px 6px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:center; }
+#betfields { display:grid; grid-template-columns:auto auto auto auto minmax(0,1fr) auto; gap:2px; align-content:center; justify-content:start; }
+#betfields label input, #betfields label select { padding-left:4px; padding-right:4px; }
 #betfields label, .notes-field { align-items:stretch; text-align:left; }
-#betfields label input, #betfields label select { width:100%; }
-#betfields label:nth-child(n+7) { grid-column:span 2; min-width:0; }
+#betfields label input, #betfields #pickselect { width:100%; }
+#betfields label select { width:auto; }
+#betfields label:nth-child(n+7) { min-width:0; }
 #betload { display:flex; flex-direction:column; align-items:stretch; justify-content:center; gap:8px; }
 #betload button { width:100%; }
 #betload img { width:100%; max-width:160px; height:auto; flex:1 1 auto; object-fit:contain; border:1px solid var(--line); border-radius:8px; padding:8px; box-sizing:border-box; background:#0e0e0e; cursor:pointer; }
