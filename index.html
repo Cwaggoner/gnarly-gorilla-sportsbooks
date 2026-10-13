@@ -122,6 +122,8 @@ tr.fromcard td { color:#b0b0b0; }
 .jump button { padding:4px 8px; font-size:12px; }
 .sitenav { position:relative; z-index:5; display:flex; gap:6px; flex-wrap:wrap; justify-content:center; align-items:center; background:#0a0a0a; border:1px solid var(--line); border-radius:8px; padding:6px; margin:8px 0 0; }
 .sitenav button { padding:4px 8px; font-size:12px; }
+.sitenav .tz { margin-left:auto; display:flex; align-items:center; gap:6px; color:var(--muted); font-size:12px; }
+.sitenav .tz select { width:16ch; min-width:16ch; max-width:16ch; font-size:12px; }
 .card { scroll-margin-top:0; }
 input[type=file] { position:absolute; width:1px; height:1px; opacity:0; }
 .file-face { display:flex; align-items:center; justify-content:center; text-align:center; height:38px; min-width:140px; padding:6px 10px; box-sizing:border-box; background:#0e0e0e; color:var(--text); border:1px solid var(--line); border-radius:8px; cursor:pointer; }
@@ -178,6 +180,19 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <button type="button" data-jump="breaks">Books</button>
 <button type="button" data-jump="addbet">Add</button>
 <button type="button" data-jump="calendarcard">Calendar</button>
+<label class="tz">Time Zone
+<select id="timezone">
+<option value="America/Anchorage">Alaska</option>
+<option value="America/Phoenix">Arizona</option>
+<option value="America/Chicago">Central</option>
+<option value="America/New_York" selected>Eastern</option>
+<option value="Pacific/Honolulu">Hawaii</option>
+<option value="Europe/London">London</option>
+<option value="America/Denver">Mountain</option>
+<option value="America/Los_Angeles">Pacific</option>
+<option value="UTC">UTC</option>
+</select>
+</label>
 </nav>
 </div>
 <div id="seasons" class="card"><div class="section-head"><h2>Season Dates</h2><p class="warn slips-side">Checked in the month each league publishes its schedule.</p></div></div>
@@ -327,9 +342,10 @@ const KEY = "gnarly-gorilla-sportsbooks-v1";
 const GRADE_KEY = "gnarly-gorilla-grading-v1";
 const UNIT = 10;
 const form = document.getElementById("form");
-form.date.value = new Date().toISOString().slice(0,10);
+form.date.value = new Date().toLocaleDateString("en-CA", {timeZone: localStorage.getItem("gg-timezone") || "America/New_York"});
 function ymd(d){ return d.toISOString().slice(0,10); }
-function yesterday(){ const d = new Date(Date.now() - 86400000); return d.toLocaleDateString("en-CA", {timeZone:"America/New_York"}); }
+function siteZone(){ return localStorage.getItem("gg-timezone") || "America/New_York"; }
+function yesterday(){ const d = new Date(todayEt() + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() - 1); return d.toISOString().slice(0,10); }
 function load(){ try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { return []; } }
 function loadGrade(){ try { return JSON.parse(localStorage.getItem(GRADE_KEY) || "[]"); } catch (e) { return []; } }
 function archiveSlips(bets){
@@ -675,13 +691,14 @@ function drawCalendar(){
   document.getElementById("calendar").innerHTML = html;
 }
 
-function todayEt(){ return new Date().toLocaleDateString("en-CA", {timeZone:"America/New_York"}); }
+function todayEt(){ return new Date().toLocaleDateString("en-CA", {timeZone: siteZone()}); }
 function msUntilMidnightEt(){
-  const parts = new Intl.DateTimeFormat("en-US", {timeZone:"America/New_York", hour:"numeric", minute:"numeric", second:"numeric", hourCycle:"h23"}).formatToParts(new Date());
+  const parts = new Intl.DateTimeFormat("en-US", {timeZone: siteZone(), hour:"numeric", minute:"numeric", second:"numeric", hourCycle:"h23"}).formatToParts(new Date());
   const get = k => Number(parts.find(p => p.type === k).value);
   return ((23 - get("hour")) * 3600 + (59 - get("minute")) * 60 + (60 - get("second"))) * 1000 + 2000;
 }
-function armMidnight(){ setTimeout(() => { nightlyUpdate().finally(() => armMidnight()); }, msUntilMidnightEt()); }
+let midnightTimer;
+function armMidnight(){ clearTimeout(midnightTimer); midnightTimer = setTimeout(() => { nightlyUpdate().finally(() => armMidnight()); }, msUntilMidnightEt()); }
 armMidnight();
 loadCalendarFile();
 async function nightlyUpdate(){
@@ -1163,7 +1180,7 @@ async function fillPickBoard(useSaved){
   if (!key) { note.textContent = "Add the odds key in Today's Card. Then this list follows " + book + "."; return; }
   if (!bookKey || !sportKey) { note.textContent = book + " has no live board."; return; }
   const day = form.date.value;
-  const today = new Date().toLocaleDateString("en-CA", {timeZone:"America/New_York"});
+  const today = new Date().toLocaleDateString("en-CA", {timeZone: siteZone()});
   const dayKey = "gg-day-" + day + "-" + sportKey + "-" + bookKey;
   note.textContent = "Loading " + book + " " + sport + " picks for " + day + "...";
   let games;
@@ -1174,7 +1191,7 @@ async function fillPickBoard(useSaved){
     games = useSaved ? (cachedBoard(sport, bookKey) || []) : await fetchBook(sportKey, bookKey, key);
     const byDay = {};
     games.forEach(game => {
-      const gameDay = game.commence_time ? new Date(game.commence_time).toLocaleDateString("en-CA", {timeZone:"America/New_York"}) : day;
+      const gameDay = game.commence_time ? new Date(game.commence_time).toLocaleDateString("en-CA", {timeZone: siteZone()}) : day;
       byDay[gameDay] = byDay[gameDay] || [];
       byDay[gameDay].push(game);
     });
@@ -1189,7 +1206,7 @@ async function fillPickBoard(useSaved){
   }
   let count = 0;
   const dayGames = games.filter(game => {
-    const gameDay = game.commence_time ? new Date(game.commence_time).toLocaleDateString("en-CA", {timeZone:"America/New_York"}) : day;
+    const gameDay = game.commence_time ? new Date(game.commence_time).toLocaleDateString("en-CA", {timeZone: siteZone()}) : day;
     return !day || !gameDay || gameDay === day;
   });
   const started = dayGames.filter(game => game.commence_time && Date.parse(game.commence_time) <= Date.now());
@@ -2054,6 +2071,14 @@ document.getElementById("resetcal").onclick = () => {
   localStorage.removeItem("gg-calendar-personal");
   drawCalendar();
   document.getElementById("calnote").textContent = "Showing the shared $10 calendar.";
+};
+const tzSelect = document.getElementById("timezone");
+tzSelect.value = siteZone();
+tzSelect.onchange = () => {
+  localStorage.setItem("gg-timezone", tzSelect.value);
+  form.date.value = todayEt();
+  armMidnight();
+  render();
 };
 document.getElementById("prevMonth").onclick = () => { monthCursor.setMonth(monthCursor.getMonth()-1); render(); };
 document.getElementById("nextMonth").onclick = () => { monthCursor.setMonth(monthCursor.getMonth()+1); render(); };
