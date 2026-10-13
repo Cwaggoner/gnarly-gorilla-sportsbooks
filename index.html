@@ -550,10 +550,10 @@ function drawDashboard(history, manual){
   });
   ctx.fillStyle = "#d6ffd0";
   ctx.font = "11px sans-serif";
-  ctx.textAlign = "center";
   pts.forEach((p, i) => {
     const parts = String(p.date).split("-");
     const label = parts.length === 3 ? parts[1] + "/" + parts[2] : p.date;
+    ctx.textAlign = i === 0 ? "right" : i === pts.length - 1 ? "left" : "center";
     ctx.fillText(label, x(i), h - 6);
   });
   ctx.textAlign = "left";
