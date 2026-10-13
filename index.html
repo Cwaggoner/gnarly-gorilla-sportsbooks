@@ -889,10 +889,15 @@ function drawCalendar(){
       const drive = driveCard.date === today ? driveCard.lines : [];
       const local = load().filter(b => b.date === today && b.result === "pending");
       const open = drive.length ? drive : local;
+      const graded = load().concat(loadGrade()).concat(gradeFile).filter(b => b.date === today && b.result !== "pending" && !isNoPick(b));
+      const seen = new Set();
+      const settled = graded.filter(b => { const k = [b.sport, b.pick].join("|"); if (seen.has(k)) return false; seen.add(k); return true; });
+      const result = settled.length ? money(settled.reduce((s, b) => s + slipMoney(b), 0)) : "";
+      const resultCls = settled.length && settled.reduce((s, b) => s + slipMoney(b), 0) > 0 ? "win" : settled.length && settled.reduce((s, b) => s + slipMoney(b), 0) < 0 ? "loss" : "";
       const winAll = open.reduce((s, b) => { const odds = Number(b.odds), stake = Number(b.stake) || 10; if (!Number.isFinite(odds) || odds === 0) return s; return s + (odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds)); }, 0);
       const loseAll = open.reduce((s, b) => s + Number(b.stake || 10), 0);
-      const line = open.length ? "<span class='range'><span class='win'>All Win " + money(winAll) + "</span><span class='slash'> / </span><span class='loss'>All Lose -" + money(loseAll).replace("-", "") + "</span></span>" : "<br><span class='wait'>Picks Not Loaded Until " + formatTime(firstPickAt(), false) + "</span>";
-      html += "<div class='today daycell' data-date='" + date + "'><b>" + d + "</b><br>" + line + "</div>";
+      const lower = open.length ? "<span class='range'><span class='win'>All Win " + money(winAll) + "</span><span class='slash'> / </span><span class='loss'>All Lose -" + money(loseAll).replace("-", "") + "</span></span>" : "<span class='wait'>Picks Not Loaded Until " + formatTime(firstPickAt(), false) + "</span>";
+      html += "<div class='today daycell' data-date='" + date + "'><b>" + d + "</b><br><span class='" + resultCls + "'>" + result + "</span><br>" + lower + "</div>";
     } else {
       const live = load().concat(loadGrade()).concat(gradeFile).filter(b => b.date === date && b.result !== "pending" && !isNoPick(b));
       const seen = new Set();
