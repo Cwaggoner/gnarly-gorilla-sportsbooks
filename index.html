@@ -812,7 +812,7 @@ function render(){
   const dayPl = gradedDay.reduce((s,b) => s + slipMoney(b), 0);
   const hit = daySettled.length ? (gradedDay.filter(b => b.result === "win").length / daySettled.length * 100).toFixed(0) + "%" : "-";
   const blocks = [];
-  if (show !== "graded") blocks.push(["Date", pending]);
+  if (show !== "graded") blocks.push(["Pending", pending]);
   if (show !== "pending") blocks.push(["Graded", gradedDay]);
   const copy = ["GNARLY GORILLA REPORT CARD", (picked || y), "W/L Record " + rec(gradedDay) + "   P/L " + money(dayPl) + "   on $10 slips", "Hit rate " + hit, "Row sum " + money(dayPl)];
   let body = "";
