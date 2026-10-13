@@ -1110,6 +1110,7 @@ async function fillPickBoard(useSaved){
   const msg = count ? "Loaded " + count + " " + book + " " + sport + " picks for " + day + "." : "No " + book + " lines for " + sport + " on " + day + ".";
   note.textContent = msg + (closed ? " " + closed + " closes saved." : "");
   document.getElementById("loadnote").textContent = count ? "Load successful." : "Load failed.";
+  if (count) localStorage.setItem("gg-pick-board", JSON.stringify({book, sport, day, value: sel.value, options: [...sel.options].map(o => ({value:o.value, text:o.textContent, price:o.dataset.price || "", close:o.dataset.close || ""}))}));
 }
 document.getElementById("pickselect").onchange = () => {
   const opt = document.getElementById("pickselect").selectedOptions[0];
@@ -1135,6 +1136,23 @@ form.type.onchange = refreshPicks;
 form.book.onchange = refreshPicks;
 form.sport.onchange = refreshPicks;
 document.getElementById("picknote").textContent = "Press Load Picks. The list follows the date in Add A Bet.";
+try {
+  const savedPicks = JSON.parse(localStorage.getItem("gg-pick-board") || "null");
+  if (savedPicks && savedPicks.options && savedPicks.options.length) {
+    const sel = document.getElementById("pickselect");
+    sel.innerHTML = "";
+    savedPicks.options.forEach(o => {
+      const opt = document.createElement("option");
+      opt.value = o.value;
+      opt.textContent = o.text;
+      if (o.price) opt.dataset.price = o.price;
+      if (o.close) opt.dataset.close = o.close;
+      sel.appendChild(opt);
+    });
+    if (savedPicks.value) sel.value = savedPicks.value;
+    document.getElementById("picknote").textContent = "Restored " + (savedPicks.book || "") + " " + (savedPicks.sport || "") + " picks. No new API call.";
+  }
+} catch (e) {}
 function findBookPrice(games, bookKey, type, pick){
   const info = teamOf(pick);
   const market = type === "Total" ? "totals" : type === "Moneyline" ? "h2h" : "spreads";
