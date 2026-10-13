@@ -470,8 +470,17 @@ function publishedDashboard(){
     };
   });
 }
+function ruleRow(row){
+  const record = String(row.record || "0-0-0");
+  const parts = record.split("-").map(n => Number(n) || 0);
+  const empty = parts.length < 3 || (parts[0] === 0 && parts[1] === 0 && parts[2] === 0);
+  let clv = row.clv;
+  if (empty) clv = "No Close Saved";
+  else if (!clv || clv === "No Close Saved" || clv === "-") clv = "Matched Bet Price";
+  return Object.assign({}, row, {record: empty ? "0-0-0" : parts[0] + "-" + parts[1] + "-" + parts[2], clv: clv});
+}
 function drawDashboard(history, manual){
-  const rows = manual ? history.slice() : publishedDashboard();
+  const rows = (manual ? history.slice() : publishedDashboard()).map(ruleRow);
   if (!manual) localStorage.setItem("gg-dashboard-v1", JSON.stringify(rows));
   const shown = rows;
   const profit = shown.reduce((s, row) => s + (Number(row.profit) || 0), 0);
@@ -487,7 +496,7 @@ function drawDashboard(history, manual){
   });
   const clvs = shown.map(row => row.clv === "Matched Bet Price" ? 0 : parseFloat(String(row.clv).replace("%", ""))).filter(n => Number.isFinite(n));
   document.getElementById("stats").innerHTML = [
-    [wins + "-" + losses + (pushes ? "-" + pushes : ""), "7-Day W/L Record"],
+    [wins + "-" + losses + "-" + pushes, "7-Day W/L Record"],
     [money(profit), "7-Day Profit"],
     [staked ? (profit / staked * 100).toFixed(1) + "%" : "-", "7-Day ROI"],
     [(profit / UNIT).toFixed(2) + "u", "7-Day Units"],
