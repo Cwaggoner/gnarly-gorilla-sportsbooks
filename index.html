@@ -521,6 +521,14 @@ function drawDashboard(history, manual){
     ctx.textAlign = "left";
     ctx.fillText(label, w - right + 6, yy + 3);
   }
+  ctx.strokeStyle = "#2a3a2a";
+  ctx.lineWidth = 1;
+  pts.forEach((p, i) => {
+    ctx.beginPath();
+    ctx.moveTo(x(i), y(max));
+    ctx.lineTo(x(i), h - bottom);
+    ctx.stroke();
+  });
   ctx.fillStyle = "#8fb898";
   ctx.textAlign = "left";
   ctx.font = "11px sans-serif";
