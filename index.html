@@ -531,6 +531,16 @@ function drawDashboard(history, manual){
   ctx.beginPath();
   pts.forEach((p,i) => i ? ctx.lineTo(x(i), y(p.y)) : ctx.moveTo(x(i), y(p.y)));
   ctx.stroke();
+  ctx.fillStyle = "#39ff14";
+  ctx.font = "11px sans-serif";
+  const ends = [pts[0], pts[pts.length - 1]];
+  ends.forEach((p, n) => {
+    const i = n ? pts.length - 1 : 0;
+    const label = money(p.y);
+    const above = y(p.y) > top + 16;
+    ctx.textAlign = n ? "right" : "left";
+    ctx.fillText(label, x(i) + (n ? -6 : 6), y(p.y) + (above ? -6 : 12));
+  });
   ctx.fillStyle = "#d6ffd0";
   ctx.font = "11px sans-serif";
   ctx.textAlign = "center";
