@@ -120,12 +120,15 @@ tr.fromcard td { color:#b0b0b0; }
 .tools { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; align-items:flex-end; }
 .jump { display:flex; gap:6px; margin:6px 0; justify-content:center; align-items:center; }
 .jump button { padding:4px 8px; font-size:12px; }
-.sitenav { position:relative; z-index:5; display:flex; gap:6px; flex-wrap:wrap; justify-content:center; align-items:center; background:#0a0a0a; border:1px solid var(--line); border-radius:8px; padding:6px; margin:8px 0 0; }
+.sitenav { position:relative; z-index:5; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr); align-items:center; gap:8px; background:#0a0a0a; border:1px solid var(--line); border-radius:8px; padding:6px; margin:8px 0 0; }
+.nav-cell { display:flex; align-items:center; justify-content:center; min-width:0; gap:6px; flex-wrap:wrap; }
+.nav-cell.left { flex-direction:column; gap:2px; color:var(--title); text-align:center; }
+.nav-cell.mid { flex-wrap:wrap; }
 .sitenav button { padding:4px 8px; font-size:12px; }
-.sitenav .tz { margin-left:auto; display:flex; align-items:center; gap:6px; color:var(--muted); font-size:12px; }
+.sitenav .tz { display:flex; align-items:center; justify-content:center; gap:6px; color:var(--muted); font-size:12px; flex-wrap:wrap; }
 .sitenav .tz select { width:16ch; min-width:16ch; max-width:16ch; font-size:12px; }
 .sitenav .tz button { min-width:5ch; }
-.sitenav .clock { color:var(--title); min-width:7ch; text-align:right; }
+.sitenav .clock { color:var(--title); text-align:center; }
 .card { scroll-margin-top:0; }
 input[type=file] { position:absolute; width:1px; height:1px; opacity:0; }
 .file-face { display:flex; align-items:center; justify-content:center; text-align:center; height:38px; min-width:140px; padding:6px 10px; box-sizing:border-box; background:#0e0e0e; color:var(--text); border:1px solid var(--line); border-radius:8px; cursor:pointer; }
@@ -173,6 +176,8 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <div class="head-icon right"><img src="gg-icon.png" alt="Gnarly Gorilla"></div>
 </header>
 <nav class="sitenav" id="sitenav">
+<div class="nav-cell left"><span class="clock" id="zonedate"></span><span class="clock" id="zonetime"></span></div>
+<div class="nav-cell mid">
 <button type="button" data-jump="seasons">Seasons</button>
 <button type="button" data-jump="dashboard">Dashboard</button>
 <button type="button" data-jump="todaycard">Today</button>
@@ -182,6 +187,8 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <button type="button" data-jump="breaks">Books</button>
 <button type="button" data-jump="addbet">Add</button>
 <button type="button" data-jump="calendarcard">Calendar</button>
+</div>
+<div class="nav-cell right">
 <label class="tz">Time Zone
 <select id="timezone">
 <option value="America/Anchorage">Alaska</option>
@@ -195,8 +202,8 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <option value="UTC">UTC</option>
 </select>
 <button type="button" id="hourmode">24h</button>
-<span class="clock" id="zonetime"></span>
 </label>
+</div>
 </nav>
 </div>
 <div id="seasons" class="card"><div class="section-head"><h2>Season Dates</h2><p class="warn slips-side">Checked in the month each league publishes its schedule.</p></div></div>
@@ -356,8 +363,11 @@ function formatTime(value){
   return date.toLocaleTimeString("en-US", {timeZone: siteZone(), hour:"numeric", minute:"2-digit", hour12: hour12()});
 }
 function showClock(){
-  const el = document.getElementById("zonetime");
-  if (el) el.textContent = formatTime(new Date());
+  const now = new Date();
+  const date = document.getElementById("zonedate");
+  const time = document.getElementById("zonetime");
+  if (date) date.textContent = now.toLocaleDateString("en-US", {timeZone: siteZone(), weekday:"short", month:"short", day:"numeric", year:"numeric"});
+  if (time) time.textContent = formatTime(now);
 }
 function yesterday(){ const d = new Date(todayEt() + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() - 1); return d.toISOString().slice(0,10); }
 function load(){ try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { return []; } }
