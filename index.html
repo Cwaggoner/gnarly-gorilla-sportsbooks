@@ -458,10 +458,7 @@ function publishedDashboard(){
     let dayClv = "No Close Saved";
     if (!lines.length) dayClv = "No Close Saved";
     else if (clvs.length) dayClv = (clvs.reduce((s, v) => s + v, 0) / clvs.length).toFixed(1) + "%";
-    else if (withClose.length) dayClv = "Matched Bet Price";
-    else if (saved === 0 || saved === "0" || saved === "Matched Bet Price") dayClv = "Matched Bet Price";
-    else if (Number.isFinite(Number(saved))) dayClv = Number(saved).toFixed(1) + "%";
-    else if (saved) dayClv = String(saved);
+    else dayClv = "Matched Bet Price";
     return {
       date,
       record: lines.length ? rec(lines) : "0-0-0",
