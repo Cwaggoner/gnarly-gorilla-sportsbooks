@@ -724,7 +724,7 @@ function drawCalendar(){
       const open = load().filter(b => b.date === today && b.result === "pending");
       const winAll = open.reduce((s, b) => { const odds = Number(b.odds), stake = Number(b.stake) || 0; if (!Number.isFinite(odds) || odds === 0) return s; return s + (odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds)); }, 0);
       const loseAll = open.reduce((s, b) => s + Number(b.stake || 0), 0);
-      const line = open.length ? "All Win <span class='win'>" + money(winAll) + "</span><span class='slash'> / </span>All Lose <span class='loss'>-" + money(loseAll).replace("-", "") + "</span>" : "<span class='wait'>Picks Not Loaded Until " + formatTime(firstPickAt(), false) + "</span>";
+      const line = open.length ? "All Win <span class='win'>" + money(winAll) + "</span><span class='slash'> / </span>All Lose <span class='loss'>-" + money(loseAll).replace("-", "") + "</span>" : "<br><span class='wait'>Picks Not Loaded Until " + formatTime(firstPickAt(), false) + "</span>";
       html += "<div class='today daycell' data-date='" + date + "'><b>" + d + "</b><br>" + line + "</div>";
     } else {
       let day = board[date];
