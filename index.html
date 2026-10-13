@@ -370,7 +370,7 @@ const form = document.getElementById("form");
 form.date.value = new Date().toLocaleDateString("en-CA", {timeZone: localStorage.getItem("gg-timezone") || "America/New_York"});
 function ymd(d){ return d.toISOString().slice(0,10); }
 function siteZone(){ return localStorage.getItem("gg-timezone") || "America/New_York"; }
-function hour12(){ return localStorage.getItem("gg-hour") === "12"; }
+function hour12(){ return localStorage.getItem("gg-hour") !== "24"; }
 function formatTime(value, seconds){
   const date = value instanceof Date ? value : new Date(value);
   if (Number.isNaN(date.getTime())) return "";
