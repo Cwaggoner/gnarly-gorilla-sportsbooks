@@ -500,9 +500,10 @@ function drawDashboard(history, manual){
   ctx.clearRect(0,0,w,h);
   ctx.fillStyle = "#0e0e0e";
   ctx.fillRect(0,0,w,h);
+  if (!shown.length) return;
   let run = 0;
-  const pts = shown.map(row => { run += Number(row.profit) || 0; return {date: row.date, y: run}; });
-  if (!pts.length) return;
+  const pts = [{date: shown[0].date, y: 0}];
+  shown.forEach(row => { run += Number(row.profit) || 0; pts.push({date: row.date, y: run}); });
   const vals = pts.map(p => p.y);
   const min = Math.min(0, ...vals), max = Math.max(0, ...vals);
   const span = (max - min) || 1;
