@@ -172,7 +172,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <option>HardRock</option>
 </select></label>
 <label id="oddskeybox">Odds key<input id="oddskey" type="password" placeholder="Free key from the-odds-api.com" autocomplete="off"></label>
-<p class="api-note">Live odds and the pick list will not populate without a free or paid subscription to The Odds API. A key is required. Paste it in From Today's Card.<br><a href="https://the-odds-api.com/" target="_blank" rel="noopener noreferrer">Open The Odds API</a></p>
+<p class="api-note">Paste a free or paid Odds API key here. Load Picks in Add A Bet uses this key. Add A Bet Book drives the list. This Book only stamps a card you load from this section.<br><a href="https://the-odds-api.com/" target="_blank" rel="noopener noreferrer">Open The Odds API</a></p>
 <textarea id="paste" placeholder="NFL | Spread | Chiefs -3.5 | -110 | High 62%"></textarea>
 <div class="tools">
 <label>Upload pick-card PDF<input type="file" id="cardpdf" accept="application/pdf,.pdf"></label>
@@ -247,7 +247,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </div>
 </div>
 <label class="notes-field">Notes<textarea name="notes" placeholder="High 62%"></textarea></label>
-<p class="warn fine">Load Picks needs a free Odds API key. Paste it in the Odds key box on From Today's Card. Moneyline, Spread, and Total then fill from that book.</p>
+<p class="warn fine">Load Picks uses the Odds API key from From Today's Card and the Book selected here. Moneyline, Spread, and Total fill from that book. A refresh restores the last list with no new call.</p>
 <div class="stack">
 <button type="submit" id="savebtn">Save Bet</button>
 <button type="button" id="canceledit">Cancel Edit</button>
@@ -277,7 +277,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <thead><tr><th>Date</th><th>Book</th><th>Sport</th><th>Type</th><th>Pick</th><th>Odds</th><th>Close</th><th>CLV</th><th>Stake</th><th>Result</th><th>P/L</th><th>Grade</th></tr></thead>
 <tbody id="rows"></tbody>
 </table></div>
-<p class="api-note">Live odds and the pick list will not populate without a free or paid subscription to The Odds API. A key is required. Paste it in From Today's Card.<br><a href="https://the-odds-api.com/" target="_blank" rel="noopener noreferrer">Open The Odds API</a></p>
+<p class="api-note">Live prices need the Odds API key from From Today's Card. The pick list is filled in Add A Bet. A saved list returns on refresh with no new call. A new book calls the API once, then uses the save for 15 minutes.<br><a href="https://the-odds-api.com/" target="_blank" rel="noopener noreferrer">Open The Odds API</a></p>
 </section>
 <section class="card" id="calendarcard">
 <h2>Calendar</h2>
