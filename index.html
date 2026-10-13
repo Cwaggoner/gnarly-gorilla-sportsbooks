@@ -717,7 +717,11 @@ async function loadCalendarFile(){
     const data = await res.json();
     const dates = data.dates || data;
     Object.keys(dates).forEach(date => {
-      if (dates[date] && Number.isFinite(Number(dates[date].pl))) publishedCalendar[date] = dates[date];
+      if (!dates[date] || !Number.isFinite(Number(dates[date].pl))) return;
+      const prior = publishedCalendar[date] || {};
+      publishedCalendar[date] = Object.assign({}, prior, dates[date]);
+      if (!Number.isFinite(Number(publishedCalendar[date].allWin)) && Number.isFinite(Number(prior.allWin))) publishedCalendar[date].allWin = prior.allWin;
+      if (!Number.isFinite(Number(publishedCalendar[date].allLose)) && Number.isFinite(Number(prior.allLose))) publishedCalendar[date].allLose = prior.allLose;
     });
     localStorage.setItem("gg-calendar-published", JSON.stringify(publishedCalendar));
     drawCalendar();
@@ -1726,7 +1730,12 @@ async function catchUp(){
       fetch("cards/dashboard.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").catch(() => "")
     ]);
     if (cal && cal.dates) {
-      publishedCalendar = cal.dates;
+      Object.keys(cal.dates).forEach(date => {
+        const prior = publishedCalendar[date] || {};
+        publishedCalendar[date] = Object.assign({}, prior, cal.dates[date]);
+        if (!Number.isFinite(Number(publishedCalendar[date].allWin)) && Number.isFinite(Number(prior.allWin))) publishedCalendar[date].allWin = prior.allWin;
+        if (!Number.isFinite(Number(publishedCalendar[date].allLose)) && Number.isFinite(Number(prior.allLose))) publishedCalendar[date].allLose = prior.allLose;
+      });
       localStorage.setItem("gg-calendar-published", JSON.stringify(publishedCalendar));
     }
     if (grades) {
