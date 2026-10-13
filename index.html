@@ -446,7 +446,15 @@ function publishedDashboard(){
     const profit = Number.isFinite(Number(day.pl)) ? Number(day.pl) : lines.reduce((s, b) => s + (Number(b.profit) || 0), 0);
     const n = Number(day.n) || lines.length;
     const staked = n * UNIT;
-    const clvs = lines.map(clv).filter(v => v != null);
+    const withClose = lines.filter(b => b.close !== "" && b.close != null);
+    const clvs = withClose.map(clv).filter(v => v != null);
+    const saved = day.clv;
+    let dayClv = "No Close Saved";
+    if (clvs.length) dayClv = (clvs.reduce((s, v) => s + v, 0) / clvs.length).toFixed(1) + "%";
+    else if (withClose.length) dayClv = "Matched Bet Price";
+    else if (saved === 0 || saved === "0" || saved === "Matched Bet Price") dayClv = "Matched Bet Price";
+    else if (Number.isFinite(Number(saved))) dayClv = Number(saved).toFixed(1) + "%";
+    else if (saved) dayClv = String(saved);
     return {
       date,
       record: lines.length ? rec(lines) : (n ? n + " slips" : "No Picks"),
@@ -454,7 +462,7 @@ function publishedDashboard(){
       roi: staked ? (profit / staked * 100).toFixed(1) + "%" : "-",
       units: (profit / UNIT).toFixed(2) + "u",
       pending: 0,
-      clv: clvs.length ? (clvs.every(v => Math.abs(v) < 0.05) ? "Matched Bet Price" : (clvs.reduce((s, v) => s + v, 0) / clvs.length).toFixed(1) + "%") : "No Close Saved"
+      clv: dayClv
     };
   });
 }
@@ -473,7 +481,7 @@ function drawDashboard(history, manual){
     if (parts.length < 2 || /slips|no picks/i.test(row.record)) return;
     wins += parts[0] || 0; losses += parts[1] || 0; pushes += parts[2] || 0;
   });
-  const clvs = shown.map(row => parseFloat(String(row.clv).replace("%", ""))).filter(n => Number.isFinite(n));
+  const clvs = shown.map(row => row.clv === "Matched Bet Price" ? 0 : parseFloat(String(row.clv).replace("%", ""))).filter(n => Number.isFinite(n));
   document.getElementById("stats").innerHTML = [
     [wins + "-" + losses + (pushes ? "-" + pushes : ""), "7-Day W/L Record"],
     [money(profit), "7-Day Profit"],
@@ -676,7 +684,7 @@ function weekRecord(){
   return w + "-" + l + (p ? "-" + p : "");
 }
 function weekClv(){
-  const vals = publishedDashboard().map(row => parseFloat(String(row.clv).replace("%", ""))).filter(n => Number.isFinite(n));
+  const vals = publishedDashboard().map(row => row.clv === "Matched Bet Price" ? 0 : parseFloat(String(row.clv).replace("%", ""))).filter(n => Number.isFinite(n));
   if (!vals.length) return "No Close Saved";
   return (vals.reduce((s, n) => s + n, 0) / vals.length).toFixed(1) + "%";
 }
