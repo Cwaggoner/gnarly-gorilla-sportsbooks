@@ -207,9 +207,8 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <p class="api-note">Paste a free or paid Odds API key here. Load Picks in Add A Bet uses this key. Add A Bet Book drives the list. This Book only stamps a card you load from this section.<br><a href="https://the-odds-api.com/" target="_blank" rel="noopener noreferrer">Open The Odds API</a></p>
 <textarea id="paste" placeholder="NFL | Spread | Chiefs -3.5 | -110 | High 62%"></textarea>
 <div class="tools">
-<label>Upload pick-card PDF<input type="file" id="cardpdf" accept="application/pdf,.pdf"><span class="file-face">No File Chosen</span></label>
-<button type="button" id="loadcard">Load Card As Pending</button>
-<button type="button" id="loaddrive">Load Drive Card</button>
+<label>Upload Pick-Card PDF<input type="file" id="cardpdf" accept="application/pdf,.pdf"><span class="file-face">No File Chosen</span></label>
+<div class="btn-pair"><span>Loaders</span><div><button type="button" id="loadcard">Load Card As Pending</button><button type="button" id="loaddrive">Load Drive Card</button></div></div>
 </div>
 <p id="pdfnote" class="warn"></p>
 </section>
@@ -1321,7 +1320,7 @@ async function loadPending(){
   });
   const added = bets.length - before;
   if (!added) {
-    note.textContent = "Nothing loaded. Upload the pick-card PDF or paste Sport | Type | Pick | Odds lines first.";
+    note.textContent = "Nothing loaded. Upload the Pick-Card PDF or paste Sport | Type | Pick | Odds lines first.";
     return;
   }
   save(bets);
