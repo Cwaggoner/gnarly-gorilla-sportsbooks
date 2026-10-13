@@ -73,7 +73,7 @@ label { display:flex; flex-direction:column; gap:4px; font-size:12px; color:var(
 input, select, button, textarea { background:#0e0e0e; color:var(--text); border:1px solid var(--line); border-radius:8px; padding:8px; }
 #oddskeybox { display:block; margin:16px 0; }
 #seasons { margin-bottom:18px; }
-.season-line { border-top:1px solid #39ff14; margin-top:10px; }
+#seasons table { margin-bottom:16px; }
 #reportDay { color-scheme:dark; }
 #reportDay::-webkit-calendar-picker-indicator { filter:invert(1); opacity:1; cursor:pointer; }
 textarea { width:100%; min-height:120px; font:13px/1.4 ui-monospace, monospace; }
@@ -649,7 +649,7 @@ function showSeasons(checked){
   });
   wave += " H448";
   const ekg = "<span class='ekg' data-ms='" + (parseFloat(pulse) * 1000) + "'><svg viewBox='0 0 448 36' preserveAspectRatio='none' aria-label='Season pulse'><defs><clipPath id='ekgclip'><rect class='ekg-clip' x='0' y='0' width='0' height='36'></rect></clipPath></defs><path class='trace' clip-path='url(#ekgclip)' d='" + wave + "' style='stroke:" + color + "'></path></svg></span>";
-  box.innerHTML = "<h2>Season Dates</h2><p class='warn'>Checked " + (checked || "2026-10-08") + ". NFL May, NHL July, MLB July, NBA August, CFB August, CBB September.</p><table><thead><tr><th colspan='4' style='text-align:center'>" + ekg + "</th></tr><tr><th>Sport</th><th>Start</th><th>Last Card</th><th>Status</th></tr></thead><tbody>" + rows + "</tbody></table><div class='season-line'></div>";
+  box.innerHTML = "<h2>Season Dates</h2><p class='warn'>Checked " + (checked || "2026-10-08") + ". NFL May, NHL July, MLB July, NBA August, CFB August, CBB September.</p><table><thead><tr><th colspan='4' style='text-align:center'>" + ekg + "</th></tr><tr><th>Sport</th><th>Start</th><th>Last Card</th><th>Status</th></tr></thead><tbody>" + rows + "</tbody></table>";
   startPulse();
 }
 let pulseFrame = 0;
