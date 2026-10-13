@@ -1,24 +1,7 @@
-# file: GG-CARD-2026-10-12
-2026-10-12 | NBA | Spread | Thunder +8.5 | -110 | High 62% Edge: Dog on 8.5+ preseason spread.
-2026-10-12 | NBA | Spread | Nets +3.5 | -110 | Medium 54%
-2026-10-12 | NBA | Spread | Timberwolves +2.5 | -110 | Medium 55%
-2026-10-12 | NBA | Spread | Jazz +3.5 | -110 | Medium 53%
-2026-10-12 | NBA | Total | Thunder at Hawks Under 223.5 | -110 | Medium 54% Named game
-2026-10-12 | NBA | Total | Nets at Wizards Under 222.5 | -110 | Medium 52% Named game
-2026-10-12 | NBA | Total | Timberwolves at Knicks Under 227.5 | -110 | Medium 55% Named game
-2026-10-12 | NBA | Total | Spurs at Jazz Under 226.5 | -110 | Medium 53% Named game
-2026-10-12 | NBA | SGP | Thunder +8.5 and Thunder at Hawks Under 223.5 | 190 | Estimated +190. Dog and under. Edge.
-2026-10-12 | NBA | SGP | Timberwolves +2.5 and Timberwolves at Knicks Under 227.5 | 190 | Estimated +190.
-2026-10-12 | NBA | SGP | Nets +3.5 and Nets at Wizards Under 222.5 | 190 | Estimated +190.
-2026-10-12 | NHL | Moneyline | Buffalo Sabres ML | -108 | Medium
-2026-10-12 | NHL | Moneyline | Ottawa Senators ML | 114 | High Edge: 4-1 start, strong D vs NJ; dog value
-2026-10-12 | NHL | Moneyline | Vegas Golden Knights ML | -102 | Medium
-2026-10-12 | NHL | Total | Panthers at Sabres Under 5.5 | 114 | Medium Named game
-2026-10-12 | NHL | SGP | Senators ML and Senators at Devils Under 5.5 | 220 | High Edge. Same game.
-2026-10-12 | MLB | Total | Dodgers at Brewers Under 6.5 | -110 | High 61% Edge. Yamamoto and Henderson.
-2026-10-12 | MLB | Run Line | Rays -1.5 | 130 | Medium 56%. ML short so buy the run line.
-2026-10-12 | MLB | SGP | Dodgers at Brewers Under 6.5 and Brewers +1.5 | -280 | Medium. Same game.
-2026-10-12 | MLB | SGP | Rays -1.5 and Rays at Blue Jays Under 6.5 | 120 | Medium. Same game.
-2026-10-12 | NFL | Spread | Bills +3.5 | -110 | High Edge: road dog value, avoid short Rams ML.
-2026-10-12 | NFL | Total | Bills at Rams Over 54.5 | -110 | Medium Named game
-2026-10-12 | NFL | SGP | Bills +3.5 and Bills at Rams Over 54.5 | 190 | Same game. Two legs.
+# file: GG-CARD-2026-10-13
+2026-10-13 | NBA | Spread | Knicks +10.5 | -110 | High 63% Edge: Dog on 10.5+ preseason spread.
+2026-10-13 | NBA | Spread | Pacers +10.5 | -110 | Medium 55%
+2026-10-13 | NBA | Total | Knicks at Raptors Under 217.5 | -110 | Medium 54% Named game
+2026-10-13 | NBA | Total | Pacers at Thunder Under 228.5 | -110 | Medium 53% Named game
+2026-10-13 | NBA | SGP | Knicks +10.5 and Knicks at Raptors Under 217.5 | 190 | Estimated +190. Dog and under. Edge.
+2026-10-13 | NBA | SGP | Pacers +10.5 and Pacers at Thunder Under 228.5 | 190 | Estimated +190.
