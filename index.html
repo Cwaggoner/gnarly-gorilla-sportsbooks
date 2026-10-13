@@ -622,9 +622,18 @@ let publishedCalendar = {"2026-10-01":{pl:8.20,n:0},"2026-10-02":{pl:-12.40,n:0}
 function personalCalendar(){
   try { return JSON.parse(localStorage.getItem("gg-calendar-personal") || "null"); } catch (err) { return null; }
 }
+async function loadCalendarFile(){
+  try {
+    const res = await fetch("cards/calendar.json?ts=" + Date.now());
+    if (!res.ok) return;
+    const data = await res.json();
+    Object.assign(publishedCalendar, data.dates || data);
+    drawCalendar();
+  } catch (err) {}
+}
 function drawCalendar(){
   const mine = personalCalendar();
-  const board = Object.assign({}, mine || publishedCalendar);
+  const board = Object.assign({}, publishedCalendar, mine || {});
   const y = monthCursor.getFullYear(), m = monthCursor.getMonth();
   const first = new Date(y, m, 1);
   const start = first.getDay();
@@ -664,7 +673,10 @@ function msUntilMidnightEt(){
 }
 function armMidnight(){ setTimeout(() => { nightlyUpdate().finally(() => armMidnight()); }, msUntilMidnightEt()); }
 armMidnight();
+loadCalendarFile();
 async function nightlyUpdate(){
+  await loadCalendarFile();
+
   const note = document.getElementById("pdfnote");
   await applyGrades().catch(() => {});
   const res = await fetch("cards/today.txt?ts=" + Date.now()).catch(() => null);
