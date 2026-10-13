@@ -1127,6 +1127,13 @@ function render(){
     byKey[key] = b;
   });
   unique.push(...Object.values(byKey));
+  const gradedKeys = unique.filter(b => b.result && b.result !== "pending").map(b => [b.date, b.sport, String(b.pick || "").toLowerCase()]);
+  unique = unique.filter(b => {
+    if (b.result !== "pending") return true;
+    const pick = String(b.pick || "").toLowerCase();
+    const parts = pick.split(/\s+and\s+|\s+/).filter(w => w.length > 2);
+    return !gradedKeys.some(([date, sport, graded]) => date === b.date && sport === b.sport && (graded.includes(pick) || pick.includes(graded) || parts.filter(w => graded.includes(w)).length >= Math.min(3, parts.length)));
+  });
   const windowed = unique.filter(b => inSlipWindow(b.date));
   const bets = filtered(windowed.sort((a,b) => String(b.date).localeCompare(String(a.date))));
   const totals = bets;
