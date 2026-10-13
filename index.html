@@ -618,10 +618,9 @@ function drawCardAnalysis(text){
   grid.innerHTML = sports.map(sport => {
     const mine = rows.filter(r => r[1] === sport);
     if (!mine.length) return "<div class='analysis-cell'><b>" + sport + "</b><div class='meta'>No Picks</div><p>No card for this sport.</p></div>";
-    const edges = mine.filter(r => /edge/i.test(r[5] || ""));
-    const edge = edges[0];
-    const note = edge ? (edge[3] + " is the edge.") : (mine[0][3] + " leads the card.");
-    return "<div class='analysis-cell'><b>" + sport + "</b><div class='meta'>" + mine.length + " plays" + (edges.length ? " · " + edges.length + " edge" : "") + "</div><p>" + sportLean(mine) + ". " + note + "</p></div>";
+    const edges = mine.filter(r => /edge/i.test(r[5] || "") || /^high\b/i.test(r[5] || ""));
+    const note = edges.length ? edges.map(r => r[3]).join("; ") : (mine[0][3] + " leads the card.");
+    return "<div class='analysis-cell'><b>" + sport + "</b><div class='meta'>" + mine.length + " plays" + (edges.length ? " · " + edges.length + " edge" + (edges.length === 1 ? "" : "s") : "") + "</div><p>" + sportLean(mine) + ". " + note + "</p></div>";
   }).join("");
   const title = document.querySelector("#cardanalysis h3");
   if (title) title.textContent = "Analysis" + (day ? " · " + day : "");
