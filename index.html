@@ -1099,12 +1099,30 @@ async function loadSeasons(){
   } catch (err) { showSeasons(); }
 }
 function seasonText(sport){ return seasonEnded(sport) ? "Season Ended" : "No Picks"; }
+function pickTokens(pick){
+  return String(pick || "").toLowerCase().replace(/[^a-z0-9.+-]+/g, " ").split(/\s+/).filter(w => w.length > 1);
+}
+function samePick(a, b){
+  const left = String(a || "").toLowerCase(), right = String(b || "").toLowerCase();
+  if (!left || !right) return false;
+  if (left === right || left.includes(right) || right.includes(left)) return true;
+  const parts = pickTokens(left);
+  return parts.filter(w => right.includes(w)).length >= Math.min(3, parts.length);
+}
+function dropMatchedPending(rows){
+  const list = (rows || []).filter(Boolean);
+  const graded = list.filter(b => b.result && b.result !== "pending");
+  return list.filter(b => {
+    if (b.result !== "pending") return true;
+    return !graded.some(g => g.date === b.date && g.sport === b.sport && samePick(b.pick, g.pick));
+  });
+}
 function clearStalePending(){
-  const bets = load();
+  const bets = dropMatchedPending(load());
   const older = bets.filter(b => !inSlipWindow(b.date));
-  if (!older.length) return;
-  archiveSlips(older.filter(b => b.result !== "pending"));
-  save(bets.filter(b => inSlipWindow(b.date)));
+  if (older.length) archiveSlips(older.filter(b => b.result !== "pending"));
+  const kept = bets.filter(b => inSlipWindow(b.date));
+  if (kept.length !== load().length) save(kept);
 }
 function render(){
   clearStalePending();
@@ -1127,13 +1145,7 @@ function render(){
     byKey[key] = b;
   });
   unique.push(...Object.values(byKey));
-  const gradedKeys = unique.filter(b => b.result && b.result !== "pending").map(b => [b.date, b.sport, String(b.pick || "").toLowerCase()]);
-  unique = unique.filter(b => {
-    if (b.result !== "pending") return true;
-    const pick = String(b.pick || "").toLowerCase();
-    const parts = pick.split(/\s+and\s+|\s+/).filter(w => w.length > 2);
-    return !gradedKeys.some(([date, sport, graded]) => date === b.date && sport === b.sport && (graded.includes(pick) || pick.includes(graded) || parts.filter(w => graded.includes(w)).length >= Math.min(3, parts.length)));
-  });
+  unique = dropMatchedPending(unique);
   const windowed = unique.filter(b => inSlipWindow(b.date));
   const bets = filtered(windowed.sort((a,b) => String(b.date).localeCompare(String(a.date))));
   const totals = bets;
@@ -1811,7 +1823,7 @@ async function applyGrades(){
   const graded = loadGrade();
   rules.forEach(rule => {
     [bets, graded].forEach(list => list.forEach(b => {
-      if (b.date === rule.date && String(b.pick).includes(rule.pick)) { b.result = rule.result; if (rule.close !== "") b.close = rule.close; }
+      if (b.date === rule.date && (b.sport === rule.sport || !b.sport || !rule.sport) && samePick(b.pick, rule.pick)) { b.result = rule.result; if (rule.close !== "") b.close = rule.close; }
     }));
     if (/no picks|season ended/i.test(rule.pick) || !inSlipWindow(rule.date)) return;
     if (!graded.some(b => b.date === rule.date && b.pick === rule.pick)) graded.push({id: Date.now() + Math.random(), date: rule.date, book: "BetMGM", sport: rule.sport, type: betType({pick: rule.pick}), pick: rule.pick, odds: rule.odds, close: rule.close, stake: 10, result: rule.result, profit: rule.profit, notes: "Graded"});
