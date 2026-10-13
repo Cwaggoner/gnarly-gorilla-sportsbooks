@@ -105,7 +105,9 @@ tr.fromcard td { color:#b0b0b0; }
 .sitenav { position:relative; z-index:5; display:flex; gap:6px; flex-wrap:wrap; justify-content:center; align-items:center; background:#0a0a0a; border:1px solid var(--line); border-radius:8px; padding:6px; margin:8px 0 0; }
 .sitenav button { padding:4px 8px; font-size:12px; }
 .card { scroll-margin-top:0; }
-#loadcal { height:38px; box-sizing:border-box; padding:6px 8px; }
+input[type=file] { height:38px; box-sizing:border-box; text-align:center; text-align-last:center; line-height:22px; padding:6px 8px; display:inline-flex; align-items:center; justify-content:center; }
+input[type=file]::file-selector-button { margin:0 8px 0 0; }
+#loadcal { height:38px; }
 label:has(#loadcal) { gap:0; }
 #dashboard { display:flex; flex-direction:column; }
 #dashboard .dash-tools { margin-top:14px; }
