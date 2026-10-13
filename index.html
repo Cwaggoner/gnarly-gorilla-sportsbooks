@@ -713,10 +713,10 @@ async function loadSeasons(){
 }
 function seasonText(sport){ return seasonEnded(sport) ? "Season Ended" : "No Picks"; }
 function clearStalePending(){
-  const bets = load().filter(b => b.result !== "pending" || inSlipWindow(b.date));
-  const graded = loadGrade().filter(b => b.result !== "pending" || inSlipWindow(b.date));
-  localStorage.setItem(KEY, JSON.stringify(bets));
-  localStorage.setItem(GRADE_KEY, JSON.stringify(graded));
+  const bets = load();
+  const older = bets.filter(b => b.result === "pending" && !inSlipWindow(b.date));
+  if (!older.length) return;
+  archiveSlips(older);
 }
 function render(){
   clearStalePending();
