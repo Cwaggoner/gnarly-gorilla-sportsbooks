@@ -682,9 +682,20 @@ armMidnight();
 loadCalendarFile();
 async function nightlyUpdate(){
   await loadCalendarFile();
-
   const note = document.getElementById("pdfnote");
   await applyGrades().catch(() => {});
+  if (!window.gradeWatch) {
+    window.gradeWatch = setInterval(async () => {
+      const res = await fetch("cards/grades.txt?ts=" + Date.now()).catch(() => null);
+      const text = res && res.ok ? await res.text() : "";
+      if (!text.includes(yesterday())) return;
+      clearInterval(window.gradeWatch);
+      window.gradeWatch = null;
+      await applyGrades().catch(() => {});
+      await loadCalendarFile();
+      if (note) note.textContent = "Midnight grade file loaded for " + yesterday() + ".";
+    }, 60000);
+  }
   const res = await fetch("cards/today.txt?ts=" + Date.now()).catch(() => null);
   const text = res && res.ok ? await res.text() : "";
   const today = todayEt();
