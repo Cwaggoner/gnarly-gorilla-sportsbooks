@@ -64,7 +64,8 @@ form, .row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1f
 #betnotes { display:flex; flex-direction:column; gap:8px; }
 .notes-field { grid-column:1 / -1; }
 .notes-field textarea { width:100%; min-height:64px; }
-.fine { grid-column:1 / -1; font-size:11px; line-height:1.4; margin:8px 0 0; width:100%; }
+.notes-head { display:flex; align-items:baseline; gap:8px; }
+.fine { font-size:11px; line-height:1.2; margin:0; }
 
 label { display:flex; flex-direction:column; gap:4px; font-size:12px; color:var(--muted); }
 input, select, button, textarea { background:#0e0e0e; color:var(--text); border:1px solid var(--line); border-radius:8px; padding:8px; }
@@ -247,8 +248,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <span id="editnote" class="warn"></span>
 </div>
 </div>
-<label class="notes-field">Notes<textarea name="notes" placeholder="High 62%"></textarea></label>
-<p class="warn fine">Load Picks uses the Odds API key from From Today's Card and the Book selected here. Moneyline, Spread, and Total fill from that book. A refresh restores the last list with no new call.</p>
+<label class="notes-field"><span class="notes-head">Notes <span class="warn fine">Load Picks uses the Odds API key from From Today's Card and the Book selected here. Moneyline, Spread, and Total fill from that book. A refresh restores the last list with no new call.</span></span><textarea name="notes" placeholder="High 62%"></textarea></label>
 <div class="stack">
 <button type="submit" id="savebtn">Save Bet</button>
 <button type="button" id="canceledit">Cancel Edit</button>
