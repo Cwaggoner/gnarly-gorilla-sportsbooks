@@ -779,30 +779,19 @@ async function venueWeather(city, state, iso){
     wind: wx.hourly.windspeed_10m[best]
   };
 }
+async function loadSchedule(){
+  if (window.ggSchedule) return window.ggSchedule;
+  const res = await fetch("cards/schedule.json?ts=" + Date.now());
+  if (!res.ok) return [];
+  const data = await res.json();
+  window.ggSchedule = data.games || [];
+  return window.ggSchedule;
+}
 async function dayGames(date){
   const key = "gg-dayzoom-" + date;
   try { const saved = JSON.parse(sessionStorage.getItem(key) || "null"); if (saved) return saved; } catch (e) {}
-  const stamp = date.replace(/-/g, "");
-  const games = [];
-  for (const [sport, path] of Object.entries(ESPN_PATH)) {
-    try {
-      const res = await fetch("https://site.api.espn.com/apis/site/v2/sports/" + path + "/scoreboard?dates=" + stamp);
-      if (!res.ok) continue;
-      const data = await res.json();
-      for (const ev of data.events || []) {
-        const comp = (ev.competitions || [])[0] || {};
-        const venue = comp.venue || {};
-        const addr = venue.address || {};
-        const status = (ev.status && ev.status.type) || {};
-        const name = status.name || "";
-        const detail = status.shortDetail || status.detail || "";
-        let flag = "";
-        if (/CANCEL/i.test(name)) flag = "Cancelled";
-        else if (/POSTPON|DELAY|SUSPEND/i.test(name)) flag = /weather|rain|snow|storm/i.test(detail) ? "Rained Out" : "Postponed";
-        games.push({sport, name: ev.shortName || ev.name, start: ev.date, city: addr.city || "", state: addr.state || "", venue: venue.fullName || "", flag, detail});
-      }
-    } catch (e) {}
-  }
+  const board = await loadSchedule();
+  const games = board.filter(g => g.date === date).map(g => Object.assign({}, g));
   games.sort((a, b) => String(a.start).localeCompare(String(b.start)));
   for (const game of games) {
     try { game.wx = await venueWeather(game.city, game.state, game.start); } catch (e) { game.wx = null; }
