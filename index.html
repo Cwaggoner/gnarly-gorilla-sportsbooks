@@ -1422,6 +1422,15 @@ document.getElementById("cardpdf").onchange = async e => {
 
 const BOOK_KEY = {BetMGM:"betmgm", Caesars:"williamhill_us", DraftKings:"draftkings", Fanatics:"fanatics", FanDuel:"fanduel", HardRock:"hardrockbet"};
 const SPORT_KEY = {NFL:"americanfootball_nfl", NHL:"icehockey_nhl", NBA:"basketball_nba", MLB:"baseball_mlb", CBB:"basketball_ncaab", CFB:"americanfootball_ncaaf"};
+const PRESEASON_KEY = {NBA:"basketball_nba_preseason", NFL:"americanfootball_nfl_preseason", MLB:"baseball_mlb_preseason"};
+function sportKeys(sport){
+  const main = SPORT_KEY[sport];
+  if (!main) return [];
+  const start = SEASON_START[sport];
+  const today = todayEt();
+  if (PRESEASON_KEY[sport] && start && today < start) return [PRESEASON_KEY[sport], main];
+  return [main, PRESEASON_KEY[sport]].filter(Boolean);
+}
 const oddskey = document.getElementById("oddskey");
 oddskey.value = localStorage.getItem("gg-odds-key") || "";
 oddskey.onchange = () => localStorage.setItem("gg-odds-key", oddskey.value.trim());
@@ -1450,13 +1459,13 @@ function matchOutcome(outcomes, name, side){
     return on === n || on.endsWith(" " + n) || n.endsWith(on);
   });
 }
-async function fetchBook(sport, bookKey, key){
-  const cacheKey = "gg-odds-" + sport + "-" + bookKey;
+async function fetchOne(sportKey, bookKey, key){
+  const cacheKey = "gg-odds-" + sportKey + "-" + bookKey;
   try {
     const cached = JSON.parse(sessionStorage.getItem(cacheKey) || "null");
     if (cached && Date.now() - cached.at < 15 * 60 * 1000) return cached.games;
   } catch (e) {}
-  const url = "https://api.the-odds-api.com/v4/sports/" + sport + "/odds?apiKey=" + encodeURIComponent(key) + "&regions=us,us2&markets=spreads,totals,h2h&oddsFormat=american&bookmakers=" + bookKey;
+  const url = "https://api.the-odds-api.com/v4/sports/" + sportKey + "/odds?apiKey=" + encodeURIComponent(key) + "&regions=us,us2&markets=spreads,totals,h2h&oddsFormat=american&bookmakers=" + bookKey;
   let res;
   try { res = await fetch(url); }
   catch (e) { res = await fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(url)); }
@@ -1464,8 +1473,18 @@ async function fetchBook(sport, bookKey, key){
   const games = await res.json();
   const pack = JSON.stringify({at: Date.now(), games});
   sessionStorage.setItem(cacheKey, pack);
-  localStorage.setItem("gg-board-" + sport + "-" + bookKey, pack);
+  localStorage.setItem("gg-board-" + sportKey + "-" + bookKey, pack);
   return games;
+}
+async function fetchBook(sport, bookKey, key){
+  const keys = sportKeys(Object.keys(SPORT_KEY).find(s => SPORT_KEY[s] === sport) || "") ;
+  const list = keys.length ? keys : [sport];
+  let games = [];
+  for (const sportKey of list) {
+    games = await fetchOne(sportKey, bookKey, key);
+    if (games && games.length) return games;
+  }
+  return games || [];
 }
 async function repricePaste(){
   const note = document.getElementById("pdfnote");
@@ -1593,6 +1612,18 @@ async function fillPickBoard(useSaved){
   const bets = load();
   const closed = applyCloses(bets, games, bookKey);
   if (closed) save(bets);
+  if (!count) {
+    const card = (driveCard.lines || []).filter(l => l.sport === sport && (!type || l.type === type || (type === "Total" && /under|over/i.test(l.pick)) || (type === "Spread" && /[+-]\d/.test(l.pick))));
+    card.forEach(l => {
+      const opt = document.createElement("option");
+      opt.value = l.pick;
+      opt.textContent = l.pick + " (" + l.odds + ")";
+      opt.dataset.price = l.odds;
+      opt.dataset.close = l.odds;
+      sel.appendChild(opt);
+      count++;
+    });
+  }
   const msg = count ? "Loaded " + count + " " + book + " " + sport + " picks for " + day + "." + (started.length ? " " + started.length + " started games closed." : "") : "No " + book + " lines for " + sport + " on " + day + ".";
   note.textContent = msg + (closed ? " " + closed + " closes saved." : "");
   document.getElementById("loadnote").textContent = count ? "Load successful." : "No Lines";
