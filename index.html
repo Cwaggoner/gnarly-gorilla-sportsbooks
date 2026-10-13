@@ -124,6 +124,8 @@ tr.fromcard td { color:#b0b0b0; }
 .sitenav button { padding:4px 8px; font-size:12px; }
 .sitenav .tz { margin-left:auto; display:flex; align-items:center; gap:6px; color:var(--muted); font-size:12px; }
 .sitenav .tz select { width:16ch; min-width:16ch; max-width:16ch; font-size:12px; }
+.sitenav .tz button { min-width:5ch; }
+.sitenav .clock { color:var(--title); min-width:7ch; text-align:right; }
 .card { scroll-margin-top:0; }
 input[type=file] { position:absolute; width:1px; height:1px; opacity:0; }
 .file-face { display:flex; align-items:center; justify-content:center; text-align:center; height:38px; min-width:140px; padding:6px 10px; box-sizing:border-box; background:#0e0e0e; color:var(--text); border:1px solid var(--line); border-radius:8px; cursor:pointer; }
@@ -192,6 +194,8 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <option value="America/Los_Angeles">Pacific</option>
 <option value="UTC">UTC</option>
 </select>
+<button type="button" id="hourmode">24h</button>
+<span class="clock" id="zonetime"></span>
 </label>
 </nav>
 </div>
@@ -345,6 +349,16 @@ const form = document.getElementById("form");
 form.date.value = new Date().toLocaleDateString("en-CA", {timeZone: localStorage.getItem("gg-timezone") || "America/New_York"});
 function ymd(d){ return d.toISOString().slice(0,10); }
 function siteZone(){ return localStorage.getItem("gg-timezone") || "America/New_York"; }
+function hour12(){ return localStorage.getItem("gg-hour") === "12"; }
+function formatTime(value){
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleTimeString("en-US", {timeZone: siteZone(), hour:"numeric", minute:"2-digit", hour12: hour12()});
+}
+function showClock(){
+  const el = document.getElementById("zonetime");
+  if (el) el.textContent = formatTime(new Date());
+}
 function yesterday(){ const d = new Date(todayEt() + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() - 1); return d.toISOString().slice(0,10); }
 function load(){ try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { return []; } }
 function loadGrade(){ try { return JSON.parse(localStorage.getItem(GRADE_KEY) || "[]"); } catch (e) { return []; } }
@@ -1223,8 +1237,9 @@ async function fillPickBoard(useSaved){
       if (want && mk.key !== want) return;
       (mk.outcomes || []).forEach(o => {
         if (o.price == null) return;
-        let label = game.away_team + " at " + game.home_team + " " + o.name + (mk.key === "h2h" ? " ML" : "");
-        if (mk.key === "spreads" && o.point != null) label = game.away_team + " at " + game.home_team + " " + o.name.split(" ").slice(-1)[0] + " " + (o.point > 0 ? "+" : "") + o.point;
+        const kick = game.commence_time ? " " + formatTime(game.commence_time) : "";
+        let label = game.away_team + " at " + game.home_team + kick + " " + o.name + (mk.key === "h2h" ? " ML" : "");
+        if (mk.key === "spreads" && o.point != null) label = game.away_team + " at " + game.home_team + kick + " " + o.name.split(" ").slice(-1)[0] + " " + (o.point > 0 ? "+" : "") + o.point;
         if (mk.key === "totals" && o.point != null) label = totalLabel(game, o.name.toLowerCase(), o.point);
         const opt = document.createElement("option");
         opt.value = label;
@@ -2078,8 +2093,19 @@ tzSelect.onchange = () => {
   localStorage.setItem("gg-timezone", tzSelect.value);
   form.date.value = todayEt();
   armMidnight();
+  showClock();
   render();
 };
+const hourBtn = document.getElementById("hourmode");
+hourBtn.textContent = hour12() ? "12h" : "24h";
+hourBtn.onclick = () => {
+  localStorage.setItem("gg-hour", hour12() ? "24" : "12");
+  hourBtn.textContent = hour12() ? "12h" : "24h";
+  showClock();
+  render();
+};
+showClock();
+setInterval(showClock, 1000);
 document.getElementById("prevMonth").onclick = () => { monthCursor.setMonth(monthCursor.getMonth()-1); render(); };
 document.getElementById("nextMonth").onclick = () => { monthCursor.setMonth(monthCursor.getMonth()+1); render(); };
 [KEY, GRADE_KEY].forEach(k => {
