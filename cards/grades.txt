@@ -98,3 +98,28 @@
 2026-10-10 | CFB | Boise State -6.5 |  | win | BOIS 38 FRES 31 | 9.09
 2026-10-10 | CFB | Minnesota -2.5 |  | loss | MINN 13 PUR 41 | -10.00
 2026-10-10 | CFB | Arizona State -20.5 |  | loss | ASU 30 HAW 12 | -10.00
+
+# file: GG-GRADES-2026-10-12
+2026-10-12 | NBA | Thunder +8.5 | -110 | win | ATL 113 OKC 110 | 9.09
+2026-10-12 | NBA | Nets +3.5 | -110 | win | BKN 131 WSH 122 | 9.09
+2026-10-12 | NBA | Timberwolves +2.5 | -110 | win | MIN 122 NY 104 | 9.09
+2026-10-12 | NBA | Jazz +3.5 | -110 | win | UTAH 119 SA 109 | 9.09
+2026-10-12 | NBA | Thunder at Hawks Under 223.5 | -110 | win | 223 | 9.09
+2026-10-12 | NBA | Nets at Wizards Under 222.5 | -110 | loss | 253 | -10.00
+2026-10-12 | NBA | Timberwolves at Knicks Under 227.5 | -110 | win | 226 | 9.09
+2026-10-12 | NBA | Spurs at Jazz Under 226.5 | -110 | loss | 228 | -10.00
+2026-10-12 | NBA | Thunder +8.5 and Thunder at Hawks Under 223.5 | 190 | win | ATL 113 OKC 110 | 19.00
+2026-10-12 | NBA | Timberwolves +2.5 and Timberwolves at Knicks Under 227.5 | 190 | win | MIN 122 NY 104 | 19.00
+2026-10-12 | NBA | Nets +3.5 and Nets at Wizards Under 222.5 | 190 | loss | 253 | -10.00
+2026-10-12 | NHL | Buffalo Sabres ML | -108 | win | BUF 5 FLA 3 | 9.26
+2026-10-12 | NHL | Ottawa Senators ML | 114 | win | OTT 4 NJ 1 | 11.40
+2026-10-12 | NHL | Vegas Golden Knights ML | -102 | loss | MIN 4 VGK 2 | -10.00
+2026-10-12 | NHL | Panthers at Sabres Under 5.5 | 114 | loss | 8 | -10.00
+2026-10-12 | NHL | Senators ML and Senators at Devils Under 5.5 | 220 | win | OTT 4 NJ 1 | 22.00
+2026-10-12 | MLB | Dodgers at Brewers Under 6.5 | -110 | loss | LAD 4 MIL 7 | -10.00
+2026-10-12 | MLB | Rays -1.5 | 130 | loss | CLE 7 TB 3 | -10.00
+2026-10-12 | MLB | Dodgers at Brewers Under 6.5 and Brewers +1.5 | -280 | loss | LAD 4 MIL 7 | -10.00
+2026-10-12 | MLB | Rays -1.5 and Rays at Blue Jays Under 6.5 | 120 | loss | CLE 7 TB 3 | -10.00
+2026-10-12 | NFL | Bills +3.5 | -110 | win | BUF 37 LAR 34 | 9.09
+2026-10-12 | NFL | Bills at Rams Over 54.5 | -110 | win | 71 | 9.09
+2026-10-12 | NFL | Bills +3.5 and Bills at Rams Over 54.5 | 190 | win | BUF 37 LAR 34 | 19.00
