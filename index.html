@@ -32,7 +32,7 @@ body { margin:0; background:var(--bg); color:var(--text); font:15px/1.4 system-u
 header { display:grid; grid-template-columns:96px 1fr 96px; align-items:stretch; gap:12px; width:100%; box-sizing:border-box; margin:0; padding:6px 10px; border:1px solid #39ff14; border-radius:10px; background:#0a0a0a; }
 .topbar { position:sticky; top:0; z-index:6; background:#0a0a0a; padding-bottom:8px; }
 .head-icon { display:flex; align-items:center; justify-content:center; border-right:1px solid #39ff14; padding-right:6px; }
-.head-icon.right { border-right:0; border-left:1px solid #39ff14; padding-right:0; padding-left:6px; }
+.head-icon.right { border-right:none !important; border-left:1px solid #39ff14; padding-right:0; padding-left:6px; }
 header img { width:72px; height:72px; border-radius:12px; display:block; }
 header .head-text { display:flex; flex-direction:column; justify-content:center; }
 header h1 { margin:0; color:var(--title); font-size:22px; letter-spacing:.04em; }
