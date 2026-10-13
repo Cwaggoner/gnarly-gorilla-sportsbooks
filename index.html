@@ -61,7 +61,7 @@ form, .row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1f
 #picknote, #loadnote, #editnote { display:flex; align-items:center; min-height:38px; margin:0; padding:8px 12px; border:1px solid var(--line); border-radius:8px; box-sizing:border-box; }
 .bet-top { grid-column:1 / -1; display:grid; grid-template-columns:1.6fr auto auto; gap:10px; align-items:stretch; }
 .bet-box { border:1px solid #39ff14; border-radius:10px; padding:10px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:center; }
-#betfields { display:grid; grid-template-columns:1.3fr auto auto 1fr 1.8fr 1fr; gap:4px; align-content:center; }
+#betfields { display:grid; grid-template-columns:auto auto auto auto 1fr auto; gap:4px; align-content:center; }
 #betfields label input, #betfields label select { padding-left:6px; padding-right:6px; }
 #betfields label, .notes-field { align-items:stretch; text-align:left; }
 #betfields label input, #betfields label select { width:100%; }
@@ -83,6 +83,9 @@ input, select, button, textarea { background:#0e0e0e; color:var(--text); border:
 .btn-pair div { display:flex; gap:8px; }
 .book-select { width:12ch; min-width:12ch; max-width:12ch; box-sizing:content-box; }
 .sport-select { width:8ch; min-width:8ch; max-width:8ch; box-sizing:content-box; }
+.type-select { width:11ch; min-width:11ch; max-width:11ch; box-sizing:content-box; }
+.result-select { width:8ch; min-width:8ch; max-width:8ch; box-sizing:content-box; }
+#betfields input[type=date] { width:11ch; min-width:11ch; max-width:11ch; }
 .book-key { display:flex; align-items:flex-end; gap:12px; }
 #oddskeybox { display:flex; margin:0; }
 #seasons { margin-bottom:18px; }
@@ -260,9 +263,9 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <option selected>NFL</option>
 <option>NHL</option>
 </select></label>
-<label>Type<select name="type"><option>Moneyline</option><option>Spread</option><option>Total</option><option>Prop</option><option>Parlay</option><option>SGP</option></select></label>
+<label>Type<select name="type" class="type-select"><option>Moneyline</option><option>Spread</option><option>Total</option><option>Prop</option><option>Parlay</option><option>SGP</option></select></label>
 <label>Pick<select name="pick" id="pickselect" required><option value="">Select a pick</option></select></label>
-<label>Result<select name="result"><option>pending</option><option>win</option><option>loss</option><option>push</option><option>void</option></select></label>
+<label>Result<select name="result" class="result-select"><option>pending</option><option>win</option><option>loss</option><option>push</option><option>void</option></select></label>
 <label>American Odds<input name="odds" type="number" step="1" placeholder="-110" required></label>
 <label>Close Odds<input name="close" type="number" step="1" placeholder="-120"></label>
 <input type="hidden" name="editId">
