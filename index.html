@@ -287,8 +287,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </form>
 </section>
 <section class="card" id="slips">
-<div class="section-head"><h2>Slips</h2><p class="warn slips-side">Live prices need the Odds API key from Today's Card. The pick list is filled in Add A Bet. A saved list returns on refresh with no new call. A new book calls the API once, then uses the save for 15 minutes. <a href="https://the-odds-api.com/" target="_blank" rel="noopener noreferrer">Open The Odds API</a></p></div>
-<p class="warn">This card keeps today and yesterday only. Older days stay on the calendar and in the published files.</p>
+<div class="section-head"><h2>Slips</h2><p class="warn slips-side">This card keeps today and yesterday only. Older days stay on the calendar and in the published files.</p></div>
 <div class="tools">
 <label>Sport<select id="fSport" class="sport-select"><option value="">All</option><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option></select></label>
 <label>Book<select id="fBook" class="book-select"><option value="">All</option><option>BetMGM</option><option>Caesars</option><option>DraftKings</option><option>Fanatics</option><option>FanDuel</option><option>HardRock</option></select></label>
@@ -306,6 +305,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <thead><tr><th>Date</th><th>Book</th><th>Sport</th><th>Type</th><th>Pick</th><th>Odds</th><th>Close</th><th>CLV</th><th>Stake</th><th>Result</th><th>P/L</th><th>Grade</th></tr></thead>
 <tbody id="rows"></tbody>
 </table></div>
+<p class="api-note">Live prices need the Odds API key from Today's Card. The pick list is filled in Add A Bet. A saved list returns on refresh with no new call. A new book calls the API once, then uses the save for 15 minutes.<br><a href="https://the-odds-api.com/" target="_blank" rel="noopener noreferrer">Open The Odds API</a></p>
 </section>
 <section class="card" id="calendarcard">
 <h2>Calendar</h2>
