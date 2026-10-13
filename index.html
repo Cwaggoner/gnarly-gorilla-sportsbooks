@@ -467,15 +467,15 @@ function drawDashboard(history, manual){
     const n = parseFloat(String(row.roi).replace("%", ""));
     return s + (n ? (Number(row.profit) || 0) / (n / 100) : 0);
   }, 0);
-  let w = 0, l = 0, psh = 0;
+  let wins = 0, losses = 0, pushes = 0;
   shown.forEach(row => {
     const parts = String(row.record || "0-0").split("-").map(n => Number(n) || 0);
     if (parts.length < 2 || /slips|no picks/i.test(row.record)) return;
-    w += parts[0] || 0; l += parts[1] || 0; psh += parts[2] || 0;
+    wins += parts[0] || 0; losses += parts[1] || 0; pushes += parts[2] || 0;
   });
   const clvs = shown.map(row => parseFloat(String(row.clv).replace("%", ""))).filter(n => Number.isFinite(n));
   document.getElementById("stats").innerHTML = [
-    [w + "-" + l + (psh ? "-" + psh : ""), "7-Day W/L Record"],
+    [wins + "-" + losses + (pushes ? "-" + pushes : ""), "7-Day W/L Record"],
     [money(profit), "7-Day Profit"],
     [staked ? (profit / staked * 100).toFixed(1) + "%" : "-", "7-Day ROI"],
     [(profit / UNIT).toFixed(2) + "u", "7-Day Units"],
