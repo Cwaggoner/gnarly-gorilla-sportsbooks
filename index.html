@@ -370,17 +370,19 @@ form.date.value = new Date().toLocaleDateString("en-CA", {timeZone: localStorage
 function ymd(d){ return d.toISOString().slice(0,10); }
 function siteZone(){ return localStorage.getItem("gg-timezone") || "America/New_York"; }
 function hour12(){ return localStorage.getItem("gg-hour") === "12"; }
-function formatTime(value){
+function formatTime(value, seconds){
   const date = value instanceof Date ? value : new Date(value);
   if (Number.isNaN(date.getTime())) return "";
-  return date.toLocaleTimeString("en-US", {timeZone: siteZone(), hour:"numeric", minute:"2-digit", second:"2-digit", hour12: hour12()});
+  const opt = {timeZone: siteZone(), hour:"numeric", minute:"2-digit", hour12: hour12()};
+  if (seconds !== false) opt.second = "2-digit";
+  return date.toLocaleTimeString("en-US", opt);
 }
 function showClock(){
   const now = new Date();
   const date = document.getElementById("zonedate");
   const time = document.getElementById("zonetime");
   if (date) date.textContent = now.toLocaleDateString("en-US", {timeZone: siteZone(), weekday:"long", month:"long", day:"numeric", year:"numeric"});
-  if (time) time.textContent = formatTime(now);
+  if (time) time.textContent = formatTime(now, true);
 }
 function yesterday(){ const d = new Date(todayEt() + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() - 1); return d.toISOString().slice(0,10); }
 function load(){ try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { return []; } }
@@ -811,7 +813,7 @@ async function openDay(date){
     if (game.flag) tags.unshift(game.flag);
     const rate = weatherRate(tags, game.flag);
     const temp = game.wx && game.wx.temp != null ? Math.round(game.wx.temp) + "°F" : "Weather unavailable";
-    return "<div class='daygame'><b>" + game.sport + "</b><div>" + game.name + "<div class='daymeta'>" + formatTime(game.start) + (game.venue ? " · " + game.venue : "") + "</div></div><span class='wx " + rate + "'>" + rate[0].toUpperCase() + rate.slice(1) + " · " + temp + "</span><div class='daytags'>" + (tags.join(" · ") || "Clear") + "</div></div>";
+    return "<div class='daygame'><b>" + game.sport + "</b><div>" + game.name + "<div class='daymeta'>" + formatTime(game.start, false) + (game.venue ? " · " + game.venue : "") + "</div></div><span class='wx " + rate + "'>" + rate[0].toUpperCase() + rate.slice(1) + " · " + temp + "</span><div class='daytags'>" + (tags.join(" · ") || "Clear") + "</div></div>";
   }).join("") : "<p>No games scheduled.</p>";
   box.innerHTML = "<div class='dayzoom'><div class='dayzoom-head'><h3>" + dayTitle(date) + "</h3><button type='button' id='closeday'>Close</button></div>" + rows + "</div>";
   document.getElementById("closeday").onclick = () => drawCalendar();
