@@ -1241,7 +1241,15 @@ async function repriceSlips(){
   save(bets);
   note.textContent = priced + " pending slips repriced at " + book + ".";
 }
-document.getElementById("cardbook").onchange = () => { repriceSlips().catch(err => { document.getElementById("pdfnote").textContent = err.message; }); };
+document.getElementById("cardbook").onchange = () => {
+  const book = document.getElementById("cardbook").value;
+  if (form.book.value !== book) form.book.value = book;
+  const filter = document.getElementById("fBook");
+  if (filter && [...filter.options].some(o => o.value === book)) filter.value = book;
+  refreshPicks();
+  render();
+  repriceSlips().catch(err => { document.getElementById("pdfnote").textContent = err.message; });
+};
 
 async function loadPending(){
   const note = document.getElementById("pdfnote");
