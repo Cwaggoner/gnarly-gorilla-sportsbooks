@@ -347,22 +347,6 @@
       "close": "",
       "edge": false,
       "score": ""
-    },
-    {
-      "id": 99001,
-      "date": "2026-10-12",
-      "book": "BetMGM",
-      "sport": "NBA",
-      "type": "Spread",
-      "pick": "Manual Test +3.5",
-      "odds": -110,
-      "stake": 10,
-      "result": "pending",
-      "notes": "One-time cyan test from Add A Bet.",
-      "close": "",
-      "edge": false,
-      "score": "",
-      "manual": true
     }
   ]
 }
