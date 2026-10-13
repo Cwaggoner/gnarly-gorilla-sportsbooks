@@ -4,6 +4,6 @@ Date | Record | Profit | ROI | Units | Pending | Avg CLV
 2026-10-07 | 0-0-0 | $-5.74 | -2.4% | -0.57u | 0 | No Close Saved
 2026-10-08 | 0-0-0 | $-26.51 | -6.2% | -2.65u | 0 | No Close Saved
 2026-10-09 | 0-0-0 | $15.13 | 5.2% | 1.51u | 0 | No Close Saved
-2026-10-10 | 32-28-0 | $52.02 | 8.7% | 5.20u | 0 | Matched Bet Price
-2026-10-11 | 14-14-2 | $0.89 | 0.3% | 0.09u | 0 | Matched Bet Price
+2026-10-10 | 32-28-0 | $52.02 | 8.7% | 5.20u | 0 | No Close Saved
+2026-10-11 | 14-14-2 | $0.89 | 0.3% | 0.09u | 0 | No Close Saved
 2026-10-12 | 14-9-0 | $92.38 | 42.0% | 9.24u | 0 | Matched Bet Price

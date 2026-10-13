@@ -10,6 +10,6 @@
 2026-10-07 | matched bet price | -110 | Matched Bet Price
 2026-10-08 | no close saved |  | No Close Saved
 2026-10-09 | no close saved |  | No Close Saved
-2026-10-10 | matched bet price | bet price | Matched Bet Price
-2026-10-11 | matched bet price | bet price | Matched Bet Price
+2026-10-10 | no close saved |  | No Close Saved
+2026-10-11 | no close saved |  | No Close Saved
 2026-10-12 | matched bet price | bet price | Matched Bet Price

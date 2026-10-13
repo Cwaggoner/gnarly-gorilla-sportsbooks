@@ -456,7 +456,7 @@ function publishedDashboard(){
     const clvs = withClose.map(clv).filter(v => v != null);
     const saved = day.clv;
     let dayClv = "No Close Saved";
-    if (!lines.length) dayClv = "No Close Saved";
+    if (!lines.length || !withClose.length) dayClv = "No Close Saved";
     else if (clvs.length) dayClv = (clvs.reduce((s, v) => s + v, 0) / clvs.length).toFixed(1) + "%";
     else dayClv = "Matched Bet Price";
     return {
@@ -2428,7 +2428,7 @@ fetch("cards/grades.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(
     const result = (parts[4].match(/win|loss|push/i) || ["loss"])[0].toLowerCase();
     const dollars = parts[parts.length - 1].replace(/[$,+]/g, "");
     const profit = Number(dollars);
-    return {date: parts[0], sport: parts[1], pick: parts[2], odds: close || -110, close: close, result: result, stake: 10, profit: Number.isFinite(profit) ? profit : 0};
+    return {date: parts[0], sport: parts[1], pick: parts[2], odds: "", close: close, result: result, stake: 10, profit: Number.isFinite(profit) ? profit : 0};
   }).filter(Boolean);
   render();
 }).catch(() => {});
