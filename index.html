@@ -662,8 +662,34 @@ function msUntilMidnightEt(){
   const get = k => Number(parts.find(p => p.type === k).value);
   return ((23 - get("hour")) * 3600 + (59 - get("minute")) * 60 + (60 - get("second"))) * 1000 + 2000;
 }
-function armMidnight(){ setTimeout(() => { render(); armMidnight(); }, msUntilMidnightEt()); }
+function armMidnight(){ setTimeout(() => { nightlyUpdate().finally(() => armMidnight()); }, msUntilMidnightEt()); }
 armMidnight();
+async function nightlyUpdate(){
+  const note = document.getElementById("pdfnote");
+  await applyGrades().catch(() => {});
+  const res = await fetch("cards/today.txt?ts=" + Date.now()).catch(() => null);
+  const text = res && res.ok ? await res.text() : "";
+  const today = todayEt();
+  const todays = text.split(/\n/).filter(line => line.trim().startsWith(today));
+  if (todays.length) {
+    const added = addCardLines(todays.join("\n"), document.getElementById("cardbook").value || "BetMGM");
+    if (note) note.textContent = "After midnight. Yesterday graded. " + (added || 0) + " " + today + " picks loaded.";
+    return;
+  }
+  if (note) note.textContent = "After midnight. Yesterday graded. Today's picks load when the morning task publishes them.";
+  if (!window.cardWatch) {
+    window.cardWatch = setInterval(async () => {
+      const check = await fetch("cards/today.txt?ts=" + Date.now()).catch(() => null);
+      const body = check && check.ok ? await check.text() : "";
+      const lines = body.split(/\n/).filter(line => line.trim().startsWith(todayEt()));
+      if (!lines.length) return;
+      clearInterval(window.cardWatch);
+      window.cardWatch = null;
+      const added = addCardLines(lines.join("\n"), document.getElementById("cardbook").value || "BetMGM");
+      if (note) note.textContent = "Morning card published. " + (added || 0) + " " + todayEt() + " picks loaded.";
+    }, 60000);
+  }
+}
 function inSlipWindow(date){ date = String(date || "").slice(0, 10); return date === todayEt() || date === yesterday(); }
 let SEASON_END = {MLB:"2026-10-31", CFB:"2027-01-25", NFL:"2027-02-14", CBB:"2027-04-05", NHL:"2027-04-10", NBA:"2027-04-11"};
 let SEASON_START = {MLB:"2026-03-25", CFB:"2026-08-27", NFL:"2026-09-09", CBB:"2026-11-02", NHL:"2026-09-29", NBA:"2026-10-20"};
@@ -1375,7 +1401,7 @@ function addCardLines(text, book){
     line = line.trim();
     if (!line || line.startsWith("#")) return;
     const parts = line.split("|").map(s => s.trim());
-    let date = ymd(new Date()), sport, type, pick, odds, notes;
+    let date = todayEt(), sport, type, pick, odds, notes;
     if (/^\d{4}-\d{2}-\d{2}$/.test(parts[0])) date = parts.shift();
     [sport, type, pick, odds, notes] = parts;
     odds = String(odds || "").replace(/\u2212/g, "-");
