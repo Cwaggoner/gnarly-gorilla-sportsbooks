@@ -153,7 +153,7 @@ label:has(#loadcal) { gap:0; }
 .dayzoom { border:1px solid #39ff14; border-radius:8px; padding:10px; background:#0e0e0e; }
 .dayzoom-head { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px; }
 .dayzoom-head h3 { margin:0; color:var(--title); font-size:16px; }
-.daygame { display:grid; grid-template-columns:70px 1fr auto; gap:6px 10px; align-items:center; border-top:1px solid var(--line); padding:8px 0; }
+.daygame { display:grid; grid-template-columns:1fr auto; gap:6px 10px; align-items:center; border-top:1px solid var(--line); padding:8px 0; }
 .daygame b { color:var(--title); }
 .daymeta { color:var(--muted); font-size:12px; }
 .wx { justify-self:end; font-size:12px; padding:2px 8px; border-radius:8px; border:1px solid var(--line); }
@@ -789,17 +789,16 @@ async function loadSchedule(){
   window.ggSchedule = data.games || [];
   return window.ggSchedule;
 }
+const SPORT_NAME = {NFL:"Pro Football", NBA:"Pro Basketball", NHL:"Pro Hockey", MLB:"Pro Baseball", CBB:"College Basketball", CFB:"College Football"};
 async function dayGames(date){
-  const key = "gg-dayzoom-" + date;
-  try { const saved = JSON.parse(sessionStorage.getItem(key) || "null"); if (saved) return saved; } catch (e) {}
   const board = await loadSchedule();
   const games = board.filter(g => g.date === date).map(g => Object.assign({}, g));
-  games.sort((a, b) => String(a.start).localeCompare(String(b.start)));
+  games.sort((a, b) => String(a.start).localeCompare(String(b.start)) || a.sport.localeCompare(b.sport));
   for (const game of games) {
+    if (game.wx) continue;
     try { game.wx = await venueWeather(game.city, game.state, game.start); } catch (e) { game.wx = null; }
     if (!game.flag && game.wx && game.wx.precip >= 0.4 && game.wx.code >= 51) game.flag = "Rained Out";
   }
-  try { sessionStorage.setItem(key, JSON.stringify(games)); } catch (e) {}
   return games;
 }
 async function openDay(date){
@@ -813,7 +812,7 @@ async function openDay(date){
     if (game.flag) tags.unshift(game.flag);
     const rate = weatherRate(tags, game.flag);
     const temp = game.wx && game.wx.temp != null ? Math.round(game.wx.temp) + "°F" : "Weather unavailable";
-    return "<div class='daygame'><b>" + game.sport + "</b><div>" + game.name + "<div class='daymeta'>" + formatTime(game.start, false) + (game.venue ? " · " + game.venue : "") + "</div></div><span class='wx " + rate + "'>" + rate[0].toUpperCase() + rate.slice(1) + " · " + temp + "</span><div class='daytags'>" + (tags.join(" · ") || "Clear") + "</div></div>";
+    return "<div class='daygame'><div><b>" + game.sport + "</b> " + game.name + "<div class='daymeta'>" + (SPORT_NAME[game.sport] || game.sport) + " · " + formatTime(game.start, false) + (game.venue ? " · " + game.venue : "") + "</div></div><span class='wx " + rate + "'>" + rate[0].toUpperCase() + rate.slice(1) + " · " + temp + "</span><div class='daytags'>" + (tags.join(" · ") || "Clear") + "</div></div>";
   }).join("") : "<p>No games scheduled.</p>";
   box.innerHTML = "<div class='dayzoom'><div class='dayzoom-head'><h3>" + dayTitle(date) + "</h3><button type='button' id='closeday'>Close</button></div>" + rows + "</div>";
   document.getElementById("closeday").onclick = () => drawCalendar();
