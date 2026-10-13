@@ -802,10 +802,12 @@ async function dayGames(date){
   }
   return games;
 }
+let openDate = "";
 async function openDay(date){
+  openDate = date;
   const box = document.getElementById("calendar");
   box.innerHTML = "<div class='dayzoom'><div class='dayzoom-head'><h3>" + dayTitle(date) + "</h3><button type='button' id='closeday'>Close</button></div><p>Loading games and weather...</p></div>";
-  document.getElementById("closeday").onclick = () => drawCalendar();
+  document.getElementById("closeday").onclick = () => { openDate = ""; drawCalendar(); };
   const games = await dayGames(date);
   if (!document.getElementById("closeday")) return;
   const rows = games.length ? games.map(game => {
@@ -816,7 +818,7 @@ async function openDay(date){
     return "<div class='daygame'><div><b>" + game.sport + "</b> " + game.name + "<div class='daymeta'>" + (SPORT_NAME[game.sport] || game.sport) + " · " + formatTime(game.start, false) + (game.venue ? " · " + game.venue : "") + "</div></div><span class='wx " + rate + "'>" + rate[0].toUpperCase() + rate.slice(1) + " · " + temp + "</span><div class='daytags'>" + (tags.join(" · ") || "Clear") + "</div></div>";
   }).join("") : "<p>No games scheduled.</p>";
   box.innerHTML = "<div class='dayzoom'><div class='dayzoom-head'><h3>" + dayTitle(date) + "</h3><button type='button' id='closeday'>Close</button></div>" + rows + "</div>";
-  document.getElementById("closeday").onclick = () => drawCalendar();
+  document.getElementById("closeday").onclick = () => { openDate = ""; drawCalendar(); };
 }
 document.getElementById("calendar").onclick = ev => {
   const day = ev.target.closest(".daycell");
@@ -2212,14 +2214,16 @@ tzSelect.onchange = () => {
   form.date.value = todayEt();
   armMidnight();
   showClock();
-  render();
+  if (openDate) openDay(openDate);
+  else render();
 };
 const hourBtn = document.getElementById("hourmode");
 hourBtn.textContent = "12hr/24hr Toggle";
 hourBtn.onclick = () => {
   localStorage.setItem("gg-hour", hour12() ? "24" : "12");
   showClock();
-  render();
+  if (openDate) openDay(openDate);
+  else render();
 };
 showClock();
 setInterval(showClock, 1000);
