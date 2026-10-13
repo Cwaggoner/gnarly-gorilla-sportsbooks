@@ -738,6 +738,7 @@ function drawCalendar(){
     }
   }
   document.getElementById("calendar").innerHTML = html;
+  if (openDate && !document.getElementById("closeday")) openDay(openDate);
 }
 
 
