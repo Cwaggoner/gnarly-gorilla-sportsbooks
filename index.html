@@ -147,7 +147,10 @@ label:has(#loadcal) { gap:0; }
 .charts { display:grid; grid-template-columns:1.4fr 1fr; gap:12px; }
 .cal { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; text-transform:uppercase; }
 .cal div { height:72px; background:#0e0e0e; border:1px solid var(--line); border-radius:6px; font-size:13px; padding:4px; line-height:1.2; overflow:hidden; }
-.cal .range { color:#8fd18a; font-size:11px; line-height:1.15; display:block; white-space:nowrap; overflow:hidden; }
+.cal .range { font-size:11px; line-height:1.15; display:block; white-space:nowrap; overflow:hidden; }
+.cal .win { color:#39ff14; }
+.cal .loss { color:#ff6b6b; }
+.cal .slash { color:#39ff14; }
 .cal .wait { color:#f0e14a; font-size:11px; line-height:1.15; display:block; }
 .cal .dow { height:auto; }
 .cal div.today { border:1px solid #39ff14; box-shadow:0 0 0 1px #39ff14 inset; }
@@ -724,7 +727,7 @@ function drawCalendar(){
       const open = load().filter(b => b.date === today && b.result === "pending");
       const winAll = open.reduce((s, b) => { const odds = Number(b.odds), stake = Number(b.stake) || 0; if (!Number.isFinite(odds) || odds === 0) return s; return s + (odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds)); }, 0);
       const loseAll = open.reduce((s, b) => s + Number(b.stake || 0), 0);
-      const line = open.length ? "All Win <span class='win'>" + money(winAll) + "</span><span class='slash'> / </span>All Lose <span class='loss'>-" + money(loseAll).replace("-", "") + "</span>" : "<br><span class='wait'>Picks Not Loaded Until " + formatTime(firstPickAt(), false) + "</span>";
+      const line = open.length ? "<span class='win'>All Win " + money(winAll) + "</span><span class='slash'> / </span><span class='loss'>All Lose -" + money(loseAll).replace("-", "") + "</span>" : "<br><span class='wait'>Picks Not Loaded Until " + formatTime(firstPickAt(), false) + "</span>";
       html += "<div class='today daycell' data-date='" + date + "'><b>" + d + "</b><br>" + line + "</div>";
     } else {
       let day = board[date];
@@ -733,7 +736,7 @@ function drawCalendar(){
         if (slips.length) day = {pl: slips.reduce((s, b) => s + slipMoney(b), 0)};
       }
       const cls = day && day.pl > 0 ? "win" : day && day.pl < 0 ? "loss" : "";
-      const range = day && Number.isFinite(Number(day.allWin)) ? "<br><span class='range'>All Win " + money(day.allWin) + " / All Lose " + money(day.allLose) + "</span>" : "";
+      const range = day && Number.isFinite(Number(day.allWin)) ? "<br><span class='range'><span class='win'>All Win " + money(day.allWin) + "</span><span class='slash'> / </span><span class='loss'>All Lose " + money(day.allLose) + "</span></span>" : "";
       html += "<div class='daycell' data-date='" + date + "'><b>" + d + "</b><br><span class='" + cls + "'>" + (day ? money(day.pl) : "") + "</span>" + range + "</div>";
     }
   }
