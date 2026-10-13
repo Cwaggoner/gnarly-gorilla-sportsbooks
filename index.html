@@ -1131,7 +1131,7 @@ function clearStalePending(){
 function render(){
   clearStalePending();
   const all = load().concat(loadGrade()).concat(gradeFile).filter(b => b && b.pick && !isNoPick(b) && !/^RANGE$/i.test(b.pick) && !/^all win/i.test(b.result || ""));
-  const unique = [];
+  let unique = [];
   const seen = new Set();
   const byKey = {};
   all.forEach(b => {
