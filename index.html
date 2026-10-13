@@ -533,9 +533,12 @@ function drawDashboard(history, manual){
   ctx.stroke();
   ctx.fillStyle = "#d6ffd0";
   ctx.font = "11px sans-serif";
-  ctx.fillText(pts[0].date, left, h - 6);
-  ctx.textAlign = "right";
-  ctx.fillText(pts[pts.length-1].date, w - right, h - 6);
+  ctx.textAlign = "center";
+  pts.forEach((p, i) => {
+    const parts = String(p.date).split("-");
+    const label = parts.length === 3 ? parts[1] + "/" + parts[2] : p.date;
+    ctx.fillText(label, x(i), h - 6);
+  });
   ctx.textAlign = "left";
 }
 function drawCharts(bets){
