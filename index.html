@@ -162,8 +162,8 @@ label:has(#loadcal) { gap:0; }
 #report td, #report th { padding:4px 16px 4px 0; }
 .charts { display:grid; grid-template-columns:1.4fr 1fr; gap:12px; }
 .cal { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; text-transform:uppercase; }
-.cal div { height:72px; background:#0e0e0e; border:1px solid var(--line); border-radius:6px; font-size:13px; padding:4px; line-height:1.2; overflow:hidden; }
-.cal .range { font-size:11px; line-height:1.15; display:block; white-space:nowrap; overflow:hidden; }
+.cal div { height:84px; background:#0e0e0e; border:1px solid var(--line); border-radius:6px; font-size:12px; padding:4px; line-height:1.15; overflow:hidden; }
+.cal .range { font-size:11px; line-height:1.15; display:block; white-space:normal; overflow:visible; }
 .cal .win { color:#39ff14; }
 .cal .loss { color:#ff6b6b; }
 .cal .slash { color:#39ff14; }
@@ -891,7 +891,7 @@ function drawCalendar(){
       const open = drive.length ? drive : local;
       const winAll = open.reduce((s, b) => { const odds = Number(b.odds), stake = Number(b.stake) || 10; if (!Number.isFinite(odds) || odds === 0) return s; return s + (odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds)); }, 0);
       const loseAll = open.reduce((s, b) => s + Number(b.stake || 10), 0);
-      const line = open.length ? "<span class='win'>All Win " + money(winAll) + "</span><span class='slash'> / </span><span class='loss'>All Lose -" + money(loseAll).replace("-", "") + "</span>" : "<br><span class='wait'>Picks Not Loaded Until " + formatTime(firstPickAt(), false) + "</span>";
+      const line = open.length ? "<span class='range'><span class='win'>All Win " + money(winAll) + "</span><span class='slash'> / </span><span class='loss'>All Lose -" + money(loseAll).replace("-", "") + "</span></span>" : "<br><span class='wait'>Picks Not Loaded Until " + formatTime(firstPickAt(), false) + "</span>";
       html += "<div class='today daycell' data-date='" + date + "'><b>" + d + "</b><br>" + line + "</div>";
     } else {
       const live = load().concat(loadGrade()).concat(gradeFile).filter(b => b.date === date && b.result !== "pending" && !isNoPick(b));
