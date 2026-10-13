@@ -146,6 +146,7 @@ label:has(#loadcal) { gap:0; }
 .cal { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
 .cal div { height:64px; background:#0e0e0e; border:1px solid var(--line); border-radius:6px; font-size:11px; padding:4px; line-height:1.15; overflow:hidden; }
 .cal .range { color:#8fd18a; font-size:9px; line-height:1.1; display:block; white-space:nowrap; overflow:hidden; }
+.cal .wait { color:#f0e14a; font-size:9px; line-height:1.1; display:block; }
 .cal .dow { height:auto; }
 .cal div.today { border:1px solid #39ff14; box-shadow:0 0 0 1px #39ff14 inset; }
 .cal .daycell { cursor:pointer; }
@@ -708,6 +709,12 @@ function drawCalendar(){
   html += names.map(n => "<div class='dow'>" + n + "</div>").join("");
   for (let i = 0; i < start; i++) html += "<div></div>";
   const today = todayEt();
+  const firstPickAt = () => {
+    const day = new Date().toLocaleDateString("en-CA", {timeZone:"America/New_York"});
+    const probe = new Date(day + "T09:00:00Z");
+    const hour = Number(new Intl.DateTimeFormat("en-US", {timeZone:"America/New_York", hour:"numeric", hourCycle:"h23"}).format(probe));
+    return new Date(probe.getTime() + (9 - hour) * 3600000);
+  };
   for (let d = 1; d <= days; d++) {
     const date = y + "-" + String(m + 1).padStart(2, "0") + "-" + String(d).padStart(2, "0");
     const isToday = date === today;
@@ -715,7 +722,7 @@ function drawCalendar(){
       const open = load().filter(b => b.date === today && b.result === "pending");
       const winAll = open.reduce((s, b) => { const odds = Number(b.odds), stake = Number(b.stake) || 0; if (!Number.isFinite(odds) || odds === 0) return s; return s + (odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds)); }, 0);
       const loseAll = open.reduce((s, b) => s + Number(b.stake || 0), 0);
-      const line = open.length ? "All Win <span class='win'>" + money(winAll) + "</span><span class='slash'> / </span>All Lose <span class='loss'>-" + money(loseAll).replace("-", "") + "</span>" : "";
+      const line = open.length ? "All Win <span class='win'>" + money(winAll) + "</span><span class='slash'> / </span>All Lose <span class='loss'>-" + money(loseAll).replace("-", "") + "</span>" : "<span class='wait'>Picks Not Loaded Until " + formatTime(firstPickAt(), false) + "</span>";
       html += "<div class='today daycell' data-date='" + date + "'><b>" + d + "</b><br>" + line + "</div>";
     } else {
       let day = board[date];
