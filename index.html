@@ -93,6 +93,8 @@ th, td { text-align:left; vertical-align:middle; padding:8px; border-bottom:1px 
 tr.sport td { color:#39ff14; font-weight:700; background:#102010; }
 #rows tr.sport td { background:#2a2a2a; }
 tr.type td { color:#d6ffd0; font-weight:700; background:#0e0e0e; padding-left:16px; }
+tr.type td .type-row { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+tr.type td .type-count { font-weight:400; color:#8fb898; font-size:12px; }
 th { color:var(--title); background:#102010; }
 .win { color:var(--title); } .loss { color:var(--red); } .push, .warn { color:var(--amber); }
 tr.manual td { color:#00e5ff; }
@@ -778,7 +780,13 @@ function render(){
     const cv = clv(b);
     let head = "";
     if (b.sport !== lastSport) { lastSport = b.sport; lastType = ""; head += "<tr class='sport'><td colspan='12'>" + esc(b.sport || "Other") + (seasonEnded(b.sport) ? " Season Ended" : "") + "</td></tr>"; }
-    if (b.type !== lastType) { lastType = b.type; head += "<tr class='type'><td colspan='12'>" + esc(b.type || "Other") + "</td></tr>"; }
+    if (b.type !== lastType) {
+      lastType = b.type;
+      const same = grouped.filter(x => x.sport === b.sport && x.type === b.type);
+      const n = k => same.filter(x => x.result === k).length;
+      const count = n("win") + " win · " + n("loss") + " loss · " + n("push") + " push · " + n("pending") + " pending · " + same.length + " total";
+      head += "<tr class='type'><td colspan='12'><div class='type-row'><span>" + esc(b.type || "Other") + "</span><span class='type-count'>" + count + "</span></div></td></tr>";
+    }
     return head + "<tr" + (b.manual ? " class='manual'" : "") + "><td>" + b.date + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td>" + esc(b.pick) + "</td><td>" + b.odds + "</td><td>" + (b.close || b.lastPrice || dash) + "</td><td class='" + (cv > 0 ? "win" : cv < 0 ? "loss" : "") + "'>" + clvText(b) + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='" + cls + "'>" + b.result + "</td><td class='" + cls + "'>" + (b.result === "pending" ? dash : money(p)) + "</td><td>" + grade + " <button data-edit='" + b.id + "'>Edit</button> <button class='danger' data-del='" + b.id + "'>Delete</button></td></tr>";
   }).join("") || "<tr><td colspan='12'>No bets yet.</td></tr>";
   try { drawCharts(gradeFile.concat(bets)); } catch (err) { document.getElementById("plotnote").textContent = "Chart failed. The rest of the page is still live."; }
