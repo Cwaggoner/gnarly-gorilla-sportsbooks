@@ -136,7 +136,8 @@ label:has(#loadcal) { gap:0; }
 #report td, #report th { padding:4px 16px 4px 0; }
 .charts { display:grid; grid-template-columns:1.4fr 1fr; gap:12px; }
 .cal { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
-.cal div { height:52px; background:#0e0e0e; border:1px solid var(--line); border-radius:6px; font-size:11px; padding:4px; line-height:1.15; overflow:hidden; }
+.cal div { height:64px; background:#0e0e0e; border:1px solid var(--line); border-radius:6px; font-size:11px; padding:4px; line-height:1.15; overflow:hidden; }
+.cal .range { color:#8fd18a; font-size:9px; line-height:1.1; display:block; white-space:nowrap; overflow:hidden; }
 .cal .dow { height:auto; }
 .cal div.today { border:1px solid #39ff14; box-shadow:0 0 0 1px #39ff14 inset; }
 .slash { color:#39ff14; }
@@ -665,7 +666,8 @@ function drawCalendar(){
         if (slips.length) day = {pl: slips.reduce((s, b) => s + slipMoney(b), 0)};
       }
       const cls = day && day.pl > 0 ? "win" : day && day.pl < 0 ? "loss" : "";
-      html += "<div><b>" + d + "</b><br><span class='" + cls + "'>" + (day ? money(day.pl) : "") + "</span></div>";
+      const range = day && Number.isFinite(Number(day.allWin)) ? "<br><span class='range'>All Win " + money(day.allWin) + " / All Lose " + money(day.allLose) + "</span>" : "";
+      html += "<div><b>" + d + "</b><br><span class='" + cls + "'>" + (day ? money(day.pl) : "") + "</span>" + range + "</div>";
     }
   }
   document.getElementById("calendar").innerHTML = html;
