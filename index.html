@@ -1,1 +1,163 @@
-PLACEHOLDER_FOR_FULL_HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gnarly Gorilla Sportsbooks | Bet Ledger For NFL, NBA, NHL, MLB, CBB, CFB</title>
+<meta name="description" content="Gnarly Gorilla Sportsbooks is a free bet ledger for Chrome and Chromebook. Log BetMGM, Caesars, DraftKings, Fanatics, FanDuel, and HardRock slips for NFL, NBA, NHL, MLB, CBB, and CFB, then grade them into a report card.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#0a0a0a">
+<link rel="canonical" href="https://cwaggoner.github.io/gnarly-gorilla-sportsbooks/">
+<link rel="icon" href="gg-icon.png" type="image/png">
+<link rel="apple-touch-icon" href="gg-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Gnarly Gorilla Sportsbooks">
+<meta property="og:title" content="Gnarly Gorilla Sportsbooks | Bet Ledger">
+<meta property="og:description" content="Free sports bet ledger. Log $10 slips, grade wins and losses, and copy the report card. No sportsbook login.">
+<meta property="og:url" content="https://cwaggoner.github.io/gnarly-gorilla-sportsbooks/">
+<meta property="og:image" content="https://cwaggoner.github.io/gnarly-gorilla-sportsbooks/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Gnarly Gorilla Sportsbooks | Bet Ledger">
+<meta name="twitter:description" content="Free sports bet ledger for NFL, NBA, NHL, MLB, CBB, and CFB. Grade yesterday and copy the report.">
+<meta name="twitter:image" content="https://cwaggoner.github.io/gnarly-gorilla-sportsbooks/og-image.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Gnarly Gorilla Sportsbooks","url":"https://cwaggoner.github.io/gnarly-gorilla-sportsbooks/","applicationCategory":"SportsApplication","operatingSystem":"Chrome, ChromeOS","description":"Free bet ledger for logging and grading sports slips across BetMGM, Caesars, DraftKings, Fanatics, FanDuel, and HardRock.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"image":"https://cwaggoner.github.io/gnarly-gorilla-sportsbooks/og-image.png"}
+</script>
+<style>
+:root { --bg:#0a0a0a; --card:#141414; --line:#243024; --title:#39ff14; --text:#d6ffd0; --muted:#8fb898; --amber:#f0e14a; --red:#ff6b6b; }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text); font:15px/1.4 system-ui, sans-serif; }
+header { display:grid; grid-template-columns:96px 1fr auto 96px; align-items:stretch; gap:12px; width:100%; box-sizing:border-box; margin:0; padding:6px 10px; border:1px solid #39ff14; border-radius:10px; background:#0a0a0a; }
+.topbar { position:sticky; top:0; z-index:6; background:#0a0a0a; padding-bottom:8px; }
+.head-icon { display:flex; align-items:center; justify-content:center; border-right:1px solid #39ff14; padding-right:6px; }
+.head-icon.right { border-right:none !important; border-left:1px solid #39ff14; padding-right:0; padding-left:6px; }
+header img { width:72px; height:72px; border-radius:12px; display:block; }
+.head-flag { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; }
+.head-flag span { color:#d6ffd0; font-size:10px; letter-spacing:.08em; line-height:1; }
+.head-flag svg { width:28px; height:18px; display:block; border-radius:2px; box-shadow:0 1px 2px rgba(0,0,0,.6); }
+header .head-text { display:flex; flex-direction:column; justify-content:center; }
+header h1 { margin:0; color:var(--title); font-size:22px; letter-spacing:.04em; }
+header p { margin:4px 0 0; color:var(--muted); }
+.page { max-width:1100px; margin:0 auto; padding:16px; }
+main { margin:0; padding:0; }
+footer.card { width:100%; max-width:none; margin:14px 0 0; box-sizing:border-box; }
+.page-end { height:55vh; }
+.stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; margin:12px 0 16px; }
+.stat, .card, table { background:var(--card); border:1px solid #39ff14; border-radius:10px; }
+.stat { padding:12px; display:flex; flex-direction:column; justify-content:center; }
+.stat b { display:block; color:var(--title); font-size:20px; }
+.stat span { color:var(--muted); font-size:12px; }
+.card { padding:14px; margin-top:14px; }
+.section-head { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.section-head h2 { margin:0; }
+.slips-side { margin:0; text-align:left; max-width:62%; font-size:12px; }
+.card > h2, .card > .section-head { background:rgba(57,255,20,.12); border-bottom:1px solid #39ff14; margin:-14px -14px 12px; padding:10px 14px; }
+h2.split-title { margin:16px 0 12px; border:1px solid #39ff14; border-radius:10px; }
+.api-note { margin-top:18px; }
+.api-note a { color:var(--title); }
+.print-preview { margin-top:12px; }
+.print-preview img { width:100%; height:auto; border:1px solid #39ff14; border-radius:10px; background:#0a0a0a; }
+h2 { margin:0 0 10px; font-size:16px; color:var(--title); }
+form, .row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:8px; align-items:center; }
+.break { grid-column:1 / -1; height:0; }
+.stack { display:flex; flex-direction:row; gap:8px; grid-column:1 / -1; align-items:flex-end; }
+#picknote, #loadnote, #editnote { display:flex; align-items:center; min-height:38px; margin:0; padding:8px 12px; border:1px solid var(--line); border-radius:8px; box-sizing:border-box; }
+.bet-top { grid-column:1 / -1; display:grid; grid-template-columns:minmax(0,1fr) 170px 210px; gap:10px; align-items:stretch; }
+.bet-box { border:1px solid #39ff14; border-radius:10px; padding:8px 6px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:center; }
+#betfields { display:grid; grid-template-columns:16ch 12ch 8ch 11ch minmax(0,1fr) 11ch; gap:2px; align-content:center; justify-content:start; }
+#betfields label { min-width:0; }
+#pickselect { min-width:0; max-width:100%; }
+#betfields label input, #betfields label select { padding-left:4px; padding-right:4px; }
+#betfields label, .notes-field { align-items:stretch; text-align:left; }
+#betfields label input, #betfields #pickselect { width:100%; }
+#betfields label select { width:auto; }
+#betfields label:nth-child(n+7) { min-width:0; }
+#betload { display:flex; flex-direction:column; align-items:stretch; justify-content:center; gap:8px; }
+#betload button { width:100%; }
+#betload img { width:100%; max-width:160px; height:auto; flex:1 1 auto; object-fit:contain; border:1px solid var(--line); border-radius:8px; padding:8px; box-sizing:border-box; background:#0e0e0e; cursor:pointer; }
+#betnotes { display:flex; flex-direction:column; justify-content:center; gap:8px; min-height:120px; }
+.notes-field { grid-column:1 / -1; width:100%; }
+.notes-field textarea { width:100%; min-height:64px; }
+.notes-head { display:flex; align-items:baseline; justify-content:space-between; gap:12px; width:100%; }
+.fine { font-size:12px; line-height:1.2; margin:0; margin-left:auto; text-align:right; }
+
+label { display:flex; flex-direction:column; align-items:center; text-align:center; gap:4px; font-size:12px; color:var(--muted); }
+input, select, button, textarea { background:#0e0e0e; color:var(--text); border:1px solid var(--line); border-radius:8px; padding:8px; }
+.tools > button, .stack > button, .file-face, .tools select { height:38px; box-sizing:border-box; }
+.btn-pair { display:flex; flex-direction:column; align-items:center; gap:4px; }
+.btn-pair span { font-size:12px; color:var(--muted); text-align:center; width:100%; }
+.btn-pair .pair-title { display:flex; align-items:center; justify-content:center; gap:6px; }
+.btn-pair .pair-title .warn { width:auto; white-space:nowrap; }
+.btn-pair div { display:flex; gap:8px; }
+.book-select { width:12ch; min-width:12ch; max-width:12ch; box-sizing:content-box; }
+.sport-select { width:8ch; min-width:8ch; max-width:8ch; box-sizing:content-box; }
+.type-select { width:11ch; min-width:11ch; max-width:11ch; box-sizing:content-box; }
+.result-select { width:11ch; min-width:11ch; max-width:11ch; box-sizing:content-box; }
+#betfields input[type=date] { width:16ch; min-width:16ch; max-width:16ch; }
+.book-key { display:flex; align-items:flex-end; gap:12px; }
+#oddskeybox { display:flex; margin:0; }
+#seasons { margin-bottom:18px; }
+#seasons table { margin-bottom:28px; }
+.season-hold, .season-hold td { border:0; background:transparent; box-shadow:none; width:100%; }
+.season-hold td { height:18px; width:50%; }
+#reportDay { color-scheme:dark; }
+#reportDay::-webkit-calendar-picker-indicator { filter:invert(1); opacity:1; cursor:pointer; }
+textarea { width:100%; min-height:120px; font:13px/1.4 ui-monospace, monospace; }
+button { cursor:pointer; color:var(--title); font-weight:700; }
+button.danger { color:var(--red); }
+button.amber { color:var(--amber); }
+table { width:100%; border-collapse:separate; border-spacing:0; margin-top:8px; border:1px solid #39ff14; border-radius:10px; overflow:hidden; }
+.card, .page { max-width:100%; }
+.table-wrap { display:block; width:100%; overflow-x:auto; }
+canvas { max-width:100%; height:auto; }
+th, td { text-align:left; vertical-align:middle; padding:8px; border-bottom:1px solid #39ff14; font-size:13px; }
+tr.sport td { color:#39ff14; font-weight:700; background:#102010; }
+#rows tr.sport td { background:#2a2a2a; }
+tr.type td { color:#d6ffd0; font-weight:700; background:#0e0e0e; padding-left:16px; }
+tr.type td .type-row { display:flex; justify-content:flex-start; align-items:center; gap:12px; }
+tr.type td .type-count { font-weight:400; color:#8fb898; font-size:12px; }
+th { color:var(--title); background:#102010; }
+.win { color:var(--title); } .loss { color:var(--red); } .push, .warn { color:var(--amber); }
+tr.manual td { color:#00e5ff; }
+tr.fromcard td { color:#b0b0b0; }
+.tools { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; align-items:flex-end; }
+.jump { display:flex; gap:6px; margin:6px 0; justify-content:center; align-items:center; }
+.jump button { padding:4px 8px; font-size:12px; }
+.sitenav { position:relative; z-index:5; display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:center; gap:0; background:#0a0a0a; border:1px solid #39ff14; border-radius:8px; padding:3px 8px; margin:8px 0 0; overflow:hidden; }
+.nav-cell { display:flex; align-items:center; justify-content:center; min-width:0; gap:6px; flex-wrap:nowrap; overflow:hidden; }
+.nav-cell.mid { border-left:1px solid #39ff14; border-right:1px solid #39ff14; padding:0 10px; flex:0 0 auto; overflow:visible; }
+.nav-cell.left { color:var(--title); white-space:nowrap; }
+.sitenav button, .sitenav select { height:26px; padding:2px 6px; font-size:12px; box-sizing:border-box; }
+.sitenav .tz { display:flex; flex-direction:row; align-items:center; justify-content:center; gap:6px; color:var(--muted); font-size:12px; white-space:nowrap; flex-wrap:nowrap; }
+.sitenav .tz select { width:110px; min-width:110px; max-width:110px; height:26px; flex:0 0 110px; align-self:center; }
+.sitenav .tz button { min-width:14ch; white-space:nowrap; }
+.sitenav .clock { color:var(--title); white-space:nowrap; }
+.card { scroll-margin-top:0; }
+input[type=file] { position:absolute; width:1px; height:1px; opacity:0; }
+.file-face { display:flex; align-items:center; justify-content:center; text-align:center; height:38px; min-width:140px; padding:6px 10px; box-sizing:border-box; background:#0e0e0e; color:var(--text); border:1px solid var(--line); border-radius:8px; cursor:pointer; }
+label:has(input[type=file]) { position:relative; }
+#loadcal { height:38px; }
+label:has(#loadcal) { gap:0; }
+.card-analysis { margin:8px 0 10px; border:1px solid #39ff14; border-radius:8px; padding:8px 10px; background:#0e0e0e; }
+.card-analysis h3 { margin:0 0 6px; color:#39ff14; font-size:13px; letter-spacing:.04em; }
+.analysis-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; }
+.analysis-cell { border:1px solid #243024; border-radius:6px; padding:6px 8px; min-height:0; }
+.analysis-cell b { color:#39ff14; font-size:12px; }
+.analysis-cell .meta { color:#f0e14a; font-size:11px; }
+.analysis-cell p { margin:2px 0 0; font-size:11px; color:var(--text); }
+.page-end { height:55vh; }
+</style>
+</head>
+<body>
+<div class="topbar">
+<header>
+<div class="head-icon"><img src="gg-icon.png" alt="Gnarly Gorilla"></div>
+<div class="head-text">
+<h1>Gnarly Gorilla Sportsbooks</h1>
+<p>Free bet ledger for Gnarly Gorilla Sports Decks.</p>
+<p>Log NFL, NBA, NHL, MLB, CBB, and CFB slips, grade them the next day, and copy the report card.</p>
+<p id="liveline" class="warn" style="margin:6px 0 0;font-size:12px;"></p>
+</div>
+<div class="head-flag" aria-label="United States"><svg viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg" role="img"><defs
