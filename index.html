@@ -146,18 +146,2511 @@ label:has(#loadcal) { gap:0; }
 .analysis-cell { border:1px solid #243024; border-radius:6px; padding:6px 8px; min-height:0; }
 .analysis-cell b { color:#39ff14; font-size:12px; }
 .analysis-cell .meta { color:#f0e14a; font-size:11px; }
-.analysis-cell p { margin:2px 0 0; font-size:11px; color:var(--text); }
-.page-end { height:55vh; }
+.analysis-cell p { margin:2px 0 0; color:#d6ffd0; font-size:11px; line-height:1.25; }
+.sharp-read { margin-top:10px; }
+.sharp-read b { color:#39ff14; font-size:12px; }
+.sharp-read p { margin:4px 0 0; color:#d6ffd0; font-size:12px; line-height:1.35; }
+.card-rest { margin-top:10px; border:1px solid #39ff14; border-radius:8px; padding:10px; }
+@media (max-width:700px) { .analysis-grid { grid-template-columns:1fr 1fr; } }
+#dashboard { display:flex; flex-direction:column; }
+#dashboard .dash-tools { margin-top:14px; }
+#dashChart { border:1px solid #39ff14; border-radius:8px; margin:0 0 16px; }
+#report table, #report th, #report td { border:0; background:transparent; box-shadow:none; }
+#report th { color:var(--title); font-weight:700; }
+#report hr.split { border:0; border-top:2px solid #39ff14; margin:16px 0 12px; }
+#report tr.edge td { color:#f0e14a; }
+#report td, #report th { padding:4px 16px 4px 0; }
+.charts { display:grid; grid-template-columns:1.4fr 1fr; gap:12px; }
+.cal { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; text-transform:uppercase; }
+.cal div { height:84px; background:#0e0e0e; border:1px solid var(--line); border-radius:6px; font-size:12px; padding:4px; line-height:1.15; overflow:hidden; }
+.cal .range { font-size:11px; line-height:1.15; display:block; white-space:normal; overflow:visible; }
+.cal .win { color:#39ff14; }
+.cal .loss { color:#ff6b6b; }
+.cal .slash { color:#39ff14; }
+.cal .wait { color:#f0e14a; font-size:11px; line-height:1.15; display:block; }
+.cal .dow { height:auto; }
+.cal div.today { border:1px solid #39ff14; box-shadow:0 0 0 1px #39ff14 inset; }
+.cal .daycell { cursor:pointer; }
+.cal .daycell:hover { border-color:#39ff14; }
+.cal .dayzoom { height:auto; overflow:visible; grid-column:1 / -1; border:1px solid #39ff14; border-radius:8px; padding:10px; background:#0e0e0e; font-size:13px; line-height:1.4; text-transform:none; }
+.cal .dayzoom div { height:auto; overflow:visible; background:transparent; border:0; border-radius:0; padding:0; font-size:13px; line-height:1.4; }
+.dayzoom-head { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px; }
+.dayzoom-head h3 { margin:0; color:var(--title); font-size:16px; white-space:nowrap; }
+.daygame { display:grid; grid-template-columns:1fr auto auto; gap:6px 10px; align-items:center; border-bottom:1px solid #39ff14; padding:8px 0; }
+.daygame b { color:var(--title); font-size:13px; }
+.daymeta { color:var(--muted); font-size:13px; }
+.wx { justify-self:end; font-size:13px; padding:2px 8px; border-radius:8px; border:1px solid var(--line); width:18ch; box-sizing:border-box; text-align:center; white-space:nowrap; }
+.wx.good { color:#39ff14; border-color:#39ff14; }
+.wx.fair { color:#f0e14a; border-color:#f0e14a; }
+.wx.poor { color:#ff6b6b; border-color:#ff6b6b; }
+.daytags { color:var(--text); font-size:13px; white-space:nowrap; }
+.slash { color:#39ff14; }
+.cal .dow { min-height:0; color:var(--title); background:transparent; border:0; }
+canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--line); border-radius:8px; display:block; }
+.charts canvas { width:100%; height:192px; }
+@media (max-width:700px) { .charts { grid-template-columns:1fr; } .bet-top { grid-template-columns:1fr; } #betfields { grid-template-columns:1fr 1fr; } #betload img { max-width:120px; } }
+
+@media (max-width:700px) { table { display:block; overflow-x:auto; } }
+.ekg{display:block;width:100%;height:36px;margin:0 auto}
+.ekg svg{width:100%;height:36px}
+.ekg-dot{position:absolute;top:13px;width:10px;height:10px;border-radius:50%;background:#fff;transform:translateX(-50%)}
+.ekg .base{fill:none;stroke:#163016;stroke-width:1.5;vector-effect:non-scaling-stroke}
+.ekg .trace{fill:none;stroke:#39ff14;stroke-width:1.5;stroke-linecap:round;vector-effect:non-scaling-stroke}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
 <body>
+
+<div class="page">
 <div class="topbar">
 <header>
 <div class="head-icon"><img src="gg-icon.png" alt="Gnarly Gorilla"></div>
 <div class="head-text">
 <h1>Gnarly Gorilla Sportsbooks</h1>
-<p>Free bet ledger for Gnarly Gorilla Sports Decks.</p>
-<p>Log NFL, NBA, NHL, MLB, CBB, and CFB slips, grade them the next day, and copy the report card.</p>
-<p id="liveline" class="warn" style="margin:6px 0 0;font-size:12px;"></p>
+<p>Free bet ledger for Gnarly Gorilla Sports Decks. Log NFL, NBA, NHL, MLB, CBB, and CFB slips, grade them the next day, and copy the report card.</p>
+<p id="liveline" class="warn" style="margin:6px 0 0;font-size:12px;">Closed Value Lines update at 6:00 PM Eastern. Last live price is saved then.</p>
 </div>
-<div class="head-flag" aria-label="United States"><svg viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg" role="img"><defs
+<div class="head-flag" aria-label="United States"><svg viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg" role="img"><defs><linearGradient id="flaggloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".45" stop-color="#fff" stop-opacity=".08"/><stop offset="1" stop-color="#000" stop-opacity=".25"/></linearGradient></defs><rect width="28" height="18" fill="#b22234"/><g fill="#fff"><rect y="1.38" width="28" height="1.38"/><rect y="4.15" width="28" height="1.38"/><rect y="6.92" width="28" height="1.38"/><rect y="9.69" width="28" height="1.38"/><rect y="12.46" width="28" height="1.38"/><rect y="15.23" width="28" height="1.38"/></g><rect width="11.2" height="9.7" fill="#3c3b6e"/><rect width="28" height="18" fill="url(#flaggloss)"/></svg><span>USA</span><span id="headregion"></span><span id="headrules">BETTING RULES</span></div>
+<div class="head-icon right"><img src="gg-icon.png" alt="Gnarly Gorilla"></div>
+</header>
+<nav class="sitenav" id="sitenav">
+<div class="nav-cell left"><span class="clock" id="zonedate"></span><span class="clock" id="zonetime"></span></div>
+<div class="nav-cell mid">
+<button type="button" data-jump="seasons">Seasons</button>
+<button type="button" data-jump="dashboard">Dashboard</button>
+<button type="button" data-jump="todaycard">Today</button>
+<button type="button" data-jump="slips">Slips</button>
+<button type="button" data-jump="reportcard">Report Card</button>
+<button type="button" data-jump="charts">Charts</button>
+<button type="button" data-jump="breaks">Books</button>
+<button type="button" data-jump="addbet">Add</button>
+<button type="button" data-jump="calendarcard">Calendar</button>
+</div>
+<div class="nav-cell right">
+<label class="tz">Zone
+<select id="timezone">
+<option value="America/Anchorage">Alaska</option>
+<option value="America/Phoenix">Arizona</option>
+<option value="America/Chicago">Central</option>
+<option value="America/New_York" selected>Eastern</option>
+<option value="Pacific/Honolulu">Hawaii</option>
+<option value="Europe/London">London</option>
+<option value="America/Denver">Mountain</option>
+<option value="America/Los_Angeles">Pacific</option>
+<option value="UTC">UTC</option>
+</select>
+<button type="button" id="hourmode">12hr/24hr Toggle</button>
+</label>
+</div>
+</nav>
+</div>
+<div id="seasons" class="card"><div class="section-head"><h2>Season Dates</h2><p class="warn slips-side">Checked in the month each league publishes its schedule.</p></div></div>
+<main>
+<section class="card" id="dashboard">
+<div class="section-head"><h2>Dashboard</h2><p class="warn slips-side">Last 7 days on this card. The full history stays in the saved file.</p></div>
+<section class="stats" id="stats"></section>
+<canvas id="dashChart" width="640" height="320"></canvas>
+<table>
+<thead><tr><th>Date</th><th>W/L Record</th><th>Profit</th><th>ROI</th><th>Units</th><th>Pending</th><th>Avg CLV</th></tr></thead>
+<tbody id="dashrows"></tbody>
+</table>
+<div class="tools dash-tools">
+<div class="btn-pair"><span>Data Save/Reset</span><div><button type="button" id="savedash">Save Dashboard</button><button type="button" id="resetdash">Reset</button></div></div>
+<label>Load Dashboard<input type="file" id="loaddash" accept=".txt,text/plain"><span class="file-face">No File Chosen</span></label>
+<span id="dashnote" class="warn"></span>
+</div>
+</section>
+<section class="card" id="todaycard">
+<div class="section-head"><h2>Today's Card</h2><p class="warn slips-side">One play per line: Sport | Type | Pick | American odds | Confidence. Stake is $10. Book is the dropdown below. Pending until graded.</p></div>
+<div class="card-analysis" id="cardanalysis"><h3>Analysis</h3><div class="analysis-grid" id="analysisgrid"></div><div class="sharp-read"><b>Analysis:</b><p id="sharpread"></p></div></div>
+<div class="card-rest">
+<div class="book-key">
+<label>Book<select id="cardbook" class="book-select">
+<option>BetMGM</option>
+<option>Caesars</option>
+<option>DraftKings</option>
+<option>Fanatics</option>
+<option>FanDuel</option>
+<option>HardRock</option>
+</select></label>
+<label id="oddskeybox">Odds key<input id="oddskey" type="password" placeholder="Free key from the-odds-api.com" autocomplete="off"></label>
+</div>
+<p class="api-note">Paste a free or paid Odds API key here. Load Picks in Add A Bet uses this key. Add A Bet Book drives the list. This Book only stamps a card you load from this section.<br><a href="https://the-odds-api.com/" target="_blank" rel="noopener noreferrer">Open The Odds API</a></p>
+<textarea id="paste" placeholder="NFL | Spread | Chiefs -3.5 | -110 | High 62%"></textarea>
+<div class="tools">
+<label>Upload Pick-Card PDF<input type="file" id="cardpdf" accept="application/pdf,.pdf"><span class="file-face">No File Chosen</span></label>
+<div class="btn-pair"><span>Loaders</span><div><button type="button" id="loadcard">Load Card As Pending</button><button type="button" id="loaddrive">Load Drive Card</button></div></div>
+</div>
+<p id="pdfnote" class="warn"></p>
+</div>
+</section>
+<section class="card" id="reportcard">
+<h2>Report Card</h2>
+<div class="jump"><button type="button" data-jump="printpreview">Page 1</button><button type="button" data-jump="printpreview2">Page 2</button></div>
+<div class="tools">
+<label>Day<input type="date" id="reportDay"></label>
+<label>Show<select id="reportShow"><option value="both">Both</option><option value="pending">Pending</option><option value="graded">Graded</option></select></label>
+</div>
+<div id="report"></div>
+<div class="tools"><button type="button" id="copyreport">Copy Report</button><button type="button" id="printreport">Print Report</button><button type="button" id="savepng">Save PNG</button><span id="copynote" class="warn"></span><span id="printnote" class="warn"></span></div>
+<div id="printpreview" class="print-preview" hidden>
+<div class="jump"><button type="button" data-jump="reportcard">Report</button><button type="button" data-jump="printpreview2">Page 2</button></div>
+<img id="printimg" alt="Report card print preview" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+<div class="tools"><button type="button" id="saveprint">Save PDF</button></div>
+</div>
+<div id="printpreview2" class="print-preview" hidden>
+<div class="jump"><button type="button" data-jump="reportcard">Report</button><button type="button" data-jump="printpreview">Page 1</button></div>
+<img id="printimg2" alt="Report card second page" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+</div>
+</section>
+<section class="card" id="charts">
+<div class="section-head"><h2>Charts</h2><p class="warn slips-side">Profit uses settled slips. CLV uses every saved close, including pending. <span id="plotnote"></span></p><button type="button" id="plot">Plot</button></div>
+<div class="charts">
+<div><h2>Cumulative Profit</h2><canvas id="profitChart" width="640" height="220"></canvas></div>
+<div><h2>Profit By Sport</h2><canvas id="sportChart" width="420" height="220"></canvas></div>
+</div>
+</section>
+<section class="card" id="breaks"></section>
+<section class="card" id="addbet">
+<h2>Add A Bet</h2>
+<form id="form">
+<div class="bet-top">
+<div class="bet-box" id="betfields">
+<label>Date<input type="date" name="date" required></label>
+<label>Book<select name="book" class="book-select" required>
+<option>BetMGM</option>
+<option>Caesars</option>
+<option>DraftKings</option>
+<option>Fanatics</option>
+<option>FanDuel</option>
+<option>HardRock</option>
+</select></label>
+<label>Sport<select name="sport" class="sport-select" required>
+<option>CBB</option>
+<option>CFB</option>
+<option>MLB</option>
+<option>NBA</option>
+<option selected>NFL</option>
+<option>NHL</option>
+</select></label>
+<label>Type<select name="type" class="type-select"><option>Moneyline</option><option>Spread</option><option>Total</option><option>Prop</option><option>Parlay</option><option>SGP</option></select></label>
+<label>Pick<select name="pick" id="pickselect" required><option value="">Select a pick</option></select></label>
+<label>Result<select name="result" class="result-select"><option>pending</option><option>win</option><option>loss</option><option>push</option><option>void</option></select></label>
+<label>American Odds<input name="odds" type="number" step="1" placeholder="-110" required></label>
+<label>Close Odds<input name="close" type="number" step="1" placeholder="-120"></label>
+<input type="hidden" name="editId">
+<label>Stake $<input name="stake" type="number" step="0.01" min="0" value="10" required></label>
+</div>
+<div class="bet-box" id="betload"><button type="button" id="loadpicks">Load Picks</button><img id="loadicon" src="gg-icon.png" alt="Gnarly Gorilla"></div>
+<div class="bet-box" id="betnotes">
+<p id="picknote" class="warn"></p>
+<span id="loadnote" class="warn"></span>
+<span id="editnote" class="warn"></span>
+</div>
+</div>
+<label class="notes-field"><span class="notes-head">Notes <span class="warn fine">Load Picks uses the Odds API key from Today's Card and the Book selected here. Moneyline, Spread, and Total fill from that book. A refresh restores the last list with no new call.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span><textarea name="notes" placeholder="High 62%"></textarea></label>
+<div class="stack">
+<button type="submit" id="savebtn">Save Bet</button>
+<button type="button" id="canceledit">Cancel Edit</button>
+</div>
+</form>
+</section>
+<section class="card" id="slips">
+<div class="section-head"><h2>Slips</h2><p class="warn slips-side">This card keeps today and yesterday only. Older days stay on the calendar and in the published files.</p></div>
+<div class="tools">
+<label>Sport<select id="fSport" class="sport-select"><option value="">All</option><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option></select></label>
+<label>Book<select id="fBook" class="book-select"><option value="">All</option><option>BetMGM</option><option>Caesars</option><option>DraftKings</option><option>Fanatics</option><option>FanDuel</option><option>HardRock</option></select></label>
+<label>Market<select id="fType"><option value="">All</option><option>Moneyline</option><option>Spread</option><option>Total</option><option>Prop</option><option>Parlay</option><option>SGP</option></select></label>
+<label>Result<select id="fResult"><option value="">All</option><option>pending</option><option>win</option><option>loss</option><option>push</option></select></label>
+</div>
+<div class="tools">
+<label>Load Ledger<input type="file" id="loadledger" accept=".json,application/json"><span class="file-face">No File Chosen</span></label>
+<div class="btn-pair"><span>Ledger Data</span><div><button type="button" id="syncledger">Sync Ledger</button><button type="button" id="saveledger">Save Ledger</button></div></div>
+<span id="ledgernote" class="warn"></span>
+<label>Import CSV<input type="file" id="import" accept=".csv,text/csv"><span class="file-face">No File Chosen</span></label>
+<div class="btn-pair"><span>Exporting</span><div><button type="button" id="exportpdf">Export PDF</button><button type="button" id="export">Export Spreadsheet</button><button type="button" class="danger" id="clear">Clear All</button></div></div>
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>Date</th><th>Book</th><th>Sport</th><th>Type</th><th>Pick</th><th>Odds</th><th>Close</th><th>CLV</th><th>Stake</th><th>Result</th><th>P/L</th><th>Grade</th></tr></thead>
+<tbody id="rows"></tbody>
+</table></div>
+<p class="api-note">Live prices need the Odds API key from Today's Card. The pick list is filled in Add A Bet. A saved list returns on refresh with no new call. A new book calls the API once, then uses the save for 15 minutes.<br><a href="https://the-odds-api.com/" target="_blank" rel="noopener noreferrer">Open The Odds API</a></p>
+</section>
+<section class="card" id="calendarcard">
+<div class="section-head"><h2>Calendar</h2><p class="warn slips-side">Everyone sees the shared $10 calendar until they upload a file. An uploaded file stays in this browser only. Other users do not see it. Use Shared Calendar to go back.</p></div>
+<div class="tools"><div class="btn-pair"><span>Navigation</span><div><button type="button" id="prevMonth">Prev</button><button type="button" id="nextMonth">Next</button></div></div><label>Load My Calendar<input type="file" id="loadcal" accept=".json,application/json"><span class="file-face">No File Chosen</span></label><div class="btn-pair"><span class="pair-title"><span id="calnote" class="warn"></span></span><div><button type="button" id="resetcal">Use Shared Calendar</button></div></div></div>
+<div class="cal" id="calendar"></div>
+</section>
+</main>
+<footer class="card">
+<h2>About This Ledger</h2>
+<p>Gnarly Gorilla Sportsbooks is a free browser bet ledger for the daily Gnarly Gorilla pick cards. It tracks American-odds slips for NFL, NBA, NHL, MLB, college basketball, and college football at BetMGM, Caesars, DraftKings, Fanatics, FanDuel, and HardRock. Bets stay in this browser. The page does not log into a sportsbook and does not place wagers.</p>
+<p class="warn" id="staterule">Bet Responsibly. Gambling involves risk. Wagers can lose the full stake. This ledger is a record of picks and results, not a sportsbook, not betting advice, and not an offer to place a wager. You must be 21 or older where sports betting is legal. If gambling is causing problems, call or text 1-800-GAMBLER.</p>
+<p class="warn" id="statebooks">State rules load from the visitor location.</p>
+</footer>
+<div class="page-end"></div>
+</div>
+<script>
+const KEY = "gnarly-gorilla-sportsbooks-v1";
+const GRADE_KEY = "gnarly-gorilla-grading-v1";
+const UNIT = 10;
+const form = document.getElementById("form");
+form.date.value = new Date().toLocaleDateString("en-CA", {timeZone: localStorage.getItem("gg-timezone") || "America/New_York"});
+function ymd(d){ return d.toISOString().slice(0,10); }
+function siteZone(){ return localStorage.getItem("gg-timezone") || Intl.DateTimeFormat().resolvedOptions().timeZone || "America/New_York"; }
+function hour12(){ return localStorage.getItem("gg-hour") !== "24"; }
+function formatTime(value, seconds){
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  const opt = {timeZone: siteZone(), hour:"numeric", minute:"2-digit", hour12: hour12()};
+  if (seconds !== false) opt.second = "2-digit";
+  return date.toLocaleTimeString("en-US", opt);
+}
+function liveByText(){
+  const zone = siteZone();
+  const day = new Date().toLocaleDateString("en-CA", {timeZone: "America/New_York"});
+  const guess = new Date(day + "T13:30:00Z");
+  const parts = new Intl.DateTimeFormat("en-US", {timeZone: "America/New_York", hour:"numeric", minute:"numeric", hourCycle:"h23"}).formatToParts(guess);
+  const h = Number(parts.find(p => p.type === "hour").value);
+  const m = Number(parts.find(p => p.type === "minute").value);
+  const instant = new Date(guess.getTime() + ((9 * 60 + 30) - (h * 60 + m)) * 60000);
+  const clock = instant.toLocaleTimeString("en-US", {timeZone: zone, hour:"numeric", minute:"2-digit", hour12: hour12()});
+  const place = zone.replace(/_/g, " ").split("/").pop();
+  return "All picks live by " + clock + " " + place + ". Cards post at 9:00 AM Eastern. The extra 30 minutes is the buffer.";
+}
+function showClock(){
+  const now = new Date();
+  const date = document.getElementById("zonedate");
+  const time = document.getElementById("zonetime");
+  if (date) date.textContent = now.toLocaleDateString("en-US", {timeZone: siteZone(), weekday:"long", month:"long", day:"numeric", year:"numeric"});
+  if (time) time.textContent = formatTime(now, true);
+  const live = document.getElementById("liveline");
+  if (live) live.textContent = liveByText();
+}
+function yesterday(){ const d = new Date(todayEt() + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() - 1); return d.toISOString().slice(0,10); }
+function load(){ try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { return []; } }
+function loadGrade(){ try { return JSON.parse(localStorage.getItem(GRADE_KEY) || "[]"); } catch (e) { return []; } }
+function archiveSlips(bets){
+  const prior = loadGrade();
+  const seen = new Set(prior.map(b => [b.date, b.sport, b.pick].join("|")));
+  bets.forEach(b => { const k = [b.date, b.sport, b.pick].join("|"); if (!seen.has(k)) { prior.push(b); seen.add(k); } });
+  localStorage.setItem(GRADE_KEY, JSON.stringify(prior));
+  return prior.length;
+}
+function save(bets){ localStorage.setItem(KEY, JSON.stringify(bets)); render(); }
+function slipMoney(b){
+  if (!b || b.result === "pending") return 0;
+  const published = Number(b.profit);
+  if ((b.result === "loss" || b.result === "push") && Number.isFinite(published)) return published;
+  if (b.result === "win" && Number.isFinite(published) && published !== 0) return published;
+  return profit(b);
+}
+function profit(b){
+  if (b.result === "pending" || b.result === "void" || b.result === "push") return 0;
+  if ((b.result === "win" || b.result === "loss") && Number.isFinite(Number(b.profit))) return Number(b.profit);
+  const odds = Number(b.odds), stake = Number(b.stake) || 0;
+  if (!Number.isFinite(stake)) return 0;
+  if (b.result !== "win") return -stake;
+  if (!Number.isFinite(odds) || odds === 0) return 0;
+  const winAmt = odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds);
+  return Number.isFinite(winAmt) ? winAmt : 0;
+}
+function money(n){ n = Number(n); if (!Number.isFinite(n)) return "-"; return (n < 0 ? "-$" : "$") + Math.abs(n).toFixed(2); }
+function rec(list){
+  const w = list.filter(b => b.result === "win").length;
+  const l = list.filter(b => b.result === "loss").length;
+  const p = list.filter(b => b.result === "push").length;
+  return w + "-" + l + "-" + p;
+}
+function esc(s){ return String(s == null ? "" : s).replace(/&/g,"&").replace(/</g,"<").replace(/>/g,">"); }
+
+
+function shiftDate(iso, days){
+  const [y, m, d] = iso.split("-").map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d + days));
+  return dt.toISOString().slice(0, 10);
+}
+function lastSevenDates(){
+  const today = todayEt();
+  return Array.from({length: 7}, (_, i) => shiftDate(today, i - 7));
+}
+function publishedDashboard(){
+  const slips = (gradeFile || []).filter(b => b && b.date && !isNoPick(b) && (b.result === "win" || b.result === "loss" || b.result === "push"));
+  return lastSevenDates().map(date => {
+    const day = publishedCalendar[date] || {};
+    const lines = slips.filter(b => b.date === date);
+    const profit = Number.isFinite(Number(day.pl)) ? Number(day.pl) : lines.reduce((s, b) => s + (Number(b.profit) || 0), 0);
+    const n = Number(day.n) || lines.length;
+    const staked = n * UNIT;
+    const withClose = lines.filter(b => b.close !== "" && b.close != null);
+    const clvs = withClose.map(clv).filter(v => v != null);
+    const saved = day.clv;
+    let dayClv = "No Close Saved";
+    if (!lines.length) dayClv = "No Close Saved";
+    else if (!withClose.length) dayClv = "Close Not On File";
+    else if (clvs.length) dayClv = (clvs.reduce((s, v) => s + v, 0) / clvs.length).toFixed(1) + "%";
+    else dayClv = "Matched Bet Price";
+    return {
+      date,
+      record: lines.length ? rec(lines) : (n ? "Split Not On File" : "0-0-0"),
+      profit,
+      roi: staked ? (profit / staked * 100).toFixed(1) + "%" : "-",
+      units: (profit / UNIT).toFixed(2) + "u",
+      pending: 0,
+      clv: dayClv
+    };
+  });
+}
+function ruleRow(row){
+  const record = String(row.record || "0-0-0");
+  if (/split not on file/i.test(record)) return Object.assign({}, row, {record: "Split Not On File", clv: row.clv || "No Close Saved"});
+  const parts = record.split("-").map(n => Number(n) || 0);
+  const empty = parts.length < 3 || (parts[0] === 0 && parts[1] === 0 && parts[2] === 0);
+  const clv = empty ? "No Close Saved" : (row.clv === "No Close Saved" || !row.clv ? "Close Not On File" : row.clv);
+  return Object.assign({}, row, {record: empty ? "0-0-0" : parts[0] + "-" + parts[1] + "-" + parts[2], clv: clv});
+}
+function drawDashboard(history, manual){
+  const rows = (manual ? history.slice() : publishedDashboard()).map(ruleRow);
+  if (!manual) localStorage.setItem("gg-dashboard-v1", JSON.stringify(rows));
+  const shown = rows;
+  const profit = shown.reduce((s, row) => s + (Number(row.profit) || 0), 0);
+  const staked = shown.reduce((s, row) => {
+    const n = parseFloat(String(row.roi).replace("%", ""));
+    return s + (n ? (Number(row.profit) || 0) / (n / 100) : 0);
+  }, 0);
+  let wins = 0, losses = 0, pushes = 0;
+  shown.forEach(row => {
+    const parts = String(row.record || "0-0").split("-").map(n => Number(n) || 0);
+    if (parts.length < 3 || /no picks/i.test(row.record)) return;
+    wins += parts[0] || 0; losses += parts[1] || 0; pushes += parts[2] || 0;
+  });
+  const clvs = shown.map(row => row.clv === "Matched Bet Price" ? 0 : parseFloat(String(row.clv).replace("%", ""))).filter(n => Number.isFinite(n));
+  document.getElementById("stats").innerHTML = [
+    [wins + "-" + losses + "-" + pushes, "7-Day W/L Record"],
+    [money(profit), "7-Day Profit"],
+    [staked ? (profit / staked * 100).toFixed(1) + "%" : "-", "7-Day ROI"],
+    [(profit / UNIT).toFixed(2) + "u", "7-Day Units"],
+    [shown.reduce((s, row) => s + (Number(row.pending) || 0), 0), "Pending"],
+    [clvs.length ? (clvs.reduce((s, n) => s + n, 0) / clvs.length).toFixed(1) + "%" : "No Close Saved", "7-Day Avg CLV"]
+  ].map(x => "<div class='stat'><b>" + x[0] + "</b><span>" + x[1] + "</span></div>").join("");
+  document.getElementById("dashrows").innerHTML = shown.map(row => "<tr><td>" + row.date + "</td><td>" + row.record + "</td><td>" + money(Number(row.profit)) + "</td><td>" + row.roi + "</td><td>" + row.units + "</td><td>" + (Number(row.pending) === 0 ? "0 - All Pending Has Been Graded" : row.pending) + "</td><td>" + (row.clv === "-" || row.clv == null || row.clv === "" ? "No Close Saved" : row.clv) + "</td></tr>").join("");
+  const canvas = document.getElementById("dashChart");
+  const ctx = canvas.getContext("2d");
+  const w = Math.max(320, canvas.clientWidth || 640);
+  const h = 320;
+  canvas.width = w;
+  canvas.height = h;
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle = "#0e0e0e";
+  ctx.fillRect(0,0,w,h);
+  if (!shown.length) return;
+  const pts = shown.map(row => ({date: row.date, y: Number(row.profit) || 0}));
+  const min = -1000, max = 1000, span = max - min;
+  const left = 62, right = 62, top = 14, bottom = 22;
+  const x = i => left + (w - left - right) * (pts.length === 1 ? 0.5 : i / (pts.length - 1));
+  const y = v => top + (h - top - bottom) * (1 - (v - min) / span);
+  ctx.font = "10px sans-serif";
+  ctx.textAlign = "right";
+  for (let v = min; v <= max; v += 100) {
+    const yy = y(v);
+    ctx.strokeStyle = v === 0 ? "#ff00ff" : "#243024";
+    ctx.lineWidth = v === 0 ? 1.5 : 1;
+    ctx.beginPath(); ctx.moveTo(left, yy); ctx.lineTo(w - right, yy); ctx.stroke();
+    const label = v === 0 ? "$0" : (v < 0 ? "-$" + Math.abs(v) : "$" + v);
+    ctx.fillStyle = v === 0 ? "#ff00ff" : (v < 0 ? "#ff6b6b" : "#8fd18a");
+    ctx.textAlign = "right";
+    ctx.fillText(label, left - 6, yy + 3);
+    ctx.textAlign = "left";
+    ctx.fillText(label, w - right + 6, yy + 3);
+  }
+  ctx.strokeStyle = "#2a3a2a";
+  ctx.lineWidth = 1;
+  pts.forEach((p, i) => {
+    ctx.beginPath();
+    ctx.moveTo(x(i), y(max));
+    ctx.lineTo(x(i), h - bottom);
+    ctx.stroke();
+  });
+  ctx.fillStyle = "#8fb898";
+  ctx.textAlign = "left";
+  ctx.font = "11px sans-serif";
+  ctx.fillStyle = "#ff00ff";
+  ctx.fillText("Break Even - $0", left + 8, y(0) - 6);
+  ctx.strokeStyle = "#39ff14";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  pts.forEach((p,i) => i ? ctx.lineTo(x(i), y(p.y)) : ctx.moveTo(x(i), y(p.y)));
+  ctx.stroke();
+  ctx.fillStyle = "#39ff14";
+  ctx.font = "11px sans-serif";
+  const ends = [pts[0], pts[pts.length - 1]];
+  ends.forEach((p, n) => {
+    const i = n ? pts.length - 1 : 0;
+    const label = money(p.y);
+    const above = y(p.y) > top + 16;
+    ctx.textAlign = n ? "right" : "left";
+    ctx.fillText(label, x(i) + (n ? -6 : 6), y(p.y) + (above ? -6 : 12));
+  });
+  ctx.fillStyle = "#d6ffd0";
+  ctx.font = "11px sans-serif";
+  pts.forEach((p, i) => {
+    const parts = String(p.date).split("-");
+    const label = parts.length === 3 ? parts[1] + "/" + parts[2] : p.date;
+    ctx.textAlign = i === 0 ? "left" : i === pts.length - 1 ? "right" : "center";
+    ctx.fillText(label, x(i), h - 6);
+  });
+  ctx.textAlign = "left";
+}
+
+function cardLines(text){
+  return String(text || "").split(/\r?\n/).map(line => line.split("|").map(s => s.trim())).filter(p => p.length >= 4 && /^[A-Z]{2,4}$/.test(p[1] || ""));
+}
+function sportLean(rows){
+  const types = rows.map(r => (r[2] || "").toLowerCase());
+  const picks = rows.map(r => (r[3] || "").toLowerCase());
+  const bits = [];
+  if (types.some(t => t === "spread") || picks.some(p => /[+]\d/.test(p))) bits.push("dogs");
+  if (types.some(t => t === "total") || picks.some(p => /under|over/.test(p))) bits.push(picks.some(p => /under/.test(p)) ? "unders" : "totals");
+  if (types.some(t => t === "moneyline")) bits.push("moneylines");
+  if (types.some(t => /run line|puck line/.test(t))) bits.push("alt line");
+  if (types.some(t => t === "sgp")) bits.push("SGP");
+  return bits.length ? bits.join(" and ") : "posted plays";
+}
+function drawCardAnalysis(text){
+  const grid = document.getElementById("analysisgrid");
+  if (!grid) return;
+  const rows = cardLines(text);
+  const sports = ["CBB","CFB","MLB","NBA","NFL","NHL"];
+  const day = (rows[0] && rows[0][0]) || "";
+  grid.innerHTML = sports.map(sport => {
+    const mine = rows.filter(r => r[1] === sport);
+    if (!mine.length) return "<div class='analysis-cell'><b>" + sport + "</b><div class='meta'>No Picks</div><p>No card for this sport.</p></div>";
+    const edges = mine.filter(r => /edge/i.test(r[5] || "") || /^high\b/i.test(r[5] || ""));
+    const note = edges.length ? edges.map(r => r[3]).join("; ") : (mine[0][3] + " leads the card.");
+    return "<div class='analysis-cell'><b>" + sport + "</b><div class='meta'>" + mine.length + " plays" + (edges.length ? " · " + edges.length + " edge" + (edges.length === 1 ? "" : "s") : "") + "</div><p>" + sportLean(mine) + ". " + note + "</p></div>";
+  }).join("");
+  const title = document.querySelector("#cardanalysis h3");
+  if (title) title.textContent = "Analysis" + (day ? " · " + day : "");
+  const read = document.getElementById("sharpread");
+  if (read) read.textContent = sharpRead(rows);
+}
+function sharpRead(rows){
+  if (!rows.length) return "No card is live yet. Wait for the posted picks, then play only a number with a reason.";
+  const edges = rows.filter(r => /edge/i.test(r[5] || "") || /^high\b/i.test(r[5] || ""));
+  const names = edges.map(r => r[1] + " " + r[3]);
+  const best = names.slice(0, 4).join(", ");
+  return "Play the price, not the name. The card is built the sharp way: dogs, named totals, and no short favorite. Best use of the card: " + (best || "the posted edges") + ". Those are the only plays with a real number and a reason. Pass a medium dog under 5 points and pass an estimated same-game parlay unless the straight leg is already the play. Shop the -110. If the book is -115 or shorter, pass it. Two legs in the same game is the max. This is a read of the card, not a guarantee.";
+}
+function drawCharts(bets){
+  const settled = bets.filter(b => b.result === "win" || b.result === "loss" || b.result === "push").slice().sort((a,b) => a.date.localeCompare(b.date) || a.id - b.id);
+  const line = document.getElementById("profitChart");
+  const bars = document.getElementById("sportChart");
+  drawBars(bars, bets);
+  const h = bars.height;
+  line.height = h;
+  line.style.height = h + "px";
+  bars.style.height = h + "px";
+  drawLine(line, settled);
+}
+function drawLine(canvas, settled){
+  const ctx = canvas.getContext("2d");
+  const w = Math.max(320, canvas.clientWidth || 640);
+  const h = 192;
+  canvas.width = w;
+  canvas.height = h;
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle = "#0e0e0e";
+  ctx.fillRect(0,0,w,h);
+  if (!settled.length){ ctx.fillStyle = "#8fb898"; ctx.font = "14px sans-serif"; ctx.fillText("No settled slips yet.", 16, 32); return; }
+  let run = 0;
+  const pts = settled.map(b => { run += profit(b); return {date:b.date, y:run}; });
+  const vals = pts.map(p => p.y);
+  const min = Math.min(0, ...vals), max = Math.max(0, ...vals);
+  const span = (max - min) || 1;
+  const pad = 28;
+  const x = i => pad + (w - pad * 2) * (pts.length === 1 ? 0.5 : i / (pts.length - 1));
+  const y = v => pad + (h - pad * 2) * (1 - (v - min) / span);
+  ctx.fillStyle = "#d6ffd0";
+  ctx.font = "12px sans-serif";
+  const zeroLabel = "Break Even - $0";
+  const zeroW = ctx.measureText(zeroLabel).width;
+  ctx.strokeStyle = "#243024";
+  ctx.beginPath(); ctx.moveTo(pad, y(0)); ctx.lineTo(w - zeroW - 16, y(0)); ctx.stroke();
+  ctx.fillText(zeroLabel, w - zeroW - 8, y(0) + 4);
+  ctx.strokeStyle = "#39ff14";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  pts.forEach((p,i) => i ? ctx.lineTo(x(i), y(p.y)) : ctx.moveTo(x(i), y(p.y)));
+  ctx.stroke();
+  ctx.fillStyle = "#d6ffd0";
+  ctx.font = "12px sans-serif";
+  ctx.fillText(pts[0].date, pad, h - 8);
+  ctx.fillText(pts[pts.length-1].date, w - 90, h - 8);
+  ctx.fillStyle = "#39ff14";
+  ctx.fillText(money(pts[pts.length-1].y), pad, 16);
+}
+let gradeFile = [];
+let edgePicks = new Set();
+function chartClv(b){
+  if (b.close === "" || b.close == null || Number(b.close) === Number(b.odds)) return null;
+  const got = decimal(b.odds), closed = decimal(b.close);
+  if (!got || !closed) return null;
+  return (got / closed - 1) * 100;
+}
+function yesterdayGraded(bets){
+  const day = yesterday();
+  const seen = new Set();
+  const rows = [];
+  bets.concat(load()).concat(loadGrade()).concat(gradeFile).forEach(b => {
+    const sport = String(b.sport || "").trim().toUpperCase();
+    const date = String(b.date || "").slice(0, 10);
+    const settled = b.result === "win" || b.result === "loss" || b.result === "push";
+    if (!sport || date !== day || !settled) return;
+    const key = [date, sport, b.pick].join("|");
+    if (seen.has(key)) return;
+    seen.add(key);
+    rows.push(b);
+  });
+  return rows;
+}
+function drawBars(canvas, bets){
+  const ctx = canvas.getContext("2d");
+  const sports = ["CBB","CFB","MLB","NBA","NFL","NHL"];
+  const map = {};
+  sports.forEach(sport => { map[sport] = {pl:0, clv:[], n:0, yday:0}; });
+  yesterdayGraded(bets).forEach(b => {
+    const sport = String(b.sport || "").trim().toUpperCase();
+    if (!map[sport]) return;
+    const row = map[sport];
+    row.yday += 1;
+    row.pl += profit(b);
+    const cv = chartClv(b);
+    if (cv != null) row.clv.push(cv);
+  });
+  const rows = sports.map(sport => [sport, map[sport]]);
+  const cssW = Math.max(320, canvas.clientWidth || 420);
+  const rowH = 28;
+  const h = 192;
+  canvas.width = cssW;
+  canvas.height = h;
+  ctx.clearRect(0,0,cssW,h);
+  ctx.fillStyle = "#0e0e0e";
+  ctx.fillRect(0,0,cssW,h);
+  ctx.font = "12px sans-serif";
+  const label = r => r[1].yday ? "" : seasonText(r[0]);
+  const labelW = Math.max(...rows.map(r => ctx.measureText(r[0]).width), 36);
+  const valueW = Math.max(...rows.map(r => ctx.measureText(money(r[1].pl) + "  " + label(r)).width), 70);
+  const left = 12 + labelW + 8;
+  const right = 12 + valueW;
+  const maxBar = Math.max(24, cssW - left - right - 8);
+  const max = Math.max(...rows.map(r => Math.abs(r[1].pl)), 1);
+  rows.forEach((r,i) => {
+    const [name, row] = r;
+    const y = 16 + i * rowH;
+    if (row.pl) { const bw = Math.max(2, maxBar * Math.abs(row.pl) / max); ctx.fillStyle = row.pl < 0 ? "#ff6b6b" : "#39ff14"; ctx.fillRect(left, y, bw, 14); }
+    ctx.fillStyle = "#d6ffd0";
+    ctx.fillText(name, 12, y + 12);
+    ctx.fillText(money(row.pl) + "  " + label(r), cssW - right, y + 12);
+  });
+}
+
+
+function decimal(odds){
+  odds = Number(odds);
+  if (!odds) return 0;
+  return odds > 0 ? 1 + odds / 100 : 1 + 100 / Math.abs(odds);
+}
+function clv(b){
+  if (b.close === "" || b.close == null) return null;
+  if (Number(b.close) === Number(b.odds)) return null;
+  const got = decimal(b.odds), closed = decimal(b.close);
+  if (!got || !closed) return null;
+  return (got / closed - 1) * 100;
+}
+function clvText(b){
+  if (b.result === "pending" || b.result === "void") return "-";
+  if (b.close === "" || b.close == null) return "No Close Saved";
+  const cv = clv(b);
+  if (cv == null || Math.abs(cv) < 0.05) return "Matched Bet Price";
+  return cv.toFixed(1) + "%";
+}
+function weekRows(){
+  return publishedDashboard().map(row => ({date: row.date, profit: Number(row.profit) || 0, staked: Math.abs(Number(String(row.roi).replace("%",""))) ? (Number(row.profit) || 0) / (parseFloat(row.roi) / 100) : 0, record: row.record, clv: row.clv}));
+}
+function publishedWeek(){
+  return Object.entries(publishedCalendar).filter(([date]) => date < todayEt()).sort(([a],[b]) => a.localeCompare(b)).slice(-7);
+}
+function weekProfit(){
+  return publishedDashboard().reduce((s, row) => s + (Number(row.profit) || 0), 0);
+}
+function weekRoi(){
+  const rows = publishedDashboard();
+  const profit = rows.reduce((s, row) => s + (Number(row.profit) || 0), 0);
+  const staked = rows.reduce((s, row) => {
+    const n = parseFloat(String(row.roi).replace("%", ""));
+    return s + (n ? (Number(row.profit) || 0) / (n / 100) : 0);
+  }, 0);
+  return staked ? (profit / staked * 100).toFixed(1) + "%" : "-";
+}
+function weekRecord(){
+  let w = 0, l = 0, p = 0;
+  publishedDashboard().forEach(row => {
+    const parts = String(row.record || "0-0").split("-").map(n => Number(n) || 0);
+    if (parts.length < 2 || /slips|no picks/i.test(row.record)) return;
+    w += parts[0] || 0;
+    l += parts[1] || 0;
+    p += parts[2] || 0;
+  });
+  return w + "-" + l + (p ? "-" + p : "");
+}
+function weekClv(){
+  const vals = publishedDashboard().map(row => row.clv === "Matched Bet Price" ? 0 : parseFloat(String(row.clv).replace("%", ""))).filter(n => Number.isFinite(n));
+  if (!vals.length) return "No Close Saved";
+  return (vals.reduce((s, n) => s + n, 0) / vals.length).toFixed(1) + "%";
+}
+function clvListText(list){
+  const graded = list.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
+  if (!graded.length) return "No Close Saved";
+  const withClose = graded.filter(b => b.close !== "" && b.close != null);
+  if (!withClose.length) return "No Close Saved";
+  const xs = withClose.map(clv).filter(v => v != null);
+  if (!xs.length || xs.every(v => Math.abs(v) < 0.05)) return "Matched Bet Price";
+  return (xs.reduce((s,v)=>s+v,0)/xs.length).toFixed(1) + "%";
+}
+function filtered(bets){
+  const sport = document.getElementById("fSport").value;
+  const book = document.getElementById("fBook").value;
+  const type = document.getElementById("fType").value;
+  const result = document.getElementById("fResult").value;
+  return bets.filter(b => (!sport || b.sport === sport) && (!book || b.book === book) && (!type || b.type === type) && (!result || b.result === result));
+}
+let monthCursor = new Date();
+let publishedCalendar = {};
+try { publishedCalendar = JSON.parse(localStorage.getItem("gg-calendar-published") || "{}"); } catch (err) { publishedCalendar = {}; }
+function personalCalendar(){
+  try { return JSON.parse(localStorage.getItem("gg-calendar-personal") || "null"); } catch (err) { return null; }
+}
+async function loadCalendarFile(){
+  try {
+    const res = await fetch("cards/calendar.json?ts=" + Date.now());
+    if (!res.ok) return;
+    const data = await res.json();
+    const dates = data.dates || data;
+    Object.keys(dates).forEach(date => {
+      if (!dates[date] || !Number.isFinite(Number(dates[date].pl))) return;
+      const prior = publishedCalendar[date] || {};
+      publishedCalendar[date] = Object.assign({}, prior, dates[date]);
+      if (!Number.isFinite(Number(publishedCalendar[date].allWin)) && Number.isFinite(Number(prior.allWin))) publishedCalendar[date].allWin = prior.allWin;
+      if (!Number.isFinite(Number(publishedCalendar[date].allLose)) && Number.isFinite(Number(prior.allLose))) publishedCalendar[date].allLose = prior.allLose;
+    });
+    localStorage.setItem("gg-calendar-published", JSON.stringify(publishedCalendar));
+    drawCalendar();
+  } catch (err) {}
+}
+let driveCard = {date: "", lines: [], loaded: false};
+async function loadDriveCardForCalendar(){
+  try {
+    const res = await fetch("cards/today.txt?ts=" + Date.now());
+    if (!res.ok) return;
+    const text = await res.text();
+    const today = todayEt();
+    const lines = text.split(/\n/).map(l => l.trim()).filter(l => l && !l.startsWith("#")).map(l => {
+      const parts = l.split("|").map(s => s.trim());
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(parts[0])) return null;
+      return {date: parts[0], sport: parts[1], type: parts[2], pick: parts[3], odds: Number(String(parts[4] || "").replace(/\u2212/g, "-")), stake: 10};
+    }).filter(row => row && row.date === today && row.pick && Number.isFinite(row.odds) && !/no picks|season ended/i.test(row.pick));
+    driveCard = {date: today, lines: lines, loaded: true};
+    drawCalendar();
+  } catch (err) {}
+}
+function drawCalendar(){
+  const mine = personalCalendar() || {};
+  const board = Object.assign({}, publishedCalendar);
+  Object.keys(mine).forEach(date => { if (mine[date] && Number.isFinite(Number(mine[date].pl))) board[date] = mine[date]; });
+  const y = monthCursor.getFullYear(), m = monthCursor.getMonth();
+  const first = new Date(y, m, 1);
+  const start = first.getDay();
+  const days = new Date(y, m + 1, 0).getDate();
+  const names = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  let html = "<div class='dow' style='grid-column:1/-1;color:#39ff14'>" + first.toLocaleString(undefined,{month:"long", year:"numeric"}) + "</div>";
+  html += names.map(n => "<div class='dow'>" + n + "</div>").join("");
+  for (let i = 0; i < start; i++) html += "<div></div>";
+  const today = todayEt();
+  const firstPickAt = () => {
+    const day = new Date().toLocaleDateString("en-CA", {timeZone:"America/New_York"});
+    const probe = new Date(day + "T09:00:00Z");
+    const hour = Number(new Intl.DateTimeFormat("en-US", {timeZone:"America/New_York", hour:"numeric", hourCycle:"h23"}).format(probe));
+    return new Date(probe.getTime() + (9 - hour) * 3600000);
+  };
+  for (let d = 1; d <= days; d++) {
+    const date = y + "-" + String(m + 1).padStart(2, "0") + "-" + String(d).padStart(2, "0");
+    const isToday = date === today;
+    if (isToday) {
+      const drive = driveCard.date === today ? driveCard.lines : [];
+      const local = load().filter(b => b.date === today && b.result === "pending");
+      const open = drive.length ? drive : local;
+      const graded = load().concat(loadGrade()).concat(gradeFile).filter(b => b.date === today && b.result !== "pending" && !isNoPick(b));
+      const seen = new Set();
+      const settled = graded.filter(b => { const k = [b.sport, b.pick].join("|"); if (seen.has(k)) return false; seen.add(k); return true; });
+      const result = settled.length ? money(settled.reduce((s, b) => s + slipMoney(b), 0)) : "";
+      const resultCls = settled.length && settled.reduce((s, b) => s + slipMoney(b), 0) > 0 ? "win" : settled.length && settled.reduce((s, b) => s + slipMoney(b), 0) < 0 ? "loss" : "";
+      const winAll = open.reduce((s, b) => { const odds = Number(b.odds), stake = Number(b.stake) || 10; if (!Number.isFinite(odds) || odds === 0) return s; return s + (odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds)); }, 0);
+      const loseAll = open.reduce((s, b) => s + Number(b.stake || 10), 0);
+      const lower = open.length ? "<span class='range'><span class='win'>All Win " + money(winAll) + "</span><span class='slash'> / </span><span class='loss'>All Lose -" + money(loseAll).replace("-", "") + "</span></span>" : "<span class='wait'>Picks Not Loaded Until " + formatTime(firstPickAt(), false) + "</span>";
+      html += "<div class='today daycell' data-date='" + date + "'><b>" + d + "</b><br><span class='" + resultCls + "'>" + result + "</span><br>" + lower + "</div>";
+    } else {
+      const live = load().concat(loadGrade()).concat(gradeFile).filter(b => b.date === date && b.result !== "pending" && !isNoPick(b));
+      const seen = new Set();
+      const slips = live.filter(b => { const k = [b.sport, b.pick].join("|"); if (seen.has(k)) return false; seen.add(k); return true; });
+      let day = board[date];
+      if (slips.length && date < today) day = Object.assign({}, day || {}, {pl: slips.reduce((s, b) => s + slipMoney(b), 0), n: slips.length});
+      else if (!day && date < today && slips.length) day = {pl: slips.reduce((s, b) => s + slipMoney(b), 0)};
+      const cls = day && day.pl > 0 ? "win" : day && day.pl < 0 ? "loss" : "";
+      const range = day && Number.isFinite(Number(day.allWin)) ? "<br><span class='range'><span class='win'>All Win " + money(day.allWin) + "</span><span class='slash'> / </span><span class='loss'>All Lose " + money(day.allLose) + "</span></span>" : "";
+      html += "<div class='daycell' data-date='" + date + "'><b>" + d + "</b><br><span class='" + cls + "'>" + (day ? money(day.pl) : "") + "</span>" + range + "</div>";
+    }
+  }
+  document.getElementById("calendar").innerHTML = html;
+  if (openDate && !document.getElementById("closeday")) openDay(openDate);
+}
+
+
+const ESPN_PATH = {NFL:"football/nfl", NBA:"basketball/nba", NHL:"hockey/nhl", MLB:"baseball/mlb", CBB:"basketball/mens-college-basketball", CFB:"football/college-football"};
+function dayTitle(date){
+  const d = new Date(date + "T12:00:00");
+  return d.toLocaleDateString("en-US", {weekday:"long", month:"long", day:"numeric", year:"numeric"});
+}
+function weatherWords(code, temp, wind, precip){
+  const tags = [];
+  if (code === 0) tags.push("Clear", "Sunny");
+  else if (code === 1) tags.push("Sunny");
+  else if (code === 2) tags.push("Clear");
+  else if (code === 3) tags.push("Overcast");
+  else if (code >= 45 && code <= 48) tags.push("Overcast");
+  if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82) || precip >= 0.05) tags.push("Rainy");
+  if ((code >= 71 && code <= 77) || (code >= 85 && code <= 86)) tags.push("Snow");
+  if (code >= 95) tags.push("Rainy");
+  if (temp != null && temp <= 32 && precip > 0) tags.push("Ice");
+  if (temp != null && temp < 45) tags.push("Cold");
+  if (temp != null && temp > 85) tags.push("Hot");
+  if (wind != null && wind >= 15) tags.push("Windy " + Math.round(wind) + " mph");
+  return [...new Set(tags)];
+}
+function weatherRate(tags, status){
+  if (/rained out|postponed|cancelled|canceled/i.test(status)) return "poor";
+  if (tags.some(t => /rainy|snow|ice|hot|cold/i.test(t) || /windy (\d+)/i.test(t) && Number(t.match(/\d+/)[0]) >= 25)) return "poor";
+  if (tags.some(t => /overcast|windy/i.test(t))) return "fair";
+  return "good";
+}
+async function venueWeather(city, state, iso){
+  if (!city) return null;
+  const geoRes = await fetch("https://geocoding-api.open-meteo.com/v1/search?count=5&name=" + encodeURIComponent(city));
+  const geo = await geoRes.json();
+  const hit = (geo.results || []).find(r => !state || String(r.admin1 || "").toLowerCase().startsWith(String(state).toLowerCase().slice(0, 2))) || (geo.results || [])[0];
+  if (!hit) return null;
+  const day = iso.slice(0, 10);
+  const past = new Date(iso).getTime() < Date.now() - 3 * 3600000;
+  const base = past ? "https://archive-api.open-meteo.com/v1/archive" : "https://api.open-meteo.com/v1/forecast";
+  const wxRes = await fetch(base + "?latitude=" + hit.latitude + "&longitude=" + hit.longitude + "&hourly=temperature_2m,precipitation,weathercode,windspeed_10m&temperature_unit=fahrenheit&windspeed_unit=mph&timezone=auto&start_date=" + day + "&end_date=" + day);
+  const wx = await wxRes.json();
+  const hours = (wx.hourly && wx.hourly.time) || [];
+  if (!hours.length) return null;
+  const target = new Date(iso).getTime();
+  let best = 0, gap = Infinity;
+  hours.forEach((t, i) => { const g = Math.abs(new Date(t).getTime() - target); if (g < gap) { gap = g; best = i; } });
+  return {
+    temp: wx.hourly.temperature_2m[best],
+    precip: wx.hourly.precipitation[best],
+    code: wx.hourly.weathercode[best],
+    wind: wx.hourly.windspeed_10m[best]
+  };
+}
+async function loadSchedule(){
+  if (window.ggSchedule) return window.ggSchedule;
+  const res = await fetch("cards/schedule.json?ts=" + Date.now());
+  if (!res.ok) return [];
+  const data = await res.json();
+  window.ggSchedule = data.games || [];
+  return window.ggSchedule;
+}
+const SPORT_NAME = {NFL:"Pro Football", NBA:"Pro Basketball", NHL:"Pro Hockey", MLB:"Pro Baseball", CBB:"College Basketball", CFB:"College Football"};
+const INDOOR = {NHL:1, NBA:1, CBB:1};
+const STATE_NAME = {AL:"Alabama", AK:"Alaska", AZ:"Arizona", AR:"Arkansas", CA:"California", CO:"Colorado", CT:"Connecticut", DE:"Delaware", DC:"District of Columbia", FL:"Florida", GA:"Georgia", HI:"Hawaii", ID:"Idaho", IL:"Illinois", IN:"Indiana", IA:"Iowa", KS:"Kansas", KY:"Kentucky", LA:"Louisiana", ME:"Maine", MD:"Maryland", MA:"Massachusetts", MI:"Michigan", MN:"Minnesota", MS:"Mississippi", MO:"Missouri", MT:"Montana", NE:"Nebraska", NV:"Nevada", NH:"New Hampshire", NJ:"New Jersey", NM:"New Mexico", NY:"New York", NC:"North Carolina", ND:"North Dakota", OH:"Ohio", OK:"Oklahoma", OR:"Oregon", PA:"Pennsylvania", RI:"Rhode Island", SC:"South Carolina", SD:"South Dakota", TN:"Tennessee", TX:"Texas", UT:"Utah", VT:"Vermont", VA:"Virginia", WA:"Washington", WV:"West Virginia", WI:"Wisconsin", WY:"Wyoming", AB:"Alberta", BC:"British Columbia", MB:"Manitoba", ON:"Ontario", PQ:"Quebec", QC:"Quebec"};
+function stateName(code){ return STATE_NAME[code] || code; }
+async function dayGames(date){
+  const board = await loadSchedule();
+  const games = board.filter(g => g.date === date).map(g => Object.assign({}, g));
+  games.sort((a, b) => String(a.start).localeCompare(String(b.start)) || a.sport.localeCompare(b.sport));
+  for (const game of games) {
+    if (game.wx) continue;
+    try { game.wx = await venueWeather(game.city, game.state, game.start); } catch (e) { game.wx = null; }
+    if (!INDOOR[game.sport] && !game.flag && game.wx && game.wx.precip >= 0.4 && game.wx.code >= 51) game.flag = "Rained Out";
+    if (INDOOR[game.sport] && game.flag === "Rained Out") game.flag = "";
+  }
+  return games;
+}
+let openDate = sessionStorage.getItem("gg-open-day") || "";
+async function openDay(date){
+  openDate = date;
+  sessionStorage.setItem("gg-open-day", date);
+  const box = document.getElementById("calendar");
+  box.innerHTML = "<div class='dayzoom'><div class='dayzoom-head'><h3>" + dayTitle(date) + "</h3><button type='button' id='closeday'>Close</button></div><p>Loading games and weather...</p></div>";
+  document.getElementById("closeday").onclick = () => { openDate = ""; sessionStorage.removeItem("gg-open-day"); drawCalendar(); };
+  const games = await dayGames(date);
+  if (!document.getElementById("closeday")) return;
+  const rows = games.length ? games.map(game => {
+    const indoor = !!INDOOR[game.sport];
+    const tags = indoor ? ["Indoor"] : (game.wx ? weatherWords(game.wx.code, game.wx.temp, game.wx.wind, game.wx.precip) : []);
+    if (!indoor && game.flag) tags.unshift(game.flag);
+    if (indoor && game.flag && game.flag !== "Rained Out") tags.unshift(game.flag);
+    const rate = indoor ? (game.flag && game.flag !== "Rained Out" ? "poor" : "good") : weatherRate(tags, game.flag);
+    const temp = indoor ? "Indoor" : (game.wx && game.wx.temp != null ? Math.round(game.wx.temp) + "°F" : "Weather unavailable");
+    return "<div class='daygame'><div><b>" + game.sport + "</b> " + game.name + "<div class='daymeta'>" + (SPORT_NAME[game.sport] || game.sport) + " · " + formatTime(game.start, false) + (game.venue ? " · " + game.venue : "") + (game.city || game.state ? " · " + [game.city, stateName(game.state)].filter(Boolean).join(", ") : "") + "</div></div><span class='daytags'>" + (tags.join(" · ") || "Clear") + "</span><span class='wx " + rate + "'>" + rate[0].toUpperCase() + rate.slice(1) + " · " + temp + "</span></div>";
+  }).join("") : "<p>No games scheduled.</p>";
+  box.innerHTML = "<div class='dayzoom'><div class='dayzoom-head'><h3>" + dayTitle(date) + "</h3><button type='button' id='closeday'>Close</button></div>" + rows + "</div>";
+  document.getElementById("closeday").onclick = () => { openDate = ""; sessionStorage.removeItem("gg-open-day"); drawCalendar(); };
+}
+document.getElementById("calendar").onclick = ev => {
+  const day = ev.target.closest(".daycell");
+  if (day && day.dataset.date) openDay(day.dataset.date);
+};
+
+function todayEt(){ return new Date().toLocaleDateString("en-CA", {timeZone: siteZone()}); }
+function msUntilMidnightEt(){
+  const parts = new Intl.DateTimeFormat("en-US", {timeZone: siteZone(), hour:"numeric", minute:"numeric", second:"numeric", hourCycle:"h23"}).formatToParts(new Date());
+  const get = k => Number(parts.find(p => p.type === k).value);
+  return ((23 - get("hour")) * 3600 + (59 - get("minute")) * 60 + (60 - get("second"))) * 1000 + 2000;
+}
+let midnightTimer;
+function armMidnight(){ clearTimeout(midnightTimer); midnightTimer = setTimeout(() => { nightlyUpdate().finally(() => armMidnight()); }, msUntilMidnightEt()); }
+armMidnight();
+loadCalendarFile();
+async function nightlyUpdate(){
+  await loadCalendarFile();
+  const note = document.getElementById("pdfnote");
+  await applyGrades().catch(() => {});
+  if (!window.gradeWatch) {
+    window.gradeWatch = setInterval(async () => {
+      const res = await fetch("cards/grades.txt?ts=" + Date.now()).catch(() => null);
+      const text = res && res.ok ? await res.text() : "";
+      if (!text.includes(yesterday())) return;
+      clearInterval(window.gradeWatch);
+      window.gradeWatch = null;
+      await applyGrades().catch(() => {});
+      await loadCalendarFile();
+      if (note) note.textContent = "Midnight grade file loaded for " + yesterday() + ".";
+    }, 60000);
+  }
+  const res = await fetch("cards/today.txt?ts=" + Date.now()).catch(() => null);
+  const text = res && res.ok ? await res.text() : "";
+  const today = todayEt();
+  const todays = text.split(/\n/).filter(line => line.trim().startsWith(today));
+  if (todays.length) {
+    const added = addCardLines(todays.join("\n"), document.getElementById("cardbook").value || "BetMGM");
+    if (note) note.textContent = "After midnight. Yesterday graded. " + (added || 0) + " " + today + " picks loaded.";
+    return;
+  }
+  if (note) note.textContent = "After midnight. Yesterday graded. Today's picks load when the morning task publishes them.";
+  if (!window.cardWatch) {
+    window.cardWatch = setInterval(async () => {
+      const check = await fetch("cards/today.txt?ts=" + Date.now()).catch(() => null);
+      const body = check && check.ok ? await check.text() : "";
+      const lines = body.split(/\n/).filter(line => line.trim().startsWith(todayEt()));
+      if (!lines.length) return;
+      clearInterval(window.cardWatch);
+      window.cardWatch = null;
+      const added = addCardLines(lines.join("\n"), document.getElementById("cardbook").value || "BetMGM");
+      if (note) note.textContent = "Morning card published. " + (added || 0) + " " + todayEt() + " picks loaded.";
+    }, 60000);
+  }
+}
+function inSlipWindow(date){ date = String(date || "").slice(0, 10); return date === todayEt() || date === yesterday(); }
+let SEASON_END = {MLB:"2026-10-31", CFB:"2027-01-25", NFL:"2027-02-14", CBB:"2027-04-05", NHL:"2027-04-10", NBA:"2027-04-11"};
+let SEASON_START = {MLB:"2026-03-25", CFB:"2026-08-27", NFL:"2026-09-09", CBB:"2026-11-02", NHL:"2026-09-29", NBA:"2026-10-20"};
+function seasonEnded(sport){ const end = SEASON_END[String(sport || "").toUpperCase()]; return !!end && todayEt() > end; }
+function showSeasons(checked){
+  const box = document.getElementById("seasons");
+  if (!box) return;
+  const names = {CBB:"CBB - College Basketball", CFB:"CFB - College Football", MLB:"MLB - Major League Baseball", NBA:"NBA - National Basketball Association", NFL:"NFL - National Football League", NHL:"NHL - National Hockey League"};
+  const rows = ["CBB","CFB","MLB","NBA","NFL","NHL"].map(s => "<tr><td>" + names[s] + "</td><td>" + SEASON_START[s] + "</td><td>" + SEASON_END[s] + "</td><td>" + (seasonEnded(s) ? "Season Ended" : "Open") + "</td></tr>").join("");
+  const open = ["CBB","CFB","MLB","NBA","NFL","NHL"].filter(s => !seasonEnded(s)).length;
+  const pulse = open === 6 ? "6.6s" : open >= 4 ? "7.4s" : open >= 2 ? "9s" : open === 1 ? "13s" : "15s";
+  const color = open === 6 ? "#39ff14" : open >= 3 ? "#f0e14a" : "#ff6b6b";
+  let wave = "M0 18";
+  const spikes = open > 1 ? [40, 110, 180, 250, 320, 390] : open === 1 ? [40, 110, 180, 250, 320, 390] : [];
+  spikes.forEach(x => {
+    if (open > 1) wave += " H" + x + " L" + (x + 2) + " 18 L" + (x + 4) + " 2 L" + (x + 6) + " 34 L" + (x + 8) + " 18";
+    else wave += " H" + x + " L" + (x + 2) + " 18 L" + (x + 3) + " 14 L" + (x + 4) + " 22 L" + (x + 5) + " 18";
+  });
+  wave += " H448";
+  const ekg = "<span class='ekg' data-ms='" + (parseFloat(pulse) * 1000) + "'><svg viewBox='0 0 448 36' preserveAspectRatio='none' aria-label='Season pulse'><defs><clipPath id='ekgclip'><rect class='ekg-clip' x='0' y='0' width='0' height='36'></rect></clipPath></defs><path class='trace' clip-path='url(#ekgclip)' d='" + wave + "' style='stroke:" + color + "'></path></svg></span>";
+  box.innerHTML = "<div class='section-head'><h2>Season Dates</h2><p class='warn slips-side'>Checked " + (checked || "2026-10-08") + ". NFL May, NHL July, MLB July, NBA August, CFB August, CBB September.</p></div><table><thead><tr><th colspan='4' style='text-align:center'>" + ekg + "</th></tr><tr><th>Sport</th><th>Start</th><th>Last Card</th><th>Status</th></tr></thead><tbody>" + rows + "</tbody></table><table class='season-hold'><tbody><tr><td></td><td></td></tr><tr><td></td><td></td></tr></tbody></table>";
+  startPulse();
+}
+let pulseFrame = 0;
+function startPulse(){
+  cancelAnimationFrame(pulseFrame);
+  const root = document.querySelector("#seasons .ekg");
+  const trace = root && root.querySelector(".trace");
+  const clip = root && root.querySelector(".ekg-clip");
+  if (!trace || !clip) return;
+  const ms = Number(root.dataset.ms) || 1600;
+  const began = performance.now();
+  const fade = 1200;
+  const tick = now => {
+    const cycle = (now - began) % (ms + fade);
+    if (cycle <= ms) {
+      const progress = cycle / ms;
+      clip.setAttribute("width", String(Math.max(0.5, progress * 448)));
+      trace.style.opacity = String(0.35 + progress * 0.65);
+    } else {
+      clip.setAttribute("width", "448");
+      const fadeOut = 1 - (cycle - ms) / fade;
+      trace.style.opacity = String(Math.max(0, fadeOut));
+    }
+    pulseFrame = requestAnimationFrame(tick);
+  };
+  pulseFrame = requestAnimationFrame(tick);
+}
+async function loadSeasons(){
+  showSeasons();
+  try {
+    const res = await fetch("cards/seasons.json?ts=" + Date.now());
+    if (!res.ok) return;
+    const data = await res.json();
+    (data.sports || []).forEach(s => { SEASON_START[s.sport] = s.start; SEASON_END[s.sport] = s.end; });
+    showSeasons(data.checked);
+  } catch (err) { showSeasons(); }
+}
+function seasonText(sport){ return seasonEnded(sport) ? "Season Ended" : "No Picks"; }
+const TEAM_ALIAS = {fla:"panthers", buf:"sabres", ott:"senators", nj:"devils", njd:"devils", tb:"rays", tor:"blue jays", lad:"dodgers", mil:"brewers", okc:"thunder", atl:"hawks", bkn:"nets", wsh:"wizards", min:"timberwolves", ny:"knicks", utah:"jazz", sa:"spurs", vgk:"golden knights", buf2:"sabres"};
+function expandTeams(text){
+  return String(text || "").toLowerCase().replace(/\b[a-z]{2,4}\b/g, w => TEAM_ALIAS[w] || w);
+}
+function pickTokens(pick){
+  return expandTeams(pick).replace(/[^a-z0-9.+-]+/g, " ").split(/\s+/).filter(w => w.length > 1);
+}
+function samePick(a, b){
+  const left = expandTeams(a), right = expandTeams(b);
+  if (!left || !right) return false;
+  if (left === right || left.includes(right) || right.includes(left)) return true;
+  const parts = pickTokens(a);
+  return parts.filter(w => right.includes(w)).length >= Math.min(3, parts.length);
+}
+function dropMatchedPending(rows){
+  const list = (rows || []).filter(Boolean);
+  const graded = list.filter(b => b.result && b.result !== "pending");
+  return list.filter(b => {
+    if (b.result !== "pending") return true;
+    return !graded.some(g => g.date === b.date && g.sport === b.sport && samePick(b.pick, g.pick));
+  });
+}
+function clearStalePending(){
+  const bets = dropMatchedPending(load());
+  const older = bets.filter(b => !inSlipWindow(b.date));
+  if (older.length) archiveSlips(older.filter(b => b.result !== "pending"));
+  const kept = bets.filter(b => inSlipWindow(b.date));
+  if (kept.length !== load().length) save(kept);
+}
+function render(){
+  clearStalePending();
+  const all = load().concat(loadGrade()).concat(gradeFile).filter(b => b && b.pick && !isNoPick(b) && !/^RANGE$/i.test(b.pick) && !/^all win/i.test(b.result || ""));
+  let unique = [];
+  const seen = new Set();
+  const byKey = {};
+  all.forEach(b => {
+    const key = [b.date, b.sport, b.pick].join("|");
+    const prior = byKey[key];
+    const incoming = Number(b.profit), had = Number(prior && prior.profit);
+    const better = !prior || (prior.result === "pending" && b.result !== "pending") || (Number.isFinite(incoming) && incoming !== 0 && (!Number.isFinite(had) || had === 0));
+    if (!better) return;
+    if (!b.id) b.id = key;
+    if (!b.book) b.book = "BetMGM";
+    b.type = betType(b);
+    if (!b.stake) b.stake = 10;
+    if ((b.odds === "" || b.odds == null || Number.isNaN(Number(b.odds))) && prior && prior.odds !== "" && prior.odds != null) b.odds = prior.odds;
+    if (b.odds === "" || b.odds == null || Number.isNaN(Number(b.odds))) b.odds = b.close || -110;
+    byKey[key] = b;
+  });
+  unique.push(...Object.values(byKey));
+  unique = dropMatchedPending(unique);
+  const windowed = unique.filter(b => inSlipWindow(b.date));
+  const bets = filtered(windowed.sort((a,b) => String(b.date).localeCompare(String(a.date))));
+  const totals = bets;
+  const settled = totals.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
+  const pl = totals.reduce((s,b) => s + profit(b), 0);
+  const staked = settled.reduce((s,b) => s + Number(b.stake), 0);
+  const wins = totals.filter(b => b.result === "win").length;
+  const losses = totals.filter(b => b.result === "loss").length;
+  const pushes = totals.filter(b => b.result === "push").length;
+  const dash = "-";
+  const byGame = {};
+  settled.forEach(b => {
+    const row = byGame[b.date] || {date: b.date, wins:0, losses:0, pushes:0, profit:0, staked:0, clv:[]};
+    if (b.result === "win") row.wins++;
+    if (b.result === "loss") row.losses++;
+    if (b.result === "push") row.pushes++;
+    row.profit += profit(b);
+    row.staked += Number(b.stake) || 0;
+    const cv = clv(b);
+    if (cv != null) row.clv.push(cv);
+    byGame[b.date] = row;
+  });
+  const history = Object.values(byGame).filter(row => row.date < todayEt()).map(row => ({
+    date: row.date,
+    record: row.wins + "-" + row.losses + (row.pushes ? "-" + row.pushes : ""),
+    profit: row.profit,
+    roi: row.staked ? (row.profit / row.staked * 100).toFixed(1) + "%" : dash,
+    units: (row.profit / UNIT).toFixed(2) + "u",
+    pending: 0,
+    clv: row.clv.length ? (row.clv.every(v => Math.abs(v) < 0.05) ? "Matched Bet Price" : (row.clv.reduce((s,v)=>s+v,0)/row.clv.length).toFixed(1) + "%") : "No Close Saved"
+  }));
+  localStorage.setItem("gg-dashboard-v1", JSON.stringify(history));
+  drawDashboard(history);
+  const avgClv = weekClv(history);
+  document.getElementById("stats").innerHTML = [
+    [weekRecord(history), "7-Day W/L Record"],
+    [money(weekProfit(history)), "7-Day Profit"],
+    [weekRoi(history), "7-Day ROI"],
+    [(weekProfit(history) / UNIT).toFixed(2) + "u", "7-Day Units"],
+    [bets.filter(b => b.result === "pending" && b.date === todayEt()).length, "Pending"],
+    [avgClv, "7-Day Avg CLV"]
+  ].map(x => "<div class='stat'><b>" + x[0] + "</b><span>" + x[1] + "</span></div>").join("");
+  const typeRank = t => t === "SGP" ? 99 : ["Moneyline","Parlay","Prop","Spread","Total"].indexOf(t) + 1 || 50;
+  const grouped = bets.slice().sort((a,b) => String(a.sport).localeCompare(String(b.sport)) || typeRank(a.type) - typeRank(b.type) || b.date.localeCompare(a.date) || b.id - a.id);
+  let lastSport = "", lastType = "";
+  document.getElementById("rows").innerHTML = grouped.map(b => {
+    const p = slipMoney(b);
+    const cls = b.result === "win" ? "win" : b.result === "loss" ? "loss" : "push";
+    const finished = b.date < todayEt();
+    const grade = !finished ? "Game not finished"
+      : b.result === "pending"
+      ? "<button data-set='win' data-id='" + b.id + "'>Win</button> <button class='danger' data-set='loss' data-id='" + b.id + "'>Loss</button> <button class='amber' data-set='push' data-id='" + b.id + "'>Push</button>"
+      : "<button data-set='pending' data-id='" + b.id + "'>Undo</button>";
+    const cv = clv(b);
+    let head = "";
+    if (b.sport !== lastSport) { lastSport = b.sport; lastType = ""; head += "<tr class='sport'><td colspan='12'>" + esc(b.sport || "Other") + (seasonEnded(b.sport) ? " Season Ended" : "") + "</td></tr>"; }
+    if (b.type !== lastType) {
+      lastType = b.type;
+      const same = grouped.filter(x => x.sport === b.sport && x.type === b.type);
+      const n = k => same.filter(x => x.result === k).length;
+      const count = "(" + n("win") + " win · " + n("loss") + " loss · " + n("push") + " push · " + n("pending") + " pending · " + same.length + " total)";
+      head += "<tr class='type'><td colspan='12'><div class='type-row'><span>" + esc(b.type || "Other") + "</span><span class='type-count'>" + count + "</span></div></td></tr>";
+    }
+    return head + "<tr" + (b.manual ? " class='manual'" : b.fromCard ? " class='fromcard'" : "") + "><td>" + b.date + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td>" + esc(b.pick) + "</td><td>" + (b.odds === "" || b.odds == null ? (b.close || -110) : b.odds) + "</td><td>" + (b.close || b.lastPrice || dash) + "</td><td class='" + (cv > 0 ? "win" : cv < 0 ? "loss" : "") + "'>" + clvText(b) + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='" + cls + "'>" + b.result + "</td><td class='" + cls + "'>" + (b.result === "pending" ? dash : money(p)) + "</td><td>" + grade + " <button data-edit='" + b.id + "'>Edit</button> <button class='danger' data-del='" + b.id + "'>Delete</button></td></tr>";
+  }).join("") || "<tr><td colspan='12'>No bets yet.</td></tr>";
+  try { drawCharts(gradeFile.concat(bets)); } catch (err) { document.getElementById("plotnote").textContent = "Chart failed. The rest of the page is still live."; }
+  document.getElementById("plotnote").textContent = settled.length + " settled slips plotted. " + bets.filter(b => b.result === "pending").length + " slips left to settle.";
+  drawCalendar();
+  document.getElementById("breaks").innerHTML = "<h2>Graded Results By Sport And Book</h2>" + group(settled, "sport") + group(settled, "book") + "<h2 class='split-title'>Market Split</h2>" + group(settled, "type") + "<p class='api-note'>This card uses graded slips only. Pending slips are not counted. A sport with no graded slips says No Picks.</p>";
+  const y = yesterday();
+  const graded = loadGrade();
+  const picked = document.getElementById("reportDay").value;
+  const show = document.getElementById("reportShow").value || "both";
+  const poolMap = {};
+  bets.concat(graded).concat(gradeFile).forEach(b => {
+    const key = [b.date, b.sport, b.pick].join("|");
+    const prior = poolMap[key];
+    const better = !prior || (prior.result === "pending" && b.result !== "pending") || (Number.isFinite(Number(b.profit)) && !Number.isFinite(Number(prior.profit)));
+    if (better) poolMap[key] = b;
+  });
+  const pool = Object.values(poolMap);
+  const pending = pool.filter(b => b.result === "pending" && b.date === (picked || todayEt()));
+  const gradedDay = pool.filter(b => b.result !== "pending" && b.date === (picked || y));
+  const day = picked ? pool.filter(b => b.date === picked) : gradedDay;
+  const daySettled = gradedDay.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
+  const dayPl = gradedDay.reduce((s,b) => s + slipMoney(b), 0);
+  const hit = daySettled.length ? (gradedDay.filter(b => b.result === "win").length / daySettled.length * 100).toFixed(0) + "%" : "-";
+  const blocks = [];
+  if (show !== "graded") blocks.push(["Pending", pending]);
+  if (show !== "pending") blocks.push(["Graded", gradedDay]);
+  const copy = ["GNARLY GORILLA REPORT CARD", (picked || y), "W/L Record " + rec(gradedDay) + "   P/L " + money(dayPl) + "   on $10 slips", "Hit rate " + hit, "Row sum " + money(dayPl)];
+  let body = "";
+  blocks.forEach(([title, list]) => {
+    const sorted = list.slice().sort((a,b) => String(a.sport).localeCompare(String(b.sport)) || String(a.result).localeCompare(String(b.result)) || String(a.pick).localeCompare(String(b.pick)));
+    copy.push("", title);
+    if (title === "Pending" || (title === "Graded" && show !== "graded")) body += "<hr class='split'>";
+    body += "<h2>" + title + "</h2>";
+    if (!sorted.length) { const empty = title === "Pending" ? "None - Picks Start at 9:00 AM" : "None"; copy.push(empty); body += "<p>" + empty + "</p>"; return; }
+    body += "<table><thead><tr><th>Date</th><th>Result</th><th>Sport</th><th>Pick</th><th>Odds</th><th>P/L</th></tr></thead><tbody>";
+    ["CBB","CFB","MLB","NBA","NFL","NHL"].forEach(sport => {
+      const rows = sorted.filter(b => String(b.sport).toUpperCase() === sport);
+      copy.push(sport);
+      body += "<tr class='sport'><td colspan='6'>" + sport + "</td></tr>";
+      if (!rows.length) { const label = seasonText(sport); copy.push(label); body += "<tr><td></td><td>" + label + "</td><td>" + sport + "</td><td>" + label + "</td><td></td><td></td></tr>"; return; }
+      rows.forEach(b => {
+        const plCell = b.result === "pending" ? "OPEN" : money(slipMoney(b));
+        const edge = markEdge(b).edge;
+        copy.push([b.date, b.result.toUpperCase(), b.sport, b.pick, b.odds, plCell].join("  "));
+        body += "<tr" + (edge ? " class='edge'" : "") + "><td>" + esc(b.date) + "</td><td>" + esc(b.result.toUpperCase()) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.pick) + "</td><td>" + esc(b.odds) + "</td><td>" + plCell + "</td></tr>";
+      });
+    });
+    body += "</tbody></table>";
+  });
+  if (!day.length) copy.push("No slips dated yesterday.");
+  copy.push("", "Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u");
+  const report = document.getElementById("report");
+  report.dataset.copy = copy.join("\n");
+  report.innerHTML = "<p>Date " + (picked || todayEt()) + ". Graded " + (picked || y) + "</p><p>W/L Record " + rec(gradedDay) + "   P/L " + money(dayPl) + "   Hit rate " + hit + "   Row sum " + money(dayPl) + "</p>" + body + "<p>Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u</p>";
+}
+function group(bets, key){
+  const map = {};
+  if (key === "sport") ["CBB","CFB","MLB","NBA","NFL","NHL"].forEach(s => map[s] = {pl:0, n:0});
+  bets.forEach(b => {
+    if (b.result !== "win" && b.result !== "loss" && b.result !== "push") return;
+    const k = String(b[key] || "").trim() || "?";
+    map[k] = map[k] || {pl:0, n:0};
+    map[k].pl += slipMoney(b);
+    map[k].n++;
+  });
+  const rows = Object.entries(map).sort((a,b) => a[0].localeCompare(b[0]));
+  return "<p>" + rows.map(([k,v]) => esc(k) + ": " + (v.n ? money(v.pl) + " (" + v.n + ")" : seasonText(k))).join(" | ") + "</p>";
+}
+form.onsubmit = e => {
+  e.preventDefault();
+  const d = Object.fromEntries(new FormData(form));
+  const bets = load();
+  if (d.result && d.result !== "pending" && d.date >= todayEt()) {
+    document.getElementById("editnote").textContent = "Game not finished. Result stays pending until the game date has passed.";
+    return;
+  }
+  const row = {...d, odds: Number(d.odds), stake: Number(d.stake), close: d.close ? Number(d.close) : ""};
+  delete row.editId;
+  if (d.editId) {
+    const bet = bets.find(b => String(b.id) === d.editId);
+    if (bet) Object.assign(bet, row, {id: bet.id});
+  } else bets.push({id: Date.now(), ...row, result: d.result || "pending", manual: true});
+  save(bets);
+  form.pick.value = ""; form.notes.value = ""; form.close.value = ""; form.editId.value = "";
+  document.getElementById("savebtn").textContent = "Save Bet";
+};
+document.getElementById("rows").onclick = e => {
+  const t = e.target;
+  if (t.dataset.edit) {
+    const bet = load().find(b => String(b.id) === t.dataset.edit);
+    if (!bet) return;
+    ["date","book","sport","type","odds","stake","result","notes"].forEach(k => { if (form[k]) form[k].value = bet[k] ?? ""; });
+    if (![...form.pick.options].some(o => o.value === bet.pick)) { const opt = document.createElement("option"); opt.value = bet.pick; opt.textContent = bet.pick; form.pick.appendChild(opt); }
+    form.pick.value = bet.pick;
+    form.close.value = bet.close || "";
+    form.editId.value = bet.id;
+    document.getElementById("savebtn").textContent = "Update Bet";
+    form.scrollIntoView();
+    return;
+  }
+  if (t.dataset.del) save(load().filter(b => String(b.id) !== t.dataset.del));
+  if (t.dataset.set) {
+    const bets = load();
+    const bet = bets.find(b => String(b.id) === t.dataset.id);
+    if (bet && t.dataset.set !== "pending" && bet.date >= todayEt()) {
+      document.getElementById("editnote").textContent = "Game not finished. Result stays pending until the game date has passed.";
+      return;
+    }
+    if (bet) bet.result = t.dataset.set;
+    save(bets);
+  }
+};
+
+function marketOf(pick){
+  if (/^(over|under)\b/i.test(pick)) return "Total";
+  if (/[+-]\d/.test(pick)) return "Spread";
+  return "Moneyline";
+}
+function sportOf(text){
+  const m = text.match(/\b(NFL|NBA|NHL|MLB|CBB|CFB)\b/);
+  return m ? m[1] : "NFL";
+}
+function linesFromCard(text){
+  const sport = sportOf(text);
+  const lines = [];
+  const seen = new Set();
+  text.split(/\n/).forEach(raw => {
+    const line = raw.replace(/\s+/g, " ").trim();
+    const sgp = line.match(/^SGP\s+\d+:\s+(.+?)\.\s+Estimated\s+([+-]\d+)/i);
+    if (sgp) {
+      lines.push(sport + " | SGP | " + sgp[1].trim() + " | " + sgp[2] + " | Card SGP");
+      return;
+    }
+    const bet = line.match(/(.+?)\s+((?:Over|Under)\s+\d+(?:\.\d+)?|(?:[A-Z][A-Za-z.'-]+(?:\s+[A-Z][A-Za-z.'-]+)*)\s+[+-]\d+(?:\.\d+)?)\s+([+-]\d{3})\b.*?((?:High|Medium|Low)\s+\d+%)/i);
+    if (!bet) return;
+    let pick = bet[2].trim().replace(/^(?:AM|PM)\s+/, "");
+    if (/^(over|under)\b/i.test(pick)) {
+      const game = bet[1].replace(/\([^)]*\)/g, "").replace(/,?\s*\d{1,2}:\d{2}\s*(?:AM|PM)?/ig, "").replace(/\s+/g, " ").trim();
+      if (game && !/^pick$/i.test(game)) pick = game + " " + pick;
+    }
+    const key = pick + bet[3];
+    if (seen.has(key)) return;
+    seen.add(key);
+    lines.push(sport + " | " + marketOf(pick) + " | " + pick + " | " + bet[3] + " | " + bet[4]);
+  });
+  return lines;
+}
+document.getElementById("cardpdf").onchange = async e => {
+  const file = e.target.files[0];
+  const note = document.getElementById("pdfnote");
+  if (!file) return;
+  note.textContent = "Reading card...";
+  try {
+    if (!window.pdfjsLib) throw new Error("PDF reader did not load");
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    const doc = await pdfjsLib.getDocument({data: await file.arrayBuffer()}).promise;
+    const rows = [];
+    for (let n = 1; n <= doc.numPages; n++) {
+      const page = await doc.getPage(n);
+      const content = await page.getTextContent();
+      const buckets = [];
+      content.items.forEach(item => {
+        const y = Math.round(item.transform[5]);
+        let bucket = buckets.find(b => Math.abs(b.y - y) < 2);
+        if (!bucket) { bucket = {y, parts: []}; buckets.push(bucket); }
+        bucket.parts.push({x: item.transform[4], s: item.str});
+      });
+      buckets.sort((a,b) => b.y - a.y).forEach(b => rows.push(b.parts.sort((a,c) => a.x - c.x).map(p => p.s).join(" ")));
+    }
+    const lines = linesFromCard(rows.join("\n"));
+    if (!lines.length) throw new Error("No picks found. Paste the lines by hand.");
+    document.getElementById("paste").value = lines.join("\n");
+    drawCardAnalysis(lines.join("\n"));
+    note.textContent = lines.length + " plays read. Loading as pending...";
+    loadPending();
+  } catch (err) {
+    note.textContent = err.message || "Could not read that PDF.";
+  }
+  e.target.value = "";
+};
+
+
+const BOOK_KEY = {BetMGM:"betmgm", Caesars:"williamhill_us", DraftKings:"draftkings", Fanatics:"fanatics", FanDuel:"fanduel", HardRock:"hardrockbet"};
+const SPORT_KEY = {NFL:"americanfootball_nfl", NHL:"icehockey_nhl", NBA:"basketball_nba", MLB:"baseball_mlb", CBB:"basketball_ncaab", CFB:"americanfootball_ncaaf"};
+const PRESEASON_KEY = {NBA:"basketball_nba_preseason", NFL:"americanfootball_nfl_preseason", MLB:"baseball_mlb_preseason"};
+function sportKeys(sport){
+  const main = SPORT_KEY[sport];
+  if (!main) return [];
+  const start = SEASON_START[sport];
+  const today = todayEt();
+  if (PRESEASON_KEY[sport] && start && today < start) return [PRESEASON_KEY[sport], main];
+  return [main, PRESEASON_KEY[sport]].filter(Boolean);
+}
+const oddskey = document.getElementById("oddskey");
+oddskey.value = localStorage.getItem("gg-odds-key") || "";
+oddskey.onchange = () => localStorage.setItem("gg-odds-key", oddskey.value.trim());
+function teamOf(pick){
+  const total = String(pick).match(/^(.*?)\s*(over|under)\s+\d+(?:\.\d+)?$/i);
+  if (total) return {side: total[2].toLowerCase(), name: total[1].trim(), game: total[1].trim()};
+  const m = String(pick).match(/^(.+?)\s+([+-]\d+(?:\.\d+)?)$/);
+  return m ? {side:"spread", name:m[1], game:m[1]} : {side:"ml", name:pick, game:pick};
+}
+function gameHits(game, name){
+  if (!name) return true;
+  const teams = (game.away_team + " " + game.home_team).toLowerCase();
+  const words = name.toLowerCase().split(/\s+/).filter(w => w.length > 2 && !["under","over","at","the","ml"].includes(w));
+  return words.some(w => teams.includes(w) || teams.split(/\s+/).some(t => t.startsWith(w)));
+}
+function totalLabel(game, side, point){
+  const who = game ? game.away_team + " at " + game.home_team + " " : "";
+  return who + (side === "under" ? "Under " : "Over ") + point;
+}
+function matchOutcome(outcomes, name, side){
+  const n = name.toLowerCase();
+  return outcomes.find(o => {
+    const on = o.name.toLowerCase();
+    if (side === "over") return on === "over";
+    if (side === "under") return on === "under";
+    return on === n || on.endsWith(" " + n) || n.endsWith(on);
+  });
+}
+async function fetchOne(sportKey, bookKey, key){
+  const cacheKey = "gg-odds-" + sportKey + "-" + bookKey;
+  try {
+    const cached = JSON.parse(sessionStorage.getItem(cacheKey) || "null");
+    if (cached && cached.games && cached.games.length && Date.now() - cached.at < 15 * 60 * 1000) return cached.games;
+  } catch (e) {}
+  const url = "https://api.the-odds-api.com/v4/sports/" + sportKey + "/odds?apiKey=" + encodeURIComponent(key) + "&regions=us,us2&markets=spreads,totals,h2h&oddsFormat=american&bookmakers=" + bookKey;
+  let res;
+  try { res = await fetch(url); }
+  catch (e) { res = await fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(url)); }
+  if (!res.ok) throw new Error("Odds feed returned " + res.status);
+  const games = await res.json();
+  if (games && games.length) {
+    const pack = JSON.stringify({at: Date.now(), games});
+    sessionStorage.setItem(cacheKey, pack);
+    localStorage.setItem("gg-board-" + sportKey + "-" + bookKey, pack);
+  }
+  return games;
+}
+function cardPicks(sport, type){
+  const lines = (driveCard.lines || []).filter(l => l.sport === sport);
+  if (!type) return lines;
+  return lines.filter(l => l.type === type || (type === "Total" && /under|over/i.test(l.pick)) || (type === "Spread" && /[+-]\d/.test(l.pick)) || (type === "Moneyline" && /\bml\b|moneyline/i.test(l.pick)));
+}
+async function fetchBook(sport, bookKey, key){
+  const name = Object.keys(SPORT_KEY).find(s => SPORT_KEY[s] === sport) || sport;
+  const list = sportKeys(name);
+  const keys = list.length ? list : [sport];
+  let games = [];
+  for (const sportKey of keys) {
+    games = await fetchOne(sportKey, bookKey, key);
+    if (games && games.length) {
+      localStorage.setItem("gg-active-key-" + name, sportKey);
+      return games;
+    }
+  }
+  return games || [];
+}
+async function repricePaste(){
+  const note = document.getElementById("pdfnote");
+  const book = document.getElementById("cardbook").value;
+  const bookKey = BOOK_KEY[book];
+  const key = oddskey.value.trim();
+  localStorage.setItem("gg-odds-key", key);
+  const raw = document.getElementById("paste").value.trim();
+  if (!raw) return;
+  if (!bookKey) { note.textContent = book + " has no live board. Card odds kept."; return; }
+  if (!key) { note.textContent = "Card odds kept. Paste a free key from the-odds-api.com once to pull " + book + "."; return; }
+  const lines = raw.split(/\r?\n/);
+  const sports = [...new Set(lines.map(l => l.split("|")[0].trim()).filter(s => SPORT_KEY[s]))];
+  const boards = {};
+  for (const sport of sports) boards[sport] = await fetchBook(SPORT_KEY[sport], bookKey, key);
+  let priced = 0, missed = 0;
+  const out = lines.map(line => {
+    const parts = line.split("|").map(s => s.trim());
+    if (parts.length < 4 || parts[1] === "SGP") return line;
+    const [sport, type, pick] = parts;
+    const games = boards[sport] || [];
+    const info = teamOf(pick);
+    const market = type === "Total" ? "totals" : type === "Moneyline" ? "h2h" : "spreads";
+    let found = null, matched = null;
+    for (const game of games) {
+      const bk = (game.bookmakers || []).find(b => b.key === bookKey);
+      if (!bk) continue;
+      const mk = (bk.markets || []).find(m => m.key === market);
+      if (!mk) continue;
+      const outcome = matchOutcome(mk.outcomes, info.name, info.side);
+      if (!outcome) continue;
+      if (!gameHits(game, info.game || info.name)) continue;
+      found = outcome;
+      matched = game;
+      break;
+    }
+    if (!found || found.price == null) { missed++; return line; }
+    priced++;
+    let newPick = pick;
+    if (found.point != null && type !== "Moneyline") {
+      if (type === "Total") newPick = totalLabel(matched, info.side, found.point);
+      else newPick = info.name + " " + (found.point > 0 ? "+" : "") + found.point;
+    }
+    parts[2] = newPick;
+    parts[3] = String(found.price);
+    return parts.join(" | ");
+  });
+  document.getElementById("paste").value = out.join("\n");
+  note.textContent = priced + " lines repriced at " + book + (missed ? ". " + missed + " kept the card price." : ".");
+}
+
+async function fillPickBoard(useSaved){
+  const book = form.book.value;
+  const sport = form.sport.value;
+  const type = form.type.value;
+  const bookKey = BOOK_KEY[book];
+  const sportKey = SPORT_KEY[sport];
+  const key = oddskey.value.trim();
+  const sel = document.getElementById("pickselect");
+  const note = document.getElementById("picknote");
+  const current = sel.value;
+  sel.innerHTML = "<option value=''>Select a pick</option>";
+  if (!key) { note.textContent = "Add the odds key in Today's Card. Then this list follows " + book + "."; return; }
+  if (!bookKey || !sportKey) { note.textContent = book + " has no live board."; return; }
+  const day = form.date.value;
+  const today = new Date().toLocaleDateString("en-CA", {timeZone: siteZone()});
+  const dayKey = "gg-day-" + day + "-" + sportKey + "-" + bookKey;
+  note.textContent = "Loading " + book + " " + sport + " picks for " + day + "...";
+  let games;
+  if (day && day < today) {
+    try { games = JSON.parse(localStorage.getItem(dayKey) || "null") || []; } catch (e) { games = []; }
+    if (!games.length) { note.textContent = "No saved board for " + day + "."; document.getElementById("loadnote").textContent = "No Past Board"; return; }
+  } else {
+    games = useSaved ? (cachedBoard(sport, bookKey) || []) : await fetchBook(sportKey, bookKey, key);
+    const byDay = {};
+    games.forEach(game => {
+      const gameDay = game.commence_time ? new Date(game.commence_time).toLocaleDateString("en-CA", {timeZone: siteZone()}) : day;
+      byDay[gameDay] = byDay[gameDay] || [];
+      byDay[gameDay].push(game);
+    });
+    Object.entries(byDay).forEach(([d, list]) => localStorage.setItem("gg-day-" + d + "-" + sportKey + "-" + bookKey, JSON.stringify(list)));
+  }
+  const marketFor = {Moneyline:"h2h", Spread:"spreads", Total:"totals"};
+  const want = marketFor[type] || "";
+  if (!want) {
+    note.textContent = type + " has no board lines. Moneyline, Spread, and Total update from the saved board.";
+    document.getElementById("loadnote").textContent = "No board lines for " + type + ".";
+    return;
+  }
+  let count = 0;
+  const dayGames = games.filter(game => {
+    const gameDay = game.commence_time ? new Date(game.commence_time).toLocaleDateString("en-CA", {timeZone: siteZone()}) : day;
+    return !day || !gameDay || gameDay === day;
+  });
+  const started = dayGames.filter(game => game.commence_time && Date.parse(game.commence_time) <= Date.now());
+  const openGames = dayGames.filter(game => !game.commence_time || Date.parse(game.commence_time) > Date.now());
+  if (dayGames.length && !openGames.length) {
+    note.textContent = sport + " Bet Window Closed. Games have started and no bets can be taken.";
+    document.getElementById("loadnote").textContent = "Bet Window Closed";
+    return;
+  }
+  openGames.forEach(game => {
+    const bk = (game.bookmakers || []).find(b => b.key === bookKey);
+    if (!bk) return;
+    (bk.markets || []).forEach(mk => {
+      if (want && mk.key !== want) return;
+      (mk.outcomes || []).forEach(o => {
+        if (o.price == null) return;
+        const kick = game.commence_time ? " " + formatTime(game.commence_time) : "";
+        let label = game.away_team + " at " + game.home_team + kick + " " + o.name + (mk.key === "h2h" ? " ML" : "");
+        if (mk.key === "spreads" && o.point != null) label = game.away_team + " at " + game.home_team + kick + " " + o.name.split(" ").slice(-1)[0] + " " + (o.point > 0 ? "+" : "") + o.point;
+        if (mk.key === "totals" && o.point != null) label = totalLabel(game, o.name.toLowerCase(), o.point);
+        const opt = document.createElement("option");
+        opt.value = label;
+        opt.textContent = label + " (" + o.price + ")";
+        opt.dataset.price = o.price;
+        opt.dataset.close = o.price;
+        opt.dataset.market = mk.key;
+        sel.appendChild(opt);
+        count++;
+      });
+    });
+  });
+  if (current) sel.value = current;
+  const bets = load();
+  const closed = applyCloses(bets, games, bookKey);
+  if (closed) save(bets);
+  if (!count) {
+    if (!driveCard.loaded) await loadDriveCardForCalendar();
+    const card = cardPicks(sport, type);
+    card.forEach(l => {
+      const opt = document.createElement("option");
+      opt.value = l.pick;
+      opt.textContent = l.pick + " (" + l.odds + ")";
+      opt.dataset.price = l.odds;
+      opt.dataset.close = l.odds;
+      sel.appendChild(opt);
+      count++;
+    });
+  }
+  const msg = count ? "Loaded " + count + " " + book + " " + sport + " picks for " + day + "." + (started.length ? " " + started.length + " started games closed." : "") : "No " + book + " lines for " + sport + " on " + day + ".";
+  note.textContent = msg + (closed ? " " + closed + " closes saved." : "");
+  document.getElementById("loadnote").textContent = count ? "Load successful." : "No Lines";
+  if (count) localStorage.setItem("gg-pick-board", JSON.stringify({book, sport, day, value: sel.value, options: [...sel.options].map(o => ({value:o.value, text:o.textContent, price:o.dataset.price || "", close:o.dataset.close || ""}))}));
+}
+document.getElementById("pickselect").onchange = () => {
+  const opt = document.getElementById("pickselect").selectedOptions[0];
+  if (!opt || !opt.dataset.price) return;
+  form.odds.value = opt.dataset.price;
+  form.close.value = opt.dataset.close;
+};
+document.getElementById("loadicon").onclick = () => document.getElementById("loadpicks").click();
+document.getElementById("loadpicks").onclick = () => {
+  document.getElementById("loadnote").textContent = "Loading...";
+  fillPickBoard().catch(err => {
+    document.getElementById("picknote").textContent = err.message || "Feed error.";
+    document.getElementById("loadnote").textContent = /key|401|403/i.test(err.message || "") ? "Bad Key" : "Feed Error";
+  });
+};
+function refreshPicks(){
+  const games = cachedBoard(form.sport.value, BOOK_KEY[form.book.value]);
+  if (!games) { document.getElementById("picknote").textContent = "Press Load Picks for this date. The saved board is not here yet."; return; }
+  fillPickBoard(true).catch(err => { document.getElementById("picknote").textContent = err.message; });
+}
+form.date.onchange = refreshPicks;
+form.type.onchange = refreshPicks;
+form.book.onchange = () => {
+  const book = form.book.value;
+  const filter = document.getElementById("fBook");
+  if (filter && [...filter.options].some(o => o.value === book)) filter.value = book;
+  refreshPicks();
+  render();
+  repriceSlips().catch(err => { document.getElementById("picknote").textContent = err.message; });
+};
+form.sport.onchange = refreshPicks;
+document.getElementById("picknote").textContent = "Press Load Picks. The list follows the date in Add A Bet.";
+try {
+  const savedPicks = JSON.parse(localStorage.getItem("gg-pick-board") || "null");
+  if (savedPicks && savedPicks.options && savedPicks.options.length) {
+    const sel = document.getElementById("pickselect");
+    sel.innerHTML = "";
+    savedPicks.options.forEach(o => {
+      const opt = document.createElement("option");
+      opt.value = o.value;
+      opt.textContent = o.text;
+      if (o.price) opt.dataset.price = o.price;
+      if (o.close) opt.dataset.close = o.close;
+      sel.appendChild(opt);
+    });
+    if (savedPicks.value) sel.value = savedPicks.value;
+    document.getElementById("picknote").textContent = "Restored " + (savedPicks.book || "") + " " + (savedPicks.sport || "") + " picks. No new API call.";
+  }
+} catch (e) {}
+function findBookPrice(games, bookKey, type, pick){
+  const info = teamOf(pick);
+  const market = type === "Total" ? "totals" : type === "Moneyline" ? "h2h" : "spreads";
+  for (const game of games || []) {
+    const bk = (game.bookmakers || []).find(b => b.key === bookKey);
+    if (!bk) continue;
+    const mk = (bk.markets || []).find(m => m.key === market);
+    if (!mk) continue;
+    const outcome = matchOutcome(mk.outcomes, info.name || (game.home_team + " " + game.away_team), info.side);
+    if (!outcome || outcome.price == null) continue;
+    if (!gameHits(game, info.game || info.name)) continue;
+    return {outcome, game};
+  }
+  return null;
+}
+function cachedBoard(sport, bookKey){
+  const keys = ["gg-odds-" + SPORT_KEY[sport] + "-" + bookKey, "gg-board-" + SPORT_KEY[sport] + "-" + bookKey];
+  for (const key of keys) {
+    try {
+      const cached = JSON.parse(sessionStorage.getItem(key) || localStorage.getItem(key) || "null");
+      if (cached && cached.games) return cached.games;
+    } catch (e) {}
+  }
+  return null;
+}
+function closeStore(){
+  try { return JSON.parse(localStorage.getItem("gg-closes") || "{}"); } catch (e) { return {}; }
+}
+function saveCloseStore(store){ localStorage.setItem("gg-closes", JSON.stringify(store)); }
+function closeKey(b){ return [b.date, b.sport, b.pick].join("|"); }
+function rememberPrice(b, price){
+  if (price == null || price === "") return;
+  const store = closeStore();
+  const key = closeKey(b);
+  store[key] = {date: b.date, sport: b.sport, pick: b.pick, odds: b.odds, close: Number(price), at: Date.now()};
+  saveCloseStore(store);
+}
+function applySavedCloses(bets){
+  const store = closeStore();
+  let n = 0;
+  bets.forEach(b => {
+    if (b.result === "pending" || b.type === "SGP") return;
+    const saved = store[closeKey(b)];
+    if (!saved || saved.close == null) return;
+    b.close = Number(saved.close);
+    b.realClose = true;
+    n++;
+  });
+  return n;
+}
+function applyCloses(bets, games, bookKey){
+  let filled = 0;
+  const today = ymd(new Date());
+  bets.forEach(b => {
+    if (b.close && b.realClose) return;
+    if (b.type === "SGP" || BOOK_KEY[b.book] !== bookKey) return;
+    const hit = findBookPrice(games, bookKey, b.type, b.pick);
+    if (hit) {
+      b.lastPrice = Number(hit.outcome.price);
+      rememberPrice(b, b.lastPrice);
+    }
+    const started = hit && hit.game.commence_time && Date.parse(hit.game.commence_time) <= Date.now();
+    const gone = !hit && b.lastPrice && b.date && b.date <= today;
+    if (!started && !gone) return;
+    if (!b.lastPrice) return;
+    b.close = Number(b.lastPrice);
+    b.realClose = true;
+    filled++;
+  });
+  return filled;
+}
+function captureCloses(){
+  const bets = load();
+  const open = bets.filter(b => !b.close && BOOK_KEY[b.book] && SPORT_KEY[b.sport]);
+  let filled = 0;
+  const seen = new Set();
+  open.forEach(b => {
+    const key = b.sport + "|" + b.book;
+    if (seen.has(key)) return;
+    seen.add(key);
+    const games = cachedBoard(b.sport, BOOK_KEY[b.book]);
+    if (games) filled += applyCloses(bets, games, BOOK_KEY[b.book]);
+  });
+  if (filled) save(bets);
+  return filled;
+}
+async function repriceSlips(){
+  const note = document.getElementById("pdfnote");
+  const book = form.book.value;
+  const bookKey = BOOK_KEY[book];
+  const key = oddskey.value.trim();
+  const bets = load();
+  const pending = bets.filter(b => b.result === "pending");
+  pending.forEach(b => { b.book = book; });
+  save(bets);
+  if (!pending.length) { note.textContent = "No pending slips to reprice."; return; }
+  if (!bookKey || !key) { note.textContent = "Book set to " + book + " on " + pending.length + " pending slips. Add the odds key to pull that book's price."; return; }
+  const sports = [...new Set(pending.map(b => b.sport).filter(s => SPORT_KEY[s]))];
+  const boards = {};
+  for (const sport of sports) boards[sport] = await fetchBook(SPORT_KEY[sport], bookKey, key);
+  let priced = 0;
+  pending.forEach(b => {
+    if (b.type === "SGP") return;
+    const hit = findBookPrice(boards[b.sport], bookKey, b.type, b.pick);
+    if (!hit) return;
+    const found = hit.outcome;
+    b.odds = Number(found.price);
+    if (found.point != null && b.type !== "Moneyline") {
+      const info = teamOf(b.pick);
+      b.pick = b.type === "Total" ? totalLabel(hit.game, info.side, found.point) : (info.name + " " + (found.point > 0 ? "+" : "") + found.point);
+    }
+    priced++;
+  });
+  applyCloses(bets, boards[sports[0]] || [], bookKey);
+  sports.forEach(sport => applyCloses(bets, boards[sport] || [], bookKey));
+  save(bets);
+  note.textContent = priced + " pending slips repriced at " + book + ".";
+}
+document.getElementById("cardbook").onchange = () => {
+  document.getElementById("pdfnote").textContent = document.getElementById("cardbook").value + " will be used when this card is loaded. Add A Bet drives the pick list.";
+};
+
+async function loadPending(){
+  const note = document.getElementById("pdfnote");
+  const bets = load();
+  const today = ymd(new Date());
+  const book = document.getElementById("cardbook").value;
+  await repricePaste().catch(err => { document.getElementById("pdfnote").textContent = err.message; });
+  const before = bets.length;
+  document.getElementById("paste").value.split(/\r?\n/).forEach(line => {
+    line = line.trim();
+    if (!line || line.startsWith("#")) return;
+    const parts = line.split("|").map(s => s.trim());
+    let date = today, sport, type, pick, odds, notes;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(parts[0])) { date = parts.shift(); }
+    [sport, type, pick, odds, notes] = parts;
+    odds = String(odds || "").replace(/\u2212/g, "-").replace(/\+/g, "");
+    if (!sport || !pick || !odds || Number.isNaN(Number(odds)) || /no picks|season ended/i.test(pick)) return;
+    if (!inSlipWindow(date)) return;
+    if (/^(over|under)\s+\d/i.test(pick)) { note.textContent = "Skipped " + pick + ". A total needs the game, such as Bruins at Rangers Under 5.5."; return; }
+    bets.push({id: Date.now() + Math.random(), date, book, sport, type: type || "Spread", pick, odds: Number(odds), stake: 10, result: "pending", notes: notes || "", fromCard: true});
+  });
+  const added = bets.length - before;
+  if (!added) {
+    note.textContent = "Nothing loaded. Upload the Pick-Card PDF or paste Sport | Type | Pick | Odds lines first.";
+    return;
+  }
+  save(bets);
+  document.getElementById("paste").value = "";
+  note.textContent = added + " pending slips loaded at " + book + ". They are in the Slips table.";
+  document.getElementById("slips").scrollIntoView({behavior:"smooth", block:"start"});
+  document.getElementById("rows").scrollIntoView({behavior:"smooth", block:"center"});
+}
+function slipKey(b){ return [b.date, b.sport, b.pick].join("|"); }
+function betType(b){
+  const pick = String(b && b.pick || "");
+  const given = String(b && b.type || "");
+  if (/\band\b/i.test(pick) || /^sgp\b/i.test(pick) || /^sgp$/i.test(given)) return "SGP";
+  if (/\b(over|under)\b/i.test(pick) || /^total$/i.test(given)) return "Total";
+  if (/\bml\b|moneyline/i.test(pick) || /^moneyline$/i.test(given)) return "Moneyline";
+  if (/parlay/i.test(pick) || /^parlay$/i.test(given)) return "Parlay";
+  if (/prop/i.test(pick) || /^prop$/i.test(given)) return "Prop";
+  if (/[+-]\d/.test(pick) || /run line|puck line|spread/i.test(given + " " + pick)) return "Spread";
+  return given || "Spread";
+}
+function isNoPick(b){ return /no picks|season ended/i.test([b && b.pick, b && b.sport, b && b.type, b && b.result, b && b.notes].join(" ")); }
+function keepClose(b){
+  b.type = betType(b);
+  if (b.close !== "" && b.close != null && Number(b.close) === Number(b.odds) && !b.realClose) b.close = "";
+  if (b.close !== "" && b.close != null) return b;
+  const hit = (gradeFile || []).find(g => g.date === b.date && samePick(g.pick, b.pick) && g.close !== "" && g.close != null && Number(g.close) !== Number(b.odds));
+  if (hit) { b.close = hit.close; b.realClose = true; }
+  return b;
+}
+function markEdge(b){
+  const cv = clv(b);
+  const key = [b.date, b.sport, b.pick].join("|").toLowerCase();
+  b.edge = b.edge === true || edgePicks.has(key) || /edge/i.test(b.notes || "") || /^high\b/i.test(b.notes || "") || (cv != null && cv > 0.05);
+  return b;
+}
+function addCardLines(text, book){
+  const bets = load();
+  const seen = new Set(bets.map(slipKey));
+  let added = 0;
+  text.split(/\r?\n/).forEach(line => {
+    line = line.trim();
+    if (!line || line.startsWith("#")) return;
+    const parts = line.split("|").map(s => s.trim());
+    let date = todayEt(), sport, type, pick, odds, notes;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(parts[0])) date = parts.shift();
+    [sport, type, pick, odds, notes] = parts;
+    odds = String(odds || "").replace(/\u2212/g, "-");
+    if (!sport || !pick || !odds || Number.isNaN(Number(odds)) || /no picks|season ended/i.test(pick) || !inSlipWindow(date)) return;
+    const row = markEdge({id: Date.now() + Math.random(), date, book: book || "BetMGM", sport, type: type || "Spread", pick, odds: Number(odds), stake: 10, result: "pending", notes: notes || "", fromCard: true});
+    if (seen.has(slipKey(row))) return;
+    seen.add(slipKey(row));
+    bets.push(row);
+    added++;
+  });
+  if (added) save(bets);
+  return added;
+}
+async function loadDriveCard(){
+  const note = document.getElementById("pdfnote");
+  const res = await fetch("cards/today.txt?ts=" + Date.now());
+  if (!res.ok) { note.textContent = "Drive card file is not on the site yet."; return; }
+  const text = await res.text();
+  const named = text.match(/^#\s*file:\s*(.+)$/m);
+  const fileName = (named ? named[1] : "Drive card").replace(/\.(txt|pdf)$/i, "");
+  const current = load();
+  const finished = current.filter(b => b.date < todayEt() && b.result === "pending");
+  if (finished.length) archiveSlips(finished);
+  const added = addCardLines(text, document.getElementById("cardbook").value || "BetMGM");
+  load().forEach(markEdge);
+  save(load());
+  note.textContent = "Read " + fileName + ". " + (added || 0) + " slips added. Ledger has every sport loaded for the day.";
+}
+function gradeRows(text){
+  return text.split(/\n/).map(l => l.trim()).filter(l => l && !l.startsWith("#")).map(l => {
+    const r = l.split("|").map(s => s.trim());
+    if (/^RANGE$/i.test(r[1] || "") || /all win|all lose/i.test(l)) return null;
+    const wide = r.length >= 5 && /^(NBA|NHL|NFL|MLB|CBB|CFB)$/.test(r[1]);
+    const odds = Number(String(wide ? r[3] : r[3]).replace(/[^\d+-]/g, ""));
+    return {date: r[0], sport: wide ? r[1] : "", pick: wide ? r[2] : r[1], result: (wide ? r[4] : r[2] || "").toLowerCase(), close: "", odds: Number.isNaN(odds) ? -110 : odds};
+  }).filter(row => row && row.date && row.pick && row.result && !/no picks|season ended|^range$/i.test(row.pick + " " + row.result));
+}
+async function applyGrades(){
+  const res = await fetch("cards/grades.txt?ts=" + Date.now());
+  if (!res.ok) return;
+  const text = await res.text();
+  const named = (text.match(/^#\s*file:\s*(.+)$/m) || [, "grades"])[1].replace(/\.(txt|pdf)$/i, "");
+  const rules = gradeRows(text);
+  const bets = load();
+  const graded = loadGrade();
+  rules.forEach(rule => {
+    [bets, graded].forEach(list => list.forEach(b => {
+      if (b.date === rule.date && (b.sport === rule.sport || !b.sport || !rule.sport) && samePick(b.pick, rule.pick)) { b.result = rule.result; if (rule.close !== "" && rule.close != null && Number(rule.close) !== Number(b.odds)) b.close = rule.close; }
+    }));
+    if (/no picks|season ended/i.test(rule.pick) || !inSlipWindow(rule.date)) return;
+    if (!graded.some(b => b.date === rule.date && b.pick === rule.pick)) graded.push({id: Date.now() + Math.random(), date: rule.date, book: "BetMGM", sport: rule.sport, type: betType({pick: rule.pick}), pick: rule.pick, odds: rule.odds, close: rule.close, stake: 10, result: rule.result, profit: rule.profit, notes: "Graded"});
+  });
+  localStorage.setItem(GRADE_KEY, JSON.stringify(graded));
+  localStorage.setItem(KEY, JSON.stringify(bets));
+  render();
+}
+document.getElementById("savedash").onclick = () => {
+  const rows = JSON.parse(localStorage.getItem("gg-dashboard-v1") || "[]");
+  const name = "GG-DASHBOARD-" + todayEt();
+  const lines = ["# file: " + name].concat(rows.map(row => [row.date, row.record, row.profit, row.roi, row.units, row.pending, row.clv].join(" | ")));
+  download(name + ".txt", new Blob([lines.join("\n") + "\n"], {type:"text/plain"}));
+  document.getElementById("dashnote").textContent = rows.length ? "Saved " + name + "." : "Save failed. No dashboard rows.";
+};
+document.getElementById("loaddash").onchange = async e => {
+  const file = e.target.files[0];
+  const note = document.getElementById("dashnote");
+  const label = file ? file.name.replace(/\.(txt|pdf|json)$/i, "") : "Dashboard";
+  if (!file) { note.textContent = "Load failed."; return; }
+  try {
+    const rows = (await file.text()).split(/\n/).map(l => l.trim()).filter(l => l && !l.startsWith("#")).map(l => {
+      const [date, record, profit, roi, units, pending, clv] = l.split("|").map(s => s.trim());
+      return {date, record, profit: Number(profit), roi, units, pending, clv};
+    }).filter(row => row.date);
+    if (!rows.length) throw new Error("empty");
+    sessionStorage.setItem("gg-dashboard-manual", JSON.stringify(rows));
+    drawDashboard(rows, true);
+    note.textContent = "Loaded " + label + ". " + rows.length + " days shown.";
+  } catch (err) {
+    note.textContent = "Load failed for " + label + ".";
+  }
+  e.target.value = "";
+};
+document.getElementById("resetdash").onclick = () => {
+  sessionStorage.removeItem("gg-dashboard-manual");
+  drawDashboard(JSON.parse(localStorage.getItem("gg-dashboard-v1") || "[]"));
+  document.getElementById("dashnote").textContent = "Reset. Last 7 days restored.";
+};
+document.getElementById("loaddrive").onclick = () => { localStorage.removeItem("gg-hold-ledger"); loadDriveCard().then(applyGrades).catch(err => { document.getElementById("pdfnote").textContent = err.message; }); };
+async function catchUp(){
+  try {
+    const [cal, grades, dash] = await Promise.all([
+      fetch("cards/calendar.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).catch(() => null),
+      fetch("cards/grades.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").catch(() => ""),
+      fetch("cards/dashboard.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").catch(() => "")
+    ]);
+    if (cal && cal.dates) {
+      Object.keys(cal.dates).forEach(date => {
+        const prior = publishedCalendar[date] || {};
+        publishedCalendar[date] = Object.assign({}, prior, cal.dates[date]);
+        if (!Number.isFinite(Number(publishedCalendar[date].allWin)) && Number.isFinite(Number(prior.allWin))) publishedCalendar[date].allWin = prior.allWin;
+        if (!Number.isFinite(Number(publishedCalendar[date].allLose)) && Number.isFinite(Number(prior.allLose))) publishedCalendar[date].allLose = prior.allLose;
+      });
+      localStorage.setItem("gg-calendar-published", JSON.stringify(publishedCalendar));
+    }
+    if (grades) {
+      gradeFile = grades.split(/\n/).map(line => {
+        const parts = line.split("|").map(s => s.trim());
+        if (parts.length < 5 || !/^\d{4}-\d{2}-\d{2}$/.test(parts[0]) || /^RANGE$/i.test(parts[1] || "") || /no picks|season ended|all win|all lose/i.test([parts[1], parts[2], parts[4]].join(" "))) return null;
+        const odds = (parts[3].match(/-?\d+/) || [""])[0];
+        const result = (parts[4].match(/win|loss|push/i) || ["loss"])[0].toLowerCase();
+        const dollars = parts[parts.length - 1].replace(/[$,+]/g, "");
+        const profit = Number(dollars);
+        return {date: parts[0], sport: parts[1], pick: parts[2], odds: odds || -110, close: "", result: result, stake: 10, profit: Number.isFinite(profit) ? profit : 0};
+      }).filter(Boolean);
+    }
+    if (dash) localStorage.setItem("gg-dashboard-published", dash);
+  } catch (err) {}
+  clearStalePending();
+  const held = localStorage.getItem("gg-hold-ledger") === "1";
+  const inWindow = load().some(b => inSlipWindow(b.date));
+  if (!held || !inWindow) {
+    localStorage.removeItem("gg-hold-ledger");
+    await loadDriveCard().catch(() => {});
+  }
+  await applyGrades().catch(() => {});
+  render();
+}
+catchUp();
+let stateRules = {};
+let visitorState = "";
+function applyState(name){
+  visitorState = name || "";
+  const line = document.getElementById("headregion");
+  if (line && name) line.textContent = String(name).toUpperCase();
+  const rule = stateRules[name];
+  const note = document.getElementById("staterule");
+  const books = document.getElementById("statebooks");
+  if (!rule) {
+    if (note) note.textContent = "Bet Responsibly. Gambling involves risk. Wagers can lose the full stake. This ledger is a record of picks and results, not a sportsbook, not betting advice, and not an offer to place a wager. You must be 21 or older where sports betting is legal. If gambling is causing problems, call or text 1-800-GAMBLER.";
+    return;
+  }
+  if (note) note.textContent = rule.rule + " This is a summary of published state rules as of October 2026, not legal advice. Confirm with the state regulator before you bet. If gambling is causing problems, call or text 1-800-GAMBLER.";
+  if (books) books.textContent = rule.books.length ? "Listed books for " + name + ": " + rule.books.join(", ") + ". A book not on that list is not treated as available here. The posted line is the book line, not a state-adjusted price." : "No listed book from this site is available in " + name + ".";
+  document.querySelectorAll("select.book-select").forEach(sel => {
+    [...sel.options].forEach(opt => {
+      if (!opt.value && opt.textContent === "All") return;
+      const ok = rule.books.includes(opt.value || opt.textContent);
+      opt.disabled = !ok;
+      opt.textContent = (opt.value || opt.textContent).replace(/ \(not listed\)$/, "") + (ok ? "" : " (not listed)");
+    });
+    if (sel.selectedOptions[0] && sel.selectedOptions[0].disabled) {
+      const open = [...sel.options].find(opt => !opt.disabled && opt.value !== "");
+      if (open) sel.value = open.value || open.textContent;
+    }
+  });
+}
+fetch("cards/state-rules.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => {
+  stateRules = (data && data.states) || {};
+  return fetch("https://ipapi.co/json/").then(r => r.ok ? r.json() : null);
+}).then(data => {
+  const code = String(data && data.country_code || "").toUpperCase();
+  if (code && code !== "US") {
+    document.body.innerHTML = "<div class='page' style='padding:48px 20px;text-align:center'><h1 style='color:#39ff14'>United States Only</h1><p style='color:#d6ffd0'>This site is available only to devices in the United States.</p></div>";
+    return;
+  }
+  const place = data && (data.region || data.country_name);
+  if (place) applyState(place);
+}).catch(() => {});
+document.getElementById("loadcard").onclick = () => loadPending();
+
+let printBlob = null;
+let printPng = null;
+let printPngPages = [];
+let printPagesAll = [];
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+async function jpegPdf(canvas) {
+  const jpeg = new Uint8Array(await (await new Promise(r => canvas.toBlob(r, "image/jpeg", 0.92))).arrayBuffer());
+  const w = 792, h = 612;
+  const parts = [];
+  const add = s => parts.push(new TextEncoder().encode(s));
+  add("%PDF-1.4\n");
+  const xref = [0];
+  const mark = () => { xref.push(parts.reduce((n, p) => n + p.length, 0)); };
+  mark(); add("1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n");
+  mark(); add("2 0 obj\n<< /Type /Pages /Count 1 /Kids [3 0 R] >>\nendobj\n");
+  mark(); add("3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 792 612] /Contents 4 0 R /Resources << /XObject << /Im0 5 0 R >> >> >>\nendobj\n");
+  mark(); add("4 0 obj\n<< /Length 44 >>\nstream\nq 792 0 0 612 0 0 cm /Im0 Do Q\nendstream\nendobj\n");
+  mark(); add("5 0 obj\n<< /Type /XObject /Subtype /Image /Width " + canvas.width + " /Height " + canvas.height + " /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length " + jpeg.length + " >>\nstream\n");
+  parts.push(jpeg);
+  add("\nendstream\nendobj\n");
+  const start = parts.reduce((n, p) => n + p.length, 0);
+  add("xref\n0 6\n0000000000 65535 f \n");
+  xref.slice(1).forEach(o => add(String(o).padStart(10, "0") + " 00000 n \n"));
+  add("trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n" + start + "\n%%EOF");
+  return new Blob(parts, {type:"application/pdf"});
+}
+async function buildReportPages(mode) {
+  const report = document.getElementById("report");
+  const rows = [...report.querySelectorAll("h2, tbody tr")].map(el => el.tagName === "H2" ? {cells:[el.textContent], edge:false, head:true} : {cells:[...el.children].map(td => td.textContent), edge:el.classList.contains("edge"), head:false});
+  const summary = [...report.querySelectorAll(":scope > p")].map(p => p.textContent);
+  const landscape = mode === "print";
+  const dpi = 120;
+  const pageW = Math.round((landscape ? 17 : 11) * dpi);
+  const pageH = Math.round((landscape ? 11 : 17) * dpi);
+  const margin = 48;
+  const rowH = 28;
+  const show = document.getElementById("reportShow").value || "both";
+  const sections = [];
+  let current = [];
+  rows.forEach(row => {
+    if (row.head && current.length) { sections.push(current); current = [row]; }
+    else current.push(row);
+  });
+  if (current.length) sections.push(current);
+  const pages = show === "both" && sections.length > 1 ? sections : [rows];
+  if (!pages.length) pages.push([]);
+  const icon = new Image();
+  icon.src = "gg-icon.png";
+  const iconReady = await new Promise(res => { icon.onload = () => res(true); icon.onerror = () => res(false); });
+  const canvases = pages.map((pageRows, pageIndex) => {
+    const canvas = document.createElement("canvas");
+    canvas.width = pageW;
+    canvas.height = pageH;
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#0a0a0a";
+    ctx.fillRect(0, 0, pageW, pageH);
+    ctx.strokeStyle = "#39ff14";
+    ctx.lineWidth = 3;
+    roundRect(ctx, 24, 24, pageW - 48, pageH - 48, 24);
+    ctx.stroke();
+    if (iconReady) {
+      ctx.save();
+      roundRect(ctx, pageW - 156, 40, 108, 108, 16);
+      ctx.stroke();
+      ctx.clip();
+      ctx.drawImage(icon, pageW - 152, 44, 100, 100);
+      ctx.restore();
+    }
+    ctx.fillStyle = "#39ff14";
+    ctx.font = "28px sans-serif";
+    ctx.fillText("Gnarly Gorilla Report Card", margin, 78);
+    ctx.fillStyle = "#d6ffd0";
+    ctx.font = "16px sans-serif";
+    const label = (pageRows.find(r => r.head) || {}).cells ? (pageRows.find(r => r.head).cells[0] || "") : "";
+    ctx.fillText((landscape ? "Ledger landscape" : "Ledger portrait") + "  " + (label || ("Page " + (pageIndex + 1))) + "  " + (pageIndex + 1) + " of " + pages.length, margin, 108);
+    let y = 140;
+    if (pageIndex === 0) summary.forEach(line => { ctx.fillText(line, margin, y); y += 24; });
+    const section = label === "Date" || !label ? (pageIndex === 0 ? "Pending" : "Graded") : label;
+    y += 8;
+    ctx.strokeStyle = "#39ff14";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(margin, y - 18);
+    ctx.lineTo(pageW - margin, y - 18);
+    ctx.stroke();
+    ctx.fillStyle = "#39ff14";
+    ctx.font = "18px sans-serif";
+    ctx.fillText(section, margin, y);
+    y += 28;
+    const heads = ["Date", "Result", "Sport", "Pick", "Odds", "P/L"];
+    const xs = landscape ? [margin, 220, 380, 520, pageW - 280, pageW - 150] : [margin, 180, 300, 420, pageW - 240, pageW - 120];
+    ctx.fillStyle = "#39ff14";
+    ctx.font = "16px sans-serif";
+    heads.forEach((h, i) => ctx.fillText(h, xs[i], y));
+    ctx.font = "15px sans-serif";
+    pageRows.forEach(row => {
+      const cells = row.cells || [];
+      if (row.head || cells.length === 1 && /^(Pending|Graded|Date)$/.test(cells[0] || "")) return;
+      y += rowH;
+      if (cells.length === 1) {
+        ctx.fillStyle = "#39ff14";
+        ctx.fillText(cells[0], margin, y);
+        return;
+      }
+      ctx.fillStyle = row.edge ? "#f0e14a" : "#d6ffd0";
+      cells.forEach((cell, i) => ctx.fillText(String(cell), xs[i], y));
+    });
+    if (!pageRows.length) { ctx.fillStyle = "#d6ffd0"; ctx.fillText("No slips on this report.", margin, y + 28); }
+    return canvas;
+  });
+  return canvases;
+}
+async function buildPrintForm() {
+  const note = document.getElementById("printnote");
+  render();
+  const printPages = await buildReportPages("print");
+  const pngPages = await buildReportPages("png");
+  document.getElementById("printimg").src = printPages[0].toDataURL("image/png");
+  document.getElementById("printpreview").hidden = false;
+  const second = document.getElementById("printpreview2");
+  if (printPages[1]) { document.getElementById("printimg2").src = printPages[1].toDataURL("image/png"); second.hidden = false; }
+  else second.hidden = true;
+  printPng = await new Promise(r => pngPages[0].toBlob(r, "image/png"));
+  printPngPages = pngPages;
+  printPagesAll = printPages;
+  printBlob = await jpegPdf(printPages[0]);
+  note.textContent = "Preview ready. " + printPages.length + " print page" + (printPages.length === 1 ? "" : "s") + ". Nothing is cut off.";
+}
+document.getElementById("printreport").onclick = async () => {
+  const note = document.getElementById("printnote");
+  note.textContent = "Building the report...";
+  try {
+    await buildPrintForm();
+    const popup = window.open("", "gg-report");
+    if (!popup) { note.textContent = "Preview is below. Allow pop-ups to print."; return; }
+    const imgs = printPagesAll.map(c => "<img src='" + c.toDataURL("image/png") + "' style='width:100%;page-break-after:always'>").join("");
+    popup.document.write("<title>Gnarly Gorilla Report Card</title><style>@page{size:ledger landscape;margin:0.4in}body{margin:0;background:#0a0a0a}</style>" + imgs);
+    popup.document.close();
+    popup.focus();
+    popup.print();
+    note.textContent = "Print dialog open. Ledger landscape, " + printPagesAll.length + " page" + (printPagesAll.length === 1 ? "" : "s") + ".";
+  } catch (err) {
+    note.textContent = err.message || "Print failed.";
+  }
+};
+document.getElementById("savepng").onclick = async () => {
+  const note = document.getElementById("printnote");
+  try { await buildPrintForm(); } catch (err) { note.textContent = err.message || "Preview failed."; return; }
+  if (!printPngPages.length) { note.textContent = "No report to save."; return; }
+  const page = printPngPages.length > 1 ? printPngPages : [printPngPages[0]];
+  for (let i = 0; i < page.length; i++) {
+    const blob = await new Promise(r => page[i].toBlob(r, "image/png"));
+    const name = page.length === 1 ? "GG-Report-Card.png" : "GG-Report-Card-" + (i + 1) + ".png";
+    download(name, blob);
+  }
+  note.textContent = "PNG saved in portrait. " + page.length + " file" + (page.length === 1 ? "" : "s") + ".";
+  return;
+  const name = "GG-Report-Card.png";
+  try {
+    if (window.showSaveFilePicker) {
+      const handle = await showSaveFilePicker({suggestedName: name, types: [{description: "PNG", accept: {"image/png": [".png"]}}]});
+      const writable = await handle.createWritable();
+      await writable.write(printPng);
+      await writable.close();
+      note.textContent = "PNG saved.";
+      return;
+    }
+  } catch (err) {
+    if (err.name === "AbortError") { note.textContent = "Save cancelled."; return; }
+  }
+  download(name, printPng);
+  note.textContent = "PNG downloaded.";
+};
+document.getElementById("saveprint").onclick = async () => {
+  const note = document.getElementById("printnote");
+  if (!printBlob) { note.textContent = "Press Print Report first."; return; }
+  const name = "GG-Report-Card.pdf";
+  try {
+    if (window.showSaveFilePicker) {
+      const handle = await showSaveFilePicker({suggestedName: name, types: [{description: "PDF", accept: {"application/pdf": [".pdf"]}}]});
+      const writable = await handle.createWritable();
+      await writable.write(printBlob);
+      await writable.close();
+      note.textContent = "Saved.";
+      return;
+    }
+  } catch (err) {
+    if (err.name === "AbortError") { note.textContent = "Save cancelled."; return; }
+  }
+  download(name, printBlob);
+  note.textContent = "Save dialog is not available here. The file was downloaded instead.";
+};
+document.querySelectorAll("[data-jump]").forEach(btn => btn.onclick = () => {
+  const box = document.getElementById(btn.dataset.jump);
+  if (!box) return;
+  if (btn.dataset.jump === "seasons") { window.scrollTo({top: 0, behavior:"smooth"}); return; }
+  const bar = document.querySelector(".topbar");
+  const top = box.getBoundingClientRect().top + window.scrollY - (bar ? bar.offsetHeight : 0);
+  window.scrollTo({top: Math.max(0, top), behavior:"smooth"});
+});
+document.getElementById("copyreport").onclick = async () => {
+  const text = document.getElementById("report").dataset.copy || document.getElementById("report").textContent;
+  const note = document.getElementById("copynote");
+  try {
+    await navigator.clipboard.writeText(text);
+    note.textContent = "Copied.";
+  } catch (err) {
+    const box = document.createElement("textarea");
+    box.value = text;
+    document.body.appendChild(box);
+    box.select();
+    const ok = document.execCommand("copy");
+    box.remove();
+    note.textContent = ok ? "Copied." : "Select the report and copy it by hand.";
+  }
+};
+
+function download(name, blob){
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+function pdfEscape(s){
+  return String(s).replace(/[^\x20-\x7E]/g, " ").replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)");
+}
+function buildPdf(bets){
+  const sorted = bets.slice().sort((a,b) => a.date.localeCompare(b.date) || a.id - b.id);
+  const pl = bets.reduce((s,b) => s + profit(b), 0);
+  const objects = [];
+  function add(body){ objects.push(body); return objects.length; }
+  const fontId = add("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>");
+  const boldId = add("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>");
+  const cols = [28, 72, 124, 156, 204, 330, 366, 402, 446, 492];
+  const heads = ["Date","Book","Sport","Type","Pick","Odds","Stake","Result","P/L","Notes"];
+  const pages = [];
+  for (let i = 0; i < Math.max(sorted.length, 1); i += 48) pages.push(sorted.slice(i, i + 48));
+  const pageIds = [];
+  pages.forEach((chunk, pageIndex) => {
+    const cmds = [
+      "0.039 0.039 0.039 rg", "0 0 612 792 re", "f",
+      "0.063 0.125 0.063 rg", "0 760 612 32 re", "f",
+      "0.22 1 0.08 rg", "BT", "/F2 11 Tf", "1 0 0 1 28 772 Tm (GNARLY GORILLA SPORTSBOOKS) Tj", "ET",
+      "0.84 1 0.82 rg", "BT", "/F1 8 Tf", "1 0 0 1 250 772 Tm (Ledger card  |  daily pick companion) Tj", "ET",
+      "0.94 0.88 0.29 rg", "BT", "/F1 8 Tf", "1 0 0 1 28 742 Tm (" + pdfEscape("W/L Record " + rec(bets) + "    Profit " + money(pl) + "    Units " + (pl / UNIT).toFixed(2) + "u    $10 slips") + ") Tj", "ET",
+      "0.063 0.125 0.063 rg", "28 724 556 14 re", "f",
+      "0.22 1 0.08 rg", "BT", "/F2 7 Tf"
+    ];
+    heads.forEach((h, i) => cmds.push("1 0 0 1 " + cols[i] + " 728 Tm (" + h + ") Tj"));
+    cmds.push("ET", "0.84 1 0.82 rg", "BT", "/F1 7 Tf");
+    if (!sorted.length && pageIndex === 0) cmds.push("1 0 0 1 28 708 Tm (No slips yet.) Tj");
+    chunk.forEach((b, i) => {
+      const y = 708 - i * 11;
+      const cells = [b.date, b.book, b.sport, b.type, b.pick, b.odds, Number(b.stake).toFixed(2), b.result, b.result === "pending" ? "-" : money(profit(b)), b.notes || ""];
+      cells.forEach((c, n) => cmds.push("1 0 0 1 " + cols[n] + " " + y + " Tm (" + pdfEscape(c).slice(0, n === 4 ? 22 : 14) + ") Tj"));
+    });
+    cmds.push("ET");
+    cmds.push("0.56 0.72 0.60 rg", "BT", "/F1 7 Tf", "1 0 0 1 28 24 Tm (Gnarly Gorilla Sportsbooks  |  page " + (pageIndex + 1) + "  |  not a sportsbook login) Tj", "ET");
+    const stream = cmds.join("\n");
+    const contentId = add("<< /Length " + stream.length + " >>\nstream\n" + stream + "\nendstream");
+    pageIds.push(add("<< /Type /Page /Parent PAGES /MediaBox [0 0 612 792] /Contents " + contentId + " 0 R /Resources << /Font << /F1 " + fontId + " 0 R /F2 " + boldId + " 0 R >> >> >>"));
+  });
+  const pagesId = add("<< /Type /Pages /Kids [" + pageIds.map(id => id + " 0 R").join(" ") + "] /Count " + pageIds.length + " >>");
+  const catalogId = add("<< /Type /Catalog /Pages " + pagesId + " 0 R >>");
+  let pdf = "%PDF-1.4\n";
+  const offsets = [0];
+  objects.forEach((body, i) => {
+    offsets.push(pdf.length);
+    pdf += (i + 1) + " 0 obj\n" + body.replace("PAGES", pagesId + " 0 R") + "\nendobj\n";
+  });
+  const xref = pdf.length;
+  pdf += "xref\n0 " + (objects.length + 1) + "\n0000000000 65535 f \n";
+  offsets.slice(1).forEach(off => { pdf += String(off).padStart(10, "0") + " 00000 n \n"; });
+  pdf += "trailer << /Size " + (objects.length + 1) + " /Root " + catalogId + " 0 R >>\nstartxref\n" + xref + "\n%%EOF";
+  return new Blob([pdf], {type:"application/pdf"});
+}
+function crc32(bytes){
+  let c = 0xFFFFFFFF;
+  for (let i = 0; i < bytes.length; i++) {
+    c ^= bytes[i];
+    for (let k = 0; k < 8; k++) c = (c >>> 1) ^ (0xEDB88320 & -(c & 1));
+  }
+  return (~c) >>> 0;
+}
+function zipStore(files){
+  const enc = new TextEncoder();
+  const parts = [];
+  const central = [];
+  let offset = 0;
+  files.forEach(f => {
+    const name = enc.encode(f.name);
+    const data = enc.encode(f.data);
+    const crc = crc32(data);
+    const local = new Uint8Array(30 + name.length);
+    const v = new DataView(local.buffer);
+    v.setUint32(0, 0x04034b50, true);
+    v.setUint16(4, 20, true);
+    v.setUint32(14, crc, true);
+    v.setUint32(18, data.length, true);
+    v.setUint32(22, data.length, true);
+    v.setUint16(26, name.length, true);
+    local.set(name, 30);
+    parts.push(local, data);
+    const cen = new Uint8Array(46 + name.length);
+    const cv = new DataView(cen.buffer);
+    cv.setUint32(0, 0x02014b50, true);
+    cv.setUint16(4, 20, true);
+    cv.setUint16(6, 20, true);
+    cv.setUint32(16, crc, true);
+    cv.setUint32(20, data.length, true);
+    cv.setUint32(24, data.length, true);
+    cv.setUint16(28, name.length, true);
+    cv.setUint32(42, offset, true);
+    cen.set(name, 46);
+    central.push(cen);
+    offset += local.length + data.length;
+  });
+  const centralStart = offset;
+  let centralSize = 0;
+  central.forEach(c => { parts.push(c); centralSize += c.length; offset += c.length; });
+  const end = new Uint8Array(22);
+  const ev = new DataView(end.buffer);
+  ev.setUint32(0, 0x06054b50, true);
+  ev.setUint16(8, files.length, true);
+  ev.setUint16(10, files.length, true);
+  ev.setUint32(12, centralSize, true);
+  ev.setUint32(16, centralStart, true);
+  parts.push(end);
+  return new Blob(parts, {type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+}
+function xmlEsc(s){ return String(s).replace(/&/g,"&").replace(/</g,"<").replace(/>/g,">"); }
+function xmlEsc(s){ return String(s).replace(/&/g,"&").replace(/</g,"<").replace(/>/g,">"); }
+function buildSheet(bets){
+  const rows = [["Date","Book","Sport","Type","Pick","Odds","Stake","Result","Profit","Notes"]];
+  bets.slice().sort((a,b) => a.date.localeCompare(b.date)).forEach(b => rows.push([b.date, b.book, b.sport, b.type, b.pick, b.odds, b.stake, b.result, b.result === "pending" ? "" : profit(b).toFixed(2), b.notes || ""]));
+  const sheet = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0" zoomScale="100"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><sheetFormatPr defaultRowHeight="12"/><cols><col min="1" max="1" width="12"/><col min="2" max="4" width="12"/><col min="5" max="5" width="22"/><col min="6" max="10" width="12"/></cols><sheetData>' + rows.map((r,i) => "<row r=\"" + (i+1) + "\" ht=\"12\" customHeight=\"1\">" + r.map((c,j) => "<c r=\"" + String.fromCharCode(65+j) + (i+1) + "\" t=\"inlineStr\" s=\"" + (i === 0 ? 2 : 1) + "\"><is><t>" + xmlEsc(c) + "</t></is></c>").join("") + "</row>").join("") + "</sheetData></worksheet>";
+  const styles = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="3"><font><sz val="8"/><name val="Calibri"/></font><font><sz val="8"/><color rgb="FFD6FFD0"/><name val="Calibri"/></font><font><b/><sz val="8"/><color rgb="FF39FF14"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF102010"/></patternFill></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="3"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/><xf numFmtId="0" fontId="2" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/></cellXfs></styleSheet>';
+  return zipStore([
+    {name:"[Content_Types].xml", data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>'},
+    {name:"_rels/.rels", data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'},
+    {name:"xl/workbook.xml", data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Ledger card" sheetId="1" r:id="rId1"/></sheets></workbook>'},
+    {name:"xl/_rels/workbook.xml.rels", data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>'},
+    {name:"xl/styles.xml", data:styles},
+    {name:"xl/worksheets/sheet1.xml", data:sheet}
+  ]);
+}
+
+document.getElementById("loadledger").onchange = e => {
+  const file = e.target.files[0];
+  const note = document.getElementById("ledgernote");
+  if (!file) return;
+  note.textContent = "Loading " + file.name.replace(/\.[^.]+$/, "") + "...";
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(String(reader.result));
+      const bets = Array.isArray(data) ? data : data.bets;
+      if (!Array.isArray(bets)) throw new Error("That file has no slips.");
+      const kept = bets.filter(b => !isNoPick(b) && inSlipWindow(b.date));
+      kept.forEach(b => { keepClose(b); markEdge(b); });
+      save(kept);
+      document.getElementById("reportDay").value = "";
+      localStorage.setItem("gg-hold-ledger", "1");
+      render();
+      requestAnimationFrame(render);
+    note.textContent = "Loaded " + bets.length + " slips.";
+      document.getElementById("slips").scrollIntoView({behavior:"smooth", block:"start"});
+    } catch (err) {
+      note.textContent = "Load failed. Use a Save Ledger JSON file.";
+    }
+    e.target.value = "";
+  };
+  reader.readAsText(file);
+};
+document.getElementById("syncledger").onclick = async () => {
+  const note = document.getElementById("ledgernote");
+  note.textContent = "Syncing ledger and graded slips...";
+  try {
+    const res = await fetch("cards/ledger.json?ts=" + Date.now());
+    if (!res.ok) throw new Error("missing");
+    const data = await res.json();
+    const bets = Array.isArray(data) ? data : data.bets;
+    if (!Array.isArray(bets) || !bets.length) throw new Error("empty");
+    bets.forEach(b => { keepClose(b); markEdge(b); });
+    save(bets);
+    localStorage.setItem("gg-hold-ledger", "1");
+    const grades = await fetch("cards/grades.txt?ts=" + Date.now());
+    if (grades.ok) {
+      const text = await grades.text();
+      gradeFile = text.split(/\n/).map(line => {
+        const parts = line.split("|").map(s => s.trim());
+        if (parts.length < 5 || !/^\d{4}-\d{2}-\d{2}$/.test(parts[0]) || /^RANGE$/i.test(parts[1] || "") || /no picks|season ended|all win|all lose/i.test([parts[1], parts[2], parts[4]].join(" "))) return null;
+        const odds = (parts[3].match(/-?\d+/) || [""])[0];
+        const result = (parts[4].match(/win|loss|push/i) || ["loss"])[0].toLowerCase();
+        const dollars = parts[parts.length - 1].replace(/[$,+]/g, "");
+        const profit = Number(dollars);
+        const row = {date: parts[0], sport: parts[1], pick: parts[2], odds: odds || -110, close: "", result: result, stake: 10, profit: Number.isFinite(profit) ? profit : 0};
+        keepClose(row);
+        return row;
+      }).filter(Boolean);
+    }
+    await applyGrades();
+    const filled = load();
+    filled.forEach(keepClose);
+    save(filled);
+    const graded = filled.concat(loadGrade()).concat(gradeFile).filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
+    note.textContent = "Synced ledger. " + bets.length + " slips loaded. " + graded.length + " graded slips are in the Slips card.";
+    document.getElementById("slips").scrollIntoView({behavior:"smooth", block:"start"});
+  } catch (err) {
+    note.textContent = "Sync failed. Ledger is not on the site yet.";
+  }
+};
+document.getElementById("saveledger").onclick = () => {
+  const bets = load();
+  const blob = new Blob([JSON.stringify({saved: new Date().toISOString(), bets}, null, 2)], {type:"application/json"});
+  download("GG-LEDGER-" + ymd(new Date()) + ".json", blob);
+  document.getElementById("ledgernote").textContent = bets.length + " slips saved.";
+};
+document.getElementById("exportpdf").onclick = () => download("gnarly-gorilla-sportsbooks.pdf", buildPdf(load()));
+document.getElementById("export").onclick = () => download("gnarly-gorilla-sportsbooks.xlsx", buildSheet(load()));
+document.getElementById("import").onchange = e => {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    const lines = String(reader.result).trim().split(/\r?\n/).slice(1);
+    const bets = load();
+    lines.forEach(line => {
+      const cols = line.split(",");
+      if (cols.length < 8) return;
+      bets.push(markEdge(keepClose({id: Date.now() + Math.random(), date:cols[0], book:cols[1], sport:cols[2], type:cols[3], pick:cols[4], odds:Number(cols[5]), close: cols[9] || "", stake:Number(cols[6]), result:cols[7], notes:cols[8] || ""})));
+    });
+    save(bets);
+  };
+  reader.readAsText(file);
+};
+document.getElementById("clear").onclick = () => { if (confirm("Delete every bet in this browser?")) save([]); };
+["fSport","fBook","fType","fResult"].forEach(id => {
+  const el = document.getElementById(id);
+  const apply = () => { el.offsetHeight; requestAnimationFrame(render); };
+  el.addEventListener("input", apply);
+  el.addEventListener("change", apply);
+});
+["reportDay","reportShow"].forEach(id => document.getElementById(id).onchange = render);
+async function fillChartCloses(){
+  const key = oddskey.value.trim();
+  const bets = load();
+  const seen = new Set();
+  let filled = 0;
+  for (const b of bets) {
+    if (b.close || b.type === "SGP" || !BOOK_KEY[b.book] || !SPORT_KEY[b.sport]) continue;
+    const id = b.sport + "|" + b.book;
+    if (seen.has(id)) continue;
+    seen.add(id);
+    let games = cachedBoard(b.sport, BOOK_KEY[b.book]);
+    if (!games && key) games = await fetchBook(SPORT_KEY[b.sport], BOOK_KEY[b.book], key);
+    if (!games) continue;
+    filled += applyCloses(bets.filter(x => x.sport === b.sport), games, BOOK_KEY[b.book]);
+  }
+  if (filled) save(bets);
+  return filled;
+}
+document.getElementById("plot").onclick = () => {
+  const note = document.getElementById("plotnote");
+  note.textContent = "Updating CLV for every sport...";
+  fillChartCloses().then(filled => {
+    const bets = filtered(load());
+    const settled = bets.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
+    drawCharts(load().concat(loadGrade()));
+    const pending = bets.filter(b => b.result === "pending").length;
+    const sports = [...new Set(bets.map(b => String(b.sport || "").trim().toUpperCase()))].filter(Boolean);
+    note.textContent = (settled.length ? settled.length + " settled slips plotted." : "No settled slips yet.") + " " + pending + " slips left to settle. CLV checked for " + sports.join(", ") + "." + (filled ? " " + filled + " closes saved." : "");
+  }).catch(err => { note.textContent = err.message || "CLV update failed."; });
+};
+document.getElementById("canceledit").onclick = event => {
+  event.preventDefault();
+  form.reset();
+  form.date.value = new Date().toISOString().slice(0,10);
+  form.editId.value = "";
+  document.getElementById("savebtn").textContent = "Save Bet";
+  document.getElementById("editnote").textContent = "Edit cancelled.";
+  document.getElementById("picknote").textContent = "";
+};
+document.querySelectorAll("input[type=file]").forEach(input => input.addEventListener("change", () => { const face = input.parentElement.querySelector(".file-face"); if (face) face.textContent = input.files && input.files[0] ? input.files[0].name : "No File Chosen"; }));
+document.getElementById("loadcal").onchange = e => {
+  const file = e.target.files[0];
+  const note = document.getElementById("calnote");
+  if (!file) return;
+  note.textContent = "Loading " + file.name.replace(/\.[^.]+$/, "") + "...";
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(String(reader.result));
+      let dates = data && data.dates;
+      if (!dates && Array.isArray(data && data.bets || data)) {
+        dates = {};
+        (data.bets || data).forEach(b => {
+          if (!b || !b.date || b.result === "pending" || isNoPick(b)) return;
+          const row = dates[b.date] || {pl: 0, n: 0};
+          row.pl += profit(b);
+          row.n += 1;
+          dates[b.date] = row;
+        });
+      }
+      if (!dates || !Object.keys(dates).length) throw new Error("empty");
+      localStorage.setItem("gg-calendar-personal", JSON.stringify(dates));
+      drawCalendar();
+      note.textContent = "Private calendar loaded. Only this browser can see it.";
+      document.getElementById("calendarcard").scrollIntoView({behavior:"smooth", block:"start"});
+    } catch (err) {
+      note.textContent = "Load failed. Use a calendar JSON or a ledger JSON.";
+    }
+    e.target.value = "";
+  };
+  reader.readAsText(file);
+};
+document.getElementById("resetcal").onclick = () => {
+  localStorage.removeItem("gg-calendar-personal");
+  drawCalendar();
+  document.getElementById("calnote").textContent = "Showing The Default Calendar ($10.00 Bets)";
+};
+const tzSelect = document.getElementById("timezone");
+tzSelect.value = siteZone();
+tzSelect.onchange = () => {
+  localStorage.setItem("gg-timezone", tzSelect.value);
+  form.date.value = todayEt();
+  armMidnight();
+  showClock();
+  if (openDate) openDay(openDate);
+  else render();
+};
+const hourBtn = document.getElementById("hourmode");
+hourBtn.textContent = "12hr/24hr Toggle";
+hourBtn.onclick = () => {
+  localStorage.setItem("gg-hour", hour12() ? "24" : "12");
+  showClock();
+  if (openDate) openDay(openDate);
+  else render();
+};
+showClock();
+setInterval(showClock, 1000);
+document.getElementById("prevMonth").onclick = () => { monthCursor.setMonth(monthCursor.getMonth()-1); render(); };
+document.getElementById("nextMonth").onclick = () => { monthCursor.setMonth(monthCursor.getMonth()+1); render(); };
+[KEY, GRADE_KEY].forEach(k => {
+  try {
+    const rows = JSON.parse(localStorage.getItem(k) || "[]");
+    const clean = rows.filter(b => b && !/^RANGE$/i.test(b.pick || "") && !/^all win/i.test(b.result || ""));
+    if (clean.length !== rows.length) localStorage.setItem(k, JSON.stringify(clean));
+  } catch (err) {}
+});
+render();
+loadSeasons();
+fetch("cards/calendar.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => { if (data && data.dates) publishedCalendar = data.dates; render(); }).catch(() => {});
+fetch("cards/report.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
+  const day = ((text.match(/Yesterday\s+(\d{4}-\d{2}-\d{2})/) || [])[1]) || "";
+  text.split(/\n/).forEach(line => {
+    if (!/\bEDGE\b/.test(line)) return;
+    const parts = line.split("|").map(s => s.trim());
+    if (parts.length < 3) return;
+    edgePicks.add([day, parts[0], parts[2]].join("|").toLowerCase());
+  });
+  if (edgePicks.size) render();
+}).catch(() => {});
+fetch("cards/today.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(drawCardAnalysis).catch(() => {});
+loadDriveCardForCalendar();
+setInterval(loadDriveCardForCalendar, 60000);
+fetch("cards/closes.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
+  const store = closeStore();
+  text.split(/\n/).forEach(line => {
+    line = line.trim();
+    if (!line || line.startsWith("#") || /no close saved|matched bet price|bet price/i.test(line)) return;
+    const parts = line.split("|").map(s => s.trim());
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(parts[0]) || parts.length < 5) return;
+    const close = Number(String(parts[4]).replace(/[^\d+-]/g, ""));
+    if (!Number.isFinite(close)) return;
+    const key = [parts[0], parts[1], parts[3]].join("|");
+    store[key] = {date: parts[0], sport: parts[1], pick: parts[3], odds: parts[2], close: close, at: Date.now(), realClose: true};
+  });
+  saveCloseStore(store);
+  const bets = load();
+  if (applySavedCloses(bets)) save(bets);
+  render();
+}).catch(() => {});
+fetch("cards/grades.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
+  gradeFile = text.split(/\n/).map(line => {
+    const parts = line.split("|").map(s => s.trim());
+    if (parts.length < 5 || !/^\d{4}-\d{2}-\d{2}$/.test(parts[0]) || /no picks|season ended/i.test([parts[1], parts[2], parts[4]].join(" "))) return null;
+    const odds = (parts[3].match(/-?\d+/) || [""])[0];
+    const result = (parts[4].match(/win|loss|push/i) || ["loss"])[0].toLowerCase();
+    const dollars = parts[parts.length - 1].replace(/[$,+]/g, "");
+    const profit = Number(dollars);
+    return {date: parts[0], sport: parts[1], pick: parts[2], odds: odds || -110, close: "", result: result, stake: 10, profit: Number.isFinite(profit) ? profit : 0};
+  }).filter(Boolean);
+  render();
+}).catch(() => {});
+</script>
+</body>
+</html>
