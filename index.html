@@ -416,7 +416,7 @@ function liveByText(){
   const instant = new Date(guess.getTime() + ((9 * 60 + 30) - (h * 60 + m)) * 60000);
   const clock = instant.toLocaleTimeString("en-US", {timeZone: zone, hour:"numeric", minute:"2-digit", hour12: hour12()});
   const place = zone.replace(/_/g, " ").split("/").pop();
-  return "All picks live by " + clock + " " + place + ". Cards post at 9:00 AM Eastern. The extra 30 minutes is the buffer.";
+  return "All picks live by " + clock + " " + place + ". Closed Value Lines update at 6:00 PM Eastern. Last live price is saved then.";
 }
 function showClock(){
   const now = new Date();
