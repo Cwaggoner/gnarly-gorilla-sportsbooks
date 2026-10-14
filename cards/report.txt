@@ -1,33 +1,22 @@
-# GG report 2026-10-13
-# Yesterday 2026-10-12 graded. No pick cards created for 2026-10-13 in this run.
+# GG report 2026-10-14
+# Yesterday 2026-10-13 graded. No pick cards created for 2026-10-14 in this run.
 
-Record 14-9-0  Profit $92.38  Units 9.24u  CLV 0.0 (Matched Bet Price)
+Record 6-5-0  Profit $15.36  Units 1.54u  CLV 0.0 (Matched Bet Price)
 
-NBA | win | Thunder +8.5 | -110 | +$9.09 EDGE
-NBA | win | Nets +3.5 | -110 | +$9.09
-NBA | win | Timberwolves +2.5 | -110 | +$9.09
-NBA | win | Jazz +3.5 | -110 | +$9.09
-NBA | win | Thunder at Hawks Under 223.5 | -110 | +$9.09
-NBA | loss | Nets at Wizards Under 222.5 | -110 | -$10.00
-NBA | win | Timberwolves at Knicks Under 227.5 | -110 | +$9.09
-NBA | loss | Spurs at Jazz Under 226.5 | -110 | -$10.00
-NBA | win | Thunder +8.5 and Under | +190 | +$19.00 EDGE
-NBA | win | Timberwolves +2.5 and Under | +190 | +$19.00
-NBA | loss | Nets +3.5 and Under | +190 | -$10.00
-NHL | win | Buffalo Sabres ML | -108 | +$9.26
-NHL | win | Ottawa Senators ML | +114 | +$11.40 EDGE
-NHL | loss | Vegas Golden Knights ML | -102 | -$10.00
-NHL | loss | Panthers at Sabres Under 5.5 | +114 | -$10.00
-NHL | win | Senators ML and Under | +220 | +$22.00 EDGE
-MLB | loss | Dodgers at Brewers Under 6.5 | -110 | -$10.00 EDGE
-MLB | loss | Rays -1.5 | +130 | -$10.00
-MLB | loss | Under 6.5 and Brewers +1.5 | -280 | -$10.00
-MLB | loss | Rays -1.5 and Under | +120 | -$10.00
-NFL | win | Bills +3.5 | -110 | +$9.09 EDGE
-NFL | win | Bills at Rams Over 54.5 | -110 | +$9.09
-NFL | win | Bills +3.5 and Over | +190 | +$19.00
+NBA | loss | Knicks +10.5 | -110 | -$10.00 EDGE
+NBA | win | Pacers +10.5 | -110 | +$9.09
+NBA | loss | Knicks at Raptors Under 217.5 | -110 | -$10.00
+NBA | win | Pacers at Thunder Under 228.5 | -110 | +$9.09
+NBA | loss | SGP Knicks +10.5 and Under | +190 | -$10.00 EDGE
+NBA | win | SGP Pacers +10.5 and Under | +190 | +$19.00
+MLB | win | Guardians at Rays Under 7 | -110 | +$9.09
+NHL | loss | Buffalo Sabres ML | +135 | -$10.00
+NHL | loss | Washington Capitals ML | +136 | -$10.00
+NHL | win | Seattle Kraken ML | +100 | +$10.00
+NHL | win | Winnipeg Jets ML | -110 | +$9.09
 
-2026-10-12 | CFB | No Picks
-2026-10-12 | CBB | No Picks
+2026-10-13 | NFL | No Picks
+2026-10-13 | CBB | No Picks
+2026-10-13 | CFB | No Picks
 No sport is Season Ended. MLB last card date 2026-10-31. CFB 2027-01-25. NFL 2027-02-14. CBB 2027-04-05. NHL 2027-04-10. NBA 2027-04-11.
 Unconfirmed end dates: CFB 2027-01-25, NFL 2027-02-14, CBB 2027-04-05, NHL 2027-04-10, NBA 2027-04-11.
