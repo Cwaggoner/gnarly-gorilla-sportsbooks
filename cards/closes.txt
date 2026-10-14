@@ -1,16 +1,3 @@
 # file: closes
-# Saved close record, October 1 through October 12.
-# A blank close was never saved. A matching close is Matched Bet Price.
-2026-10-01 | no close saved |  | No Close Saved
-2026-10-02 | no close saved |  | No Close Saved
-2026-10-03 | no close saved |  | No Close Saved
-2026-10-04 | created close | -108 | CLV -0.9%
-2026-10-05 | created close | -115 | CLV 2.1%
-2026-10-06 | created close | -105 | CLV -2.3%
-2026-10-07 | matched bet price | -110 | Matched Bet Price
-2026-10-08 | no close saved |  | No Close Saved
-2026-10-09 | no close saved |  | No Close Saved
-2026-10-10 | no close saved |  | No Close Saved
-2026-10-11 | no close saved |  | No Close Saved
-2026-10-12 | matched bet price | bet price | Matched Bet Price
-2026-10-13 | matched bet price | bet price | Matched Bet Price
+# Per-slip last live price. Format: date | sport | odds | pick | close
+# A line is written only when a live price was captured before kickoff.

@@ -1714,18 +1714,48 @@ function cachedBoard(sport, bookKey){
   }
   return null;
 }
+function closeStore(){
+  try { return JSON.parse(localStorage.getItem("gg-closes") || "{}"); } catch (e) { return {}; }
+}
+function saveCloseStore(store){ localStorage.setItem("gg-closes", JSON.stringify(store)); }
+function closeKey(b){ return [b.date, b.sport, b.pick].join("|"); }
+function rememberPrice(b, price){
+  if (price == null || price === "") return;
+  const store = closeStore();
+  const key = closeKey(b);
+  store[key] = {date: b.date, sport: b.sport, pick: b.pick, odds: b.odds, close: Number(price), at: Date.now()};
+  saveCloseStore(store);
+}
+function applySavedCloses(bets){
+  const store = closeStore();
+  let n = 0;
+  bets.forEach(b => {
+    if (b.result === "pending" || b.type === "SGP") return;
+    const saved = store[closeKey(b)];
+    if (!saved || saved.close == null) return;
+    b.close = Number(saved.close);
+    b.realClose = true;
+    n++;
+  });
+  return n;
+}
 function applyCloses(bets, games, bookKey){
   let filled = 0;
   const today = ymd(new Date());
   bets.forEach(b => {
-    if (b.close || b.type === "SGP" || BOOK_KEY[b.book] !== bookKey) return;
+    if (b.close && b.realClose) return;
+    if (b.type === "SGP" || BOOK_KEY[b.book] !== bookKey) return;
     const hit = findBookPrice(games, bookKey, b.type, b.pick);
-    if (hit) b.lastPrice = Number(hit.outcome.price);
+    if (hit) {
+      b.lastPrice = Number(hit.outcome.price);
+      rememberPrice(b, b.lastPrice);
+    }
     const started = hit && hit.game.commence_time && Date.parse(hit.game.commence_time) <= Date.now();
     const gone = !hit && b.lastPrice && b.date && b.date <= today;
     if (!started && !gone) return;
     if (!b.lastPrice) return;
     b.close = Number(b.lastPrice);
+    b.realClose = true;
     filled++;
   });
   return filled;
@@ -2592,6 +2622,23 @@ fetch("cards/report.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(
 fetch("cards/today.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(drawCardAnalysis).catch(() => {});
 loadDriveCardForCalendar();
 setInterval(loadDriveCardForCalendar, 60000);
+fetch("cards/closes.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
+  const store = closeStore();
+  text.split(/\n/).forEach(line => {
+    line = line.trim();
+    if (!line || line.startsWith("#") || /no close saved|matched bet price|bet price/i.test(line)) return;
+    const parts = line.split("|").map(s => s.trim());
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(parts[0]) || parts.length < 5) return;
+    const close = Number(String(parts[4]).replace(/[^\d+-]/g, ""));
+    if (!Number.isFinite(close)) return;
+    const key = [parts[0], parts[1], parts[3]].join("|");
+    store[key] = {date: parts[0], sport: parts[1], pick: parts[3], odds: parts[2], close: close, at: Date.now(), realClose: true};
+  });
+  saveCloseStore(store);
+  const bets = load();
+  if (applySavedCloses(bets)) save(bets);
+  render();
+}).catch(() => {});
 fetch("cards/grades.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
   gradeFile = text.split(/\n/).map(line => {
     const parts = line.split("|").map(s => s.trim());
