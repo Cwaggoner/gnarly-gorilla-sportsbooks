@@ -768,8 +768,8 @@ function clv(b){
   return (got / closed - 1) * 100;
 }
 function clvText(b){
-  if (b.close === "" || b.close == null) return "No Close Saved";
   if (b.result === "pending" || b.result === "void") return "-";
+  if (b.close === "" || b.close == null) return "No Close Saved";
   const cv = clv(b);
   if (cv == null || Math.abs(cv) < 0.05) return "Matched Bet Price";
   return cv.toFixed(1) + "%";
@@ -1827,9 +1827,10 @@ function betType(b){
 function isNoPick(b){ return /no picks|season ended/i.test([b && b.pick, b && b.sport, b && b.type, b && b.result, b && b.notes].join(" ")); }
 function keepClose(b){
   b.type = betType(b);
+  if (b.close !== "" && b.close != null && Number(b.close) === Number(b.odds) && !b.realClose) b.close = "";
   if (b.close !== "" && b.close != null) return b;
-  const hit = (gradeFile || []).find(g => g.date === b.date && g.pick === b.pick && g.close !== "" && g.close != null);
-  if (hit) b.close = hit.close;
+  const hit = (gradeFile || []).find(g => g.date === b.date && samePick(g.pick, b.pick) && g.close !== "" && g.close != null && Number(g.close) !== Number(b.odds));
+  if (hit) { b.close = hit.close; b.realClose = true; }
   return b;
 }
 function markEdge(b){
@@ -1880,8 +1881,8 @@ function gradeRows(text){
     const r = l.split("|").map(s => s.trim());
     if (/^RANGE$/i.test(r[1] || "") || /all win|all lose/i.test(l)) return null;
     const wide = r.length >= 5 && /^(NBA|NHL|NFL|MLB|CBB|CFB)$/.test(r[1]);
-    const close = Number(String(wide ? r[3] : r[3]).replace(/[^\d+-]/g, ""));
-    return {date: r[0], sport: wide ? r[1] : "", pick: wide ? r[2] : r[1], result: (wide ? r[4] : r[2] || "").toLowerCase(), close: Number.isNaN(close) ? "" : close, odds: Number.isNaN(close) ? -110 : close};
+    const odds = Number(String(wide ? r[3] : r[3]).replace(/[^\d+-]/g, ""));
+    return {date: r[0], sport: wide ? r[1] : "", pick: wide ? r[2] : r[1], result: (wide ? r[4] : r[2] || "").toLowerCase(), close: "", odds: Number.isNaN(odds) ? -110 : odds};
   }).filter(row => row && row.date && row.pick && row.result && !/no picks|season ended|^range$/i.test(row.pick + " " + row.result));
 }
 async function applyGrades(){
@@ -1894,7 +1895,7 @@ async function applyGrades(){
   const graded = loadGrade();
   rules.forEach(rule => {
     [bets, graded].forEach(list => list.forEach(b => {
-      if (b.date === rule.date && (b.sport === rule.sport || !b.sport || !rule.sport) && samePick(b.pick, rule.pick)) { b.result = rule.result; if (rule.close !== "") b.close = rule.close; }
+      if (b.date === rule.date && (b.sport === rule.sport || !b.sport || !rule.sport) && samePick(b.pick, rule.pick)) { b.result = rule.result; if (rule.close !== "" && rule.close != null && Number(rule.close) !== Number(b.odds)) b.close = rule.close; }
     }));
     if (/no picks|season ended/i.test(rule.pick) || !inSlipWindow(rule.date)) return;
     if (!graded.some(b => b.date === rule.date && b.pick === rule.pick)) graded.push({id: Date.now() + Math.random(), date: rule.date, book: "BetMGM", sport: rule.sport, type: betType({pick: rule.pick}), pick: rule.pick, odds: rule.odds, close: rule.close, stake: 10, result: rule.result, profit: rule.profit, notes: "Graded"});
@@ -1955,11 +1956,11 @@ async function catchUp(){
       gradeFile = grades.split(/\n/).map(line => {
         const parts = line.split("|").map(s => s.trim());
         if (parts.length < 5 || !/^\d{4}-\d{2}-\d{2}$/.test(parts[0]) || /^RANGE$/i.test(parts[1] || "") || /no picks|season ended|all win|all lose/i.test([parts[1], parts[2], parts[4]].join(" "))) return null;
-        const close = (parts[3].match(/-?\d+/) || [""])[0];
+        const odds = (parts[3].match(/-?\d+/) || [""])[0];
         const result = (parts[4].match(/win|loss|push/i) || ["loss"])[0].toLowerCase();
         const dollars = parts[parts.length - 1].replace(/[$,+]/g, "");
         const profit = Number(dollars);
-        return {date: parts[0], sport: parts[1], pick: parts[2], odds: close || -110, close: close, result: result, stake: 10, profit: Number.isFinite(profit) ? profit : 0};
+        return {date: parts[0], sport: parts[1], pick: parts[2], odds: odds || -110, close: "", result: result, stake: 10, profit: Number.isFinite(profit) ? profit : 0};
       }).filter(Boolean);
     }
     if (dash) localStorage.setItem("gg-dashboard-published", dash);
@@ -2418,11 +2419,11 @@ document.getElementById("syncledger").onclick = async () => {
       gradeFile = text.split(/\n/).map(line => {
         const parts = line.split("|").map(s => s.trim());
         if (parts.length < 5 || !/^\d{4}-\d{2}-\d{2}$/.test(parts[0]) || /^RANGE$/i.test(parts[1] || "") || /no picks|season ended|all win|all lose/i.test([parts[1], parts[2], parts[4]].join(" "))) return null;
-        const close = (parts[3].match(/-?\d+/) || [""])[0];
+        const odds = (parts[3].match(/-?\d+/) || [""])[0];
         const result = (parts[4].match(/win|loss|push/i) || ["loss"])[0].toLowerCase();
         const dollars = parts[parts.length - 1].replace(/[$,+]/g, "");
         const profit = Number(dollars);
-        const row = {date: parts[0], sport: parts[1], pick: parts[2], odds: close || -110, close: close, result: result, stake: 10, profit: Number.isFinite(profit) ? profit : 0};
+        const row = {date: parts[0], sport: parts[1], pick: parts[2], odds: odds || -110, close: "", result: result, stake: 10, profit: Number.isFinite(profit) ? profit : 0};
         keepClose(row);
         return row;
       }).filter(Boolean);
@@ -2595,11 +2596,11 @@ fetch("cards/grades.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(
   gradeFile = text.split(/\n/).map(line => {
     const parts = line.split("|").map(s => s.trim());
     if (parts.length < 5 || !/^\d{4}-\d{2}-\d{2}$/.test(parts[0]) || /no picks|season ended/i.test([parts[1], parts[2], parts[4]].join(" "))) return null;
-    const close = (parts[3].match(/-?\d+/) || [""])[0];
+    const odds = (parts[3].match(/-?\d+/) || [""])[0];
     const result = (parts[4].match(/win|loss|push/i) || ["loss"])[0].toLowerCase();
     const dollars = parts[parts.length - 1].replace(/[$,+]/g, "");
     const profit = Number(dollars);
-    return {date: parts[0], sport: parts[1], pick: parts[2], odds: close || -110, close: close, result: result, stake: 10, profit: Number.isFinite(profit) ? profit : 0};
+    return {date: parts[0], sport: parts[1], pick: parts[2], odds: odds || -110, close: "", result: result, stake: 10, profit: Number.isFinite(profit) ? profit : 0};
   }).filter(Boolean);
   render();
 }).catch(() => {});
