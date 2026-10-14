@@ -134,3 +134,18 @@
 2026-10-12 | NFL | Bills +3.5 and Bills at Rams Over 54.5 | 190 | win | BUF 37 LAR 34 | 19.00
 2026-10-12 | CFB | No Picks
 2026-10-12 | CBB | No Picks
+2026-10-13 | RANGE | All Win 74.36 | All Lose -60.00
+2026-10-13 | NBA | Knicks +10.5 | -110 | loss | TOR 148 NYK 98 | -10.00
+2026-10-13 | NBA | Pacers +10.5 | -110 | win | OKC 114 IND 112 | 9.09
+2026-10-13 | NBA | Knicks at Raptors Under 217.5 | -110 | loss | 246 | -10.00
+2026-10-13 | NBA | Pacers at Thunder Under 228.5 | -110 | win | 226 | 9.09
+2026-10-13 | NBA | SGP Knicks +10.5 and Knicks at Raptors Under 217.5 | 190 | loss | TOR 148 NYK 98 | -10.00
+2026-10-13 | NBA | SGP Pacers +10.5 and Pacers at Thunder Under 228.5 | 190 | win | OKC 114 IND 112 | 19.00
+2026-10-13 | MLB | Guardians at Rays Under 7 | -110 | win | CLE 1 TB 3 | 9.09
+2026-10-13 | NHL | Buffalo Sabres ML | 135 | loss | BUF 3 MTL 4 SO | -10.00
+2026-10-13 | NHL | Washington Capitals ML | 136 | loss | WSH 2 CAR 4 | -10.00
+2026-10-13 | NHL | Seattle Kraken ML | 100 | win | SEA 3 PHI 2 SO | 10.00
+2026-10-13 | NHL | Winnipeg Jets ML | -110 | win | MIN 2 WPG 5 | 9.09
+2026-10-13 | NFL | No Picks
+2026-10-13 | CBB | No Picks
+2026-10-13 | CFB | No Picks
