@@ -149,3 +149,10 @@
 2026-10-13 | NFL | No Picks
 2026-10-13 | CBB | No Picks
 2026-10-13 | CFB | No Picks
+2026-10-14 | RANGE | All Win 0.00 | All Lose 0.00
+2026-10-14 | NBA | No Picks
+2026-10-14 | MLB | No Picks
+2026-10-14 | NHL | No Picks
+2026-10-14 | NFL | No Picks
+2026-10-14 | CFB | No Picks
+2026-10-14 | CBB | No Picks
