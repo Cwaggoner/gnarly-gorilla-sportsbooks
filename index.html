@@ -903,20 +903,26 @@ function drawCalendar(){
       const seen = new Set();
       const slips = live.filter(b => { const k = [b.sport, b.pick].join("|"); if (seen.has(k)) return false; seen.add(k); return true; });
       let day = board[date];
-      const actual = slips.reduce((s, b) => s + slipMoney(b), 0);
-      const wins = slips.filter(b => b.result === "win").length;
-      if (slips.length && date < today) {
-        const published = Number(day && day.pl);
-        const stakeTotal = slips.reduce((s, b) => s + Number(b.stake || 10), 0);
-        const usePublished = Number.isFinite(published) && wins > 0 && Math.abs(actual + stakeTotal) < 0.5;
-        day = Object.assign({}, day || {}, {pl: usePublished ? published : actual, n: slips.length});
-      } else if (!day && date < today && slips.length) day = {pl: actual};
+      const unique = [];
+      const seenPick = new Set();
+      slips.forEach(b => {
+        const k = [b.sport, String(b.pick || "").replace(/^sgp\s+/i, "")].join("|").toLowerCase();
+        if (seenPick.has(k)) return;
+        seenPick.add(k);
+        unique.push(b);
+      });
+      const actual = unique.reduce((s, b) => s + slipMoney(b), 0);
+      const published = Number(day && day.pl);
+      if (date < today) {
+        const usePublished = Number.isFinite(published) && published !== 0;
+        day = Object.assign({}, day || {}, {pl: usePublished ? published : actual, n: unique.length || (day && day.n) || 0});
+      } else if (!day && unique.length) day = {pl: actual};
       const cls = day && day.pl > 0 ? "win" : day && day.pl < 0 ? "loss" : "";
-      const rangeSlips = slips.length ? slips : [];
-      const winAll = rangeSlips.reduce((s, b) => { const odds = Number(b.odds), stake = Number(b.stake) || 10; if (!Number.isFinite(odds) || odds === 0) return s; return s + (odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds)); }, 0);
-      const loseAll = rangeSlips.reduce((s, b) => s + Number(b.stake || 10), 0);
-      const range = rangeSlips.length ? "<br><span class='range'><span class='win'>All Win " + money(winAll) + "</span><span class='slash'> / </span><span class='loss'>All Lose -" + money(loseAll).replace("-", "") + "</span></span>" : (day && Number.isFinite(Number(day.allWin)) ? "<br><span class='range'><span class='win'>All Win " + money(day.allWin) + "</span><span class='slash'> / </span><span class='loss'>All Lose " + money(day.allLose) + "</span></span>" : "");
-      html += "<div class='daycell' data-date='" + date + "'><b>" + d + "</b><br><span class='" + cls + "'>" + (day ? money(day.pl) : "") + "</span>" + range + "</div>";
+      const rangeSlips = unique.length ? unique : [];
+      const winAll = rangeSlips.length ? rangeSlips.reduce((s, b) => { const odds = Number(b.odds), stake = Number(b.stake) || 10; if (!Number.isFinite(odds) || odds === 0) return s; return s + (odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds)); }, 0) : Number(day && day.allWin) || 0;
+      const loseAll = rangeSlips.length ? rangeSlips.reduce((s, b) => s + Number(b.stake || 10), 0) : Math.abs(Number(day && day.allLose) || 0);
+      const range = (rangeSlips.length || (day && Number.isFinite(Number(day.allWin)))) ? "<br><span class='range'><span class='win'>All Win " + money(winAll) + "</span><span class='slash'> / </span><span class='loss'>All Lose -" + money(loseAll).replace("-", "") + "</span></span>" : "";
+      html += "<div class='daycell' data-date='" + date + "'><b>" + d + "</b><br><span class='" + cls + "'>" + (day && Number.isFinite(Number(day.pl)) ? money(day.pl) : "") + "</span>" + range + "</div>";
     }
   }
   document.getElementById("calendar").innerHTML = html;
