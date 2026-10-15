@@ -1330,7 +1330,8 @@ function group(bets, key){
     map[k].n++;
   });
   const rows = Object.entries(map).sort((a,b) => a[0].localeCompare(b[0]));
-  return "<p>" + rows.map(([k,v]) => esc(k) + ": " + (v.n ? money(v.pl) + " (" + v.n + ")" : seasonText(k))).join(" | ") + "</p>";
+  const moneyCls = n => n > 0 ? "win" : n < 0 ? "loss" : "";
+  return "<p>" + rows.map(([k,v]) => esc(k) + ": " + (v.n ? "<span class='" + moneyCls(v.pl) + "'>" + money(v.pl) + "</span> (" + v.n + ")" : seasonText(k))).join(" | ") + "</p>";
 }
 form.onsubmit = e => {
   e.preventDefault();
