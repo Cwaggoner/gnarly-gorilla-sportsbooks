@@ -769,7 +769,7 @@ function clv(b){
 }
 function clvText(b){
   if (b.result === "pending" || b.result === "void") return "-";
-  if (b.close === "" || b.close == null) return "No Close Saved";
+  if (!b.realClose || b.close === "" || b.close == null) return "No Close Saved";
   const cv = clv(b);
   if (cv == null || Math.abs(cv) < 0.05) return "Matched Bet Price";
   return cv.toFixed(1) + "%";
@@ -906,7 +906,10 @@ function drawCalendar(){
       if (slips.length && date < today) day = Object.assign({}, day || {}, {pl: slips.reduce((s, b) => s + slipMoney(b), 0), n: slips.length});
       else if (!day && date < today && slips.length) day = {pl: slips.reduce((s, b) => s + slipMoney(b), 0)};
       const cls = day && day.pl > 0 ? "win" : day && day.pl < 0 ? "loss" : "";
-      const range = day && Number.isFinite(Number(day.allWin)) ? "<br><span class='range'><span class='win'>All Win " + money(day.allWin) + "</span><span class='slash'> / </span><span class='loss'>All Lose " + money(day.allLose) + "</span></span>" : "";
+      const rangeSlips = slips.length ? slips : [];
+      const winAll = rangeSlips.reduce((s, b) => { const odds = Number(b.odds), stake = Number(b.stake) || 10; if (!Number.isFinite(odds) || odds === 0) return s; return s + (odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds)); }, 0);
+      const loseAll = rangeSlips.reduce((s, b) => s + Number(b.stake || 10), 0);
+      const range = rangeSlips.length ? "<br><span class='range'><span class='win'>All Win " + money(winAll) + "</span><span class='slash'> / </span><span class='loss'>All Lose -" + money(loseAll).replace("-", "") + "</span></span>" : (day && Number.isFinite(Number(day.allWin)) ? "<br><span class='range'><span class='win'>All Win " + money(day.allWin) + "</span><span class='slash'> / </span><span class='loss'>All Lose " + money(day.allLose) + "</span></span>" : "");
       html += "<div class='daycell' data-date='" + date + "'><b>" + d + "</b><br><span class='" + cls + "'>" + (day ? money(day.pl) : "") + "</span>" + range + "</div>";
     }
   }
