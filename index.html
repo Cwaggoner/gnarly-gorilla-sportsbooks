@@ -2523,11 +2523,60 @@ document.getElementById("clear").onclick = () => { if (confirm("Delete every bet
   el.addEventListener("change", apply);
 });
 ["reportDay","reportShow"].forEach(id => document.getElementById(id).onchange = render);
+async function keyIsPaid(key){
+  if (!key) return false;
+  const saved = localStorage.getItem("gg-key-tier");
+  if (saved) { try { const pack = JSON.parse(saved); if (pack.key === key) return pack.paid === true; } catch (e) {} }
+  const url = "https://api.the-odds-api.com/v4/historical/sports/americanfootball_nfl/odds?apiKey=" + encodeURIComponent(key) + "&regions=us&markets=h2h&oddsFormat=american&date=2026-01-01T12:00:00Z";
+  let paid = false;
+  try {
+    const res = await fetch(url);
+    paid = res.ok;
+  } catch (e) { paid = false; }
+  localStorage.setItem("gg-key-tier", JSON.stringify({key, paid, at: Date.now()}));
+  return paid;
+}
+async function paidHistoricalGames(sport, bookKey, date, key){
+  const sportKey = SPORT_KEY[sport];
+  if (!sportKey) return null;
+  const cacheKey = "gg-hist-" + sportKey + "-" + bookKey + "-" + date;
+  try {
+    const cached = JSON.parse(localStorage.getItem(cacheKey) || "null");
+    if (cached && cached.games) return cached.games;
+  } catch (e) {}
+  const url = "https://api.the-odds-api.com/v4/historical/sports/" + sportKey + "/odds?apiKey=" + encodeURIComponent(key) + "&regions=us,us2&markets=spreads,totals,h2h&oddsFormat=american&bookmakers=" + bookKey + "&date=" + date + "T23:00:00Z";
+  let res;
+  try { res = await fetch(url); }
+  catch (e) { return null; }
+  if (!res.ok) return null;
+  const body = await res.json();
+  const games = body && body.data ? body.data : body;
+  if (games && games.length) localStorage.setItem(cacheKey, JSON.stringify({at: Date.now(), games}));
+  return games || null;
+}
 async function fillChartCloses(){
   const key = oddskey.value.trim();
   const bets = load();
   const seen = new Set();
   let filled = 0;
+  const paid = key ? await keyIsPaid(key) : false;
+  if (paid) {
+    const need = bets.filter(b => (!b.realClose || b.close === "" || b.close == null) && b.type !== "SGP" && BOOK_KEY[b.book] && SPORT_KEY[b.sport]);
+    const groups = new Map();
+    need.forEach(b => {
+      const id = b.sport + "|" + b.book + "|" + b.date;
+      if (!groups.has(id)) groups.set(id, []);
+      groups.get(id).push(b);
+    });
+    for (const [id, rows] of groups) {
+      const [sport, book] = id.split("|");
+      const games = await paidHistoricalGames(sport, BOOK_KEY[book], rows[0].date, key);
+      if (!games) continue;
+      filled += applyCloses(rows, games, BOOK_KEY[book]);
+    }
+    if (filled) save(bets);
+    return filled;
+  }
   for (const b of bets) {
     if (b.close || b.type === "SGP" || !BOOK_KEY[b.book] || !SPORT_KEY[b.sport]) continue;
     const id = b.sport + "|" + b.book;
