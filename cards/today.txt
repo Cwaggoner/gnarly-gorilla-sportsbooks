@@ -10,6 +10,11 @@
 2026-10-15 | NHL | Moneyline | Utah Mammoth ML | 105 | Medium
 2026-10-15 | NHL | Spread | Seattle Kraken +1.5 | -120 | Medium
 2026-10-15 | NHL | Moneyline | Chicago Blackhawks ML | 114 | Medium
-2026-10-15 | NBA | No Picks
+2026-10-15 | NBA | Spread | Rockets +5.5 | -115 | High 60% Edge: Dog on 5.5+ preseason spread.
+2026-10-15 | NBA | Spread | Raptors +5.5 | -110 | Medium 55%
+2026-10-15 | NBA | Total | Thunder at Rockets Under 223.5 | -110 | Medium 54% Named game
+2026-10-15 | NBA | Total | Raptors at Knicks Under 225.5 | -110 | Medium 53% Named game
+2026-10-15 | NBA | SGP | Rockets +5.5 and Thunder at Rockets Under 223.5 | 190 | Estimated +190. Dog and under. Edge.
+2026-10-15 | NBA | SGP | Raptors +5.5 and Raptors at Knicks Under 225.5 | 190 | Estimated +190.
 2026-10-15 | NFL | No Picks
 2026-10-15 | CBB | No Picks
