@@ -441,8 +441,8 @@ function save(bets){ localStorage.setItem(KEY, JSON.stringify(bets)); render(); 
 function slipMoney(b){
   if (!b || b.result === "pending") return 0;
   const published = Number(b.profit);
-  if ((b.result === "loss" || b.result === "push") && Number.isFinite(published)) return published;
-  if (b.result === "win" && Number.isFinite(published) && published !== 0) return published;
+  if (Number.isFinite(published) && published !== 0) return published;
+  if (b.result === "push") return 0;
   return profit(b);
 }
 function profit(b){
@@ -903,8 +903,14 @@ function drawCalendar(){
       const seen = new Set();
       const slips = live.filter(b => { const k = [b.sport, b.pick].join("|"); if (seen.has(k)) return false; seen.add(k); return true; });
       let day = board[date];
-      if (slips.length && date < today) day = Object.assign({}, day || {}, {pl: slips.reduce((s, b) => s + slipMoney(b), 0), n: slips.length});
-      else if (!day && date < today && slips.length) day = {pl: slips.reduce((s, b) => s + slipMoney(b), 0)};
+      const actual = slips.reduce((s, b) => s + slipMoney(b), 0);
+      const wins = slips.filter(b => b.result === "win").length;
+      if (slips.length && date < today) {
+        const published = Number(day && day.pl);
+        const stakeTotal = slips.reduce((s, b) => s + Number(b.stake || 10), 0);
+        const usePublished = Number.isFinite(published) && wins > 0 && Math.abs(actual + stakeTotal) < 0.5;
+        day = Object.assign({}, day || {}, {pl: usePublished ? published : actual, n: slips.length});
+      } else if (!day && date < today && slips.length) day = {pl: actual};
       const cls = day && day.pl > 0 ? "win" : day && day.pl < 0 ? "loss" : "";
       const rangeSlips = slips.length ? slips : [];
       const winAll = rangeSlips.reduce((s, b) => { const odds = Number(b.odds), stake = Number(b.stake) || 10; if (!Number.isFinite(odds) || odds === 0) return s; return s + (odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds)); }, 0);
@@ -2645,7 +2651,7 @@ fetch("cards/closes.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(
 fetch("cards/grades.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
   gradeFile = text.split(/\n/).map(line => {
     const parts = line.split("|").map(s => s.trim());
-    if (parts.length < 5 || !/^\d{4}-\d{2}-\d{2}$/.test(parts[0]) || /no picks|season ended/i.test([parts[1], parts[2], parts[4]].join(" "))) return null;
+    if (parts.length < 5 || !/^\d{4}-\d{2}-\d{2}$/.test(parts[0]) || /^RANGE$/i.test(parts[1] || "") || /no picks|season ended|all win|all lose/i.test([parts[1], parts[2], parts[4]].join(" "))) return null;
     const odds = (parts[3].match(/-?\d+/) || [""])[0];
     const result = (parts[4].match(/win|loss|push/i) || ["loss"])[0].toLowerCase();
     const dollars = parts[parts.length - 1].replace(/[$,+]/g, "");
