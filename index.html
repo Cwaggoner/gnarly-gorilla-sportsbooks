@@ -893,7 +893,9 @@ function drawCalendar(){
       const seen = new Set();
       const settled = graded.filter(b => { const k = [b.sport, b.pick].join("|"); if (seen.has(k)) return false; seen.add(k); return true; });
       const result = settled.length ? money(settled.reduce((s, b) => s + slipMoney(b), 0)) : "";
-      const resultCls = settled.length && settled.reduce((s, b) => s + slipMoney(b), 0) > 0 ? "win" : settled.length && settled.reduce((s, b) => s + slipMoney(b), 0) < 0 ? "loss" : "";
+      const todayWins = settled.filter(b => b.result === "win").length;
+      const todayLosses = settled.filter(b => b.result === "loss").length;
+      const resultCls = todayWins > todayLosses ? "win" : todayLosses > todayWins ? "loss" : "";
       const winAll = open.reduce((s, b) => { const odds = Number(b.odds), stake = Number(b.stake) || 10; if (!Number.isFinite(odds) || odds === 0) return s; return s + (odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds)); }, 0);
       const loseAll = open.reduce((s, b) => s + Number(b.stake || 10), 0);
       const lower = open.length ? "<span class='range'><span class='win'>All Win " + money(winAll) + "</span><span class='slash'> / </span><span class='loss'>All Lose -" + money(loseAll).replace("-", "") + "</span></span>" : "<span class='wait'>Picks Not Loaded Until " + formatTime(firstPickAt(), false) + "</span>";
@@ -917,7 +919,9 @@ function drawCalendar(){
         const usePublished = Number.isFinite(published) && published !== 0;
         day = Object.assign({}, day || {}, {pl: usePublished ? published : actual, n: unique.length || (day && day.n) || 0});
       } else if (!day && unique.length) day = {pl: actual};
-      const cls = day && day.pl > 0 ? "win" : day && day.pl < 0 ? "loss" : "";
+      const wins = unique.filter(b => b.result === "win").length || Number(day && day.wins) || 0;
+      const losses = unique.filter(b => b.result === "loss").length || Number(day && day.losses) || 0;
+      const cls = wins > losses ? "win" : losses > wins ? "loss" : (day && day.pl > 0 ? "win" : day && day.pl < 0 ? "loss" : "");
       const rangeSlips = unique.length ? unique : [];
       const priced = rangeSlips.filter(b => Number.isFinite(Number(b.odds)) && Number(b.odds) !== 0);
       const publishedWin = Number(day && day.allWin);
