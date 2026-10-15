@@ -460,6 +460,7 @@ function profit(b){
   return Number.isFinite(winAmt) ? winAmt : 0;
 }
 function money(n){ n = Number(n); if (!Number.isFinite(n)) return "-"; return (n < 0 ? "-$" : "$") + Math.abs(n).toFixed(2); }
+function moneyHtml(n){ const v = Number(n); const cls = v > 0 ? "win" : v < 0 ? "loss" : "zero"; return "<span class= + cls + >" + money(v) + "</span>"; }
 function rec(list){
   const w = list.filter(b => b.result === "win").length;
   const l = list.filter(b => b.result === "loss").length;
@@ -531,13 +532,13 @@ function drawDashboard(history, manual){
   const clvs = shown.map(row => row.clv === "Matched Bet Price" ? 0 : parseFloat(String(row.clv).replace("%", ""))).filter(n => Number.isFinite(n));
   document.getElementById("stats").innerHTML = [
     [wins + "-" + losses + "-" + pushes, "7-Day W/L Record"],
-    [money(profit), "7-Day Profit"],
+    [moneyHtml(profit), "7-Day Profit"],
     [staked ? (profit / staked * 100).toFixed(1) + "%" : "-", "7-Day ROI"],
     [(profit / UNIT).toFixed(2) + "u", "7-Day Units"],
     [shown.reduce((s, row) => s + (Number(row.pending) || 0), 0), "Pending"],
     [clvs.length ? (clvs.reduce((s, n) => s + n, 0) / clvs.length).toFixed(1) + "%" : "No Close Saved", "7-Day Avg CLV"]
   ].map(x => "<div class='stat'><b>" + x[0] + "</b><span>" + x[1] + "</span></div>").join("");
-  document.getElementById("dashrows").innerHTML = shown.map(row => "<tr><td>" + row.date + "</td><td>" + row.record + "</td><td>" + money(Number(row.profit)) + "</td><td>" + row.roi + "</td><td>" + row.units + "</td><td>" + (Number(row.pending) === 0 ? "0 - All Pending Has Been Graded" : row.pending) + "</td><td>" + (row.clv === "-" || row.clv == null || row.clv === "" ? "No Close Saved" : row.clv) + "</td></tr>").join("");
+  document.getElementById("dashrows").innerHTML = shown.map(row => "<tr><td>" + row.date + "</td><td>" + row.record + "</td><td>" + moneyHtml(Number(row.profit)) + "</td><td>" + row.roi + "</td><td>" + row.units + "</td><td>" + (Number(row.pending) === 0 ? "0 - All Pending Has Been Graded" : row.pending) + "</td><td>" + (row.clv === "-" || row.clv == null || row.clv === "" ? "No Close Saved" : row.clv) + "</td></tr>").join("");
   const canvas = document.getElementById("dashChart");
   const ctx = canvas.getContext("2d");
   const w = Math.max(320, canvas.clientWidth || 640);
@@ -896,7 +897,7 @@ function drawCalendar(){
       const graded = load().concat(loadGrade()).concat(gradeFile).filter(b => b.date === today && b.result !== "pending" && !isNoPick(b));
       const seen = new Set();
       const settled = graded.filter(b => { const k = [b.sport, b.pick].join("|"); if (seen.has(k)) return false; seen.add(k); return true; });
-      const result = settled.length ? money(settled.reduce((s, b) => s + slipMoney(b), 0)) : "";
+      const result = settled.length ? moneyHtml(settled.reduce((s, b) => s + slipMoney(b), 0)) : "";
       const todayPl = settled.reduce((s, b) => s + slipMoney(b), 0);
       const resultCls = settled.length && todayPl > 0 ? "win" : settled.length && todayPl < 0 ? "loss" : (settled.length ? "zero" : "");
       const winAll = open.reduce((s, b) => { const odds = Number(b.odds), stake = Number(b.stake) || 10; if (!Number.isFinite(odds) || odds === 0) return s; return s + (odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds)); }, 0);
@@ -1235,7 +1236,7 @@ function render(){
   const avgClv = weekClv(history);
   document.getElementById("stats").innerHTML = [
     [weekRecord(history), "7-Day W/L Record"],
-    [money(weekProfit(history)), "7-Day Profit"],
+    [moneyHtml(weekProfit(history)), "7-Day Profit"],
     [weekRoi(history), "7-Day ROI"],
     [(weekProfit(history) / UNIT).toFixed(2) + "u", "7-Day Units"],
     [bets.filter(b => b.result === "pending" && b.date === todayEt()).length, "Pending"],
@@ -1263,7 +1264,7 @@ function render(){
       head += "<tr class='type'><td colspan='12'><div class='type-row'><span>" + esc(b.type || "Other") + "</span><span class='type-count'>" + count + "</span></div></td></tr>";
     }
     const rowCls = b.result === "win" ? "row-win" : b.result === "loss" ? "row-loss" : (b.manual ? "manual" : b.fromCard ? "fromcard" : "");
-    return head + "<tr" + (rowCls ? " class='" + rowCls + "'" : "") + "><td>" + b.date + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td>" + esc(b.pick) + "</td><td>" + (b.odds === "" || b.odds == null ? (b.close || -110) : b.odds) + "</td><td>" + (b.close || b.lastPrice || dash) + "</td><td class='" + (cv > 0 ? "win" : cv < 0 ? "loss" : "") + "'>" + clvText(b) + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='" + cls + "'>" + b.result + "</td><td class='" + cls + "'>" + (b.result === "pending" ? dash : money(p)) + "</td><td>" + grade + " <button data-edit='" + b.id + "'>Edit</button> <button class='danger' data-del='" + b.id + "'>Delete</button></td></tr>";
+    return head + "<tr" + (rowCls ? " class='" + rowCls + "'" : "") + "><td>" + b.date + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td>" + esc(b.pick) + "</td><td>" + (b.odds === "" || b.odds == null ? (b.close || -110) : b.odds) + "</td><td>" + (b.close || b.lastPrice || dash) + "</td><td class='" + (cv > 0 ? "win" : cv < 0 ? "loss" : "") + "'>" + clvText(b) + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='" + cls + "'>" + b.result + "</td><td class='" + cls + "'>" + (b.result === "pending" ? dash : moneyHtml(p)) + "</td><td>" + grade + " <button data-edit='" + b.id + "'>Edit</button> <button class='danger' data-del='" + b.id + "'>Delete</button></td></tr>";
   }).join("") || "<tr><td colspan='12'>No bets yet.</td></tr>";
   try { drawCharts(gradeFile.concat(bets)); } catch (err) { document.getElementById("plotnote").textContent = "Chart failed. The rest of the page is still live."; }
   document.getElementById("plotnote").textContent = settled.length + " settled slips plotted. " + bets.filter(b => b.result === "pending").length + " slips left to settle.";
@@ -1305,7 +1306,7 @@ function render(){
       body += "<tr class='sport'><td colspan='6'>" + sport + "</td></tr>";
       if (!rows.length) { const label = seasonText(sport); copy.push(label); body += "<tr><td></td><td>" + label + "</td><td>" + sport + "</td><td>" + label + "</td><td></td><td></td></tr>"; return; }
       rows.forEach(b => {
-        const plCell = b.result === "pending" ? "OPEN" : money(slipMoney(b));
+        const plCell = b.result === "pending" ? "OPEN" : moneyHtml(slipMoney(b));
         const edge = markEdge(b).edge;
         copy.push([b.date, b.result.toUpperCase(), b.sport, b.pick, b.odds, plCell].join("  "));
         body += "<tr" + (edge ? " class='edge'" : "") + "><td>" + esc(b.date) + "</td><td>" + esc(b.result.toUpperCase()) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.pick) + "</td><td>" + esc(b.odds) + "</td><td>" + plCell + "</td></tr>";
@@ -1330,8 +1331,7 @@ function group(bets, key){
     map[k].n++;
   });
   const rows = Object.entries(map).sort((a,b) => a[0].localeCompare(b[0]));
-  const moneyCls = n => n > 0 ? "win" : n < 0 ? "loss" : "";
-  return "<p>" + rows.map(([k,v]) => esc(k) + ": " + (v.n ? "<span class='" + moneyCls(v.pl) + "'>" + money(v.pl) + "</span> (" + v.n + ")" : seasonText(k))).join(" | ") + "</p>";
+  return "<p>" + rows.map(([k,v]) => esc(k) + ": " + (v.n ? moneyHtml(v.pl) + " (" + v.n + ")" : seasonText(k))).join(" | ") + "</p>";
 }
 form.onsubmit = e => {
   e.preventDefault();
