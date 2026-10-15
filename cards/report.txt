@@ -1,22 +1,24 @@
-# GG report 2026-10-14
-# Yesterday 2026-10-13 graded. No pick cards created for 2026-10-14 in this run.
+# GG report 2026-10-15
+# Yesterday 2026-10-14 graded. No pick cards created for 2026-10-15 in this run.
 
-Record 6-5-0  Profit $15.36  Units 1.54u  CLV 0.0 (Matched Bet Price)
+Record 3-10-0  Profit $-73.49  Units -7.35u  CLV 0.0 (Matched Bet Price)
 
-NBA | loss | Knicks +10.5 | -110 | -$10.00 EDGE
-NBA | win | Pacers +10.5 | -110 | +$9.09
-NBA | loss | Knicks at Raptors Under 217.5 | -110 | -$10.00
-NBA | win | Pacers at Thunder Under 228.5 | -110 | +$9.09
-NBA | loss | SGP Knicks +10.5 and Under | +190 | -$10.00 EDGE
-NBA | win | SGP Pacers +10.5 and Under | +190 | +$19.00
-MLB | win | Guardians at Rays Under 7 | -110 | +$9.09
-NHL | loss | Buffalo Sabres ML | +135 | -$10.00
-NHL | loss | Washington Capitals ML | +136 | -$10.00
-NHL | win | Seattle Kraken ML | +100 | +$10.00
-NHL | win | Winnipeg Jets ML | -110 | +$9.09
+NBA | win | Nets +6.5 | -110 | +$9.09 EDGE
+NBA | loss | Hornets +8.5 | -110 | -$10.00
+NBA | loss | Nets at Heat Under 224.5 | -110 | -$10.00
+NBA | win | Hornets at Celtics Under 218.5 | -110 | +$9.09
+NBA | loss | SGP Nets +6.5 and Under | +190 | -$10.00 EDGE
+NBA | loss | SGP Hornets +8.5 and Under | +190 | -$10.00
+NHL | loss | Montreal Canadiens ML | +140 | -$10.00
+NHL | loss | Colorado Avalanche ML | -110 | -$10.00
+NHL | loss | Canadiens at Capitals Under 6.5 | -110 | -$10.00
+NHL | loss | SGP Montreal Canadiens ML and Under | +220 | -$10.00
+MLB | loss | Brewers at Dodgers Under 7.5 | -110 | -$10.00
+MLB | win | Brewers +1.5 | -120 | +$8.33
+MLB | loss | SGP Brewers +1.5 and Under | +160 | -$10.00
 
-2026-10-13 | NFL | No Picks
-2026-10-13 | CBB | No Picks
-2026-10-13 | CFB | No Picks
+2026-10-14 | NFL | No Picks
+2026-10-14 | CBB | No Picks
+2026-10-14 | CFB | No Picks
 No sport is Season Ended. MLB last card date 2026-10-31. CFB 2027-01-25. NFL 2027-02-14. CBB 2027-04-05. NHL 2027-04-10. NBA 2027-04-11.
 Unconfirmed end dates: CFB 2027-01-25, NFL 2027-02-14, CBB 2027-04-05, NHL 2027-04-10, NBA 2027-04-11.
