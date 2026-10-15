@@ -1598,6 +1598,13 @@ async function fillPickBoard(useSaved){
       const gameDay = game.commence_time ? new Date(game.commence_time).toLocaleDateString("en-CA", {timeZone: siteZone()}) : day;
       byDay[gameDay] = byDay[gameDay] || [];
       byDay[gameDay].push(game);
+      if (day && gameDay !== day && game.commence_time) {
+        const start = Date.parse(game.commence_time);
+        if (Number.isFinite(start) && start < Date.now() + 36 * 3600000) {
+          byDay[day] = byDay[day] || [];
+          byDay[day].push(game);
+        }
+      }
     });
     Object.entries(byDay).forEach(([d, list]) => localStorage.setItem("gg-day-" + d + "-" + sportKey + "-" + bookKey, JSON.stringify(list)));
   }
@@ -1609,14 +1616,17 @@ async function fillPickBoard(useSaved){
     return;
   }
   let count = 0;
+  const zoneDay = iso => new Date(iso).toLocaleDateString("en-CA", {timeZone: siteZone()});
   const dayGames = games.filter(game => {
     if (!day) return true;
     if (!game.commence_time) return true;
-    const gameDay = new Date(game.commence_time).toLocaleDateString("en-CA", {timeZone: siteZone()});
-    if (gameDay === day) return true;
+    if (zoneDay(game.commence_time) === day) return true;
     const start = Date.parse(game.commence_time);
-    const dayStart = Date.parse(day + "T00:00:00");
-    return Number.isFinite(start) && start >= dayStart && start < dayStart + 36 * 3600000;
+    if (!Number.isFinite(start)) return false;
+    const next = new Date(day + "T12:00:00Z");
+    next.setUTCDate(next.getUTCDate() + 1);
+    const nextDay = next.toISOString().slice(0, 10);
+    return zoneDay(game.commence_time) === nextDay && start < Date.now() + 36 * 3600000;
   });
   const started = dayGames.filter(game => game.commence_time && Date.parse(game.commence_time) <= Date.now());
   const openGames = dayGames.filter(game => !game.commence_time || Date.parse(game.commence_time) > Date.now());
