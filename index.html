@@ -919,9 +919,13 @@ function drawCalendar(){
       } else if (!day && unique.length) day = {pl: actual};
       const cls = day && day.pl > 0 ? "win" : day && day.pl < 0 ? "loss" : "";
       const rangeSlips = unique.length ? unique : [];
-      const winAll = rangeSlips.length ? rangeSlips.reduce((s, b) => { const odds = Number(b.odds), stake = Number(b.stake) || 10; if (!Number.isFinite(odds) || odds === 0) return s; return s + (odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds)); }, 0) : Number(day && day.allWin) || 0;
-      const loseAll = rangeSlips.length ? rangeSlips.reduce((s, b) => s + Number(b.stake || 10), 0) : Math.abs(Number(day && day.allLose) || 0);
-      const range = (rangeSlips.length || (day && Number.isFinite(Number(day.allWin)))) ? "<br><span class='range'><span class='win'>All Win " + money(winAll) + "</span><span class='slash'> / </span><span class='loss'>All Lose -" + money(loseAll).replace("-", "") + "</span></span>" : "";
+      const priced = rangeSlips.filter(b => Number.isFinite(Number(b.odds)) && Number(b.odds) !== 0);
+      const publishedWin = Number(day && day.allWin);
+      const publishedLose = Math.abs(Number(day && day.allLose) || 0);
+      const computedWin = priced.reduce((s, b) => { const odds = Number(b.odds), stake = Number(b.stake) || 10; return s + (odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds)); }, 0);
+      const winAll = priced.length && computedWin > 0 ? computedWin : (Number.isFinite(publishedWin) ? publishedWin : 0);
+      const loseAll = rangeSlips.length ? rangeSlips.reduce((s, b) => s + Number(b.stake || 10), 0) : publishedLose;
+      const range = (rangeSlips.length || Number.isFinite(publishedWin)) ? "<br><span class='range'><span class='win'>All Win " + money(winAll) + "</span><span class='slash'> / </span><span class='loss'>All Lose -" + money(publishedLose || loseAll).replace("-", "") + "</span></span>" : "";
       html += "<div class='daycell' data-date='" + date + "'><b>" + d + "</b><br><span class='" + cls + "'>" + (day && Number.isFinite(Number(day.pl)) ? money(day.pl) : "") + "</span>" + range + "</div>";
     }
   }
