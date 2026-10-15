@@ -150,7 +150,7 @@
 2026-10-13 | CBB | No Picks
 2026-10-13 | CFB | No Picks
 2026-10-14 | RANGE | All Win 161.97 | All Lose -130.00
-2026-10-14 | NBA | Nets +6.5 | -110 | win | MIA 144 BKN 128 | 9.09
+2026-10-14 | NBA | Nets +6.5 | -110 | loss | MIA 144 BKN 128 | -10.00
 2026-10-14 | NBA | Hornets +8.5 | -110 | loss | BOS 114 CHA 93 | -10.00
 2026-10-14 | NBA | Nets at Heat Under 224.5 | -110 | loss | 272 | -10.00
 2026-10-14 | NBA | Hornets at Celtics Under 218.5 | -110 | win | 207 | 9.09
