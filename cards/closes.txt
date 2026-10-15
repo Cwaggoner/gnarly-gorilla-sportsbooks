@@ -15,9 +15,17 @@
 2026-10-14 | MLB | -110 | Brewers at Dodgers Under 7.5 | -110
 2026-10-14 | MLB | -120 | Brewers +1.5 | -120
 2026-10-14 | MLB | 160 | SGP Brewers +1.5 and Brewers at Dodgers Under 7.5 | 160
-2026-10-15 | NBA | -115 | Rockets +5.5 | -115
+2026-10-15 | CFB | -110 | Colorado State +14 | -110
+2026-10-15 | CFB | -110 | Colorado State at Texas State Under 70.5 | -110
+2026-10-15 | MLB | -110 | Rays at Guardians Over 6.5 | -105
+2026-10-15 | MLB | -160 | Brewers +1.5 | -170
+2026-10-15 | NHL | 100 | Buffalo Sabres ML | -102
+2026-10-15 | NHL | 120 | New York Rangers ML | +110
+2026-10-15 | NHL | 130 | New York Islanders ML | +135
+2026-10-15 | NHL | 105 | Utah Mammoth ML | +105
+2026-10-15 | NHL | -120 | Seattle Kraken +1.5 | -115
+2026-10-15 | NHL | 114 | Chicago Blackhawks ML | +110
+2026-10-15 | NBA | -115 | Rockets +5.5 | -110
 2026-10-15 | NBA | -110 | Raptors +5.5 | -110
 2026-10-15 | NBA | -110 | Thunder at Rockets Under 223.5 | -110
 2026-10-15 | NBA | -110 | Raptors at Knicks Under 225.5 | -110
-2026-10-15 | NBA | 190 | SGP Rockets +5.5 and Thunder at Rockets Under 223.5 | 190
-2026-10-15 | NBA | 190 | SGP Raptors +5.5 and Raptors at Knicks Under 225.5 | 190
