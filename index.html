@@ -547,13 +547,13 @@ function drawDashboard(history, manual){
   ctx.fillRect(0,0,w,h);
   if (!shown.length) return;
   const pts = shown.map(row => ({date: row.date, y: Number(row.profit) || 0}));
-  const min = -1000, max = 1000, span = max - min;
+  const min = -500, max = 500, span = max - min;
   const left = 62, right = 62, top = 14, bottom = 22;
   const x = i => left + (w - left - right) * (pts.length === 1 ? 0.5 : i / (pts.length - 1));
   const y = v => top + (h - top - bottom) * (1 - (v - min) / span);
   ctx.font = "10px sans-serif";
   ctx.textAlign = "right";
-  for (let v = min; v <= max; v += 100) {
+  for (let v = min; v <= max; v += 50) {
     const yy = y(v);
     ctx.strokeStyle = v === 0 ? "#ff00ff" : "#243024";
     ctx.lineWidth = v === 0 ? 1.5 : 1;
