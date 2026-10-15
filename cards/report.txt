@@ -1,14 +1,16 @@
 # GG report 2026-10-15
 # Yesterday 2026-10-14 graded. No pick cards created for 2026-10-15 in this run.
 
-Record 3-10-0  Profit $-73.49  Units -7.35u  CLV 0.0 (Matched Bet Price)
+Analysis: Preseason NBA dogs failed hard. Nets +6.5 lost by 16 in a blowout (Heat 144-128). Hornets +8.5 High Edge dog lost by 21 (Celtics 114-93). The Hornets/Celtics under hit at 207, but the SGP lost on the spread. Nets/Heat total exploded to 272. NHL moneylines and under lost in a 5-4 Canadiens/Capitals and Avalanche shootout loss. MLB under on Brewers/Dodgers lost (8 runs) but the +1.5 run line hit as Brewers won 6-2.
 
-NBA | win | Nets +6.5 | -110 | +$9.09 EDGE
-NBA | loss | Hornets +8.5 | -110 | -$10.00
+Record 2-11-0  Profit $-92.58  Units -9.26u  CLV 0.0 (Matched Bet Price)
+
+NBA | loss | Nets +6.5 | -110 | -$10.00
+NBA | loss | Hornets +8.5 | -110 | -$10.00 EDGE
 NBA | loss | Nets at Heat Under 224.5 | -110 | -$10.00
 NBA | win | Hornets at Celtics Under 218.5 | -110 | +$9.09
-NBA | loss | SGP Nets +6.5 and Under | +190 | -$10.00 EDGE
-NBA | loss | SGP Hornets +8.5 and Under | +190 | -$10.00
+NBA | loss | SGP Nets +6.5 and Under | +190 | -$10.00
+NBA | loss | SGP Hornets +8.5 and Under | +190 | -$10.00 EDGE
 NHL | loss | Montreal Canadiens ML | +140 | -$10.00
 NHL | loss | Colorado Avalanche ML | -110 | -$10.00
 NHL | loss | Canadiens at Capitals Under 6.5 | -110 | -$10.00
