@@ -1610,8 +1610,13 @@ async function fillPickBoard(useSaved){
   }
   let count = 0;
   const dayGames = games.filter(game => {
-    const gameDay = game.commence_time ? new Date(game.commence_time).toLocaleDateString("en-CA", {timeZone: siteZone()}) : day;
-    return !day || !gameDay || gameDay === day;
+    if (!day) return true;
+    if (!game.commence_time) return true;
+    const gameDay = new Date(game.commence_time).toLocaleDateString("en-CA", {timeZone: siteZone()});
+    if (gameDay === day) return true;
+    const start = Date.parse(game.commence_time);
+    const dayStart = Date.parse(day + "T00:00:00");
+    return Number.isFinite(start) && start >= dayStart && start < dayStart + 36 * 3600000;
   });
   const started = dayGames.filter(game => game.commence_time && Date.parse(game.commence_time) <= Date.now());
   const openGames = dayGames.filter(game => !game.commence_time || Date.parse(game.commence_time) > Date.now());
