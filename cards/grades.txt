@@ -149,10 +149,20 @@
 2026-10-13 | NFL | No Picks
 2026-10-13 | CBB | No Picks
 2026-10-13 | CFB | No Picks
-2026-10-14 | RANGE | All Win 0.00 | All Lose 0.00
-2026-10-14 | NBA | No Picks
-2026-10-14 | MLB | No Picks
-2026-10-14 | NHL | No Picks
+2026-10-14 | RANGE | All Win 161.97 | All Lose -130.00
+2026-10-14 | NBA | Nets +6.5 | -110 | win | MIA 144 BKN 128 | 9.09
+2026-10-14 | NBA | Hornets +8.5 | -110 | loss | BOS 114 CHA 93 | -10.00
+2026-10-14 | NBA | Nets at Heat Under 224.5 | -110 | loss | 272 | -10.00
+2026-10-14 | NBA | Hornets at Celtics Under 218.5 | -110 | win | 207 | 9.09
+2026-10-14 | NBA | SGP Nets +6.5 and Nets at Heat Under 224.5 | 190 | loss | MIA 144 BKN 128 | -10.00
+2026-10-14 | NBA | SGP Hornets +8.5 and Hornets at Celtics Under 218.5 | 190 | loss | BOS 114 CHA 93 | -10.00
+2026-10-14 | NHL | Montreal Canadiens ML | 140 | loss | MTL 4 WSH 5 | -10.00
+2026-10-14 | NHL | Colorado Avalanche ML | -110 | loss | DAL 3 COL 2 SO | -10.00
+2026-10-14 | NHL | Canadiens at Capitals Under 6.5 | -110 | loss | 9 | -10.00
+2026-10-14 | NHL | SGP Montreal Canadiens ML and Canadiens at Capitals Under 6.5 | 220 | loss | MTL 4 WSH 5 | -10.00
+2026-10-14 | MLB | Brewers at Dodgers Under 7.5 | -110 | loss | MIL 6 LAD 2 | -10.00
+2026-10-14 | MLB | Brewers +1.5 | -120 | win | MIL 6 LAD 2 | 8.33
+2026-10-14 | MLB | SGP Brewers +1.5 and Brewers at Dodgers Under 7.5 | 160 | loss | MIL 6 LAD 2 | -10.00
 2026-10-14 | NFL | No Picks
-2026-10-14 | CFB | No Picks
 2026-10-14 | CBB | No Picks
+2026-10-14 | CFB | No Picks
