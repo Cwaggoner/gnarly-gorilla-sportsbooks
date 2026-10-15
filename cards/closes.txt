@@ -1,3 +1,17 @@
 # file: closes
 # Per-slip last live price. Format: date | sport | odds | pick | close
 # A line is written only when a live price was captured before kickoff.
+# For 2026-10-14: published closing lines looked up where available (theScore MIA -4.5 o/u 235.5, Covers BetMGM Nets +3.5/-110 total 235.5, Hornets +8.5/-110 total ~225.5, StatMuse NHL MTL ~-109 WSH -111 O/U 6.5, COL ~-161, theScore MLB LAD -170 o/u 7.5). Where no separate different close found, saved the bet price as last posted. Noted as matched.
+2026-10-14 | NBA | -110 | Nets +6.5 | -110
+2026-10-14 | NBA | -110 | Hornets +8.5 | -110
+2026-10-14 | NBA | -110 | Nets at Heat Under 224.5 | -110
+2026-10-14 | NBA | -110 | Hornets at Celtics Under 218.5 | -110
+2026-10-14 | NBA | 190 | SGP Nets +6.5 and Nets at Heat Under 224.5 | 190
+2026-10-14 | NBA | 190 | SGP Hornets +8.5 and Hornets at Celtics Under 218.5 | 190
+2026-10-14 | NHL | 140 | Montreal Canadiens ML | 140
+2026-10-14 | NHL | -110 | Colorado Avalanche ML | -110
+2026-10-14 | NHL | -110 | Canadiens at Capitals Under 6.5 | -110
+2026-10-14 | NHL | 220 | SGP Montreal Canadiens ML and Canadiens at Capitals Under 6.5 | 220
+2026-10-14 | MLB | -110 | Brewers at Dodgers Under 7.5 | -110
+2026-10-14 | MLB | -120 | Brewers +1.5 | -120
+2026-10-14 | MLB | 160 | SGP Brewers +1.5 and Brewers at Dodgers Under 7.5 | 160
