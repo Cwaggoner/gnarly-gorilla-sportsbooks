@@ -3,7 +3,9 @@
 2026-10-16 | NHL | Moneyline | Pittsburgh Penguins ML | 180 | High Edge: Value on the dog vs short COL ML. Recent Ball Arena points.
 2026-10-16 | NHL | Moneyline | Anaheim Ducks ML | -105 | Medium
 2026-10-16 | CFB | No Picks
-2026-10-16 | MLB | No Picks
+2026-10-16 | MLB | Total | Rays @ Guardians Under 6.5 | -110 | High Edge: Totals market preferred. Low scoring series after Game 1, rainy/windy at Progressive Field.
+2026-10-16 | MLB | Moneyline | Guardians ML | -110 | Medium Edge: Dog at pick'em. Home field, series lead 2-1.
+2026-10-16 | MLB | SGP | Guardians ML and Under 6.5 | Edge | High Edge: Two-leg same-game parlay.
 2026-10-16 | NBA | No Picks
 2026-10-16 | NFL | No Picks
 2026-10-16 | CBB | Season Ended
