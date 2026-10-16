@@ -35,3 +35,18 @@
 2026-10-15 | NFL | -105 | Broncos +2.5 | -105
 2026-10-15 | NFL | -105 | Seahawks at Broncos Under 40.5 | -105
 2026-10-15 | NFL | 190 | SGP Broncos +2.5 and Seahawks at Broncos Under 40.5 | 190
+2026-10-16 | NBA | -110 | Bucks +8.5 | -110
+2026-10-16 | NBA | -110 | Raptors +9.5 | -110
+2026-10-16 | NBA | -110 | Celtics +5.5 | -110
+2026-10-16 | NBA | -110 | Bucks at Pacers Under 235.5 | -110
+2026-10-16 | NBA | -110 | Raptors at Pistons Under 217.5 | -110
+2026-10-16 | NBA | 190 | SGP Bucks +8.5 and Bucks at Pacers Under 235.5 | 190
+2026-10-16 | NBA | 190 | SGP Raptors +9.5 and Raptors at Pistons Under 217.5 | 190
+2026-10-16 | NHL | -135 | Pittsburgh Penguins +1.5 | -135
+2026-10-16 | NHL | 180 | Pittsburgh Penguins ML | 180
+2026-10-16 | NHL | -105 | Anaheim Ducks ML | -105
+2026-10-16 | CFB | -112 | Tulane +7 | -112
+2026-10-16 | CFB | -108 | Memphis vs Tulane Under 55.5 | -108
+2026-10-16 | MLB | -110 | Rays @ Guardians Under 6.5 | -110
+2026-10-16 | MLB | -110 | Guardians ML | -110
+2026-10-16 | MLB | Edge | Guardians ML and Under 6.5 | Edge
