@@ -1,7 +1,7 @@
 # file: closes
 # Per-slip last live price. Format: date | sport | odds | pick | close
 # A line is written only when a live price was captured before kickoff.
-# For 2026-10-14: published closing lines looked up where available (theScore MIA -4.5 o/u 235.5, Covers BetMGM Nets +3.5/-110 total 235.5, Hornets +8.5/-110 total ~225.5, StatMuse NHL MTL ~-109 WSH -111 O/U 6.5, COL ~-161, theScore MLB LAD -170 o/u 7.5). Where no separate different close found, saved the bet price as last posted. Noted as matched.
+# For 2026-10-15: published closing lines looked up (theScore CLE -130 o/u 6.5, EdgeBets Broncos +2.5 u40.5 -105, Covers/Action for NBA preseason). Differing closes saved. Matched bet price for SGPs and NFL where close equaled bet price. Noted as matched.
 2026-10-14 | NBA | -110 | Nets +6.5 | -110
 2026-10-14 | NBA | -110 | Hornets +8.5 | -110
 2026-10-14 | NBA | -110 | Nets at Heat Under 224.5 | -110
@@ -19,13 +19,19 @@
 2026-10-15 | CFB | -110 | Colorado State at Texas State Under 70.5 | -110
 2026-10-15 | MLB | -110 | Rays at Guardians Over 6.5 | -105
 2026-10-15 | MLB | -160 | Brewers +1.5 | -170
+2026-10-15 | MLB | 190 | SGP Rays +1.5 and Rays at Guardians Over 6.5 | 190
 2026-10-15 | NHL | 100 | Buffalo Sabres ML | -102
-2026-10-15 | NHL | 120 | New York Rangers ML | +110
-2026-10-15 | NHL | 130 | New York Islanders ML | +135
-2026-10-15 | NHL | 105 | Utah Mammoth ML | +105
+2026-10-15 | NHL | 120 | New York Rangers ML | 110
+2026-10-15 | NHL | 130 | New York Islanders ML | 135
+2026-10-15 | NHL | 105 | Utah Mammoth ML | 105
 2026-10-15 | NHL | -120 | Seattle Kraken +1.5 | -115
-2026-10-15 | NHL | 114 | Chicago Blackhawks ML | +110
+2026-10-15 | NHL | 114 | Chicago Blackhawks ML | 110
 2026-10-15 | NBA | -115 | Rockets +5.5 | -110
 2026-10-15 | NBA | -110 | Raptors +5.5 | -110
 2026-10-15 | NBA | -110 | Thunder at Rockets Under 223.5 | -110
 2026-10-15 | NBA | -110 | Raptors at Knicks Under 225.5 | -110
+2026-10-15 | NBA | 190 | SGP Rockets +5.5 and Thunder at Rockets Under 223.5 | 190
+2026-10-15 | NBA | 190 | SGP Raptors +5.5 and Raptors at Knicks Under 225.5 | 190
+2026-10-15 | NFL | -105 | Broncos +2.5 | -105
+2026-10-15 | NFL | -105 | Seahawks at Broncos Under 40.5 | -105
+2026-10-15 | NFL | 190 | SGP Broncos +2.5 and Seahawks at Broncos Under 40.5 | 190
