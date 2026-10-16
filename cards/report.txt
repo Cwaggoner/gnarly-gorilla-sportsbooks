@@ -1,26 +1,31 @@
-# GG report 2026-10-15
-# Yesterday 2026-10-14 graded. No pick cards created for 2026-10-15 in this run.
+# GG report 2026-10-16
+# Yesterday 2026-10-15 graded. No pick cards created for 2026-10-16 in this run.
 
-Analysis: Preseason NBA dogs failed hard. Nets +6.5 lost by 16 in a blowout (Heat 144-128). Hornets +8.5 High Edge dog lost by 21 (Celtics 114-93). The Hornets/Celtics under hit at 207, but the SGP lost on the spread. Nets/Heat total exploded to 272. NHL moneylines and under lost in a 5-4 Canadiens/Capitals and Avalanche shootout loss. MLB under on Brewers/Dodgers lost (8 runs) but the +1.5 run line hit as Brewers won 6-2.
+Analysis: Mixed results on preseason NBA and NHL. Rockets +5.5 High Edge dog covered in 116-89 win over Thunder. Raptors +5.5 covered in close 122-120 loss. Unders split. NFL TNF Broncos +2.5 and Under 40.5 both hit in 17-14 OT win. MLB playoff overs missed (Rays/Guardians 5 runs, Brewers/Dodgers 10 runs) but Brewers +1.5 covered. NHL moneylines mixed, several close to closing prices.
 
-Record 2-11-0  Profit $-92.58  Units -9.26u  CLV 0.0 (Matched Bet Price)
+Record 9-8-0  Profit $12.36  Units 1.24u  CLV +0.4%
 
-NBA | loss | Nets +6.5 | -110 | -$10.00
-NBA | loss | Hornets +8.5 | -110 | -$10.00 EDGE
-NBA | loss | Nets at Heat Under 224.5 | -110 | -$10.00
-NBA | win | Hornets at Celtics Under 218.5 | -110 | +$9.09
-NBA | loss | SGP Nets +6.5 and Under | +190 | -$10.00
-NBA | loss | SGP Hornets +8.5 and Under | +190 | -$10.00 EDGE
-NHL | loss | Montreal Canadiens ML | +140 | -$10.00
-NHL | loss | Colorado Avalanche ML | -110 | -$10.00
-NHL | loss | Canadiens at Capitals Under 6.5 | -110 | -$10.00
-NHL | loss | SGP Montreal Canadiens ML and Under | +220 | -$10.00
-MLB | loss | Brewers at Dodgers Under 7.5 | -110 | -$10.00
-MLB | win | Brewers +1.5 | -120 | +$8.33
-MLB | loss | SGP Brewers +1.5 and Under | +160 | -$10.00
+CFB | loss | Colorado State +14 | -110 | -$10.00
+CFB | loss | Colorado State at Texas State Under 70.5 | -110 | -$10.00
+MLB | loss | Rays at Guardians Over 6.5 | -110 | -$10.00 EDGE
+MLB | win | Brewers +1.5 | -160 | +$6.25
+MLB | loss | SGP Rays +1.5 and Over | +190 | -$10.00
+NHL | win | Buffalo Sabres ML | +100 | +$10.00
+NHL | loss | New York Rangers ML | +120 | -$10.00
+NHL | loss | New York Islanders ML | +130 | -$10.00 EDGE
+NHL | win | Utah Mammoth ML | +105 | +$10.50
+NHL | win | Seattle Kraken +1.5 | -120 | +$8.33 EDGE
+NHL | win | Chicago Blackhawks ML | +114 | +$11.40
+NBA | win | Rockets +5.5 | -115 | +$8.70 EDGE
+NBA | win | Raptors +5.5 | -110 | +$9.09
+NBA | win | Thunder at Rockets Under 223.5 | -110 | +$9.09
+NBA | loss | Raptors at Knicks Under 225.5 | -110 | -$10.00
+NBA | win | SGP Rockets +5.5 and Under | +190 | +$19.00 EDGE
+NBA | loss | SGP Raptors +5.5 and Under | +190 | -$10.00
+NFL | win | Broncos +2.5 | -105 | +$9.52
+NFL | win | Seahawks at Broncos Under 40.5 | -105 | +$9.52
+NFL | win | SGP Broncos +2.5 and Under | +190 | +$19.00 EDGE
 
-2026-10-14 | NFL | No Picks
-2026-10-14 | CBB | No Picks
-2026-10-14 | CFB | No Picks
+2026-10-15 | CBB | No Picks
 No sport is Season Ended. MLB last card date 2026-10-31. CFB 2027-01-25. NFL 2027-02-14. CBB 2027-04-05. NHL 2027-04-10. NBA 2027-04-11.
 Unconfirmed end dates: CFB 2027-01-25, NFL 2027-02-14, CBB 2027-04-05, NHL 2027-04-10, NBA 2027-04-11.
