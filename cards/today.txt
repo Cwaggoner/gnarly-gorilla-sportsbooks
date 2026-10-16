@@ -16,5 +16,7 @@
 2026-10-15 | NBA | Total | Raptors at Knicks Under 225.5 | -110 | Medium 53% Named game
 2026-10-15 | NBA | SGP | Rockets +5.5 and Thunder at Rockets Under 223.5 | 190 | Estimated +190. Dog and under. Edge.
 2026-10-15 | NBA | SGP | Raptors +5.5 and Raptors at Knicks Under 225.5 | 190 | Estimated +190.
-2026-10-15 | NFL | No Picks
+2026-10-15 | NFL | Spread | Broncos +2.5 | -105 | Medium Edge: Dog on a Thursday night spread. Seahawks were short favorites.
+2026-10-15 | NFL | Total | Seahawks at Broncos Under 40.5 | -105 | Medium Edge: Named under. Total fell from the open.
+2026-10-15 | NFL | SGP | Broncos +2.5 and Seahawks at Broncos Under 40.5 | 190 | Estimated +190. Dog and under. Edge.
 2026-10-15 | CBB | No Picks
