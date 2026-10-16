@@ -1,22 +1,9 @@
-# file: GG-CARD-2026-10-15
-2026-10-15 | CFB | Spread | Colorado State +14 | -110 | Medium Edge: Real dog of 14.
-2026-10-15 | CFB | Total | Colorado State at Texas State Under 70.5 | -110 | Medium Edge: Total with reason. Named game
-2026-10-15 | MLB | Total | Rays at Guardians Over 6.5 | -110 | Medium Edge: total - models project ~7.7 Named game
-2026-10-15 | MLB | Spread | Brewers +1.5 | -160 | Medium Edge: run line / dog side - avoid short LAD ML
-2026-10-15 | MLB | SGP | Rays +1.5 and Rays at Guardians Over 6.5 | 190 | Estimated +190. Edge
-2026-10-15 | NHL | Moneyline | Buffalo Sabres ML | 100 | Medium
-2026-10-15 | NHL | Moneyline | New York Rangers ML | 120 | Medium Edge
-2026-10-15 | NHL | Moneyline | New York Islanders ML | 130 | Medium
-2026-10-15 | NHL | Moneyline | Utah Mammoth ML | 105 | Medium
-2026-10-15 | NHL | Spread | Seattle Kraken +1.5 | -120 | Medium
-2026-10-15 | NHL | Moneyline | Chicago Blackhawks ML | 114 | Medium
-2026-10-15 | NBA | Spread | Rockets +5.5 | -115 | High 60% Edge: Dog on 5.5+ preseason spread.
-2026-10-15 | NBA | Spread | Raptors +5.5 | -110 | Medium 55%
-2026-10-15 | NBA | Total | Thunder at Rockets Under 223.5 | -110 | Medium 54% Named game
-2026-10-15 | NBA | Total | Raptors at Knicks Under 225.5 | -110 | Medium 53% Named game
-2026-10-15 | NBA | SGP | Rockets +5.5 and Thunder at Rockets Under 223.5 | 190 | Estimated +190. Dog and under. Edge.
-2026-10-15 | NBA | SGP | Raptors +5.5 and Raptors at Knicks Under 225.5 | 190 | Estimated +190.
-2026-10-15 | NFL | Spread | Broncos +2.5 | -105 | Medium Edge: Dog on a Thursday night spread. Seahawks were short favorites.
-2026-10-15 | NFL | Total | Seahawks at Broncos Under 40.5 | -105 | Medium Edge: Named under. Total fell from the open.
-2026-10-15 | NFL | SGP | Broncos +2.5 and Seahawks at Broncos Under 40.5 | 190 | Estimated +190. Dog and under. Edge.
-2026-10-15 | CBB | No Picks
+# file: GG-CARD-2026-10-16
+2026-10-16 | NHL | Spread | Pittsburgh Penguins +1.5 | -135 | Medium
+2026-10-16 | NHL | Moneyline | Pittsburgh Penguins ML | 180 | High Edge: Value on the dog vs short COL ML. Recent Ball Arena points.
+2026-10-16 | NHL | Moneyline | Anaheim Ducks ML | -105 | Medium
+2026-10-16 | CFB | No Picks
+2026-10-16 | MLB | No Picks
+2026-10-16 | NBA | No Picks
+2026-10-16 | NFL | No Picks
+2026-10-16 | CBB | No Picks
