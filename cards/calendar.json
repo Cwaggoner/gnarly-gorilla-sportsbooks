@@ -111,6 +111,16 @@
       "wins": 2,
       "losses": 11,
       "pushes": 0
+    },
+    "2026-10-15": {
+      "pl": 12.36,
+      "n": 17,
+      "allWin": 172.72,
+      "allLose": -170.0,
+      "clv": 0.0,
+      "wins": 9,
+      "losses": 8,
+      "pushes": 0
     }
   }
 }

@@ -166,3 +166,23 @@
 2026-10-14 | NFL | No Picks
 2026-10-14 | CBB | No Picks
 2026-10-14 | CFB | No Picks
+2026-10-15 | RANGE | All Win 172.72 | All Lose -170.00
+2026-10-15 | CFB | Colorado State +14 | -110 | loss | TXST 66 CSU 27 | -10.00
+2026-10-15 | CFB | Colorado State at Texas State Under 70.5 | -110 | loss | TXST 66 CSU 27 | -10.00
+2026-10-15 | MLB | Rays at Guardians Over 6.5 | -110 | loss | CLE 3 TB 2 | -10.00
+2026-10-15 | MLB | Brewers +1.5 | -160 | win | MIL 6 LAD 4 | 6.25
+2026-10-15 | MLB | SGP Rays +1.5 and Rays at Guardians Over 6.5 | 190 | loss | CLE 3 TB 2 | -10.00
+2026-10-15 | NHL | Buffalo Sabres ML | 100 | win | BUF 5 TOR 4 OT | 10.00
+2026-10-15 | NHL | New York Rangers ML | 120 | loss | NYR 1 NJ 7 | -10.00
+2026-10-15 | NHL | New York Islanders ML | 130 | loss | NYI 1 OTT 2 SO | -10.00
+2026-10-15 | NHL | Utah Mammoth ML | 105 | win | UTA 4 EDM 2 | 10.50
+2026-10-15 | NHL | Seattle Kraken +1.5 | -120 | win | SEA 3 TB 4 OT | 8.33
+2026-10-15 | NHL | Chicago Blackhawks ML | 114 | win | CHI 4 WPG 3 | 11.40
+2026-10-15 | NBA | Rockets +5.5 | -115 | win | HOU 116 OKC 89 | 8.70
+2026-10-15 | NBA | Raptors +5.5 | -110 | win | TOR 120 NYK 122 | 9.09
+2026-10-15 | NBA | Thunder at Rockets Under 223.5 | -110 | win | HOU 116 OKC 89 | 9.09
+2026-10-15 | NBA | Raptors at Knicks Under 225.5 | -110 | loss | TOR 120 NYK 122 | -10.00
+2026-10-15 | NBA | SGP Rockets +5.5 and Thunder at Rockets Under 223.5 | 190 | win | HOU 116 OKC 89 | 19.00
+2026-10-15 | NBA | SGP Raptors +5.5 and Raptors at Knicks Under 225.5 | 190 | loss | TOR 120 NYK 122 | -10.00
+2026-10-15 | NFL | No Picks
+2026-10-15 | CBB | No Picks
