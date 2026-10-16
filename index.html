@@ -613,8 +613,13 @@ function drawDashboard(history, manual){
 }
 
 function cardLines(text){
-  return String(text || "").split(/\r?\n/).map(line => line.split("|").map(s => s.trim())).filter(p => p.length >= 4 && /^[A-Z]{2,4}$/.test(p[1] || ""));
+  return String(text || "").split(/\r?\n/).map(line => line.split("|").map(s => s.trim())).filter(p => {
+    if (!/^[A-Z]{2,4}$/.test(p[1] || "")) return false;
+    if (p.length >= 4) return true;
+    return p.length >= 3 && /no picks|season ended/i.test(p[2] || "");
+  });
 }
+function isNoCard(row){ return /no picks|season ended/i.test((row[2] || "") + " " + (row[3] || "")); }
 function sportLean(rows){
   const types = rows.map(r => (r[2] || "").toLowerCase());
   const picks = rows.map(r => (r[3] || "").toLowerCase());
@@ -634,10 +639,15 @@ function drawCardAnalysis(text){
   const day = (rows[0] && rows[0][0]) || "";
   grid.innerHTML = sports.map(sport => {
     const mine = rows.filter(r => r[1] === sport);
-    if (!mine.length) return "<div class='analysis-cell'><b>" + sport + "</b><div class='meta'>No Picks</div><p>No card for this sport.</p></div>";
-    const edges = mine.filter(r => /edge/i.test(r[5] || "") || /^high\b/i.test(r[5] || ""));
-    const note = edges.length ? edges.map(r => r[3]).join("; ") : (mine[0][3] + " leads the card.");
-    return "<div class='analysis-cell'><b>" + sport + "</b><div class='meta'>" + mine.length + " plays" + (edges.length ? " · " + edges.length + " edge" + (edges.length === 1 ? "" : "s") : "") + "</div><p>" + sportLean(mine) + ". " + note + "</p></div>";
+    const plays = mine.filter(r => !isNoCard(r));
+    if (!plays.length) {
+      const ended = mine.some(r => /season ended/i.test((r[2] || "") + " " + (r[3] || ""))) || seasonEnded(sport);
+      const label = ended ? "Season Ended" : "No Picks";
+      return "<div class='analysis-cell'><b>" + sport + "</b><div class='meta'>" + label + "</div><p>" + (ended ? "Season is closed for this sport." : "No picks posted for this sport.") + "</p></div>";
+    }
+    const edges = plays.filter(r => /edge/i.test(r[5] || "") || /^high\b/i.test(r[5] || ""));
+    const note = edges.length ? edges.map(r => r[3]).join("; ") : (plays[0][3] + " leads the card.");
+    return "<div class='analysis-cell'><b>" + sport + "</b><div class='meta'>" + plays.length + " plays" + (edges.length ? " · " + edges.length + " edge" + (edges.length === 1 ? "" : "s") : "") + "</div><p>" + sportLean(plays) + ". " + note + "</p></div>";
   }).join("");
   const title = document.querySelector("#cardanalysis h3");
   if (title) title.textContent = "Analysis" + (day ? " · " + day : "");
@@ -645,6 +655,7 @@ function drawCardAnalysis(text){
   if (read) read.textContent = sharpRead(rows);
 }
 function sharpRead(rows){
+  rows = rows.filter(r => !isNoCard(r));
   if (!rows.length) return "No card is live yet. Wait for the posted picks, then play only a number with a reason.";
   const edges = rows.filter(r => /edge/i.test(r[5] || "") || /^high\b/i.test(r[5] || ""));
   const names = edges.map(r => r[1] + " " + r[3]);
