@@ -38,4 +38,547 @@ header img { width:72px; height:72px; border-radius:12px; display:block; }
 .head-flag span { color:#d6ffd0; font-size:10px; letter-spacing:.08em; line-height:1; }
 .head-flag svg { width:28px; height:18px; display:block; border-radius:2px; box-shadow:0 1px 2px rgba(0,0,0,.6); }
 header .head-text { display:flex; flex-direction:column; justify-content:center; }
-header h1 { margin:0; color:var(--title); font-size
+header h1 { margin:0; color:var(--title); font-size:22px; letter-spacing:.04em; }
+header p { margin:4px 0 0; color:var(--muted); }
+.page { max-width:1100px; margin:0 auto; padding:16px; }
+main { margin:0; padding:0; }
+footer.card { width:100%; max-width:none; margin:14px 0 0; box-sizing:border-box; }
+.page { display:flex; flex-direction:column; } .page-end { order:9999; height:100vh; } #below-about:empty { display:none; }
+.stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; margin:12px 0 16px; }
+.stat, .card, table { background:var(--card); border:1px solid #39ff14; border-radius:10px; }
+.stat { padding:12px; display:flex; flex-direction:column; justify-content:center; }
+.stat b { display:block; color:var(--title); font-size:20px; }
+.stat span { color:var(--muted); font-size:12px; }
+.card { padding:14px; margin-top:14px; }
+.section-head { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.section-head h2 { margin:0; }
+.slips-side { margin:0; text-align:left; max-width:62%; font-size:12px; }
+.card > h2, .card > .section-head { background:rgba(57,255,20,.12); border-bottom:1px solid #39ff14; margin:-14px -14px 12px; padding:10px 14px; }
+h2.split-title { margin:16px 0 12px; border:1px solid #39ff14; border-radius:10px; }
+.api-note { margin-top:18px; }
+.api-note a { color:var(--title); }
+.print-preview { margin-top:12px; }
+.print-preview img { width:100%; height:auto; border:1px solid #39ff14; border-radius:10px; background:#0a0a0a; }
+h2 { margin:0 0 10px; font-size:16px; color:var(--title); }
+form, .row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:8px; align-items:center; }
+.break { grid-column:1 / -1; height:0; }
+.stack { display:flex; flex-direction:row; gap:8px; grid-column:1 / -1; align-items:flex-end; }
+#picknote, #loadnote, #editnote { display:flex; align-items:center; min-height:38px; margin:0; padding:8px 12px; border:1px solid var(--line); border-radius:8px; box-sizing:border-box; }
+.bet-top { grid-column:1 / -1; display:grid; grid-template-columns:minmax(0,1fr) 170px 210px; gap:10px; align-items:stretch; }
+.bet-box { border:1px solid #39ff14; border-radius:10px; padding:8px 6px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:center; }
+#betfields { display:grid; grid-template-columns:16ch 12ch 8ch 11ch minmax(0,1fr) 11ch; gap:2px; align-content:center; justify-content:start; }
+#betfields label { min-width:0; }
+#pickselect { min-width:0; max-width:100%; }
+#betfields label input, #betfields label select { padding-left:4px; padding-right:4px; }
+#betfields label, .notes-field { align-items:stretch; text-align:left; }
+#betfields label input, #betfields #pickselect { width:100%; }
+#betfields label select { width:auto; }
+#betfields label:nth-child(n+7) { min-width:0; }
+#betload { display:flex; flex-direction:column; align-items:stretch; justify-content:center; gap:8px; }
+#betload button { width:100%; }
+#betload img { width:100%; max-width:160px; height:auto; flex:1 1 auto; object-fit:contain; border:1px solid var(--line); border-radius:8px; padding:8px; box-sizing:border-box; background:#0e0e0e; cursor:pointer; }
+#betnotes { display:flex; flex-direction:column; justify-content:center; gap:8px; min-height:120px; }
+.notes-field { grid-column:1 / -1; width:100%; }
+.notes-field textarea { width:100%; min-height:64px; }
+.notes-head { display:flex; align-items:baseline; justify-content:space-between; gap:12px; width:100%; }
+.fine { font-size:12px; line-height:1.2; margin:0; margin-left:auto; text-align:right; }
+
+label { display:flex; flex-direction:column; align-items:center; text-align:center; gap:4px; font-size:12px; color:var(--muted); }
+input, select, button, textarea { background:#0e0e0e; color:var(--text); border:1px solid var(--line); border-radius:8px; padding:8px; }
+.tools > button, .stack > button, .file-face, .tools select { height:38px; box-sizing:border-box; }
+.btn-pair { display:flex; flex-direction:column; align-items:center; gap:4px; }
+.btn-pair span { font-size:12px; color:var(--muted); text-align:center; width:100%; }
+.btn-pair .pair-title { display:flex; align-items:center; justify-content:center; gap:6px; }
+.btn-pair .pair-title .warn { width:auto; white-space:nowrap; }
+.btn-pair div { display:flex; gap:8px; }
+.book-select { width:12ch; min-width:12ch; max-width:12ch; box-sizing:content-box; }
+.sport-select { width:8ch; min-width:8ch; max-width:8ch; box-sizing:content-box; }
+.type-select { width:11ch; min-width:11ch; max-width:11ch; box-sizing:content-box; }
+.result-select { width:11ch; min-width:11ch; max-width:11ch; box-sizing:content-box; }
+#betfields input[type=date] { width:16ch; min-width:16ch; max-width:16ch; }
+.book-key { display:flex; align-items:flex-end; gap:12px; }
+#oddskeybox { display:flex; margin:0; }
+#seasons { margin-bottom:18px; }
+#seasons table { margin-bottom:28px; }
+.season-hold, .season-hold td { border:0; background:transparent; box-shadow:none; width:100%; }
+.season-hold td { height:18px; width:50%; }
+#reportDay { color-scheme:dark; }
+#reportDay::-webkit-calendar-picker-indicator { filter:invert(1); opacity:1; cursor:pointer; }
+textarea { width:100%; min-height:120px; font:13px/1.4 ui-monospace, monospace; }
+button { cursor:pointer; color:var(--title); font-weight:700; }
+button.danger { color:var(--red); }
+button.amber { color:var(--amber); }
+table { width:100%; border-collapse:separate; border-spacing:0; margin-top:8px; border:1px solid #39ff14; border-radius:10px; overflow:hidden; }
+.card, .page { max-width:100%; }
+.table-wrap { display:block; width:100%; overflow-x:auto; }
+canvas { max-width:100%; height:auto; }
+th, td { text-align:left; vertical-align:middle; padding:8px; border-bottom:1px solid #39ff14; font-size:13px; }
+tr.sport td { color:#39ff14; font-weight:700; background:#102010; }
+#rows tr.sport td { background:#2a2a2a; }
+tr.type td { color:#d6ffd0; font-weight:700; background:#0e0e0e; padding-left:16px; }
+tr.type td .type-row { display:flex; justify-content:flex-start; align-items:center; gap:12px; }
+tr.type td .type-count { font-weight:400; color:#8fb898; font-size:12px; }
+th { color:var(--title); background:#102010; }
+.win { color:var(--title); } .loss { color:var(--red); } .push, .warn { color:var(--amber); } .zero { color:#ffffff; font-style:italic; }
+tr.manual td { color:#00e5ff; }
+tr.fromcard td { color:#b0b0b0; }
+tr.row-win td { color:#39ff14; }
+tr.row-loss td { color:#ff6b6b; }
+tr.row-pending td { color:var(--amber); }
+.tools { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; align-items:flex-end; }
+.jump { display:flex; gap:6px; margin:6px 0; justify-content:center; align-items:center; }
+.jump button { padding:4px 8px; font-size:12px; }
+.sitenav { position:relative; z-index:5; display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:center; gap:0; background:#0a0a0a; border:1px solid #39ff14; border-radius:8px; padding:3px 8px; margin:8px 0 0; overflow:hidden; }
+.nav-cell { display:flex; align-items:center; justify-content:center; min-width:0; gap:6px; flex-wrap:nowrap; overflow:hidden; }
+.nav-cell.mid { border-left:1px solid #39ff14; border-right:1px solid #39ff14; padding:0 10px; flex:0 0 auto; overflow:visible; }
+.nav-cell.left { color:var(--title); white-space:nowrap; }
+.sitenav button, .sitenav select { height:26px; padding:2px 6px; font-size:12px; box-sizing:border-box; }
+.sitenav .tz { display:flex; flex-direction:row; align-items:center; justify-content:center; gap:6px; color:var(--muted); font-size:12px; white-space:nowrap; flex-wrap:nowrap; }
+.sitenav .tz select { width:110px; min-width:110px; max-width:110px; height:26px; flex:0 0 110px; align-self:center; }
+.sitenav .tz button { min-width:14ch; white-space:nowrap; }
+.sitenav .clock { color:var(--title); white-space:nowrap; }
+.card { scroll-margin-top:0; }
+input[type=file] { position:absolute; width:1px; height:1px; opacity:0; }
+.file-face { display:flex; align-items:center; justify-content:center; text-align:center; height:38px; min-width:140px; padding:6px 10px; box-sizing:border-box; background:#0e0e0e; color:var(--text); border:1px solid var(--line); border-radius:8px; cursor:pointer; }
+label:has(input[type=file]) { position:relative; }
+#loadcal { height:38px; }
+label:has(#loadcal) { gap:0; }
+.card-analysis { margin:8px 0 10px; border:1px solid #39ff14; border-radius:8px; padding:8px 10px; background:#0e0e0e; }
+.card-analysis h3 { margin:0 0 6px; color:#39ff14; font-size:13px; letter-spacing:.04em; }
+.analysis-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; }
+.analysis-cell { border:1px solid #243024; border-radius:6px; padding:6px 8px; min-height:0; }
+.analysis-cell b { color:#39ff14; font-size:12px; }
+.analysis-cell .meta { color:#f0e14a; font-size:11px; }
+.analysis-cell p { margin:2px 0 0; color:#d6ffd0; font-size:11px; line-height:1.25; }
+.sharp-read { margin-top:10px; }
+.sharp-read b { color:#39ff14; font-size:12px; }
+.sharp-read p { margin:4px 0 0; color:#d6ffd0; font-size:12px; line-height:1.35; }
+.card-rest { margin-top:10px; border:1px solid #39ff14; border-radius:8px; padding:10px; }
+@media (max-width:700px) { .analysis-grid { grid-template-columns:1fr 1fr; } }
+#dashboard { display:flex; flex-direction:column; }
+#dashboard .dash-tools { margin-top:14px; }
+#dashChart { border:1px solid #39ff14; border-radius:8px; margin:0 0 16px; }
+#report table, #report th, #report td { border:0; background:transparent; box-shadow:none; }
+#report th { color:var(--title); font-weight:700; }
+#report hr.split { border:0; border-top:2px solid #39ff14; margin:16px 0 12px; }
+#report tr.edge td { color:#f0e14a; }
+#report td, #report th { padding:4px 16px 4px 0; }
+.charts { display:grid; grid-template-columns:1.4fr 1fr; gap:12px; }
+.cal { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; text-transform:uppercase; }
+.cal div { height:84px; background:#0e0e0e; border:1px solid var(--line); border-radius:6px; font-size:12px; padding:4px; line-height:1.15; overflow:hidden; }
+.cal .range { font-size:11px; line-height:1.15; display:block; white-space:normal; overflow:visible; }
+.cal .win { color:#39ff14; }
+.cal .loss { color:#ff6b6b; }
+.cal .slash { color:#39ff14; }
+.cal .wait { color:#f0e14a; font-size:11px; line-height:1.15; display:block; }
+.cal .dow { height:auto; }
+.cal div.today { border:1px solid #39ff14; box-shadow:0 0 0 1px #39ff14 inset; }
+.cal .daycell { cursor:pointer; }
+.cal .daycell:hover { border-color:#39ff14; }
+.cal .dayzoom { height:auto; overflow:visible; grid-column:1 / -1; border:1px solid #39ff14; border-radius:8px; padding:10px; background:#0e0e0e; font-size:13px; line-height:1.4; text-transform:none; }
+.cal .dayzoom div { height:auto; overflow:visible; background:transparent; border:0; border-radius:0; padding:0; font-size:13px; line-height:1.4; }
+.dayzoom-head { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px; }
+.dayzoom-head h3 { margin:0; color:var(--title); font-size:16px; white-space:nowrap; }
+.daygame { display:grid; grid-template-columns:1fr auto auto; gap:6px 10px; align-items:center; border-bottom:1px solid #39ff14; padding:8px 0; }
+.daygame b { color:var(--title); font-size:13px; }
+.daymeta { color:var(--muted); font-size:13px; }
+.wx { justify-self:end; font-size:13px; padding:2px 8px; border-radius:8px; border:1px solid var(--line); width:18ch; box-sizing:border-box; text-align:center; white-space:nowrap; }
+.wx.good { color:#39ff14; border-color:#39ff14; }
+.wx.fair { color:#f0e14a; border-color:#f0e14a; }
+.wx.poor { color:#ff6b6b; border-color:#ff6b6b; }
+.daytags { color:var(--text); font-size:13px; white-space:nowrap; }
+.slash { color:#39ff14; }
+.cal .dow { min-height:0; color:var(--title); background:transparent; border:0; }
+canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--line); border-radius:8px; display:block; }
+.charts canvas { width:100%; height:192px; }
+@media (max-width:700px) { .charts { grid-template-columns:1fr; } .bet-top { grid-template-columns:1fr; } #betfields { grid-template-columns:1fr 1fr; } #betload img { max-width:120px; } }
+
+@media (max-width:700px) { table { display:block; overflow-x:auto; } }
+.ekg{display:block;width:100%;height:36px;margin:0 auto}
+.ekg svg{width:100%;height:36px}
+.ekg-dot{position:absolute;top:13px;width:10px;height:10px;border-radius:50%;background:#fff;transform:translateX(-50%)}
+.ekg .base{fill:none;stroke:#163016;stroke-width:1.5;vector-effect:non-scaling-stroke}
+.ekg .trace{fill:none;stroke:#39ff14;stroke-width:1.5;stroke-linecap:round;vector-effect:non-scaling-stroke}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head>
+<body>
+
+<div class="page">
+<div class="topbar">
+<header>
+<div class="head-icon"><img src="gg-icon.png" alt="Gnarly Gorilla"></div>
+<div class="head-text">
+<h1>Gnarly Gorilla Sportsbooks</h1>
+<p>Free bet ledger for Gnarly Gorilla Sports Decks. Log NFL, NBA, NHL, MLB, CBB, and CFB slips, grade them the next day, and copy the report card.</p>
+<p id="liveline" class="warn" style="margin:6px 0 0;font-size:12px;">Closed Value Lines update at 6:00 PM Eastern. Last live price is saved then.</p>
+</div>
+<div class="head-flag" aria-label="United States"><svg viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg" role="img"><defs><linearGradient id="flaggloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".45" stop-color="#fff" stop-opacity=".08"/><stop offset="1" stop-color="#000" stop-opacity=".25"/></linearGradient></defs><rect width="28" height="18" fill="#b22234"/><g fill="#fff"><rect y="1.38" width="28" height="1.38"/><rect y="4.15" width="28" height="1.38"/><rect y="6.92" width="28" height="1.38"/><rect y="9.69" width="28" height="1.38"/><rect y="12.46" width="28" height="1.38"/><rect y="15.23" width="28" height="1.38"/></g><rect width="11.2" height="9.7" fill="#3c3b6e"/><rect width="28" height="18" fill="url(#flaggloss)"/></svg><span>USA</span><span id="headregion"></span><span id="headrules">BETTING RULES</span></div>
+<div class="head-icon right"><img src="gg-icon.png" alt="Gnarly Gorilla"></div>
+</header>
+<nav class="sitenav" id="sitenav">
+<div class="nav-cell left"><span class="clock" id="zonedate"></span><span class="clock" id="zonetime"></span></div>
+<div class="nav-cell mid">
+<button type="button" data-jump="seasons">Seasons</button>
+<button type="button" data-jump="dashboard">Dashboard</button>
+<button type="button" data-jump="todaycard">Today</button>
+<button type="button" data-jump="slips">Slips</button>
+<button type="button" data-jump="reportcard">Report Card</button>
+<button type="button" data-jump="charts">Charts</button>
+<button type="button" data-jump="breaks">Books</button>
+<button type="button" data-jump="addbet">Add Bet</button>
+<button type="button" data-jump="calendarcard">Calendar</button>
+<button type="button" data-jump="about">About</button>
+</div>
+<div class="nav-cell right">
+<label class="tz">Zone
+<select id="timezone">
+<option value="America/Anchorage">Alaska</option>
+<option value="America/Phoenix">Arizona</option>
+<option value="America/Chicago">Central</option>
+<option value="America/New_York" selected>Eastern</option>
+<option value="Pacific/Honolulu">Hawaii</option>
+<option value="Europe/London">London</option>
+<option value="America/Denver">Mountain</option>
+<option value="America/Los_Angeles">Pacific</option>
+<option value="UTC">UTC</option>
+</select>
+<button type="button" id="hourmode">12hr/24hr Toggle</button>
+</label>
+</div>
+</nav>
+</div>
+<div id="seasons" class="card"><div class="section-head"><h2>Season Dates</h2><p class="warn slips-side">Checked in the month each league publishes its schedule.</p></div></div>
+<main>
+<section class="card" id="dashboard">
+<div class="section-head"><h2>Dashboard</h2><p class="warn slips-side">Last 7 days on this card. The full history stays in the saved file.</p></div>
+<section class="stats" id="stats"></section>
+<canvas id="dashChart" width="640" height="320"></canvas>
+<table>
+<thead><tr><th>Date</th><th>W/L Record</th><th>Profit</th><th>ROI</th><th>Units</th><th>Pending</th><th>Avg CLV</th></tr></thead>
+<tbody id="dashrows"></tbody>
+</table>
+<div class="tools dash-tools">
+<div class="btn-pair"><span>Data Save/Reset</span><div><button type="button" id="savedash">Save Dashboard</button><button type="button" id="resetdash">Reset</button></div></div>
+<label>Load Dashboard<input type="file" id="loaddash" accept=".txt,text/plain"><span class="file-face">No File Chosen</span></label>
+<span id="dashnote" class="warn"></span>
+</div>
+</section>
+<section class="card" id="todaycard">
+<div class="section-head"><h2>Today's Card</h2><p class="warn slips-side">One play per line: Sport | Type | Pick | American odds | Confidence. Stake is $10. Book is the dropdown below. Pending until graded.</p></div>
+<div class="card-analysis" id="cardanalysis"><h3>Analysis</h3><div class="analysis-grid" id="analysisgrid"></div><div class="sharp-read"><b>Analysis:</b><p id="sharpread"></p></div></div>
+<div class="card-rest">
+<div class="book-key">
+<label>Book<select id="cardbook" class="book-select">
+<option>BetMGM</option>
+<option>Caesars</option>
+<option>DraftKings</option>
+<option>Fanatics</option>
+<option>FanDuel</option>
+<option>HardRock</option>
+</select></label>
+<label id="oddskeybox">Odds key<input id="oddskey" type="password" placeholder="Free key from the-odds-api.com" autocomplete="off"></label>
+</div>
+<p class="api-note">Paste a free or paid Odds API key here. Load Picks in Add A Bet uses this key. Add A Bet Book drives the list. This Book only stamps a card you load from this section.<br><a href="https://the-odds-api.com/" target="_blank" rel="noopener noreferrer">Open The Odds API</a></p>
+<textarea id="paste" placeholder="NFL | Spread | Chiefs -3.5 | -110 | High 62%"></textarea>
+<div class="tools">
+<label>Upload Pick-Card PDF<input type="file" id="cardpdf" accept="application/pdf,.pdf"><span class="file-face">No File Chosen</span></label>
+<div class="btn-pair"><span>Loaders</span><div><button type="button" id="loadcard">Load Card As Pending</button><button type="button" id="loaddrive">Load Drive Card</button></div></div>
+</div>
+<p id="pdfnote" class="warn"></p>
+</div>
+</section>
+<section class="card" id="reportcard">
+<h2>Report Card</h2>
+<div class="jump"><button type="button" data-jump="printpreview">Page 1</button><button type="button" data-jump="printpreview2">Page 2</button></div>
+<div class="tools">
+<label>Day<input type="date" id="reportDay"></label>
+<label>Show<select id="reportShow"><option value="both">Both</option><option value="pending">Pending</option><option value="graded">Graded</option></select></label>
+</div>
+<div id="report"></div>
+<div class="tools"><button type="button" id="copyreport">Copy Report</button><button type="button" id="printreport">Print Report</button><button type="button" id="savepng">Save PNG</button><span id="copynote" class="warn"></span><span id="printnote" class="warn"></span></div>
+<div id="printpreview" class="print-preview" hidden>
+<div class="jump"><button type="button" data-jump="reportcard">Report</button><button type="button" data-jump="printpreview2">Page 2</button></div>
+<img id="printimg" alt="Report card print preview" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+<div class="tools"><button type="button" id="saveprint">Save PDF</button></div>
+</div>
+<div id="printpreview2" class="print-preview" hidden>
+<div class="jump"><button type="button" data-jump="reportcard">Report</button><button type="button" data-jump="printpreview">Page 1</button></div>
+<img id="printimg2" alt="Report card second page" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+</div>
+</section>
+<section class="card" id="charts">
+<div class="section-head"><h2>Charts</h2><p class="warn slips-side">Profit uses settled slips. CLV uses every saved close, including pending. <span id="plotnote"></span></p><button type="button" id="plot">Plot</button></div>
+<div class="charts">
+<div><h2>Cumulative Profit</h2><canvas id="profitChart" width="640" height="220"></canvas></div>
+<div><h2>Profit By Sport</h2><canvas id="sportChart" width="420" height="220"></canvas></div>
+</div>
+</section>
+<section class="card" id="breaks"></section>
+<section class="card" id="addbet">
+<h2>Add A Bet</h2>
+<form id="form">
+<div class="bet-top">
+<div class="bet-box" id="betfields">
+<label>Date<input type="date" name="date" required></label>
+<label>Book<select name="book" class="book-select" required>
+<option>BetMGM</option>
+<option>Caesars</option>
+<option>DraftKings</option>
+<option>Fanatics</option>
+<option>FanDuel</option>
+<option>HardRock</option>
+</select></label>
+<label>Sport<select name="sport" class="sport-select" required>
+<option>CBB</option>
+<option>CFB</option>
+<option>MLB</option>
+<option>NBA</option>
+<option selected>NFL</option>
+<option>NHL</option>
+</select></label>
+<label>Type<select name="type" class="type-select"><option>Moneyline</option><option>Spread</option><option>Total</option><option>Prop</option><option>Parlay</option><option>SGP</option></select></label>
+<label>Pick<select name="pick" id="pickselect" required><option value="">Select a pick</option></select></label>
+<label>Result<select name="result" class="result-select"><option>pending</option><option>win</option><option>loss</option><option>push</option><option>void</option></select></label>
+<label>American Odds<input name="odds" type="number" step="1" placeholder="-110" required></label>
+<label>Close Odds<input name="close" type="number" step="1" placeholder="-120"></label>
+<input type="hidden" name="editId">
+<label>Stake $<input name="stake" type="number" step="0.01" min="0" value="10" required></label>
+</div>
+<div class="bet-box" id="betload"><button type="button" id="loadpicks">Load Picks</button><img id="loadicon" src="gg-icon.png" alt="Gnarly Gorilla"></div>
+<div class="bet-box" id="betnotes">
+<p id="picknote" class="warn"></p>
+<span id="loadnote" class="warn"></span>
+<span id="editnote" class="warn"></span>
+</div>
+</div>
+<label class="notes-field"><span class="notes-head">Notes <span class="warn fine">Load Picks uses the Odds API key from Today's Card and the Book selected here. Moneyline, Spread, and Total fill from that book. A refresh restores the last list with no new call.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span><textarea name="notes" placeholder="High 62%"></textarea></label>
+<div class="stack">
+<button type="submit" id="savebtn">Save Bet</button>
+<button type="button" id="canceledit">Cancel Edit</button>
+</div>
+</form>
+</section>
+<section class="card" id="slips">
+<div class="section-head"><h2>Slips</h2><p class="warn slips-side">This card keeps today and yesterday only. Older days stay on the calendar and in the published files.</p></div>
+<div class="tools">
+<label>Sport<select id="fSport" class="sport-select"><option value="">All</option><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option></select></label>
+<label>Book<select id="fBook" class="book-select"><option value="">All</option><option>BetMGM</option><option>Caesars</option><option>DraftKings</option><option>Fanatics</option><option>FanDuel</option><option>HardRock</option></select></label>
+<label>Market<select id="fType"><option value="">All</option><option>Moneyline</option><option>Spread</option><option>Total</option><option>Prop</option><option>Parlay</option><option>SGP</option></select></label>
+<label>Result<select id="fResult"><option value="">All</option><option>pending</option><option>win</option><option>loss</option><option>push</option></select></label>
+</div>
+<div class="tools">
+<label>Load Ledger<input type="file" id="loadledger" accept=".json,application/json"><span class="file-face">No File Chosen</span></label>
+<div class="btn-pair"><span>Ledger Data</span><div><button type="button" id="syncledger">Sync Ledger</button><button type="button" id="saveledger">Save Ledger</button></div></div>
+<span id="ledgernote" class="warn"></span>
+<label>Import CSV<input type="file" id="import" accept=".csv,text/csv"><span class="file-face">No File Chosen</span></label>
+<div class="btn-pair"><span>Exporting</span><div><button type="button" id="exportpdf">Export PDF</button><button type="button" id="export">Export Spreadsheet</button><button type="button" class="danger" id="clear">Clear All</button></div></div>
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>Date</th><th>Book</th><th>Sport</th><th>Type</th><th>Pick</th><th>Odds</th><th>Close</th><th>CLV</th><th>Stake</th><th>Result</th><th>P/L</th><th>Grade</th></tr></thead>
+<tbody id="rows"></tbody>
+</table></div>
+<p class="api-note">Live prices need the Odds API key from Today's Card. The pick list is filled in Add A Bet. A saved list returns on refresh with no new call. A new book calls the API once, then uses the save for 15 minutes.<br><a href="https://the-odds-api.com/" target="_blank" rel="noopener noreferrer">Open The Odds API</a></p>
+</section>
+<section class="card" id="calendarcard">
+<div class="section-head"><h2>Calendar</h2><p class="warn slips-side">Everyone sees the shared $10 calendar until they upload a file. An uploaded file stays in this browser only. Other users do not see it. Use Shared Calendar to go back.</p></div>
+<div class="tools"><div class="btn-pair"><span>Navigation</span><div><button type="button" id="prevMonth">Prev</button><button type="button" id="nextMonth">Next</button></div></div><label>Load My Calendar<input type="file" id="loadcal" accept=".json,application/json"><span class="file-face">No File Chosen</span></label><div class="btn-pair"><span class="pair-title"><span id="calnote" class="warn"></span></span><div><button type="button" id="resetcal">Use Shared Calendar</button></div></div></div>
+<div class="cal" id="calendar"></div>
+</section>
+</main>
+<footer class="card" id="about">
+<h2>About This Ledger</h2>
+<p>Gnarly Gorilla Sportsbooks is a free browser bet ledger for the daily Gnarly Gorilla pick cards. It tracks American-odds slips for NFL, NBA, NHL, MLB, college basketball, and college football at BetMGM, Caesars, DraftKings, Fanatics, FanDuel, and HardRock. Bets stay in this browser. The page does not log into a sportsbook and does not place wagers.</p>
+<p class="warn" id="staterule">Bet Responsibly. Gambling involves risk. Wagers can lose the full stake. This ledger is a record of picks and results, not a sportsbook, not betting advice, and not an offer to place a wager. You must be 21 or older where sports betting is legal. If gambling is causing problems, call or text 1-800-GAMBLER.</p>
+<p class="warn" id="statebooks">State rules load from the visitor location.</p>
+</footer>
+<div id="below-about"></div>
+<div class="page-end"></div>
+</div>
+<script>
+const KEY = "gnarly-gorilla-sportsbooks-v1";
+const GRADE_KEY = "gnarly-gorilla-grading-v1";
+const UNIT = 10;
+const form = document.getElementById("form");
+form.date.value = new Date().toLocaleDateString("en-CA", {timeZone: localStorage.getItem("gg-timezone") || "America/New_York"});
+function ymd(d){ return d.toISOString().slice(0,10); }
+function siteZone(){ return localStorage.getItem("gg-timezone") || Intl.DateTimeFormat().resolvedOptions().timeZone || "America/New_York"; }
+function hour12(){ return localStorage.getItem("gg-hour") !== "24"; }
+function formatTime(value, seconds){
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  const opt = {timeZone: siteZone(), hour:"numeric", minute:"2-digit", hour12: hour12()};
+  if (seconds !== false) opt.second = "2-digit";
+  return date.toLocaleTimeString("en-US", opt);
+}
+function liveByText(){
+  const zone = siteZone();
+  const day = new Date().toLocaleDateString("en-CA", {timeZone: "America/New_York"});
+  const guess = new Date(day + "T13:30:00Z");
+  const parts = new Intl.DateTimeFormat("en-US", {timeZone: "America/New_York", hour:"numeric", minute:"numeric", hourCycle:"h23"}).formatToParts(guess);
+  const h = Number(parts.find(p => p.type === "hour").value);
+  const m = Number(parts.find(p => p.type === "minute").value);
+  const instant = new Date(guess.getTime() + ((9 * 60 + 30) - (h * 60 + m)) * 60000);
+  const clock = instant.toLocaleTimeString("en-US", {timeZone: zone, hour:"numeric", minute:"2-digit", hour12: hour12()});
+  const place = zone.replace(/_/g, " ").split("/").pop();
+  return "All picks live by " + clock + " " + place + ". Closed Value Lines update at 6:00 PM Eastern. Last live price is saved then.";
+}
+function showClock(){
+  const now = new Date();
+  const date = document.getElementById("zonedate");
+  const time = document.getElementById("zonetime");
+  if (date) date.textContent = now.toLocaleDateString("en-US", {timeZone: siteZone(), weekday:"long", month:"long", day:"numeric", year:"numeric"});
+  if (time) time.textContent = formatTime(now, true);
+  const live = document.getElementById("liveline");
+  if (live) live.textContent = liveByText();
+}
+function yesterday(){ const d = new Date(todayEt() + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() - 1); return d.toISOString().slice(0,10); }
+function load(){ try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { return []; } }
+function loadGrade(){ try { return JSON.parse(localStorage.getItem(GRADE_KEY) || "[]"); } catch (e) { return []; } }
+function archiveSlips(bets){
+  const prior = loadGrade();
+  const seen = new Set(prior.map(b => [b.date, b.sport, b.pick].join("|")));
+  bets.forEach(b => { const k = [b.date, b.sport, b.pick].join("|"); if (!seen.has(k)) { prior.push(b); seen.add(k); } });
+  localStorage.setItem(GRADE_KEY, JSON.stringify(prior));
+  return prior.length;
+}
+function save(bets){ localStorage.setItem(KEY, JSON.stringify(bets)); render(); }
+function slipMoney(b){
+  if (!b || b.result === "pending") return 0;
+  const published = Number(b.profit);
+  if (Number.isFinite(published) && published !== 0) return published;
+  if (b.result === "push") return 0;
+  return profit(b);
+}
+function profit(b){
+  if (b.result === "pending" || b.result === "void" || b.result === "push") return 0;
+  if ((b.result === "win" || b.result === "loss") && Number.isFinite(Number(b.profit))) return Number(b.profit);
+  const odds = Number(b.odds), stake = Number(b.stake) || 0;
+  if (!Number.isFinite(stake)) return 0;
+  if (b.result !== "win") return -stake;
+  if (!Number.isFinite(odds) || odds === 0) return 0;
+  const winAmt = odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds);
+  return Number.isFinite(winAmt) ? winAmt : 0;
+}
+function money(n){ n = Number(n); if (!Number.isFinite(n)) return "-"; return (n < 0 ? "-$" : "$") + Math.abs(n).toFixed(2); }
+function moneyHtml(n){ const v = Number(n); const cls = v > 0 ? "win" : v < 0 ? "loss" : "zero"; return "<span class='" + cls + "'>" + money(v) + "</span>"; }
+function rec(list){
+  const w = list.filter(b => b.result === "win").length;
+  const l = list.filter(b => b.result === "loss").length;
+  const p = list.filter(b => b.result === "push").length;
+  return w + "-" + l + "-" + p;
+}
+function esc(s){ return String(s == null ? "" : s).replace(/&/g,"&").replace(/</g,"<").replace(/>/g,">"); }
+
+
+function shiftDate(iso, days){
+  const [y, m, d] = iso.split("-").map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d + days));
+  return dt.toISOString().slice(0, 10);
+}
+function lastSevenDates(){
+  const today = todayEt();
+  return Array.from({length: 7}, (_, i) => shiftDate(today, i - 7));
+}
+function publishedDashboard(){
+  const slips = (gradeFile || []).filter(b => b && b.date && !isNoPick(b) && (b.result === "win" || b.result === "loss" || b.result === "push"));
+  return lastSevenDates().map(date => {
+    const day = publishedCalendar[date] || {};
+    const lines = slips.filter(b => b.date === date);
+    const profit = Number.isFinite(Number(day.pl)) ? Number(day.pl) : lines.reduce((s, b) => s + (Number(b.profit) || 0), 0);
+    const n = Number(day.n) || lines.length;
+    const staked = n * UNIT;
+    const withClose = lines.filter(b => b.close !== "" && b.close != null);
+    const clvs = withClose.map(clv).filter(v => v != null);
+    const saved = day.clv;
+    let dayClv = "No Close Saved";
+    if (!lines.length) dayClv = "No Close Saved";
+    else if (!withClose.length) dayClv = "Close Not On File";
+    else if (clvs.length) dayClv = (clvs.reduce((s, v) => s + v, 0) / clvs.length).toFixed(1) + "%";
+    else dayClv = "Matched Bet Price";
+    return {
+      date,
+      record: lines.length ? rec(lines) : (n ? "Split Not On File" : "0-0-0"),
+      profit,
+      roi: staked ? (profit / staked * 100).toFixed(1) + "%" : "-",
+      units: (profit / UNIT).toFixed(2) + "u",
+      pending: 0,
+      clv: dayClv
+    };
+  });
+}
+function ruleRow(row){
+  const record = String(row.record || "0-0-0");
+  if (/split not on file/i.test(record)) return Object.assign({}, row, {record: "Split Not On File", clv: row.clv || "No Close Saved"});
+  const parts = record.split("-").map(n => Number(n) || 0);
+  const empty = parts.length < 3 || (parts[0] === 0 && parts[1] === 0 && parts[2] === 0);
+  const clv = empty ? "No Close Saved" : (row.clv === "No Close Saved" || !row.clv ? "Close Not On File" : row.clv);
+  return Object.assign({}, row, {record: empty ? "0-0-0" : parts[0] + "-" + parts[1] + "-" + parts[2], clv: clv});
+}
+function drawDashboard(history, manual){
+  const rows = (manual ? history.slice() : publishedDashboard()).map(ruleRow);
+  if (!manual) localStorage.setItem("gg-dashboard-v1", JSON.stringify(rows));
+  const shown = rows;
+  const profit = shown.reduce((s, row) => s + (Number(row.profit) || 0), 0);
+  const staked = shown.reduce((s, row) => {
+    const n = parseFloat(String(row.roi).replace("%", ""));
+    return s + (n ? (Number(row.profit) || 0) / (n / 100) : 0);
+  }, 0);
+  let wins = 0, losses = 0, pushes = 0;
+  shown.forEach(row => {
+    const parts = String(row.record || "0-0").split("-").map(n => Number(n) || 0);
+    if (parts.length < 3 || /no picks/i.test(row.record)) return;
+    wins += parts[0] || 0; losses += parts[1] || 0; pushes += parts[2] || 0;
+  });
+  const clvs = shown.map(row => row.clv === "Matched Bet Price" ? 0 : parseFloat(String(row.clv).replace("%", ""))).filter(n => Number.isFinite(n));
+  document.getElementById("stats").innerHTML = [
+    [wins + "-" + losses + "-" + pushes, "7-Day W/L Record"],
+    [money(profit), "7-Day Profit"],
+    [staked ? (profit / staked * 100).toFixed(1) + "%" : "-", "7-Day ROI"],
+    [(profit / UNIT).toFixed(2) + "u", "7-Day Units"],
+    [shown.reduce((s, row) => s + (Number(row.pending) || 0), 0), "Pending"],
+    [clvs.length ? (clvs.reduce((s, n) => s + n, 0) / clvs.length).toFixed(1) + "%" : "No Close Saved", "7-Day Avg CLV"]
+  ].map(x => "<div class='stat'><b>" + x[0] + "</b><span>" + x[1] + "</span></div>").join("");
+  document.getElementById("dashrows").innerHTML = shown.map(row => "<tr><td>" + row.date + "</td><td>" + row.record + "</td><td>" + moneyHtml(Number(row.profit)) + "</td><td>" + row.roi + "</td><td>" + row.units + "</td><td>" + (Number(row.pending) === 0 ? "0 - All Pending Has Been Graded" : row.pending) + "</td><td>" + (row.clv === "-" || row.clv == null || row.clv === "" ? "No Close Saved" : row.clv) + "</td></tr>").join("");
+  const canvas = document.getElementById("dashChart");
+  const ctx = canvas.getContext("2d");
+  const w = Math.max(320, canvas.clientWidth || 640);
+  const h = 320;
+  canvas.width = w;
+  canvas.height = h;
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle = "#0e0e0e";
+  ctx.fillRect(0,0,w,h);
+  if (!shown.length) return;
+  const pts = shown.map(row => ({date: row.date, y: Number(row.profit) || 0}));
+  const min = -500, max = 500, span = max - min;
+  const left = 62, right = 62, top = 14, bottom = 22;
+  const x = i => left + (w - left - right) * (pts.length === 1 ? 0.5 : i / (pts.length - 1));
+  const y = v => top + (h - top - bottom) * (1 - (v - min) / span);
+  ctx.font = "10px sans-serif";
+  ctx.textAlign = "right";
+  for (let v = min; v <= max; v += 50) {
+    const yy = y(v);
+    ctx.strokeStyle = v === 0 ? "#ff00ff" : "#243024";
+    ctx.lineWidth = v === 0 ? 1.5 : 1;
+    ctx.beginPath(); ctx.moveTo(left, yy); ctx.lineTo(w - right, yy); ctx.stroke();
+    const label = v === 0 ? "$0" : (v < 0 ? "-$" + Math.abs(v) : "$" + v);
+    ctx.fillStyle = v === 0 ? "#ff00ff" : (v < 0 ? "#ff6b6b" : "#8fd18a");
+    ctx.textAlign = "right";
+    ctx.fillText(label, left - 6, yy + 3);
+    ctx.textAlign = "left";
+    ctx.fillText(label, w - right + 6, yy + 3);
+  }
+  ctx.strokeStyle = "#2a3a2a";
+  ctx.lineWidth = 1;
+  pts.forEach((p, i) => {
+    ctx.beginPath();
+    ctx.moveTo(x(i), y(max));
+    ctx.lineTo(x(i), h - bottom);
+    ctx.stroke();
+  });
+  ctx.fillStyle = "#8fb898";
+  ctx.textAlign = "left";
+  ctx.font = "11px sans-serif";
+  ctx.fillStyle = "#ff00ff";
+  ctx.fillText("Break Even - $0", left + 96, y(0) - 6);
