@@ -285,7 +285,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </select></label>
 <label id="oddskeybox">Odds key<input id="oddskey" type="password" placeholder="Free key from the-odds-api.com" autocomplete="off"></label>
 </div>
-<p class="api-note">Paste a free or paid Odds API key here. Load Picks in Add A Bet uses this key. Add A Bet Book drives the list. This Book only stamps a card you load from this section.<br><a href="https://the-odds-api.com/" target="_blank" rel="noopener noreferrer">Open The Odds API</a></p>
+<p class="api-note">Paste a free or paid Odds API key here. Load Picks in Add A Bet uses this key. CLV and Close need a paid subscription. A free key loads the board only. Add A Bet Book drives the list. This Book only stamps a card you load from this section.<br><a href="https://the-odds-api.com/" target="_blank" rel="noopener noreferrer">Open The Odds API</a></p>
 <textarea id="paste" placeholder="NFL | Spread | Chiefs -3.5 | -110 | High 62%"></textarea>
 <div class="tools">
 <label>Upload Pick-Card PDF<input type="file" id="cardpdf" accept="application/pdf,.pdf"><span class="file-face">No File Chosen</span></label>
@@ -314,7 +314,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </div>
 </section>
 <section class="card" id="charts">
-<div class="section-head"><h2>Charts</h2><p class="warn slips-side">Profit uses settled slips. CLV uses every saved close, including pending. <span id="plotnote"></span></p><button type="button" id="plot">Plot</button></div>
+<div class="section-head"><h2>Charts</h2><p class="warn slips-side">Profit uses settled slips. CLV needs a paid Odds API key. <span id="plotnote"></span></p><button type="button" id="plot">Plot</button></div>
 <div class="charts">
 <div><h2>Cumulative Profit</h2><canvas id="profitChart" width="640" height="220"></canvas></div>
 <div><h2>Profit By Sport</h2><canvas id="sportChart" width="420" height="220"></canvas></div>
@@ -384,7 +384,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <thead><tr><th>Date</th><th>Book</th><th>Sport</th><th>Type</th><th>Pick</th><th>Odds</th><th>Close</th><th>CLV</th><th>Stake</th><th>Result</th><th>P/L</th><th>Grade</th></tr></thead>
 <tbody id="rows"></tbody>
 </table></div>
-<p class="api-note">Live prices need the Odds API key from Today's Card. The pick list is filled in Add A Bet. A saved list returns on refresh with no new call. A new book calls the API once, then uses the save for 15 minutes.<br><a href="https://the-odds-api.com/" target="_blank" rel="noopener noreferrer">Open The Odds API</a></p>
+<p class="api-note">Live prices need the Odds API key from Today's Card. CLV and Close need a paid subscription. A free key loads the board only. The pick list is filled in Add A Bet. A saved list returns on refresh with no new call. A new book calls the API once, then uses the save for 15 minutes.<br><a href="https://the-odds-api.com/" target="_blank" rel="noopener noreferrer">Open The Odds API</a></p>
 </section>
 <section class="card" id="calendarcard">
 <div class="section-head"><h2>Calendar</h2><p class="warn slips-side">Everyone sees the shared $10 calendar until they upload a file. An uploaded file stays in this browser only. Other users do not see it. Use Shared Calendar to go back.</p></div>
@@ -543,9 +543,9 @@ function drawDashboard(history, manual){
     [staked ? (profit / staked * 100).toFixed(1) + "%" : "-", "7-Day ROI"],
     [(profit / UNIT).toFixed(2) + "u", "7-Day Units"],
     [shown.reduce((s, row) => s + (Number(row.pending) || 0), 0), "Pending"],
-    [clvs.length ? (clvs.reduce((s, n) => s + n, 0) / clvs.length).toFixed(1) + "%" : "No Close Saved", "7-Day Avg CLV"]
+    [paidKey ? (clvs.length ? (clvs.reduce((s, n) => s + n, 0) / clvs.length).toFixed(1) + "%" : "No Close Saved") : "Paid Key Required", "7-Day Avg CLV"]
   ].map(x => "<div class='stat'><b>" + x[0] + "</b><span>" + x[1] + "</span></div>").join("");
-  document.getElementById("dashrows").innerHTML = shown.map(row => "<tr><td>" + row.date + "</td><td>" + row.record + "</td><td>" + moneyHtml(Number(row.profit)) + "</td><td>" + row.roi + "</td><td>" + row.units + "</td><td>" + (Number(row.pending) === 0 ? "0 - All Pending Has Been Graded" : row.pending) + "</td><td>" + (row.clv === "-" || row.clv == null || row.clv === "" ? "No Close Saved" : row.clv) + "</td></tr>").join("");
+  document.getElementById("dashrows").innerHTML = shown.map(row => "<tr><td>" + row.date + "</td><td>" + row.record + "</td><td>" + moneyHtml(Number(row.profit)) + "</td><td>" + row.roi + "</td><td>" + row.units + "</td><td>" + (Number(row.pending) === 0 ? "0 - All Pending Has Been Graded" : row.pending) + "</td><td>" + (paidKey ? (row.clv === "-" || row.clv == null || row.clv === "" ? "No Close Saved" : row.clv) : "Paid Key Required") + "</td></tr>").join("");
   const canvas = document.getElementById("dashChart");
   const ctx = canvas.getContext("2d");
   const w = Math.max(320, canvas.clientWidth || 640);
@@ -790,7 +790,9 @@ function clv(b){
   if (!got || !closed) return null;
   return (got / closed - 1) * 100;
 }
+let paidKey = false;
 function clvText(b){
+  if (!paidKey) return "Paid Key Required";
   if (b.result === "pending" || b.result === "void") return "-";
   if (!b.realClose || b.close === "" || b.close == null) return "No Close Saved";
   const cv = clv(b);
@@ -2562,7 +2564,7 @@ document.getElementById("clear").onclick = () => { if (confirm("Delete every bet
 });
 ["reportDay","reportShow"].forEach(id => document.getElementById(id).onchange = render);
 async function keyIsPaid(key){
-  if (!key) return false;
+  if (!key) { paidKey = false; return false; }
   const saved = localStorage.getItem("gg-key-tier");
   if (saved) { try { const pack = JSON.parse(saved); if (pack.key === key) return pack.paid === true; } catch (e) {} }
   const url = "https://api.the-odds-api.com/v4/historical/sports/americanfootball_nfl/odds?apiKey=" + encodeURIComponent(key) + "&regions=us&markets=h2h&oddsFormat=american&date=2026-01-01T12:00:00Z";
@@ -2572,7 +2574,8 @@ async function keyIsPaid(key){
     paid = res.ok;
   } catch (e) { paid = false; }
   localStorage.setItem("gg-key-tier", JSON.stringify({key, paid, at: Date.now()}));
-  return paid;
+  paidKey = paid === true;
+  return paidKey;
 }
 async function paidHistoricalGames(sport, bookKey, date, key){
   const sportKey = SPORT_KEY[sport];
@@ -2730,6 +2733,7 @@ fetch("cards/report.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(
   if (edgePicks.size) render();
 }).catch(() => {});
 fetch("cards/today.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(drawCardAnalysis).catch(() => {});
+(async () => { const k = (document.getElementById("oddskey") || {}).value || ""; if (k.trim()) { paidKey = await keyIsPaid(k.trim()); render(); } })();
 loadDriveCardForCalendar();
 setInterval(loadDriveCardForCalendar, 60000);
 fetch("cards/closes.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
