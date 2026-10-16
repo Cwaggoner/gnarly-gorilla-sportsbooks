@@ -966,7 +966,7 @@ function drawCalendar(){
     if (pl > 0) gain += pl; else loss += Math.abs(pl);
   });
   const box = document.getElementById("monthpl");
-  if (box) box.innerHTML = "<span class='win'>" + money(gain) + "</span> <span class='loss'>-" + money(loss).replace("-", "") + "</span>";
+  if (box) box.innerHTML = "Monthly Win/Loss Record <span class='win'>" + money(gain) + "</span> <span class='loss'>-" + money(loss).replace("-", "") + "</span>";
   if (openDate && !document.getElementById("closeday")) openDay(openDate);
 }
 
