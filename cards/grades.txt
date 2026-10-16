@@ -166,7 +166,7 @@
 2026-10-14 | NFL | No Picks
 2026-10-14 | CBB | No Picks
 2026-10-14 | CFB | No Picks
-2026-10-15 | RANGE | All Win 172.72 | All Lose -170.00
+2026-10-15 | RANGE | All Win 210.76 | All Lose -200.00
 2026-10-15 | CFB | Colorado State +14 | -110 | loss | TXST 66 CSU 27 | -10.00
 2026-10-15 | CFB | Colorado State at Texas State Under 70.5 | -110 | loss | TXST 66 CSU 27 | -10.00
 2026-10-15 | MLB | Rays at Guardians Over 6.5 | -110 | loss | CLE 3 TB 2 | -10.00
@@ -184,5 +184,7 @@
 2026-10-15 | NBA | Raptors at Knicks Under 225.5 | -110 | loss | TOR 120 NYK 122 | -10.00
 2026-10-15 | NBA | SGP Rockets +5.5 and Thunder at Rockets Under 223.5 | 190 | win | HOU 116 OKC 89 | 19.00
 2026-10-15 | NBA | SGP Raptors +5.5 and Raptors at Knicks Under 225.5 | 190 | loss | TOR 120 NYK 122 | -10.00
-2026-10-15 | NFL | No Picks
+2026-10-15 | NFL | Broncos +2.5 | -105 | win | SEA 14 DEN 17 | 9.52
+2026-10-15 | NFL | Seahawks at Broncos Under 40.5 | -105 | win | 31 | 9.52
+2026-10-15 | NFL | SGP Broncos +2.5 and Seahawks at Broncos Under 40.5 | 190 | win | SEA 14 DEN 17 | 19.00
 2026-10-15 | CBB | No Picks
