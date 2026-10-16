@@ -48,7 +48,11 @@ footer.card { width:100%; max-width:none; margin:14px 0 0; box-sizing:border-box
 .stat, .card, table { background:var(--card); border:1px solid #39ff14; border-radius:10px; }
 .stat { padding:12px; display:flex; flex-direction:column; justify-content:center; }
 .stat b { display:block; color:var(--title); font-size:20px; }
+.stat b span { font-size:20px; }
 .stat span { color:var(--muted); font-size:12px; }
+.stat b .win { color:var(--title); }
+.stat b .loss { color:var(--red); }
+.stat b .zero { color:#ffffff; font-style:italic; }
 .card { padding:14px; margin-top:14px; }
 .section-head { display:flex; align-items:center; justify-content:space-between; gap:12px; }
 .section-head h2 { margin:0; }
@@ -461,7 +465,7 @@ function profit(b){
   return Number.isFinite(winAmt) ? winAmt : 0;
 }
 function money(n){ n = Number(n); if (!Number.isFinite(n)) return "-"; return (n < 0 ? "-$" : "$") + Math.abs(n).toFixed(2); }
-function moneyHtml(n){ const v = Number(n); const cls = v > 0 ? "win" : v < 0 ? "loss" : "zero"; return "<span class= + cls + >" + money(v) + "</span>"; }
+function moneyHtml(n){ const v = Number(n); const cls = v > 0 ? "win" : v < 0 ? "loss" : "zero"; return "<span class='" + cls + "'>" + money(v) + "</span>"; }
 function rec(list){
   const w = list.filter(b => b.result === "win").length;
   const l = list.filter(b => b.result === "loss").length;
