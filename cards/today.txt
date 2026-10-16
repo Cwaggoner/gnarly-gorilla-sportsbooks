@@ -2,7 +2,8 @@
 2026-10-16 | NHL | Spread | Pittsburgh Penguins +1.5 | -135 | Medium
 2026-10-16 | NHL | Moneyline | Pittsburgh Penguins ML | 180 | High Edge: Value on the dog vs short COL ML. Recent Ball Arena points.
 2026-10-16 | NHL | Moneyline | Anaheim Ducks ML | -105 | Medium
-2026-10-16 | CFB | No Picks
+2026-10-16 | CFB | Spread | Tulane +7 | -112 | Medium Edge: Real dog of 7. Live underdog of 7 or more vs Memphis.
+2026-10-16 | CFB | Total | Memphis vs Tulane Under 55.5 | -108 | Medium Edge: Total with reason. Tulane offense limited.
 2026-10-16 | MLB | Total | Rays @ Guardians Under 6.5 | -110 | High Edge: Totals market preferred. Low scoring series after Game 1, rainy/windy at Progressive Field.
 2026-10-16 | MLB | Moneyline | Guardians ML | -110 | Medium Edge: Dog at pick'em. Home field, series lead 2-1.
 2026-10-16 | MLB | SGP | Guardians ML and Under 6.5 | Edge | High Edge: Two-leg same-game parlay.
