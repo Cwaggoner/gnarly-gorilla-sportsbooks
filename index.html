@@ -1368,7 +1368,8 @@ async function drawOddsCompare(){
   const sports = Object.keys(SPORT_KEY);
   const rows = [];
   for (const sport of sports) {
-    const games = await fetchBook(SPORT_KEY[sport], "", key).catch(() => []);
+    const url = "https://api.the-odds-api.com/v4/sports/" + SPORT_KEY[sport] + "/odds?apiKey=" + encodeURIComponent(key) + "&regions=us,us2&markets=h2h&oddsFormat=american";
+    const games = await fetch(url).then(r => r.ok ? r.json() : []).catch(() => []);
     games.filter(g => g.commence_time && new Date(g.commence_time).toLocaleDateString("en-CA", {timeZone: siteZone()}) === day).forEach(g => {
       const cells = books.map(book => {
         const bk = (g.bookmakers || []).find(b => b.key === BOOK_KEY[book]);
