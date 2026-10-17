@@ -1410,9 +1410,9 @@ if (!force && stamp === day && table && table.includes("<table")) { box.innerHTM
   const label = {h2h:"Moneyline, away / home", spreads:"Spread, away / home", totals:"Total, over point and price / under price"}[marketKey];
   const head = "<tr><th>Game</th>" + books.map(b => "<th>" + esc(b) + "</th>").join("") + "</tr>";
   const body = rows.slice(0, 12).map(r => "<tr><td>" + esc(r.sport) + " " + esc(r.label) + "</td>" + r.cells.map(c => "<td>" + c + "</td>").join("") + "</tr>").join("");
-  const select = "<select id='comparemarket'><option value='h2h'" + (market==="h2h"?" selected":"") + ">Moneyline</option><option value='spreads'" + (market==="spreads"?" selected":"") + ">Spread</option><option value='totals'" + (market==="totals"?" selected":"") + ">Total</option></select>";
+  const select = "<select id='comparesport'><option value='CBB'>CBB</option><option value='CFB'>CFB</option><option value='MLB'>MLB</option><option value='NBA'>NBA</option><option value='NFL'>NFL</option><option value='NHL'>NHL</option><option value='All'>All</option></select> <select id='comparemarket'><option value='h2h'" + (market==="h2h"?" selected":"") + ">Moneyline</option><option value='spreads'" + (market==="spreads"?" selected":"") + ">Spread</option><option value='totals'" + (market==="totals"?" selected":"") + ">Total</option></select>";
   if (!rows.length && table && table.includes("<table")) { box.innerHTML = table; wireCompare(); return; }
-  table = "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>" + (day === todayEt() ? "Today" : "Yesterday") + ". " + label + ". " + select + "</p>" + (rows.length ? "<table class='compare'><thead>" + head + "</thead><tbody></tbody></table>" : "<p class='api-note'>No games posted for " + day + " yet.</p>");
+  table = "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>" + (day === todayEt() ? "Today" : "Yesterday") + ". " + label + ". " + select + "</p>" + (rows.length ? "<table class='compare'><thead>" + head + "</thead><tbody>" + body + "</tbody></table>" : (table && table.includes("<table") ? table : "<p class='api-note'>No games posted for " + day + " yet.</p>"));
   localStorage.setItem("gg-compare-stamp-" + market, day);
   localStorage.setItem("gg-compare-html-" + market, table);
   box.innerHTML = table;
