@@ -2997,6 +2997,19 @@ fetch("cards/grades.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(
   }).filter(Boolean);
   render();
 }).catch(() => {});
+
+document.getElementById("sitenav").addEventListener("click", e => {
+  const btn = e.target.closest("[data-jump]");
+  if (!btn) return;
+  const id = btn.dataset.jump;
+  let box = document.getElementById(id);
+  if (!box && id === "liveodds") { drawOddsCompare(true).catch(() => {}); box = document.getElementById(id); }
+  if (!box) return;
+  if (id === "seasons") { window.scrollTo({top: 0, behavior:"smooth"}); return; }
+  const bar = document.querySelector(".topbar") || document.querySelector(".sitenav");
+  const top = box.getBoundingClientRect().top + window.scrollY - (bar ? bar.offsetHeight : 0) - 8;
+  window.scrollTo({top: Math.max(0, top), behavior:"smooth"});
+});
 </script>
 </body>
 </html>
