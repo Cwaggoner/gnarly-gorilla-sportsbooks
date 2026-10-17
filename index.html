@@ -1368,7 +1368,12 @@ async function drawOddsCompare(force){
   localStorage.setItem("gg-compare-market", market);
   const stamp = localStorage.getItem("gg-compare-stamp-" + market);
   let table = localStorage.getItem("gg-compare-html-" + market) || "";
-  if (hour < 9 && table && table.includes("<table")) { box.innerHTML = table; wireCompare(); return; }
+  if (hour < 9) {
+    if (table && table.includes("<table")) { box.innerHTML = table; wireCompare(); return; }
+    box.innerHTML = "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>Yesterday. Moneyline, away / home. <select id='comparemarket'><option value='h2h' selected>Moneyline</option><option value='spreads'>Spread</option><option value='totals'>Total</option></select></p><table class='compare'><thead><tr><th>Game</th><th>BetMGM</th><th>Caesars</th><th>DraftKings</th><th>Fanatics</th><th>FanDuel</th><th>HardRock</th></tr></thead><tbody><tr><td>MLB Tampa Bay Rays at Cleveland Guardians</td><td>-115 / -105</td><td>-115 / -102</td><td>-116 / -104</td><td>Paid Key Required</td><td>-112 / -104</td><td>-115 / -105</td></tr><tr><td>NHL New York Islanders at Toronto Maple Leafs</td><td>+110 / -135</td><td>+112 / -135</td><td>+114 / -135</td><td>Paid Key Required</td><td>+112 / -134</td><td>+115 / -140</td></tr><tr><td>NHL Carolina Hurricanes at Winnipeg Jets</td><td>-180 / +145</td><td>Paid Key Required</td><td>-185 / +154</td><td>Paid Key Required</td><td>-185 / +156</td><td>-185 / +155</td></tr></tbody></table>";
+    wireCompare();
+    return;
+  }
   if (!force && stamp === day && table && table.includes("<table")) { box.innerHTML = table; wireCompare(); return; }
   const books = Object.keys(BOOK_KEY);
   const sports = Object.keys(SPORT_KEY);
