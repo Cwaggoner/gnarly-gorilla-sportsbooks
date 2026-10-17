@@ -1387,6 +1387,7 @@ async function drawOddsCompare(force){
     filterCompare();
     return;
   }
+if (!force && localStorage.getItem("gg-paid-key") && table && table.includes("<table")) { box.innerHTML = table; wireCompare(); return; }
 if (!force && stamp === day && table && table.includes("<table") && table.includes("comparesport")) { box.innerHTML = table; wireCompare(); return; }
   const books = Object.keys(BOOK_KEY);
   const sports = Object.keys(SPORT_KEY);
