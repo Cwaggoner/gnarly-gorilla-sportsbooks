@@ -1,1 +1,62 @@
-PLACEHOLDER
+# file: closes
+# Per-slip last live price. Format: date | sport | odds | pick | close
+# A line is written only when a live price was captured before kickoff.
+# For 2026-10-15: published closing lines looked up (theScore CLE -130 o/u 6.5, EdgeBets Broncos +2.5 u40.5 -105, Covers/Action for NBA preseason). Differing closes saved. Matched bet price for SGPs and NFL where close equaled bet price. Noted as matched.
+2026-10-14 | NBA | -110 | Nets +6.5 | -110
+2026-10-14 | NBA | -110 | Hornets +8.5 | -110
+2026-10-14 | NBA | -110 | Nets at Heat Under 224.5 | -110
+2026-10-14 | NBA | -110 | Hornets at Celtics Under 218.5 | -110
+2026-10-14 | NBA | 190 | SGP Nets +6.5 and Nets at Heat Under 224.5 | 190
+2026-10-14 | NBA | 190 | SGP Hornets +8.5 and Hornets at Celtics Under 218.5 | 190
+2026-10-14 | NHL | 140 | Montreal Canadiens ML | 140
+2026-10-14 | NHL | -110 | Colorado Avalanche ML | -110
+2026-10-14 | NHL | -110 | Canadiens at Capitals Under 6.5 | -110
+2026-10-14 | NHL | 220 | SGP Montreal Canadiens ML and Canadiens at Capitals Under 6.5 | 220
+2026-10-14 | MLB | -110 | Brewers at Dodgers Under 7.5 | -110
+2026-10-14 | MLB | -120 | Brewers +1.5 | -120
+2026-10-14 | MLB | 160 | SGP Brewers +1.5 and Brewers at Dodgers Under 7.5 | 160
+2026-10-15 | CFB | -110 | Colorado State +14 | -110
+2026-10-15 | CFB | -110 | Colorado State at Texas State Under 70.5 | -110
+2026-10-15 | MLB | -110 | Rays at Guardians Over 6.5 | -105
+2026-10-15 | MLB | -160 | Brewers +1.5 | -170
+2026-10-15 | MLB | 190 | SGP Rays +1.5 and Rays at Guardians Over 6.5 | 190
+2026-10-15 | NHL | 100 | Buffalo Sabres ML | -102
+2026-10-15 | NHL | 120 | New York Rangers ML | 110
+2026-10-15 | NHL | 130 | New York Islanders ML | 135
+2026-10-15 | NHL | 105 | Utah Mammoth ML | 105
+2026-10-15 | NHL | -120 | Seattle Kraken +1.5 | -115
+2026-10-15 | NHL | 114 | Chicago Blackhawks ML | 110
+2026-10-15 | NBA | -115 | Rockets +5.5 | -110
+2026-10-15 | NBA | -110 | Raptors +5.5 | -110
+2026-10-15 | NBA | -110 | Thunder at Rockets Under 223.5 | -110
+2026-10-15 | NBA | -110 | Raptors at Knicks Under 225.5 | -110
+2026-10-15 | NBA | 190 | SGP Rockets +5.5 and Thunder at Rockets Under 223.5 | 190
+2026-10-15 | NBA | 190 | SGP Raptors +5.5 and Raptors at Knicks Under 225.5 | 190
+2026-10-15 | NFL | -105 | Broncos +2.5 | -105
+2026-10-15 | NFL | -105 | Seahawks at Broncos Under 40.5 | -105
+2026-10-15 | NFL | 190 | SGP Broncos +2.5 and Seahawks at Broncos Under 40.5 | 190
+2026-10-16 | NBA | -110 | Bucks +8.5 | -110
+2026-10-16 | NBA | -110 | Raptors +9.5 | -110
+2026-10-16 | NBA | -110 | Celtics +5.5 | -110
+2026-10-16 | NBA | -110 | Bucks at Pacers Under 235.5 | -110
+2026-10-16 | NBA | -110 | Raptors at Pistons Under 217.5 | -110
+2026-10-16 | NBA | 190 | SGP Bucks +8.5 and Bucks at Pacers Under 235.5 | 190
+2026-10-16 | NBA | 190 | SGP Raptors +9.5 and Raptors at Pistons Under 217.5 | 190
+2026-10-16 | NHL | -135 | Pittsburgh Penguins +1.5 | -135
+2026-10-16 | NHL | 180 | Pittsburgh Penguins ML | 180
+2026-10-16 | NHL | -105 | Anaheim Ducks ML | -105
+2026-10-16 | CFB | -112 | Tulane +7 | -112
+2026-10-16 | CFB | -108 | Memphis vs Tulane Under 55.5 | -108
+2026-10-17 | MLB | -110 | Rays @ Guardians Under 6.5 | -110
+2026-10-17 | MLB | -104 | Guardians ML | -104
+2026-10-17 | MLB | 190 | SGP Guardians ML and Under 6.5 | 190
+2026-10-17 | NHL | -165 | Winnipeg Jets +1.5 | -165
+2026-10-17 | NHL | 105 | New Jersey Devils ML | 105
+2026-10-17 | NHL | 120 | Buffalo Sabres ML | 120
+2026-10-17 | NHL | 114 | New York Islanders ML | 114
+2026-10-17 | NHL | -160 | Seattle Kraken +1.5 | -160
+2026-10-17 | NHL | 118 | Boston Bruins ML | 118
+2026-10-17 | CFB | -110 | Tennessee +7.5 | -110
+2026-10-17 | CFB | -110 | Florida +11.5 | -110
+2026-10-17 | CFB | -110 | BYU +10.5 | -110
+2026-10-17 | CFB | -110 | Alabama vs Tennessee Under 50.5 | -110
