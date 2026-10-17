@@ -1356,40 +1356,62 @@ function render(){
   report.innerHTML = "<p>Date " + (picked || todayEt()) + ". Graded " + (picked || y) + "</p><p>W/L Record " + rec(gradedDay) + "   P/L " + money(dayPl) + "   Hit rate " + hit + "   Row sum " + money(dayPl) + "</p>" + body + "<p>Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u</p>";
 }
 
-async function drawOddsCompare(){
+async function drawOddsCompare(force){
   const key = oddskey.value.trim();
   const box = document.getElementById("oddscompare");
   if (!box) return;
   if (!key) { box.innerHTML = "<p class='api-note'>Odds comparison needs the Odds API key from Today's Card.</p>"; return; }
   const day = todayEt();
-  const stamp = localStorage.getItem("gg-compare-stamp");
-  let table = localStorage.getItem("gg-compare-html") || "";
-  if (stamp === day && table && table.includes("<table")) { box.innerHTML = table; return; }
+  const market = (document.getElementById("comparemarket") || {}).value || localStorage.getItem("gg-compare-market") || "h2h";
+  localStorage.setItem("gg-compare-market", market);
+  const stamp = localStorage.getItem("gg-compare-stamp-" + market);
+  let table = localStorage.getItem("gg-compare-html-" + market) || "";
+  if (!force && stamp === day && table && table.includes("<table")) { box.innerHTML = table; wireCompare(); return; }
   const books = Object.keys(BOOK_KEY);
   const sports = Object.keys(SPORT_KEY);
+  const marketKey = {h2h:"h2h", spreads:"spreads", totals:"totals"}[market] || "h2h";
   const rows = [];
   for (const sport of sports) {
-    const url = "https://api.the-odds-api.com/v4/sports/" + SPORT_KEY[sport] + "/odds?apiKey=" + encodeURIComponent(key) + "&regions=us,us2&markets=h2h&oddsFormat=american";
+    const url = "https://api.the-odds-api.com/v4/sports/" + SPORT_KEY[sport] + "/odds?apiKey=" + encodeURIComponent(key) + "&regions=us,us2&markets=" + marketKey + "&oddsFormat=american";
     const games = await fetch(url).then(r => r.ok ? r.json() : []).catch(() => []);
     games.filter(g => g.commence_time && new Date(g.commence_time).toLocaleDateString("en-CA", {timeZone: siteZone()}) === day).forEach(g => {
       const paidOnly = {Caesars:1, Fanatics:1};
       const cells = books.map(book => {
         const bk = (g.bookmakers || []).find(b => b.key === BOOK_KEY[book]);
-        const mk = bk && (bk.markets || []).find(m => m.key === "h2h");
+        const mk = bk && (bk.markets || []).find(m => m.key === marketKey);
         if (!mk) return paidOnly[book] ? "Paid Key Required" : "-";
-        const away = (mk.outcomes || []).find(o => o.name === g.away_team);
-        const home = (mk.outcomes || []).find(o => o.name === g.home_team);
-        return (away && away.price != null ? away.price : "-") + " / " + (home && home.price != null ? home.price : "-");
+        if (marketKey === "h2h") {
+          const away = (mk.outcomes || []).find(o => o.name === g.away_team);
+          const home = (mk.outcomes || []).find(o => o.name === g.home_team);
+          return (away && away.price != null ? away.price : "-") + " / " + (home && home.price != null ? home.price : "-");
+        }
+        if (marketKey === "spreads") {
+          const away = (mk.outcomes || []).find(o => o.name === g.away_team);
+          const home = (mk.outcomes || []).find(o => o.name === g.home_team);
+          return (away ? away.point + " " + away.price : "-") + " / " + (home ? home.point + " " + home.price : "-");
+        }
+        const over = (mk.outcomes || []).find(o => o.name === "Over");
+        const under = (mk.outcomes || []).find(o => o.name === "Under");
+        return (over ? over.point + " " + over.price : "-") + " / " + (under ? under.price : "-");
       });
       rows.push({sport, label: g.away_team + " at " + g.home_team, cells});
     });
   }
+  const label = {h2h:"Moneyline, away / home", spreads:"Spread, away / home", totals:"Total, over point and price / under price"}[marketKey];
   const head = "<tr><th>Game</th>" + books.map(b => "<th>" + esc(b) + "</th>").join("") + "</tr>";
   const body = rows.slice(0, 12).map(r => "<tr><td>" + esc(r.sport) + " " + esc(r.label) + "</td>" + r.cells.map(c => "<td>" + c + "</td>").join("") + "</tr>").join("");
-  table = rows.length ? "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>Moneyline, away / home. Loaded once a day. No click needed.</p><table class='compare'><thead>" + head + "</thead><tbody>" + body + "</tbody></table>" : "<p class='api-note'>No games posted for " + day + " yet.</p>";
-  localStorage.setItem("gg-compare-stamp", day);
-  localStorage.setItem("gg-compare-html", table);
+  const select = "<select id='comparemarket'><option value='h2h'" + (market==="h2h"?" selected":"") + ">Moneyline</option><option value='spreads'" + (market==="spreads"?" selected":"") + ">Spread</option><option value='totals'" + (market==="totals"?" selected":"") + ">Total</option></select>";
+  table = "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>" + label + ". Loaded once a day. " + select + "</p>" + (rows.length ? "<table class='compare'><thead>" + head + "</thead><tbody>" + body + "</tbody></table>" : "<p class='api-note'>No games posted for " + day + " yet.</p>");
+  localStorage.setItem("gg-compare-stamp-" + market, day);
+  localStorage.setItem("gg-compare-html-" + market, table);
   box.innerHTML = table;
+  wireCompare();
+}
+function wireCompare(){
+  const sel = document.getElementById("comparemarket");
+  if (!sel || sel.dataset.wired) return;
+  sel.dataset.wired = "1";
+  sel.onchange = () => drawOddsCompare(true).catch(() => {});
 }
 function group(bets, key){
   const map = {};
