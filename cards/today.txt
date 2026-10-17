@@ -26,3 +26,7 @@
 2026-10-16 | NFL | No Picks
 2026-10-16 | CBB | Season Ended
 2026-10-17 | CBB | Season Ended
+2026-10-17 | CFB | Spread | Tennessee +7.5 | -110 | Edge: Real dog of 7.5. Third Saturday in October at Neyland. Alabama off a loss.
+2026-10-17 | CFB | Spread | Florida +11.5 | -110 | Edge: Live underdog of 11.5. Texas home but inconsistent early season.
+2026-10-17 | CFB | Spread | BYU +10.5 | -110 | Edge: Real dog of 10.5 at home in Provo. Night game, lower total favors cover.
+2026-10-17 | CFB | Total | Alabama vs Tennessee Under 50.5 | -110 | Edge: Total with reason. Rivalry, total has dropped, expected lower-scoring environment.
