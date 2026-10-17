@@ -1647,6 +1647,7 @@ async function fillPickBoard(useSaved){
     document.getElementById("loadnote").textContent = "Waiting On Yesterday";
     return;
   }
+  const sport = form.sport.value;
   const marketFor = {Moneyline:"h2h", Spread:"spreads", Total:"totals"};
   const type = form.type.value;
   const want = marketFor[type] || "";
@@ -1658,10 +1659,11 @@ async function fillPickBoard(useSaved){
   let count = 0;
   const zoneDay = iso => new Date(iso).toLocaleDateString("en-CA", {timeZone: siteZone()});
   const dayGames = allGames.filter(game => {
+    if (sport && game._sport !== sport) return false;
     if (!day) return true;
     if (!game.commence_time) return true;
     return zoneDay(game.commence_time) === day;
-  });
+  }).sort((a, b) => String(a._sport).localeCompare(b._sport) || String(a.commence_time || "").localeCompare(String(b.commence_time || "")));
   const started = dayGames.filter(game => game.commence_time && Date.parse(game.commence_time) <= Date.now());
   const openGames = dayGames.filter(game => !game.commence_time || Date.parse(game.commence_time) > Date.now());
   openGames.forEach(game => {
@@ -1688,7 +1690,7 @@ async function fillPickBoard(useSaved){
     });
   });
   if (current) sel.value = current;
-  const msg = count ? "Loaded " + count + " " + book + " picks across all sports for " + day + "." + (started.length ? " " + started.length + " started games closed." : "") : "No " + book + " lines for " + day + ".";
+  const msg = count ? "Loaded " + count + " " + book + " " + (sport || "all sports") + " picks for " + day + "." + (started.length ? " " + started.length + " started games closed." : "") : "No " + book + " lines for " + day + ".";
   note.textContent = msg;
   document.getElementById("loadnote").textContent = count ? "Load successful." : "No Lines";
   if (count) localStorage.setItem("gg-pick-board", JSON.stringify({book, sport: "ALL", day, value: sel.value, options: [...sel.options].map(o => ({value:o.value, text:o.textContent, price:o.dataset.price || "", close:o.dataset.close || ""}))}));
