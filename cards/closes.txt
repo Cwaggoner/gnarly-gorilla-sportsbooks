@@ -60,3 +60,17 @@
 2026-10-17 | CFB | -110 | Florida +11.5 | -110
 2026-10-17 | CFB | -110 | BYU +10.5 | -110
 2026-10-17 | CFB | -110 | Alabama vs Tennessee Under 50.5 | -110
+2026-10-10 | NBA | -110 | Clippers +4.5 | -110
+2026-10-10 | NBA | -110 | Hawks +2.5 | -110
+2026-10-10 | NBA | -110 | Wizards +5.5 | -110
+2026-10-10 | NBA | -110 | Heat +1.5 | -110
+2026-10-10 | NBA | -110 | 76ers +5.5 | -110
+2026-10-10 | NBA | -110 | Kings +5.5 | -110
+2026-10-10 | NBA | -110 | Suns +7.5 | -110
+2026-10-10 | NBA | -110 | Clippers at Raptors Under 217.5 | -107
+2026-10-10 | NBA | -110 | Pistons at Wizards Under 222.5 | -110
+2026-10-10 | NBA | -110 | 76ers at Celtics Under 222.5 | -110
+2026-10-10 | NBA | -110 | Kings at Warriors Under 229.5 | -110
+2026-10-10 | NBA | -110 | Spurs at Suns Under 221.5 | -110
+2026-10-11 | NFL | -110 | Broncos +2.5 | +100
+2026-10-11 | NFL | -110 | Broncos at Chargers Under 42.5 | -110
