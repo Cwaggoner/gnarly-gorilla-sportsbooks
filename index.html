@@ -490,8 +490,22 @@ function lastSevenDates(){
   const today = todayEt();
   return Array.from({length: 7}, (_, i) => shiftDate(today, i - 7));
 }
+let closeMap = {};
+function loadCloses(){
+  return fetch("cards/closes.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
+    closeMap = {};
+    text.split(/\n/).forEach(line => {
+      const parts = line.split("|").map(s => s.trim());
+      if (parts.length < 5 || !/^\d{4}-\d{2}-\d{2}$/.test(parts[0])) return;
+      closeMap[parts[0] + "|" + parts[3]] = parts[4];
+    });
+  }).catch(() => {});
+}
 function publishedDashboard(){
-  const slips = (gradeFile || []).filter(b => b && b.date && !isNoPick(b) && (b.result === "win" || b.result === "loss" || b.result === "push"));
+  const slips = (gradeFile || []).filter(b => b && b.date && !isNoPick(b) && (b.result === "win" || b.result === "loss" || b.result === "push")).map(b => {
+    const close = closeMap[b.date + "|" + b.pick];
+    return close ? Object.assign({}, b, {close}) : b;
+  });
   return lastSevenDates().map(date => {
     const day = publishedCalendar[date] || {};
     const lines = slips.filter(b => b.date === date);
@@ -2963,8 +2977,7 @@ fetch("cards/report.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(
     if (parts.length < 3) return;
     edgePicks.add([day, parts[0], parts[2]].join("|").toLowerCase());
   });
-  if (edgePicks.size) render();
-  showSeasons();
+  if (edgePicks.size) loadCloses().then(() => { render(); showSeasons(); }).catch(() => { render(); showSeasons(); });
 }).catch(() => {});
 fetch("cards/today.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(drawCardAnalysis).catch(() => {});
 (async () => { const k = (document.getElementById("oddskey") || {}).value || ""; if (k.trim()) { paidKey = await keyIsPaid(k.trim()); render(); } })();
