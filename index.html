@@ -1425,7 +1425,7 @@ if (!force && stamp === day && table && table.includes("<table") && table.includ
   const savedBoards = window.__ggBoards || {};
   const fallback = savedBoards[market] || savedBoards.h2h || "";
   const paid = localStorage.getItem("gg-paid-key");
-  if (paid && rows.length) {
+  if ((paid || force) && rows.length) {
     table = "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>" + (day === todayEt() ? "Today" : "Yesterday") + ". " + label + ". " + select + "</p><table class='compare'><thead>" + head + "</thead><tbody>" + body + "</tbody></table>";
     localStorage.setItem("gg-compare-stamp-" + market, day);
     localStorage.setItem("gg-compare-html-" + market, table);
