@@ -1424,11 +1424,16 @@ if (!force && stamp === day && table && table.includes("<table") && table.includ
   const select = "<select id='comparesport'><option value='CBB'>CBB</option><option value='CFB'>CFB</option><option value='MLB'>MLB</option><option value='NBA'>NBA</option><option value='NFL'>NFL</option><option value='NHL'>NHL</option><option value='All' selected>All</option></select> <select id='comparemarket'><option value='h2h'" + (market==="h2h"?" selected":"") + ">Moneyline</option><option value='spreads'" + (market==="spreads"?" selected":"") + ">Spread</option><option value='totals'" + (market==="totals"?" selected":"") + ">Total</option></select>";
   const boards = window.__ggBoards || {};
   const fallback = boards[market] || boards.h2h || "";
-  const paid = localStorage.getItem("gg-paid-key");
-  const sportsInRows = new Set(rows.map(r => r.sport));
-  if (!paid && sportsInRows.size < 4 && fallback.includes("<table")) { box.innerHTML = fallback; wireCompare(); return; }
-  if (!paid && !rows.length && fallback.includes("<table")) { box.innerHTML = fallback; wireCompare(); return; }
-  table = "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>" + (day === todayEt() ? "Today" : "Yesterday") + ". " + label + ". " + select + "</p>" + (rows.length ? "<table class='compare'><thead>" + head + "</thead><tbody>" + body + "</tbody></table>" : "<p class='api-note'>No games posted for " + day + " yet.</p>");
+  if (fallback.includes("<table") && rows.length < 6) {
+    box.innerHTML = fallback;
+    if (rows.length) {
+      const tbody = box.querySelector("tbody");
+      if (tbody) tbody.insertAdjacentHTML("beforeend", body);
+    }
+    wireCompare();
+    return;
+  }
+  table = "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>" + (day === todayEt() ? "Today" : "Yesterday") + ". " + label + ". " + select + "</p>" + (rows.length ? "<table class='compare'><thead>" + head + "</thead><tbody>" + body + "</tbody></table>" : (fallback.includes("<table") ? fallback : "<p class='api-note'>No games posted for " + day + " yet.</p>"));
   localStorage.setItem("gg-compare-stamp-" + market, day);
   localStorage.setItem("gg-compare-html-" + market, table);
   box.innerHTML = table;
