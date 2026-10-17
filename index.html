@@ -2549,7 +2549,7 @@ document.getElementById("sitenav").addEventListener("click", e => {
   if (!box) return;
   if (id === "seasons") { window.scrollTo({top: 0, behavior:"smooth"}); return; }
   const bar = document.querySelector(".topbar") || document.querySelector(".sitenav");
-  const top = box.getBoundingClientRect().top + window.scrollY - (bar ? bar.offsetHeight : 0) - 8;
+  const top = box.getBoundingClientRect().top + window.scrollY - (bar ? bar.offsetHeight : 0) - 20;
   window.scrollTo({top: Math.max(0, top), behavior:"smooth"});
 });
 document.getElementById("copyreport").onclick = async () => {
@@ -3008,7 +3008,7 @@ document.getElementById("sitenav").addEventListener("click", e => {
   if (!box) return;
   if (id === "seasons") { window.scrollTo({top: 0, behavior:"smooth"}); return; }
   const bar = document.querySelector(".topbar") || document.querySelector(".sitenav");
-  const top = box.getBoundingClientRect().top + window.scrollY - (bar ? bar.offsetHeight : 0) - 8;
+  const top = box.getBoundingClientRect().top + window.scrollY - (bar ? bar.offsetHeight : 0) - 20;
   window.scrollTo({top: Math.max(0, top), behavior:"smooth"});
 });
 </script>
