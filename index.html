@@ -1090,11 +1090,11 @@ async function nightlyUpdate(){
       const res = await fetch("cards/grades.txt?ts=" + Date.now()).catch(() => null);
       const text = res && res.ok ? await res.text() : "";
       if (!text.includes(yesterday())) return;
-      clearInterval(window.gradeWatch);
-      window.gradeWatch = null;
       await applyGrades().catch(() => {});
       await loadCalendarFile();
-      if (note) note.textContent = "Midnight grade file loaded for " + yesterday() + ".";
+      const still = load().filter(b => b.date === yesterday() && b.result === "pending" && !isNoPick(b));
+      if (note) note.textContent = still.length ? still.length + " slips from " + yesterday() + " still pending." : "All " + yesterday() + " slips graded.";
+      if (!still.length) { clearInterval(window.gradeWatch); window.gradeWatch = null; }
     }, 60000);
   }
   const res = await fetch("cards/today.txt?ts=" + Date.now()).catch(() => null);
@@ -1725,6 +1725,7 @@ async function autoLoadBoard(){
 }
 if (!window.boardWatch) window.boardWatch = setInterval(() => autoLoadBoard().catch(() => {}), 15 * 60000);
 autoLoadBoard().catch(() => {});
+applyGrades().catch(() => {});
 document.getElementById("loadpicks").onclick = () => {
   document.getElementById("loadnote").textContent = "Loading...";
   fillPickBoard().catch(err => {
