@@ -1354,6 +1354,7 @@ function render(){
 function group(bets, key){
   const map = {};
   if (key === "sport") ["CBB","CFB","MLB","NBA","NFL","NHL"].forEach(s => map[s] = {pl:0, n:0});
+  if (key === "book") ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"].forEach(s => map[s] = {pl:0, n:0});
   bets.forEach(b => {
     if (b.result !== "win" && b.result !== "loss" && b.result !== "push") return;
     const k = String(b[key] || "").trim() || "?";
@@ -1362,7 +1363,50 @@ function group(bets, key){
     map[k].n++;
   });
   const rows = Object.entries(map).sort((a,b) => a[0].localeCompare(b[0]));
-  return "<p>" + rows.map(([k,v]) => esc(k) + ": " + (v.n ? moneyHtml(v.pl) + " (" + v.n + ")" : seasonText(k))).join(" | ") + "</p>";
+  return "<p>" + rows.map(([k,v]) => esc(k) + ": " + (v.n ? moneyHtml(v.pl) + " (" + v.n + ")" : "No Slips")).join(" | ") + "</p>";
+}
+async function repriceBooks(){
+  const key = oddskey.value.trim();
+  if (!key) return;
+  const stamp = localStorage.getItem("gg-books-stamp");
+  if (stamp === todayEt()) return;
+  const settled = load().filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
+  if (!settled.length) return;
+  const books = Object.keys(BOOK_KEY);
+  const bySport = {};
+  settled.forEach(b => { if (SPORT_KEY[b.sport]) (bySport[b.sport] = bySport[b.sport] || []).push(b); });
+  const boards = {};
+  for (const sport of Object.keys(bySport)) {
+    boards[sport] = {};
+    for (const book of books) {
+      boards[sport][book] = await fetchBook(SPORT_KEY[sport], BOOK_KEY[book], key).catch(() => []);
+    }
+  }
+  const map = {};
+  books.forEach(book => map[book] = {pl:0, n:0});
+  settled.forEach(b => {
+    books.forEach(book => {
+      const games = (boards[b.sport] || {})[book] || [];
+      const hit = games.find(g => String(b.pick).includes(g.home_team) || String(b.pick).includes(g.away_team));
+      const price = hit ? priceFrom(hit, BOOK_KEY[book], b) : Number(b.odds);
+      const copy = {...b, odds: price};
+      map[book].pl += slipMoney(copy);
+      map[book].n++;
+    });
+  });
+  localStorage.setItem("gg-books-stamp", todayEt());
+  localStorage.setItem("gg-books-figures", JSON.stringify(map));
+  render();
+}
+function priceFrom(game, bookKey, slip){
+  const bk = (game.bookmakers || []).find(b => b.key === bookKey);
+  if (!bk) return Number(slip.odds);
+  const market = slip.type === "Total" ? "totals" : slip.type === "Moneyline" ? "h2h" : "spreads";
+  const mk = (bk.markets || []).find(m => m.key === market);
+  if (!mk) return Number(slip.odds);
+  const name = String(slip.pick).split(" ").slice(-2)[0];
+  const o = (mk.outcomes || []).find(x => String(slip.pick).includes(x.name) || (x.point != null && String(slip.pick).includes(String(x.point))));
+  return o && o.price != null ? o.price : Number(slip.odds);
 }
 form.onsubmit = e => {
   e.preventDefault();
@@ -1726,6 +1770,7 @@ async function autoLoadBoard(){
 if (!window.boardWatch) window.boardWatch = setInterval(() => autoLoadBoard().catch(() => {}), 15 * 60000);
 autoLoadBoard().catch(() => {});
 applyGrades().catch(() => {});
+repriceBooks().catch(() => {});
 document.getElementById("loadpicks").onclick = () => {
   document.getElementById("loadnote").textContent = "Loading...";
   fillPickBoard().catch(err => {
