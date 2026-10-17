@@ -1607,43 +1607,48 @@ async function repricePaste(){
 
 async function fillPickBoard(useSaved){
   const book = form.book.value;
-  const sport = form.sport.value;
-  const type = form.type.value;
   const bookKey = BOOK_KEY[book];
-  const sportKey = SPORT_KEY[sport];
   const key = oddskey.value.trim();
   const sel = document.getElementById("pickselect");
   const note = document.getElementById("picknote");
   const current = sel.value;
   sel.innerHTML = "<option value=''>Select a pick</option>";
   if (!key) { note.textContent = "Add the odds key in Today's Card. Then this list follows " + book + "."; return; }
-  if (!bookKey || !sportKey) { note.textContent = book + " has no live board."; return; }
+  if (!bookKey) { note.textContent = book + " has no live board."; return; }
   const day = form.date.value;
   const today = new Date().toLocaleDateString("en-CA", {timeZone: siteZone()});
-  const dayKey = "gg-day-" + day + "-" + sportKey + "-" + bookKey;
-  note.textContent = "Loading " + book + " " + sport + " picks for " + day + "...";
-  let games;
-  if (day && day < today) {
-    try { games = JSON.parse(localStorage.getItem(dayKey) || "null") || []; } catch (e) { games = []; }
-    if (!games.length) { note.textContent = "No saved board for " + day + "."; document.getElementById("loadnote").textContent = "No Past Board"; return; }
-  } else {
-    games = useSaved ? (cachedBoard(sport, bookKey) || []) : await fetchBook(sportKey, bookKey, key);
-    const byDay = {};
-    games.forEach(game => {
-      const gameDay = game.commence_time ? new Date(game.commence_time).toLocaleDateString("en-CA", {timeZone: siteZone()}) : day;
-      byDay[gameDay] = byDay[gameDay] || [];
-      byDay[gameDay].push(game);
-      if (day && gameDay !== day && game.commence_time) {
-        const start = Date.parse(game.commence_time);
-        if (Number.isFinite(start) && start < Date.now() + 36 * 3600000) {
-          byDay[day] = byDay[day] || [];
-          byDay[day].push(game);
-        }
-      }
-    });
-    Object.entries(byDay).forEach(([d, list]) => localStorage.setItem("gg-day-" + d + "-" + sportKey + "-" + bookKey, JSON.stringify(list)));
+  const yest = new Date(today + "T12:00:00Z");
+  yest.setUTCDate(yest.getUTCDate() - 1);
+  const yesterday = yest.toISOString().slice(0, 10);
+  note.textContent = "Loading " + book + " picks for every sport on " + day + "...";
+  const sports = Object.keys(SPORT_KEY);
+  let allGames = [];
+  for (const sport of sports) {
+    const sportKey = SPORT_KEY[sport];
+    const dayKey = "gg-day-" + day + "-" + sportKey + "-" + bookKey;
+    let games = [];
+    if (day && day < today) {
+      try { games = JSON.parse(localStorage.getItem(dayKey) || "null") || []; } catch (e) { games = []; }
+    } else {
+      games = useSaved ? (cachedBoard(sport, bookKey) || []) : await fetchBook(sportKey, bookKey, key);
+      const byDay = {};
+      games.forEach(game => {
+        const gameDay = game.commence_time ? new Date(game.commence_time).toLocaleDateString("en-CA", {timeZone: siteZone()}) : day;
+        byDay[gameDay] = byDay[gameDay] || [];
+        byDay[gameDay].push(game);
+      });
+      Object.entries(byDay).forEach(([d, list]) => localStorage.setItem("gg-day-" + d + "-" + sportKey + "-" + bookKey, JSON.stringify(list)));
+    }
+    games.forEach(g => { g._sport = sport; allGames.push(g); });
+  }
+  const lastYesterday = allGames.filter(g => g.commence_time && new Date(g.commence_time).toLocaleDateString("en-CA", {timeZone: siteZone()}) === yesterday).map(g => Date.parse(g.commence_time)).filter(Number.isFinite).sort((a,b) => b - a)[0];
+  if (day === today && lastYesterday && lastYesterday > Date.now()) {
+    note.textContent = "Waiting for the last game from " + yesterday + " to finish.";
+    document.getElementById("loadnote").textContent = "Waiting On Yesterday";
+    return;
   }
   const marketFor = {Moneyline:"h2h", Spread:"spreads", Total:"totals"};
+  const type = form.type.value;
   const want = marketFor[type] || "";
   if (!want) {
     note.textContent = type + " has no board lines. Moneyline, Spread, and Total update from the saved board.";
@@ -1652,24 +1657,13 @@ async function fillPickBoard(useSaved){
   }
   let count = 0;
   const zoneDay = iso => new Date(iso).toLocaleDateString("en-CA", {timeZone: siteZone()});
-  const dayGames = games.filter(game => {
+  const dayGames = allGames.filter(game => {
     if (!day) return true;
     if (!game.commence_time) return true;
-    if (zoneDay(game.commence_time) === day) return true;
-    const start = Date.parse(game.commence_time);
-    if (!Number.isFinite(start)) return false;
-    const next = new Date(day + "T12:00:00Z");
-    next.setUTCDate(next.getUTCDate() + 1);
-    const nextDay = next.toISOString().slice(0, 10);
-    return zoneDay(game.commence_time) === nextDay && start < Date.now() + 36 * 3600000;
+    return zoneDay(game.commence_time) === day;
   });
   const started = dayGames.filter(game => game.commence_time && Date.parse(game.commence_time) <= Date.now());
   const openGames = dayGames.filter(game => !game.commence_time || Date.parse(game.commence_time) > Date.now());
-  if (dayGames.length && !openGames.length) {
-    note.textContent = sport + " Bet Window Closed. Games have started and no bets can be taken.";
-    document.getElementById("loadnote").textContent = "Bet Window Closed";
-    return;
-  }
   openGames.forEach(game => {
     const bk = (game.bookmakers || []).find(b => b.key === bookKey);
     if (!bk) return;
@@ -1678,41 +1672,26 @@ async function fillPickBoard(useSaved){
       (mk.outcomes || []).forEach(o => {
         if (o.price == null) return;
         const kick = game.commence_time ? " " + formatTime(game.commence_time) : "";
-        let label = game.away_team + " at " + game.home_team + kick + " " + o.name + (mk.key === "h2h" ? " ML" : "");
-        if (mk.key === "spreads" && o.point != null) label = game.away_team + " at " + game.home_team + kick + " " + o.name.split(" ").slice(-1)[0] + " " + (o.point > 0 ? "+" : "") + o.point;
-        if (mk.key === "totals" && o.point != null) label = totalLabel(game, o.name.toLowerCase(), o.point);
+        let label = game._sport + " " + game.away_team + " at " + game.home_team + kick + " " + o.name + (mk.key === "h2h" ? " ML" : "");
+        if (mk.key === "spreads" && o.point != null) label = game._sport + " " + game.away_team + " at " + game.home_team + kick + " " + o.name.split(" ").slice(-1)[0] + " " + (o.point > 0 ? "+" : "") + o.point;
+        if (mk.key === "totals" && o.point != null) label = game._sport + " " + totalLabel(game, o.name.toLowerCase(), o.point);
         const opt = document.createElement("option");
         opt.value = label;
         opt.textContent = label + " (" + o.price + ")";
         opt.dataset.price = o.price;
         opt.dataset.close = o.price;
         opt.dataset.market = mk.key;
+        opt.dataset.sport = game._sport;
         sel.appendChild(opt);
         count++;
       });
     });
   });
   if (current) sel.value = current;
-  const bets = load();
-  const closed = applyCloses(bets, games, bookKey);
-  if (closed) save(bets);
-  if (!count) {
-    if (!driveCard.loaded) await loadDriveCardForCalendar();
-    const card = cardPicks(sport, type);
-    card.forEach(l => {
-      const opt = document.createElement("option");
-      opt.value = l.pick;
-      opt.textContent = l.pick + " (" + l.odds + ")";
-      opt.dataset.price = l.odds;
-      opt.dataset.close = l.odds;
-      sel.appendChild(opt);
-      count++;
-    });
-  }
-  const msg = count ? "Loaded " + count + " " + book + " " + sport + " picks for " + day + "." + (started.length ? " " + started.length + " started games closed." : "") : "No " + book + " lines for " + sport + " on " + day + ".";
-  note.textContent = msg + (closed ? " " + closed + " closes saved." : "");
+  const msg = count ? "Loaded " + count + " " + book + " picks across all sports for " + day + "." + (started.length ? " " + started.length + " started games closed." : "") : "No " + book + " lines for " + day + ".";
+  note.textContent = msg;
   document.getElementById("loadnote").textContent = count ? "Load successful." : "No Lines";
-  if (count) localStorage.setItem("gg-pick-board", JSON.stringify({book, sport, day, value: sel.value, options: [...sel.options].map(o => ({value:o.value, text:o.textContent, price:o.dataset.price || "", close:o.dataset.close || ""}))}));
+  if (count) localStorage.setItem("gg-pick-board", JSON.stringify({book, sport: "ALL", day, value: sel.value, options: [...sel.options].map(o => ({value:o.value, text:o.textContent, price:o.dataset.price || "", close:o.dataset.close || ""}))}));
 }
 document.getElementById("pickselect").onchange = () => {
   const opt = document.getElementById("pickselect").selectedOptions[0];
