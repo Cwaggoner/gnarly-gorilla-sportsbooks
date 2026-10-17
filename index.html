@@ -1304,6 +1304,7 @@ function render(){
   document.getElementById("plotnote").textContent = settled.length + " settled slips plotted. " + bets.filter(b => b.result === "pending").length + " slips left to settle.";
   drawCalendar();
   document.getElementById("breaks").innerHTML = "<div id=\"oddscompare\"></div>" + "<h2>Graded Results By Sport And Book</h2>" + group(settled, "sport") + group(settled, "book") + "<h2 class='split-title'>Market Split</h2>" + group(settled, "type") + "<p class='api-note'>This card uses graded slips only. Pending slips are not counted. A sport with no graded slips says No Picks.</p>";
+  drawOddsCompare().catch(() => {});
   const y = yesterday();
   const graded = loadGrade();
   const picked = document.getElementById("reportDay").value;
@@ -1363,7 +1364,7 @@ async function drawOddsCompare(){
   const day = todayEt();
   const stamp = localStorage.getItem("gg-compare-stamp");
   let table = localStorage.getItem("gg-compare-html") || "";
-  if (stamp === day && table) { box.innerHTML = table; return; }
+  if (stamp === day && table && table.includes("<table")) { box.innerHTML = table; return; }
   const books = Object.keys(BOOK_KEY);
   const sports = Object.keys(SPORT_KEY);
   const rows = [];
