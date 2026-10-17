@@ -1308,7 +1308,7 @@ function render(){
     const card = document.createElement("section");
     card.className = "card";
     card.id = "liveodds";
-    card.innerHTML = "<div class=\"section-head\"><h2>Live Odds</h2><p class=\"warn slips-side\">Moneyline, spread, and total across books. Loaded once a day.</p></div>";
+    card.innerHTML = "<div class=\"section-head\"><h2>Live Odds</h2><p class=\"warn slips-side\">Moneyline, spread, and total across books. Loaded once a day.</p><button type=\"button\" id=\"refreshodds\">Refresh</button></div>";
     const hold = document.createElement("div");
     hold.id = "oddscompare";
     card.appendChild(hold);
