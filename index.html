@@ -1519,11 +1519,8 @@ async function drawOddsCompare(force){
     const boards = {'h2h': "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>Yesterday. Moneyline, away / home. <select id='comparesport'><option value='CBB'>CBB</option><option value='CFB'>CFB</option><option value='MLB'>MLB</option><option value='NBA'>NBA</option><option value='NFL'>NFL</option><option value='NHL'>NHL</option><option value='All' selected>All</option></select> <select id='comparemarket'><option value='h2h' selected>Moneyline</option><option value='spreads'>Spread</option><option value='totals'>Total</option></select></p><table class='compare'><thead><tr><th>Game</th><th>BetMGM</th><th>Caesars</th><th>DraftKings</th><th>Fanatics</th><th>FanDuel</th><th>HardRock</th></tr></thead><tbody><tr><td>CBB Season Ended</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>CFB Tulane at Memphis</td><td>+7 -112</td><td>-</td><td>+7 -112</td><td>-</td><td>+7 -112</td><td>+7 -112</td></tr><tr><td>CFB Washington at Purdue</td><td>+140 / -165</td><td>-</td><td>+142 / -170</td><td>-</td><td>+132 / -160</td><td>+140 / -165</td></tr><tr><td>CFB App State at Coastal Carolina</td><td>-118 / -102</td><td>-</td><td>-118 / -102</td><td>-</td><td>-115 / -104</td><td>-118 / -102</td></tr><tr><td>MLB Tampa Bay Rays at Cleveland Guardians</td><td>-115 / -105</td><td>-115 / -102</td><td>-116 / -104</td><td>-</td><td>-112 / -104</td><td>-115 / -105</td></tr><tr><td>NBA Milwaukee Bucks at Indiana Pacers</td><td>+8.5 -110</td><td>-</td><td>+8.5 -110</td><td>-</td><td>+8.5 -110</td><td>+8.5 -110</td></tr><tr><td>NBA Toronto Raptors at Detroit Pistons</td><td>+9.5 -110</td><td>-</td><td>+9.5 -110</td><td>-</td><td>+9.5 -110</td><td>+9.5 -110</td></tr><tr><td>NBA Boston Celtics at Philadelphia 76ers</td><td>+5.5 -110</td><td>-</td><td>+5.5 -110</td><td>-</td><td>+5.5 -110</td><td>+5.5 -110</td></tr><tr><td>NBA Miami Heat at Orlando Magic</td><td>+120 / -140</td><td>-</td><td>+120 / -140</td><td>-</td><td>+120 / -140</td><td>+120 / -140</td></tr><tr><td>NBA Boston Celtics at Philadelphia 76ers</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NBA Atlanta Hawks at Dallas Mavericks</td><td>-105 / -115</td><td>-</td><td>-105 / -115</td><td>-</td><td>-105 / -115</td><td>-105 / -115</td></tr><tr><td>NBA Sacramento Kings at San Antonio Spurs</td><td>+625 / -950</td><td>-</td><td>+625 / -950</td><td>-</td><td>+625 / -950</td><td>+625 / -950</td></tr><tr><td>NBA Charlotte Hornets at Memphis Grizzlies</td><td>-120 / +100</td><td>-</td><td>-120 / +100</td><td>-</td><td>-120 / +100</td><td>-120 / +100</td></tr><tr><td>NBA Washington Wizards at New Orleans Pelicans</td><td>-130 / +110</td><td>-</td><td>-130 / +110</td><td>-</td><td>-130 / +110</td><td>-130 / +110</td></tr><tr><td>NBA Minnesota Timberwolves at Chicago Bulls</td><td>-120 / +100</td><td>-</td><td>-120 / +100</td><td>-</td><td>-120 / +100</td><td>-120 / +100</td></tr><tr><td>NBA Portland Trail Blazers at Golden State Warriors</td><td>-205 / +170</td><td>-</td><td>-205 / +170</td><td>-</td><td>-205 / +170</td><td>-205 / +170</td></tr><tr><td>NBA Utah Jazz at Phoenix Suns</td><td>+165 / -200</td><td>-</td><td>+165 / -200</td><td>-</td><td>+165 / -200</td><td>+165 / -200</td></tr><tr><td>NBA Denver Nuggets at Los Angeles Lakers</td><td>+180 / -220</td><td>-</td><td>+180 / -220</td><td>-</td><td>+180 / -220</td><td>+180 / -220</td></tr><tr><td>NFL No Picks</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NHL Pittsburgh Penguins at Colorado Avalanche</td><td>+180 / -220</td><td>-</td><td>+175 / -215</td><td>-</td><td>+175 / -210</td><td>+180 / -220</td></tr><tr><td>NHL Anaheim Ducks</td><td>-105</td><td>-</td><td>-105</td><td>-</td><td>-105</td><td>-105</td></tr></tbody></table>", 'spreads': "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>Yesterday. Spread, away / home. <select id='comparesport'><option value='CBB'>CBB</option><option value='CFB'>CFB</option><option value='MLB'>MLB</option><option value='NBA'>NBA</option><option value='NFL'>NFL</option><option value='NHL'>NHL</option><option value='All' selected>All</option></select> <select id='comparemarket'><option value='h2h'>Moneyline</option><option value='spreads' selected>Spread</option><option value='totals'>Total</option></select></p><table class='compare'><thead><tr><th>Game</th><th>BetMGM</th><th>Caesars</th><th>DraftKings</th><th>Fanatics</th><th>FanDuel</th><th>HardRock</th></tr></thead><tbody><tr><td>CBB Season Ended</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>CFB Tulane at Memphis</td><td>+7 -112</td><td>-</td><td>+7 -112</td><td>-</td><td>+7 -112</td><td>+7 -112</td></tr><tr><td>CFB Washington at Purdue</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>CFB App State at Coastal Carolina</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>MLB Tampa Bay Rays at Cleveland Guardians</td><td>-1.5 +155 / +1.5 -190</td><td>-1.5 +159 / +1.5 -189</td><td>-1.5 +153 / +1.5 -187</td><td>-</td><td>-1.5 +160 / +1.5 -194</td><td>-1.5 +160 / +1.5 -190</td></tr><tr><td>NBA Milwaukee Bucks at Indiana Pacers</td><td>+8.5 -110</td><td>-</td><td>+8.5 -110</td><td>-</td><td>+8.5 -110</td><td>+8.5 -110</td></tr><tr><td>NBA Toronto Raptors at Detroit Pistons</td><td>+9.5 -110</td><td>-</td><td>+9.5 -110</td><td>-</td><td>+9.5 -110</td><td>+9.5 -110</td></tr><tr><td>NBA Boston Celtics at Philadelphia 76ers</td><td>+5.5 -110</td><td>-</td><td>+5.5 -110</td><td>-</td><td>+5.5 -110</td><td>+5.5 -110</td></tr><tr><td>NBA Miami Heat at Orlando Magic</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NBA Boston Celtics at Philadelphia 76ers</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NBA Atlanta Hawks at Dallas Mavericks</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NBA Sacramento Kings at San Antonio Spurs</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NBA Charlotte Hornets at Memphis Grizzlies</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NBA Washington Wizards at New Orleans Pelicans</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NBA Minnesota Timberwolves at Chicago Bulls</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NBA Portland Trail Blazers at Golden State Warriors</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NBA Utah Jazz at Phoenix Suns</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NBA Denver Nuggets at Los Angeles Lakers</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NFL No Picks</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NHL Pittsburgh Penguins at Colorado Avalanche</td><td>+1.5 -135</td><td>-</td><td>+1.5 -135</td><td>-</td><td>+1.5 -135</td><td>+1.5 -135</td></tr></tbody></table>", 'totals': "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>Yesterday. Total, over point and price / under price. <select id='comparesport'><option value='CBB'>CBB</option><option value='CFB'>CFB</option><option value='MLB'>MLB</option><option value='NBA'>NBA</option><option value='NFL'>NFL</option><option value='NHL'>NHL</option><option value='All' selected>All</option></select> <select id='comparemarket'><option value='h2h'>Moneyline</option><option value='spreads'>Spread</option><option value='totals' selected>Total</option></select></p><table class='compare'><thead><tr><th>Game</th><th>BetMGM</th><th>Caesars</th><th>DraftKings</th><th>Fanatics</th><th>FanDuel</th><th>HardRock</th></tr></thead><tbody><tr><td>CBB Season Ended</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>CFB Memphis vs Tulane</td><td>55.5 -108 / -108</td><td>-</td><td>55.5 -108 / -108</td><td>-</td><td>55.5 -108 / -108</td><td>55.5 -108 / -108</td></tr><tr><td>MLB Tampa Bay Rays at Cleveland Guardians</td><td>6.5 -110 / -110</td><td>6.5 -106 / -111</td><td>6.5 -108 / -112</td><td>-</td><td>6.5 -110 / -110</td><td>6.5 -110 / -110</td></tr><tr><td>NBA Milwaukee Bucks at Indiana Pacers</td><td>235.5 -110 / -110</td><td>-</td><td>235.5 -110 / -110</td><td>-</td><td>235.5 -110 / -110</td><td>235.5 -110 / -110</td></tr><tr><td>NBA Toronto Raptors at Detroit Pistons</td><td>217.5 -110 / -110</td><td>-</td><td>217.5 -110 / -110</td><td>-</td><td>217.5 -110 / -110</td><td>217.5 -110 / -110</td></tr><tr><td>NFL No Picks</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NHL Pittsburgh Penguins at Colorado Avalanche</td><td>6.5 -110 / -110</td><td>-</td><td>6.5 -110 / -110</td><td>-</td><td>6.5 -110 / -110</td><td>6.5 -110 / -110</td></tr></tbody></table>"};
     window.__ggBoards = boards;
     if (!force) {
-    const saved = localStorage.getItem("gg-odds-board-" + market);
-    const shown = (saved && saved.includes("<table")) ? saved : (boards[market] || boards.h2h);
-    box.innerHTML = shown || "";
+    box.innerHTML = boards[market] || boards.h2h || "";
     wireCompare();
-    filterCompare();
     return;
   }
   if (!key) {
@@ -1541,7 +1538,8 @@ async function drawOddsCompare(force){
   for (const sport of sports) {
     const url = "https://api.the-odds-api.com/v4/sports/" + SPORT_KEY[sport] + "/odds?apiKey=" + encodeURIComponent(key) + "&regions=us,us2&markets=" + marketKey + "&oddsFormat=american";
     const games = await fetch(url).then(r => r.ok ? r.json() : []).catch(() => []);
-    games.filter(g => g.commence_time && new Date(g.commence_time).toLocaleDateString("en-CA", {timeZone: siteZone()}) === day).forEach(g => {
+    (Array.isArray(games) ? games : []).forEach(g => {
+      if (!g || !g.away_team || !g.home_team) return;
       const paidOnly = {Caesars:1, Fanatics:1};
       const cells = books.map(book => {
         const bk = (g.bookmakers || []).find(b => b.key === BOOK_KEY[book]);
@@ -1566,52 +1564,31 @@ async function drawOddsCompare(force){
   }
   const label = {h2h:"Moneyline, away / home", spreads:"Spread, away / home", totals:"Total, over point and price / under price"}[marketKey];
   const head = "<tr><th>Game</th>" + books.map(b => "<th>" + esc(b) + "</th>").join("") + "</tr>";
-  const sportFilter = (document.getElementById("comparesport") || {}).value || localStorage.getItem("gg-compare-sport") || "All";
-  const shown = sportFilter === "All" ? rows : rows.filter(r => r.sport === sportFilter);
-  const body = shown.slice(0, 40).map(r => "<tr><td>" + esc(r.sport) + " " + esc(r.label) + "</td>" + r.cells.map(c => "<td>" + c + "</td>").join("") + "</tr>").join("");
+  const sportFilter = (document.getElementById("comparesport") || {}).value || "All";
+  const shown = !sportFilter || sportFilter === "All" ? rows : rows.filter(r => r.sport === sportFilter);
+  const listed = shown.length ? shown : rows;
+  const body = listed.map(r => "<tr><td>" + esc(r.sport) + " " + esc(r.label) + "</td>" + r.cells.map(c => "<td>" + c + "</td>").join("") + "</tr>").join("");
   const select = "<select id='comparesport'><option value='CBB'>CBB</option><option value='CFB'>CFB</option><option value='MLB'>MLB</option><option value='NBA'>NBA</option><option value='NFL'>NFL</option><option value='NHL'>NHL</option><option value='All' selected>All</option></select> <select id='comparemarket'><option value='h2h'" + (market==="h2h"?" selected":"") + ">Moneyline</option><option value='spreads'" + (market==="spreads"?" selected":"") + ">Spread</option><option value='totals'" + (market==="totals"?" selected":"") + ">Total</option></select>";
   const savedBoards = window.__ggBoards || {};
   const fallback = savedBoards[market] || savedBoards.h2h || "";
   if (!rows.length && fallback.includes("<table")) { box.innerHTML = fallback; wireCompare(); return; }
-  const paid = localStorage.getItem("gg-paid-key");
-  if ((paid || force) && rows.length) {
-    const seeded = (window.__ggBoards || {})[market] || "";
-    const seededRows = seeded.match(/<tr><td>CFB[^<]*<\/td>.*?<\/tr>/g) || [];
-    const extra = seededRows.filter(r => !body.includes(r.match(/<td>([^<]+)/)[1])).join("");
-    table = "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>" + (day === todayEt() ? "Today" : "Yesterday") + ". " + label + ". " + select + "</p><table class='compare'><thead>" + head + "</thead><tbody>" + body + extra + "</tbody></table>";
-    localStorage.setItem("gg-compare-stamp-" + market, day);
-    localStorage.setItem("gg-compare-html-" + market, table);
-    localStorage.setItem("gg-odds-board-" + market, table);
-    try { localStorage.setItem("gg-odds-raw-" + market, JSON.stringify({at: Date.now(), day: day, rows: rows})); } catch (e) {}
-    rememberApiBoard(day, marketKey, rows);
-    box.innerHTML = table;
-    wireCompare();
-    return;
-  }
-  if (fallback.includes("<table") && rows.length < 6) {
-    box.innerHTML = fallback;
-    if (rows.length) {
-      const tbody = box.querySelector("tbody");
-      if (tbody) tbody.insertAdjacentHTML("beforeend", body);
-    }
-    wireCompare();
-    return;
-  }
-  table = "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>" + (day === todayEt() ? "Today" : "Yesterday") + ". " + label + ". " + select + "</p>" + (rows.length ? "<table class='compare'><thead>" + head + "</thead><tbody>" + body + "</tbody></table>" : (fallback.includes("<table") ? fallback : "<p class='api-note'>No games posted for " + day + " yet.</p>"));
+  table = "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>" + (day === todayEt() ? "Today" : "Yesterday") + ". " + label + ". " + select + "</p><table class='compare'><thead>" + head + "</thead><tbody>" + body + "</tbody></table>";
   localStorage.setItem("gg-compare-stamp-" + market, day);
   localStorage.setItem("gg-compare-html-" + market, table);
+  localStorage.setItem("gg-odds-board-" + market, table);
+  try { localStorage.setItem("gg-odds-raw-" + market, JSON.stringify({at: Date.now(), day: day, rows: rows})); } catch (e) {}
+  rememberApiBoard(day, marketKey, rows);
   box.innerHTML = table;
   wireCompare();
 }
 function filterCompare(){
-  const sport = (document.getElementById("comparesport") || {}).value || localStorage.getItem("gg-compare-sport") || "All";
-  const rows = document.querySelectorAll("#oddscompare tbody tr");
-  rows.forEach(r => {
-    const cell = r.querySelector("td");
-    if (!cell) return;
-    const label = cell.textContent || "";
-    r.style.display = (!sport || sport === "All" || label.startsWith(sport)) ? "" : "none";
-  });
+  const sport = (document.getElementById("comparesport") || {}).value || "All";
+  const rows = [...document.querySelectorAll("#oddscompare tbody tr")];
+  if (!rows.length) return;
+  if (!sport || sport === "All") { rows.forEach(r => { r.style.display = ""; }); return; }
+  const matches = rows.filter(r => ((r.querySelector("td") || {}).textContent || "").indexOf(sport) === 0);
+  if (!matches.length) { rows.forEach(r => { r.style.display = ""; }); return; }
+  rows.forEach(r => { r.style.display = matches.indexOf(r) >= 0 ? "" : "none"; });
 }
 function ensureSport(){
   const note = document.querySelector("#oddscompare .api-note");
@@ -1635,13 +1612,10 @@ function wireCompare(){
     sel.onchange = () => { localStorage.setItem("gg-compare-market", sel.value); drawOddsCompare(false).catch(() => {}); };
   }
   const sport = document.getElementById("comparesport");
-  if (sport) {
-    const saved = localStorage.getItem("gg-compare-sport") || "All";
-    if ([...sport.options].some(o => o.value === saved)) sport.value = saved;
-    if (!sport.dataset.wired) {
-      sport.dataset.wired = "1";
-      sport.onchange = () => { localStorage.setItem("gg-compare-sport", sport.value); filterCompare(); };
-    }
+  if (sport && !sport.dataset.wired) {
+    sport.dataset.wired = "1";
+    sport.value = "All";
+    sport.onchange = () => { localStorage.setItem("gg-compare-sport", sport.value); filterCompare(); };
   }
   filterCompare();
 }
