@@ -1430,11 +1430,20 @@ function filterCompare(){
 }
 function wireCompare(){
   const sel = document.getElementById("comparemarket");
-  if (!sel || sel.dataset.wired) return;
-  sel.dataset.wired = "1";
-  sel.onchange = () => drawOddsCompare(true).catch(() => {});
+  if (sel && !sel.dataset.wired) {
+    sel.dataset.wired = "1";
+    sel.onchange = () => drawOddsCompare(true).catch(() => {});
+  }
   const sport = document.getElementById("comparesport");
-  if (sport && !sport.dataset.wired) { sport.dataset.wired = "1"; sport.onchange = filterCompare; }
+  if (sport) {
+    const saved = localStorage.getItem("gg-compare-sport") || "CBB";
+    if ([...sport.options].some(o => o.value === saved)) sport.value = saved;
+    if (!sport.dataset.wired) {
+      sport.dataset.wired = "1";
+      sport.onchange = () => { localStorage.setItem("gg-compare-sport", sport.value); filterCompare(); };
+    }
+  }
+  filterCompare();
 }
 function group(bets, key){
   const map = {};
