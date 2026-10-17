@@ -1361,10 +1361,9 @@ async function drawOddsCompare(force){
   const box = document.getElementById("oddscompare");
   if (!box) return;
   if (!key) { box.innerHTML = "<p class='api-note'>Odds comparison needs the Odds API key from Today's Card.</p>"; return; }
-  const day = todayEt();
   const now = new Date();
   const hour = Number(now.toLocaleString("en-US", {timeZone: siteZone(), hour: "numeric", hour12: false}));
-  if (hour < 9) { box.innerHTML = "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>Today's board loads after 9:00 AM.</p>"; return; }
+  const day = hour < 9 ? yesterday() : todayEt();
   const market = (document.getElementById("comparemarket") || {}).value || localStorage.getItem("gg-compare-market") || "h2h";
   localStorage.setItem("gg-compare-market", market);
   const stamp = localStorage.getItem("gg-compare-stamp-" + market);
@@ -1404,7 +1403,7 @@ async function drawOddsCompare(force){
   const head = "<tr><th>Game</th>" + books.map(b => "<th>" + esc(b) + "</th>").join("") + "</tr>";
   const body = rows.slice(0, 12).map(r => "<tr><td>" + esc(r.sport) + " " + esc(r.label) + "</td>" + r.cells.map(c => "<td>" + c + "</td>").join("") + "</tr>").join("");
   const select = "<select id='comparemarket'><option value='h2h'" + (market==="h2h"?" selected":"") + ">Moneyline</option><option value='spreads'" + (market==="spreads"?" selected":"") + ">Spread</option><option value='totals'" + (market==="totals"?" selected":"") + ">Total</option></select>";
-  table = "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>" + label + ". Loaded once a day. " + select + "</p>" + (rows.length ? "<table class='compare'><thead>" + head + "</thead><tbody>" + body + "</tbody></table>" : "<p class='api-note'>No games posted for " + day + " yet.</p>");
+  table = "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>" + (day === todayEt() ? "Today" : "Yesterday") + ". " + label + ". " + select + "</p>" + (rows.length ? "<table class='compare'><thead>" + head + "</thead><tbody>" + body + "</tbody></table>" : "<p class='api-note'>No games posted for " + day + " yet.</p>");
   localStorage.setItem("gg-compare-stamp-" + market, day);
   localStorage.setItem("gg-compare-html-" + market, table);
   box.innerHTML = table;
