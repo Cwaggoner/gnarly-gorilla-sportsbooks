@@ -58,7 +58,7 @@ footer.card { width:100%; max-width:none; margin:14px 0 0; box-sizing:border-box
 .section-head h2 { margin:0; }
 .slips-side { margin:0; text-align:left; max-width:62%; font-size:12px; }
 .card > h2, .card > .section-head { background:rgba(57,255,20,.12); border-bottom:1px solid #39ff14; margin:-14px -14px 12px; padding:10px 14px; }
-h2.split-title { margin:16px 0 12px; border:1px solid #39ff14; border-radius:10px; }
+h2.split-title { margin:16px 0 12px; border:1px solid #39ff14; border-radius:10px; background:rgba(57,255,20,.12); padding:10px 14px; }
 .api-note { margin-top:18px; }
 .api-note a { color:var(--title); }
 .print-preview { margin-top:12px; }
@@ -1303,7 +1303,7 @@ function render(){
   try { drawCharts(gradeFile.concat(bets)); } catch (err) { document.getElementById("plotnote").textContent = "Chart failed. The rest of the page is still live."; }
   document.getElementById("plotnote").textContent = settled.length + " settled slips plotted. " + bets.filter(b => b.result === "pending").length + " slips left to settle.";
   drawCalendar();
-  document.getElementById("breaks").innerHTML = "<div id=\"oddscompare\"></div>" + "<h2>Graded Results By Sport And Book</h2>" + group(settled, "sport") + group(settled, "book") + "<h2 class='split-title'>Market Split</h2>" + group(settled, "type") + "<p class='api-note'>This card uses graded slips only. Pending slips are not counted. A sport with no graded slips says No Picks.</p>";
+  document.getElementById("breaks").innerHTML = "<h2>Graded Results By Sport And Book</h2>" + group(settled, "sport") + group(settled, "book") + "<h2 class='split-title'>Market Split</h2>" + group(settled, "type") + "<p class='api-note'>This card uses graded slips only. Pending slips are not counted. A sport with no graded slips says No Picks.</p>" + "<div id=\"oddscompare\"></div>";
   drawOddsCompare().catch(() => {});
   const y = yesterday();
   const graded = loadGrade();
