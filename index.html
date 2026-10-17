@@ -1422,8 +1422,8 @@ if (!force && stamp === day && table && table.includes("<table") && table.includ
   const head = "<tr><th>Game</th>" + books.map(b => "<th>" + esc(b) + "</th>").join("") + "</tr>";
   const body = rows.slice(0, 12).map(r => "<tr><td>" + esc(r.sport) + " " + esc(r.label) + "</td>" + r.cells.map(c => "<td>" + c + "</td>").join("") + "</tr>").join("");
   const select = "<select id='comparesport'><option value='CBB'>CBB</option><option value='CFB'>CFB</option><option value='MLB'>MLB</option><option value='NBA'>NBA</option><option value='NFL'>NFL</option><option value='NHL'>NHL</option><option value='All' selected>All</option></select> <select id='comparemarket'><option value='h2h'" + (market==="h2h"?" selected":"") + ">Moneyline</option><option value='spreads'" + (market==="spreads"?" selected":"") + ">Spread</option><option value='totals'" + (market==="totals"?" selected":"") + ">Total</option></select>";
-  const boards = window.__ggBoards || {};
-  const fallback = boards[market] || boards.h2h || "";
+  const savedBoards = window.__ggBoards || {};
+  const fallback = savedBoards[market] || savedBoards.h2h || "";
   if (fallback.includes("<table") && rows.length < 6) {
     box.innerHTML = fallback;
     if (rows.length) {
