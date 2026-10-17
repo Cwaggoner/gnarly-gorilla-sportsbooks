@@ -491,6 +491,36 @@ function lastSevenDates(){
   return Array.from({length: 7}, (_, i) => shiftDate(today, i - 7));
 }
 let closeMap = {};
+async function fillHistoricalCloses(){
+  const key = (document.getElementById("oddskey") || {}).value.trim();
+  if (!key) return;
+  const missing = (gradeFile || []).filter(b => b && b.date && !isNoPick(b) && (b.close === "" || b.close == null || Number(b.close) === Number(b.odds)));
+  if (!missing.length) return;
+  const bySport = {};
+  missing.forEach(b => { (bySport[b.sport] = bySport[b.sport] || []).push(b); });
+  for (const sport of Object.keys(bySport)) {
+    const sportKey = SPORT_KEY[sport];
+    if (!sportKey) continue;
+    const dates = [...new Set(bySport[sport].map(b => b.date))];
+    for (const date of dates) {
+      const url = "https://api.the-odds-api.com/v4/historical/sports/" + sportKey + "/odds?apiKey=" + encodeURIComponent(key) + "&regions=us&markets=h2h,spreads,totals&oddsFormat=american&date=" + date + "T23:00:00Z";
+      const data = await fetch(url).then(r => r.ok ? r.json() : null).catch(() => null);
+      if (!data || !data.data) continue;
+      bySport[sport].filter(b => b.date === date).forEach(b => {
+        const game = (data.data || []).find(g => (g.away_team + " at " + g.home_team).includes(b.pick.split(" ")[0]) || b.pick.includes(g.away_team) || b.pick.includes(g.home_team));
+        if (!game) return;
+        const book = (game.bookmakers || [])[0];
+        if (!book) return;
+        const market = b.type === "Total" ? "totals" : b.type === "Spread" ? "spreads" : "h2h";
+        const mk = (book.markets || []).find(m => m.key === market);
+        if (!mk) return;
+        const hit = (mk.outcomes || []).find(o => b.pick.includes(o.name) || (o.point != null && b.pick.includes(String(o.point))));
+        if (hit) b.close = hit.price;
+      });
+    }
+  }
+  render();
+}
 function loadCloses(){
   return fetch("cards/closes.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
     closeMap = {};
@@ -2977,7 +3007,7 @@ fetch("cards/report.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(
     if (parts.length < 3) return;
     edgePicks.add([day, parts[0], parts[2]].join("|").toLowerCase());
   });
-  if (edgePicks.size) loadCloses().then(() => { render(); showSeasons(); }).catch(() => { render(); showSeasons(); });
+  if (edgePicks.size) loadCloses().then(() => fillHistoricalCloses()).then(() => { render(); showSeasons(); }).catch(() => { render(); showSeasons(); });
 }).catch(() => {});
 fetch("cards/today.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(drawCardAnalysis).catch(() => {});
 (async () => { const k = (document.getElementById("oddskey") || {}).value || ""; if (k.trim()) { paidKey = await keyIsPaid(k.trim()); render(); } })();
