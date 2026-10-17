@@ -2539,7 +2539,9 @@ document.getElementById("saveprint").onclick = async () => {
   download(name, printBlob);
   note.textContent = "Save dialog is not available here. The file was downloaded instead.";
 };
-document.querySelectorAll("[data-jump]").forEach(btn => btn.onclick = () => {
+document.getElementById("sitenav").addEventListener("click", e => {
+  const btn = e.target.closest("[data-jump]");
+  if (!btn) return;
   const id = btn.dataset.jump;
   let box = document.getElementById(id);
   if (!box && id === "liveodds") { drawOddsCompare(true).catch(() => {}); box = document.getElementById(id); }
