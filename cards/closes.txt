@@ -187,5 +187,5 @@
 2026-10-13 | NHL | 100 | Seattle Kraken ML | 100
 2026-10-13 | NHL | -110 | Winnipeg Jets ML | -110
 2026-10-16 | MLB | -110 | Rays @ Guardians Under 6.5 | -110
-2026-10-16 | MLB | -110 | Guardians ML | -110
+2026-10-16 | MLB | -110 | Guardians ML | -105
 2026-10-16 | MLB | 190 | SGP Guardians ML and Under 6.5 | 190
