@@ -1362,6 +1362,9 @@ async function drawOddsCompare(force){
   if (!box) return;
   if (!key) { box.innerHTML = "<p class='api-note'>Odds comparison needs the Odds API key from Today's Card.</p>"; return; }
   const day = todayEt();
+  const now = new Date();
+  const hour = Number(now.toLocaleString("en-US", {timeZone: siteZone(), hour: "numeric", hour12: false}));
+  if (hour < 9) { box.innerHTML = "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>Today's board loads after 9:00 AM.</p>"; return; }
   const market = (document.getElementById("comparemarket") || {}).value || localStorage.getItem("gg-compare-market") || "h2h";
   localStorage.setItem("gg-compare-market", market);
   const stamp = localStorage.getItem("gg-compare-stamp-" + market);
