@@ -1,31 +1,27 @@
-# GG report 2026-10-16
-# Yesterday 2026-10-15 graded. No pick cards created for 2026-10-16 in this run.
+# GG report 2026-10-17
+# Yesterday 2026-10-16 graded. No pick cards created for 2026-10-17 in this run.
 
-Analysis: Mixed results on preseason NBA and NHL. Rockets +5.5 High Edge dog covered in 116-89 win over Thunder. Raptors +5.5 covered in close 122-120 loss. Unders split. NFL TNF Broncos +2.5 and Under 40.5 both hit in 17-14 OT win. MLB playoff overs missed (Rays/Guardians 5 runs, Brewers/Dodgers 10 runs) but Brewers +1.5 covered. NHL moneylines mixed, several close to closing prices.
+Analysis: Solid day with CFB and MLB hitting, NBA mixed on preseason. Tulane +7 and Under both cashed in 31-17 win. Guardians ML and Under 6.5 both hit in 3-2 win, SGP +19. NBA dogs covered but unders missed. NHL dogs lost.
 
-Record 9-8-0  Profit $12.36  Units 1.24u  CLV +0.4%
+Record 8-7-0  Profit $12.64  Units 1.26u  CLV Matched Bet Price
 
-CFB | loss | Colorado State +14 | -110 | -$10.00
-CFB | loss | Colorado State at Texas State Under 70.5 | -110 | -$10.00
-MLB | loss | Rays at Guardians Over 6.5 | -110 | -$10.00 EDGE
-MLB | win | Brewers +1.5 | -160 | +$6.25
-MLB | loss | SGP Rays +1.5 and Over | +190 | -$10.00
-NHL | win | Buffalo Sabres ML | +100 | +$10.00
-NHL | loss | New York Rangers ML | +120 | -$10.00
-NHL | loss | New York Islanders ML | +130 | -$10.00 EDGE
-NHL | win | Utah Mammoth ML | +105 | +$10.50
-NHL | win | Seattle Kraken +1.5 | -120 | +$8.33 EDGE
-NHL | win | Chicago Blackhawks ML | +114 | +$11.40
-NBA | win | Rockets +5.5 | -115 | +$8.70 EDGE
-NBA | win | Raptors +5.5 | -110 | +$9.09
-NBA | win | Thunder at Rockets Under 223.5 | -110 | +$9.09
-NBA | loss | Raptors at Knicks Under 225.5 | -110 | -$10.00
-NBA | win | SGP Rockets +5.5 and Under | +190 | +$19.00 EDGE
-NBA | loss | SGP Raptors +5.5 and Under | +190 | -$10.00
-NFL | win | Broncos +2.5 | -105 | +$9.52
-NFL | win | Seahawks at Broncos Under 40.5 | -105 | +$9.52
-NFL | win | SGP Broncos +2.5 and Under | +190 | +$19.00 EDGE
+NHL | loss | Pittsburgh Penguins +1.5 | -135 | -$10.00
+NHL | loss | Pittsburgh Penguins ML | +180 | -$10.00 EDGE
+NHL | loss | Anaheim Ducks ML | -105 | -$10.00
+CFB | win | Tulane +7 | -112 | +$8.93 EDGE
+CFB | win | Memphis vs Tulane Under 55.5 | -108 | +$9.26 EDGE
+MLB | win | Rays @ Guardians Under 6.5 | -110 | +$9.09 EDGE
+MLB | win | Guardians ML | -110 | +$9.09 EDGE
+MLB | win | SGP Guardians ML and Under 6.5 | +190 | +$19.00 EDGE
+NBA | win | Bucks +8.5 | -110 | +$9.09 EDGE
+NBA | win | Raptors +9.5 | -110 | +$9.09 EDGE
+NBA | win | Celtics +5.5 | -110 | +$9.09
+NBA | loss | Bucks at Pacers Under 235.5 | -110 | -$10.00
+NBA | loss | Raptors at Pistons Under 217.5 | -110 | -$10.00
+NBA | loss | SGP Bucks +8.5 and Under | +190 | -$10.00 EDGE
+NBA | loss | SGP Raptors +9.5 and Under | +190 | -$10.00
 
-2026-10-15 | CBB | No Picks
-No sport is Season Ended. MLB last card date 2026-10-31. CFB 2027-01-25. NFL 2027-02-14. CBB 2027-04-05. NHL 2027-04-10. NBA 2027-04-11.
+2026-10-16 | NFL | No Picks
+2026-10-16 | CBB | Season Ended
+No sport is Season Ended for current seasons. MLB last card date 2026-10-31. CFB 2027-01-25. NFL 2027-02-14. CBB 2027-04-05. NHL 2027-04-10. NBA 2027-04-11.
 Unconfirmed end dates: CFB 2027-01-25, NFL 2027-02-14, CBB 2027-04-05, NHL 2027-04-10, NBA 2027-04-11.
