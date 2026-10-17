@@ -1,27 +1,25 @@
 # GG report 2026-10-17
 # Yesterday 2026-10-16 graded. No pick cards created for 2026-10-17 in this run.
 
-Analysis: Solid day with CFB and MLB hitting, NBA mixed on preseason. Tulane +7 and Under both cashed in 31-17 win. Guardians ML and Under 6.5 both hit in 3-2 win, SGP +19. NBA dogs covered but unders missed. NHL dogs lost.
+Analysis: CFB cashed both legs as Tulane forced six turnovers in a 31-17 win over Memphis, covering +7 and the Under 55.5. NBA preseason dogs covered their spreads (Bucks won outright, Raptors lost by 4, Celtics won by 5) but both unders missed in high-scoring games, sinking the SGPs. NHL dogs lost: Penguins fell 5-2 to Avalanche, Ducks lost 4-2 to Bruins. MLB ALCS Game 4 between Rays and Guardians was postponed by rain and not graded.
 
-Record 8-7-0  Profit $12.64  Units 1.26u  CLV Matched Bet Price
+Record 5-7-0  Profit $-24.54  Units -2.45u  CLV Matched Bet Price
 
-NHL | loss | Pittsburgh Penguins +1.5 | -135 | -$10.00
-NHL | loss | Pittsburgh Penguins ML | +180 | -$10.00 EDGE
-NHL | loss | Anaheim Ducks ML | -105 | -$10.00
-CFB | win | Tulane +7 | -112 | +$8.93 EDGE
-CFB | win | Memphis vs Tulane Under 55.5 | -108 | +$9.26 EDGE
-MLB | win | Rays @ Guardians Under 6.5 | -110 | +$9.09 EDGE
-MLB | win | Guardians ML | -110 | +$9.09 EDGE
-MLB | win | SGP Guardians ML and Under 6.5 | +190 | +$19.00 EDGE
-NBA | win | Bucks +8.5 | -110 | +$9.09 EDGE
-NBA | win | Raptors +9.5 | -110 | +$9.09 EDGE
-NBA | win | Celtics +5.5 | -110 | +$9.09
-NBA | loss | Bucks at Pacers Under 235.5 | -110 | -$10.00
-NBA | loss | Raptors at Pistons Under 217.5 | -110 | -$10.00
-NBA | loss | SGP Bucks +8.5 and Under | +190 | -$10.00 EDGE
-NBA | loss | SGP Raptors +9.5 and Under | +190 | -$10.00
+NHL | loss | Pittsburgh Penguins +1.5 | close -135 | -$10.00
+NHL | loss | Pittsburgh Penguins ML | close 180 | -$10.00 EDGE
+NHL | loss | Anaheim Ducks ML | close -105 | -$10.00
+CFB | win | Tulane +7 | close -112 | +$8.93 EDGE
+CFB | win | Memphis vs Tulane Under 55.5 | close -108 | +$9.26 EDGE
+NBA | win | Bucks +8.5 | close -110 | +$9.09 EDGE
+NBA | win | Raptors +9.5 | close -110 | +$9.09 EDGE
+NBA | win | Celtics +5.5 | close -110 | +$9.09
+NBA | loss | Bucks at Pacers Under 235.5 | close -110 | -$10.00
+NBA | loss | Raptors at Pistons Under 217.5 | close -110 | -$10.00
+NBA | loss | SGP Bucks +8.5 and Under | close 190 | -$10.00 EDGE
+NBA | loss | SGP Raptors +9.5 and Under | close 190 | -$10.00
 
 2026-10-16 | NFL | No Picks
 2026-10-16 | CBB | Season Ended
+2026-10-16 | MLB | Game postponed (rain)
 No sport is Season Ended for current seasons. MLB last card date 2026-10-31. CFB 2027-01-25. NFL 2027-02-14. CBB 2027-04-05. NHL 2027-04-10. NBA 2027-04-11.
 Unconfirmed end dates: CFB 2027-01-25, NFL 2027-02-14, CBB 2027-04-05, NHL 2027-04-10, NBA 2027-04-11.
