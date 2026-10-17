@@ -547,9 +547,9 @@ function drawDashboard(history, manual){
     [staked ? (profit / staked * 100).toFixed(1) + "%" : "-", "7-Day ROI"],
     [(profit / UNIT).toFixed(2) + "u", "7-Day Units"],
     [shown.reduce((s, row) => s + (Number(row.pending) || 0), 0), "Pending"],
-    [paidKey ? (clvs.length ? (clvs.reduce((s, n) => s + n, 0) / clvs.length).toFixed(1) + "%" : "No Close Saved") : "Paid Key Required", "7-Day Avg CLV"]
+    [clvs.length ? (clvs.reduce((s, n) => s + n, 0) / clvs.length).toFixed(1) + "%" : "No Close Saved", "7-Day Avg CLV"]
   ].map(x => "<div class='stat'><b>" + x[0] + "</b><span>" + x[1] + "</span></div>").join("");
-  document.getElementById("dashrows").innerHTML = shown.map(row => "<tr><td>" + row.date + "</td><td>" + row.record + "</td><td>" + moneyHtml(Number(row.profit)) + "</td><td>" + row.roi + "</td><td>" + row.units + "</td><td>" + (Number(row.pending) === 0 ? "0 - All Pending Has Been Graded" : row.pending) + "</td><td>" + (paidKey ? (row.clv === "-" || row.clv == null || row.clv === "" ? "No Close Saved" : row.clv) : "Paid Key Required") + "</td></tr>").join("");
+  document.getElementById("dashrows").innerHTML = shown.map(row => "<tr><td>" + row.date + "</td><td>" + row.record + "</td><td>" + moneyHtml(Number(row.profit)) + "</td><td>" + row.roi + "</td><td>" + row.units + "</td><td>" + (Number(row.pending) === 0 ? "0 - All Pending Has Been Graded" : row.pending) + "</td><td>" + (row.clv === "-" || row.clv == null || row.clv === "" ? "No Close Saved" : row.clv) + "</td></tr>").join("");
   const canvas = document.getElementById("dashChart");
   const ctx = canvas.getContext("2d");
   const w = Math.max(320, canvas.clientWidth || 640);
@@ -794,9 +794,9 @@ function clv(b){
   if (!got || !closed) return null;
   return (got / closed - 1) * 100;
 }
-let paidKey = false;
+let paidKey = true;
 function clvText(b){
-  if (!paidKey) return "Paid Key Required";
+  if (!paidKey) return "-";
   if (b.result === "pending" || b.result === "void") return "-";
   if (!b.realClose || b.close === "" || b.close == null) return "No Close Saved";
   const cv = clv(b);
@@ -1402,7 +1402,7 @@ async function drawOddsCompare(force){
       const cells = books.map(book => {
         const bk = (g.bookmakers || []).find(b => b.key === BOOK_KEY[book]);
         const mk = bk && (bk.markets || []).find(m => m.key === marketKey);
-        if (!mk) return paidOnly[book] ? "Paid Key Required" : "-";
+        if (!mk) return "-";
         if (marketKey === "h2h") {
           const away = (mk.outcomes || []).find(o => o.name === g.away_team);
           const home = (mk.outcomes || []).find(o => o.name === g.home_team);
