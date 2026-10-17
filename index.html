@@ -1130,7 +1130,7 @@ let SEASON_START = {MLB:"2026-03-25", CFB:"2026-08-27", NFL:"2026-09-09", CBB:"2
 function seasonEnded(sport){ const end = SEASON_END[String(sport || "").toUpperCase()]; return !!end && todayEt() > end; }
 function showSeasons(checked){
   const box = document.getElementById("seasons");
-  if (!box) { const hold = document.createElement("div"); hold.id = "oddscompare"; (document.getElementById("breaks") || document.body).after(hold); return drawOddsCompare(force); }
+  if (!box) return;
   const names = {CBB:"CBB - College Basketball", CFB:"CFB - College Football", MLB:"MLB - Major League Baseball", NBA:"NBA - National Basketball Association", NFL:"NFL - National Football League", NHL:"NHL - National Hockey League"};
   const rows = ["CBB","CFB","MLB","NBA","NFL","NHL"].map(s => "<tr><td>" + names[s] + "</td><td>" + SEASON_START[s] + "</td><td>" + SEASON_END[s] + "</td><td>" + (seasonEnded(s) ? "Season Ended" : "Open") + "</td></tr>").join("");
   const open = ["CBB","CFB","MLB","NBA","NFL","NHL"].filter(s => !seasonEnded(s)).length;
@@ -2964,6 +2964,7 @@ fetch("cards/report.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(
     edgePicks.add([day, parts[0], parts[2]].join("|").toLowerCase());
   });
   if (edgePicks.size) render();
+  showSeasons();
 }).catch(() => {});
 fetch("cards/today.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(drawCardAnalysis).catch(() => {});
 (async () => { const k = (document.getElementById("oddskey") || {}).value || ""; if (k.trim()) { paidKey = await keyIsPaid(k.trim()); render(); } })();
