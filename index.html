@@ -2540,11 +2540,13 @@ document.getElementById("saveprint").onclick = async () => {
   note.textContent = "Save dialog is not available here. The file was downloaded instead.";
 };
 document.querySelectorAll("[data-jump]").forEach(btn => btn.onclick = () => {
-  const box = document.getElementById(btn.dataset.jump);
+  const id = btn.dataset.jump;
+  let box = document.getElementById(id);
+  if (!box && id === "liveodds") { drawOddsCompare(true).catch(() => {}); box = document.getElementById(id); }
   if (!box) return;
-  if (btn.dataset.jump === "seasons") { window.scrollTo({top: 0, behavior:"smooth"}); return; }
-  const bar = document.querySelector(".topbar");
-  const top = box.getBoundingClientRect().top + window.scrollY - (bar ? bar.offsetHeight : 0);
+  if (id === "seasons") { window.scrollTo({top: 0, behavior:"smooth"}); return; }
+  const bar = document.querySelector(".topbar") || document.querySelector(".sitenav");
+  const top = box.getBoundingClientRect().top + window.scrollY - (bar ? bar.offsetHeight : 0) - 8;
   window.scrollTo({top: Math.max(0, top), behavior:"smooth"});
 });
 document.getElementById("copyreport").onclick = async () => {
