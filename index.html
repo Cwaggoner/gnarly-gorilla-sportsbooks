@@ -1660,7 +1660,7 @@ function sportKeys(sport){
 }
 const oddskey = document.getElementById("oddskey");
 oddskey.value = localStorage.getItem("gg-odds-key") || "";
-oddskey.onchange = () => localStorage.setItem("gg-odds-key", oddskey.value.trim());
+// key is saved only by the Commit button
 function teamOf(pick){
   const total = String(pick).match(/^(.*?)\s*(over|under)\s+\d+(?:\.\d+)?$/i);
   if (total) return {side: total[2].toLowerCase(), name: total[1].trim(), game: total[1].trim()};
@@ -2060,6 +2060,7 @@ document.getElementById("commitkey").onclick = () => {
   const key = oddskey.value.trim();
   localStorage.setItem("gg-odds-key", key);
   localStorage.setItem("gg-paid-key", key ? "1" : "");
+  oddskey.value = key;
   Object.keys(localStorage).filter(k => k.startsWith("gg-compare") || k.startsWith("gg-board")).forEach(k => localStorage.removeItem(k));
   Object.keys(sessionStorage).filter(k => k.startsWith("gg-odds")).forEach(k => sessionStorage.removeItem(k));
   document.getElementById("pdfnote").textContent = key ? "Key committed. Refreshing the board and CLV." : "Key cleared.";
