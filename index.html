@@ -1362,6 +1362,12 @@ function group(bets, key){
     map[k].pl += slipMoney(b);
     map[k].n++;
   });
+  if (key === "book") {
+    try {
+      const saved = JSON.parse(localStorage.getItem("gg-books-figures") || "null");
+      if (saved) Object.entries(saved).forEach(([k,v]) => { if (v.n) map[k] = v; });
+    } catch (e) {}
+  }
   const rows = Object.entries(map).sort((a,b) => a[0].localeCompare(b[0]));
   return "<p>" + rows.map(([k,v]) => esc(k) + ": " + (v.n ? moneyHtml(v.pl) + " (" + v.n + ")" : "No Slips")).join(" | ") + "</p>";
 }
