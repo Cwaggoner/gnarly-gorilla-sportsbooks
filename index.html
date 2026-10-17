@@ -205,6 +205,9 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 .ekg-dot{position:absolute;top:13px;width:10px;height:10px;border-radius:50%;background:#fff;transform:translateX(-50%)}
 .ekg .base{fill:none;stroke:#163016;stroke-width:1.5;vector-effect:non-scaling-stroke}
 .ekg .trace{fill:none;stroke:#39ff14;stroke-width:1.5;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.compare { width:100%; border-collapse:collapse; font-size:12px; }
+.compare th, .compare td { border-bottom:1px solid #1f3a1f; padding:4px 6px; text-align:left; }
+.compare th { color:#39ff14; }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
@@ -1300,7 +1303,7 @@ function render(){
   try { drawCharts(gradeFile.concat(bets)); } catch (err) { document.getElementById("plotnote").textContent = "Chart failed. The rest of the page is still live."; }
   document.getElementById("plotnote").textContent = settled.length + " settled slips plotted. " + bets.filter(b => b.result === "pending").length + " slips left to settle.";
   drawCalendar();
-  document.getElementById("breaks").innerHTML = "<h2>Graded Results By Sport And Book</h2>" + group(settled, "sport") + group(settled, "book") + "<h2 class='split-title'>Market Split</h2>" + group(settled, "type") + "<p class='api-note'>This card uses graded slips only. Pending slips are not counted. A sport with no graded slips says No Picks.</p>";
+  document.getElementById("breaks").innerHTML = "<div id=\"oddscompare\"></div>" + "<h2>Graded Results By Sport And Book</h2>" + group(settled, "sport") + group(settled, "book") + "<h2 class='split-title'>Market Split</h2>" + group(settled, "type") + "<p class='api-note'>This card uses graded slips only. Pending slips are not counted. A sport with no graded slips says No Picks.</p>";
   const y = yesterday();
   const graded = loadGrade();
   const picked = document.getElementById("reportDay").value;
@@ -1350,6 +1353,40 @@ function render(){
   const report = document.getElementById("report");
   report.dataset.copy = copy.join("\n");
   report.innerHTML = "<p>Date " + (picked || todayEt()) + ". Graded " + (picked || y) + "</p><p>W/L Record " + rec(gradedDay) + "   P/L " + money(dayPl) + "   Hit rate " + hit + "   Row sum " + money(dayPl) + "</p>" + body + "<p>Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u</p>";
+}
+
+async function drawOddsCompare(){
+  const key = oddskey.value.trim();
+  const box = document.getElementById("oddscompare");
+  if (!box) return;
+  if (!key) { box.innerHTML = "<p class='api-note'>Odds comparison needs the Odds API key from Today's Card.</p>"; return; }
+  const day = todayEt();
+  const stamp = localStorage.getItem("gg-compare-stamp");
+  let table = localStorage.getItem("gg-compare-html") || "";
+  if (stamp === day && table) { box.innerHTML = table; return; }
+  const books = Object.keys(BOOK_KEY);
+  const sports = Object.keys(SPORT_KEY);
+  const rows = [];
+  for (const sport of sports) {
+    const games = await fetchBook(SPORT_KEY[sport], "", key).catch(() => []);
+    games.filter(g => g.commence_time && new Date(g.commence_time).toLocaleDateString("en-CA", {timeZone: siteZone()}) === day).forEach(g => {
+      const cells = books.map(book => {
+        const bk = (g.bookmakers || []).find(b => b.key === BOOK_KEY[book]);
+        const mk = bk && (bk.markets || []).find(m => m.key === "h2h");
+        if (!mk) return "-";
+        const away = (mk.outcomes || []).find(o => o.name === g.away_team);
+        const home = (mk.outcomes || []).find(o => o.name === g.home_team);
+        return (away && away.price != null ? away.price : "-") + " / " + (home && home.price != null ? home.price : "-");
+      });
+      rows.push({sport, label: g.away_team + " at " + g.home_team, cells});
+    });
+  }
+  const head = "<tr><th>Game</th>" + books.map(b => "<th>" + esc(b) + "</th>").join("") + "</tr>";
+  const body = rows.slice(0, 12).map(r => "<tr><td>" + esc(r.sport) + " " + esc(r.label) + "</td>" + r.cells.map(c => "<td>" + c + "</td>").join("") + "</tr>").join("");
+  table = rows.length ? "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>Moneyline, away / home. Loaded once a day. No click needed.</p><table class='compare'><thead>" + head + "</thead><tbody>" + body + "</tbody></table>" : "<p class='api-note'>No games posted for " + day + " yet.</p>";
+  localStorage.setItem("gg-compare-stamp", day);
+  localStorage.setItem("gg-compare-html", table);
+  box.innerHTML = table;
 }
 function group(bets, key){
   const map = {};
@@ -1777,6 +1814,7 @@ if (!window.boardWatch) window.boardWatch = setInterval(() => autoLoadBoard().ca
 autoLoadBoard().catch(() => {});
 applyGrades().catch(() => {});
 repriceBooks().catch(() => {});
+drawOddsCompare().catch(() => {});
 document.getElementById("loadpicks").onclick = () => {
   document.getElementById("loadnote").textContent = "Loading...";
   fillPickBoard().catch(err => {
