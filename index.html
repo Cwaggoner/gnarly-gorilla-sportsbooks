@@ -1702,6 +1702,29 @@ document.getElementById("pickselect").onchange = () => {
   form.close.value = opt.dataset.close;
 };
 document.getElementById("loadicon").onclick = () => document.getElementById("loadpicks").click();
+async function autoLoadBoard(){
+  const key = oddskey.value.trim();
+  if (!key) return;
+  const day = form.date.value || todayEt();
+  const stamp = localStorage.getItem("gg-board-auto");
+  if (stamp === day) return;
+  const yest = new Date(day + "T12:00:00Z");
+  yest.setUTCDate(yest.getUTCDate() - 1);
+  const yesterday = yest.toISOString().slice(0, 10);
+  const bookKey = BOOK_KEY[form.book.value] || "betmgm";
+  let last = 0;
+  Object.keys(SPORT_KEY).forEach(sport => {
+    try {
+      const list = JSON.parse(localStorage.getItem("gg-day-" + yesterday + "-" + SPORT_KEY[sport] + "-" + bookKey) || "[]");
+      list.forEach(g => { const t = Date.parse(g.commence_time || ""); if (Number.isFinite(t) && t > last) last = t; });
+    } catch (e) {}
+  });
+  if (last && last > Date.now()) return;
+  localStorage.setItem("gg-board-auto", day);
+  await fillPickBoard().catch(() => {});
+}
+if (!window.boardWatch) window.boardWatch = setInterval(() => autoLoadBoard().catch(() => {}), 15 * 60000);
+autoLoadBoard().catch(() => {});
 document.getElementById("loadpicks").onclick = () => {
   document.getElementById("loadnote").textContent = "Loading...";
   fillPickBoard().catch(err => {
