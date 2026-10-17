@@ -1376,7 +1376,7 @@ async function drawOddsCompare(force){
     filterCompare();
     return;
   }
-if (!force && stamp === day && table && table.includes("<table")) { box.innerHTML = table; wireCompare(); return; }
+if (!force && stamp === day && table && table.includes("<table") && table.includes("comparesport")) { box.innerHTML = table; wireCompare(); return; }
   const books = Object.keys(BOOK_KEY);
   const sports = Object.keys(SPORT_KEY);
   const marketKey = {h2h:"h2h", spreads:"spreads", totals:"totals"}[market] || "h2h";
@@ -1428,7 +1428,22 @@ function filterCompare(){
     r.style.display = (sport === "All" || label.startsWith(sport)) ? "" : "none";
   });
 }
+function ensureSport(){
+  const note = document.querySelector("#oddscompare .api-note");
+  if (note && !note.querySelector("#comparesport")) {
+    const sel = document.createElement("select");
+    sel.id = "comparesport";
+    ["CBB","CFB","MLB","NBA","NFL","NHL","All"].forEach(s => {
+      const o = document.createElement("option");
+      o.value = s; o.textContent = s;
+      if (s === (localStorage.getItem("gg-compare-sport") || "CBB")) o.selected = true;
+      sel.appendChild(o);
+    });
+    note.prepend(sel);
+  }
+}
 function wireCompare(){
+  ensureSport();
   const sel = document.getElementById("comparemarket");
   if (sel && !sel.dataset.wired) {
     sel.dataset.wired = "1";
