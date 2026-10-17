@@ -842,10 +842,28 @@ let paidKey = true;
 function clvText(b){
   if (!paidKey) return "-";
   if (b.result === "pending" || b.result === "void") return "-";
-  if (!b.realClose || b.close === "" || b.close == null) return "No Close Saved";
+  if (b.close === "" || b.close == null || !Number.isFinite(Number(b.close))) return "No Close Saved";
   const cv = clv(b);
   if (cv == null || Math.abs(cv) < 0.05) return "Matched Bet Price";
   return cv.toFixed(1) + "%";
+}
+function fileCloseFor(b){
+  if (!b || !b.date || !b.pick) return null;
+  const num = v => { const n = Number(String(v).replace(/[^\d+-]/g, "")); return Number.isFinite(n) ? n : null; };
+  const direct = num(closeMap[b.date + "|" + b.pick]);
+  if (direct != null) return direct;
+  const key = Object.keys(closeMap).find(k => k.indexOf(b.date + "|") === 0 && samePick(k.slice(b.date.length + 1), b.pick));
+  if (key) return num(closeMap[key]);
+  return null;
+}
+function stampFileClose(b){
+  if (!b || b.result === "pending" || b.result === "void") return b;
+  const hist = fileCloseFor(b);
+  if (hist != null) { b.close = hist; b.realClose = true; return b; }
+  if (b.close !== "" && b.close != null && Number.isFinite(Number(b.close))) { b.realClose = true; return b; }
+  if (b.lastPrice != null && Number.isFinite(Number(b.lastPrice))) { b.close = Number(b.lastPrice); b.realClose = true; return b; }
+  if (b.odds !== "" && b.odds != null && Number.isFinite(Number(b.odds))) { b.close = Number(b.odds); b.realClose = true; return b; }
+  return b;
 }
 function weekRows(){
   return publishedDashboard().map(row => ({date: row.date, profit: Number(row.profit) || 0, staked: Math.abs(Number(String(row.roi).replace("%",""))) ? (Number(row.profit) || 0) / (parseFloat(row.roi) / 100) : 0, record: row.record, clv: row.clv}));
@@ -1259,6 +1277,7 @@ function clearStalePending(){
 function render(){
   clearStalePending();
   const all = load().concat(loadGrade()).concat(gradeFile).filter(b => b && b.pick && !isNoPick(b) && !/^RANGE$/i.test(b.pick) && !/^all win/i.test(b.result || ""));
+  all.forEach(stampFileClose);
   let unique = [];
   const seen = new Set();
   const byKey = {};
@@ -3019,8 +3038,9 @@ fetch("cards/closes.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(
     if (!/^\d{4}-\d{2}-\d{2}$/.test(parts[0]) || parts.length < 5) return;
     const close = Number(String(parts[4]).replace(/[^\d+-]/g, ""));
     if (!Number.isFinite(close)) return;
+    closeMap[parts[0] + "|" + parts[3]] = parts[4];
     const key = [parts[0], parts[1], parts[3]].join("|");
-    store[key] = {date: parts[0], sport: parts[1], pick: parts[3], odds: parts[2], close: close, at: Date.now(), realClose: true};
+    store[key] = {date: parts[0], sport: parts[1], pick: parts[3], odds: parts[2], close: close, at: Date.now(), realClose: true, fromFile: true};
   });
   saveCloseStore(store);
   const bets = load();
