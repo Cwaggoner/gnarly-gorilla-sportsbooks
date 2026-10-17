@@ -1129,7 +1129,7 @@ let SEASON_START = {MLB:"2026-03-25", CFB:"2026-08-27", NFL:"2026-09-09", CBB:"2
 function seasonEnded(sport){ const end = SEASON_END[String(sport || "").toUpperCase()]; return !!end && todayEt() > end; }
 function showSeasons(checked){
   const box = document.getElementById("seasons");
-  if (!box) return;
+  if (!box) { const hold = document.createElement("div"); hold.id = "oddscompare"; (document.getElementById("breaks") || document.body).after(hold); return drawOddsCompare(force); }
   const names = {CBB:"CBB - College Basketball", CFB:"CFB - College Football", MLB:"MLB - Major League Baseball", NBA:"NBA - National Basketball Association", NFL:"NFL - National Football League", NHL:"NHL - National Hockey League"};
   const rows = ["CBB","CFB","MLB","NBA","NFL","NHL"].map(s => "<tr><td>" + names[s] + "</td><td>" + SEASON_START[s] + "</td><td>" + SEASON_END[s] + "</td><td>" + (seasonEnded(s) ? "Season Ended" : "Open") + "</td></tr>").join("");
   const open = ["CBB","CFB","MLB","NBA","NFL","NHL"].filter(s => !seasonEnded(s)).length;
@@ -1303,7 +1303,12 @@ function render(){
   try { drawCharts(gradeFile.concat(bets)); } catch (err) { document.getElementById("plotnote").textContent = "Chart failed. The rest of the page is still live."; }
   document.getElementById("plotnote").textContent = settled.length + " settled slips plotted. " + bets.filter(b => b.result === "pending").length + " slips left to settle.";
   drawCalendar();
-  document.getElementById("breaks").innerHTML = "<h2>Graded Results By Sport And Book</h2>" + group(settled, "sport") + group(settled, "book") + "<h2 class='split-title'>Market Split</h2>" + group(settled, "type") + "<p class='api-note'>This card uses graded slips only. Pending slips are not counted. A sport with no graded slips says No Picks.</p>" + "<div id=\"oddscompare\"></div>";
+  document.getElementById("breaks").innerHTML = "<h2>Graded Results By Sport And Book</h2>" + group(settled, "sport") + group(settled, "book") + "<h2 class='split-title'>Market Split</h2>" + group(settled, "type") + "<p class='api-note'>This card uses graded slips only. Pending slips are not counted. A sport with no graded slips says No Picks.</p>";
+  if (!document.getElementById("oddscompare")) {
+    const hold = document.createElement("div");
+    hold.id = "oddscompare";
+    document.getElementById("breaks").after(hold);
+  }
   drawOddsCompare().catch(() => {});
   const y = yesterday();
   const graded = loadGrade();
