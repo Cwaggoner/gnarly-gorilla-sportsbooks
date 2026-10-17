@@ -188,3 +188,21 @@
 2026-10-15 | NFL | Seahawks at Broncos Under 40.5 | close -105 | win | 31 | 9.52
 2026-10-15 | NFL | SGP Broncos +2.5 and Seahawks at Broncos Under 40.5 | close 190 | win | SEA 14 DEN 17 | 19.00
 2026-10-15 | CBB | No Picks
+2026-10-16 | RANGE | All Win 120.00 | All Lose -140.00
+2026-10-16 | NHL | Pittsburgh Penguins +1.5 | -135 | loss | PIT 2 COL 5 | -10.00
+2026-10-16 | NHL | Pittsburgh Penguins ML | 180 | loss | PIT 2 COL 5 | -10.00
+2026-10-16 | NHL | Anaheim Ducks ML | -105 | loss | BOS 4 ANA 2 | -10.00
+2026-10-16 | CFB | Tulane +7 | -112 | win | MEM 17 TULN 31 | 8.93
+2026-10-16 | CFB | Memphis vs Tulane Under 55.5 | -108 | win | 48 | 9.26
+2026-10-16 | MLB | Rays @ Guardians Under 6.5 | -110 | win | CLE 3 TB 2 | 9.09
+2026-10-16 | MLB | Guardians ML | -110 | win | CLE 3 TB 2 | 9.09
+2026-10-16 | MLB | SGP Guardians ML and Under 6.5 | 190 | win | CLE 3 TB 2 | 19.00
+2026-10-16 | NBA | Bucks +8.5 | -110 | win | MIL 128 IND 127 | 9.09
+2026-10-16 | NBA | Raptors +9.5 | -110 | win | TOR 125 DET 129 | 9.09
+2026-10-16 | NBA | Celtics +5.5 | -110 | win | BOS 125 PHI 120 | 9.09
+2026-10-16 | NBA | Bucks at Pacers Under 235.5 | -110 | loss | 255 | -10.00
+2026-10-16 | NBA | Raptors at Pistons Under 217.5 | -110 | loss | 254 | -10.00
+2026-10-16 | NBA | SGP Bucks +8.5 and Bucks at Pacers Under 235.5 | 190 | loss | MIL 128 IND 127 | -10.00
+2026-10-16 | NBA | SGP Raptors +9.5 and Raptors at Pistons Under 217.5 | 190 | loss | TOR 125 DET 129 | -10.00
+2026-10-16 | NFL | No Picks
+2026-10-16 | CBB | Season Ended
