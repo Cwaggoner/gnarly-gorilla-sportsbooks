@@ -230,7 +230,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <div class="nav-cell mid">
 <button type="button" data-jump="seasons">Seasons</button>
 <button type="button" data-jump="dashboard">Dashboard</button>
-<button type="button" data-jump="todaycard">Today</button>
+<button type="button" data-jump="todaycard">Today</button><button type="button" data-jump="liveodds">Live Odds</button>
 <button type="button" data-jump="slips">Slips</button>
 <button type="button" data-jump="reportcard">Report Card</button>
 <button type="button" data-jump="charts">Charts</button>
@@ -1305,9 +1305,13 @@ function render(){
   drawCalendar();
   document.getElementById("breaks").innerHTML = "<h2>Graded Results By Sport And Book</h2>" + group(settled, "sport") + group(settled, "book") + "<h2 class='split-title'>Market Split</h2>" + group(settled, "type") + "<p class='api-note'>This card uses graded slips only. Pending slips are not counted. A sport with no graded slips says No Picks.</p>";
   if (!document.getElementById("oddscompare")) {
+    const card = document.createElement("section");
+    card.className = "card";
+    card.id = "liveodds";
     const hold = document.createElement("div");
     hold.id = "oddscompare";
-    document.getElementById("breaks").after(hold);
+    card.appendChild(hold);
+    document.getElementById("breaks").after(card);
   }
   drawOddsCompare().catch(() => {});
   const y = yesterday();
