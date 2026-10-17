@@ -1477,7 +1477,7 @@ function wireCompare(){
   const sel = document.getElementById("comparemarket");
   if (sel && !sel.dataset.wired) {
     sel.dataset.wired = "1";
-    sel.onchange = () => drawOddsCompare(true).catch(() => {});
+    sel.onchange = () => drawOddsCompare(true).then(() => { note.textContent = key ? "Live Odds refreshed with the paid key." : "Key cleared."; }).catch(e => { note.textContent = "Live Odds refresh failed: " + (e && e.message || e); });
   }
   const sport = document.getElementById("comparesport");
   if (sport) {
@@ -2084,7 +2084,8 @@ document.getElementById("commitkey").onclick = () => {
   oddskey.value = key;
   Object.keys(localStorage).filter(k => k.startsWith("gg-compare") || k.startsWith("gg-board")).forEach(k => localStorage.removeItem(k));
   Object.keys(sessionStorage).filter(k => k.startsWith("gg-odds")).forEach(k => sessionStorage.removeItem(k));
-  document.getElementById("pdfnote").textContent = key ? "Key committed. Refreshing the board and CLV." : "Key cleared.";
+  const note = document.getElementById("pdfnote");
+  note.textContent = key ? "Key committed. Refreshing Live Odds." : "Key cleared.";
   drawOddsCompare(true).catch(() => {});
   repriceBooks().catch(() => {});
   if (typeof fillPickBoard === "function") fillPickBoard().catch(() => {});
