@@ -1434,13 +1434,13 @@ if (!force && stamp === day && table && table.includes("<table") && table.includ
   wireCompare();
 }
 function filterCompare(){
-  const sport = (document.getElementById("comparesport") || {}).value || "CBB";
+  const sport = (document.getElementById("comparesport") || {}).value || localStorage.getItem("gg-compare-sport") || "All";
   const rows = document.querySelectorAll("#oddscompare tbody tr");
   rows.forEach(r => {
     const cell = r.querySelector("td");
     if (!cell) return;
     const label = cell.textContent || "";
-    r.style.display = (sport === "All" || label.startsWith(sport)) ? "" : "none";
+    r.style.display = (!sport || sport === "All" || label.startsWith(sport)) ? "" : "none";
   });
 }
 function ensureSport(){
@@ -1665,6 +1665,7 @@ function sportKeys(sport){
 }
 const oddskey = document.getElementById("oddskey");
 oddskey.value = localStorage.getItem("gg-odds-key") || "";
+localStorage.removeItem("gg-compare-sport");
 // key is saved only by the Commit button
 function teamOf(pick){
   const total = String(pick).match(/^(.*?)\s*(over|under)\s+\d+(?:\.\d+)?$/i);
