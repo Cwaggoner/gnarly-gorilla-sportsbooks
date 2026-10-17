@@ -2083,6 +2083,7 @@ async function repriceSlips(){
   save(bets);
   note.textContent = priced + " pending slips repriced at " + book + ".";
 }
+document.getElementById("refreshodds").onclick = () => drawOddsCompare(true).then(() => { document.getElementById("pdfnote").textContent = "Live Odds refreshed."; }).catch(e => { document.getElementById("pdfnote").textContent = "Refresh failed: " + (e && e.message || e); });
 document.getElementById("commitkey").onclick = () => {
   const key = oddskey.value.trim();
   localStorage.setItem("gg-odds-key", key);
