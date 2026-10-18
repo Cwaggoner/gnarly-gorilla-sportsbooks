@@ -207,19 +207,19 @@
 2026-10-16 | NFL | No Picks
 2026-10-16 | CBB | Season Ended
 2026-10-17 | RANGE | All Win 132.08 | All Lose -130.00
-2026-10-17 | MLB | Rays @ Guardians Under 6.5 | -110 | loss | TB 7 CLE 3 | -10.00
-2026-10-17 | MLB | Guardians ML | -104 | loss | TB 7 CLE 3 | -10.00
-2026-10-17 | MLB | SGP Guardians ML and Under 6.5 | 190 | loss | TB 7 CLE 3 | -10.00
-2026-10-17 | NHL | Winnipeg Jets +1.5 | -165 | win | CAR 3 WPG 2 | 6.06
-2026-10-17 | NHL | New Jersey Devils ML | 105 | loss | NJD 2 WSH 4 | -10.00
-2026-10-17 | NHL | Buffalo Sabres ML | 120 | loss | BUF 3 MTL 4 OT | -10.00
-2026-10-17 | NHL | New York Islanders ML | 114 | win | NYI 4 TOR 1 | 11.40
-2026-10-17 | NHL | Seattle Kraken +1.5 | -160 | loss | SEA 3 FLA 8 | -10.00
-2026-10-17 | NHL | Boston Bruins ML | 118 | win | BOS 4 LA 1 | 11.80
-2026-10-17 | CFB | Tennessee +7.5 | -110 | win | ALA 10 TENN 26 | 9.09
-2026-10-17 | CFB | Florida +11.5 | -110 | win | FLA 27 TEX 24 | 9.09
-2026-10-17 | CFB | BYU +10.5 | -110 | win | ND 24 BYU 28 | 9.09
-2026-10-17 | CFB | Alabama vs Tennessee Under 50.5 | -110 | win | ALA 10 TENN 26 | 9.09
+2026-10-17 | MLB | Rays @ Guardians Under 6.5 | -110 | loss | TB 7 CLE 3 | -10.00 | close:-110
+2026-10-17 | MLB | Guardians ML | -104 | loss | TB 7 CLE 3 | -10.00 | close:-104
+2026-10-17 | MLB | SGP Guardians ML and Under 6.5 | 190 | loss | TB 7 CLE 3 | -10.00 | close:190
+2026-10-17 | NHL | Winnipeg Jets +1.5 | -165 | win | CAR 3 WPG 2 | 6.06 | close:-165
+2026-10-17 | NHL | New Jersey Devils ML | 105 | loss | NJD 2 WSH 4 | -10.00 | close:105
+2026-10-17 | NHL | Buffalo Sabres ML | 120 | loss | BUF 3 MTL 4 OT | -10.00 | close:120
+2026-10-17 | NHL | New York Islanders ML | 114 | win | NYI 4 TOR 1 | 11.40 | close:114
+2026-10-17 | NHL | Seattle Kraken +1.5 | -160 | loss | SEA 3 FLA 8 | -10.00 | close:-160
+2026-10-17 | NHL | Boston Bruins ML | 118 | win | BOS 4 LA 1 | 11.80 | close:118
+2026-10-17 | CFB | Tennessee +7.5 | -110 | win | ALA 10 TENN 26 | 9.09 | close:-110
+2026-10-17 | CFB | Florida +11.5 | -110 | win | FLA 27 TEX 24 | 9.09 | close:-110
+2026-10-17 | CFB | BYU +10.5 | -110 | win | ND 24 BYU 28 | 9.09 | close:-110
+2026-10-17 | CFB | Alabama vs Tennessee Under 50.5 | -110 | win | ALA 10 TENN 26 | 9.09 | close:-110
 2026-10-17 | NBA | No Picks
 2026-10-17 | NFL | No Picks
 2026-10-17 | CBB | Season Ended
