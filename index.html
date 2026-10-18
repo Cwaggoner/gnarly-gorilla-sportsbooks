@@ -688,9 +688,20 @@ function sportLean(rows){
 function drawCardAnalysis(text){
   const grid = document.getElementById("analysisgrid");
   if (!grid) return;
-  const rows = cardLines(text);
+  const all = cardLines(text);
+  const today = todayEt();
+  const dated = all.filter(p => /^\d{4}-\d{2}-\d{2}$/.test(p[0]));
+  const rows = dated.length ? dated.filter(p => p[0] === today) : all;
+  const title = document.querySelector("#cardanalysis h3");
+  const read = document.getElementById("sharpread");
+  if (dated.length && !rows.length) {
+    grid.innerHTML = "<p class='warn'>Today's card is not posted yet. Yesterday's picks stay off this card.</p>";
+    if (title) title.textContent = "Analysis · " + today;
+    if (read) read.textContent = "No card is live yet. It posts with the morning picks. Yesterday is not carried onto this card.";
+    return;
+  }
   const sports = ["CBB","CFB","MLB","NBA","NFL","NHL"];
-  const day = (rows[0] && rows[0][0]) || "";
+  const day = (rows[0] && /^\d{4}-\d{2}-\d{2}$/.test(rows[0][0]) && rows[0][0]) || today;
   grid.innerHTML = sports.map(sport => {
     const mine = rows.filter(r => r[1] === sport);
     const plays = mine.filter(r => !isNoCard(r));
@@ -703,9 +714,7 @@ function drawCardAnalysis(text){
     const note = edges.length ? edges.map(r => r[3]).join("; ") : (plays[0][3] + " leads the card.");
     return "<div class='analysis-cell'><b>" + sport + "</b><div class='meta'>" + plays.length + " plays" + (edges.length ? " · " + edges.length + " edge" + (edges.length === 1 ? "" : "s") : "") + "</div><p>" + sportLean(plays) + ". " + note + "</p></div>";
   }).join("");
-  const title = document.querySelector("#cardanalysis h3");
-  if (title) title.textContent = "Analysis" + (day ? " · " + day : "");
-  const read = document.getElementById("sharpread");
+  if (title) title.textContent = "Analysis · " + day;
   if (read) read.textContent = sharpRead(rows);
 }
 function sharpRead(rows){
@@ -1243,9 +1252,11 @@ async function nightlyUpdate(){
   const todays = text.split(/\n/).filter(line => line.trim().startsWith(today));
   if (todays.length) {
     const added = addCardLines(todays.join("\n"), document.getElementById("cardbook").value || "BetMGM");
+    drawCardAnalysis(todays.join("\n"));
     if (note) note.textContent = "After midnight. Yesterday graded. " + (added || 0) + " " + today + " picks loaded.";
     return;
   }
+  drawCardAnalysis(text);
   if (note) note.textContent = "After midnight. Yesterday graded. Today's picks load when the morning task publishes them.";
   if (!window.cardWatch) {
     window.cardWatch = setInterval(async () => {
@@ -1256,6 +1267,7 @@ async function nightlyUpdate(){
       clearInterval(window.cardWatch);
       window.cardWatch = null;
       const added = addCardLines(lines.join("\n"), document.getElementById("cardbook").value || "BetMGM");
+      drawCardAnalysis(lines.join("\n"));
       if (note) note.textContent = "Morning card published. " + (added || 0) + " " + todayEt() + " picks loaded.";
     }, 60000);
   }
@@ -2253,7 +2265,7 @@ document.getElementById("cardbook").onchange = () => {
 async function loadPending(){
   const note = document.getElementById("pdfnote");
   const bets = load();
-  const today = ymd(new Date());
+  const today = todayEt();
   const book = document.getElementById("cardbook").value;
   await repricePaste().catch(err => { document.getElementById("pdfnote").textContent = err.message; });
   const before = bets.length;
@@ -2347,15 +2359,30 @@ async function loadDriveCard(){
   const res = await fetch("cards/today.txt?ts=" + Date.now());
   if (!res.ok) { note.textContent = "Drive card file is not on the site yet."; return; }
   const text = await res.text();
+  const today = todayEt();
+  const lines = text.split(/\n/).filter(line => line.trim().startsWith(today));
+  drawCardAnalysis(lines.length ? lines.join("\n") : text);
+  if (!lines.length) {
+    note.textContent = "Today's card is not posted yet. Yesterday was not loaded.";
+    return;
+  }
   const named = text.match(/^#\s*file:\s*(.+)$/m);
   const fileName = (named ? named[1] : "Drive card").replace(/\.(txt|pdf)$/i, "");
   const current = load();
-  const finished = current.filter(b => b.date < todayEt() && b.result === "pending");
+  const finished = current.filter(b => b.date < today && b.result === "pending");
   if (finished.length) archiveSlips(finished);
-  const added = addCardLines(text, document.getElementById("cardbook").value || "BetMGM");
+  const added = addCardLines(lines.join("\n"), document.getElementById("cardbook").value || "BetMGM");
   load().forEach(markEdge);
   save(load());
-  note.textContent = "Read " + fileName + ". " + (added || 0) + " slips added. Ledger has every sport loaded for the day.";
+  note.textContent = "Read " + fileName + ". " + (added || 0) + " slips added for " + today + ".";
+}
+async function refreshTodayCard(){
+  const res = await fetch("cards/today.txt?ts=" + Date.now()).catch(() => null);
+  const text = res && res.ok ? await res.text() : "";
+  const today = todayEt();
+  const lines = text.split(/\n/).filter(line => line.trim().startsWith(today));
+  drawCardAnalysis(lines.length ? lines.join("\n") : text);
+  if (lines.length) addCardLines(lines.join("\n"), (document.getElementById("cardbook") || {}).value || "BetMGM");
 }
 function gradeRows(text){
   return text.split(/\n/).map(l => l.trim()).filter(l => l && !l.startsWith("#")).map(l => {
@@ -3102,7 +3129,8 @@ fetch("cards/report.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(
   });
   if (edgePicks.size) loadCloses().then(() => { render(); showSeasons(); }).catch(() => { render(); showSeasons(); });
 }).catch(() => {});
-fetch("cards/today.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(drawCardAnalysis).catch(() => {});
+refreshTodayCard();
+setInterval(refreshTodayCard, 60000);
 (async () => { const k = (document.getElementById("oddskey") || {}).value || ""; if (k.trim()) { paidKey = true; } })();
 loadDriveCardForCalendar();
 setInterval(loadDriveCardForCalendar, 60000);
