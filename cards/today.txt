@@ -8,6 +8,18 @@
 2026-10-18 | NHL | Moneyline | Calgary Flames ML | +180 | Medium: Moneyline dog at plus money. Home underdog vs short Canes ML.
 2026-10-18 | NBA | No Picks
 2026-10-18 | CBB | Season Ended
+2026-10-18 | NFL | Spread | Houston Texans +2.5 | -102 | Medium: London dog. Avoid short JAX ML -142.
+2026-10-18 | NFL | Spread | Cleveland Browns +3 | -102 | High Edge: Lamar Jackson OUT (ankle). Home dog vs Huntley. Avoid short BAL ML -175.
+2026-10-18 | NFL | Spread | Philadelphia Eagles +3 | -108 | Medium: Home dog. Eagles without Hurts (McKee starts). Avoid short CAR ML -162.
+2026-10-18 | NFL | Spread | Atlanta Falcons +1.5 | -118 | Medium: Close dog. Avoid short CHI ML -120.
+2026-10-18 | NFL | Spread | New York Giants +1.5 | -122 | High Edge: Home dog in close game. Avoid short NO ML -110.
+2026-10-18 | NFL | Spread | New York Jets +7.5 | -112 | Medium: Dog vs short NE ML -360. Spread or dog only.
+2026-10-18 | NFL | Spread | Tampa Bay Buccaneers +2.5 | -105 | Medium: Home dog. Avoid short PIT ML -142.
+2026-10-18 | NFL | Spread | Tennessee Titans +6.5 | -102 | Medium: Dog vs short IND ML -310.
+2026-10-18 | NFL | Spread | Arizona Cardinals +12.5 | -108 | High Edge: Big dog value. Avoid short LAR ML -800.
+2026-10-18 | NFL | Spread | Las Vegas Raiders +5.5 | -110 | Medium: Dog vs short BUF ML -258.
+2026-10-18 | NFL | Spread | Los Angeles Chargers +7.5 | -112 | Medium: Dog vs short KC ML -410.
+2026-10-18 | NFL | Spread | Dallas Cowboys +1.5 | -118 | High Edge: Close SNF dog. Avoid short GB ML -115.
 # file: GG-CARD-2026-10-17
 2026-10-17 | MLB | Total | Rays @ Guardians Under 6.5 | -110 | High Edge: Totals market preferred (2-0 +$19). Martinez historically dominant vs CLE, Guardians bullpen game, cool clear conditions suppress offense.
 2026-10-17 | MLB | Moneyline | Guardians ML | -104 | High Edge: Dog at near even price. Home field, series lead 2-1. Avoid short favorite.
