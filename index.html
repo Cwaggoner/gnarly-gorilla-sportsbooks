@@ -535,6 +535,26 @@ function loadCloses(){
     });
   }).catch(() => {});
 }
+function roiText(profit, staked){
+  const stake = Number(staked), pl = Number(profit);
+  if (!Number.isFinite(stake) || stake <= 0 || !Number.isFinite(pl)) return "-";
+  const pct = pl / stake * 100;
+  if (!Number.isFinite(pct) || Math.abs(pct) < 0.05) return "0.0%";
+  return pct.toFixed(1) + "%";
+}
+function rowStake(row){
+  const saved = Number(row && row.staked);
+  if (Number.isFinite(saved) && saved > 0) return saved;
+  const parts = String(row && row.record || "").split("-").map(n => Number(n));
+  if (parts.length >= 2 && parts.every(n => Number.isFinite(n)) && !/not on file|no picks/i.test(row.record || "")) {
+    const n = parts.reduce((s, n) => s + n, 0);
+    if (n > 0) return n * UNIT;
+  }
+  const pct = parseFloat(String(row && row.roi || "").replace("%", ""));
+  const profit = Number(row && row.profit);
+  if (Number.isFinite(pct) && pct !== 0 && Number.isFinite(profit)) return profit / (pct / 100);
+  return 0;
+}
 function publishedDashboard(){
   const slips = (gradeFile || []).filter(b => b && b.date && !isNoPick(b) && (b.result === "win" || b.result === "loss" || b.result === "push")).map(b => {
     const close = closeMap[b.date + "|" + b.pick];
@@ -543,22 +563,24 @@ function publishedDashboard(){
   return lastSevenDates().map(date => {
     const day = publishedCalendar[date] || {};
     const lines = slips.filter(b => b.date === date);
-    const profit = Number.isFinite(Number(day.pl)) ? Number(day.pl) : lines.reduce((s, b) => s + (Number(b.profit) || 0), 0);
-    const n = Number(day.n) || lines.length;
-    const staked = n * UNIT;
+    const fromLines = lines.length > 0;
+    const profit = fromLines ? lines.reduce((s, b) => s + (Number(b.profit) || 0), 0) : (Number.isFinite(Number(day.pl)) ? Number(day.pl) : 0);
+    const staked = fromLines ? lines.reduce((s, b) => s + (Number(b.stake) > 0 ? Number(b.stake) : UNIT), 0) : (Number(day.n) || 0) * UNIT;
+    const n = fromLines ? lines.length : (Number(day.n) || 0);
     const withClose = lines.filter(b => b.close !== "" && b.close != null);
     const clvs = withClose.map(clv).filter(v => v != null);
-    const saved = day.clv;
     let dayClv = "No Close Saved";
     if (!lines.length) dayClv = "No Close Saved";
     else if (!withClose.length) dayClv = "Close Not On File";
     else if (clvs.length) dayClv = (clvs.reduce((s, v) => s + v, 0) / clvs.length).toFixed(1) + "%";
     else dayClv = "Matched Bet Price";
+    const record = fromLines ? rec(lines) : (day.wins != null ? (Number(day.wins) || 0) + "-" + (Number(day.losses) || 0) + "-" + (Number(day.pushes) || 0) : (n ? "Split Not On File" : "0-0-0"));
     return {
       date,
-      record: lines.length ? rec(lines) : (n ? "Split Not On File" : "0-0-0"),
+      record,
       profit,
-      roi: staked ? (profit / staked * 100).toFixed(1) + "%" : "-",
+      staked,
+      roi: roiText(profit, staked),
       units: (profit / UNIT).toFixed(2) + "u",
       pending: 0,
       clv: dayClv
@@ -578,10 +600,7 @@ function drawDashboard(history, manual){
   if (!manual) localStorage.setItem("gg-dashboard-v1", JSON.stringify(rows));
   const shown = rows;
   const profit = shown.reduce((s, row) => s + (Number(row.profit) || 0), 0);
-  const staked = shown.reduce((s, row) => {
-    const n = parseFloat(String(row.roi).replace("%", ""));
-    return s + (n ? (Number(row.profit) || 0) / (n / 100) : 0);
-  }, 0);
+  const staked = shown.reduce((s, row) => s + rowStake(row), 0);
   let wins = 0, losses = 0, pushes = 0;
   shown.forEach(row => {
     const parts = String(row.record || "0-0").split("-").map(n => Number(n) || 0);
@@ -592,7 +611,7 @@ function drawDashboard(history, manual){
   document.getElementById("stats").innerHTML = [
     [wins + "-" + losses + "-" + pushes, "7-Day W/L Record"],
     [moneyHtml(profit), "7-Day Profit"],
-    [staked ? (profit / staked * 100).toFixed(1) + "%" : "-", "7-Day ROI"],
+    [staked ? roiText(profit, staked) : "-", "7-Day ROI"],
     [(profit / UNIT).toFixed(2) + "u", "7-Day Units"],
     [shown.reduce((s, row) => s + (Number(row.pending) || 0), 0), "Pending"],
     [clvs.length ? (clvs.reduce((s, n) => s + n, 0) / clvs.length).toFixed(1) + "%" : "No Close Saved", "7-Day Avg CLV"]
@@ -949,7 +968,7 @@ function stampFileClose(b){
   return b;
 }
 function weekRows(){
-  return publishedDashboard().map(row => ({date: row.date, profit: Number(row.profit) || 0, staked: Math.abs(Number(String(row.roi).replace("%",""))) ? (Number(row.profit) || 0) / (parseFloat(row.roi) / 100) : 0, record: row.record, clv: row.clv}));
+  return publishedDashboard().map(row => ({date: row.date, profit: Number(row.profit) || 0, staked: rowStake(row), record: row.record, clv: row.clv}));
 }
 function publishedWeek(){
   return Object.entries(publishedCalendar).filter(([date]) => date < todayEt()).sort(([a],[b]) => a.localeCompare(b)).slice(-7);
@@ -960,11 +979,8 @@ function weekProfit(){
 function weekRoi(){
   const rows = publishedDashboard();
   const profit = rows.reduce((s, row) => s + (Number(row.profit) || 0), 0);
-  const staked = rows.reduce((s, row) => {
-    const n = parseFloat(String(row.roi).replace("%", ""));
-    return s + (n ? (Number(row.profit) || 0) / (n / 100) : 0);
-  }, 0);
-  return staked ? (profit / staked * 100).toFixed(1) + "%" : "-";
+  const staked = rows.reduce((s, row) => s + rowStake(row), 0);
+  return roiText(profit, staked);
 }
 function weekRecord(){
   let w = 0, l = 0, p = 0;
