@@ -5,19 +5,19 @@ Analysis: CFB underdogs went 4-0 as Tennessee covered +7.5 with a 26-10 win over
 
 Record 7-6-0  Profit $5.62  Units 0.56u  CLV Matched Bet Price
 
-MLB | loss | Rays @ Guardians Under 6.5 | close -110 | -$10.00
-MLB | loss | Guardians ML | close -104 | -$10.00
-MLB | loss | SGP Guardians ML and Under 6.5 | close 190 | -$10.00
-NHL | win | Winnipeg Jets +1.5 | close -165 | +$6.06
-NHL | loss | New Jersey Devils ML | close 105 | -$10.00
+MLB | loss | Rays @ Guardians Under 6.5 | close -110 | -$10.00 EDGE
+MLB | loss | Guardians ML | close -104 | -$10.00 EDGE
+MLB | loss | SGP Guardians ML and Under 6.5 | close 190 | -$10.00 EDGE
+NHL | win | Winnipeg Jets +1.5 | close -165 | +$6.06 EDGE
+NHL | loss | New Jersey Devils ML | close 105 | -$10.00 EDGE
 NHL | loss | Buffalo Sabres ML | close 120 | -$10.00
 NHL | win | New York Islanders ML | close 114 | +$11.40
 NHL | loss | Seattle Kraken +1.5 | close -160 | -$10.00
 NHL | win | Boston Bruins ML | close 118 | +$11.80
-CFB | win | Tennessee +7.5 | close -110 | +$9.09
-CFB | win | Florida +11.5 | close -110 | +$9.09
-CFB | win | BYU +10.5 | close -110 | +$9.09
-CFB | win | Alabama vs Tennessee Under 50.5 | close -110 | +$9.09
+CFB | win | Tennessee +7.5 | close -110 | +$9.09 EDGE
+CFB | win | Florida +11.5 | close -110 | +$9.09 EDGE
+CFB | win | BYU +10.5 | close -110 | +$9.09 EDGE
+CFB | win | Alabama vs Tennessee Under 50.5 | close -110 | +$9.09 EDGE
 
 2026-10-17 | NBA | No Picks
 2026-10-17 | NFL | No Picks
