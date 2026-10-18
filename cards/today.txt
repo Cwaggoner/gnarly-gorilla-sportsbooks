@@ -6,6 +6,7 @@
 2026-10-18 | NHL | Spread | Calgary Flames +1.5 | -140 | High Edge: Puck-line dog. CAR ML -218 is short. Canes on back-to-back after Winnipeg. Flames home, rested. Avoid short favorite.
 2026-10-18 | NHL | Moneyline | Columbus Blue Jackets ML | +160 | Medium: Moneyline dog. Plus money. MIN short favorite avoided.
 2026-10-18 | NHL | Moneyline | Calgary Flames ML | +180 | Medium: Moneyline dog at plus money. Home underdog vs short Canes ML.
+2026-10-18 | NBA | No Picks
 2026-10-18 | CBB | Season Ended
 # file: GG-CARD-2026-10-17
 2026-10-17 | MLB | Total | Rays @ Guardians Under 6.5 | -110 | High Edge: Totals market preferred (2-0 +$19). Martinez historically dominant vs CLE, Guardians bullpen game, cool clear conditions suppress offense.
