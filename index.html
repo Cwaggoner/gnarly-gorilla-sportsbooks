@@ -30,7 +30,7 @@
 * { box-sizing:border-box; }
 body { margin:0; background:var(--bg); color:var(--text); font:15px/1.4 system-ui, sans-serif; }
 header { display:grid; grid-template-columns:96px 1fr auto 96px; align-items:stretch; gap:12px; width:100%; box-sizing:border-box; margin:0; padding:6px 10px; border:1px solid #39ff14; border-radius:10px; background:#0a0a0a; }
-.topbar { position:sticky; top:0; z-index:6; background:#0a0a0a; padding-bottom:8px; }
+.topbar { position:sticky; top:0; z-index:6; background:#0a0a0a; padding-bottom:0; }
 .head-icon { display:flex; align-items:center; justify-content:center; border-right:1px solid #39ff14; padding-right:6px; }
 .head-icon.right { border-right:none !important; border-left:1px solid #39ff14; padding-right:0; padding-left:6px; }
 header img { width:72px; height:72px; border-radius:12px; display:block; }
@@ -2718,18 +2718,6 @@ document.getElementById("saveprint").onclick = async () => {
   download(name, printBlob);
   note.textContent = "Save dialog is not available here. The file was downloaded instead.";
 };
-document.getElementById("sitenav").addEventListener("click", e => {
-  const btn = e.target.closest("[data-jump]");
-  if (!btn) return;
-  const id = btn.dataset.jump;
-  let box = document.getElementById(id);
-  if (!box && id === "liveodds") { drawOddsCompare(false).catch(() => {}); box = document.getElementById(id); }
-  if (!box) return;
-  if (id === "seasons") { window.scrollTo({top: 0, behavior:"smooth"}); return; }
-  const bar = document.querySelector(".topbar") || document.querySelector(".sitenav");
-  const top = box.getBoundingClientRect().top + window.scrollY - (bar ? bar.offsetHeight : 0) - 20;
-  window.scrollTo({top: Math.max(0, top), behavior:"smooth"});
-});
 document.getElementById("copyreport").onclick = async () => {
   const text = document.getElementById("report").dataset.copy || document.getElementById("report").textContent;
   const note = document.getElementById("copynote");
@@ -3157,17 +3145,20 @@ fetch("cards/grades.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(
   render();
 }).catch(() => {});
 
-document.getElementById("sitenav").addEventListener("click", e => {
-  const btn = e.target.closest("[data-jump]");
-  if (!btn) return;
-  const id = btn.dataset.jump;
+function jumpToCard(id){
   let box = document.getElementById(id);
   if (!box && id === "liveodds") { drawOddsCompare(false).catch(() => {}); box = document.getElementById(id); }
   if (!box) return;
-  if (id === "seasons") { window.scrollTo({top: 0, behavior:"smooth"}); return; }
-  const bar = document.querySelector(".topbar") || document.querySelector(".sitenav");
-  const top = box.getBoundingClientRect().top + window.scrollY - (bar ? bar.offsetHeight : 0) - 20;
-  window.scrollTo({top: Math.max(0, top), behavior:"smooth"});
+  const topbar = document.querySelector(".topbar");
+  const nav = document.getElementById("sitenav");
+  const navBottom = topbar && nav ? nav.getBoundingClientRect().bottom - topbar.getBoundingClientRect().top : (nav ? nav.offsetHeight : 0);
+  const y = box.getBoundingClientRect().top + window.scrollY - navBottom;
+  window.scrollTo({top: Math.max(0, y), behavior:"smooth"});
+}
+document.addEventListener("click", e => {
+  const btn = e.target.closest("[data-jump]");
+  if (!btn) return;
+  jumpToCard(btn.dataset.jump);
 });
 </script>
 </body>
