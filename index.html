@@ -495,6 +495,7 @@ function lastSevenDates(){
   return Array.from({length: 7}, (_, i) => shiftDate(today, i - 7));
 }
 let closeMap = {};
+let betMap = {};
 async function fillHistoricalCloses(){
   const key = (document.getElementById("oddskey") || {}).value.trim();
   if (!key) return;
@@ -528,10 +529,12 @@ async function fillHistoricalCloses(){
 function loadCloses(){
   return fetch("cards/closes.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
     closeMap = {};
+    betMap = {};
     text.split(/\n/).forEach(line => {
       const parts = line.split("|").map(s => s.trim());
       if (parts.length < 5 || !/^\d{4}-\d{2}-\d{2}$/.test(parts[0])) return;
       closeMap[parts[0] + "|" + parts[3]] = parts[4];
+      if (parts[2]) betMap[parts[0] + "|" + parts[3]] = parts[2];
     });
   }).catch(() => {});
 }
@@ -1098,35 +1101,39 @@ function drawCalendar(){
       const lower = open.length ? "<span class='range'><span class='win'>All Win " + money(winAll) + "</span><span class='slash'> / </span><span class='loss'>All Lose -" + money(loseAll).replace("-", "") + "</span></span>" : "<span class='wait'>Picks Not Loaded Until " + formatTime(firstPickAt(), false) + "</span>";
       html += "<div class='today daycell' data-date='" + date + "'><b>" + d + "</b><br><span class='" + resultCls + "'>" + result + "</span><br>" + lower + "</div>";
     } else {
+      const personal = !!(mine[date] && Number.isFinite(Number(mine[date].pl)));
       const live = load().concat(loadGrade()).concat(gradeFile).filter(b => b.date === date && b.result !== "pending" && !isNoPick(b));
       const seen = new Set();
       const slips = live.filter(b => { const k = [b.sport, b.pick].join("|"); if (seen.has(k)) return false; seen.add(k); return true; });
       let day = board[date];
-      const unique = [];
-      const seenPick = new Set();
-      slips.forEach(b => {
-        const k = [b.sport, String(b.pick || "").replace(/^sgp\s+/i, "")].join("|").toLowerCase();
-        if (seenPick.has(k)) return;
-        seenPick.add(k);
-        unique.push(b);
-      });
-      const actual = unique.reduce((s, b) => s + slipMoney(b), 0);
-      const published = Number(day && day.pl);
-      if (date < today) {
-        const usePublished = Number.isFinite(published) && published !== 0;
-        day = Object.assign({}, day || {}, {pl: usePublished ? published : actual, n: unique.length || (day && day.n) || 0});
-      } else if (!day && unique.length) day = {pl: actual};
+      const ticketOdds = b => {
+        const saved = betMap[b.date + "|" + b.pick];
+        const raw = saved != null && saved !== "" ? saved : b.odds;
+        const n = Number(String(raw).replace(/[^\d+-]/g, ""));
+        return Number.isFinite(n) && n !== 0 ? n : NaN;
+      };
+      const winPay = b => {
+        const odds = ticketOdds(b), stake = Number(b.stake) || 10;
+        if (!Number.isFinite(odds)) return 0;
+        return odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds);
+      };
+      if (date < today && slips.length && !personal) {
+        day = Object.assign({}, day || {}, {
+          pl: slips.reduce((s, b) => s + slipMoney(b), 0),
+          n: slips.length,
+          allWin: slips.reduce((s, b) => s + winPay(b), 0),
+          allLose: -slips.reduce((s, b) => s + (Number(b.stake) || 10), 0)
+        });
+        board[date] = day;
+      }
       const pl = Number(day && day.pl);
-      const cls = Number.isFinite(pl) && pl > 0 ? "win" : Number.isFinite(pl) && pl < 0 ? "loss" : "zero";
-      const rangeSlips = unique.length ? unique : [];
-      const priced = rangeSlips.filter(b => Number.isFinite(Number(b.odds)) && Number(b.odds) !== 0);
+      const cls = Number.isFinite(pl) && pl > 0 ? "win" : Number.isFinite(pl) && pl < 0 ? "loss" : (Number.isFinite(pl) ? "zero" : "");
       const publishedWin = Number(day && day.allWin);
       const publishedLose = Math.abs(Number(day && day.allLose) || 0);
-      const computedWin = priced.reduce((s, b) => { const odds = Number(b.odds), stake = Number(b.stake) || 10; return s + (odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds)); }, 0);
-      const winAll = Number.isFinite(publishedWin) && publishedWin > 0 ? publishedWin : computedWin;
-      const loseAll = publishedLose > 0 ? publishedLose : rangeSlips.reduce((s, b) => s + Number(b.stake || 10), 0);
-      const range = (rangeSlips.length || Number.isFinite(publishedWin)) ? "<br><span class='range'><span class='win'>All Win " + money(winAll) + "</span><span class='slash'> / </span><span class='loss'>All Lose -" + money(loseAll).replace("-", "") + "</span></span>" : "";
-      html += "<div class='daycell' data-date='" + date + "'><b>" + d + "</b><br><span class='" + cls + "'>" + (day && Number.isFinite(Number(day.pl)) ? money(day.pl) : "") + "</span>" + range + "</div>";
+      const winAll = Number.isFinite(publishedWin) && publishedWin > 0 ? publishedWin : slips.reduce((s, b) => s + winPay(b), 0);
+      const loseAll = publishedLose > 0 ? publishedLose : slips.reduce((s, b) => s + (Number(b.stake) || 10), 0);
+      const range = (slips.length || (Number.isFinite(publishedWin) && publishedWin > 0)) ? "<br><span class='range'><span class='win'>All Win " + money(winAll) + "</span><span class='slash'> / </span><span class='loss'>All Lose -" + money(loseAll).replace("-", "") + "</span></span>" : "";
+      html += "<div class='daycell' data-date='" + date + "'><b>" + d + "</b><br><span class='" + cls + "'>" + (day && Number.isFinite(pl) ? money(pl) : "") + "</span>" + range + "</div>";
     }
   }
   document.getElementById("calendar").innerHTML = html;
@@ -3156,6 +3163,7 @@ fetch("cards/closes.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(
     const close = Number(String(parts[4]).replace(/[^\d+-]/g, ""));
     if (!Number.isFinite(close)) return;
     closeMap[parts[0] + "|" + parts[3]] = parts[4];
+    if (parts[2]) betMap[parts[0] + "|" + parts[3]] = parts[2];
     const key = [parts[0], parts[1], parts[3]].join("|");
     store[key] = {date: parts[0], sport: parts[1], pick: parts[3], odds: parts[2], close: close, at: Date.now(), realClose: true, fromFile: true};
   });
