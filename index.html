@@ -567,13 +567,13 @@ function publishedDashboard(){
     const profit = fromLines ? lines.reduce((s, b) => s + (Number(b.profit) || 0), 0) : (Number.isFinite(Number(day.pl)) ? Number(day.pl) : 0);
     const staked = fromLines ? lines.reduce((s, b) => s + (Number(b.stake) > 0 ? Number(b.stake) : UNIT), 0) : (Number(day.n) || 0) * UNIT;
     const n = fromLines ? lines.length : (Number(day.n) || 0);
-    const withClose = lines.filter(b => b.close !== "" && b.close != null);
-    const clvs = withClose.map(clv).filter(v => v != null);
+    const withClose = lines.filter(b => b.close !== "" && b.close != null && Number.isFinite(Number(b.close)));
+    const clvs = withClose.map(b => { const v = clv(b); return v == null ? 0 : v; });
     let dayClv = "No Close Saved";
     if (!lines.length) dayClv = "No Close Saved";
     else if (!withClose.length) dayClv = "Close Not On File";
-    else if (clvs.length) dayClv = (clvs.reduce((s, v) => s + v, 0) / clvs.length).toFixed(1) + "%";
-    else dayClv = "Matched Bet Price";
+    else if (clvs.every(v => Math.abs(v) < 0.05)) dayClv = "Matched Bet Price";
+    else dayClv = (clvs.reduce((s, v) => s + v, 0) / clvs.length).toFixed(1) + "%";
     const record = fromLines ? rec(lines) : (day.wins != null ? (Number(day.wins) || 0) + "-" + (Number(day.losses) || 0) + "-" + (Number(day.pushes) || 0) : (n ? "Split Not On File" : "0-0-0"));
     return {
       date,
@@ -994,9 +994,17 @@ function weekRecord(){
   return w + "-" + l + (p ? "-" + p : "");
 }
 function weekClv(){
-  const vals = publishedDashboard().map(row => row.clv === "Matched Bet Price" ? 0 : parseFloat(String(row.clv).replace("%", ""))).filter(n => Number.isFinite(n));
-  if (!vals.length) return "No Close Saved";
-  return (vals.reduce((s, n) => s + n, 0) / vals.length).toFixed(1) + "%";
+  const dates = new Set(lastSevenDates());
+  const slips = (gradeFile || []).filter(b => b && dates.has(b.date) && !isNoPick(b) && (b.result === "win" || b.result === "loss" || b.result === "push")).map(b => {
+    const close = closeMap[b.date + "|" + b.pick];
+    return close ? Object.assign({}, b, {close}) : b;
+  });
+  const withClose = slips.filter(b => b.close !== "" && b.close != null && Number.isFinite(Number(b.close)));
+  if (!slips.length || !withClose.length) return "No Close Saved";
+  const vals = withClose.map(b => { const v = clv(b); return v == null ? 0 : v; });
+  const avg = vals.reduce((s, n) => s + n, 0) / vals.length;
+  if (!Number.isFinite(avg) || Math.abs(avg) < 0.05) return "0.0%";
+  return avg.toFixed(1) + "%";
 }
 function clvListText(list){
   const graded = list.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
