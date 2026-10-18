@@ -1,25 +1,26 @@
-# GG report 2026-10-17
-# Yesterday 2026-10-16 graded. No pick cards created for 2026-10-17 in this run.
+# GG report 2026-10-18
+# Yesterday 2026-10-17 graded. No pick cards created for 2026-10-18 in this run.
 
-Analysis: CFB cashed both legs as Tulane forced six turnovers in a 31-17 win over Memphis, covering +7 and the Under 55.5. NBA preseason dogs covered their spreads (Bucks won outright, Raptors lost by 4, Celtics won by 5) but both unders missed in high-scoring games, sinking the SGPs. NHL dogs lost: Penguins fell 5-2 to Avalanche, Ducks lost 4-2 to Bruins. MLB ALCS Game 4 between Rays and Guardians was postponed by rain and not graded.
+Analysis: CFB underdogs went 4-0 as Tennessee covered +7.5 with a 26-10 win over Alabama, Florida covered +11.5 in a 27-24 victory over Texas, BYU covered +10.5 by beating Notre Dame 28-24, and the Alabama-Tennessee Under 50.5 cashed in a 36-point game. NHL was mixed with Jets covering +1.5 in a 3-2 loss, Islanders and Bruins winning their MLs, while Devils, Sabres and Kraken lost. MLB ALCS Game 5 saw the Rays win 7-3, sending all three Guardians bets to losses.
 
-Record 5-7-0  Profit $-24.54  Units -2.45u  CLV Matched Bet Price
+Record 7-6-0  Profit $5.62  Units 0.56u  CLV Matched Bet Price
 
-NHL | loss | Pittsburgh Penguins +1.5 | close -135 | -$10.00
-NHL | loss | Pittsburgh Penguins ML | close 180 | -$10.00 EDGE
-NHL | loss | Anaheim Ducks ML | close -105 | -$10.00
-CFB | win | Tulane +7 | close -112 | +$8.93 EDGE
-CFB | win | Memphis vs Tulane Under 55.5 | close -108 | +$9.26 EDGE
-NBA | win | Bucks +8.5 | close -110 | +$9.09 EDGE
-NBA | win | Raptors +9.5 | close -110 | +$9.09 EDGE
-NBA | win | Celtics +5.5 | close -110 | +$9.09
-NBA | loss | Bucks at Pacers Under 235.5 | close -110 | -$10.00
-NBA | loss | Raptors at Pistons Under 217.5 | close -110 | -$10.00
-NBA | loss | SGP Bucks +8.5 and Under | close 190 | -$10.00 EDGE
-NBA | loss | SGP Raptors +9.5 and Under | close 190 | -$10.00
+MLB | loss | Rays @ Guardians Under 6.5 | close -110 | -$10.00
+MLB | loss | Guardians ML | close -104 | -$10.00
+MLB | loss | SGP Guardians ML and Under 6.5 | close 190 | -$10.00
+NHL | win | Winnipeg Jets +1.5 | close -165 | +$6.06
+NHL | loss | New Jersey Devils ML | close 105 | -$10.00
+NHL | loss | Buffalo Sabres ML | close 120 | -$10.00
+NHL | win | New York Islanders ML | close 114 | +$11.40
+NHL | loss | Seattle Kraken +1.5 | close -160 | -$10.00
+NHL | win | Boston Bruins ML | close 118 | +$11.80
+CFB | win | Tennessee +7.5 | close -110 | +$9.09
+CFB | win | Florida +11.5 | close -110 | +$9.09
+CFB | win | BYU +10.5 | close -110 | +$9.09
+CFB | win | Alabama vs Tennessee Under 50.5 | close -110 | +$9.09
 
-2026-10-16 | NFL | No Picks
-2026-10-16 | CBB | Season Ended
-2026-10-16 | MLB | Game postponed (rain)
-No sport is Season Ended for current seasons. MLB last card date 2026-10-31. CFB 2027-01-25. NFL 2027-02-14. CBB 2027-04-05. NHL 2027-04-10. NBA 2027-04-11.
+2026-10-17 | NBA | No Picks
+2026-10-17 | NFL | No Picks
+2026-10-17 | CBB | Season Ended
+No sport is Season Ended for current seasons except CBB which has ended. MLB last card date 2026-10-31. CFB 2027-01-25. NFL 2027-02-14. CBB 2027-04-05. NHL 2027-04-10. NBA 2027-04-11.
 Unconfirmed end dates: CFB 2027-01-25, NFL 2027-02-14, CBB 2027-04-05, NHL 2027-04-10, NBA 2027-04-11.
