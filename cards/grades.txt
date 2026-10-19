@@ -223,3 +223,26 @@
 2026-10-17 | NBA | No Picks
 2026-10-17 | NFL | No Picks
 2026-10-17 | CBB | Season Ended
+2026-10-18 | RANGE | All Win 190.48 | All Lose -190.00
+2026-10-18 | CBB | Season Ended
+2026-10-18 | CFB | No Picks
+2026-10-18 | MLB | Rays @ Guardians Under 6.5 | close -118 | win | TB 3 CLE 1 | 8.47
+2026-10-18 | MLB | Guardians +1.5 | close -165 | loss | TB 3 CLE 1 | -10.00
+2026-10-18 | MLB | SGP Guardians +1.5 and Rays @ Guardians Under 6.5 | close 190 | loss | TB 3 CLE 1 | -10.00
+2026-10-18 | NBA | No Picks
+2026-10-18 | NFL | Houston Texans +2.5 | close -102 | win | HOU 34 JAX 31 | 9.80
+2026-10-18 | NFL | Cleveland Browns +3 | close -102 | win | CLE 13 BAL 10 | 9.80
+2026-10-18 | NFL | Philadelphia Eagles +3 | close -108 | loss | PHI 14 CAR 25 | -10.00
+2026-10-18 | NFL | Atlanta Falcons +1.5 | close -118 | loss | ATL 23 CHI 31 | -10.00
+2026-10-18 | NFL | New York Giants +1.5 | close -122 | loss | NYG 27 NO 34 | -10.00
+2026-10-18 | NFL | New York Jets +7.5 | close -112 | win | NYJ 19 NE 26 | 8.93
+2026-10-18 | NFL | Tampa Bay Buccaneers +2.5 | close -105 | loss | TB 19 PIT 26 | -10.00
+2026-10-18 | NFL | Tennessee Titans +6.5 | close -102 | win | TEN 26 IND 20 | 9.80
+2026-10-18 | NFL | Arizona Cardinals +12.5 | close -108 | win | ARI 18 LAR 16 | 9.26
+2026-10-18 | NFL | Las Vegas Raiders +5.5 | close -110 | win | LV 30 BUF 33 | 9.09
+2026-10-18 | NFL | Los Angeles Chargers +7.5 | close -112 | loss | LAC 6 KC 22 | -10.00
+2026-10-18 | NFL | Dallas Cowboys +1.5 | close -118 | loss | DAL 13 GB 23 | -10.00
+2026-10-18 | NHL | Columbus Blue Jackets +1.5 | close -160 | win | MIN 2 CBJ 1 | 6.25
+2026-10-18 | NHL | Calgary Flames +1.5 | close -140 | win | CGY 3 CAR 2 | 7.14
+2026-10-18 | NHL | Columbus Blue Jackets ML | close +160 | loss | MIN 2 CBJ 1 | -10.00
+2026-10-18 | NHL | Calgary Flames ML | close +180 | win | CGY 3 CAR 2 | 18.00
