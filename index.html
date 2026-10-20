@@ -1714,6 +1714,32 @@ function priceProfit(result, price, stake){
   const won = price > 0 ? stake * price / 100 : stake * 100 / Math.abs(price);
   return Number.isFinite(won) ? won : null;
 }
+let publishedBooks = {};
+function bookStore(){
+  let all = {};
+  try { all = JSON.parse(localStorage.getItem("gg-book-prices") || "{}"); } catch (e) { all = {}; }
+  Object.keys(publishedBooks || {}).forEach(day => {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(day)) return;
+    const src = publishedBooks[day] || {};
+    const dest = all[day] || (all[day] = {});
+    Object.keys(src).forEach(sport => {
+      const games = dest[sport] || (dest[sport] = {});
+      Object.keys(src[sport] || {}).forEach(label => {
+        const books = games[label] || (games[label] = {});
+        Object.keys(src[sport][label] || {}).forEach(book => {
+          const saved = books[book] || {};
+          const pub = src[sport][label][book] || {};
+          const merged = Object.assign({}, pub, saved);
+          Object.keys(pub).forEach(market => {
+            if (!saved[market] || !saved[market].length) merged[market] = pub[market];
+          });
+          books[book] = merged;
+        });
+      });
+    });
+  });
+  return all;
+}
 function rememberBooks(sport, games){
   if (!Array.isArray(games) || !games.length) return;
   let all = {};
@@ -1743,7 +1769,7 @@ function rememberBooks(sport, games){
 }
 function savedBookPrice(slip, book){
   let all = {};
-  try { all = JSON.parse(localStorage.getItem("gg-book-prices") || "{}"); } catch (e) { return null; }
+  try { all = bookStore(); } catch (e) { return null; }
   const day = all[String(slip.date || "").slice(0, 10)];
   const games = day && day[String(slip.sport || "").toUpperCase()];
   if (!games) return null;
@@ -3242,6 +3268,7 @@ setInterval(refreshTodayCard, 60000);
 (async () => { const k = (document.getElementById("oddskey") || {}).value || ""; if (k.trim()) { paidKey = true; } })();
 loadDriveCardForCalendar();
 setInterval(loadDriveCardForCalendar, 60000);
+fetch("cards/book-prices.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => { if (data) { publishedBooks = data; render(); } }).catch(() => {});
 fetch("cards/closes.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
   const store = closeStore();
   text.split(/\n/).forEach(line => {
