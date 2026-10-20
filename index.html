@@ -2808,8 +2808,13 @@ async function buildReportPages(mode) {
     ctx.font = "16px sans-serif";
     const label = (pageRows.find(r => r.head) || {}).cells ? (pageRows.find(r => r.head).cells[0] || "") : "";
     ctx.fillText((landscape ? "Ledger landscape" : "Ledger portrait") + "  " + (label || ("Page " + (pageIndex + 1))) + "  " + (pageIndex + 1) + " of " + pages.length, margin, 108);
-    let y = 140;
-    if (pageIndex === 0) summary.forEach(line => { ctx.fillText(line, margin, y); y += 24; });
+    if (pageIndex === 0) {
+      let lineY = 140;
+      summary.forEach(line => { ctx.fillText(line, margin, lineY); lineY += 24; });
+    }
+    const iconBottom = 148;
+    let y = 140 + summary.length * 24;
+    if (y - 10 < iconBottom + 18) y = iconBottom + 28;
     const section = label === "Date" || !label ? (pageIndex === 0 ? "Pending" : "Graded") : label;
     y += 8;
     ctx.strokeStyle = "#39ff14";
