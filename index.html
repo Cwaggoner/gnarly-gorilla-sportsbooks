@@ -106,6 +106,9 @@ input, select, button, textarea { background:#0e0e0e; color:var(--text); border:
 #seasons table { margin-bottom:28px; }
 .season-hold, .season-hold td { border:0; background:transparent; box-shadow:none; width:100%; }
 .season-hold td { height:18px; width:50%; }
+table.season-hold.filled { border:1px solid #39ff14; border-radius:10px; overflow:hidden; margin-top:8px; }
+table.season-hold.filled th, table.season-hold.filled td { border-bottom:1px solid #39ff14; height:auto; width:auto; color:#d6ffd0; font-size:13px; text-align:left; vertical-align:middle; padding:8px; }
+table.season-hold.filled th { color:#39ff14; background:#102010; }
 #reportDay { color-scheme:dark; }
 #reportDay::-webkit-calendar-picker-indicator { filter:invert(1); opacity:1; cursor:pointer; }
 textarea { width:100%; min-height:120px; font:13px/1.4 ui-monospace, monospace; }
@@ -1330,6 +1333,37 @@ async function nightlyUpdate(){
 function inSlipWindow(date){ date = String(date || "").slice(0, 10); return date === todayEt() || date === yesterday(); }
 let SEASON_END = {MLB:"2026-10-31", CFB:"2027-01-25", NFL:"2027-02-14", CBB:"2027-04-05", NHL:"2027-04-10", NBA:"2027-04-11"};
 let SEASON_START = {MLB:"2026-03-25", CFB:"2026-08-27", NFL:"2026-09-09", CBB:"2026-11-02", NHL:"2026-09-29", NBA:"2026-10-20"};
+let pickSlate = null;
+function slateHtml(){
+  const games = pickSlate && Array.isArray(pickSlate.games) ? pickSlate.games : [];
+  if (!games.length) return "<table class='season-hold'><tbody><tr><td></td><td></td></tr><tr><td></td><td></td></tr></tbody></table>";
+  const rows = games.map(game => {
+    const away = game.away || {};
+    const home = game.home || {};
+    const when = game.start ? formatTime(game.start, false) : "";
+    const records = [away.name, away.record].filter(Boolean).join(" ") + " / " + [home.name, home.record].filter(Boolean).join(" ");
+    return "<tr><td>" + esc(game.sport + " " + game.game) + "</td><td>" + esc(when) + "</td><td>" + esc(game.location || "") + "</td><td>" + esc(records) + "</td></tr>";
+  }).join("");
+  return "<table class='season-hold filled'><thead><tr><th>Game</th><th>Time</th><th>Location</th><th>Record</th></tr></thead><tbody>" + rows + "</tbody></table>";
+}
+function drawPickSlate(){
+  const old = document.querySelector("#seasons table.season-hold");
+  if (!old) return;
+  const holder = document.createElement("div");
+  holder.innerHTML = slateHtml();
+  old.replaceWith(holder.firstElementChild);
+}
+async function loadPickSlate(){
+  try {
+    const res = await fetch("cards/pick-slate.json?ts=" + Date.now());
+    if (!res.ok) return;
+    const data = await res.json();
+    if (!data || !Array.isArray(data.games) || !data.games.length) return;
+    const same = pickSlate && pickSlate.date === data.date && JSON.stringify(pickSlate.games) === JSON.stringify(data.games);
+    pickSlate = data;
+    if (!same) drawPickSlate();
+  } catch (err) {}
+}
 function seasonEnded(sport){ const end = SEASON_END[String(sport || "").toUpperCase()]; return !!end && todayEt() > end; }
 function showSeasons(checked){
   const box = document.getElementById("seasons");
@@ -1347,7 +1381,7 @@ function showSeasons(checked){
   });
   wave += " H448";
   const ekg = "<span class='ekg' data-ms='" + (parseFloat(pulse) * 1000) + "'><svg viewBox='0 0 448 36' preserveAspectRatio='none' aria-label='Season pulse'><defs><clipPath id='ekgclip'><rect class='ekg-clip' x='0' y='0' width='0' height='36'></rect></clipPath></defs><path class='trace' clip-path='url(#ekgclip)' d='" + wave + "' style='stroke:" + color + "'></path></svg></span>";
-  box.innerHTML = "<div class='section-head'><h2>Season Dates</h2><p class='warn slips-side'>Checked " + (checked || "2026-10-08") + ". NFL May, NHL July, MLB July, NBA August, CFB August, CBB September.</p></div><table><thead><tr><th colspan='4' style='text-align:center'>" + ekg + "</th></tr><tr><th>Sport</th><th>Start</th><th>Last Card</th><th>Status</th></tr></thead><tbody>" + rows + "</tbody></table><table class='season-hold'><tbody><tr><td></td><td></td></tr><tr><td></td><td></td></tr></tbody></table>";
+  box.innerHTML = "<div class='section-head'><h2>Season Dates</h2><p class='warn slips-side'>Checked " + (checked || "2026-10-08") + ". NFL May, NHL July, MLB July, NBA August, CFB August, CBB September.</p></div><table><thead><tr><th colspan='4' style='text-align:center'>" + ekg + "</th></tr><tr><th>Sport</th><th>Start</th><th>Last Card</th><th>Status</th></tr></thead><tbody>" + rows + "</tbody></table>" + slateHtml();
   startPulse();
 }
 let pulseFrame = 0;
@@ -2550,6 +2584,7 @@ async function refreshTodayCard(){
   const lines = text.split(/\n/).filter(line => line.trim().startsWith(today));
   drawCardAnalysis(lines.length ? lines.join("\n") : text);
   if (lines.length) addCardLines(lines.join("\n"), (document.getElementById("cardbook") || {}).value || "BetMGM");
+  loadPickSlate();
 }
 function gradeRows(text){
   return text.split(/\n/).map(l => l.trim()).filter(l => l && !l.startsWith("#")).map(l => {
@@ -3249,6 +3284,7 @@ tzSelect.onchange = () => {
   form.date.value = todayEt();
   armMidnight();
   showClock();
+  drawPickSlate();
   if (openDate) openDay(openDate);
   else render();
 };
@@ -3257,6 +3293,7 @@ hourBtn.textContent = "12hr/24hr Toggle";
 hourBtn.onclick = () => {
   localStorage.setItem("gg-hour", hour12() ? "24" : "12");
   showClock();
+  drawPickSlate();
   if (openDate) openDay(openDate);
   else render();
 };
@@ -3273,6 +3310,7 @@ document.getElementById("nextMonth").onclick = () => { monthCursor.setMonth(mont
 });
 render();
 loadSeasons();
+loadPickSlate();
 fetch("cards/calendar.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => { if (data && data.dates) publishedCalendar = data.dates; render(); }).catch(() => {});
 fetch("cards/report.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
   let day = ((text.match(/Yesterday\s+(\d{4}-\d{2}-\d{2})/) || [])[1]) || "";
