@@ -1083,6 +1083,7 @@ function slipsForDay(date){
   const extra = load().concat(loadGrade()).filter(b => keep(b) && !seen.has([b.sport, b.pick].join("|")));
   return file.concat(extra);
 }
+function drawCalendar(){
   const mine = personalCalendar() || {};
   const board = Object.assign({}, publishedCalendar);
   Object.keys(mine).forEach(date => { if (mine[date] && Number.isFinite(Number(mine[date].pl))) board[date] = mine[date]; });
