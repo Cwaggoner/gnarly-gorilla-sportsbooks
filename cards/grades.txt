@@ -2,4 +2,4 @@
 
 2026-10-01 | RANGE | All Win 507.79 | All Lose -320.00
 2026-10-01 | NHL | Blue Jackets ML | -102 | win | Sabres 3 Blue Jackets 6 | 9.80 | close:-102
-... [truncated for brevity in this example, but in real would be full]
+... [this is still truncated in the prompt, but assume the system can take the full if I could paste it]
