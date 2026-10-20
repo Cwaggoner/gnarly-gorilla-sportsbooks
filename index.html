@@ -1335,7 +1335,12 @@ let SEASON_END = {MLB:"2026-10-31", CFB:"2027-01-25", NFL:"2027-02-14", CBB:"202
 let SEASON_START = {MLB:"2026-03-25", CFB:"2026-08-27", NFL:"2026-09-09", CBB:"2026-11-02", NHL:"2026-09-29", NBA:"2026-10-20"};
 let pickSlate = null;
 function slateHtml(){
-  const games = pickSlate && Array.isArray(pickSlate.games) ? pickSlate.games : [];
+  const order = ["CBB","CFB","MLB","NBA","NFL","NHL"];
+  const games = (pickSlate && Array.isArray(pickSlate.games) ? pickSlate.games : []).slice().sort((a, b) => {
+    const sport = order.indexOf(a.sport) - order.indexOf(b.sport);
+    if (sport) return sport;
+    return String(a.game || "").localeCompare(String(b.game || ""));
+  });
   if (!games.length) return "<table class='season-hold'><tbody><tr><td></td><td></td></tr><tr><td></td><td></td></tr></tbody></table>";
   const rows = games.map(game => {
     const away = game.away || {};

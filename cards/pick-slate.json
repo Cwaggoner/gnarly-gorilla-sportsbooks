@@ -3,17 +3,59 @@
   "source": "ESPN scoreboard, no odds key",
   "games": [
     {
-      "sport": "NHL",
-      "game": "San Jose Sharks at Montreal Canadiens",
+      "sport": "CFB",
+      "game": "Middle Tennessee Blue Raiders at Florida International Panthers",
       "start": "2026-10-20T23:00Z",
-      "location": "Bell Centre, Montreal, Quebec",
+      "location": "Pitbull Stadium, Miami, Florida",
       "away": {
-        "name": "San Jose Sharks",
-        "record": "4-4-1"
+        "name": "Middle Tennessee Blue Raiders",
+        "record": "3-3"
       },
       "home": {
-        "name": "Montreal Canadiens",
-        "record": "4-3-1"
+        "name": "Florida International Panthers",
+        "record": "3-3"
+      }
+    },
+    {
+      "sport": "CFB",
+      "game": "Missouri State Bears at Delaware Blue Hens",
+      "start": "2026-10-20T23:00Z",
+      "location": "Delaware Stadium, Newark, Delaware",
+      "away": {
+        "name": "Missouri State Bears",
+        "record": "2-4"
+      },
+      "home": {
+        "name": "Delaware Blue Hens",
+        "record": "2-4"
+      }
+    },
+    {
+      "sport": "NBA",
+      "game": "Oklahoma City Thunder at San Antonio Spurs",
+      "start": "2026-10-21T01:30Z",
+      "location": "Frost Bank Center, San Antonio, Texas",
+      "away": {
+        "name": "Oklahoma City Thunder",
+        "record": "0-0"
+      },
+      "home": {
+        "name": "San Antonio Spurs",
+        "record": "0-0"
+      }
+    },
+    {
+      "sport": "NBA",
+      "game": "Philadelphia 76ers at New York Knicks",
+      "start": "2026-10-20T23:00Z",
+      "location": "Madison Square Garden, New York, New York",
+      "away": {
+        "name": "Philadelphia 76ers",
+        "record": "0-0"
+      },
+      "home": {
+        "name": "New York Knicks",
+        "record": "0-0"
       }
     },
     {
@@ -28,34 +70,6 @@
       "home": {
         "name": "New York Islanders",
         "record": "4-3-1"
-      }
-    },
-    {
-      "sport": "NHL",
-      "game": "Los Angeles Kings at Washington Capitals",
-      "start": "2026-10-20T23:00Z",
-      "location": "Capital One Arena, Washington, District of Columbia",
-      "away": {
-        "name": "Los Angeles Kings",
-        "record": "0-4-2"
-      },
-      "home": {
-        "name": "Washington Capitals",
-        "record": "5-3-0"
-      }
-    },
-    {
-      "sport": "NHL",
-      "game": "Toronto Maple Leafs at Columbus Blue Jackets",
-      "start": "2026-10-20T23:00Z",
-      "location": "Nationwide Arena, Columbus, Ohio",
-      "away": {
-        "name": "Toronto Maple Leafs",
-        "record": "4-4-2"
-      },
-      "home": {
-        "name": "Columbus Blue Jackets",
-        "record": "3-4-0"
       }
     },
     {
@@ -87,59 +101,45 @@
       }
     },
     {
-      "sport": "NBA",
-      "game": "Philadelphia 76ers at New York Knicks",
+      "sport": "NHL",
+      "game": "Los Angeles Kings at Washington Capitals",
       "start": "2026-10-20T23:00Z",
-      "location": "Madison Square Garden, New York, New York",
+      "location": "Capital One Arena, Washington, District of Columbia",
       "away": {
-        "name": "Philadelphia 76ers",
-        "record": "0-0"
+        "name": "Los Angeles Kings",
+        "record": "0-4-2"
       },
       "home": {
-        "name": "New York Knicks",
-        "record": "0-0"
+        "name": "Washington Capitals",
+        "record": "5-3-0"
       }
     },
     {
-      "sport": "NBA",
-      "game": "Oklahoma City Thunder at San Antonio Spurs",
-      "start": "2026-10-21T01:30Z",
-      "location": "Frost Bank Center, San Antonio, Texas",
+      "sport": "NHL",
+      "game": "San Jose Sharks at Montreal Canadiens",
+      "start": "2026-10-20T23:00Z",
+      "location": "Bell Centre, Montreal, Quebec",
       "away": {
-        "name": "Oklahoma City Thunder",
-        "record": "0-0"
+        "name": "San Jose Sharks",
+        "record": "4-4-1"
       },
       "home": {
-        "name": "San Antonio Spurs",
-        "record": "0-0"
+        "name": "Montreal Canadiens",
+        "record": "4-3-1"
       }
     },
     {
-      "sport": "CFB",
-      "game": "Middle Tennessee Blue Raiders at Florida International Panthers",
+      "sport": "NHL",
+      "game": "Toronto Maple Leafs at Columbus Blue Jackets",
       "start": "2026-10-20T23:00Z",
-      "location": "Pitbull Stadium, Miami, Florida",
+      "location": "Nationwide Arena, Columbus, Ohio",
       "away": {
-        "name": "Middle Tennessee Blue Raiders",
-        "record": "3-3"
+        "name": "Toronto Maple Leafs",
+        "record": "4-4-2"
       },
       "home": {
-        "name": "Florida International Panthers",
-        "record": "3-3"
-      }
-    },
-    {
-      "sport": "CFB",
-      "game": "Missouri State Bears at Delaware Blue Hens",
-      "start": "2026-10-20T23:00Z",
-      "location": "Delaware Stadium, Newark, Delaware",
-      "away": {
-        "name": "Missouri State Bears",
-        "record": "2-4"
-      },
-      "home": {
-        "name": "Delaware Blue Hens",
-        "record": "2-4"
+        "name": "Columbus Blue Jackets",
+        "record": "3-4-0"
       }
     }
   ]
