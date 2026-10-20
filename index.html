@@ -1497,7 +1497,7 @@ function render(){
   document.getElementById("plotnote").textContent = settled.length + " settled slips plotted. " + bets.filter(b => b.result === "pending").length + " slips left to settle.";
   drawCalendar();
   const bookDay = chartSlips().filter(b => b.date === yesterday());
-  document.getElementById("breaks").innerHTML = "<h2>Graded Results By Sport And Book</h2><p class='api-note'>Yesterday, " + yesterday() + ". Updates when the grade file loads.</p>" + group(bookDay, "sport") + group(bookDay, "book") + "<h2 class='split-title'>Market Split</h2>" + group(bookDay, "type") + "<p class='api-note'>Graded slips only. A sport with no graded slips says No Picks. Other books say No Slips until that book has its own saved price.</p>";
+  document.getElementById("breaks").innerHTML = "<h2>Graded Results By Sport And Book</h2><p class='api-note'>Yesterday, " + yesterday() + ". Book prices are saved from the one Load Picks call. No new call after the game starts.</p>" + group(bookDay, "sport") + bookFigures(bookDay) + "<h2 class='split-title'>Market Split</h2>" + group(bookDay, "type") + "<p class='api-note'>Graded slips only. A sport with no graded slips says No Picks. A book says No Price Saved until that one call stored its price.</p>";
   if (!document.getElementById("oddscompare")) {
     const card = document.createElement("section");
     card.className = "card";
@@ -1600,6 +1600,7 @@ async function drawOddsCompare(force){
   for (const sport of sports) {
     const url = "https://api.the-odds-api.com/v4/sports/" + SPORT_KEY[sport] + "/odds?apiKey=" + encodeURIComponent(key) + "&regions=us,us2&markets=" + marketKey + "&oddsFormat=american";
     const games = await fetch(url).then(r => r.ok ? r.json() : []).catch(() => []);
+    rememberBooks(sport, Array.isArray(games) ? games : []);
     (Array.isArray(games) ? games : []).forEach(g => {
       if (!g || !g.away_team || !g.home_team) return;
       const gameDay = g.commence_time ? new Date(g.commence_time).toLocaleDateString("en-CA", {timeZone: siteZone()}) : "";
@@ -1703,6 +1704,83 @@ function wireCompare(){
     sport.onchange = () => { localStorage.setItem("gg-compare-sport", sport.value); filterCompare(); };
   }
   filterCompare();
+}
+function priceProfit(result, price, stake){
+  stake = Number(stake) || 10;
+  price = Number(price);
+  if (result === "push") return 0;
+  if (result === "loss") return -stake;
+  if (result !== "win" || !Number.isFinite(price) || price === 0) return null;
+  const won = price > 0 ? stake * price / 100 : stake * 100 / Math.abs(price);
+  return Number.isFinite(won) ? won : null;
+}
+function rememberBooks(sport, games){
+  if (!Array.isArray(games) || !games.length) return;
+  let all = {};
+  try { all = JSON.parse(localStorage.getItem("gg-book-prices") || "{}"); } catch (e) { all = {}; }
+  games.forEach(g => {
+    if (!g || !g.away_team || !g.home_team) return;
+    const day = g.commence_time ? new Date(g.commence_time).toLocaleDateString("en-CA", {timeZone: siteZone()}) : todayEt();
+    const sportName = String(sport || "").toUpperCase();
+    const label = g.away_team + " at " + g.home_team;
+    const dayRow = all[day] || (all[day] = {});
+    const sportRow = dayRow[sportName] || (dayRow[sportName] = {});
+    const entry = sportRow[label] || (sportRow[label] = {});
+    (g.bookmakers || []).forEach(bk => {
+      const name = Object.keys(BOOK_KEY).find(n => BOOK_KEY[n] === bk.key);
+      if (!name) return;
+      const book = entry[name] || (entry[name] = {});
+      (bk.markets || []).forEach(m => {
+        book[m.key] = (m.outcomes || []).map(o => ({name: o.name, price: o.price, point: o.point}));
+      });
+    });
+  });
+  const keep = new Date(todayEt() + "T12:00:00Z");
+  keep.setUTCDate(keep.getUTCDate() - 14);
+  const cutoff = keep.toISOString().slice(0, 10);
+  Object.keys(all).forEach(d => { if (d < cutoff) delete all[d]; });
+  localStorage.setItem("gg-book-prices", JSON.stringify(all));
+}
+function savedBookPrice(slip, book){
+  let all = {};
+  try { all = JSON.parse(localStorage.getItem("gg-book-prices") || "{}"); } catch (e) { return null; }
+  const day = all[String(slip.date || "").slice(0, 10)];
+  const games = day && day[String(slip.sport || "").toUpperCase()];
+  if (!games) return null;
+  const pick = String(slip.pick || "");
+  const label = Object.keys(games).find(k => k.split(" at ").every(team => pick.includes(team) || teamHit(pick, team)));
+  if (!label) return null;
+  const type = slip.type || betType(slip);
+  const market = type === "Total" ? "totals" : type === "Moneyline" ? "h2h" : "spreads";
+  const outcomes = ((games[label][book] || {})[market]) || [];
+  if (type === "Total") {
+    const side = /under/i.test(pick) ? "Under" : "Over";
+    const hit = outcomes.find(o => o.name === side);
+    return hit ? hit.price : null;
+  }
+  const hit = outcomes.find(o => pick.includes(o.name) || teamHit(pick, o.name));
+  return hit ? hit.price : null;
+}
+function bookFigures(slips){
+  const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
+  const map = {};
+  names.forEach(n => map[n] = {pl:0, n:0});
+  slips.forEach(b => {
+    if (b.result !== "win" && b.result !== "loss" && b.result !== "push") return;
+    const parlay = b.type === "SGP" || /\band\b/i.test(b.pick);
+    names.forEach(book => {
+      const price = parlay ? (book === "BetMGM" ? b.odds : null) : (savedBookPrice(b, book) || (book === "BetMGM" ? b.odds : null));
+      if (price == null || price === "") return;
+      const got = priceProfit(b.result, price, b.stake);
+      if (got == null) return;
+      map[book].pl += got;
+      map[book].n++;
+    });
+  });
+  return "<p>" + names.map(k => {
+    const v = map[k];
+    return esc(k) + ": " + (v.n ? moneyHtml(v.pl) + " (" + v.n + ")" : (slips.length ? "No Price Saved" : "No Slips"));
+  }).join(" | ") + "</p>";
 }
 function group(bets, key){
   const map = {};
@@ -1917,12 +1995,17 @@ function matchOutcome(outcomes, name, side){
   });
 }
 async function fetchOne(sportKey, bookKey, key){
-  const cacheKey = "gg-odds-" + sportKey + "-" + bookKey;
+  const allKey = "gg-odds-all-" + sportKey;
   try {
-    const cached = JSON.parse(sessionStorage.getItem(cacheKey) || "null");
-    if (cached && cached.games && cached.games.length && Date.now() - cached.at < 15 * 60 * 1000) return cached.games;
+    const cached = JSON.parse(sessionStorage.getItem(allKey) || "null");
+    if (cached && cached.games && cached.games.length && Date.now() - cached.at < 15 * 60 * 1000) {
+      const sportName = Object.keys(SPORT_KEY).find(s => SPORT_KEY[s] === sportKey) || "";
+      if (sportName) rememberBooks(sportName, cached.games);
+      return cached.games;
+    }
   } catch (e) {}
-  const url = "https://api.the-odds-api.com/v4/sports/" + sportKey + "/odds?apiKey=" + encodeURIComponent(key) + "&regions=us,us2&markets=spreads,totals,h2h&oddsFormat=american&bookmakers=" + bookKey;
+  const ids = Object.values(BOOK_KEY).join(",");
+  const url = "https://api.the-odds-api.com/v4/sports/" + sportKey + "/odds?apiKey=" + encodeURIComponent(key) + "&regions=us,us2&markets=spreads,totals,h2h&oddsFormat=american&bookmakers=" + ids;
   let res;
   try { res = await fetch(url); }
   catch (e) { res = await fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(url)); }
@@ -1930,8 +2013,10 @@ async function fetchOne(sportKey, bookKey, key){
   const games = await res.json();
   if (games && games.length) {
     const pack = JSON.stringify({at: Date.now(), games});
-    sessionStorage.setItem(cacheKey, pack);
+    sessionStorage.setItem(allKey, pack);
     localStorage.setItem("gg-board-" + sportKey + "-" + bookKey, pack);
+    const sportName = Object.keys(SPORT_KEY).find(s => SPORT_KEY[s] === sportKey) || "";
+    if (sportName) rememberBooks(sportName, games);
   }
   return games;
 }
