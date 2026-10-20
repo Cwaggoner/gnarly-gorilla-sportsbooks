@@ -1496,7 +1496,8 @@ function render(){
   try { drawCharts(); } catch (err) { document.getElementById("plotnote").textContent = "Chart failed. The rest of the page is still live."; }
   document.getElementById("plotnote").textContent = settled.length + " settled slips plotted. " + bets.filter(b => b.result === "pending").length + " slips left to settle.";
   drawCalendar();
-  document.getElementById("breaks").innerHTML = "<h2>Graded Results By Sport And Book</h2>" + group(settled, "sport") + group(settled, "book") + "<h2 class='split-title'>Market Split</h2>" + group(settled, "type") + "<p class='api-note'>This card uses graded slips only. Pending slips are not counted. A sport with no graded slips says No Picks.</p>";
+  const bookDay = chartSlips().filter(b => b.date === yesterday());
+  document.getElementById("breaks").innerHTML = "<h2>Graded Results By Sport And Book</h2><p class='api-note'>Yesterday, " + yesterday() + ". Updates when the grade file loads.</p>" + group(bookDay, "sport") + group(bookDay, "book") + "<h2 class='split-title'>Market Split</h2>" + group(bookDay, "type") + "<p class='api-note'>Graded slips only. A sport with no graded slips says No Picks. Other books say No Slips until that book has its own saved price.</p>";
   if (!document.getElementById("oddscompare")) {
     const card = document.createElement("section");
     card.className = "card";
@@ -1714,14 +1715,9 @@ function group(bets, key){
     map[k].pl += slipMoney(b);
     map[k].n++;
   });
-  if (key === "book") {
-    try {
-      const saved = JSON.parse(localStorage.getItem("gg-books-figures") || "null");
-      if (saved) Object.entries(saved).forEach(([k,v]) => { if (v.n) map[k] = v; });
-    } catch (e) {}
-  }
+  const empty = key === "sport" ? "No Picks" : "No Slips";
   const rows = Object.entries(map).sort((a,b) => a[0].localeCompare(b[0]));
-  return "<p>" + rows.map(([k,v]) => esc(k) + ": " + (v.n ? moneyHtml(v.pl) + " (" + v.n + ")" : "No Slips")).join(" | ") + "</p>";
+  return "<p>" + rows.map(([k,v]) => esc(k) + ": " + (v.n ? moneyHtml(v.pl) + " (" + v.n + ")" : empty)).join(" | ") + "</p>";
 }
 async function repriceBooks(){
   const key = oddskey.value.trim();
@@ -2293,7 +2289,6 @@ document.getElementById("commitkey").onclick = () => {
   const note = document.getElementById("pdfnote");
   note.textContent = key ? "Key committed. Refreshing Live Odds." : "Key cleared.";
   drawOddsCompare(true).catch(() => {});
-  repriceBooks().catch(() => {});
   if (typeof fillPickBoard === "function") fillPickBoard().catch(() => {});
 };
 document.getElementById("cardbook").onchange = () => {
