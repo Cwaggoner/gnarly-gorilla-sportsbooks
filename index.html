@@ -747,11 +747,25 @@ function sharpRead(rows){
   const best = names.slice(0, 4).join(", ");
   return "Play the price, not the name. The card is built the sharp way: dogs, named totals, and no short favorite. Best use of the card: " + (best || "the posted edges") + ". Those are the only plays with a real number and a reason. Pass a medium dog under 5 points and pass an estimated same-game parlay unless the straight leg is already the play. Shop the -110. If the book is -115 or shorter, pass it. Two legs in the same game is the max. This is a read of the card, not a guarantee.";
 }
-function drawCharts(bets){
-  const settled = bets.filter(b => b.result === "win" || b.result === "loss" || b.result === "push").slice().sort((a,b) => a.date.localeCompare(b.date) || a.id - b.id);
+function chartSlips(){
+  const all = load().concat(loadGrade()).concat(gradeFile);
+  const byKey = {};
+  all.forEach(b => {
+    if (!b || !b.pick || isNoPick(b) || /^RANGE$/i.test(b.pick)) return;
+    if (b.result !== "win" && b.result !== "loss" && b.result !== "push") return;
+    const key = [b.date, b.sport, b.pick].join("|");
+    const prior = byKey[key];
+    const incoming = Number(b.profit);
+    const had = Number(prior && prior.profit);
+    if (!prior || (Number.isFinite(incoming) && incoming !== 0 && (!Number.isFinite(had) || had === 0))) byKey[key] = b;
+  });
+  return Object.values(byKey).sort((a, b) => String(a.date).localeCompare(String(b.date)) || String(a.pick).localeCompare(String(b.pick)));
+}
+function drawCharts(){
+  const settled = chartSlips();
   const line = document.getElementById("profitChart");
   const bars = document.getElementById("sportChart");
-  drawBars(bars, bets);
+  drawBars(bars, settled);
   const h = bars.height;
   line.height = h;
   line.style.height = h + "px";
@@ -1479,7 +1493,7 @@ function render(){
     const rowCls = b.result === "win" ? "row-win" : b.result === "loss" ? "row-loss" : b.result === "pending" ? (edge ? "row-pending edge" : "row-pending") : (b.manual ? "manual" : b.fromCard ? "fromcard" : "");
     return head + "<tr" + (rowCls ? " class='" + rowCls + "'" : "") + "><td>" + b.date + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td>" + esc(b.pick) + "</td><td>" + (b.odds === "" || b.odds == null ? (b.close || -110) : b.odds) + "</td><td class='col-close'>" + (b.close === "" || b.close == null ? dash : b.close) + "</td><td class='" + (cv > 0 ? "win" : cv < 0 ? "loss" : "") + "'>" + clvText(b) + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='result " + cls + "'>" + b.result + "</td><td class='" + cls + "'>" + (b.result === "pending" ? dash : moneyHtml(p)) + "</td><td>" + grade + " <button data-edit='" + b.id + "'>Edit</button> <button class='danger' data-del='" + b.id + "'>Delete</button></td></tr>";
   }).join("") || "<tr><td colspan='12'>No bets yet.</td></tr>";
-  try { drawCharts(gradeFile.concat(bets)); } catch (err) { document.getElementById("plotnote").textContent = "Chart failed. The rest of the page is still live."; }
+  try { drawCharts(); } catch (err) { document.getElementById("plotnote").textContent = "Chart failed. The rest of the page is still live."; }
   document.getElementById("plotnote").textContent = settled.length + " settled slips plotted. " + bets.filter(b => b.result === "pending").length + " slips left to settle.";
   drawCalendar();
   document.getElementById("breaks").innerHTML = "<h2>Graded Results By Sport And Book</h2>" + group(settled, "sport") + group(settled, "book") + "<h2 class='split-title'>Market Split</h2>" + group(settled, "type") + "<p class='api-note'>This card uses graded slips only. Pending slips are not counted. A sport with no graded slips says No Picks.</p>";
@@ -3045,11 +3059,11 @@ document.getElementById("plot").onclick = () => {
   note.textContent = "Updating CLV for every sport...";
   fillChartCloses().then(filled => {
     const bets = filtered(load());
-    const settled = bets.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
-    drawCharts(load().concat(loadGrade()));
+    drawCharts();
+    const plotted = chartSlips();
     const pending = bets.filter(b => b.result === "pending").length;
-    const sports = [...new Set(bets.map(b => String(b.sport || "").trim().toUpperCase()))].filter(Boolean);
-    note.textContent = (settled.length ? settled.length + " settled slips plotted." : "No settled slips yet.") + " " + pending + " slips left to settle. CLV checked for " + sports.join(", ") + "." + (filled ? " " + filled + " closes saved." : "");
+    const sports = [...new Set(plotted.map(b => String(b.sport || "").trim().toUpperCase()))].filter(Boolean);
+    note.textContent = (plotted.length ? plotted.length + " settled slips plotted." : "No settled slips yet.") + " " + pending + " slips left to settle. CLV checked for " + sports.join(", ") + "." + (filled ? " " + filled + " closes saved." : "");
   }).catch(err => { note.textContent = err.message || "CLV update failed."; });
 };
 document.getElementById("canceledit").onclick = event => {
