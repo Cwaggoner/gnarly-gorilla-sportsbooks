@@ -1642,7 +1642,7 @@ async function drawOddsCompare(force){
     wireCompare();
     return;
   }
-  if (!force && wantToday && todayCache.includes("<table")) {
+  if (!force && wantToday && cacheHasTimes(todayCache)) {
     box.innerHTML = todayCache;
     wireCompare();
     return;
@@ -1687,7 +1687,9 @@ async function drawOddsCompare(force){
         const under = (mk.outcomes || []).find(o => o.name === "Under");
         return (over ? over.point + " " + over.price : "-") + " / " + (under ? under.price : "-");
       });
-      rows.push({sport, label: g.away_team + " at " + g.home_team, start: g.commence_time || "", cells});
+      const known = gameStarts()[sport + " " + g.away_team + " at " + g.home_team] || "";
+      const start = g.commence_time || known;
+      rows.push({sport, label: g.away_team + " at " + g.home_team, start: start, cells});
     });
   }
   const sportOrder = ["CBB","CFB","MLB","NBA","NFL","NHL"];
@@ -1711,6 +1713,9 @@ async function drawOddsCompare(force){
     wireCompare();
     return;
   }
+  const startMap = gameStarts();
+  rows.forEach(r => { if (r.start) startMap[r.sport + " " + r.label] = r.start; });
+  saveGameStarts(startMap);
   table = "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>" + (wantToday ? "Today" : "Yesterday") + ". " + label + ". " + select + "</p><table class='compare'><thead>" + head + "</thead><tbody>" + body + "</tbody></table>";
   localStorage.setItem("gg-compare-stamp-" + market, day);
   localStorage.setItem("gg-compare-html-" + market, table);
@@ -1764,11 +1769,57 @@ function ensureOddsTimeColumn(){
     game.insertAdjacentElement("afterend", td);
   });
 }
-function paintOddsTimes(){
-  document.querySelectorAll("#oddscompare td.gametime").forEach(td => {
-    if (td.dataset.start) td.textContent = formatTime(td.dataset.start, false);
-  });
+function cacheHasTimes(html){
+  return /data-start=['"][^'"]+['"]/.test(html || "");
 }
+function gameStarts(){
+  try { return JSON.parse(localStorage.getItem("gg-game-starts") || "{}"); } catch (e) { return {}; }
+}
+function saveGameStarts(map){
+  try { localStorage.setItem("gg-game-starts", JSON.stringify(map || {})); } catch (e) {}
+}
+function seedBoardStarts(){
+  const map = gameStarts();
+  Object.keys(window.__ggBoards || {}).forEach(market => {
+    const hold = document.createElement("div");
+    hold.innerHTML = window.__ggBoards[market] || "";
+    hold.querySelectorAll("td.gametime").forEach(td => {
+      const label = ((td.previousElementSibling || {}).textContent || "").trim();
+      if (label && td.dataset.start) map[label] = td.dataset.start;
+    });
+  });
+  ["h2h","spreads","totals"].forEach(market => {
+    try {
+      const raw = JSON.parse(localStorage.getItem("gg-odds-raw-" + market) || "null");
+      (raw && raw.rows || []).forEach(r => {
+        if (r && r.start) map[(r.sport ? r.sport + " " : "") + r.label] = r.start;
+      });
+    } catch (e) {}
+  });
+  saveGameStarts(map);
+  return map;
+}
+function applyGameStarts(){
+  const map = seedBoardStarts();
+  document.querySelectorAll("#oddscompare tbody tr").forEach(tr => {
+    const game = tr.querySelector("td");
+    if (!game) return;
+    let td = tr.querySelector(".gametime");
+    if (!td) {
+      td = document.createElement("td");
+      td.className = "gametime";
+      game.insertAdjacentElement("afterend", td);
+    }
+    const label = (game.textContent || "").trim();
+    const start = td.dataset.start || map[label] || "";
+    if (!start) return;
+    td.dataset.start = start;
+    map[label] = start;
+    td.textContent = formatTime(start, false);
+  });
+  saveGameStarts(map);
+}
+function paintOddsTimes(){ applyGameStarts(); }
 function sortOddsRows(){
   const order = ["CBB","CFB","MLB","NBA","NFL","NHL"];
   const tbody = document.querySelector("#oddscompare tbody");
@@ -1839,7 +1890,7 @@ function wireCompare(){
   }
   filterCompare();
   ensureOddsTimeColumn();
-  paintOddsTimes();
+  applyGameStarts();
   sortOddsRows();
 }
 function priceProfit(result, price, stake){
