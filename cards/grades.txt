@@ -1,23 +1,172 @@
 # file: grades
 
-2026-10-01 | NHL | No Picks
+2026-10-01 | RANGE | All Win 507.79 | All Lose -320.00
+2026-10-01 | NHL | Blue Jackets ML | -102 | win | Sabres 3 Blue Jackets 6 | 9.80 | close:-102
+2026-10-01 | NHL | Sabres at Blue Jackets Under 6.5 | -135 | loss | 9 | -10.00 | close:-135
+2026-10-01 | NHL | SGP Blue Jackets ML and Sabres at Blue Jackets Under 6.5 | 245 | loss | Sabres 3 Blue Jackets 6 | -10.00 | close:245
+2026-10-01 | NHL | Flyers ML | 150 | loss | Flyers 2 Devils 3 | -10.00 | close:150
+2026-10-01 | NHL | Flyers at Devils Under 5.5 | 100 | win | 5 | 10.00 | close:100
+2026-10-01 | NHL | SGP Flyers ML and Flyers at Devils Under 5.5 | 400 | loss | Flyers 2 Devils 3 | -10.00 | close:400
+2026-10-01 | NHL | Rangers ML | 124 | win | Lightning 1 Rangers 5 | 12.40 | close:124
+2026-10-01 | NHL | Lightning at Rangers Under 5.5 | 100 | loss | 6 | -10.00 | close:100
+2026-10-01 | NHL | SGP Rangers ML and Lightning at Rangers Under 5.5 | 348 | loss | Lightning 1 Rangers 5 | -10.00 | close:348
+2026-10-01 | NHL | Predators ML | 124 | loss | Wild 3 Predators 1 | -10.00 | close:124
+2026-10-01 | NHL | Wild at Predators Under 6.5 | -125 | win | 4 | 8.00 | close:-125
+2026-10-01 | NHL | SGP Predators ML and Wild at Predators Under 6.5 | 303 | loss | Wild 3 Predators 1 | -10.00 | close:303
+2026-10-01 | NHL | Kraken ML | -108 | win | Kraken 6 Flames 1 | 9.26 | close:-108
+2026-10-01 | NHL | Kraken at Flames Under 5.5 | 105 | loss | 7 | -10.00 | close:105
+2026-10-01 | NHL | SGP Kraken ML and Kraken at Flames Under 5.5 | 295 | loss | Kraken 6 Flames 1 | -10.00 | close:295
+2026-10-01 | NHL | Blackhawks +1.5 | -130 | loss | Blackhawks 0 Mammoth 6 | -10.00 | close:-130
+2026-10-01 | NHL | Blackhawks at Mammoth Under 6.5 | -115 | win | 6 | 8.70 | close:-115
+2026-10-01 | NHL | SGP Blackhawks +1.5 and Blackhawks at Mammoth Under 6.5 | 231 | loss | Blackhawks 0 Mammoth 6 | -10.00 | close:231
+2026-10-01 | NHL | Sharks ML | 124 | win | Panthers 3 Sharks 4 | 12.40 | close:124
+2026-10-01 | NHL | Panthers at Sharks Under 6.5 | -115 | loss | 7 | -10.00 | close:-115
+2026-10-01 | NHL | SGP Sharks ML and Panthers at Sharks Under 6.5 | 319 | loss | Panthers 3 Sharks 4 | -10.00 | close:319
+2026-10-01 | NHL | Canucks +1.5 | -125 | loss | Oilers 9 Canucks 7 | -10.00 | close:-125
+2026-10-01 | NHL | Oilers at Canucks Under 6.5 | 105 | loss | 16 | -10.00 | close:105
+2026-10-01 | NHL | SGP Canucks +1.5 and Oilers at Canucks Under 6.5 | 269 | loss | Oilers 9 Canucks 7 | -10.00 | close:269
+2026-10-01 | MLB | Braves ML | -114 | win | Phillies 2 Braves 6 | 8.77 | close:-114
+2026-10-01 | MLB | Phillies at Braves Under 7.5 | -118 | loss | 8 | -10.00 | close:-118
+2026-10-01 | MLB | SGP Braves ML and Phillies at Braves Under 7.5 | 247 | loss | Phillies 2 Braves 6 | -10.00 | close:247
+2026-10-01 | NFL | Browns +2.5 | 100 | win | Steelers 24 Browns 27 | 10.00 | close:100
+2026-10-01 | NFL | Steelers at Browns Under 38.5 | -115 | loss | 51 | -10.00 | close:-115
+2026-10-01 | NFL | SGP Browns +2.5 and Steelers at Browns Under 38.5 | 274 | loss | Steelers 24 Browns 27 | -10.00 | close:274
+2026-10-01 | CFB | Western KY +1.5 | -105 | loss | Western KY 13 New Mexico St 34 | -10.00 | close:-105
+2026-10-01 | CFB | Tulsa +3 | -118 | win | North Texas 45 Tulsa 44 | 8.47 | close:-118
 2026-10-01 | NBA | No Picks
-2026-10-01 | MLB | No Picks
-2026-10-01 | NFL | No Picks
 2026-10-01 | CBB | No Picks
-2026-10-01 | CFB | No Picks
-2026-10-02 | NHL | No Picks
+2026-10-02 | RANGE | All Win 298.90 | All Lose -180.00
+2026-10-02 | NHL | Rangers ML | 105 | win | Rangers 2 Red Wings 0 | 10.50 | close:105
+2026-10-02 | NHL | Rangers at Red Wings Under 5.5 | 114 | win | 2 | 11.40 | close:114
+2026-10-02 | NHL | SGP Rangers ML and Rangers at Red Wings Under 5.5 | 339 | win | Rangers 2 Red Wings 0 | 33.90 | close:339
+2026-10-02 | NHL | Capitals ML | 124 | win | Capitals 5 Hurricanes 2 | 12.40 | close:124
+2026-10-02 | NHL | Capitals at Hurricanes Under 6.5 | -130 | loss | 7 | -10.00 | close:-130
+2026-10-02 | NHL | SGP Capitals ML and Capitals at Hurricanes Under 6.5 | 296 | loss | Capitals 5 Hurricanes 2 | -10.00 | close:296
+2026-10-02 | NHL | Bruins ML | 102 | win | Bruins 4 Jets 3 | 10.20 | close:102
+2026-10-02 | NHL | Bruins at Jets Under 5.5 | 105 | loss | 7 | -10.00 | close:105
+2026-10-02 | NHL | SGP Bruins ML and Bruins at Jets Under 5.5 | 314 | loss | Bruins 4 Jets 3 | -10.00 | close:314
+2026-10-02 | NHL | Blues ML | 154 | win | Blues 4 Stars 0 | 15.40 | close:154
+2026-10-02 | NHL | Blues at Stars Under 5.5 | 114 | win | 4 | 11.40 | close:114
+2026-10-02 | NHL | SGP Blues ML and Blues at Stars Under 5.5 | 444 | win | Blues 4 Stars 0 | 44.40 | close:444
+2026-10-02 | NHL | Ducks +1.5 | -142 | win | Ducks 4 Golden Knights 3 | 7.04 | close:-142
+2026-10-02 | NHL | Ducks at Golden Knights Under 6.5 | 110 | loss | 7 | -10.00 | close:110
+2026-10-02 | NHL | SGP Ducks +1.5 and Ducks at Golden Knights Under 6.5 | 258 | loss | Ducks 4 Golden Knights 3 | -10.00 | close:258
+2026-10-02 | CFB | Pitt +1.5 | -118 | win | Pitt 35 Virginia Tech 33 | 8.47 | close:-118
+2026-10-02 | CFB | Delaware +7 | -110 | loss | Liberty 30 Delaware 14 | -10.00 | close:-110
+2026-10-02 | CFB | Northwestern +3 | -115 | win | Penn State 13 Northwestern 34 | 8.70 | close:-115
 2026-10-02 | NBA | No Picks
 2026-10-02 | MLB | No Picks
 2026-10-02 | NFL | No Picks
 2026-10-02 | CBB | No Picks
-2026-10-02 | CFB | No Picks
-2026-10-03 | NHL | No Picks
+2026-10-03 | RANGE | All Win 1288.98 | All Lose -1050.00
+2026-10-03 | NHL | Blackhawks +1.5 | -122 | win | Blackhawks 3 Sabres 4 | 8.20 | close:-122
+2026-10-03 | NHL | Blackhawks at Sabres Under 5.5 | 114 | loss | 7 | -10.00 | close:114
+2026-10-03 | NHL | SGP Blackhawks +1.5 and Blackhawks at Sabres Under 5.5 | 289 | loss | Blackhawks 3 Sabres 4 | -10.00 | close:289
+2026-10-03 | NHL | Penguins ML | -105 | win | Canadiens 5 Penguins 6 | 9.52 | close:-105
+2026-10-03 | NHL | Canadiens at Penguins Under 6.5 | -108 | loss | 11 | -10.00 | close:-108
+2026-10-03 | NHL | SGP Penguins ML and Canadiens at Penguins Under 6.5 | 276 | loss | Canadiens 5 Penguins 6 | -10.00 | close:276
+2026-10-03 | NHL | Capitals ML | 170 | loss | Capitals 1 Lightning 3 | -10.00 | close:170
+2026-10-03 | NHL | Capitals at Lightning Under 6.5 | -125 | win | 4 | 8.00 | close:-125
+2026-10-03 | NHL | SGP Capitals ML and Capitals at Lightning Under 6.5 | 386 | loss | Capitals 1 Lightning 3 | -10.00 | close:386
+2026-10-03 | NHL | Senators ML | -105 | win | Senators 3 Maple Leafs 2 | 9.52 | close:-105
+2026-10-03 | NHL | Senators at Maple Leafs Under 6.5 | -130 | win | 5 | 7.69 | close:-130
+2026-10-03 | NHL | SGP Senators ML and Senators at Maple Leafs Under 6.5 | 245 | win | Senators 3 Maple Leafs 2 | 24.50 | close:245
+2026-10-03 | NHL | Flyers ML | 114 | loss | Hurricanes 3 Flyers 2 | -10.00 | close:114
+2026-10-03 | NHL | Hurricanes at Flyers Under 5.5 | 105 | win | 5 | 10.50 | close:105
+2026-10-03 | NHL | SGP Flyers ML and Hurricanes at Flyers Under 5.5 | 339 | loss | Hurricanes 3 Flyers 2 | -10.00 | close:339
+2026-10-03 | NHL | Blue Jackets ML | -102 | loss | Mammoth 4 Blue Jackets 1 | -10.00 | close:-102
+2026-10-03 | NHL | Mammoth at Blue Jackets Under 6.5 | -135 | win | 5 | 7.41 | close:-135
+2026-10-03 | NHL | SGP Blue Jackets ML and Mammoth at Blue Jackets Under 6.5 | 245 | loss | Mammoth 4 Blue Jackets 1 | -10.00 | close:245
+2026-10-03 | NHL | Kraken +1.5 | -142 | loss | Kraken 1 Oilers 3 | -10.00 | close:-142
+2026-10-03 | NHL | Kraken at Oilers Under 6.5 | 102 | win | 4 | 10.20 | close:102
+2026-10-03 | NHL | SGP Kraken +1.5 and Kraken at Oilers Under 6.5 | 244 | loss | Kraken 1 Oilers 3 | -10.00 | close:244
+2026-10-03 | NHL | Islanders ML | 114 | win | Devils 0 Islanders 6 | 11.40 | close:114
+2026-10-03 | NHL | Devils at Islanders Under 5.5 | 110 | loss | 6 | -10.00 | close:110
+2026-10-03 | NHL | SGP Islanders ML and Devils at Islanders Under 5.5 | 349 | loss | Devils 0 Islanders 6 | -10.00 | close:349
+2026-10-03 | NHL | Bruins +1.5 | -148 | loss | Bruins 1 Wild 4 | -10.00 | close:-148
+2026-10-03 | NHL | Bruins at Wild Under 6.5 | -125 | win | 5 | 8.00 | close:-125
+2026-10-03 | NHL | SGP Bruins +1.5 and Bruins at Wild Under 6.5 | 202 | loss | Bruins 1 Wild 4 | -10.00 | close:202
+2026-10-03 | NHL | Predators ML | 120 | win | Stars 1 Predators 2 | 12.00 | close:120
+2026-10-03 | NHL | Stars at Predators Under 6.5 | -135 | win | 3 | 7.41 | close:-135
+2026-10-03 | NHL | SGP Predators ML and Stars at Predators Under 6.5 | 283 | win | Stars 1 Predators 2 | 28.30 | close:283
+2026-10-03 | NHL | Blues +1.5 | -105 | loss | Blues 1 Avalanche 6 | -10.00 | close:-105
+2026-10-03 | NHL | Blues at Avalanche Under 6.5 | -118 | loss | 7 | -10.00 | close:-118
+2026-10-03 | NHL | SGP Blues +1.5 and Blues at Avalanche Under 6.5 | 261 | loss | Blues 1 Avalanche 6 | -10.00 | close:261
+2026-10-03 | NHL | Flames ML | -110 | loss | Flames 1 Canucks 4 | -10.00 | close:-110
+2026-10-03 | NHL | Flames at Canucks Under 6.5 | -130 | win | 5 | 7.69 | close:-130
+2026-10-03 | NHL | SGP Flames ML and Flames at Canucks Under 6.5 | 238 | loss | Flames 1 Canucks 4 | -10.00 | close:238
+2026-10-03 | NHL | Kings ML | -110 | loss | Kings 4 Sharks 5 | -10.00 | close:-110
+2026-10-03 | NHL | Kings at Sharks Under 6.5 | -125 | loss | 9 | -10.00 | close:-125
+2026-10-03 | NHL | SGP Kings ML and Kings at Sharks Under 6.5 | 244 | loss | Kings 4 Sharks 5 | -10.00 | close:244
+2026-10-03 | MLB | White Sox ML | 124 | win | White Sox 3 Guardians 0 | 12.40 | close:124
+2026-10-03 | MLB | White Sox at Guardians Under 6.5 | 102 | win | 3 | 10.20 | close:102
+2026-10-03 | MLB | SGP White Sox ML and White Sox at Guardians Under 6.5 | 352 | win | White Sox 3 Guardians 0 | 35.20 | close:352
+2026-10-03 | MLB | Braves +1.5 | -119 | loss | Braves 3 Dodgers 5 | -10.00 | close:-119
+2026-10-03 | MLB | Braves at Dodgers Under 8.5 | -114 | win | 8 | 8.77 | close:-114
+2026-10-03 | MLB | SGP Braves +1.5 and Braves at Dodgers Under 8.5 | 245 | loss | Braves 3 Dodgers 5 | -10.00 | close:245
+2026-10-03 | MLB | Yankees ML | 119 | loss | Yankees 0 Rays 1 | -10.00 | close:119
+2026-10-03 | MLB | Yankees at Rays Under 7 | -112 | win | 1 | 8.93 | close:-112
+2026-10-03 | MLB | SGP Yankees ML and Yankees at Rays Under 7 | 315 | loss | Yankees 0 Rays 1 | -10.00 | close:315
+2026-10-03 | MLB | Padres +1.5 | -123 | win | Padres 2 Brewers 3 | 8.13 | close:-123
+2026-10-03 | MLB | Padres at Brewers Under 7 | -122 | win | 5 | 8.20 | close:-122
+2026-10-03 | MLB | SGP Padres +1.5 and Padres at Brewers Under 7 | 230 | win | Padres 2 Brewers 3 | 23.00 | close:230
+2026-10-03 | CFB | Vanderbilt +25.5 | -112 | win | Vanderbilt 14 Georgia 38 | 8.93 | close:-112
+2026-10-03 | CFB | North Carolina +21 | -105 | win | Notre Dame 37 North Carolina 26 | 9.52 | close:-105
+2026-10-03 | CFB | Clemson +14 | -108 | loss | Miami 41 Clemson 13 | -10.00 | close:-108
+2026-10-03 | CFB | Iowa +14.5 | -105 | loss | Ohio State 31 Iowa 14 | -10.00 | close:-105
+2026-10-03 | CFB | Rutgers +24.5 | -112 | loss | Indiana 47 Rutgers 15 | -10.00 | close:-112
+2026-10-03 | CFB | Mississippi St +5.5 | -108 | loss | Alabama 56 Mississippi St 23 | -10.00 | close:-108
+2026-10-03 | CFB | Missouri +5.5 | -110 | win | Florida 17 Missouri 45 | 9.09 | close:-110
+2026-10-03 | CFB | TCU +5.5 | -112 | loss | BYU 17 TCU 10 | -10.00 | close:-112
+2026-10-03 | CFB | McNeese +53.5 | -105 | win | McNeese 14 LSU 63 | 9.52 | close:-105
+2026-10-03 | CFB | Colorado +13.5 | -105 | loss | Texas Tech 29 Colorado 7 | -10.00 | close:-105
+2026-10-03 | CFB | Auburn +6 | -110 | loss | Auburn 14 Tennessee 24 | -10.00 | close:-110
+2026-10-03 | CFB | Washington +7.5 | -120 | win | Washington 21 USC 25 | 8.33 | close:-120
+2026-10-03 | CFB | UCF +10.5 | -115 | win | UCF 17 Houston 27 | 8.70 | close:-115
+2026-10-03 | CFB | Boston College +21.5 | -115 | win | Boston College 16 SMU 25 | 8.70 | close:-115
+2026-10-03 | CFB | Utah State +19.5 | -110 | win | Utah State 18 Boise St 37 | 9.09 | close:-110
+2026-10-03 | CFB | Kentucky +2.5 | -110 | win | Kentucky 35 South Carolina 34 | 9.09 | close:-110
+2026-10-03 | CFB | Charlotte +18.5 | -110 | loss | Memphis 59 Charlotte 8 | -10.00 | close:-110
+2026-10-03 | CFB | MTSU +21.5 | -108 | loss | MTSU 0 Kansas 55 | -10.00 | close:-108
+2026-10-03 | CFB | West Virginia +3 | -110 | push | West Virginia 42 Iowa State 45 | 0.00 | close:-110
+2026-10-03 | CFB | Stanford +14.5 | -108 | loss | Stanford 3 Wake Forest 57 | -10.00 | close:-108
+2026-10-03 | CFB | UConn +6.5 | -105 | win | Syracuse 42 UConn 41 | 9.52 | close:-105
+2026-10-03 | CFB | Minnesota +6.5 | -115 | win | Michigan 14 Minnesota 20 | 8.70 | close:-115
+2026-10-03 | CFB | Navy +2.5 | 100 | loss | Navy 9 Air Force 14 | -10.00 | close:100
+2026-10-03 | CFB | Michigan St +8.5 | -112 | loss | Michigan St 3 Wisconsin 31 | -10.00 | close:-112
+2026-10-03 | CFB | Buffalo +13.5 | -115 | win | W Michigan 20 Buffalo 17 | 8.70 | close:-115
+2026-10-03 | CFB | Ball State +20.5 | -108 | win | Toledo 39 Ball State 24 | 9.26 | close:-108
+2026-10-03 | CFB | California +1.5 | -118 | loss | California 31 UNLV 39 | -10.00 | close:-118
+2026-10-03 | CFB | NC State +5.5 | -108 | win | Louisville 28 NC State 31 | 9.26 | close:-108
+2026-10-03 | CFB | Florida St +1.5 | -118 | win | Virginia 7 Florida St 38 | 8.47 | close:-118
+2026-10-03 | CFB | Samford +30.5 | -102 | win | Samford 14 UAB 33 | 9.80 | close:-102
+2026-10-03 | CFB | Wyoming +17.5 | -110 | loss | Wyoming 0 N Dakota St 28 | -10.00 | close:-110
+2026-10-03 | CFB | Akron +6.5 | -102 | loss | Akron 17 C Michigan 41 | -10.00 | close:-102
+2026-10-03 | CFB | E Michigan +5.5 | -110 | win | E Michigan 38 UMass 14 | 9.09 | close:-110
+2026-10-03 | CFB | Kent State +3.5 | -112 | win | Ohio 13 Kent State 10 | 8.93 | close:-112
+2026-10-03 | CFB | Bowling Green +10.5 | -110 | win | Bowling Green 24 Miami OH 20 | 9.09 | close:-110
+2026-10-03 | CFB | Old Dominion +1.5 | -105 | loss | Old Dominion 10 Georgia St 42 | -10.00 | close:-105
+2026-10-03 | CFB | Marshall +14.5 | -108 | loss | Marshall 17 James Madison 45 | -10.00 | close:-108
+2026-10-03 | CFB | Maryland +15.5 | -112 | loss | Maryland 23 Nebraska 48 | -10.00 | close:-112
+2026-10-03 | CFB | UTEP +23.5 | -105 | loss | UTEP 7 New Mexico 61 | -10.00 | close:-105
+2026-10-03 | CFB | Purdue +9.5 | -108 | win | Purdue 24 Illinois 17 | 9.26 | close:-108
+2026-10-03 | CFB | Colorado St +7 | -112 | loss | Oregon St 56 Colorado St 26 | -10.00 | close:-112
+2026-10-03 | CFB | Texas Southern +47.5 | -115 | loss | Texas Southern 10 FAU 66 | -10.00 | close:-115
+2026-10-03 | CFB | Arkansas +13.5 | -108 | loss | Arkansas 7 Texas A&M 34 | -10.00 | close:-108
+2026-10-03 | CFB | Rice +11.5 | -105 | win | UTSA 16 Rice 14 | 9.52 | close:-105
+2026-10-03 | CFB | Coastal +2.5 | -102 | loss | GA Southern 31 Coastal 24 | -10.00 | close:-102
+2026-10-03 | CFB | UL Monroe +12.5 | -108 | loss | UL Monroe 35 South Alabama 52 | -10.00 | close:-108
+2026-10-03 | CFB | Temple +5.5 | -112 | win | Temple 17 South Florida 13 | 8.93 | close:-112
+2026-10-03 | CFB | Army +1.5 | -120 | loss | Army 29 Louisiana Tech 31 | -10.00 | close:-120
+2026-10-03 | CFB | Arkansas St +4.5 | -105 | win | Arkansas St 20 Louisiana 23 | 9.52 | close:-105
+2026-10-03 | CFB | Fresno St +2.5 | -115 | win | Fresno St 26 Washington St 6 | 8.70 | close:-115
+2026-10-03 | CFB | Baylor +3.5 | -115 | win | Baylor 55 Arizona St 19 | 8.70 | close:-115
+2026-10-03 | CFB | San Diego St +10 | -115 | win | Texas St 29 San Diego St 31 | 8.70 | close:-115
+2026-10-03 | CFB | Cincinnati +7 | -115 | loss | Cincinnati 7 Arizona 34 | -10.00 | close:-115
+2026-10-03 | CFB | San José St +2.5 | -105 | win | San José St 20 Hawai'i 16 | 9.52 | close:-105
 2026-10-03 | NBA | No Picks
-2026-10-03 | MLB | No Picks
 2026-10-03 | NFL | No Picks
 2026-10-03 | CBB | No Picks
-2026-10-03 | CFB | No Picks
 2026-10-04 | RANGE | All Win 568.25 | All Lose -370.00
 2026-10-05 | RANGE | All Win 190.89 | All Lose -210.00
 2026-10-06 | RANGE | All Win 145.44 | All Lose -160.00

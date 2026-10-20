@@ -37,28 +37,34 @@
       "pushes": 0
     },
     "2026-10-01": {
-      "pl": 0,
-      "n": 0,
-      "wins": 0,
-      "losses": 0,
+      "pl": -122.2,
+      "n": 32,
+      "allWin": 507.79,
+      "allLose": -320,
+      "wins": 10,
+      "losses": 22,
       "pushes": 0,
-      "picks": "none"
+      "clv": 0.0
     },
     "2026-10-02": {
-      "pl": 0,
-      "n": 0,
-      "wins": 0,
-      "losses": 0,
+      "pl": 103.81,
+      "n": 18,
+      "allWin": 298.9,
+      "allLose": -180,
+      "wins": 11,
+      "losses": 7,
       "pushes": 0,
-      "picks": "none"
+      "clv": 0.0
     },
     "2026-10-03": {
-      "pl": 0,
-      "n": 0,
-      "wins": 0,
-      "losses": 0,
-      "pushes": 0,
-      "picks": "none"
+      "pl": -10.19,
+      "n": 105,
+      "allWin": 1288.98,
+      "allLose": -1050,
+      "wins": 50,
+      "losses": 54,
+      "pushes": 1,
+      "clv": 0.0
     },
     "2026-10-04": {
       "pl": 1.04,
