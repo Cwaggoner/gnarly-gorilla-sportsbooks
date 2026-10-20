@@ -1,26 +1,29 @@
-# GG report 2026-10-18
-# Yesterday 2026-10-17 graded. No pick cards created for 2026-10-18 in this run.
+# GG report 2026-10-20
+# Yesterday 2026-10-19 graded. October 18 was graded in the same catch-up. No closing line was copied from the pre-game price.
 
-Analysis: CFB underdogs went 4-0 as Tennessee covered +7.5 with a 26-10 win over Alabama, Florida covered +11.5 in a 27-24 victory over Texas, BYU covered +10.5 by beating Notre Dame 28-24, and the Alabama-Tennessee Under 50.5 cashed in a 36-point game. NHL was mixed with Jets covering +1.5 in a 3-2 loss, Islanders and Bruins winning their MLs, while Devils, Sabres and Kraken lost. MLB ALCS Game 5 saw the Rays win 7-3, sending all three Guardians bets to losses.
+Analysis: Monday was a short dog card. Washington +7.5 covered in a 23-17 loss at San Francisco. The Guardians +1.5 lost a 7-3 Game 6. Pittsburgh +1.5 and Philadelphia +1.5 cashed. Anaheim +1.5 and San Jose +1.5 did not. NBA had no games. CFB had no Monday card. CBB is out of season. No close was saved, because a price seen before the start is not a close.
 
-Record 7-6-0  Profit $5.62  Units 0.56u  CLV Matched Bet Price
+Record 3-3-0  Profit $-2.73  Units -0.27u  CLV Close Not On File
 
-MLB | loss | Rays @ Guardians Under 6.5 | close -110 | -$10.00 EDGE
-MLB | loss | Guardians ML | close -104 | -$10.00 EDGE
-MLB | loss | SGP Guardians ML and Under 6.5 | close 190 | -$10.00 EDGE
-NHL | win | Winnipeg Jets +1.5 | close -165 | +$6.06 EDGE
-NHL | loss | New Jersey Devils ML | close 105 | -$10.00 EDGE
-NHL | loss | Buffalo Sabres ML | close 120 | -$10.00
-NHL | win | New York Islanders ML | close 114 | +$11.40
-NHL | loss | Seattle Kraken +1.5 | close -160 | -$10.00
-NHL | win | Boston Bruins ML | close 118 | +$11.80
-CFB | win | Tennessee +7.5 | close -110 | +$9.09 EDGE
-CFB | win | Florida +11.5 | close -110 | +$9.09 EDGE
-CFB | win | BYU +10.5 | close -110 | +$9.09 EDGE
-CFB | win | Alabama vs Tennessee Under 50.5 | close -110 | +$9.09 EDGE
+NFL | win | Washington Commanders +7.5 | close not saved | +$9.09
+MLB | loss | Guardians +1.5 | close not saved | -$10.00
+NHL | win | Pittsburgh Penguins +1.5 | close not saved | +$9.09
+NHL | loss | Anaheim Ducks +1.5 | close not saved | -$10.00
+NHL | win | Philadelphia Flyers +1.5 | close not saved | +$9.09
+NHL | loss | San Jose Sharks +1.5 | close not saved | -$10.00
 
-2026-10-17 | NBA | No Picks
-2026-10-17 | NFL | No Picks
-2026-10-17 | CBB | Season Ended
-No sport is Season Ended for current seasons except CBB which has ended. MLB last card date 2026-10-31. CFB 2027-01-25. NFL 2027-02-14. CBB 2027-04-05. NHL 2027-04-10. NBA 2027-04-11.
-Unconfirmed end dates: CFB 2027-01-25, NFL 2027-02-14, CBB 2027-04-05, NHL 2027-04-10, NBA 2027-04-11.
+2026-10-18 | MLB | win | Rays @ Guardians Under 6.5 | +$8.47 EDGE
+2026-10-18 | MLB | loss | Guardians +1.5 | -$10.00 EDGE
+2026-10-18 | MLB | loss | SGP Guardians +1.5 and Rays @ Guardians Under 6.5 | -$10.00 EDGE
+2026-10-18 | NFL | win | Cleveland Browns +3 | +$9.80 EDGE
+2026-10-18 | NFL | loss | New York Giants +1.5 | -$10.00 EDGE
+2026-10-18 | NFL | win | Arizona Cardinals +12.5 | +$9.26 EDGE
+2026-10-18 | NFL | loss | Dallas Cowboys +1.5 | -$10.00 EDGE
+2026-10-18 | NHL | win | Calgary Flames +1.5 | +$7.14 EDGE
+
+2026-10-19 | NBA | No Picks
+2026-10-19 | CFB | No Picks
+2026-10-19 | CBB | Season Ended
+2026-10-18 | NBA | No Picks
+2026-10-18 | CFB | No Picks
+2026-10-18 | CBB | Season Ended

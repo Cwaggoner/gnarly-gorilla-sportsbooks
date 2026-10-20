@@ -960,14 +960,12 @@ function rememberApiBoard(day, market, rows){
 }
 function stampFileClose(b){
   if (!b || b.result === "void") return b;
-  const api = apiCloseFor(b);
-  if (api != null) { b.close = api; b.realClose = b.result !== "pending"; return b; }
-  if (b.result === "pending") return b;
+  if (b.result === "pending") { b.close = ""; b.realClose = false; return b; }
   const hist = fileCloseFor(b);
   if (hist != null) { b.close = hist; b.realClose = true; return b; }
-  if (b.close !== "" && b.close != null && Number.isFinite(Number(b.close))) { b.realClose = true; return b; }
-  if (b.lastPrice != null && Number.isFinite(Number(b.lastPrice))) { b.close = Number(b.lastPrice); b.realClose = true; return b; }
-  if (b.odds !== "" && b.odds != null && Number.isFinite(Number(b.odds))) { b.close = Number(b.odds); b.realClose = true; return b; }
+  if (b.realClose && b.close !== "" && b.close != null && Number.isFinite(Number(b.close))) return b;
+  b.close = "";
+  b.realClose = false;
   return b;
 }
 function weekRows(){
@@ -2187,11 +2185,11 @@ function closeStore(){
 }
 function saveCloseStore(store){ localStorage.setItem("gg-closes", JSON.stringify(store)); }
 function closeKey(b){ return [b.date, b.sport, b.pick].join("|"); }
-function rememberPrice(b, price){
-  if (price == null || price === "") return;
+function rememberPrice(b, price, real){
+  if (price == null || price === "" || !real) return;
   const store = closeStore();
   const key = closeKey(b);
-  store[key] = {date: b.date, sport: b.sport, pick: b.pick, odds: b.odds, close: Number(price), at: Date.now()};
+  store[key] = {date: b.date, sport: b.sport, pick: b.pick, odds: b.odds, close: Number(price), at: Date.now(), realClose: true};
   saveCloseStore(store);
 }
 function applySavedCloses(bets){
@@ -2200,7 +2198,7 @@ function applySavedCloses(bets){
   bets.forEach(b => {
     if (b.result === "pending" || b.type === "SGP") return;
     const saved = store[closeKey(b)];
-    if (!saved || saved.close == null) return;
+    if (!saved || saved.close == null || !saved.realClose) return;
     b.close = Number(saved.close);
     b.realClose = true;
     n++;
@@ -2209,21 +2207,16 @@ function applySavedCloses(bets){
 }
 function applyCloses(bets, games, bookKey){
   let filled = 0;
-  const today = ymd(new Date());
   bets.forEach(b => {
     if (b.close && b.realClose) return;
     if (b.type === "SGP" || BOOK_KEY[b.book] !== bookKey) return;
     const hit = findBookPrice(games, bookKey, b.type, b.pick);
-    if (hit) {
-      b.lastPrice = Number(hit.outcome.price);
-      rememberPrice(b, b.lastPrice);
-    }
-    const started = hit && hit.game.commence_time && Date.parse(hit.game.commence_time) <= Date.now();
-    const gone = !hit && b.lastPrice && b.date && b.date <= today;
-    if (!started && !gone) return;
-    if (!b.lastPrice) return;
+    if (hit) b.lastPrice = Number(hit.outcome.price);
+    const started = !!(hit && hit.game && hit.game.commence_time && Date.parse(hit.game.commence_time) <= Date.now());
+    if (!started || !b.lastPrice) return;
     b.close = Number(b.lastPrice);
     b.realClose = true;
+    rememberPrice(b, b.close, true);
     filled++;
   });
   return filled;
@@ -3139,12 +3132,14 @@ render();
 loadSeasons();
 fetch("cards/calendar.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => { if (data && data.dates) publishedCalendar = data.dates; render(); }).catch(() => {});
 fetch("cards/report.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
-  const day = ((text.match(/Yesterday\s+(\d{4}-\d{2}-\d{2})/) || [])[1]) || "";
+  let day = ((text.match(/Yesterday\s+(\d{4}-\d{2}-\d{2})/) || [])[1]) || "";
   text.split(/\n/).forEach(line => {
     if (!/\bEDGE\b/.test(line)) return;
     const parts = line.split("|").map(s => s.trim());
     if (parts.length < 3) return;
-    edgePicks.add([day, parts[0], parts[2]].join("|").toLowerCase());
+    let edgeDay = day, sport = parts[0], pick = parts[2];
+    if (/^\d{4}-\d{2}-\d{2}$/.test(parts[0])) { edgeDay = parts[0]; sport = parts[1]; pick = parts[3]; }
+    if (edgeDay && sport && pick) edgePicks.add([edgeDay, sport, pick].join("|").toLowerCase());
   });
   if (edgePicks.size) loadCloses().then(() => { render(); showSeasons(); }).catch(() => { render(); showSeasons(); });
 }).catch(() => {});
