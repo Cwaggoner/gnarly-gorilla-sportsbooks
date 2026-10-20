@@ -142,5 +142,106 @@
         "record": "3-4-0"
       }
     }
-  ]
+  ],
+  "passed": [
+    {
+      "sport": "CFB",
+      "game": "South Alabama Jaguars at Marshall Thundering Herd",
+      "start": "2026-10-20T23:30Z",
+      "location": "Joan C. Edwards Stadium, Huntington, West Virginia",
+      "away": {
+        "name": "South Alabama Jaguars",
+        "record": "4-2"
+      },
+      "home": {
+        "name": "Marshall Thundering Herd",
+        "record": "3-3"
+      }
+    },
+    {
+      "sport": "NBA",
+      "game": "Boston Celtics at Detroit Pistons",
+      "start": "2026-10-20T19:00Z",
+      "location": "Little Caesars Arena, Detroit, Michigan",
+      "away": {
+        "name": "Boston Celtics",
+        "record": "0-1"
+      },
+      "home": {
+        "name": "Detroit Pistons",
+        "record": "1-0"
+      }
+    },
+    {
+      "sport": "NHL",
+      "game": "Colorado Avalanche at New Jersey Devils",
+      "start": "2026-10-20T23:00Z",
+      "location": "Prudential Center, Newark, New Jersey",
+      "away": {
+        "name": "Colorado Avalanche",
+        "record": "5-3-1"
+      },
+      "home": {
+        "name": "New Jersey Devils",
+        "record": "4-4-0"
+      }
+    },
+    {
+      "sport": "NHL",
+      "game": "Detroit Red Wings at Seattle Kraken",
+      "start": "2026-10-21T01:40Z",
+      "location": "Climate Pledge Arena, Seattle, Washington",
+      "away": {
+        "name": "Detroit Red Wings",
+        "record": "3-3-2"
+      },
+      "home": {
+        "name": "Seattle Kraken",
+        "record": "5-3-1"
+      }
+    },
+    {
+      "sport": "NHL",
+      "game": "Minnesota Wild at Edmonton Oilers",
+      "start": "2026-10-21T01:00Z",
+      "location": "Rogers Place, Edmonton, Alberta",
+      "away": {
+        "name": "Minnesota Wild",
+        "record": "6-2-1"
+      },
+      "home": {
+        "name": "Edmonton Oilers",
+        "record": "6-1-1"
+      }
+    },
+    {
+      "sport": "NHL",
+      "game": "Tampa Bay Lightning at Vegas Golden Knights",
+      "start": "2026-10-21T02:30Z",
+      "location": "T-Mobile Arena, Las Vegas, Nevada",
+      "away": {
+        "name": "Tampa Bay Lightning",
+        "record": "6-2-0"
+      },
+      "home": {
+        "name": "Vegas Golden Knights",
+        "record": "8-2-0"
+      }
+    },
+    {
+      "sport": "NHL",
+      "game": "Winnipeg Jets at St. Louis Blues",
+      "start": "2026-10-21T00:00Z",
+      "location": "Enterprise Center, St. Louis, Missouri",
+      "away": {
+        "name": "Winnipeg Jets",
+        "record": "4-2-2"
+      },
+      "home": {
+        "name": "St. Louis Blues",
+        "record": "3-4-1"
+      }
+    }
+  ],
+  "passedNote": "Games being played that did not make the picks."
 }
