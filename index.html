@@ -1687,7 +1687,7 @@ async function drawOddsCompare(force){
         const under = (mk.outcomes || []).find(o => o.name === "Under");
         return (over ? over.point + " " + over.price : "-") + " / " + (under ? under.price : "-");
       });
-      rows.push({sport, label: g.away_team + " at " + g.home_team, cells});
+      rows.push({sport, label: g.away_team + " at " + g.home_team, start: g.commence_time || "", cells});
     });
   }
   const sportOrder = ["CBB","CFB","MLB","NBA","NFL","NHL"];
@@ -1697,11 +1697,11 @@ async function drawOddsCompare(force){
     return String(a.label).localeCompare(String(b.label));
   });
   const label = {h2h:"Moneyline, away / home", spreads:"Spread, away / home", totals:"Total, over point and price / under price"}[marketKey];
-  const head = "<tr><th>Game</th>" + books.map(b => "<th>" + esc(b) + "</th>").join("") + "</tr>";
+  const head = "<tr><th>Game</th><th class='timecol'>Time</th>" + books.map(b => "<th>" + esc(b) + "</th>").join("") + "</tr>";
   const sportFilter = (document.getElementById("comparesport") || {}).value || "All";
   const shown = !sportFilter || sportFilter === "All" ? rows : rows.filter(r => r.sport === sportFilter);
   const listed = shown.length ? shown : rows;
-  const body = listed.map(r => "<tr><td>" + esc(r.sport) + " " + esc(r.label) + "</td>" + r.cells.map(c => "<td>" + c + "</td>").join("") + "</tr>").join("");
+  const body = listed.map(r => "<tr><td>" + esc(r.sport) + " " + esc(r.label) + "</td><td class='gametime' data-start='" + esc(r.start || "") + "'>" + esc(r.start ? formatTime(r.start, false) : "") + "</td>" + r.cells.map(c => "<td>" + c + "</td>").join("") + "</tr>").join("");
   const select = "<select id='comparesport'><option value='CBB'>CBB</option><option value='CFB'>CFB</option><option value='MLB'>MLB</option><option value='NBA'>NBA</option><option value='NFL'>NFL</option><option value='NHL'>NHL</option><option value='All' selected>All</option></select> <select id='comparemarket'><option value='h2h'" + (market==="h2h"?" selected":"") + ">Moneyline</option><option value='spreads'" + (market==="spreads"?" selected":"") + ">Spread</option><option value='totals'" + (market==="totals"?" selected":"") + ">Total</option></select>";
   const savedBoards = window.__ggBoards || {};
   const fallback = savedBoards[market] || savedBoards.h2h || "";
@@ -1720,6 +1720,54 @@ async function drawOddsCompare(force){
   rememberApiBoard(day, marketKey, rows);
   box.innerHTML = table;
   wireCompare();
+}
+const ODDS_START = {
+  "CFB Tulane at Memphis": "2026-10-16T23:30:00Z",
+  "CFB Washington at Purdue": "2026-10-17T00:00:00Z",
+  "CFB App State at Coastal Carolina": "2026-10-17T00:00:00Z",
+  "CFB Memphis vs Tulane": "2026-10-16T23:30:00Z",
+  "MLB Tampa Bay Rays at Cleveland Guardians": "2026-10-15T17:00:00Z",
+  "NBA Milwaukee Bucks at Indiana Pacers": "2026-10-16T23:00:00Z",
+  "NBA Toronto Raptors at Detroit Pistons": "2026-10-16T23:00:00Z",
+  "NBA Boston Celtics at Philadelphia 76ers": "2026-10-16T23:00:00Z",
+  "NBA Miami Heat at Orlando Magic": "2026-10-16T23:00:00Z",
+  "NBA Atlanta Hawks at Dallas Mavericks": "2026-10-17T00:00:00Z",
+  "NBA Sacramento Kings at San Antonio Spurs": "2026-10-17T00:00:00Z",
+  "NBA Charlotte Hornets at Memphis Grizzlies": "2026-10-17T00:00:00Z",
+  "NBA Washington Wizards at New Orleans Pelicans": "2026-10-17T00:00:00Z",
+  "NBA Minnesota Timberwolves at Chicago Bulls": "2026-10-17T00:00:00Z",
+  "NBA Portland Trail Blazers at Golden State Warriors": "2026-10-17T02:00:00Z",
+  "NBA Utah Jazz at Phoenix Suns": "2026-10-17T02:00:00Z",
+  "NBA Denver Nuggets at Los Angeles Lakers": "2026-10-17T02:30:00Z",
+  "NHL Pittsburgh Penguins at Colorado Avalanche": "2026-10-17T01:00:00Z"
+};
+function ensureOddsTimeColumn(){
+  const table = document.querySelector("#oddscompare table.compare");
+  if (!table) return;
+  const head = table.querySelector("thead tr");
+  if (head && !head.querySelector(".timecol")) {
+    const th = document.createElement("th");
+    th.className = "timecol";
+    th.textContent = "Time";
+    const game = head.querySelector("th");
+    if (game) game.insertAdjacentElement("afterend", th);
+  }
+  table.querySelectorAll("tbody tr").forEach(tr => {
+    if (tr.querySelector(".gametime")) return;
+    const game = tr.querySelector("td");
+    if (!game) return;
+    const td = document.createElement("td");
+    td.className = "gametime";
+    const start = ODDS_START[(game.textContent || "").trim()] || "";
+    if (start) td.dataset.start = start;
+    td.textContent = start ? formatTime(start, false) : "";
+    game.insertAdjacentElement("afterend", td);
+  });
+}
+function paintOddsTimes(){
+  document.querySelectorAll("#oddscompare td.gametime").forEach(td => {
+    if (td.dataset.start) td.textContent = formatTime(td.dataset.start, false);
+  });
 }
 function sortOddsRows(){
   const order = ["CBB","CFB","MLB","NBA","NFL","NHL"];
@@ -1790,6 +1838,8 @@ function wireCompare(){
     sport.onchange = () => { localStorage.setItem("gg-compare-sport", sport.value); filterCompare(); };
   }
   filterCompare();
+  ensureOddsTimeColumn();
+  paintOddsTimes();
   sortOddsRows();
 }
 function priceProfit(result, price, stake){
@@ -3331,6 +3381,7 @@ tzSelect.onchange = () => {
   armMidnight();
   showClock();
   drawPickSlate();
+  paintOddsTimes();
   if (openDate) openDay(openDate);
   else render();
 };
@@ -3340,6 +3391,7 @@ hourBtn.onclick = () => {
   localStorage.setItem("gg-hour", hour12() ? "24" : "12");
   showClock();
   drawPickSlate();
+  paintOddsTimes();
   if (openDate) openDay(openDate);
   else render();
 };
