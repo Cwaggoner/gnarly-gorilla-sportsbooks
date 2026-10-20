@@ -1,1 +1,8 @@
-PLACEHOLDER_WILL_REPLACE
+# file: grades
+2026-10-19 | RANGE | All Win 0.00 | All Lose 0.00
+2026-10-19 | CBB | Season Ended
+2026-10-19 | CFB | No Picks
+2026-10-19 | MLB | No Picks
+2026-10-19 | NBA | No Picks
+2026-10-19 | NFL | No Picks
+2026-10-19 | NHL | No Picks
