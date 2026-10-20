@@ -1690,6 +1690,12 @@ async function drawOddsCompare(force){
       rows.push({sport, label: g.away_team + " at " + g.home_team, cells});
     });
   }
+  const sportOrder = ["CBB","CFB","MLB","NBA","NFL","NHL"];
+  rows.sort((a, b) => {
+    const sport = sportOrder.indexOf(a.sport) - sportOrder.indexOf(b.sport);
+    if (sport) return sport;
+    return String(a.label).localeCompare(String(b.label));
+  });
   const label = {h2h:"Moneyline, away / home", spreads:"Spread, away / home", totals:"Total, over point and price / under price"}[marketKey];
   const head = "<tr><th>Game</th>" + books.map(b => "<th>" + esc(b) + "</th>").join("") + "</tr>";
   const sportFilter = (document.getElementById("comparesport") || {}).value || "All";
@@ -1714,6 +1720,23 @@ async function drawOddsCompare(force){
   rememberApiBoard(day, marketKey, rows);
   box.innerHTML = table;
   wireCompare();
+}
+function sortOddsRows(){
+  const order = ["CBB","CFB","MLB","NBA","NFL","NHL"];
+  const tbody = document.querySelector("#oddscompare tbody");
+  if (!tbody) return;
+  const rank = text => {
+    const sport = String(text || "").trim().split(/\s+/)[0];
+    const i = order.indexOf(sport);
+    return i < 0 ? order.length : i;
+  };
+  [...tbody.querySelectorAll("tr")].sort((a, b) => {
+    const at = (a.querySelector("td") || {}).textContent || "";
+    const bt = (b.querySelector("td") || {}).textContent || "";
+    const sport = rank(at) - rank(bt);
+    if (sport) return sport;
+    return at.localeCompare(bt);
+  }).forEach(row => tbody.appendChild(row));
 }
 function filterCompare(){
   const sport = (document.getElementById("comparesport") || {}).value || "All";
@@ -1767,6 +1790,7 @@ function wireCompare(){
     sport.onchange = () => { localStorage.setItem("gg-compare-sport", sport.value); filterCompare(); };
   }
   filterCompare();
+  sortOddsRows();
 }
 function priceProfit(result, price, stake){
   stake = Number(stake) || 10;
