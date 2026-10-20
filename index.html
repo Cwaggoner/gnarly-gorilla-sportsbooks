@@ -1063,9 +1063,7 @@ async function loadCalendarFile(){
 let driveCard = {date: "", lines: [], loaded: false};
 async function loadDriveCardForCalendar(){
   try {
-    const res = await fetch("cards/today.txt?ts=" + Date.now());
-    if (!res.ok) return;
-    const text = await res.text();
+    const text = await cardBundle();
     const today = todayEt();
     const lines = text.split(/\n/).map(l => l.trim()).filter(l => l && !l.startsWith("#")).map(l => {
       const parts = l.split("|").map(s => s.trim());
@@ -1305,8 +1303,7 @@ async function nightlyUpdate(){
       if (!still.length) { clearInterval(window.gradeWatch); window.gradeWatch = null; }
     }, 60000);
   }
-  const res = await fetch("cards/today.txt?ts=" + Date.now()).catch(() => null);
-  const text = res && res.ok ? await res.text() : "";
+  const text = await cardBundle().catch(() => "");
   const today = todayEt();
   const todays = text.split(/\n/).filter(line => line.trim().startsWith(today));
   if (todays.length) {
@@ -1319,8 +1316,7 @@ async function nightlyUpdate(){
   if (note) note.textContent = "After midnight. Yesterday graded. Today's picks load when the morning task publishes them.";
   if (!window.cardWatch) {
     window.cardWatch = setInterval(async () => {
-      const check = await fetch("cards/today.txt?ts=" + Date.now()).catch(() => null);
-      const body = check && check.ok ? await check.text() : "";
+      const body = await cardBundle().catch(() => "");
       const lines = body.split(/\n/).filter(line => line.trim().startsWith(todayEt()));
       if (!lines.length) return;
       clearInterval(window.cardWatch);
@@ -2514,11 +2510,23 @@ function addCardLines(text, book){
   if (added) save(bets);
   return added;
 }
+async function cardBundle(){
+  const files = ["cards/today.txt","cards/parts/nhl.txt","cards/parts/nba.txt","cards/parts/mlb.txt","cards/parts/nfl.txt","cards/parts/cbb.txt","cards/parts/cfb.txt"];
+  const chunks = await Promise.all(files.map(file => fetch(file + "?ts=" + Date.now()).then(r => r.ok ? r.text() : "").catch(() => "")));
+  const today = todayEt();
+  const seen = new Set();
+  const lines = [];
+  chunks.join("\n").split(/\n/).forEach(line => {
+    const text = line.trim();
+    if (!text.startsWith(today) || seen.has(text)) return;
+    seen.add(text);
+    lines.push(text);
+  });
+  return lines.join("\n");
+}
 async function loadDriveCard(){
   const note = document.getElementById("pdfnote");
-  const res = await fetch("cards/today.txt?ts=" + Date.now());
-  if (!res.ok) { note.textContent = "Drive card file is not on the site yet."; return; }
-  const text = await res.text();
+  const text = await cardBundle();
   const today = todayEt();
   const lines = text.split(/\n/).filter(line => line.trim().startsWith(today));
   drawCardAnalysis(lines.length ? lines.join("\n") : text);
@@ -2537,8 +2545,7 @@ async function loadDriveCard(){
   note.textContent = "Read " + fileName + ". " + (added || 0) + " slips added for " + today + ".";
 }
 async function refreshTodayCard(){
-  const res = await fetch("cards/today.txt?ts=" + Date.now()).catch(() => null);
-  const text = res && res.ok ? await res.text() : "";
+  const text = await cardBundle().catch(() => "");
   const today = todayEt();
   const lines = text.split(/\n/).filter(line => line.trim().startsWith(today));
   drawCardAnalysis(lines.length ? lines.join("\n") : text);

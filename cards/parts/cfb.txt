@@ -1,0 +1,5 @@
+# file: GG-CFB-2026-10-20
+2026-10-20 | CFB | Spread | Middle Tennessee +10 | -108 | Edge
+2026-10-20 | CFB | Total | Middle Tennessee at FIU Under 45.5 | -108 | Edge
+2026-10-20 | CFB | SGP | SGP Middle Tennessee +10 and Middle Tennessee at FIU Under 45.5 | 271 | Edge
+2026-10-20 | CFB | Total | Missouri State at Delaware Under 53.5 | -110 | Edge

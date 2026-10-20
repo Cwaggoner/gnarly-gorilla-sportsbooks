@@ -1,4 +1,13 @@
 # file: GG-CARD-2026-10-20
-# Picks for 2026-10-20 publish at 9:00 AM Eastern.
-# October 18 and October 19 are already in the graded history.
-# Do not write a closing line from a pre-game price.
+2026-10-20 | NHL | Moneyline | Vancouver Canucks ML | 240 | Edge
+2026-10-20 | NHL | Moneyline | San Jose Sharks ML | 185 | Edge
+2026-10-20 | NHL | Moneyline | Boston Bruins ML | 142 | Edge
+2026-10-20 | NHL | Moneyline | Toronto Maple Leafs ML | 140 | Edge
+2026-10-20 | NHL | Moneyline | Anaheim Ducks ML | 130 | Edge
+2026-10-20 | NHL | Moneyline | Los Angeles Kings ML | 130 | Edge
+2026-10-20 | NBA | Total | 76ers at Knicks Under 231.5 | -108 | Edge
+2026-10-20 | NBA | Total | Thunder at Spurs Under 230.5 | -112 | Edge
+2026-10-20 | CFB | Spread | Middle Tennessee +10 | -108 | Edge
+2026-10-20 | CFB | Total | Middle Tennessee at FIU Under 45.5 | -108 | Edge
+2026-10-20 | CFB | SGP | SGP Middle Tennessee +10 and Middle Tennessee at FIU Under 45.5 | 271 | Edge
+2026-10-20 | CFB | Total | Missouri State at Delaware Under 53.5 | -110 | Edge
