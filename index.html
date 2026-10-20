@@ -1122,6 +1122,10 @@ function drawCalendar(){
       const personal = !!(mine[date] && Number.isFinite(Number(mine[date].pl)));
       const slips = slipsForDay(date);
       let day = board[date];
+      if (day && day.picks === "none") {
+        html += "<div class='daycell' data-date='" + date + "'><b>" + d + "</b><br><span class='wait'>NO PICKS</span></div>";
+        continue;
+      }
       const ticketOdds = b => {
         const saved = betMap[b.date + "|" + b.pick];
         const raw = saved != null && saved !== "" ? saved : b.odds;

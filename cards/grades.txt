@@ -1,8 +1,23 @@
 # file: grades
 
-2026-10-01 | RANGE | All Win 99.99 | All Lose -110.00
-2026-10-02 | RANGE | All Win 99.99 | All Lose -110.00
-2026-10-03 | RANGE | All Win 99.99 | All Lose -110.00
+2026-10-01 | NHL | No Picks
+2026-10-01 | NBA | No Picks
+2026-10-01 | MLB | No Picks
+2026-10-01 | NFL | No Picks
+2026-10-01 | CBB | No Picks
+2026-10-01 | CFB | No Picks
+2026-10-02 | NHL | No Picks
+2026-10-02 | NBA | No Picks
+2026-10-02 | MLB | No Picks
+2026-10-02 | NFL | No Picks
+2026-10-02 | CBB | No Picks
+2026-10-02 | CFB | No Picks
+2026-10-03 | NHL | No Picks
+2026-10-03 | NBA | No Picks
+2026-10-03 | MLB | No Picks
+2026-10-03 | NFL | No Picks
+2026-10-03 | CBB | No Picks
+2026-10-03 | CFB | No Picks
 2026-10-04 | RANGE | All Win 568.25 | All Lose -370.00
 2026-10-05 | RANGE | All Win 190.89 | All Lose -210.00
 2026-10-06 | RANGE | All Win 145.44 | All Lose -160.00

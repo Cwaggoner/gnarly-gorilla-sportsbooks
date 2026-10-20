@@ -37,43 +37,58 @@
       "pushes": 0
     },
     "2026-10-01": {
-      "pl": 8.2,
-      "n": 11,
-      "allWin": 99.99,
-      "allLose": -110.0
+      "pl": 0,
+      "n": 0,
+      "wins": 0,
+      "losses": 0,
+      "pushes": 0,
+      "picks": "none"
     },
     "2026-10-02": {
-      "pl": -12.4,
-      "n": 11,
-      "allWin": 99.99,
-      "allLose": -110.0
+      "pl": 0,
+      "n": 0,
+      "wins": 0,
+      "losses": 0,
+      "pushes": 0,
+      "picks": "none"
     },
     "2026-10-03": {
-      "pl": 18.1,
-      "n": 11,
-      "allWin": 99.99,
-      "allLose": -110.0
+      "pl": 0,
+      "n": 0,
+      "wins": 0,
+      "losses": 0,
+      "pushes": 0,
+      "picks": "none"
     },
     "2026-10-04": {
       "pl": 1.04,
-      "n": 37,
+      "n": 31,
       "allWin": 568.25,
       "allLose": -370.0,
-      "clv": -0.9
+      "clv": -0.9,
+      "wins": 13,
+      "losses": 15,
+      "pushes": 3
     },
     "2026-10-05": {
       "pl": -76.64,
       "n": 21,
       "allWin": 190.89,
       "allLose": -210.0,
-      "clv": 2.1
+      "clv": 2.1,
+      "wins": 8,
+      "losses": 13,
+      "pushes": 0
     },
     "2026-10-06": {
       "pl": -152.48,
       "n": 16,
       "allWin": 145.44,
       "allLose": -160.0,
-      "clv": -2.3
+      "clv": -2.3,
+      "wins": 4,
+      "losses": 12,
+      "pushes": 0
     },
     "2026-10-07": {
       "pl": -5.74,
