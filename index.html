@@ -463,9 +463,21 @@ function zoneClock(date){
   const get = k => parts.find(p => p.type === k).value;
   return {date: get("year") + "-" + get("month") + "-" + get("day"), hour: Number(get("hour")), minute: Number(get("minute"))};
 }
-function gameLengthMs(sport){
+function cbbPlayoff(date){
+  const iso = String(date || "").slice(0, 10);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return false;
+  const year = iso.slice(0, 4);
+  const start = year + "-03-13";
+  let end = year + "-04-10";
+  const published = (typeof SEASON_END !== "undefined" && SEASON_END && SEASON_END.CBB) || "";
+  if (/^\d{4}-\d{2}-\d{2}$/.test(published) && published.slice(0, 4) === year && published > end && published.slice(5, 7) <= "04") end = published;
+  return iso >= start && iso <= end;
+}
+function gameLengthMs(sport, when){
+  const name = String(sport || "").toUpperCase();
   const hours = {NHL:4, NBA:3, CBB:2.5, NFL:4, CFB:4, MLB:4.5};
-  return (hours[String(sport || "").toUpperCase()] || 4) * 3600000;
+  if (name === "CBB" && cbbPlayoff(when)) return 4 * 3600000;
+  return (hours[name] || 4) * 3600000;
 }
 function slateDateOf(iso){
   const ms = Date.parse(iso || "");
@@ -498,7 +510,7 @@ function slateCutoff(date){ return instantAt(shiftDate(date, 1), 4, 0); }
 function lastSlateEnd(date){
   const starts = knownStarts().filter(g => slateDateOf(g.start) === date);
   if (!starts.length) return 0;
-  const raw = starts.reduce((end, g) => Math.max(end, g.start + gameLengthMs(g.sport)), 0);
+  const raw = starts.reduce((end, g) => Math.max(end, g.start + gameLengthMs(g.sport, date)), 0);
   return Math.min(raw, slateCutoff(date));
 }
 function slateSettled(date){
@@ -1471,7 +1483,7 @@ function showSeasons(checked){
   });
   wave += " H448";
   const ekg = "<span class='ekg' data-ms='" + (parseFloat(pulse) * 1000) + "'><svg viewBox='0 0 448 36' preserveAspectRatio='none' aria-label='Season pulse'><defs><clipPath id='ekgclip'><rect class='ekg-clip' x='0' y='0' width='0' height='36'></rect></clipPath></defs><path class='trace' clip-path='url(#ekgclip)' d='" + wave + "' style='stroke:" + color + "'></path></svg></span>";
-  box.innerHTML = "<div class='section-head'><h2>Season Dates</h2><p class='warn slips-side'>Checked " + (checked || "2026-10-08") + ". NFL May, NHL July, MLB July, NBA August, CFB August, CBB September.</p></div><table><thead><tr><th colspan='4' style='text-align:center'>" + ekg + "</th></tr><tr><th>Sport</th><th>Start</th><th>Last Card</th><th>Status</th></tr></thead><tbody>" + rows + "</tbody></table>" + slateHtml();
+  box.innerHTML = "<div class='section-head'><h2>Season Dates</h2><p class='warn slips-side'>Checked " + (checked || "2026-10-08") + ". NFL May, NHL July, MLB July, NBA August, CFB August, CBB September. March Madness, March 13 through the championship each year, stays open past midnight until the last game ends or 4:00 AM.</p></div><table><thead><tr><th colspan='4' style='text-align:center'>" + ekg + "</th></tr><tr><th>Sport</th><th>Start</th><th>Last Card</th><th>Status</th></tr></thead><tbody>" + rows + "</tbody></table>" + slateHtml();
   startPulse();
 }
 let pulseFrame = 0;
@@ -1634,7 +1646,7 @@ function render(){
   drawCalendar();
   const bookDate = slateSettled(yesterday()) ? yesterday() : shiftDate(yesterday(), -1);
   const bookDay = chartSlips().filter(b => b.date === bookDate);
-  document.getElementById("breaks").innerHTML = "<h2>Graded Results By Sport And Book</h2><p class='api-note'>Graded slate " + bookDate + ". A late NHL game stays on the slate it started, and that slate stays open until the last game ends or 4:00 AM.</p>" + group(bookDay, "sport") + bookFigures(bookDay) + "<h2 class='split-title'>Market Split</h2>" + group(bookDay, "type") + "<p class='api-note'>Graded slips only. A sport with no graded slips says No Picks. A book says No Price Saved until that one call stored its price.</p>";
+  document.getElementById("breaks").innerHTML = "<h2>Graded Results By Sport And Book</h2><p class='api-note'>Graded slate " + bookDate + ". A late NHL game or a March Madness game stays on the slate it started until that game ends or 4:00 AM.</p>" + group(bookDay, "sport") + bookFigures(bookDay) + "<h2 class='split-title'>Market Split</h2>" + group(bookDay, "type") + "<p class='api-note'>Graded slips only. A sport with no graded slips says No Picks. A book says No Price Saved until that one call stored its price.</p>";
   if (!document.getElementById("oddscompare")) {
     const card = document.createElement("section");
     card.className = "card";
@@ -2134,7 +2146,7 @@ form.onsubmit = e => {
   const d = Object.fromEntries(new FormData(form));
   const bets = load();
   if (d.result && d.result !== "pending" && !slateSettled(d.date)) {
-    document.getElementById("editnote").textContent = "Game not finished. Result stays pending until that slate ends. A late NHL game stays open until 4:00 AM.";
+    document.getElementById("editnote").textContent = "Game not finished. Result stays pending until that slate ends. A late NHL game or a March Madness game stays open until 4:00 AM.";
     return;
   }
   const row = {...d, odds: Number(d.odds), stake: Number(d.stake), close: d.close ? Number(d.close) : ""};
@@ -2166,7 +2178,7 @@ document.getElementById("rows").onclick = e => {
     const bets = load();
     const bet = bets.find(b => String(b.id) === t.dataset.id);
     if (bet && t.dataset.set !== "pending" && !slateSettled(bet.date)) {
-      document.getElementById("editnote").textContent = "Game not finished. Result stays pending until that slate ends. A late NHL game stays open until 4:00 AM.";
+      document.getElementById("editnote").textContent = "Game not finished. Result stays pending until that slate ends. A late NHL game or a March Madness game stays open until 4:00 AM.";
       return;
     }
     if (bet) bet.result = t.dataset.set;
@@ -2422,7 +2434,7 @@ async function fillPickBoard(useSaved){
   const lastEnd = lastSlateEnd(yesterday);
   if (day === today && !slateSettled(yesterday)) {
     const when = lastEnd ? formatTime(lastEnd, false) : "4:00 AM";
-    note.textContent = "Waiting for the last game from " + yesterday + " to finish. Latest end " + when + ", including a late NHL game.";
+    note.textContent = "Waiting for the last game from " + yesterday + " to finish. Latest end " + when + ", including a late NHL game" + (cbbPlayoff(yesterday) ? " or a March Madness game" : "") + ".";
     document.getElementById("loadnote").textContent = "Waiting On Yesterday";
     return;
   }
