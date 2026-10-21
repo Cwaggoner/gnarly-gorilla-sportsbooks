@@ -1,26 +1,26 @@
 {
   "checked": "2026-10-19",
-  "check_note": "2026-10-19 is Monday, but not the first Monday of a schedule-publication month (NFL May, NHL/MLB July, NBA/CFB August, CBB September). No sport was due for check. MLB end 2026-10-31 confirmed previously. CFB 2027-01-25, NFL 2027-02-14, CBB 2027-04-05, NHL playoffs through 2027-06-30, and NBA 2027-04-11 remain unconfirmed this run.",
+  "check_note": "2026-10-19 is Monday, but not the first Monday of a schedule-publication month (NFL May, NHL/MLB July, NBA/CFB August, CBB September). No sport was due for check. MLB end 2026-10-31 confirmed previously. CFB 2027-01-25, NFL 2027-02-14, CBB 2027-04-05, NHL and NBA playoffs through 2027-06-30 remain the working ends.",
   "sports": [
     {
       "sport": "MLB",
       "start": "2026-03-25",
       "end": "2026-10-31",
-      "note": "Regular season ended Sep 27. Cards run through World Series. Game 7 published for 2026-10-31.",
+      "note": "Regular season ended Sep 27. Cards run through the World Series. From October 1 through November 5 each year, an extra-inning postseason game stays open until it ends or 4:00 AM.",
       "checked": "2026-10-09"
     },
     {
       "sport": "CFB",
       "start": "2026-08-27",
       "end": "2027-01-25",
-      "note": "Through the national championship. End date not rechecked 2026-10-18.",
+      "note": "Through the national championship. From December 1 through January 31 each year, a bowl or playoff game stays open until it ends or 4:00 AM.",
       "checked": "2026-10-08"
     },
     {
       "sport": "NFL",
       "start": "2026-09-09",
       "end": "2027-02-14",
-      "note": "Regular season ends Jan 10. Cards run through the Super Bowl. End date not rechecked 2026-10-18.",
+      "note": "Regular season ends Jan 10. Cards run through the Super Bowl. From January 11 through February 15 each year, a playoff game stays open until it ends or 4:00 AM.",
       "checked": "2026-10-08"
     },
     {
@@ -40,8 +40,8 @@
     {
       "sport": "NBA",
       "start": "2026-10-20",
-      "end": "2027-04-11",
-      "note": "Regular season. End date not rechecked 2026-10-18.",
+      "end": "2027-06-30",
+      "note": "Regular season was carried as 2027-04-11. Cards run through the Finals. Each year from April 12 through June 30, a playoff overtime game stays open until it ends or 4:00 AM. The August check can replace June 30 with the published Finals date.",
       "checked": "2026-10-08"
     }
   ]
