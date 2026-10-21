@@ -1,5 +1,4 @@
-# file: GG-CFB-2026-10-20
-2026-10-20 | CFB | Spread | Middle Tennessee +10 | -108 | Edge
-2026-10-20 | CFB | Total | Middle Tennessee at FIU Under 45.5 | -108 | Edge
-2026-10-20 | CFB | SGP | SGP Middle Tennessee +10 and Middle Tennessee at FIU Under 45.5 | 271 | Edge
-2026-10-20 | CFB | Total | Missouri State at Delaware Under 53.5 | -110 | Edge
+# file: GG-CFB-2026-10-21
+2026-10-21 | CFB | Spread | Sam Houston +2.5 | -110 | Medium 56%
+2026-10-21 | CFB | Total | New Mexico State at Sam Houston Under 45.5 | -110 | High 58% Edge: Named under.
+2026-10-21 | CFB | SGP | Sam Houston +2.5 and New Mexico State at Sam Houston Under 45.5 | 190 | Estimated +190. Dog and under. Edge.
