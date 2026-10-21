@@ -1241,9 +1241,10 @@ function drawCalendar(){
     const date = y + "-" + String(m + 1).padStart(2, "0") + "-" + String(d).padStart(2, "0");
     const isToday = date === today;
     if (isToday) {
-      const drive = driveCard.date === today ? driveCard.lines : [];
-      const local = load().filter(b => b.date === today && b.result === "pending");
-      const open = drive.length ? drive : local;
+      const local = load().filter(b => b.date === today && b.result === "pending" && !isNoPick(b));
+      const posted = driveCard.date === today ? driveCard.lines : [];
+      const open = local.slice();
+      posted.forEach(row => { if (!open.some(b => sameSlip(b, row))) open.push(Object.assign({stake: 10, result: "pending"}, row)); });
       const graded = slipsForDay(today);
       const settled = graded;
       const result = settled.length ? moneyHtml(settled.reduce((s, b) => s + slipMoney(b), 0)) : "";
@@ -1597,12 +1598,24 @@ function samePick(a, b){
   const parts = pickTokens(a);
   return parts.filter(w => right.includes(w)).length >= Math.min(3, parts.length);
 }
+function normPick(pick){
+  return expandTeams(pick).replace(/[^a-z0-9.+-]+/g, " ").replace(/\s+/g, " ").trim();
+}
+function sameSlip(a, b){
+  if (!a || !b) return false;
+  const ad = String(a.date || "").slice(0, 10), bd = String(b.date || "").slice(0, 10);
+  if (!ad || ad !== bd) return false;
+  const as = String(a.sport || "").toUpperCase(), bs = String(b.sport || "").toUpperCase();
+  if (as && bs && as !== bs) return false;
+  const left = normPick(a.pick), right = normPick(b.pick);
+  return !!left && left === right;
+}
 function dropMatchedPending(rows){
   const list = (rows || []).filter(Boolean);
   const graded = list.filter(b => b.result && b.result !== "pending");
   return list.filter(b => {
     if (b.result !== "pending") return true;
-    return !graded.some(g => g.date === b.date && g.sport === b.sport && samePick(b.pick, g.pick));
+    return !graded.some(g => sameSlip(b, g));
   });
 }
 function clearStalePending(){
@@ -1639,43 +1652,9 @@ function render(){
   const bets = filtered(windowed.sort((a,b) => String(b.date).localeCompare(String(a.date))));
   const totals = bets;
   const settled = totals.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
-  const pl = totals.reduce((s,b) => s + profit(b), 0);
-  const staked = settled.reduce((s,b) => s + Number(b.stake), 0);
-  const wins = totals.filter(b => b.result === "win").length;
-  const losses = totals.filter(b => b.result === "loss").length;
-  const pushes = totals.filter(b => b.result === "push").length;
-  const dash = "-";
-  const byGame = {};
-  settled.forEach(b => {
-    const row = byGame[b.date] || {date: b.date, wins:0, losses:0, pushes:0, profit:0, staked:0, clv:[]};
-    if (b.result === "win") row.wins++;
-    if (b.result === "loss") row.losses++;
-    if (b.result === "push") row.pushes++;
-    row.profit += profit(b);
-    row.staked += Number(b.stake) || 0;
-    const cv = clv(b);
-    if (cv != null) row.clv.push(cv);
-    byGame[b.date] = row;
-  });
-  const history = Object.values(byGame).filter(row => slateSettled(row.date)).map(row => ({
-    date: row.date,
-    record: row.wins + "-" + row.losses + (row.pushes ? "-" + row.pushes : ""),
-    profit: row.profit,
-    roi: row.staked ? (row.profit / row.staked * 100).toFixed(1) + "%" : dash,
-    units: (row.profit / UNIT).toFixed(2) + "u",
-    pending: 0,
-    clv: row.clv.length ? (row.clv.every(v => Math.abs(v) < 0.05) ? "Matched Bet Price" : (row.clv.reduce((s,v)=>s+v,0)/row.clv.length).toFixed(1) + "%") : "No Close Saved"
-  }));
   drawDashboard();
-  const avgClv = weekClv(history);
-  document.getElementById("stats").innerHTML = [
-    [weekRecord(history), "7-Day W/L Record"],
-    [moneyHtml(weekProfit(history)), "7-Day Profit"],
-    [weekRoi(history), "7-Day ROI"],
-    [(weekProfit(history) / UNIT).toFixed(2) + "u", "7-Day Units"],
-    [bets.filter(b => b.result === "pending" && b.date === todayEt()).length, "Pending"],
-    [avgClv, "7-Day Avg CLV"]
-  ].map(x => "<div class='stat'><b>" + x[0] + "</b><span>" + x[1] + "</span></div>").join("");
+  const pendingBox = document.querySelector("#stats .stat:last-child b");
+  if (pendingBox) pendingBox.textContent = String(totals.filter(b => b.result === "pending" && b.date === todayEt()).length);
   const typeRank = t => t === "SGP" ? 99 : ["Moneyline","Parlay","Prop","Spread","Total"].indexOf(t) + 1 || 50;
   const grouped = bets.slice().sort((a,b) => String(a.sport).localeCompare(String(b.sport)) || typeRank(a.type) - typeRank(b.type) || b.date.localeCompare(a.date) || b.id - a.id);
   let lastSport = "", lastType = "";
@@ -2746,7 +2725,6 @@ async function loadPending(){
   const book = document.getElementById("cardbook").value;
   await repricePaste().catch(err => { document.getElementById("pdfnote").textContent = err.message; });
   const before = bets.length;
-  const seen = new Set(bets.map(slipKey));
   document.getElementById("paste").value.split(/\r?\n/).forEach(line => {
     line = line.trim();
     if (!line || line.startsWith("#")) return;
@@ -2759,9 +2737,7 @@ async function loadPending(){
     if (!inSlipWindow(date)) return;
     if (/^(over|under)\s+\d/i.test(pick)) { note.textContent = "Skipped " + pick + ". A total needs the game, such as Bruins at Rangers Under 5.5."; return; }
     const row = {id: Date.now() + Math.random(), date, book, sport, type: type || "Spread", pick, odds: Number(odds), stake: 10, result: "pending", notes: notes || "", fromCard: true};
-    if (seen.has(slipKey(row))) return;
-    seen.add(slipKey(row));
-    bets.push(row);
+    if (!placePending(bets, row)) return;
   });
   const added = bets.length - before;
   if (!added) {
@@ -2814,9 +2790,14 @@ function markEdge(b){
   b.edge = b.edge === true || edgePicks.has(key) || /edge/i.test(b.notes || "") || /^high\b/i.test(b.notes || "") || (cv != null && cv > 0.05);
   return b;
 }
+function placePending(list, row){
+  const known = list.concat(loadGrade()).concat(gradeFile || []);
+  if (known.some(b => sameSlip(b, row))) return false;
+  list.push(row);
+  return true;
+}
 function addCardLines(text, book){
   const bets = load();
-  const seen = new Set(bets.map(slipKey));
   let added = 0;
   text.split(/\r?\n/).forEach(line => {
     line = line.trim();
@@ -2828,9 +2809,7 @@ function addCardLines(text, book){
     odds = String(odds || "").replace(/\u2212/g, "-");
     if (!sport || !pick || !odds || Number.isNaN(Number(odds)) || /no picks|season ended/i.test(pick) || !inSlipWindow(date)) return;
     const row = markEdge({id: Date.now() + Math.random(), date, book: book || "BetMGM", sport, type: type || "Spread", pick, odds: Number(odds), stake: 10, result: "pending", notes: notes || "", fromCard: true});
-    if (seen.has(slipKey(row))) return;
-    seen.add(slipKey(row));
-    bets.push(row);
+    if (!placePending(bets, row)) return;
     added++;
   });
   if (added) save(bets);
@@ -2892,7 +2871,7 @@ async function applyGrades(){
   const bets = load();
   const graded = loadGrade();
   const apply = (b, rule) => {
-    if (b.date !== rule.date || !samePick(b.pick, rule.pick)) return false;
+    if (!sameSlip(b, rule)) return false;
     if (rule.sport && b.sport && b.sport !== rule.sport) return false;
     if (rule.result === "pending") return false;
     b.result = rule.result;
@@ -2904,7 +2883,7 @@ async function applyGrades(){
     bets.forEach(b => apply(b, rule));
     graded.forEach(b => apply(b, rule));
     if (!inSlipWindow(rule.date)) return;
-    if (!graded.some(b => b.date === rule.date && b.sport === rule.sport && samePick(b.pick, rule.pick))) graded.push({id: Date.now() + Math.random(), date: rule.date, book: "BetMGM", sport: rule.sport, type: betType({pick: rule.pick}), pick: rule.pick, odds: rule.odds, close: rule.close, stake: 10, result: rule.result, profit: rule.profit, realClose: rule.realClose, notes: "Graded"});
+    if (!graded.some(b => sameSlip(b, rule))) graded.push({id: Date.now() + Math.random(), date: rule.date, book: "BetMGM", sport: rule.sport, type: betType({pick: rule.pick}), pick: rule.pick, odds: rule.odds, close: rule.close, stake: 10, result: rule.result, profit: rule.profit, realClose: rule.realClose, notes: "Graded"});
   });
   localStorage.setItem(GRADE_KEY, JSON.stringify(graded));
   localStorage.setItem(KEY, JSON.stringify(bets));
