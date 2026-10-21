@@ -1,6 +1,6 @@
 {
   "checked": "2026-10-19",
-  "check_note": "2026-10-19 is Monday, but not the first Monday of a schedule-publication month (NFL May, NHL/MLB July, NBA/CFB August, CBB September). No sport was due for check. MLB end 2026-10-31 confirmed previously. CFB 2027-01-25, NFL 2027-02-14, CBB 2027-04-05, NHL 2027-04-10, and NBA 2027-04-11 remain unconfirmed this run.",
+  "check_note": "2026-10-19 is Monday, but not the first Monday of a schedule-publication month (NFL May, NHL/MLB July, NBA/CFB August, CBB September). No sport was due for check. MLB end 2026-10-31 confirmed previously. CFB 2027-01-25, NFL 2027-02-14, CBB 2027-04-05, NHL playoffs through 2027-06-30, and NBA 2027-04-11 remain unconfirmed this run.",
   "sports": [
     {
       "sport": "MLB",
@@ -33,8 +33,8 @@
     {
       "sport": "NHL",
       "start": "2026-09-29",
-      "end": "2027-04-10",
-      "note": "Regular season. End date not rechecked 2026-10-18.",
+      "end": "2027-06-30",
+      "note": "Regular season was carried as 2027-04-10. Cards run through the Stanley Cup. Each year from April 11 through June 30, a playoff overtime game stays open until it ends or 4:00 AM. The July check can replace June 30 with the published Cup date.",
       "checked": "2026-10-08"
     },
     {
