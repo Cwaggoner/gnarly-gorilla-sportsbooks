@@ -33,7 +33,10 @@ header { display:grid; grid-template-columns:96px 1fr auto 96px; align-items:str
 .topbar { position:sticky; top:0; z-index:30; align-self:flex-start; width:100%; background:#0a0a0a; }
 .sitenav { position:relative; z-index:5; display:grid; grid-template-columns:max-content minmax(0,1fr) max-content; align-items:center; gap:0; background:#0a0a0a; border:1px solid #39ff14; border-radius:8px; padding:3px 8px; margin:8px 0 0; overflow:hidden; }
 .nav-cell { display:flex; align-items:center; justify-content:center; min-width:0; gap:6px; flex-wrap:nowrap; }
-.nav-cell.mid { border-left:1px solid #39ff14; border-right:1px solid #39ff14; padding:0 10px; overflow-x:auto; scrollbar-width:none; }
+.nav-cell.mid { position:relative; border:none; padding:0 10px; overflow-x:auto; scrollbar-width:none; }
+.nav-cell.mid::before, .nav-cell.mid::after { content:""; position:absolute; top:0; bottom:0; width:1px; background:#39ff14; pointer-events:none; }
+.nav-cell.mid::before { left:10px; }
+.nav-cell.mid::after { right:10px; }
 .nav-cell.mid::-webkit-scrollbar { display:none; }
 .head-icon { display:flex; align-items:center; justify-content:center; border-right:1px solid #39ff14; padding-right:6px; }
 .head-icon.right { border-right:none !important; border-left:1px solid #39ff14; padding-right:0; padding-left:6px; }
