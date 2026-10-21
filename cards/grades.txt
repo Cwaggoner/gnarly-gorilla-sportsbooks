@@ -4,15 +4,19 @@
 2026-10-01 | NHL | Blue Jackets ML | -102 | win | Sabres 3 Blue Jackets 6 | 9.80 | close:-102
 
 2026-10-20 | RANGE | All Win 169.60 | All Lose -120.00
-2026-10-20 | NHL | Vancouver Canucks ML | 240 | loss | Canucks 3 Hurricanes 6 | -10.00
-2026-10-20 | NHL | San Jose Sharks ML | 185 | win | Sharks 4 Canadiens 3 OT | 18.50
-2026-10-20 | NHL | Boston Bruins ML | 142 | loss | Bruins 2 Stars 3 OT | -10.00
-2026-10-20 | NHL | Toronto Maple Leafs ML | 140 | win | Maple Leafs 6 Blue Jackets 2 | 14.00
-2026-10-20 | NHL | Anaheim Ducks ML | 130 | loss | Ducks 2 Islanders 3 | -10.00
-2026-10-20 | NHL | Los Angeles Kings ML | 130 | win | Kings 5 Capitals 2 | 13.00
-2026-10-20 | NBA | 76ers at Knicks Under 231.5 | -108 | win | 76ers 106 Knicks 100 | 9.26
-2026-10-20 | NBA | Thunder at Spurs Under 230.5 | -112 | win | Thunder 116 Spurs 104 | 8.93
-2026-10-20 | CFB | Middle Tennessee +10 | -108 | win | MTSU 26 FIU 23 | 9.26
-2026-10-20 | CFB | Middle Tennessee at FIU Under 45.5 | -108 | loss | MTSU 26 FIU 23 | -10.00
-2026-10-20 | CFB | SGP Middle Tennessee +10 and Middle Tennessee at FIU Under 45.5 | 271 | loss | MTSU 26 FIU 23 | -10.00
-2026-10-20 | CFB | Missouri State at Delaware Under 53.5 | -110 | loss | Missouri State 38 Delaware 61 | -10.00
+2026-10-20 | NHL | Vancouver Canucks ML | 240 | loss | Canucks 3 Hurricanes 6 | -10.00 | close:240
+2026-10-20 | NHL | San Jose Sharks ML | 185 | win | Sharks 4 Canadiens 3 OT | 18.50 | close:185
+2026-10-20 | NHL | Boston Bruins ML | 142 | loss | Bruins 2 Stars 3 OT | -10.00 | close:142
+2026-10-20 | NHL | Toronto Maple Leafs ML | 140 | win | Maple Leafs 6 Blue Jackets 2 | 14.00 | close:140
+2026-10-20 | NHL | Anaheim Ducks ML | 130 | loss | Ducks 2 Islanders 3 | -10.00 | close:130
+2026-10-20 | NHL | Los Angeles Kings ML | 130 | win | Kings 5 Capitals 2 | 13.00 | close:130
+2026-10-20 | NBA | 76ers at Knicks Under 231.5 | -108 | win | 76ers 106 Knicks 100 | 9.26 | close:-111
+2026-10-20 | NBA | Thunder at Spurs Under 230.5 | -112 | win | Thunder 116 Spurs 104 | 8.93 | close:-112
+2026-10-20 | CFB | Middle Tennessee +10 | -108 | win | MTSU 26 FIU 23 | 9.26 | close:-110
+2026-10-20 | CFB | Middle Tennessee at FIU Under 45.5 | -108 | loss | MTSU 26 FIU 23 | -10.00 | close:-110
+2026-10-20 | CFB | SGP Middle Tennessee +10 and Middle Tennessee at FIU Under 45.5 | 271 | loss | MTSU 26 FIU 23 | -10.00 | close:271
+2026-10-20 | CFB | Missouri State at Delaware Under 53.5 | -110 | loss | Missouri State 38 Delaware 61 | -10.00 | close:-110
+
+2026-10-20 | MLB | No Picks
+2026-10-20 | NFL | No Picks
+2026-10-20 | CBB | No Picks
