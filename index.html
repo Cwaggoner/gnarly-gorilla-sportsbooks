@@ -579,8 +579,14 @@ function load(){ try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } c
 function loadGrade(){ try { return JSON.parse(localStorage.getItem(GRADE_KEY) || "[]"); } catch (e) { return []; } }
 function archiveSlips(bets){
   const prior = loadGrade();
-  const seen = new Set(prior.map(b => [b.date, b.sport, b.pick].join("|")));
-  bets.forEach(b => { const k = [b.date, b.sport, b.pick].join("|"); if (!seen.has(k)) { prior.push(b); seen.add(k); } });
+  const index = new Map(prior.map((b, i) => [[b.date, b.sport, b.pick].join("|"), i]));
+  bets.forEach(b => {
+    if (!b || b.result === "pending" || isNoPick(b)) return;
+    const k = [b.date, b.sport, b.pick].join("|");
+    const at = index.get(k);
+    if (at == null) { prior.push(b); index.set(k, prior.length - 1); return; }
+    if (prior[at].result === "pending") prior[at] = Object.assign({}, prior[at], b, {id: prior[at].id || b.id});
+  });
   localStorage.setItem(GRADE_KEY, JSON.stringify(prior));
   return prior.length;
 }
@@ -727,8 +733,10 @@ function ruleRow(row){
   return Object.assign({}, row, {record: empty ? "0-0-0" : parts[0] + "-" + parts[1] + "-" + parts[2], clv: clv});
 }
 function drawDashboard(history, manual){
-  const rows = (manual ? history.slice() : publishedDashboard()).map(ruleRow);
-  if (!manual) localStorage.setItem("gg-dashboard-v1", JSON.stringify(rows));
+  let manualRows = null;
+  if (!manual) { try { manualRows = JSON.parse(sessionStorage.getItem("gg-dashboard-manual") || "null"); } catch (e) { manualRows = null; } }
+  const rows = (manual ? history.slice() : (manualRows || publishedDashboard())).map(ruleRow);
+  if (!manual && !manualRows) localStorage.setItem("gg-dashboard-v1", JSON.stringify(rows));
   const shown = rows;
   const profit = shown.reduce((s, row) => s + (Number(row.profit) || 0), 0);
   const staked = shown.reduce((s, row) => s + rowStake(row), 0);
@@ -1430,14 +1438,14 @@ async function nightlyUpdate(){
       if (!text.includes(yesterday())) return;
       await applyGrades().catch(() => {});
       await loadCalendarFile();
-      const still = load().filter(b => b.date === yesterday() && b.result === "pending" && !isNoPick(b) && !slateSettled(b.date));
-      if (note) note.textContent = still.length ? still.length + " slips from " + yesterday() + " still pending." : "All " + yesterday() + " slips graded.";
-      if (!still.length) { clearInterval(window.gradeWatch); window.gradeWatch = null; }
+      const still = load().filter(b => b.date === yesterday() && b.result === "pending" && !isNoPick(b));
+      if (note) note.textContent = !slateSettled(yesterday()) ? "Waiting for the last " + yesterday() + " game to end." : (still.length ? still.length + " slips from " + yesterday() + " are waiting on the grade file." : "All " + yesterday() + " slips graded.");
+      if (!still.length && slateSettled(yesterday())) { clearInterval(window.gradeWatch); window.gradeWatch = null; }
     }, 60000);
   }
   const text = await cardBundle().catch(() => "");
   const today = todayEt();
-  const todays = text.split(/\n/).filter(line => line.trim().startsWith(today));
+  const todays = slateSettled(yesterday()) ? text.split(/\n/).filter(line => line.trim().startsWith(today)) : [];
   if (todays.length) {
     const added = addCardLines(todays.join("\n"), document.getElementById("cardbook").value || "BetMGM");
     drawCardAnalysis(todays.join("\n"));
@@ -1445,9 +1453,10 @@ async function nightlyUpdate(){
     return;
   }
   drawCardAnalysis(text);
-  if (note) note.textContent = "After midnight. Yesterday graded. Today's picks load when the morning task publishes them.";
+  if (note) note.textContent = slateSettled(yesterday()) ? "After midnight. Yesterday graded. Today's picks load when the morning task publishes them." : "After midnight. Yesterday stays open until its last game ends.";
   if (!window.cardWatch) {
     window.cardWatch = setInterval(async () => {
+      if (!slateSettled(yesterday())) return;
       const body = await cardBundle().catch(() => "");
       const lines = body.split(/\n/).filter(line => line.trim().startsWith(todayEt()));
       if (!lines.length) return;
@@ -1614,7 +1623,7 @@ function render(){
     const key = [b.date, b.sport, b.pick].join("|");
     const prior = byKey[key];
     const incoming = Number(b.profit), had = Number(prior && prior.profit);
-    const better = !prior || (prior.result === "pending" && b.result !== "pending") || (Number.isFinite(incoming) && incoming !== 0 && (!Number.isFinite(had) || had === 0));
+    const better = !prior || (prior.result === "pending" && b.result !== "pending") || (prior.result === b.result && Number.isFinite(incoming) && incoming !== 0 && (!Number.isFinite(had) || had === 0));
     if (!better) return;
     if (!b.id) b.id = key;
     if (!b.book) b.book = "BetMGM";
@@ -1657,8 +1666,7 @@ function render(){
     pending: 0,
     clv: row.clv.length ? (row.clv.every(v => Math.abs(v) < 0.05) ? "Matched Bet Price" : (row.clv.reduce((s,v)=>s+v,0)/row.clv.length).toFixed(1) + "%") : "No Close Saved"
   }));
-  localStorage.setItem("gg-dashboard-v1", JSON.stringify(history));
-  drawDashboard(history);
+  drawDashboard();
   const avgClv = weekClv(history);
   document.getElementById("stats").innerHTML = [
     [weekRecord(history), "7-Day W/L Record"],
@@ -2738,6 +2746,7 @@ async function loadPending(){
   const book = document.getElementById("cardbook").value;
   await repricePaste().catch(err => { document.getElementById("pdfnote").textContent = err.message; });
   const before = bets.length;
+  const seen = new Set(bets.map(slipKey));
   document.getElementById("paste").value.split(/\r?\n/).forEach(line => {
     line = line.trim();
     if (!line || line.startsWith("#")) return;
@@ -2749,7 +2758,10 @@ async function loadPending(){
     if (!sport || !pick || !odds || Number.isNaN(Number(odds)) || /no picks|season ended/i.test(pick)) return;
     if (!inSlipWindow(date)) return;
     if (/^(over|under)\s+\d/i.test(pick)) { note.textContent = "Skipped " + pick + ". A total needs the game, such as Bruins at Rangers Under 5.5."; return; }
-    bets.push({id: Date.now() + Math.random(), date, book, sport, type: type || "Spread", pick, odds: Number(odds), stake: 10, result: "pending", notes: notes || "", fromCard: true});
+    const row = {id: Date.now() + Math.random(), date, book, sport, type: type || "Spread", pick, odds: Number(odds), stake: 10, result: "pending", notes: notes || "", fromCard: true};
+    if (seen.has(slipKey(row))) return;
+    seen.add(slipKey(row));
+    bets.push(row);
   });
   const added = bets.length - before;
   if (!added) {
@@ -2782,7 +2794,8 @@ function parseGradeLine(line){
   let close = "";
   if (/^close:/i.test(money)) { close = money.replace(/^close:/i, ""); money = parts[parts.length - 2]; }
   const odds = (parts[3].match(/-?\d+/) || [""])[0];
-  const result = (parts[4].match(/win|loss|push/i) || ["loss"])[0].toLowerCase();
+  const result = (parts[4].match(/win|loss|push/i) || [""])[0].toLowerCase();
+  if (!result) return null;
   const profit = Number(String(money).replace(/[$,+]/g, ""));
   const nclose = Number(String(close).replace(/[^\d+-]/g, ""));
   return {date: parts[0], sport: parts[1], pick: parts[2], odds: odds || -110, close: Number.isFinite(nclose) ? nclose : "", result: result, stake: 10, profit: Number.isFinite(profit) ? profit : 0, realClose: Number.isFinite(nclose)};
@@ -2849,9 +2862,6 @@ async function loadDriveCard(){
   }
   const named = text.match(/^#\s*file:\s*(.+)$/m);
   const fileName = (named ? named[1] : "Drive card").replace(/\.(txt|pdf)$/i, "");
-  const current = load();
-  const finished = current.filter(b => b.result === "pending" && slateSettled(b.date));
-  if (finished.length) archiveSlips(finished);
   const added = addCardLines(lines.join("\n"), document.getElementById("cardbook").value || "BetMGM");
   load().forEach(markEdge);
   save(load());
@@ -2878,16 +2888,23 @@ async function applyGrades(){
   const res = await fetch("cards/grades.txt?ts=" + Date.now());
   if (!res.ok) return;
   const text = await res.text();
-  const named = (text.match(/^#\s*file:\s*(.+)$/m) || [, "grades"])[1].replace(/\.(txt|pdf)$/i, "");
-  const rules = gradeRows(text);
+  const rules = text.split(/\n/).map(parseGradeLine).filter(Boolean);
   const bets = load();
   const graded = loadGrade();
+  const apply = (b, rule) => {
+    if (b.date !== rule.date || !samePick(b.pick, rule.pick)) return false;
+    if (rule.sport && b.sport && b.sport !== rule.sport) return false;
+    if (rule.result === "pending") return false;
+    b.result = rule.result;
+    if (Number.isFinite(Number(rule.profit))) b.profit = Number(rule.profit);
+    if (rule.close !== "" && rule.close != null && Number.isFinite(Number(rule.close))) { b.close = Number(rule.close); b.realClose = true; }
+    return true;
+  };
   rules.forEach(rule => {
-    [bets, graded].forEach(list => list.forEach(b => {
-      if (b.date === rule.date && (b.sport === rule.sport || !b.sport || !rule.sport) && samePick(b.pick, rule.pick)) { b.result = rule.result; if (rule.close !== "" && rule.close != null && Number(rule.close) !== Number(b.odds)) b.close = rule.close; }
-    }));
-    if (/no picks|season ended/i.test(rule.pick) || !inSlipWindow(rule.date)) return;
-    if (!graded.some(b => b.date === rule.date && b.pick === rule.pick)) graded.push({id: Date.now() + Math.random(), date: rule.date, book: "BetMGM", sport: rule.sport, type: betType({pick: rule.pick}), pick: rule.pick, odds: rule.odds, close: rule.close, stake: 10, result: rule.result, profit: rule.profit, notes: "Graded"});
+    bets.forEach(b => apply(b, rule));
+    graded.forEach(b => apply(b, rule));
+    if (!inSlipWindow(rule.date)) return;
+    if (!graded.some(b => b.date === rule.date && b.sport === rule.sport && samePick(b.pick, rule.pick))) graded.push({id: Date.now() + Math.random(), date: rule.date, book: "BetMGM", sport: rule.sport, type: betType({pick: rule.pick}), pick: rule.pick, odds: rule.odds, close: rule.close, stake: 10, result: rule.result, profit: rule.profit, realClose: rule.realClose, notes: "Graded"});
   });
   localStorage.setItem(GRADE_KEY, JSON.stringify(graded));
   localStorage.setItem(KEY, JSON.stringify(bets));
@@ -2924,7 +2941,13 @@ document.getElementById("resetdash").onclick = () => {
   drawDashboard(JSON.parse(localStorage.getItem("gg-dashboard-v1") || "[]"));
   document.getElementById("dashnote").textContent = "Reset. Last 7 days restored.";
 };
-document.getElementById("loaddrive").onclick = () => { localStorage.removeItem("gg-hold-ledger"); loadDriveCard().then(applyGrades).catch(err => { document.getElementById("pdfnote").textContent = err.message; }); };
+document.getElementById("loaddrive").onclick = async () => {
+  localStorage.removeItem("gg-hold-ledger");
+  const note = document.getElementById("pdfnote");
+  await applyGrades().catch(() => {});
+  if (!slateSettled(yesterday())) { note.textContent = "Yesterday is still open. Today's card waits until that slate ends."; return; }
+  await loadDriveCard().catch(err => { note.textContent = err.message; });
+};
 async function catchUp(){
   try {
     const [cal, grades, dash] = await Promise.all([
@@ -2941,19 +2964,17 @@ async function catchUp(){
       });
       localStorage.setItem("gg-calendar-published", JSON.stringify(publishedCalendar));
     }
-    if (grades) {
-      gradeFile = grades.split(/\n/).map(parseGradeLine).filter(Boolean);
-    }
+    if (grades) gradeFile = grades.split(/\n/).map(parseGradeLine).filter(Boolean);
     if (dash) localStorage.setItem("gg-dashboard-published", dash);
   } catch (err) {}
   clearStalePending();
+  await applyGrades().catch(() => {});
   const held = localStorage.getItem("gg-hold-ledger") === "1";
   const inWindow = load().some(b => inSlipWindow(b.date));
-  if (!held || !inWindow) {
+  if ((!held || !inWindow) && slateSettled(yesterday())) {
     localStorage.removeItem("gg-hold-ledger");
     await loadDriveCard().catch(() => {});
   }
-  await applyGrades().catch(() => {});
   render();
 }
 catchUp();
