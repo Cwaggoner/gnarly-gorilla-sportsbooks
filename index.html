@@ -913,9 +913,38 @@ function drawCharts(){
   line.height = h;
   line.style.height = h + "px";
   bars.style.height = h + "px";
-  drawLine(line, settled);
+  drawLine(line);
 }
-function drawLine(canvas, settled){
+function fileReplacesDay(date, day, slips, personal){
+  if (personal || date >= todayEt() || !slateSettled(date) || !slips.length) return false;
+  if (!(gradeFile || []).some(b => b.date === date && !isNoPick(b))) return false;
+  const publishedN = Number(day && day.n) || 0;
+  const publishedPl = Number(day && day.pl);
+  if (!Number.isFinite(publishedPl)) return true;
+  return publishedN > 0 && slips.length >= publishedN;
+}
+function monthDays(){
+  const mine = personalCalendar() || {};
+  const board = Object.assign({}, publishedCalendar);
+  Object.keys(mine).forEach(date => { if (mine[date] && Number.isFinite(Number(mine[date].pl))) board[date] = mine[date]; });
+  const y = monthCursor.getFullYear(), m = monthCursor.getMonth();
+  const days = new Date(y, m + 1, 0).getDate();
+  const today = todayEt();
+  const rows = [];
+  for (let d = 1; d <= days; d++) {
+    const date = y + "-" + String(m + 1).padStart(2, "0") + "-" + String(d).padStart(2, "0");
+    if (date > today || !slateSettled(date)) continue;
+    const personal = !!(mine[date] && Number.isFinite(Number(mine[date].pl)));
+    const slips = slipsForDay(date);
+    let day = personal ? mine[date] : board[date];
+    if (fileReplacesDay(date, day, slips, personal)) day = {pl: slips.reduce((s, b) => s + slipMoney(b), 0)};
+    const pl = Number(day && day.pl);
+    if (!Number.isFinite(pl)) continue;
+    rows.push({date, pl});
+  }
+  return rows;
+}
+function drawLine(canvas){
   const ctx = canvas.getContext("2d");
   const w = Math.max(320, canvas.clientWidth || 640);
   const h = 192;
@@ -924,9 +953,10 @@ function drawLine(canvas, settled){
   ctx.clearRect(0,0,w,h);
   ctx.fillStyle = "#0e0e0e";
   ctx.fillRect(0,0,w,h);
-  if (!settled.length){ ctx.fillStyle = "#8fb898"; ctx.font = "14px sans-serif"; ctx.fillText("No settled slips yet.", 16, 32); return; }
+  const days = monthDays();
+  if (!days.length){ ctx.fillStyle = "#8fb898"; ctx.font = "14px sans-serif"; ctx.fillText("No settled days this month.", 16, 32); return; }
   let run = 0;
-  const pts = settled.map(b => { run += profit(b); return {date:b.date, y:run}; });
+  const pts = days.map(d => { run += d.pl; return {date:d.date, y:run}; });
   const vals = pts.map(p => p.y);
   const min = Math.min(0, ...vals), max = Math.max(0, ...vals);
   const span = (max - min) || 1;
@@ -947,10 +977,19 @@ function drawLine(canvas, settled){
   ctx.stroke();
   ctx.fillStyle = "#d6ffd0";
   ctx.font = "12px sans-serif";
-  ctx.fillText(pts[0].date, pad, h - 8);
-  ctx.fillText(pts[pts.length-1].date, w - 90, h - 8);
-  ctx.fillStyle = "#39ff14";
-  ctx.fillText(money(pts[pts.length-1].y), pad, 16);
+  ctx.fillText(pts[0].date.slice(5), pad, h - 8);
+  ctx.textAlign = "right";
+  ctx.fillText(pts[pts.length-1].date.slice(5), w - pad, h - 8);
+  const last = pts[pts.length - 1];
+  const lx = x(pts.length - 1);
+  const ly = y(last.y);
+  ctx.fillStyle = last.y > 0 ? "#39ff14" : last.y < 0 ? "#ff6b6b" : "#ffffff";
+  ctx.font = "12px sans-serif";
+  const label = money(last.y);
+  const above = ly > pad + 14;
+  ctx.textAlign = "right";
+  ctx.fillText(label, lx - 6, ly + (above ? -6 : 14));
+  ctx.textAlign = "left";
 }
 let gradeFile = [];
 let edgePicks = new Set();
@@ -1202,6 +1241,7 @@ async function loadCalendarFile(){
     });
     localStorage.setItem("gg-calendar-published", JSON.stringify(publishedCalendar));
     drawCalendar();
+    drawCharts();
   } catch (err) {}
 }
 let driveCard = {date: "", lines: [], loaded: false};
@@ -1282,8 +1322,7 @@ function drawCalendar(){
         if (!Number.isFinite(odds)) return 0;
         return odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds);
       };
-      const fromFile = (gradeFile || []).some(b => b.date === date && !isNoPick(b));
-      if (date < today && slateSettled(date) && slips.length && !personal && fromFile) {
+      if (fileReplacesDay(date, day, slips, personal)) {
         day = Object.assign({}, day || {}, {
           pl: slips.reduce((s, b) => s + slipMoney(b), 0),
           n: slips.length,
