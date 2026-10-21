@@ -190,3 +190,15 @@
 2026-10-16 | MLB | -110 | Rays @ Guardians Under 6.5 | -110
 2026-10-16 | MLB | -110 | Guardians ML | -105
 2026-10-16 | MLB | 190 | SGP Guardians ML and Under 6.5 | 190
+2026-10-20 | NHL | 240 | Vancouver Canucks ML | 240
+2026-10-20 | NHL | 185 | San Jose Sharks ML | 185
+2026-10-20 | NHL | 142 | Boston Bruins ML | 142
+2026-10-20 | NHL | 140 | Toronto Maple Leafs ML | 140
+2026-10-20 | NHL | 130 | Anaheim Ducks ML | 130
+2026-10-20 | NHL | 130 | Los Angeles Kings ML | 130
+2026-10-20 | NBA | -108 | 76ers at Knicks Under 231.5 | -111
+2026-10-20 | NBA | -112 | Thunder at Spurs Under 230.5 | -112
+2026-10-20 | CFB | -108 | Middle Tennessee +10 | -110
+2026-10-20 | CFB | -108 | Middle Tennessee at FIU Under 45.5 | -110
+2026-10-20 | CFB | 271 | SGP Middle Tennessee +10 and Middle Tennessee at FIU Under 45.5 | 271
+2026-10-20 | CFB | -110 | Missouri State at Delaware Under 53.5 | -110
