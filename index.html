@@ -865,6 +865,7 @@ function sportLean(rows){
   return bits.length ? bits.join(" and ") : "posted plays";
 }
 function drawCardAnalysis(text){
+  postedCard = text || "";
   const grid = document.getElementById("analysisgrid");
   if (!grid) return;
   const all = cardLines(text);
@@ -877,6 +878,7 @@ function drawCardAnalysis(text){
     grid.innerHTML = "<p class='warn'>Today's card is not posted yet. Yesterday's picks stay off this card.</p>";
     if (title) title.textContent = "Analysis · " + today;
     if (read) read.textContent = "No card is live yet. It posts with the morning picks. Yesterday is not carried onto this card.";
+    drawPassedSlate();
     return;
   }
   const sports = ["CBB","CFB","MLB","NBA","NFL","NHL"];
@@ -895,6 +897,7 @@ function drawCardAnalysis(text){
   }).join("");
   if (title) title.textContent = "Analysis · " + day;
   if (read) read.textContent = sharpRead(rows);
+  drawPassedSlate();
 }
 function sharpRead(rows){
   rows = rows.filter(r => !isNoCard(r));
@@ -1544,6 +1547,34 @@ function inSlipWindow(date){ date = String(date || "").slice(0, 10); return date
 let SEASON_END = {MLB:"2026-10-31", CFB:"2027-01-25", NFL:"2027-02-14", CBB:"2027-04-05", NHL:"2027-06-30", NBA:"2027-06-30"};
 let SEASON_START = {MLB:"2026-03-25", CFB:"2026-08-27", NFL:"2026-09-09", CBB:"2026-11-02", NHL:"2026-09-29", NBA:"2026-10-20"};
 let pickSlate = null;
+let postedCard = "";
+function postedRows(){
+  const all = cardLines(postedCard || "");
+  const today = todayEt();
+  const dated = all.filter(p => /^\d{4}-\d{2}-\d{2}$/.test(p[0]));
+  return (dated.length ? dated.filter(p => p[0] === today) : all).filter(r => !isNoCard(r));
+}
+function matchupGames(){
+  const games = pickSlate && Array.isArray(pickSlate.games) ? pickSlate.games : [];
+  const pending = pendingSlips();
+  const rows = postedRows();
+  if (!pending.length && !rows.length) return null;
+  return games.filter(g => pending.some(b => gameMatchesSlip(g, b)) || rows.some(r => gameMatchesSlip(g, {sport: r[1], pick: r[3]})));
+}
+function drawPassedSlate(){
+  const box = document.getElementById("passedslate");
+  const note = document.getElementById("passednote");
+  if (!box) return;
+  const games = pickSlate && Array.isArray(pickSlate.games) ? pickSlate.games : [];
+  if (!games.length) return;
+  const used = matchupGames();
+  if (!used) return;
+  const keys = new Set(used.map(g => g.sport + "|" + g.game));
+  const left = games.filter(g => !keys.has(g.sport + "|" + g.game));
+  const date = pickSlate.date || todayEt();
+  if (note) note.textContent = left.length ? "Games on " + date + " that did not make the day's matchups." : "Every posted game on " + date + " made the day's matchups.";
+  box.innerHTML = left.length ? slateTable(left, date) : "";
+}
 function slateDateLabel(date){
   const match = String(date || "").match(/^(\d{4})-(\d{2})-(\d{2})/);
   if (!match) return "";
@@ -1605,7 +1636,7 @@ function pendingHoldHtml(pending){
 }
 function paintSeasonStatus(){
   const box = document.getElementById("seasons");
-  if (!box || !box.querySelector("table tbody")) return;
+  if (!box || !box.querySelector("table tbody")) { drawPassedSlate(); return; }
   const pending = pendingSlips();
   const order = ["CBB","CFB","MLB","NBA","NFL","NHL"];
   const body = box.querySelector("table:not(.season-hold) tbody");
@@ -1617,10 +1648,11 @@ function paintSeasonStatus(){
     cell.style.color = /Pending/.test(text) ? "#f0e14a" : text === "Season Ended" ? "#8fb898" : "#39ff14";
   });
   const hold = box.querySelector("table.season-hold");
-  if (!hold) return;
+  if (!hold) { drawPassedSlate(); return; }
   const wrap = document.createElement("div");
   wrap.innerHTML = pendingHoldHtml(pending);
   if (wrap.firstElementChild) hold.replaceWith(wrap.firstElementChild);
+  drawPassedSlate();
 }
 function drawPickSlate(){
   const old = document.querySelector("#seasons table.season-hold");
@@ -1630,10 +1662,7 @@ function drawPickSlate(){
     old.replaceWith(holder.firstElementChild);
   }
   paintSeasonStatus();
-  const box = document.getElementById("passedslate");
-  const note = document.getElementById("passednote");
-  if (note && pickSlate && pickSlate.date) note.textContent = "Games being played on " + pickSlate.date + " that did not make the picks. This table changes when the day's picks arrive.";
-  if (box) box.innerHTML = slateTable(pickSlate && pickSlate.passed);
+  drawPassedSlate();
 }
 async function loadPickSlate(){
   try {
