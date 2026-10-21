@@ -1591,10 +1591,17 @@ function seasonStatus(sport, pending){
   if (n) return n + " Pending";
   return seasonEnded(sport) ? "Season Ended" : "Open";
 }
+function gameMatchesSlip(game, slip){
+  if (!game || !slip || String(slip.sport || "").toUpperCase() !== game.sport) return false;
+  const blob = [game.game, game.away && game.away.name, game.home && game.home.name].join(" ").toLowerCase();
+  const words = String(slip.pick || "").toLowerCase().split(/[^a-z0-9]+/).filter(w => w.length > 3 && !/^(under|over|spread|total|moneyline|and)$/.test(w));
+  return words.some(w => blob.includes(w));
+}
 function pendingHoldHtml(pending){
-  if (!pending || !pending.length) return slateHtml();
-  const rows = pending.slice().sort((a, b) => String(a.sport).localeCompare(String(b.sport)) || String(a.type).localeCompare(String(b.type)) || String(a.pick).localeCompare(String(b.pick))).map(b => "<tr><td>" + esc(b.sport + " " + b.pick) + "</td><td>" + esc(b.date) + "</td><td>" + esc(b.type || "") + "</td><td>" + esc(b.odds) + "</td></tr>").join("");
-  return "<table class='season-hold filled'><thead><tr><th>Pending Slip</th><th>Date</th><th>Type</th><th>Odds</th></tr></thead><tbody>" + rows + "</tbody></table>";
+  const games = pickSlate && Array.isArray(pickSlate.games) ? pickSlate.games : [];
+  const hit = games.filter(g => (pending || []).some(b => gameMatchesSlip(g, b)));
+  const list = hit.length ? hit : games;
+  return list.length ? slateTable(list, pickSlate && pickSlate.date) : slateHtml();
 }
 function paintSeasonStatus(){
   const box = document.getElementById("seasons");
