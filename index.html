@@ -453,6 +453,64 @@ function showClock(){
   if (live) live.textContent = liveByText();
 }
 function yesterday(){ const d = new Date(todayEt() + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() - 1); return d.toISOString().slice(0,10); }
+function shiftDate(iso, days){
+  const [y, m, d] = String(iso || "").slice(0, 10).split("-").map(Number);
+  const dt = new Date(Date.UTC(y, (m || 1) - 1, (d || 1) + days));
+  return dt.toISOString().slice(0, 10);
+}
+function zoneClock(date){
+  const parts = new Intl.DateTimeFormat("en-US", {timeZone: siteZone(), year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit", hourCycle:"h23"}).formatToParts(date || new Date());
+  const get = k => parts.find(p => p.type === k).value;
+  return {date: get("year") + "-" + get("month") + "-" + get("day"), hour: Number(get("hour")), minute: Number(get("minute"))};
+}
+function gameLengthMs(sport){
+  const hours = {NHL:4, NBA:3, CBB:2.5, NFL:4, CFB:4, MLB:4.5};
+  return (hours[String(sport || "").toUpperCase()] || 4) * 3600000;
+}
+function slateDateOf(iso){
+  const ms = Date.parse(iso || "");
+  if (!Number.isFinite(ms)) return "";
+  const clock = zoneClock(new Date(ms));
+  return clock.hour < 4 ? shiftDate(clock.date, -1) : clock.date;
+}
+function knownStarts(){
+  const out = [];
+  const add = (sport, start) => {
+    const ms = Date.parse(start || "");
+    if (Number.isFinite(ms)) out.push({sport: String(sport || "").toUpperCase(), start: ms});
+  };
+  ((pickSlate && pickSlate.games) || []).forEach(g => add(g.sport, g.start));
+  (window.ggSchedule || []).forEach(g => add(g.sport, g.start));
+  (window.__ggExtraStarts || []).forEach(g => add(g.sport, g.start));
+  return out;
+}
+function instantAt(date, hour, minute){
+  let ms = Date.parse(date + "T" + String(hour).padStart(2, "0") + ":" + String(minute).padStart(2, "0") + ":00Z");
+  for (let i = 0; i < 4; i++) {
+    const clock = zoneClock(new Date(ms));
+    const dayFix = Date.parse(date + "T12:00:00Z") - Date.parse(clock.date + "T12:00:00Z");
+    const hourFix = ((hour - clock.hour) * 60 + (minute - clock.minute)) * 60000;
+    ms += dayFix + hourFix;
+  }
+  return ms;
+}
+function slateCutoff(date){ return instantAt(shiftDate(date, 1), 4, 0); }
+function lastSlateEnd(date){
+  const starts = knownStarts().filter(g => slateDateOf(g.start) === date);
+  if (!starts.length) return 0;
+  const raw = starts.reduce((end, g) => Math.max(end, g.start + gameLengthMs(g.sport)), 0);
+  return Math.min(raw, slateCutoff(date));
+}
+function slateSettled(date){
+  date = String(date || "").slice(0, 10);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return false;
+  if (Date.now() >= slateCutoff(date)) return true;
+  const end = lastSlateEnd(date);
+  return !!(end && Date.now() >= end);
+}
+function slipsLeftToSettle(list){
+  return (list || []).filter(b => b && b.result === "pending" && !isNoPick(b) && !slateSettled(b.date)).length;
+}
 function load(){ try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { return []; } }
 function loadGrade(){ try { return JSON.parse(localStorage.getItem(GRADE_KEY) || "[]"); } catch (e) { return []; } }
 function archiveSlips(bets){
@@ -1305,7 +1363,7 @@ async function nightlyUpdate(){
       if (!text.includes(yesterday())) return;
       await applyGrades().catch(() => {});
       await loadCalendarFile();
-      const still = load().filter(b => b.date === yesterday() && b.result === "pending" && !isNoPick(b));
+      const still = load().filter(b => b.date === yesterday() && b.result === "pending" && !isNoPick(b) && !slateSettled(b.date));
       if (note) note.textContent = still.length ? still.length + " slips from " + yesterday() + " still pending." : "All " + yesterday() + " slips graded.";
       if (!still.length) { clearInterval(window.gradeWatch); window.gradeWatch = null; }
     }, 60000);
@@ -1549,7 +1607,7 @@ function render(){
   document.getElementById("rows").innerHTML = grouped.map(b => {
     const p = slipMoney(b);
     const cls = b.result === "win" ? "win" : b.result === "loss" ? "loss" : "push";
-    const finished = b.date < todayEt();
+    const finished = slateSettled(b.date);
     const grade = !finished ? "Game not finished"
       : b.result === "pending"
       ? "<button data-set='win' data-id='" + b.id + "'>Win</button> <button class='danger' data-set='loss' data-id='" + b.id + "'>Loss</button> <button class='amber' data-set='push' data-id='" + b.id + "'>Push</button>"
@@ -1569,7 +1627,7 @@ function render(){
     return head + "<tr" + (rowCls ? " class='" + rowCls + "'" : "") + "><td>" + b.date + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td>" + esc(b.pick) + "</td><td>" + (b.odds === "" || b.odds == null ? (b.close || -110) : b.odds) + "</td><td class='col-close'>" + (b.close === "" || b.close == null ? dash : b.close) + "</td><td class='" + (cv > 0 ? "win" : cv < 0 ? "loss" : "") + "'>" + clvText(b) + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='result " + cls + "'>" + b.result + "</td><td class='" + cls + "'>" + (b.result === "pending" ? dash : moneyHtml(p)) + "</td><td>" + grade + " <button data-edit='" + b.id + "'>Edit</button> <button class='danger' data-del='" + b.id + "'>Delete</button></td></tr>";
   }).join("") || "<tr><td colspan='12'>No bets yet.</td></tr>";
   try { drawCharts(); } catch (err) { document.getElementById("plotnote").textContent = "Chart failed. The rest of the page is still live."; }
-  document.getElementById("plotnote").textContent = settled.length + " settled slips plotted. " + bets.filter(b => b.result === "pending").length + " slips left to settle.";
+  document.getElementById("plotnote").textContent = settled.length + " settled slips plotted. " + slipsLeftToSettle(bets) + " slips left to settle.";
   drawCalendar();
   const bookDay = chartSlips().filter(b => b.date === yesterday());
   document.getElementById("breaks").innerHTML = "<h2>Graded Results By Sport And Book</h2><p class='api-note'>Yesterday, " + yesterday() + ". Book prices are saved from the one Load Picks call. No new call after the game starts.</p>" + group(bookDay, "sport") + bookFigures(bookDay) + "<h2 class='split-title'>Market Split</h2>" + group(bookDay, "type") + "<p class='api-note'>Graded slips only. A sport with no graded slips says No Picks. A book says No Price Saved until that one call stored its price.</p>";
@@ -2343,17 +2401,23 @@ async function fillPickBoard(useSaved){
       games = useSaved ? (cachedBoard(sport, bookKey) || []) : await fetchBook(sportKey, bookKey, key);
       const byDay = {};
       games.forEach(game => {
-        const gameDay = game.commence_time ? new Date(game.commence_time).toLocaleDateString("en-CA", {timeZone: siteZone()}) : day;
-        byDay[gameDay] = byDay[gameDay] || [];
-        byDay[gameDay].push(game);
+        const calDay = game.commence_time ? new Date(game.commence_time).toLocaleDateString("en-CA", {timeZone: siteZone()}) : day;
+        const slateDay = game.commence_time ? slateDateOf(game.commence_time) : day;
+        [calDay, slateDay].forEach(d => {
+          if (!d) return;
+          byDay[d] = byDay[d] || [];
+          byDay[d].push(game);
+        });
       });
       Object.entries(byDay).forEach(([d, list]) => localStorage.setItem("gg-day-" + d + "-" + sportKey + "-" + bookKey, JSON.stringify(list)));
     }
     games.forEach(g => { g._sport = sport; allGames.push(g); });
   }
-  const lastYesterday = allGames.filter(g => g.commence_time && new Date(g.commence_time).toLocaleDateString("en-CA", {timeZone: siteZone()}) === yesterday).map(g => Date.parse(g.commence_time)).filter(Number.isFinite).sort((a,b) => b - a)[0];
-  if (day === today && lastYesterday && lastYesterday > Date.now()) {
-    note.textContent = "Waiting for the last game from " + yesterday + " to finish.";
+  window.__ggExtraStarts = allGames.filter(g => g.commence_time).map(g => ({sport: g._sport, start: g.commence_time}));
+  const lastEnd = lastSlateEnd(yesterday);
+  if (day === today && !slateSettled(yesterday)) {
+    const when = lastEnd ? formatTime(lastEnd, false) : "4:00 AM";
+    note.textContent = "Waiting for the last game from " + yesterday + " to finish. Latest end " + when + ", including a late NHL game.";
     document.getElementById("loadnote").textContent = "Waiting On Yesterday";
     return;
   }
@@ -2422,14 +2486,7 @@ async function autoLoadBoard(){
   yest.setUTCDate(yest.getUTCDate() - 1);
   const yesterday = yest.toISOString().slice(0, 10);
   const bookKey = BOOK_KEY[form.book.value] || "betmgm";
-  let last = 0;
-  Object.keys(SPORT_KEY).forEach(sport => {
-    try {
-      const list = JSON.parse(localStorage.getItem("gg-day-" + yesterday + "-" + SPORT_KEY[sport] + "-" + bookKey) || "[]");
-      list.forEach(g => { const t = Date.parse(g.commence_time || ""); if (Number.isFinite(t) && t > last) last = t; });
-    } catch (e) {}
-  });
-  if (last && last > Date.now()) return;
+  if (!slateSettled(yesterday)) return;
   localStorage.setItem("gg-board-auto", day);
   await fillPickBoard().catch(() => {});
 }
@@ -3384,7 +3441,7 @@ document.getElementById("plot").onclick = () => {
     const bets = filtered(load());
     drawCharts();
     const plotted = chartSlips();
-    const pending = bets.filter(b => b.result === "pending").length;
+    const pending = slipsLeftToSettle(bets);
     const sports = [...new Set(plotted.map(b => String(b.sport || "").trim().toUpperCase()))].filter(Boolean);
     note.textContent = (plotted.length ? plotted.length + " settled slips plotted." : "No settled slips yet.") + " " + pending + " slips left to settle. CLV checked for " + sports.join(", ") + "." + (filled ? " " + filled + " closes saved." : "");
   }).catch(err => { note.textContent = err.message || "CLV update failed."; });
