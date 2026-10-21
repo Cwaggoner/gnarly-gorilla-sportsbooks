@@ -30,7 +30,11 @@
 * { box-sizing:border-box; }
 body { margin:0; background:var(--bg); color:var(--text); font:15px/1.4 system-ui, sans-serif; }
 header { display:grid; grid-template-columns:96px 1fr auto 96px; align-items:stretch; gap:12px; width:100%; box-sizing:border-box; margin:0; padding:6px 10px; border:1px solid #39ff14; border-radius:10px; background:#0a0a0a; }
-.topbar { position:sticky; top:0; z-index:6; background:#0a0a0a; padding-bottom:0; }
+.topbar { position:static; background:#0a0a0a; }
+.sitenav { position:sticky; top:0; z-index:30; display:grid; grid-template-columns:max-content minmax(0,1fr) max-content; align-items:center; gap:0; background:#0a0a0a; border:1px solid #39ff14; border-radius:8px; padding:3px 8px; margin:8px 0 0; overflow:hidden; }
+.nav-cell { display:flex; align-items:center; justify-content:center; min-width:0; gap:6px; flex-wrap:nowrap; }
+.nav-cell.mid { border-left:1px solid #39ff14; border-right:1px solid #39ff14; padding:0 10px; overflow-x:auto; scrollbar-width:none; }
+.nav-cell.mid::-webkit-scrollbar { display:none; }
 .head-icon { display:flex; align-items:center; justify-content:center; border-right:1px solid #39ff14; padding-right:6px; }
 .head-icon.right { border-right:none !important; border-left:1px solid #39ff14; padding-right:0; padding-left:6px; }
 header img { width:72px; height:72px; border-radius:12px; display:block; }
@@ -53,7 +57,7 @@ footer.card { width:100%; max-width:none; margin:14px 0 0; box-sizing:border-box
 .stat b .win { color:var(--title); }
 .stat b .loss { color:var(--red); }
 .stat b .zero { color:#ffffff; font-style:italic; }
-.card { padding:14px; margin-top:14px; }
+.card { padding:14px; margin-top:14px; scroll-margin-top:54px; }
 .section-head { display:flex; align-items:center; justify-content:space-between; gap:12px; }
 .section-head h2 { margin:0; }
 .slips-side { margin:0; text-align:left; max-width:62%; font-size:12px; }
@@ -143,16 +147,13 @@ tr.row-pending.edge td.result { color:var(--amber); }
 .tools { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; align-items:flex-end; }
 .jump { display:flex; gap:6px; margin:6px 0; justify-content:center; align-items:center; }
 .jump button { padding:4px 8px; font-size:12px; }
-.sitenav { position:relative; z-index:5; display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:center; gap:0; background:#0a0a0a; border:1px solid #39ff14; border-radius:8px; padding:3px 8px; margin:8px 0 0; overflow:hidden; }
-.nav-cell { display:flex; align-items:center; justify-content:center; min-width:0; gap:6px; flex-wrap:nowrap; overflow:hidden; }
-.nav-cell.mid { border-left:1px solid #39ff14; border-right:1px solid #39ff14; padding:0 10px; flex:0 0 auto; overflow:visible; }
-.nav-cell.left { color:var(--title); white-space:nowrap; }
+.sitenav .clock { color:var(--title); white-space:nowrap; }
 .sitenav button, .sitenav select { height:26px; padding:2px 6px; font-size:12px; box-sizing:border-box; }
 .sitenav .tz { display:flex; flex-direction:row; align-items:center; justify-content:center; gap:6px; color:var(--muted); font-size:12px; white-space:nowrap; flex-wrap:nowrap; }
 .sitenav .tz select { width:110px; min-width:110px; max-width:110px; height:26px; flex:0 0 110px; align-self:center; }
 .sitenav .tz button { min-width:14ch; white-space:nowrap; }
 .sitenav .clock { color:var(--title); white-space:nowrap; }
-.card { scroll-margin-top:0; }
+.card { scroll-margin-top:54px; }
 input[type=file] { position:absolute; width:1px; height:1px; opacity:0; }
 .file-face { display:flex; align-items:center; justify-content:center; text-align:center; height:38px; min-width:140px; padding:6px 10px; box-sizing:border-box; background:#0e0e0e; color:var(--text); border:1px solid var(--line); border-radius:8px; cursor:pointer; }
 label:has(input[type=file]) { position:relative; }
@@ -416,6 +417,12 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <div class="page-end"></div>
 </div>
 <script>
+document.addEventListener("click", e => {
+  const btn = e.target.closest("[data-jump]");
+  if (!btn) return;
+  e.preventDefault();
+  jumpToCard(btn.getAttribute("data-jump"));
+});
 const KEY = "gnarly-gorilla-sportsbooks-v1";
 const GRADE_KEY = "gnarly-gorilla-grading-v1";
 const UNIT = 10;
@@ -3643,20 +3650,13 @@ fetch("cards/grades.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(
 
 function jumpToCard(id){
   if (id === "seasons") { window.scrollTo({top: 0, behavior:"smooth"}); return; }
-  let box = document.getElementById(id);
-  if (!box && id === "liveodds") { drawOddsCompare(false).catch(() => {}); box = document.getElementById(id); }
+  const box = document.getElementById(id);
   if (!box) return;
-  const topbar = document.querySelector(".topbar");
   const nav = document.getElementById("sitenav");
-  const navBottom = topbar && nav ? nav.getBoundingClientRect().bottom - topbar.getBoundingClientRect().top : (nav ? nav.offsetHeight : 0);
-  const y = box.getBoundingClientRect().top + window.scrollY - navBottom - 16;
+  const navH = nav ? nav.offsetHeight : 0;
+  const y = box.getBoundingClientRect().top + window.pageYOffset - navH - 8;
   window.scrollTo({top: Math.max(0, y), behavior:"smooth"});
 }
-document.addEventListener("click", e => {
-  const btn = e.target.closest("[data-jump]");
-  if (!btn) return;
-  jumpToCard(btn.dataset.jump);
-});
 </script>
 </body>
 </html>
