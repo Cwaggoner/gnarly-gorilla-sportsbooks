@@ -109,8 +109,8 @@ input, select, button, textarea { background:#0e0e0e; color:var(--text); border:
 table.season-hold.filled { border:1px solid #39ff14; border-radius:10px; overflow:hidden; margin-top:8px; }
 table.season-hold.filled th, table.season-hold.filled td { border-bottom:1px solid #39ff14; height:auto; width:auto; color:#d6ffd0; font-size:13px; text-align:left; vertical-align:middle; padding:8px; }
 table.season-hold.filled th { color:#39ff14; background:#102010; }
-.gamehead { display:flex; justify-content:space-between; align-items:center; gap:16px; width:100%; }
-.gamehead .slate-date { color:#d6ffd0; font-weight:700; white-space:nowrap; }
+.gamehead { display:inline; }
+.gamehead .slate-date { color:#39ff14; font-weight:700; white-space:nowrap; }
 #reportDay { color-scheme:dark; }
 #reportDay::-webkit-calendar-picker-indicator { filter:invert(1); opacity:1; cursor:pointer; }
 textarea { width:100%; min-height:120px; font:13px/1.4 ui-monospace, monospace; }
@@ -1361,7 +1361,7 @@ function slateTable(list, date){
     return "<tr><td>" + esc(game.sport + " " + game.game) + "</td><td>" + esc(when) + "</td><td>" + esc(game.location || "") + "</td><td>" + esc(records) + "</td></tr>";
   }).join("");
   const label = slateDateLabel(date);
-  const gameHead = label ? "<th><div class='gamehead'><span>Game</span><span class='slate-date'>" + esc(label) + "</span></div></th>" : "<th>Game</th>";
+  const gameHead = label ? "<th><div class='gamehead'><span>Game</span><span class='slate-date'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + esc(label) + "</span></div></th>" : "<th>Game</th>";
   return "<table class='season-hold filled'><thead><tr>" + gameHead + "<th>Time</th><th>Location</th><th>Record</th></tr></thead><tbody>" + rows + "</tbody></table>";
 }
 function slateHtml(){
