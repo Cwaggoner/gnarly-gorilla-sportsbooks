@@ -331,7 +331,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <section class="card" id="charts">
 <div class="section-head"><h2>Charts</h2><p class="warn slips-side">Profit uses settled slips. CLV needs a paid Odds API key. <span id="plotnote"></span></p><button type="button" id="plot">Plot</button></div>
 <div class="charts">
-<div><h2>Cumulative Profit</h2><canvas id="profitChart" width="640" height="220"></canvas></div>
+<div><h2 id="profitTitle">Cumulative Profit</h2><canvas id="profitChart" width="640" height="220"></canvas></div>
 <div><h2>Profit By Sport</h2><canvas id="sportChart" width="420" height="220"></canvas></div>
 </div>
 </section>
@@ -954,6 +954,8 @@ function drawLine(canvas){
   ctx.fillStyle = "#0e0e0e";
   ctx.fillRect(0,0,w,h);
   const days = monthDays();
+  const title = document.getElementById("profitTitle");
+  if (title) title.textContent = "Cumulative Profit · " + monthCursor.toLocaleString(undefined, {month:"long", year:"numeric"});
   if (!days.length){ ctx.fillStyle = "#8fb898"; ctx.font = "14px sans-serif"; ctx.fillText("No settled days this month.", 16, 32); return; }
   let run = 0;
   const pts = days.map(d => { run += d.pl; return {date:d.date, y:run}; });
@@ -1220,7 +1222,14 @@ function filtered(bets){
   const result = document.getElementById("fResult").value;
   return bets.filter(b => (!sport || b.sport === sport) && (!book || b.book === book) && (!type || b.type === type) && (!result || b.result === result));
 }
-let monthCursor = new Date();
+let monthCursor = (() => { const [y, m] = todayEt().split("-").map(Number); return new Date(y, m - 1, 1); })();
+let monthFollowsToday = true;
+function followMonth(){
+  if (!monthFollowsToday) return;
+  const [y, m] = todayEt().split("-").map(Number);
+  if (monthCursor.getFullYear() === y && monthCursor.getMonth() === m - 1) return;
+  monthCursor = new Date(y, m - 1, 1);
+}
 let publishedCalendar = {};
 try { publishedCalendar = JSON.parse(localStorage.getItem("gg-calendar-published") || "{}"); } catch (err) { publishedCalendar = {}; }
 function personalCalendar(){
@@ -1474,6 +1483,7 @@ function armMidnight(){ clearTimeout(midnightTimer); midnightTimer = setTimeout(
 armMidnight();
 loadCalendarFile();
 async function nightlyUpdate(){
+  followMonth();
   await loadCalendarFile();
   loadPickSlate();
   const note = document.getElementById("pdfnote");
@@ -3615,6 +3625,7 @@ tzSelect.value = siteZone();
 tzSelect.onchange = () => {
   localStorage.setItem("gg-timezone", tzSelect.value);
   form.date.value = todayEt();
+  followMonth();
   armMidnight();
   showClock();
   drawPickSlate();
@@ -3634,8 +3645,8 @@ hourBtn.onclick = () => {
 };
 showClock();
 setInterval(showClock, 1000);
-document.getElementById("prevMonth").onclick = () => { monthCursor.setMonth(monthCursor.getMonth()-1); render(); };
-document.getElementById("nextMonth").onclick = () => { monthCursor.setMonth(monthCursor.getMonth()+1); render(); };
+document.getElementById("prevMonth").onclick = () => { monthCursor.setMonth(monthCursor.getMonth()-1); monthFollowsToday = monthCursor.getFullYear() === Number(todayEt().slice(0,4)) && monthCursor.getMonth() === Number(todayEt().slice(5,7)) - 1; render(); };
+document.getElementById("nextMonth").onclick = () => { monthCursor.setMonth(monthCursor.getMonth()+1); monthFollowsToday = monthCursor.getFullYear() === Number(todayEt().slice(0,4)) && monthCursor.getMonth() === Number(todayEt().slice(5,7)) - 1; render(); };
 [KEY, GRADE_KEY].forEach(k => {
   try {
     const rows = JSON.parse(localStorage.getItem(k) || "[]");
