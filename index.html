@@ -883,6 +883,7 @@ function chartClv(b){
 }
 function yesterdayGraded(bets){
   const day = yesterday();
+  if (!slateSettled(day)) return [];
   const seen = new Set();
   const rows = [];
   bets.concat(load()).concat(loadGrade()).concat(gradeFile).forEach(b => {
@@ -921,7 +922,7 @@ function drawBars(canvas, bets){
   ctx.fillStyle = "#0e0e0e";
   ctx.fillRect(0,0,cssW,h);
   ctx.font = "12px sans-serif";
-  const label = r => r[1].yday ? "" : seasonText(r[0]);
+  const label = r => r[1].yday ? "" : (!slateSettled(yesterday()) ? "Last Game Open" : seasonText(r[0]));
   const labelW = Math.max(...rows.map(r => ctx.measureText(r[0]).width), 36);
   const valueW = Math.max(...rows.map(r => ctx.measureText(money(r[1].pl) + "  " + label(r)).width), 70);
   const left = 12 + labelW + 8;
@@ -1050,7 +1051,7 @@ function weekRows(){
   return publishedDashboard().map(row => ({date: row.date, profit: Number(row.profit) || 0, staked: rowStake(row), record: row.record, clv: row.clv}));
 }
 function publishedWeek(){
-  return Object.entries(publishedCalendar).filter(([date]) => date < todayEt()).sort(([a],[b]) => a.localeCompare(b)).slice(-7);
+  return Object.entries(publishedCalendar).filter(([date]) => slateSettled(date)).sort(([a],[b]) => a.localeCompare(b)).slice(-7);
 }
 function weekProfit(){
   return publishedDashboard().reduce((s, row) => s + (Number(row.profit) || 0), 0);
@@ -1180,6 +1181,8 @@ function drawCalendar(){
       const loseAll = open.reduce((s, b) => s + Number(b.stake || 10), 0);
       const lower = open.length ? "<span class='range'><span class='win'>All Win " + money(winAll) + "</span><span class='slash'> / </span><span class='loss'>All Lose -" + money(loseAll).replace("-", "") + "</span></span>" : "<span class='wait'>Picks Not Loaded Until " + formatTime(firstPickAt(), false) + "</span>";
       html += "<div class='today daycell' data-date='" + date + "'><b>" + d + "</b><br><span class='" + resultCls + "'>" + result + "</span><br>" + lower + "</div>";
+    } else if (date === yesterday() && !slateSettled(date)) {
+      html += "<div class='daycell' data-date='" + date + "'><b>" + d + "</b><br><span class='wait'>LAST GAME STILL OPEN</span></div>";
     } else {
       const personal = !!(mine[date] && Number.isFinite(Number(mine[date].pl)));
       const slips = slipsForDay(date);
@@ -1200,7 +1203,7 @@ function drawCalendar(){
         return odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds);
       };
       const fromFile = (gradeFile || []).some(b => b.date === date && !isNoPick(b));
-      if (date < today && slips.length && !personal && fromFile) {
+      if (date < today && slateSettled(date) && slips.length && !personal && fromFile) {
         day = Object.assign({}, day || {}, {
           pl: slips.reduce((s, b) => s + slipMoney(b), 0),
           n: slips.length,
@@ -1230,7 +1233,7 @@ function drawCalendar(){
   const prefix = y + "-" + String(m + 1).padStart(2, "0") + "-";
   let gain = 0, loss = 0;
   Object.keys(board).forEach(date => {
-    if (!date.startsWith(prefix) || date >= today) return;
+    if (!date.startsWith(prefix) || !slateSettled(date)) return;
     const pl = Number(board[date] && board[date].pl);
     if (!Number.isFinite(pl) || pl === 0) return;
     if (pl > 0) gain += pl; else loss += Math.abs(pl);
@@ -1305,7 +1308,7 @@ const STATE_NAME = {AL:"Alabama", AK:"Alaska", AZ:"Arizona", AR:"Arkansas", CA:"
 function stateName(code){ return STATE_NAME[code] || code; }
 async function dayGames(date){
   const board = await loadSchedule();
-  const games = board.filter(g => g.date === date).map(g => Object.assign({}, g));
+  const games = board.filter(g => (g.start ? slateDateOf(g.start) : g.date) === date).map(g => Object.assign({}, g));
   games.sort((a, b) => String(a.start).localeCompare(String(b.start)) || a.sport.localeCompare(b.sport));
   for (const game of games) {
     if (game.wx) continue;
@@ -1581,7 +1584,7 @@ function render(){
     if (cv != null) row.clv.push(cv);
     byGame[b.date] = row;
   });
-  const history = Object.values(byGame).filter(row => row.date < todayEt()).map(row => ({
+  const history = Object.values(byGame).filter(row => slateSettled(row.date)).map(row => ({
     date: row.date,
     record: row.wins + "-" + row.losses + (row.pushes ? "-" + row.pushes : ""),
     profit: row.profit,
@@ -1629,8 +1632,9 @@ function render(){
   try { drawCharts(); } catch (err) { document.getElementById("plotnote").textContent = "Chart failed. The rest of the page is still live."; }
   document.getElementById("plotnote").textContent = settled.length + " settled slips plotted. " + slipsLeftToSettle(bets) + " slips left to settle.";
   drawCalendar();
-  const bookDay = chartSlips().filter(b => b.date === yesterday());
-  document.getElementById("breaks").innerHTML = "<h2>Graded Results By Sport And Book</h2><p class='api-note'>Yesterday, " + yesterday() + ". Book prices are saved from the one Load Picks call. No new call after the game starts.</p>" + group(bookDay, "sport") + bookFigures(bookDay) + "<h2 class='split-title'>Market Split</h2>" + group(bookDay, "type") + "<p class='api-note'>Graded slips only. A sport with no graded slips says No Picks. A book says No Price Saved until that one call stored its price.</p>";
+  const bookDate = slateSettled(yesterday()) ? yesterday() : shiftDate(yesterday(), -1);
+  const bookDay = chartSlips().filter(b => b.date === bookDate);
+  document.getElementById("breaks").innerHTML = "<h2>Graded Results By Sport And Book</h2><p class='api-note'>Graded slate " + bookDate + ". A late NHL game stays on the slate it started, and that slate stays open until the last game ends or 4:00 AM.</p>" + group(bookDay, "sport") + bookFigures(bookDay) + "<h2 class='split-title'>Market Split</h2>" + group(bookDay, "type") + "<p class='api-note'>Graded slips only. A sport with no graded slips says No Picks. A book says No Price Saved until that one call stored its price.</p>";
   if (!document.getElementById("oddscompare")) {
     const card = document.createElement("section");
     card.className = "card";
@@ -1654,8 +1658,9 @@ function render(){
     if (better) poolMap[key] = b;
   });
   const pool = Object.values(poolMap);
-  const pending = pool.filter(b => b.result === "pending" && b.date === (picked || todayEt()));
-  const gradedDay = pool.filter(b => b.result !== "pending" && b.date === (picked || y));
+  const gradeDate = picked || (slateSettled(y) ? y : shiftDate(y, -1));
+  const pending = pool.filter(b => b.result === "pending" && !slateSettled(b.date) && (picked ? b.date === picked : b.date === todayEt() || b.date === y));
+  const gradedDay = pool.filter(b => b.result !== "pending" && b.date === gradeDate);
   const day = picked ? pool.filter(b => b.date === picked) : gradedDay;
   const daySettled = gradedDay.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
   const dayPl = gradedDay.reduce((s,b) => s + slipMoney(b), 0);
@@ -1663,7 +1668,7 @@ function render(){
   const blocks = [];
   if (show !== "graded") blocks.push(["Pending", pending]);
   if (show !== "pending") blocks.push(["Graded", gradedDay]);
-  const copy = ["GNARLY GORILLA REPORT CARD", (picked || y), "W/L Record " + rec(gradedDay) + "   P/L " + money(dayPl) + "   on $10 slips", "Hit rate " + hit, "Row sum " + money(dayPl)];
+  const copy = ["GNARLY GORILLA REPORT CARD", gradeDate, "W/L Record " + rec(gradedDay) + "   P/L " + money(dayPl) + "   on $10 slips", "Hit rate " + hit, "Row sum " + money(dayPl)];
   let body = "";
   blocks.forEach(([title, list]) => {
     const sorted = list.slice().sort((a,b) => String(a.sport).localeCompare(String(b.sport)) || String(a.result).localeCompare(String(b.result)) || String(a.pick).localeCompare(String(b.pick)));
@@ -1690,7 +1695,7 @@ function render(){
   copy.push("", "Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u");
   const report = document.getElementById("report");
   report.dataset.copy = copy.join("\n");
-  report.innerHTML = "<p>Date " + (picked || todayEt()) + ". Graded " + (picked || y) + "</p><p>W/L Record " + rec(gradedDay) + "   P/L " + money(dayPl) + "   Hit rate " + hit + "   Row sum " + money(dayPl) + "</p>" + body + "<p>Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u</p>";
+  report.innerHTML = "<p>Date " + (picked || todayEt()) + ". Graded " + gradeDate + "</p><p>W/L Record " + rec(gradedDay) + "   P/L " + money(dayPl) + "   Hit rate " + hit + "   Row sum " + money(dayPl) + "</p>" + body + "<p>Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u</p>";
 }
 
 async function drawOddsCompare(force){
@@ -1736,7 +1741,7 @@ async function drawOddsCompare(force){
     rememberBooks(sport, Array.isArray(games) ? games : []);
     (Array.isArray(games) ? games : []).forEach(g => {
       if (!g || !g.away_team || !g.home_team) return;
-      const gameDay = g.commence_time ? new Date(g.commence_time).toLocaleDateString("en-CA", {timeZone: siteZone()}) : "";
+      const gameDay = g.commence_time ? slateDateOf(g.commence_time) : "";
       if (gameDay && gameDay !== day) return;
       const paidOnly = {Caesars:1, Fanatics:1};
       const cells = books.map(book => {
@@ -2004,7 +2009,7 @@ function rememberBooks(sport, games){
   try { all = JSON.parse(localStorage.getItem("gg-book-prices") || "{}"); } catch (e) { all = {}; }
   games.forEach(g => {
     if (!g || !g.away_team || !g.home_team) return;
-    const day = g.commence_time ? new Date(g.commence_time).toLocaleDateString("en-CA", {timeZone: siteZone()}) : todayEt();
+    const day = g.commence_time ? slateDateOf(g.commence_time) : todayEt();
     const sportName = String(sport || "").toUpperCase();
     const label = g.away_team + " at " + g.home_team;
     const dayRow = all[day] || (all[day] = {});
@@ -2128,8 +2133,8 @@ form.onsubmit = e => {
   e.preventDefault();
   const d = Object.fromEntries(new FormData(form));
   const bets = load();
-  if (d.result && d.result !== "pending" && d.date >= todayEt()) {
-    document.getElementById("editnote").textContent = "Game not finished. Result stays pending until the game date has passed.";
+  if (d.result && d.result !== "pending" && !slateSettled(d.date)) {
+    document.getElementById("editnote").textContent = "Game not finished. Result stays pending until that slate ends. A late NHL game stays open until 4:00 AM.";
     return;
   }
   const row = {...d, odds: Number(d.odds), stake: Number(d.stake), close: d.close ? Number(d.close) : ""};
@@ -2160,8 +2165,8 @@ document.getElementById("rows").onclick = e => {
   if (t.dataset.set) {
     const bets = load();
     const bet = bets.find(b => String(b.id) === t.dataset.id);
-    if (bet && t.dataset.set !== "pending" && bet.date >= todayEt()) {
-      document.getElementById("editnote").textContent = "Game not finished. Result stays pending until the game date has passed.";
+    if (bet && t.dataset.set !== "pending" && !slateSettled(bet.date)) {
+      document.getElementById("editnote").textContent = "Game not finished. Result stays pending until that slate ends. A late NHL game stays open until 4:00 AM.";
       return;
     }
     if (bet) bet.result = t.dataset.set;
@@ -2431,12 +2436,11 @@ async function fillPickBoard(useSaved){
     return;
   }
   let count = 0;
-  const zoneDay = iso => new Date(iso).toLocaleDateString("en-CA", {timeZone: siteZone()});
   const dayGames = allGames.filter(game => {
     if (sport && game._sport !== sport) return false;
     if (!day) return true;
     if (!game.commence_time) return true;
-    return zoneDay(game.commence_time) === day;
+    return slateDateOf(game.commence_time) === day;
   }).sort((a, b) => String(a._sport).localeCompare(b._sport) || String(a.commence_time || "").localeCompare(String(b.commence_time || "")));
   const started = dayGames.filter(game => game.commence_time && Date.parse(game.commence_time) <= Date.now());
   const openGames = dayGames.filter(game => !game.commence_time || Date.parse(game.commence_time) > Date.now());
@@ -2782,7 +2786,7 @@ async function loadDriveCard(){
   const named = text.match(/^#\s*file:\s*(.+)$/m);
   const fileName = (named ? named[1] : "Drive card").replace(/\.(txt|pdf)$/i, "");
   const current = load();
-  const finished = current.filter(b => b.date < today && b.result === "pending");
+  const finished = current.filter(b => b.result === "pending" && slateSettled(b.date));
   if (finished.length) archiveSlips(finished);
   const added = addCardLines(lines.join("\n"), document.getElementById("cardbook").value || "BetMGM");
   load().forEach(markEdge);
