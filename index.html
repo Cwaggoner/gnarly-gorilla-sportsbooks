@@ -109,6 +109,8 @@ input, select, button, textarea { background:#0e0e0e; color:var(--text); border:
 table.season-hold.filled { border:1px solid #39ff14; border-radius:10px; overflow:hidden; margin-top:8px; }
 table.season-hold.filled th, table.season-hold.filled td { border-bottom:1px solid #39ff14; height:auto; width:auto; color:#d6ffd0; font-size:13px; text-align:left; vertical-align:middle; padding:8px; }
 table.season-hold.filled th { color:#39ff14; background:#102010; }
+.gamehead { display:flex; justify-content:space-between; align-items:center; gap:16px; width:100%; }
+.gamehead .slate-date { color:#d6ffd0; font-weight:700; white-space:nowrap; }
 #reportDay { color-scheme:dark; }
 #reportDay::-webkit-calendar-picker-indicator { filter:invert(1); opacity:1; cursor:pointer; }
 textarea { width:100%; min-height:120px; font:13px/1.4 ui-monospace, monospace; }
@@ -1293,6 +1295,7 @@ armMidnight();
 loadCalendarFile();
 async function nightlyUpdate(){
   await loadCalendarFile();
+  loadPickSlate();
   const note = document.getElementById("pdfnote");
   await applyGrades().catch(() => {});
   if (!window.gradeWatch) {
@@ -1328,6 +1331,7 @@ async function nightlyUpdate(){
       const added = addCardLines(lines.join("\n"), document.getElementById("cardbook").value || "BetMGM");
       drawCardAnalysis(lines.join("\n"));
       if (note) note.textContent = "Morning card published. " + (added || 0) + " " + todayEt() + " picks loaded.";
+      loadPickSlate();
     }, 60000);
   }
 }
@@ -1335,7 +1339,13 @@ function inSlipWindow(date){ date = String(date || "").slice(0, 10); return date
 let SEASON_END = {MLB:"2026-10-31", CFB:"2027-01-25", NFL:"2027-02-14", CBB:"2027-04-05", NHL:"2027-04-10", NBA:"2027-04-11"};
 let SEASON_START = {MLB:"2026-03-25", CFB:"2026-08-27", NFL:"2026-09-09", CBB:"2026-11-02", NHL:"2026-09-29", NBA:"2026-10-20"};
 let pickSlate = null;
-function slateTable(list){
+function slateDateLabel(date){
+  const match = String(date || "").match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!match) return "";
+  const stamp = new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]), 16));
+  return stamp.toLocaleDateString("en-US", {timeZone: "UTC", month: "long", day: "numeric", year: "numeric"});
+}
+function slateTable(list, date){
   const order = ["CBB","CFB","MLB","NBA","NFL","NHL"];
   const games = (Array.isArray(list) ? list : []).slice().sort((a, b) => {
     const sport = order.indexOf(a.sport) - order.indexOf(b.sport);
@@ -1350,11 +1360,13 @@ function slateTable(list){
     const records = [away.name, away.record].filter(Boolean).join(" ") + " / " + [home.name, home.record].filter(Boolean).join(" ");
     return "<tr><td>" + esc(game.sport + " " + game.game) + "</td><td>" + esc(when) + "</td><td>" + esc(game.location || "") + "</td><td>" + esc(records) + "</td></tr>";
   }).join("");
-  return "<table class='season-hold filled'><thead><tr><th>Game</th><th>Time</th><th>Location</th><th>Record</th></tr></thead><tbody>" + rows + "</tbody></table>";
+  const label = slateDateLabel(date);
+  const gameHead = label ? "<th><div class='gamehead'><span>Game</span><span class='slate-date'>" + esc(label) + "</span></div></th>" : "<th>Game</th>";
+  return "<table class='season-hold filled'><thead><tr>" + gameHead + "<th>Time</th><th>Location</th><th>Record</th></tr></thead><tbody>" + rows + "</tbody></table>";
 }
 function slateHtml(){
   const games = pickSlate && Array.isArray(pickSlate.games) ? pickSlate.games : [];
-  return games.length ? slateTable(games) : "<table class='season-hold'><tbody><tr><td></td><td></td></tr><tr><td></td><td></td></tr></tbody></table>";
+  return games.length ? slateTable(games, pickSlate && pickSlate.date) : "<table class='season-hold'><tbody><tr><td></td><td></td></tr><tr><td></td><td></td></tr></tbody></table>";
 }
 function drawPickSlate(){
   const old = document.querySelector("#seasons table.season-hold");
@@ -3460,6 +3472,7 @@ document.getElementById("nextMonth").onclick = () => { monthCursor.setMonth(mont
 render();
 loadSeasons();
 loadPickSlate();
+setInterval(() => { loadPickSlate(); }, 300000);
 fetch("cards/calendar.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => { if (data && data.dates) publishedCalendar = data.dates; render(); }).catch(() => {});
 fetch("cards/report.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
   let day = ((text.match(/Yesterday\s+(\d{4}-\d{2}-\d{2})/) || [])[1]) || "";
