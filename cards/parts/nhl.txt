@@ -1,7 +1,4 @@
-# file: GG-NHL-2026-10-20
-2026-10-20 | NHL | Moneyline | Vancouver Canucks ML | 240 | Edge
-2026-10-20 | NHL | Moneyline | San Jose Sharks ML | 185 | Edge
-2026-10-20 | NHL | Moneyline | Boston Bruins ML | 142 | Edge
-2026-10-20 | NHL | Moneyline | Toronto Maple Leafs ML | 140 | Edge
-2026-10-20 | NHL | Moneyline | Anaheim Ducks ML | 130 | Edge
-2026-10-20 | NHL | Moneyline | Los Angeles Kings ML | 130 | Edge
+# file: GG-NHL-2026-10-21
+2026-10-21 | NHL | Moneyline | Flyers ML | 166 | Edge: Dog moneyline.
+2026-10-21 | NHL | Total | Flyers at Sabres Under 6 | -110 | Medium 55% Named game
+2026-10-21 | NHL | Moneyline | Panthers ML | 102 | Medium 52%
