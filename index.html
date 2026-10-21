@@ -1570,6 +1570,48 @@ function slateHtml(){
   const games = pickSlate && Array.isArray(pickSlate.games) ? pickSlate.games : [];
   return games.length ? slateTable(games, pickSlate && pickSlate.date) : "<table class='season-hold'><tbody><tr><td></td><td></td></tr><tr><td></td><td></td></tr></tbody></table>";
 }
+function cardSlips(){
+  const all = load().concat(loadGrade()).concat(gradeFile || []).filter(b => b && b.pick && !isNoPick(b));
+  const byKey = {};
+  all.forEach(b => {
+    const key = [b.date, b.sport, b.pick].join("|");
+    const prior = byKey[key];
+    if (!prior || (prior.result === "pending" && b.result !== "pending")) byKey[key] = b;
+  });
+  return dropMatchedPending(Object.values(byKey)).filter(b => inSlipWindow(b.date));
+}
+function pendingSlips(){
+  return cardSlips().filter(b => b.result === "pending");
+}
+function seasonStatus(sport, pending){
+  const n = (pending || []).filter(b => String(b.sport || "").toUpperCase() === sport).length;
+  if (n) return n + " Pending";
+  return seasonEnded(sport) ? "Season Ended" : "Open";
+}
+function pendingHoldHtml(pending){
+  if (!pending || !pending.length) return slateHtml();
+  const rows = pending.slice().sort((a, b) => String(a.sport).localeCompare(String(b.sport)) || String(a.type).localeCompare(String(b.type)) || String(a.pick).localeCompare(String(b.pick))).map(b => "<tr><td>" + esc(b.sport + " " + b.pick) + "</td><td>" + esc(b.date) + "</td><td>" + esc(b.type || "") + "</td><td>" + esc(b.odds) + "</td></tr>").join("");
+  return "<table class='season-hold filled'><thead><tr><th>Pending Slip</th><th>Date</th><th>Type</th><th>Odds</th></tr></thead><tbody>" + rows + "</tbody></table>";
+}
+function paintSeasonStatus(){
+  const box = document.getElementById("seasons");
+  if (!box || !box.querySelector("table tbody")) return;
+  const pending = pendingSlips();
+  const order = ["CBB","CFB","MLB","NBA","NFL","NHL"];
+  const body = box.querySelector("table:not(.season-hold) tbody");
+  if (body) [...body.rows].forEach((tr, i) => {
+    const cell = tr.cells[3];
+    if (!cell || !order[i]) return;
+    const text = seasonStatus(order[i], pending);
+    cell.textContent = text;
+    cell.style.color = /Pending/.test(text) ? "#f0e14a" : text === "Season Ended" ? "#8fb898" : "#39ff14";
+  });
+  const hold = box.querySelector("table.season-hold");
+  if (!hold) return;
+  const wrap = document.createElement("div");
+  wrap.innerHTML = pendingHoldHtml(pending);
+  if (wrap.firstElementChild) hold.replaceWith(wrap.firstElementChild);
+}
 function drawPickSlate(){
   const old = document.querySelector("#seasons table.season-hold");
   if (old) {
@@ -1577,6 +1619,7 @@ function drawPickSlate(){
     holder.innerHTML = slateHtml();
     old.replaceWith(holder.firstElementChild);
   }
+  paintSeasonStatus();
   const box = document.getElementById("passedslate");
   const note = document.getElementById("passednote");
   if (note && pickSlate && pickSlate.date) note.textContent = "Games being played on " + pickSlate.date + " that did not make the picks. This table changes when the day's picks arrive.";
@@ -1602,7 +1645,11 @@ function showSeasons(checked){
   if (!box) return;
   if (checked) seasonChecked = checked;
   const names = {CBB:"CBB - College Basketball", CFB:"CFB - College Football", MLB:"MLB - Major League Baseball", NBA:"NBA - National Basketball Association", NFL:"NFL - National Football League", NHL:"NHL - National Hockey League"};
-  const rows = ["CBB","CFB","MLB","NBA","NFL","NHL"].map(s => "<tr><td>" + names[s] + "</td><td>" + SEASON_START[s] + "</td><td>" + SEASON_END[s] + "</td><td>" + (seasonEnded(s) ? "Season Ended" : "Open") + "</td></tr>").join("");
+  const rows = ["CBB","CFB","MLB","NBA","NFL","NHL"].map(s => {
+    const status = seasonStatus(s, pendingSlips());
+    const color = /Pending/.test(status) ? "#f0e14a" : status === "Season Ended" ? "#8fb898" : "#39ff14";
+    return "<tr><td>" + names[s] + "</td><td>" + SEASON_START[s] + "</td><td>" + SEASON_END[s] + "</td><td style='color:" + color + "'>" + status + "</td></tr>";
+  }).join("");
   const open = ["CBB","CFB","MLB","NBA","NFL","NHL"].filter(s => !seasonEnded(s)).length;
   const pulse = open === 6 ? "6.6s" : open >= 4 ? "7.4s" : open >= 2 ? "9s" : open === 1 ? "13s" : "15s";
   const color = open === 6 ? "#39ff14" : open >= 3 ? "#f0e14a" : "#ff6b6b";
@@ -1614,7 +1661,7 @@ function showSeasons(checked){
   });
   wave += " H448";
   const ekg = "<span class='ekg' data-ms='" + (parseFloat(pulse) * 1000) + "'><svg viewBox='0 0 448 36' preserveAspectRatio='none' aria-label='Season pulse'><defs><clipPath id='ekgclip'><rect class='ekg-clip' x='0' y='0' width='0' height='36'></rect></clipPath></defs><path class='trace' clip-path='url(#ekgclip)' d='" + wave + "' style='stroke:" + color + "'></path></svg></span>";
-  box.innerHTML = "<div class='section-head'><h2>Season Dates</h2><p class='warn slips-side'>Checked " + (seasonChecked || "2026-10-19") + ". NFL May, NHL July, MLB July, NBA August, CFB August, CBB September. Postseason nights stay open until the last game ends or 4:00 AM. NBA and NHL through June 30, MLB through the World Series, NFL through the Super Bowl, CFB through the championship, March Madness March 13 through the title game.</p></div><table><thead><tr><th colspan='4' style='text-align:center'>" + ekg + "</th></tr><tr><th>Sport</th><th>Start</th><th>Last Card</th><th>Status</th></tr></thead><tbody>" + rows + "</tbody></table>" + slateHtml();
+  box.innerHTML = "<div class='section-head'><h2>Season Dates</h2><p class='warn slips-side'>Checked " + (seasonChecked || "2026-10-19") + ". NFL May, NHL July, MLB July, NBA August, CFB August, CBB September. Postseason nights stay open until the last game ends or 4:00 AM. NBA and NHL through June 30, MLB through the World Series, NFL through the Super Bowl, CFB through the championship, March Madness March 13 through the title game.</p></div><table><thead><tr><th colspan='4' style='text-align:center'>" + ekg + "</th></tr><tr><th>Sport</th><th>Start</th><th>Last Card</th><th>Status</th></tr></thead><tbody>" + rows + "</tbody></table>" + pendingHoldHtml(pendingSlips());
   startPulse();
 }
 let pulseFrame = 0;
@@ -1822,6 +1869,7 @@ function render(){
   const report = document.getElementById("report");
   report.dataset.copy = copy.join("\n");
   report.innerHTML = "<p>Date " + (picked || todayEt()) + ". Graded " + gradeDate + "</p><p>W/L Record " + rec(gradedDay) + "   P/L " + money(dayPl) + "   Hit rate " + hit + "   Row sum " + money(dayPl) + "</p>" + body + "<p>Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u</p>";
+  try { paintSeasonStatus(); } catch (err) {}
   } finally {
     rendering = false;
   }
