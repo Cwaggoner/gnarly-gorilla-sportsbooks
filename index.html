@@ -1536,9 +1536,11 @@ async function loadPickSlate(){
   } catch (err) {}
 }
 function seasonEnded(sport){ const end = SEASON_END[String(sport || "").toUpperCase()]; return !!end && todayEt() > end; }
+let seasonChecked = "";
 function showSeasons(checked){
   const box = document.getElementById("seasons");
   if (!box) return;
+  if (checked) seasonChecked = checked;
   const names = {CBB:"CBB - College Basketball", CFB:"CFB - College Football", MLB:"MLB - Major League Baseball", NBA:"NBA - National Basketball Association", NFL:"NFL - National Football League", NHL:"NHL - National Hockey League"};
   const rows = ["CBB","CFB","MLB","NBA","NFL","NHL"].map(s => "<tr><td>" + names[s] + "</td><td>" + SEASON_START[s] + "</td><td>" + SEASON_END[s] + "</td><td>" + (seasonEnded(s) ? "Season Ended" : "Open") + "</td></tr>").join("");
   const open = ["CBB","CFB","MLB","NBA","NFL","NHL"].filter(s => !seasonEnded(s)).length;
@@ -1552,7 +1554,7 @@ function showSeasons(checked){
   });
   wave += " H448";
   const ekg = "<span class='ekg' data-ms='" + (parseFloat(pulse) * 1000) + "'><svg viewBox='0 0 448 36' preserveAspectRatio='none' aria-label='Season pulse'><defs><clipPath id='ekgclip'><rect class='ekg-clip' x='0' y='0' width='0' height='36'></rect></clipPath></defs><path class='trace' clip-path='url(#ekgclip)' d='" + wave + "' style='stroke:" + color + "'></path></svg></span>";
-  box.innerHTML = "<div class='section-head'><h2>Season Dates</h2><p class='warn slips-side'>Checked " + (checked || "2026-10-08") + ". NFL May, NHL July, MLB July, NBA August, CFB August, CBB September. Postseason nights stay open until the last game ends or 4:00 AM. NBA and NHL through June 30, MLB through the World Series, NFL through the Super Bowl, CFB through the championship, March Madness March 13 through the title game.</p></div><table><thead><tr><th colspan='4' style='text-align:center'>" + ekg + "</th></tr><tr><th>Sport</th><th>Start</th><th>Last Card</th><th>Status</th></tr></thead><tbody>" + rows + "</tbody></table>" + slateHtml();
+  box.innerHTML = "<div class='section-head'><h2>Season Dates</h2><p class='warn slips-side'>Checked " + (seasonChecked || "2026-10-19") + ". NFL May, NHL July, MLB July, NBA August, CFB August, CBB September. Postseason nights stay open until the last game ends or 4:00 AM. NBA and NHL through June 30, MLB through the World Series, NFL through the Super Bowl, CFB through the championship, March Madness March 13 through the title game.</p></div><table><thead><tr><th colspan='4' style='text-align:center'>" + ekg + "</th></tr><tr><th>Sport</th><th>Start</th><th>Last Card</th><th>Status</th></tr></thead><tbody>" + rows + "</tbody></table>" + slateHtml();
   startPulse();
 }
 let pulseFrame = 0;
@@ -1658,6 +1660,7 @@ function render(){
   const windowed = unique.filter(b => inSlipWindow(b.date));
   const bets = filtered(windowed.sort((a,b) => String(b.date).localeCompare(String(a.date))));
   const totals = bets;
+  const pl = totals.reduce((s, b) => s + profit(b), 0);
   const settled = totals.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
   drawDashboard();
   const pendingBox = document.querySelector("#stats .stat:last-child b");
@@ -3601,7 +3604,7 @@ document.getElementById("nextMonth").onclick = () => { monthCursor.setMonth(mont
     if (clean.length !== rows.length) localStorage.setItem(k, JSON.stringify(clean));
   } catch (err) {}
 });
-render();
+try { render(); } catch (err) {}
 loadSeasons();
 loadPickSlate();
 setInterval(() => { loadPickSlate(); }, 300000);
