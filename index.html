@@ -1684,6 +1684,7 @@ function clearStalePending(){
   if (kept.length !== load().length) save(kept);
 }
 function render(){
+  const dash = "—";
   clearStalePending();
   const all = load().concat(loadGrade()).concat(gradeFile).filter(b => b && b.pick && !isNoPick(b) && !/^RANGE$/i.test(b.pick) && !/^all win/i.test(b.result || ""));
   all.forEach(stampFileClose);
