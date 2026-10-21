@@ -582,7 +582,14 @@ function slateSettled(date){
 function slipsLeftToSettle(list){
   return (list || []).filter(b => b && b.result === "pending" && !isNoPick(b) && !slateSettled(b.date)).length;
 }
-function load(){ try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch (e) { return []; } }
+function load(){
+  try {
+    const data = JSON.parse(localStorage.getItem(KEY) || "[]");
+    if (Array.isArray(data)) return data;
+    if (data && Array.isArray(data.bets)) return data.bets;
+  } catch (e) {}
+  return [];
+}
 function loadGrade(){ try { return JSON.parse(localStorage.getItem(GRADE_KEY) || "[]"); } catch (e) { return []; } }
 function archiveSlips(bets){
   const prior = loadGrade();
@@ -597,7 +604,11 @@ function archiveSlips(bets){
   localStorage.setItem(GRADE_KEY, JSON.stringify(prior));
   return prior.length;
 }
-function save(bets){ localStorage.setItem(KEY, JSON.stringify(bets)); render(); }
+let rendering = false;
+function save(bets){
+  localStorage.setItem(KEY, JSON.stringify(bets));
+  if (!rendering) render();
+}
 function slipMoney(b){
   if (!b || b.result === "pending") return 0;
   const published = Number(b.profit);
@@ -1684,8 +1695,10 @@ function clearStalePending(){
   if (kept.length !== load().length) save(kept);
 }
 function render(){
+  if (rendering) return;
+  rendering = true;
   const dash = "—";
-  clearStalePending();
+  try {
   const all = load().concat(loadGrade()).concat(gradeFile).filter(b => b && b.pick && !isNoPick(b) && !/^RANGE$/i.test(b.pick) && !/^all win/i.test(b.result || ""));
   all.forEach(stampFileClose);
   let unique = [];
@@ -1712,13 +1725,14 @@ function render(){
   const totals = bets;
   const pl = totals.reduce((s, b) => s + profit(b), 0);
   const settled = totals.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
-  drawDashboard();
+  try { drawDashboard(); } catch (err) {}
   const pendingBox = document.querySelector("#stats .stat:last-child b");
   if (pendingBox) pendingBox.textContent = String(totals.filter(b => b.result === "pending" && b.date === todayEt()).length);
   const typeRank = t => t === "SGP" ? 99 : ["Moneyline","Parlay","Prop","Spread","Total"].indexOf(t) + 1 || 50;
   const grouped = bets.slice().sort((a,b) => String(a.sport).localeCompare(String(b.sport)) || typeRank(a.type) - typeRank(b.type) || b.date.localeCompare(a.date) || b.id - a.id);
   let lastSport = "", lastType = "";
   document.getElementById("rows").innerHTML = grouped.map(b => {
+    try {
     const p = slipMoney(b);
     const cls = b.result === "win" ? "win" : b.result === "loss" ? "loss" : "push";
     const finished = slateSettled(b.date);
@@ -1739,6 +1753,7 @@ function render(){
     const edge = markEdge(b).edge;
     const rowCls = b.result === "win" ? "row-win" : b.result === "loss" ? "row-loss" : b.result === "pending" ? (edge ? "row-pending edge" : "row-pending") : (b.manual ? "manual" : b.fromCard ? "fromcard" : "");
     return head + "<tr" + (rowCls ? " class='" + rowCls + "'" : "") + "><td>" + b.date + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td>" + esc(b.pick) + "</td><td>" + (b.odds === "" || b.odds == null ? (b.close || -110) : b.odds) + "</td><td class='col-close'>" + (b.close === "" || b.close == null ? dash : b.close) + "</td><td class='" + (cv > 0 ? "win" : cv < 0 ? "loss" : "") + "'>" + clvText(b) + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='result " + cls + "'>" + b.result + "</td><td class='" + cls + "'>" + (b.result === "pending" ? dash : moneyHtml(p)) + "</td><td>" + grade + " <button data-edit='" + b.id + "'>Edit</button> <button class='danger' data-del='" + b.id + "'>Delete</button></td></tr>";
+    } catch (err) { return ""; }
   }).join("") || "<tr><td colspan='12'>No bets yet.</td></tr>";
   try { drawCharts(); } catch (err) { document.getElementById("plotnote").textContent = "Chart failed. The rest of the page is still live."; }
   document.getElementById("plotnote").textContent = settled.length + " settled slips plotted. " + slipsLeftToSettle(bets) + " slips left to settle.";
@@ -1807,6 +1822,9 @@ function render(){
   const report = document.getElementById("report");
   report.dataset.copy = copy.join("\n");
   report.innerHTML = "<p>Date " + (picked || todayEt()) + ". Graded " + gradeDate + "</p><p>W/L Record " + rec(gradedDay) + "   P/L " + money(dayPl) + "   Hit rate " + hit + "   Row sum " + money(dayPl) + "</p>" + body + "<p>Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u</p>";
+  } finally {
+    rendering = false;
+  }
 }
 
 async function drawOddsCompare(force){
@@ -3006,14 +3024,19 @@ async function catchUp(){
     if (grades) gradeFile = grades.split(/\n/).map(parseGradeLine).filter(Boolean);
     if (dash) localStorage.setItem("gg-dashboard-published", dash);
   } catch (err) {}
-  clearStalePending();
-  await applyGrades().catch(() => {});
-  const held = localStorage.getItem("gg-hold-ledger") === "1";
-  const inWindow = load().some(b => inSlipWindow(b.date));
-  if ((!held || !inWindow) && slateSettled(yesterday())) {
-    localStorage.removeItem("gg-hold-ledger");
-    await loadDriveCard().catch(() => {});
+  if (!load().some(b => inSlipWindow(b.date))) {
+    try {
+      const res = await fetch("cards/ledger.json?ts=" + Date.now());
+      if (res.ok) {
+        const data = await res.json();
+        const bets = (Array.isArray(data) ? data : (data.bets || [])).filter(b => b && inSlipWindow(b.date) && !isNoPick(b));
+        if (bets.length) localStorage.setItem(KEY, JSON.stringify(bets));
+      }
+    } catch (err) {}
   }
+  await loadDriveCard().catch(() => {});
+  await applyGrades().catch(() => {});
+  clearStalePending();
   render();
 }
 catchUp();
