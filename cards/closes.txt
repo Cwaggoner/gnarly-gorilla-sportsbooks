@@ -202,3 +202,16 @@
 2026-10-20 | CFB | -108 | Middle Tennessee at FIU Under 45.5 | -110
 2026-10-20 | CFB | 271 | SGP Middle Tennessee +10 and Middle Tennessee at FIU Under 45.5 | 271
 2026-10-20 | CFB | -110 | Missouri State at Delaware Under 53.5 | -110
+2026-10-21 | NBA | -110 | Bulls +10.5 | -110
+2026-10-21 | NBA | -110 | Mavericks +9.5 | -110
+2026-10-21 | NBA | -110 | Warriors +6.5 | -110
+2026-10-21 | NBA | -110 | Bulls at Raptors Under 237.5 | -110
+2026-10-21 | NBA | -110 | Mavericks at Rockets Under 230.5 | -110
+2026-10-21 | NBA | 190 | SGP Bulls +10.5 and Bulls at Raptors Under 237.5 | 190
+2026-10-21 | NBA | 190 | SGP Mavericks +9.5 and Mavericks at Rockets Under 230.5 | 190
+2026-10-21 | NHL | 166 | Flyers ML | 166
+2026-10-21 | NHL | -110 | Flyers at Sabres Under 6 | -110
+2026-10-21 | NHL | 102 | Panthers ML | 102
+2026-10-21 | CFB | -110 | Sam Houston +2.5 | -110
+2026-10-21 | CFB | -110 | New Mexico State at Sam Houston Under 45.5 | -110
+2026-10-21 | CFB | 190 | SGP Sam Houston +2.5 and New Mexico State at Sam Houston Under 45.5 | 190
