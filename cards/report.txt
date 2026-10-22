@@ -1,29 +1,12 @@
-# GG report 2026-10-20
-# Yesterday 2026-10-19 graded. October 18 was graded in the same catch-up. No closing line was copied from the pre-game price.
+# GG report 2026-10-22
+# Yesterday 2026-10-21 graded. Record 3-10-0. Profit $-65.22. CLV Matched Bet Price.
 
-Analysis: Monday was a short dog card. Washington +7.5 covered in a 23-17 loss at San Francisco. The Guardians +1.5 lost a 7-3 Game 6. Pittsburgh +1.5 and Philadelphia +1.5 cashed. Anaheim +1.5 and San Jose +1.5 did not. NBA had no games. CFB had no Monday card. CBB is out of season. No close was saved, because a price seen before the start is not a close.
+Analysis: Wednesday was a dog card and it did not cash. The Bulls were +10.5 and lost by 43. The Mavericks were +9.5 and lost by 18. The Warriors were +6.5 and lost by 22. The Raptors total went under. The Rockets total went over. The Flyers moneyline and the Sabres total both cashed. The Panthers did not. Sam Houston +2.5 lost by 6, and that total went over. Two same-game parlays lost with the spread. No NFL, MLB, or CBB card.
 
-Record 3-3-0  Profit $-2.73  Units -0.27u  CLV Close Not On File
-
-NFL | win | Washington Commanders +7.5 | close not saved | +$9.09
-MLB | loss | Guardians +1.5 | close not saved | -$10.00
-NHL | win | Pittsburgh Penguins +1.5 | close not saved | +$9.09
-NHL | loss | Anaheim Ducks +1.5 | close not saved | -$10.00
-NHL | win | Philadelphia Flyers +1.5 | close not saved | +$9.09
-NHL | loss | San Jose Sharks +1.5 | close not saved | -$10.00
-
-2026-10-18 | MLB | win | Rays @ Guardians Under 6.5 | +$8.47 EDGE
-2026-10-18 | MLB | loss | Guardians +1.5 | -$10.00 EDGE
-2026-10-18 | MLB | loss | SGP Guardians +1.5 and Rays @ Guardians Under 6.5 | -$10.00 EDGE
-2026-10-18 | NFL | win | Cleveland Browns +3 | +$9.80 EDGE
-2026-10-18 | NFL | loss | New York Giants +1.5 | -$10.00 EDGE
-2026-10-18 | NFL | win | Arizona Cardinals +12.5 | +$9.26 EDGE
-2026-10-18 | NFL | loss | Dallas Cowboys +1.5 | -$10.00 EDGE
-2026-10-18 | NHL | win | Calgary Flames +1.5 | +$7.14 EDGE
-
-2026-10-19 | NBA | No Picks
-2026-10-19 | CFB | No Picks
-2026-10-19 | CBB | Season Ended
-2026-10-18 | NBA | No Picks
-2026-10-18 | CFB | No Picks
-2026-10-18 | CBB | Season Ended
+2026-10-21 | NBA | loss | Bulls +10.5 | EDGE
+2026-10-21 | NBA | loss | Mavericks +9.5 | EDGE
+2026-10-21 | NBA | loss | SGP Bulls +10.5 and Bulls at Raptors Under 237.5 | EDGE
+2026-10-21 | NBA | loss | SGP Mavericks +9.5 and Mavericks at Rockets Under 230.5 | EDGE
+2026-10-21 | NHL | win | Flyers ML | EDGE
+2026-10-21 | CFB | loss | New Mexico State at Sam Houston Under 45.5 | EDGE
+2026-10-21 | CFB | loss | SGP Sam Houston +2.5 and New Mexico State at Sam Houston Under 45.5 | EDGE

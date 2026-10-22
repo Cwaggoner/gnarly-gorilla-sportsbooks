@@ -1,9 +1,9 @@
-# GG dashboard 2026-10-21
+# GG dashboard 2026-10-22
 Date | Record | Profit | ROI | Units | Pending | Avg CLV
-2026-10-14 | 2-11-0 | $-92.58 | -71.2% | -9.26u | 0 | Matched Bet Price
 2026-10-15 | 12-8-0 | $50.40 | 25.2% | 5.04u | 0 | +0.4%
 2026-10-16 | 8-7-0 | $12.64 | 8.4% | 1.26u | 0 | Matched Bet Price
 2026-10-17 | 7-6-0 | $5.62 | 4.3% | 0.56u | 0 | Matched Bet Price
 2026-10-18 | 10-9-0 | $6.54 | 3.4% | 0.65u | 0 | Close Not On File
 2026-10-19 | 3-3-0 | $-2.73 | -4.6% | -0.27u | 0 | Close Not On File
 2026-10-20 | 6-6-0 | $12.95 | 10.8% | 1.30u | 0 | Matched Bet Price
+2026-10-21 | 3-10-0 | $-65.22 | -50.2% | -6.52u | 0 | Matched Bet Price
