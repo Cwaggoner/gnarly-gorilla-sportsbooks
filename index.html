@@ -542,7 +542,7 @@ function gameLengthMs(sport, when){
   return (hours[name] || 4) * 3600000;
 }
 function slateDateOf(iso){
-  const ms = Date.parse(iso || "");
+  const ms = typeof iso === "number" ? iso : Date.parse(iso || "");
   if (!Number.isFinite(ms)) return "";
   const clock = zoneClock(new Date(ms));
   return clock.hour < 4 ? shiftDate(clock.date, -1) : clock.date;
@@ -1674,7 +1674,10 @@ async function loadPickSlate(){
     const same = pickSlate && pickSlate._stamp === stamp;
     data._stamp = stamp;
     pickSlate = data;
-    if (!same) drawPickSlate();
+    if (!same) {
+      drawPickSlate();
+      drawCalendar();
+    }
   } catch (err) {}
 }
 function seasonEnded(sport){ const end = SEASON_END[String(sport || "").toUpperCase()]; return !!end && todayEt() > end; }

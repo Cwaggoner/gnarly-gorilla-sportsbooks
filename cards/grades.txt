@@ -24,7 +24,7 @@
 2026-10-21 | RANGE | All Win 156.52 | All Lose -130.00
 2026-10-21 | NBA | Bulls +10.5 | -110 | loss | Bulls 92 Raptors 135 | -10.00 | close:-110
 2026-10-21 | NBA | Mavericks +9.5 | -110 | loss | Mavericks 110 Rockets 128 | -10.00 | close:-110
-2026-10-21 | NBA | Warriors +6.5 | -110 | loss | Warriors 68 Lakers 100 | -10.00 | close:-110
+2026-10-21 | NBA | Warriors +6.5 | -110 | loss | Warriors 105 Lakers 127 | -10.00 | close:-110
 2026-10-21 | NBA | Bulls at Raptors Under 237.5 | -110 | win | Bulls 92 Raptors 135 | 9.09 | close:-110
 2026-10-21 | NBA | Mavericks at Rockets Under 230.5 | -110 | loss | Mavericks 110 Rockets 128 | -10.00 | close:-110
 2026-10-21 | NBA | SGP Bulls +10.5 and Bulls at Raptors Under 237.5 | 190 | loss | Bulls 92 Raptors 135 | -10.00 | close:190
