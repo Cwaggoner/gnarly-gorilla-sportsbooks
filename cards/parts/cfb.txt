@@ -1,4 +1,3 @@
-# file: GG-CFB-2026-10-21
-2026-10-21 | CFB | Spread | Sam Houston +2.5 | -110 | Medium 56%
-2026-10-21 | CFB | Total | New Mexico State at Sam Houston Under 45.5 | -110 | High 58% Edge: Named under.
-2026-10-21 | CFB | SGP | Sam Houston +2.5 and New Mexico State at Sam Houston Under 45.5 | 190 | Estimated +190. Dog and under. Edge.
+# file: GG-CFB-2026-10-22
+2026-10-22 | CFB | Spread | App State +11.5 | -110 | Edge: Real dog of 11.5. JMU 7-0, App State home.
+2026-10-22 | CFB | Total | Liberty at Kennesaw State Under 50.5 | -110 | High 54% Named under on different game.
