@@ -1,3 +1,15 @@
+# file: GG-CARD-2026-10-22
+# sharp: The number worth playing is a dog that is not a blowout. New England is +3 and +130, and Chicago is -155, so the Bears are not a price to lay. Both clubs are short-handed, which points to Patriots at Bears Under 50.5. Cleveland is +3.5 with a +124 moneyline, and Philadelphia is -148. Denver +8.5 against Oklahoma City -340 stays off. Calgary +170 and Nashville +130 are plus-money dogs against -205 and -155 favorites. Winnipeg at Dallas Under 5.5 is +102. Dallas allows 1.3 goals a game and is missing Hughes, Lindell, and Duchene. Winnipeg is missing Morrissey and Namestnikov. Both teams are near the bottom in goals scored. The Jets moneyline stays off because that Dallas defense is still the best in the league.
+# mail: still due at 9:00 AM Eastern. Grade 2026-10-21 at 8:30 first. Do not grade 2026-10-22.
+2026-10-22 | NFL | Total | Patriots at Bears Under 50.5 | -105 | Medium 57%. Named game.
+2026-10-22 | NFL | SGP | Patriots +3 and Patriots at Bears Under 50.5 | 190 | Estimated +190. Dog and under.
+2026-10-22 | NBA | Spread | Cavaliers +3.5 | -115 | Medium 56%. Moneyline is +124.
+2026-10-22 | NBA | SGP | Cavaliers +3.5 and Cavaliers at 76ers Under 235.5 | 190 | Estimated +190. Dog and under.
+2026-10-22 | NHL | Moneyline | Flames ML | 170 | High 58% Edge: Dog moneyline.
+2026-10-22 | NHL | SGP | Flames ML and Wild at Flames Under 5.5 | 190 | Estimated +190. Dog and under. Edge.
+2026-10-22 | NHL | Moneyline | Predators ML | 130 | Medium 55% Edge: Dog moneyline.
+2026-10-22 | NHL | Total | Jets at Stars Under 5.5 | 102 | High 58% Edge: Plus-price under.
+# prior card kept for the 8:30 grade
 # file: GG-CARD-2026-10-21
 2026-10-21 | NBA | Spread | Bulls +10.5 | -110 | High 62% Edge: Dog on 5.5+ spread.
 2026-10-21 | NBA | Spread | Mavericks +9.5 | -110 | High 60% Edge: Dog on 5.5+ spread.

@@ -901,6 +901,8 @@ function drawCardAnalysis(text){
   drawPassedSlate();
 }
 function sharpRead(rows){
+  const custom = String(postedCard || "").split(/\n/).map(l => l.trim()).find(l => l.startsWith("# sharp:"));
+  if (custom) return custom.replace(/^#\s*sharp:\s*/, "");
   rows = rows.filter(r => !isNoCard(r));
   if (!rows.length) return "No card is live yet. Wait for the posted picks, then play only a number with a reason.";
   const edges = rows.filter(r => /edge/i.test(r[5] || "") || /^high\b/i.test(r[5] || ""));
@@ -3022,20 +3024,25 @@ async function cardBundle(){
   const today = todayEt();
   const seen = new Set();
   const lines = [];
+  let sharp = "";
+  let fileLine = "";
   chunks.join("\n").split(/\n/).forEach(line => {
     const text = line.trim();
+    if (text.startsWith("# file:") && !fileLine) fileLine = text;
+    if (text.startsWith("# sharp:") && !sharp) { sharp = text; return; }
     if (!text.startsWith(today) || seen.has(text)) return;
     seen.add(text);
     lines.push(text);
   });
-  return lines.join("\n");
+  return [fileLine, sharp, lines.join("\n")].filter(Boolean).join("\n");
 }
 async function loadDriveCard(){
   const note = document.getElementById("pdfnote");
   const text = await cardBundle();
   const today = todayEt();
+  const sharp = (text.split(/\n/).find(line => line.trim().startsWith("# sharp:")) || "").trim();
   const lines = text.split(/\n/).filter(line => line.trim().startsWith(today));
-  drawCardAnalysis(lines.length ? lines.join("\n") : text);
+  drawCardAnalysis(lines.length ? [sharp, lines.join("\n")].filter(Boolean).join("\n") : text);
   if (!lines.length) {
     note.textContent = "Today's card is not posted yet. Yesterday was not loaded.";
     return;
@@ -3050,8 +3057,9 @@ async function loadDriveCard(){
 async function refreshTodayCard(){
   const text = await cardBundle().catch(() => "");
   const today = todayEt();
+  const sharp = (text.split(/\n/).find(line => line.trim().startsWith("# sharp:")) || "").trim();
   const lines = text.split(/\n/).filter(line => line.trim().startsWith(today));
-  drawCardAnalysis(lines.length ? lines.join("\n") : text);
+  drawCardAnalysis(lines.length ? [sharp, lines.join("\n")].filter(Boolean).join("\n") : text);
   if (lines.length) addCardLines(lines.join("\n"), (document.getElementById("cardbook") || {}).value || "BetMGM");
   loadPickSlate();
 }
