@@ -20,3 +20,22 @@
 2026-10-20 | MLB | No Picks
 2026-10-20 | NFL | No Picks
 2026-10-20 | CBB | No Picks
+
+2026-10-21 | RANGE | All Win 156.52 | All Lose -130.00
+2026-10-21 | NBA | Bulls +10.5 | -110 | loss | Bulls 92 Raptors 135 | -10.00 | close:-110
+2026-10-21 | NBA | Mavericks +9.5 | -110 | loss | Mavericks 110 Rockets 128 | -10.00 | close:-110
+2026-10-21 | NBA | Warriors +6.5 | -110 | loss | Warriors 68 Lakers 100 | -10.00 | close:-110
+2026-10-21 | NBA | Bulls at Raptors Under 237.5 | -110 | win | Bulls 92 Raptors 135 | 9.09 | close:-110
+2026-10-21 | NBA | Mavericks at Rockets Under 230.5 | -110 | loss | Mavericks 110 Rockets 128 | -10.00 | close:-110
+2026-10-21 | NBA | SGP Bulls +10.5 and Bulls at Raptors Under 237.5 | 190 | loss | Bulls 92 Raptors 135 | -10.00 | close:190
+2026-10-21 | NBA | SGP Mavericks +9.5 and Mavericks at Rockets Under 230.5 | 190 | loss | Mavericks 110 Rockets 128 | -10.00 | close:190
+2026-10-21 | NHL | Flyers ML | 166 | win | Flyers 3 Sabres 1 | 16.60 | close:166
+2026-10-21 | NHL | Flyers at Sabres Under 6 | -110 | win | Flyers 3 Sabres 1 | 9.09 | close:-110
+2026-10-21 | NHL | Panthers ML | 102 | loss | Panthers 1 Senators 5 | -10.00 | close:102
+2026-10-21 | CFB | Sam Houston +2.5 | -110 | loss | New Mexico State 30 Sam Houston 24 | -10.00 | close:-110
+2026-10-21 | CFB | New Mexico State at Sam Houston Under 45.5 | -110 | loss | New Mexico State 30 Sam Houston 24 | -10.00 | close:-110
+2026-10-21 | CFB | SGP Sam Houston +2.5 and New Mexico State at Sam Houston Under 45.5 | 190 | loss | New Mexico State 30 Sam Houston 24 | -10.00 | close:190
+
+2026-10-21 | MLB | No Picks
+2026-10-21 | NFL | No Picks
+2026-10-21 | CBB | No Picks
