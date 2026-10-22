@@ -1827,8 +1827,6 @@ function render(){
   const pl = totals.reduce((s, b) => s + profit(b), 0);
   const settled = totals.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
   try { drawDashboard(); } catch (err) {}
-  const pendingBox = document.querySelector("#stats .stat:last-child b");
-  if (pendingBox) pendingBox.textContent = String(totals.filter(b => b.result === "pending" && b.date === easternDay()).length);
   const typeRank = t => t === "SGP" ? 99 : ["Moneyline","Parlay","Prop","Spread","Total"].indexOf(t) + 1 || 50;
   const grouped = bets.slice().sort((a,b) => String(a.sport).localeCompare(String(b.sport)) || typeRank(a.type) - typeRank(b.type) || b.date.localeCompare(a.date) || b.id - a.id);
   let lastSport = "", lastType = "";
