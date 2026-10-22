@@ -235,7 +235,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <div class="head-text">
 <h1>Gnarly Gorilla Sportsbooks</h1>
 <p>Free bet ledger for Gnarly Gorilla Sports Decks. Log NFL, NBA, NHL, MLB, CBB, and CFB slips, grade them the next day, and copy the report card.</p>
-<p id="liveline" class="warn" style="margin:6px 0 0;font-size:12px;">Closed Value Lines update at 6:00 PM Eastern. Last live price is saved then.</p>
+<p id="liveline" class="warn" style="margin:6px 0 0;font-size:12px;">All picks live by 9:30 AM. Closed Value Lines update at 6:00 PM.</p>
 </div>
 <div class="head-flag" aria-label="United States"><svg viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg" role="img"><defs><linearGradient id="flaggloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".45" stop-color="#fff" stop-opacity=".08"/><stop offset="1" stop-color="#000" stop-opacity=".25"/></linearGradient></defs><rect width="28" height="18" fill="#b22234"/><g fill="#fff"><rect y="1.38" width="28" height="1.38"/><rect y="4.15" width="28" height="1.38"/><rect y="6.92" width="28" height="1.38"/><rect y="9.69" width="28" height="1.38"/><rect y="12.46" width="28" height="1.38"/><rect y="15.23" width="28" height="1.38"/></g><rect width="11.2" height="9.7" fill="#3c3b6e"/><rect width="28" height="18" fill="url(#flaggloss)"/></svg><span>USA</span><span id="headregion"></span><span id="headrules">BETTING RULES</span></div>
 <div class="head-icon right"><img src="gg-icon.png" alt="Gnarly Gorilla"></div>
@@ -431,9 +431,9 @@ const KEY = "gnarly-gorilla-sportsbooks-v1";
 const GRADE_KEY = "gnarly-gorilla-grading-v1";
 const UNIT = 10;
 const form = document.getElementById("form");
-form.date.value = new Date().toLocaleDateString("en-CA", {timeZone: localStorage.getItem("gg-timezone") || "America/New_York"});
+form.date.value = easternDay();
 function ymd(d){ return d.toISOString().slice(0,10); }
-function siteZone(){ return localStorage.getItem("gg-timezone") || Intl.DateTimeFormat().resolvedOptions().timeZone || "America/New_York"; }
+function siteZone(){ return localStorage.getItem("gg-timezone") || "America/New_York"; }
 function hour12(){ return localStorage.getItem("gg-hour") !== "24"; }
 function formatTime(value, seconds){
   const date = value instanceof Date ? value : new Date(value);
@@ -442,17 +442,21 @@ function formatTime(value, seconds){
   if (seconds !== false) opt.second = "2-digit";
   return date.toLocaleTimeString("en-US", opt);
 }
+function easternAt(hour, minute){
+  const day = easternDay();
+  let ms = Date.parse(day + "T" + String(hour).padStart(2, "0") + ":" + String(minute || 0).padStart(2, "0") + ":00Z");
+  for (let i = 0; i < 4; i++) {
+    const parts = new Intl.DateTimeFormat("en-US", {timeZone:"America/New_York", year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit", hourCycle:"h23"}).formatToParts(new Date(ms));
+    const get = k => parts.find(p => p.type === k).value;
+    const clockDate = get("year") + "-" + get("month") + "-" + get("day");
+    ms += Date.parse(day + "T12:00:00Z") - Date.parse(clockDate + "T12:00:00Z") + ((hour - Number(get("hour"))) * 60 + ((minute || 0) - Number(get("minute")))) * 60000;
+  }
+  return new Date(ms);
+}
+function zoneTime(hour, minute){ return formatTime(easternAt(hour, minute), false); }
 function liveByText(){
-  const zone = siteZone();
-  const day = new Date().toLocaleDateString("en-CA", {timeZone: "America/New_York"});
-  const guess = new Date(day + "T13:30:00Z");
-  const parts = new Intl.DateTimeFormat("en-US", {timeZone: "America/New_York", hour:"numeric", minute:"numeric", hourCycle:"h23"}).formatToParts(guess);
-  const h = Number(parts.find(p => p.type === "hour").value);
-  const m = Number(parts.find(p => p.type === "minute").value);
-  const instant = new Date(guess.getTime() + ((9 * 60 + 30) - (h * 60 + m)) * 60000);
-  const clock = instant.toLocaleTimeString("en-US", {timeZone: zone, hour:"numeric", minute:"2-digit", hour12: hour12()});
-  const place = zone.replace(/_/g, " ").split("/").pop();
-  return "All picks live by " + clock + " " + place + ". Closed Value Lines update at 6:00 PM Eastern. Last live price is saved then.";
+  const place = siteZone().replace(/_/g, " ").split("/").pop();
+  return "All picks live by " + zoneTime(9, 30) + " " + place + ". Closed Value Lines update at " + zoneTime(18, 0) + ".";
 }
 function showClock(){
   const now = new Date();
@@ -463,14 +467,14 @@ function showClock(){
   const live = document.getElementById("liveline");
   if (live) live.textContent = liveByText();
 }
-function yesterday(){ const d = new Date(todayEt() + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() - 1); return d.toISOString().slice(0,10); }
+function yesterday(){ return shiftDate(easternDay(), -1); }
 function shiftDate(iso, days){
   const [y, m, d] = String(iso || "").slice(0, 10).split("-").map(Number);
   const dt = new Date(Date.UTC(y, (m || 1) - 1, (d || 1) + days));
   return dt.toISOString().slice(0, 10);
 }
 function zoneClock(date){
-  const parts = new Intl.DateTimeFormat("en-US", {timeZone: siteZone(), year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit", hourCycle:"h23"}).formatToParts(date || new Date());
+  const parts = new Intl.DateTimeFormat("en-US", {timeZone: "America/New_York", year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit", hourCycle:"h23"}).formatToParts(date || new Date());
   const get = k => parts.find(p => p.type === k).value;
   return {date: get("year") + "-" + get("month") + "-" + get("day"), hour: Number(get("hour")), minute: Number(get("minute"))};
 }
@@ -647,7 +651,7 @@ function shiftDate(iso, days){
   return dt.toISOString().slice(0, 10);
 }
 function lastSevenDates(){
-  const today = todayEt();
+  const today = easternDay();
   return Array.from({length: 7}, (_, i) => shiftDate(today, i - 7));
 }
 let closeMap = {};
@@ -870,7 +874,7 @@ function drawCardAnalysis(text){
   const grid = document.getElementById("analysisgrid");
   if (!grid) return;
   const all = cardLines(text);
-  const today = todayEt();
+  const today = easternDay();
   const dated = all.filter(p => /^\d{4}-\d{2}-\d{2}$/.test(p[0]));
   const rows = dated.length ? dated.filter(p => p[0] === today) : all;
   const title = document.querySelector("#cardanalysis h3");
@@ -936,7 +940,7 @@ function drawCharts(){
   drawLine(line);
 }
 function fileReplacesDay(date, day, slips, personal){
-  if (personal || date >= todayEt() || !slateSettled(date) || !slips.length) return false;
+  if (personal || date >= easternDay() || !slateSettled(date) || !slips.length) return false;
   if (!(gradeFile || []).some(b => b.date === date && !isNoPick(b))) return false;
   const publishedN = Number(day && day.n) || 0;
   const publishedPl = Number(day && day.pl);
@@ -949,7 +953,7 @@ function monthDays(){
   Object.keys(mine).forEach(date => { if (mine[date] && Number.isFinite(Number(mine[date].pl))) board[date] = mine[date]; });
   const y = monthCursor.getFullYear(), m = monthCursor.getMonth();
   const days = new Date(y, m + 1, 0).getDate();
-  const today = todayEt();
+  const today = easternDay();
   const rows = [];
   for (let d = 1; d <= days; d++) {
     const date = y + "-" + String(m + 1).padStart(2, "0") + "-" + String(d).padStart(2, "0");
@@ -1242,11 +1246,11 @@ function filtered(bets){
   const result = document.getElementById("fResult").value;
   return bets.filter(b => (!sport || b.sport === sport) && (!book || b.book === book) && (!type || b.type === type) && (!result || b.result === result));
 }
-let monthCursor = (() => { const [y, m] = todayEt().split("-").map(Number); return new Date(y, m - 1, 1); })();
+let monthCursor = (() => { const [y, m] = easternDay().split("-").map(Number); return new Date(y, m - 1, 1); })();
 let monthFollowsToday = true;
 function followMonth(){
   if (!monthFollowsToday) return;
-  const [y, m] = todayEt().split("-").map(Number);
+  const [y, m] = easternDay().split("-").map(Number);
   if (monthCursor.getFullYear() === y && monthCursor.getMonth() === m - 1) return;
   monthCursor = new Date(y, m - 1, 1);
 }
@@ -1277,7 +1281,7 @@ let driveCard = {date: "", lines: [], loaded: false};
 async function loadDriveCardForCalendar(){
   try {
     const text = await cardBundle();
-    const today = todayEt();
+    const today = easternDay();
     const lines = text.split(/\n/).map(l => l.trim()).filter(l => l && !l.startsWith("#")).map(l => {
       const parts = l.split("|").map(s => s.trim());
       if (!/^\d{4}-\d{2}-\d{2}$/.test(parts[0])) return null;
@@ -1306,19 +1310,15 @@ function drawCalendar(){
   let html = "<div class='dow' style='grid-column:1/-1;color:#39ff14'>" + first.toLocaleString(undefined,{month:"long", year:"numeric"}) + "</div>";
   html += names.map(n => "<div class='dow'>" + n + "</div>").join("");
   for (let i = 0; i < start; i++) html += "<div></div>";
-  const today = todayEt();
-  const firstPickAt = () => {
-    const day = new Date().toLocaleDateString("en-CA", {timeZone:"America/New_York"});
-    const probe = new Date(day + "T09:00:00Z");
-    const hour = Number(new Intl.DateTimeFormat("en-US", {timeZone:"America/New_York", hour:"numeric", hourCycle:"h23"}).format(probe));
-    return new Date(probe.getTime() + (9 - hour) * 3600000);
-  };
+  const today = easternDay();
+  const firstPickAt = () => easternAt(9, 0);
   for (let d = 1; d <= days; d++) {
     const date = y + "-" + String(m + 1).padStart(2, "0") + "-" + String(d).padStart(2, "0");
+    const cardDay = easternDay();
     const isToday = date === today;
-    if (isToday) {
-      const local = load().filter(b => b.date === today && b.result === "pending" && !isNoPick(b));
-      const posted = driveCard.date === today ? driveCard.lines : [];
+    if (date === cardDay) {
+      const local = load().filter(b => b.date === cardDay && b.result === "pending" && !isNoPick(b));
+      const posted = driveCard.date === cardDay ? driveCard.lines : [];
       const open = local.slice();
       posted.forEach(row => { if (!open.some(b => sameSlip(b, row))) open.push(Object.assign({stake: 10, result: "pending"}, row)); });
       const graded = slipsForDay(today);
@@ -1329,7 +1329,7 @@ function drawCalendar(){
       const winAll = open.reduce((s, b) => { const odds = Number(b.odds), stake = Number(b.stake) || 10; if (!Number.isFinite(odds) || odds === 0) return s; return s + (odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds)); }, 0);
       const loseAll = open.reduce((s, b) => s + Number(b.stake || 10), 0);
       const lower = open.length ? "<span class='range'><span class='win'>All Win " + money(winAll) + "</span><span class='slash'> / </span><span class='loss'>All Lose -" + money(loseAll).replace("-", "") + "</span></span>" : "<span class='wait'>Picks Not Loaded Until " + formatTime(firstPickAt(), false) + "</span>";
-      html += "<div class='today daycell' data-date='" + date + "'><b>" + d + "</b><br><span class='" + resultCls + "'>" + result + "</span><br>" + lower + "</div>";
+      html += "<div class='" + (isToday ? "today daycell" : "daycell") + "' data-date='" + date + "'><b>" + d + "</b><br><span class='" + resultCls + "'>" + result + "</span><br>" + lower + "</div>";
     } else if (date === yesterday() && !slateSettled(date)) {
       html += "<div class='daycell' data-date='" + date + "'><b>" + d + "</b><br><span class='wait'>LAST GAME STILL OPEN</span></div>";
     } else {
@@ -1493,8 +1493,9 @@ document.getElementById("calendar").onclick = ev => {
 };
 
 function todayEt(){ return new Date().toLocaleDateString("en-CA", {timeZone: siteZone()}); }
+function easternDay(){ return new Date().toLocaleDateString("en-CA", {timeZone:"America/New_York"}); }
 function msUntilMidnightEt(){
-  const parts = new Intl.DateTimeFormat("en-US", {timeZone: siteZone(), hour:"numeric", minute:"numeric", second:"numeric", hourCycle:"h23"}).formatToParts(new Date());
+  const parts = new Intl.DateTimeFormat("en-US", {timeZone: "America/New_York", hour:"numeric", minute:"numeric", second:"numeric", hourCycle:"h23"}).formatToParts(new Date());
   const get = k => Number(parts.find(p => p.type === k).value);
   return ((23 - get("hour")) * 3600 + (59 - get("minute")) * 60 + (60 - get("second"))) * 1000 + 2000;
 }
@@ -1521,7 +1522,7 @@ async function nightlyUpdate(){
     }, 60000);
   }
   const text = await cardBundle().catch(() => "");
-  const today = todayEt();
+  const today = easternDay();
   const todays = slateSettled(yesterday()) ? text.split(/\n/).filter(line => line.trim().startsWith(today)) : [];
   if (todays.length) {
     const added = addCardLines(todays.join("\n"), document.getElementById("cardbook").value || "BetMGM");
@@ -1535,25 +1536,25 @@ async function nightlyUpdate(){
     window.cardWatch = setInterval(async () => {
       if (!slateSettled(yesterday())) return;
       const body = await cardBundle().catch(() => "");
-      const lines = body.split(/\n/).filter(line => line.trim().startsWith(todayEt()));
+      const lines = body.split(/\n/).filter(line => line.trim().startsWith(easternDay()));
       if (!lines.length) return;
       clearInterval(window.cardWatch);
       window.cardWatch = null;
       const added = addCardLines(lines.join("\n"), document.getElementById("cardbook").value || "BetMGM");
       drawCardAnalysis(lines.join("\n"));
-      if (note) note.textContent = "Morning card published. " + (added || 0) + " " + todayEt() + " picks loaded.";
+      if (note) note.textContent = "Morning card published. " + (added || 0) + " " + easternDay() + " picks loaded.";
       loadPickSlate();
     }, 60000);
   }
 }
-function inSlipWindow(date){ date = String(date || "").slice(0, 10); return date === todayEt() || date === yesterday(); }
+function inSlipWindow(date){ date = String(date || "").slice(0, 10); const east = easternDay(); return date === east || date === shiftDate(east, -1); }
 let SEASON_END = {MLB:"2026-10-31", CFB:"2027-01-25", NFL:"2027-02-14", CBB:"2027-04-05", NHL:"2027-06-30", NBA:"2027-06-30"};
 let SEASON_START = {MLB:"2026-03-25", CFB:"2026-08-27", NFL:"2026-09-09", CBB:"2026-11-02", NHL:"2026-09-29", NBA:"2026-10-20"};
 let pickSlate = null;
 let postedCard = "";
 function postedRows(){
   const all = cardLines(postedCard || "");
-  const today = todayEt();
+  const today = easternDay();
   const dated = all.filter(p => /^\d{4}-\d{2}-\d{2}$/.test(p[0]));
   return (dated.length ? dated.filter(p => p[0] === today) : all).filter(r => !isNoCard(r));
 }
@@ -1574,7 +1575,7 @@ function drawPassedSlate(){
   if (!used) return;
   const keys = new Set(used.map(g => g.sport + "|" + g.game));
   const left = games.filter(g => !keys.has(g.sport + "|" + g.game));
-  const date = pickSlate.date || todayEt();
+  const date = pickSlate.date || easternDay();
   if (note) note.textContent = left.length ? "Games on " + date + " that did not make the day's matchups." : "Every posted game on " + date + " made the day's matchups.";
   box.innerHTML = left.length ? slateTable(left, date) : "";
 }
@@ -1683,7 +1684,7 @@ async function loadPickSlate(){
     }
   } catch (err) {}
 }
-function seasonEnded(sport){ const end = SEASON_END[String(sport || "").toUpperCase()]; return !!end && todayEt() > end; }
+function seasonEnded(sport){ const end = SEASON_END[String(sport || "").toUpperCase()]; return !!end && easternDay() > end; }
 let seasonChecked = "";
 function showSeasons(checked){
   const box = document.getElementById("seasons");
@@ -1706,7 +1707,7 @@ function showSeasons(checked){
   });
   wave += " H448";
   const ekg = "<span class='ekg' data-ms='" + (parseFloat(pulse) * 1000) + "'><svg viewBox='0 0 448 36' preserveAspectRatio='none' aria-label='Season pulse'><defs><clipPath id='ekgclip'><rect class='ekg-clip' x='0' y='0' width='0' height='36'></rect></clipPath></defs><path class='trace' clip-path='url(#ekgclip)' d='" + wave + "' style='stroke:" + color + "'></path></svg></span>";
-  box.innerHTML = "<div class='section-head'><h2>Season Dates</h2><p class='warn slips-side'>Checked " + (seasonChecked || "2026-10-19") + ". NFL May, NHL July, MLB July, NBA August, CFB August, CBB September. Postseason nights stay open until the last game ends or 4:00 AM. NBA and NHL through June 30, MLB through the World Series, NFL through the Super Bowl, CFB through the championship, March Madness March 13 through the title game.</p></div><table><thead><tr><th colspan='4' style='text-align:center'>" + ekg + "</th></tr><tr><th>Sport</th><th>Start</th><th>Last Card</th><th>Status</th></tr></thead><tbody>" + rows + "</tbody></table>" + pendingHoldHtml(pendingSlips());
+  box.innerHTML = "<div class='section-head'><h2>Season Dates</h2><p class='warn slips-side'>Checked " + (seasonChecked || "2026-10-19") + ". NFL May, NHL July, MLB July, NBA August, CFB August, CBB September. Postseason nights stay open until the last game ends or " + zoneTime(4, 0) + ". NBA and NHL through June 30, MLB through the World Series, NFL through the Super Bowl, CFB through the championship, March Madness March 13 through the title game.</p></div><table><thead><tr><th colspan='4' style='text-align:center'>" + ekg + "</th></tr><tr><th>Sport</th><th>Start</th><th>Last Card</th><th>Status</th></tr></thead><tbody>" + rows + "</tbody></table>" + pendingHoldHtml(pendingSlips());
   startPulse();
 }
 let pulseFrame = 0;
@@ -1827,7 +1828,7 @@ function render(){
   const settled = totals.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
   try { drawDashboard(); } catch (err) {}
   const pendingBox = document.querySelector("#stats .stat:last-child b");
-  if (pendingBox) pendingBox.textContent = String(totals.filter(b => b.result === "pending" && b.date === todayEt()).length);
+  if (pendingBox) pendingBox.textContent = String(totals.filter(b => b.result === "pending" && b.date === easternDay()).length);
   const typeRank = t => t === "SGP" ? 99 : ["Moneyline","Parlay","Prop","Spread","Total"].indexOf(t) + 1 || 50;
   const grouped = bets.slice().sort((a,b) => String(a.sport).localeCompare(String(b.sport)) || typeRank(a.type) - typeRank(b.type) || b.date.localeCompare(a.date) || b.id - a.id);
   let lastSport = "", lastType = "";
@@ -1861,7 +1862,7 @@ function render(){
   drawCalendar();
   const bookDate = slateSettled(yesterday()) ? yesterday() : shiftDate(yesterday(), -1);
   const bookDay = chartSlips().filter(b => b.date === bookDate);
-  document.getElementById("breaks").innerHTML = "<h2>Graded Results By Sport And Book</h2><p class='api-note'>Graded slate " + bookDate + ". A postseason game stays on the slate it started until that game ends or 4:00 AM.</p>" + group(bookDay, "sport") + bookFigures(bookDay) + "<h2 class='split-title'>Market Split</h2>" + group(bookDay, "type") + "<p class='api-note'>Graded slips only. A sport with no graded slips says No Picks. A book says No Price Saved until that one call stored its price.</p>";
+  document.getElementById("breaks").innerHTML = "<h2>Graded Results By Sport And Book</h2><p class='api-note'>Graded slate " + bookDate + ". A postseason game stays on the slate it started until that game ends or " + zoneTime(4, 0) + ".</p>" + group(bookDay, "sport") + bookFigures(bookDay) + "<h2 class='split-title'>Market Split</h2>" + group(bookDay, "type") + "<p class='api-note'>Graded slips only. A sport with no graded slips says No Picks. A book says No Price Saved until that one call stored its price.</p>";
   if (!document.getElementById("oddscompare")) {
     const card = document.createElement("section");
     card.className = "card";
@@ -1886,7 +1887,7 @@ function render(){
   });
   const pool = Object.values(poolMap);
   const gradeDate = picked || (slateSettled(y) ? y : shiftDate(y, -1));
-  const pending = pool.filter(b => b.result === "pending" && !slateSettled(b.date) && (picked ? b.date === picked : b.date === todayEt() || b.date === y));
+  const pending = pool.filter(b => b.result === "pending" && !slateSettled(b.date) && (picked ? b.date === picked : b.date === easternDay() || b.date === shiftDate(easternDay(), -1)));
   const gradedDay = pool.filter(b => b.result !== "pending" && b.date === gradeDate);
   const day = picked ? pool.filter(b => b.date === picked) : gradedDay;
   const daySettled = gradedDay.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
@@ -1902,7 +1903,7 @@ function render(){
     copy.push("", title);
     if (title === "Pending" || (title === "Graded" && show !== "graded")) body += "<hr class='split'>";
     body += "<h2>" + title + "</h2>";
-    if (!sorted.length) { const empty = title === "Pending" ? "None - Picks Start at 9:00 AM" : "None"; copy.push(empty); body += "<p>" + empty + "</p>"; return; }
+    if (!sorted.length) { const empty = title === "Pending" ? "None - Picks Start at " + zoneTime(9, 0) : "None"; copy.push(empty); body += "<p>" + empty + "</p>"; return; }
     body += "<table><thead><tr><th>Date</th><th>Result</th><th>Sport</th><th>Pick</th><th>Odds</th><th>P/L</th></tr></thead><tbody>";
     ["CBB","CFB","MLB","NBA","NFL","NHL"].forEach(sport => {
       const rows = sorted.filter(b => String(b.sport).toUpperCase() === sport);
@@ -1922,7 +1923,7 @@ function render(){
   copy.push("", "Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u");
   const report = document.getElementById("report");
   report.dataset.copy = copy.join("\n");
-  report.innerHTML = "<p>Date " + (picked || todayEt()) + ". Graded " + gradeDate + "</p><p>W/L Record " + rec(gradedDay) + "   P/L " + money(dayPl) + "   Hit rate " + hit + "   Row sum " + money(dayPl) + "</p>" + body + "<p>Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u</p>";
+  report.innerHTML = "<p>Date " + (picked || easternDay()) + ". Graded " + gradeDate + "</p><p>W/L Record " + rec(gradedDay) + "   P/L " + money(dayPl) + "   Hit rate " + hit + "   Row sum " + money(dayPl) + "</p>" + body + "<p>Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u</p>";
   try { paintSeasonStatus(); } catch (err) {}
   } finally {
     rendering = false;
@@ -1935,23 +1936,23 @@ function publishedOddsHtml(day, market){
   if (!rows || !rows.length) return "";
   const books = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
   const label = market === "spreads" ? "Spread, away / home" : market === "totals" ? "Total, over point and price / under price" : "Moneyline, away / home";
-  const which = day === todayEt() ? "Today" : "Yesterday";
+  const which = day === easternDay() ? "Today" : "Yesterday";
   const opt = (value, text) => "<option value='" + value + "'" + (market === value ? " selected" : "") + ">" + text + "</option>";
   const select = "<select id='comparesport'><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option><option selected>All</option></select> <select id='comparemarket'>" + opt("h2h","Moneyline") + opt("spreads","Spread") + opt("totals","Total") + "</select>";
   const head = "<tr><th>Game</th><th class='timecol'>Time</th>" + books.map(b => "<th>" + b + "</th>").join("") + "</tr>";
   const body = rows.map(r => "<tr><td>" + esc(r.sport + " " + r.label) + "</td><td class='gametime' data-start='" + esc(r.start || "") + "'>" + esc(r.start ? formatTime(r.start, false) : "") + "</td>" + books.map(b => "<td>" + esc((r.books && r.books[b]) || "-") + "</td>").join("") + "</tr>").join("");
-  return "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>" + which + ". " + label + ". Posted at 4:00 AM from the public board. " + select + "</p><table class='compare'><thead>" + head + "</thead><tbody>" + body + "</tbody></table>";
+  return "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>" + which + ". " + label + ". Posted at " + zoneTime(4, 0) + " from the public board. " + select + "</p><table class='compare'><thead>" + head + "</thead><tbody>" + body + "</tbody></table>";
 }
 async function drawOddsCompare(force){
   const key = oddskey.value.trim();
   const box = document.getElementById("oddscompare");
   if (!box) return;
   if (!key) { /* show the board anyway */ }
-  if (slateSettled(yesterday()) && localStorage.getItem("gg-compare-locked") !== todayEt()) {
+  if (slateSettled(yesterday()) && localStorage.getItem("gg-compare-locked") !== easternDay()) {
     localStorage.setItem("gg-compare-day", "today");
-    localStorage.setItem("gg-compare-locked", todayEt());
+    localStorage.setItem("gg-compare-locked", easternDay());
   }
-  const day = (localStorage.getItem("gg-compare-day") === "today") ? todayEt() : yesterday();
+  const day = (localStorage.getItem("gg-compare-day") === "today") ? easternDay() : yesterday();
   const market = (document.getElementById("comparemarket") || {}).value || localStorage.getItem("gg-compare-market") || "h2h";
   localStorage.setItem("gg-compare-market", market);
   const published = publishedOddsHtml(day, market);
@@ -1964,7 +1965,7 @@ async function drawOddsCompare(force){
   let table = localStorage.getItem("gg-compare-html-" + market) || "";
     const boards = {'h2h': "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>Yesterday. Moneyline, away / home. <select id='comparesport'><option value='CBB'>CBB</option><option value='CFB'>CFB</option><option value='MLB'>MLB</option><option value='NBA'>NBA</option><option value='NFL'>NFL</option><option value='NHL'>NHL</option><option value='All' selected>All</option></select> <select id='comparemarket'><option value='h2h' selected>Moneyline</option><option value='spreads'>Spread</option><option value='totals'>Total</option></select></p><table class='compare'><thead><tr><th>Game</th><th class='timecol'>Time</th><th>BetMGM</th><th>Caesars</th><th>DraftKings</th><th>Fanatics</th><th>FanDuel</th><th>HardRock</th></tr></thead><tbody><tr><td>CBB Season Ended</td><td class='gametime'></td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>CFB Tulane at Memphis</td><td class='gametime' data-start='2026-10-16T23:30:00Z'>7:30 PM</td><td>+7 -112</td><td>-</td><td>+7 -112</td><td>-</td><td>+7 -112</td><td>+7 -112</td></tr><tr><td>CFB Washington at Purdue</td><td class='gametime' data-start='2026-10-17T00:00:00Z'>8:00 PM</td><td>+140 / -165</td><td>-</td><td>+142 / -170</td><td>-</td><td>+132 / -160</td><td>+140 / -165</td></tr><tr><td>CFB App State at Coastal Carolina</td><td class='gametime' data-start='2026-10-17T00:00:00Z'>8:00 PM</td><td>-118 / -102</td><td>-</td><td>-118 / -102</td><td>-</td><td>-115 / -104</td><td>-118 / -102</td></tr><tr><td>MLB Tampa Bay Rays at Cleveland Guardians</td><td class='gametime' data-start='2026-10-15T17:00:00Z'>1:00 PM</td><td>-115 / -105</td><td>-115 / -102</td><td>-116 / -104</td><td>-</td><td>-112 / -104</td><td>-115 / -105</td></tr><tr><td>NBA Milwaukee Bucks at Indiana Pacers</td><td class='gametime' data-start='2026-10-16T23:00:00Z'>7:00 PM</td><td>+8.5 -110</td><td>-</td><td>+8.5 -110</td><td>-</td><td>+8.5 -110</td><td>+8.5 -110</td></tr><tr><td>NBA Toronto Raptors at Detroit Pistons</td><td class='gametime' data-start='2026-10-16T23:00:00Z'>7:00 PM</td><td>+9.5 -110</td><td>-</td><td>+9.5 -110</td><td>-</td><td>+9.5 -110</td><td>+9.5 -110</td></tr><tr><td>NBA Boston Celtics at Philadelphia 76ers</td><td class='gametime' data-start='2026-10-16T23:00:00Z'>7:00 PM</td><td>+5.5 -110</td><td>-</td><td>+5.5 -110</td><td>-</td><td>+5.5 -110</td><td>+5.5 -110</td></tr><tr><td>NBA Miami Heat at Orlando Magic</td><td class='gametime' data-start='2026-10-16T23:00:00Z'>7:00 PM</td><td>+120 / -140</td><td>-</td><td>+120 / -140</td><td>-</td><td>+120 / -140</td><td>+120 / -140</td></tr><tr><td>NBA Boston Celtics at Philadelphia 76ers</td><td class='gametime' data-start='2026-10-16T23:00:00Z'>7:00 PM</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NBA Atlanta Hawks at Dallas Mavericks</td><td class='gametime' data-start='2026-10-17T00:00:00Z'>8:00 PM</td><td>-105 / -115</td><td>-</td><td>-105 / -115</td><td>-</td><td>-105 / -115</td><td>-105 / -115</td></tr><tr><td>NBA Sacramento Kings at San Antonio Spurs</td><td class='gametime' data-start='2026-10-17T00:00:00Z'>8:00 PM</td><td>+625 / -950</td><td>-</td><td>+625 / -950</td><td>-</td><td>+625 / -950</td><td>+625 / -950</td></tr><tr><td>NBA Charlotte Hornets at Memphis Grizzlies</td><td class='gametime' data-start='2026-10-17T00:00:00Z'>8:00 PM</td><td>-120 / +100</td><td>-</td><td>-120 / +100</td><td>-</td><td>-120 / +100</td><td>-120 / +100</td></tr><tr><td>NBA Washington Wizards at New Orleans Pelicans</td><td class='gametime' data-start='2026-10-17T00:00:00Z'>8:00 PM</td><td>-130 / +110</td><td>-</td><td>-130 / +110</td><td>-</td><td>-130 / +110</td><td>-130 / +110</td></tr><tr><td>NBA Minnesota Timberwolves at Chicago Bulls</td><td class='gametime' data-start='2026-10-17T00:00:00Z'>8:00 PM</td><td>-120 / +100</td><td>-</td><td>-120 / +100</td><td>-</td><td>-120 / +100</td><td>-120 / +100</td></tr><tr><td>NBA Portland Trail Blazers at Golden State Warriors</td><td class='gametime' data-start='2026-10-17T02:00:00Z'>10:00 PM</td><td>-205 / +170</td><td>-</td><td>-205 / +170</td><td>-</td><td>-205 / +170</td><td>-205 / +170</td></tr><tr><td>NBA Utah Jazz at Phoenix Suns</td><td class='gametime' data-start='2026-10-17T02:00:00Z'>10:00 PM</td><td>+165 / -200</td><td>-</td><td>+165 / -200</td><td>-</td><td>+165 / -200</td><td>+165 / -200</td></tr><tr><td>NBA Denver Nuggets at Los Angeles Lakers</td><td class='gametime' data-start='2026-10-17T02:30:00Z'>10:30 PM</td><td>+180 / -220</td><td>-</td><td>+180 / -220</td><td>-</td><td>+180 / -220</td><td>+180 / -220</td></tr><tr><td>NFL No Picks</td><td class='gametime'></td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NHL Pittsburgh Penguins at Colorado Avalanche</td><td class='gametime' data-start='2026-10-17T01:00:00Z'>9:00 PM</td><td>+180 / -220</td><td>-</td><td>+175 / -215</td><td>-</td><td>+175 / -210</td><td>+180 / -220</td></tr><tr><td>NHL Anaheim Ducks</td><td class='gametime'></td><td>-105</td><td>-</td><td>-105</td><td>-</td><td>-105</td><td>-105</td></tr></tbody></table>", 'spreads': "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>Yesterday. Spread, away / home. <select id='comparesport'><option value='CBB'>CBB</option><option value='CFB'>CFB</option><option value='MLB'>MLB</option><option value='NBA'>NBA</option><option value='NFL'>NFL</option><option value='NHL'>NHL</option><option value='All' selected>All</option></select> <select id='comparemarket'><option value='h2h'>Moneyline</option><option value='spreads' selected>Spread</option><option value='totals'>Total</option></select></p><table class='compare'><thead><tr><th>Game</th><th class='timecol'>Time</th><th>BetMGM</th><th>Caesars</th><th>DraftKings</th><th>Fanatics</th><th>FanDuel</th><th>HardRock</th></tr></thead><tbody><tr><td>CBB Season Ended</td><td class='gametime'></td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>CFB Tulane at Memphis</td><td class='gametime' data-start='2026-10-16T23:30:00Z'>7:30 PM</td><td>+7 -112</td><td>-</td><td>+7 -112</td><td>-</td><td>+7 -112</td><td>+7 -112</td></tr><tr><td>CFB Washington at Purdue</td><td class='gametime' data-start='2026-10-17T00:00:00Z'>8:00 PM</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>CFB App State at Coastal Carolina</td><td class='gametime' data-start='2026-10-17T00:00:00Z'>8:00 PM</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>MLB Tampa Bay Rays at Cleveland Guardians</td><td class='gametime' data-start='2026-10-15T17:00:00Z'>1:00 PM</td><td>-1.5 +155 / +1.5 -190</td><td>-1.5 +159 / +1.5 -189</td><td>-1.5 +153 / +1.5 -187</td><td>-</td><td>-1.5 +160 / +1.5 -194</td><td>-1.5 +160 / +1.5 -190</td></tr><tr><td>NBA Milwaukee Bucks at Indiana Pacers</td><td class='gametime' data-start='2026-10-16T23:00:00Z'>7:00 PM</td><td>+8.5 -110</td><td>-</td><td>+8.5 -110</td><td>-</td><td>+8.5 -110</td><td>+8.5 -110</td></tr><tr><td>NBA Toronto Raptors at Detroit Pistons</td><td class='gametime' data-start='2026-10-16T23:00:00Z'>7:00 PM</td><td>+9.5 -110</td><td>-</td><td>+9.5 -110</td><td>-</td><td>+9.5 -110</td><td>+9.5 -110</td></tr><tr><td>NBA Boston Celtics at Philadelphia 76ers</td><td class='gametime' data-start='2026-10-16T23:00:00Z'>7:00 PM</td><td>+5.5 -110</td><td>-</td><td>+5.5 -110</td><td>-</td><td>+5.5 -110</td><td>+5.5 -110</td></tr><tr><td>NBA Miami Heat at Orlando Magic</td><td class='gametime' data-start='2026-10-16T23:00:00Z'>7:00 PM</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NBA Boston Celtics at Philadelphia 76ers</td><td class='gametime' data-start='2026-10-16T23:00:00Z'>7:00 PM</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NBA Atlanta Hawks at Dallas Mavericks</td><td class='gametime' data-start='2026-10-17T00:00:00Z'>8:00 PM</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NBA Sacramento Kings at San Antonio Spurs</td><td class='gametime' data-start='2026-10-17T00:00:00Z'>8:00 PM</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NBA Charlotte Hornets at Memphis Grizzlies</td><td class='gametime' data-start='2026-10-17T00:00:00Z'>8:00 PM</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NBA Washington Wizards at New Orleans Pelicans</td><td class='gametime' data-start='2026-10-17T00:00:00Z'>8:00 PM</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NBA Minnesota Timberwolves at Chicago Bulls</td><td class='gametime' data-start='2026-10-17T00:00:00Z'>8:00 PM</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NBA Portland Trail Blazers at Golden State Warriors</td><td class='gametime' data-start='2026-10-17T02:00:00Z'>10:00 PM</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NBA Utah Jazz at Phoenix Suns</td><td class='gametime' data-start='2026-10-17T02:00:00Z'>10:00 PM</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NBA Denver Nuggets at Los Angeles Lakers</td><td class='gametime' data-start='2026-10-17T02:30:00Z'>10:30 PM</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NFL No Picks</td><td class='gametime'></td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NHL Pittsburgh Penguins at Colorado Avalanche</td><td class='gametime' data-start='2026-10-17T01:00:00Z'>9:00 PM</td><td>+1.5 -135</td><td>-</td><td>+1.5 -135</td><td>-</td><td>+1.5 -135</td><td>+1.5 -135</td></tr></tbody></table>", 'totals': "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>Yesterday. Total, over point and price / under price. <select id='comparesport'><option value='CBB'>CBB</option><option value='CFB'>CFB</option><option value='MLB'>MLB</option><option value='NBA'>NBA</option><option value='NFL'>NFL</option><option value='NHL'>NHL</option><option value='All' selected>All</option></select> <select id='comparemarket'><option value='h2h'>Moneyline</option><option value='spreads'>Spread</option><option value='totals' selected>Total</option></select></p><table class='compare'><thead><tr><th>Game</th><th class='timecol'>Time</th><th>BetMGM</th><th>Caesars</th><th>DraftKings</th><th>Fanatics</th><th>FanDuel</th><th>HardRock</th></tr></thead><tbody><tr><td>CBB Season Ended</td><td class='gametime'></td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>CFB Memphis vs Tulane</td><td class='gametime' data-start='2026-10-16T23:30:00Z'>7:30 PM</td><td>55.5 -108 / -108</td><td>-</td><td>55.5 -108 / -108</td><td>-</td><td>55.5 -108 / -108</td><td>55.5 -108 / -108</td></tr><tr><td>MLB Tampa Bay Rays at Cleveland Guardians</td><td class='gametime' data-start='2026-10-15T17:00:00Z'>1:00 PM</td><td>6.5 -110 / -110</td><td>6.5 -106 / -111</td><td>6.5 -108 / -112</td><td>-</td><td>6.5 -110 / -110</td><td>6.5 -110 / -110</td></tr><tr><td>NBA Milwaukee Bucks at Indiana Pacers</td><td class='gametime' data-start='2026-10-16T23:00:00Z'>7:00 PM</td><td>235.5 -110 / -110</td><td>-</td><td>235.5 -110 / -110</td><td>-</td><td>235.5 -110 / -110</td><td>235.5 -110 / -110</td></tr><tr><td>NBA Toronto Raptors at Detroit Pistons</td><td class='gametime' data-start='2026-10-16T23:00:00Z'>7:00 PM</td><td>217.5 -110 / -110</td><td>-</td><td>217.5 -110 / -110</td><td>-</td><td>217.5 -110 / -110</td><td>217.5 -110 / -110</td></tr><tr><td>NFL No Picks</td><td class='gametime'></td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NHL Pittsburgh Penguins at Colorado Avalanche</td><td class='gametime' data-start='2026-10-17T01:00:00Z'>9:00 PM</td><td>6.5 -110 / -110</td><td>-</td><td>6.5 -110 / -110</td><td>-</td><td>6.5 -110 / -110</td><td>6.5 -110 / -110</td></tr></tbody></table>"};
     window.__ggBoards = boards;
-    const wantToday = day === todayEt();
+    const wantToday = day === easternDay();
     const todayCache = localStorage.getItem("gg-compare-html-today-" + market) || "";
     if (!force && !wantToday) {
     box.innerHTML = boards[market] || boards.h2h || "";
@@ -2263,7 +2264,7 @@ function rememberBooks(sport, games){
   try { all = JSON.parse(localStorage.getItem("gg-book-prices") || "{}"); } catch (e) { all = {}; }
   games.forEach(g => {
     if (!g || !g.away_team || !g.home_team) return;
-    const day = g.commence_time ? slateDateOf(g.commence_time) : todayEt();
+    const day = g.commence_time ? slateDateOf(g.commence_time) : easternDay();
     const sportName = String(sport || "").toUpperCase();
     const label = g.away_team + " at " + g.home_team;
     const dayRow = all[day] || (all[day] = {});
@@ -2278,7 +2279,7 @@ function rememberBooks(sport, games){
       });
     });
   });
-  const keep = new Date(todayEt() + "T12:00:00Z");
+  const keep = new Date(easternDay() + "T12:00:00Z");
   keep.setUTCDate(keep.getUTCDate() - 14);
   const cutoff = keep.toISOString().slice(0, 10);
   Object.keys(all).forEach(d => { if (d < cutoff) delete all[d]; });
@@ -2344,7 +2345,7 @@ async function repriceBooks(){
   const key = oddskey.value.trim();
   if (!key) return;
   const stamp = localStorage.getItem("gg-books-stamp");
-  if (stamp === todayEt()) return;
+  if (stamp === easternDay()) return;
   const settled = load().filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
   if (!settled.length) return;
   const books = Object.keys(BOOK_KEY);
@@ -2369,7 +2370,7 @@ async function repriceBooks(){
       map[book].n++;
     });
   });
-  localStorage.setItem("gg-books-stamp", todayEt());
+  localStorage.setItem("gg-books-stamp", easternDay());
   localStorage.setItem("gg-books-figures", JSON.stringify(map));
   render();
 }
@@ -2388,7 +2389,7 @@ form.onsubmit = e => {
   const d = Object.fromEntries(new FormData(form));
   const bets = load();
   if (d.result && d.result !== "pending" && !slateSettled(d.date)) {
-    document.getElementById("editnote").textContent = "Game not finished. Result stays pending until that slate ends. A postseason game stays open until 4:00 AM.";
+    document.getElementById("editnote").textContent = "Game not finished. Result stays pending until that slate ends. A postseason game stays open until " + zoneTime(4, 0) + ".";
     return;
   }
   const row = {...d, odds: Number(d.odds), stake: Number(d.stake), close: d.close ? Number(d.close) : ""};
@@ -2420,7 +2421,7 @@ document.getElementById("rows").onclick = e => {
     const bets = load();
     const bet = bets.find(b => String(b.id) === t.dataset.id);
     if (bet && t.dataset.set !== "pending" && !slateSettled(bet.date)) {
-      document.getElementById("editnote").textContent = "Game not finished. Result stays pending until that slate ends. A postseason game stays open until 4:00 AM.";
+      document.getElementById("editnote").textContent = "Game not finished. Result stays pending until that slate ends. A postseason game stays open until " + zoneTime(4, 0) + ".";
       return;
     }
     if (bet) bet.result = t.dataset.set;
@@ -2504,7 +2505,7 @@ function sportKeys(sport){
   const main = SPORT_KEY[sport];
   if (!main) return [];
   const start = SEASON_START[sport];
-  const today = todayEt();
+  const today = easternDay();
   if (PRESEASON_KEY[sport] && start && today < start) return [PRESEASON_KEY[sport], main];
   return [main, PRESEASON_KEY[sport]].filter(Boolean);
 }
@@ -2643,10 +2644,8 @@ async function fillPickBoard(useSaved){
   if (!key) { note.textContent = "Add the odds key in Today's Card. Then this list follows " + book + "."; return; }
   if (!bookKey) { note.textContent = book + " has no live board."; return; }
   const day = form.date.value;
-  const today = new Date().toLocaleDateString("en-CA", {timeZone: siteZone()});
-  const yest = new Date(today + "T12:00:00Z");
-  yest.setUTCDate(yest.getUTCDate() - 1);
-  const yesterday = yest.toISOString().slice(0, 10);
+  const today = easternDay();
+  const yesterday = shiftDate(today, -1);
   note.textContent = "Loading " + book + " picks for every sport on " + day + "...";
   const sports = Object.keys(SPORT_KEY);
   let allGames = [];
@@ -2675,7 +2674,7 @@ async function fillPickBoard(useSaved){
   window.__ggExtraStarts = allGames.filter(g => g.commence_time).map(g => ({sport: g._sport, start: g.commence_time}));
   const lastEnd = lastSlateEnd(yesterday);
   if (day === today && !slateSettled(yesterday)) {
-    const when = lastEnd ? formatTime(lastEnd, false) : "4:00 AM";
+    const when = lastEnd ? formatTime(lastEnd, false) : zoneTime(4, 0);
     note.textContent = "Waiting for the last game from " + yesterday + " to finish. Latest end " + when + (lateSlate(yesterday) ? ", including a postseason game that can run past midnight." : ", including a late NHL game.");
     document.getElementById("loadnote").textContent = "Waiting On Yesterday";
     return;
@@ -2737,7 +2736,7 @@ document.getElementById("loadicon").onclick = () => document.getElementById("loa
 async function autoLoadBoard(){
   const key = oddskey.value.trim();
   if (!key) return;
-  const day = form.date.value || todayEt();
+  const day = form.date.value || easternDay();
   const stamp = localStorage.getItem("gg-board-auto");
   if (stamp === day) return;
   const yest = new Date(day + "T12:00:00Z");
@@ -2924,7 +2923,7 @@ document.getElementById("cardbook").onchange = () => {
 async function loadPending(){
   const note = document.getElementById("pdfnote");
   const bets = load();
-  const today = todayEt();
+  const today = easternDay();
   const book = document.getElementById("cardbook").value;
   await repricePaste().catch(err => { document.getElementById("pdfnote").textContent = err.message; });
   const before = bets.length;
@@ -3006,7 +3005,7 @@ function addCardLines(text, book){
     line = line.trim();
     if (!line || line.startsWith("#")) return;
     const parts = line.split("|").map(s => s.trim());
-    let date = todayEt(), sport, type, pick, odds, notes;
+    let date = easternDay(), sport, type, pick, odds, notes;
     if (/^\d{4}-\d{2}-\d{2}$/.test(parts[0])) date = parts.shift();
     [sport, type, pick, odds, notes] = parts;
     odds = String(odds || "").replace(/\u2212/g, "-");
@@ -3021,7 +3020,7 @@ function addCardLines(text, book){
 async function cardBundle(){
   const files = ["cards/today.txt","cards/parts/nhl.txt","cards/parts/nba.txt","cards/parts/mlb.txt","cards/parts/nfl.txt","cards/parts/cbb.txt","cards/parts/cfb.txt"];
   const chunks = await Promise.all(files.map(file => fetch(file + "?ts=" + Date.now()).then(r => r.ok ? r.text() : "").catch(() => "")));
-  const today = todayEt();
+  const today = easternDay();
   const seen = new Set();
   const lines = [];
   let sharp = "";
@@ -3039,7 +3038,7 @@ async function cardBundle(){
 async function loadDriveCard(){
   const note = document.getElementById("pdfnote");
   const text = await cardBundle();
-  const today = todayEt();
+  const today = easternDay();
   const sharp = (text.split(/\n/).find(line => line.trim().startsWith("# sharp:")) || "").trim();
   const lines = text.split(/\n/).filter(line => line.trim().startsWith(today));
   drawCardAnalysis(lines.length ? [sharp, lines.join("\n")].filter(Boolean).join("\n") : text);
@@ -3056,7 +3055,7 @@ async function loadDriveCard(){
 }
 async function refreshTodayCard(){
   const text = await cardBundle().catch(() => "");
-  const today = todayEt();
+  const today = easternDay();
   const sharp = (text.split(/\n/).find(line => line.trim().startsWith("# sharp:")) || "").trim();
   const lines = text.split(/\n/).filter(line => line.trim().startsWith(today));
   drawCardAnalysis(lines.length ? [sharp, lines.join("\n")].filter(Boolean).join("\n") : text);
@@ -3100,7 +3099,7 @@ async function applyGrades(){
 }
 document.getElementById("savedash").onclick = () => {
   const rows = JSON.parse(localStorage.getItem("gg-dashboard-v1") || "[]");
-  const name = "GG-DASHBOARD-" + todayEt();
+  const name = "GG-DASHBOARD-" + easternDay();
   const lines = ["# file: " + name].concat(rows.map(row => [row.date, row.record, row.profit, row.roi, row.units, row.pending, row.clv].join(" | ")));
   download(name + ".txt", new Blob([lines.join("\n") + "\n"], {type:"text/plain"}));
   document.getElementById("dashnote").textContent = rows.length ? "Saved " + name + "." : "Save failed. No dashboard rows.";
@@ -3155,15 +3154,17 @@ async function catchUp(){
     if (grades) gradeFile = grades.split(/\n/).map(parseGradeLine).filter(Boolean);
     if (dash) localStorage.setItem("gg-dashboard-published", dash);
   } catch (err) {}
-  if (!load().some(b => inSlipWindow(b.date))) {
+  if (localStorage.getItem("gg-hold-ledger") !== "1") {
+    const kept = load().filter(b => b && b.manual && inSlipWindow(b.date));
     try {
       const res = await fetch("cards/ledger.json?ts=" + Date.now());
       if (res.ok) {
         const data = await res.json();
-        const bets = (Array.isArray(data) ? data : (data.bets || [])).filter(b => b && inSlipWindow(b.date) && !isNoPick(b));
-        if (bets.length) localStorage.setItem(KEY, JSON.stringify(bets));
+        const published = (Array.isArray(data) ? data : (data.bets || [])).filter(b => b && inSlipWindow(b.date) && !isNoPick(b));
+        published.forEach(b => { if (!kept.some(x => sameSlip(x, b))) kept.push(b); });
       }
     } catch (err) {}
+    localStorage.setItem(KEY, JSON.stringify(kept));
   }
   await loadDriveCard().catch(() => {});
   await applyGrades().catch(() => {});
@@ -3779,14 +3780,14 @@ const tzSelect = document.getElementById("timezone");
 tzSelect.value = siteZone();
 tzSelect.onchange = () => {
   localStorage.setItem("gg-timezone", tzSelect.value);
-  form.date.value = todayEt();
   followMonth();
   armMidnight();
   showClock();
   drawPickSlate();
   paintOddsTimes();
+  render();
   if (openDate) openDay(openDate);
-  else render();
+  showSeasons();
 };
 const hourBtn = document.getElementById("hourmode");
 hourBtn.textContent = "12hr/24hr Toggle";
@@ -3795,13 +3796,14 @@ hourBtn.onclick = () => {
   showClock();
   drawPickSlate();
   paintOddsTimes();
+  render();
   if (openDate) openDay(openDate);
-  else render();
+  showSeasons();
 };
 showClock();
 setInterval(showClock, 1000);
-document.getElementById("prevMonth").onclick = () => { monthCursor.setMonth(monthCursor.getMonth()-1); monthFollowsToday = monthCursor.getFullYear() === Number(todayEt().slice(0,4)) && monthCursor.getMonth() === Number(todayEt().slice(5,7)) - 1; render(); };
-document.getElementById("nextMonth").onclick = () => { monthCursor.setMonth(monthCursor.getMonth()+1); monthFollowsToday = monthCursor.getFullYear() === Number(todayEt().slice(0,4)) && monthCursor.getMonth() === Number(todayEt().slice(5,7)) - 1; render(); };
+document.getElementById("prevMonth").onclick = () => { monthCursor.setMonth(monthCursor.getMonth()-1); monthFollowsToday = monthCursor.getFullYear() === Number(easternDay().slice(0,4)) && monthCursor.getMonth() === Number(easternDay().slice(5,7)) - 1; render(); };
+document.getElementById("nextMonth").onclick = () => { monthCursor.setMonth(monthCursor.getMonth()+1); monthFollowsToday = monthCursor.getFullYear() === Number(easternDay().slice(0,4)) && monthCursor.getMonth() === Number(easternDay().slice(5,7)) - 1; render(); };
 [KEY, GRADE_KEY].forEach(k => {
   try {
     const rows = JSON.parse(localStorage.getItem(k) || "[]");
