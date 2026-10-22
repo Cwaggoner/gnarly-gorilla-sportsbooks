@@ -215,3 +215,8 @@
 2026-10-21 | CFB | -110 | Sam Houston +2.5 | -110
 2026-10-21 | CFB | -110 | New Mexico State at Sam Houston Under 45.5 | -110
 2026-10-21 | CFB | 190 | SGP Sam Houston +2.5 and New Mexico State at Sam Houston Under 45.5 | 190
+2026-10-22 | NFL | -105 | Patriots at Bears Under 50.5 | -108
+2026-10-22 | NBA | -115 | Cavaliers +3.5 | -115
+2026-10-22 | NHL | 170 | Flames ML | 170
+2026-10-22 | NHL | 130 | Predators ML | 120
+2026-10-22 | NHL | 102 | Jets at Stars Under 5.5 | -110
