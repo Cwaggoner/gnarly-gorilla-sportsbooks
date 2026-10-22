@@ -1,0 +1,19 @@
+# Pick rules updated 2026-10-22 after the October 21 card
+# Record that night: 3-10, about -$65 on $10 bets.
+# Wins: Bulls at Raptors Under 237.5 (227), Flyers ML +166 (3-1), Flyers at Sabres Under 6 (4).
+# Losses: Bulls +10.5 (lost by 43), Mavericks +9.5 (lost by 18), Warriors +6.5 (lost by 22),
+# Mavericks at Rockets Under 230.5 (238), both NBA dog-plus-under SGPs,
+# Panthers ML +102 (lost 1-5), Sam Houston +2.5 (lost by 6),
+# New Mexico State at Sam Houston Under 45.5 (54), and that CFB SGP.
+
+These rules override the 2026-10-12 habit of carding every dog of 5.5 or more and pairing it with the under.
+
+1. One dog spread per sport per day. Not three.
+2. A dog spread of +8 or more is not a play in the first 10 games of a season. Pass the game.
+3. Do not build a same-game parlay of a dog spread plus the under. A blowout cashes the under and kills the dog. The Bulls game did that: under won, dog lost by 43, parlay lost.
+4. One named under is allowed. Do not also bet that game's dog.
+5. A moneyline dog must be +140 or longer. +102 is a pick'em. Pass it. The Flyers were +166 and won. The Panthers were +102 and lost by 4.
+6. A college spread inside 7 is not a play. Sam Houston +2.5 lost by 6.
+7. A college total under 48 is not a play. 45.5 went to 54.
+8. A standalone NHL total is not a play. A total is allowed only as the second leg with a moneyline already priced +140 or longer.
+9. If no number fits, write No Picks for that sport. Do not force a dog onto a bad number.
