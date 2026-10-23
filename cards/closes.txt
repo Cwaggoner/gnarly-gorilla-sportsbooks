@@ -71,6 +71,17 @@
 2026-10-18 | NHL | 160 | Columbus Blue Jackets ML | 156
 2026-10-18 | NHL | -140 | Calgary Flames +1.5 | -140
 2026-10-18 | NHL | 180 | Calgary Flames ML | 179
+2026-10-18 | MLB | -118 | Rays @ Guardians Under 6.5 | -122
+2026-10-18 | NFL | -118 | Atlanta Falcons +1.5 | -118
+2026-10-18 | NFL | -112 | New York Jets +7.5 | -120
+2026-10-18 | NFL | -105 | Tampa Bay Buccaneers +2.5 | -110
+2026-10-18 | NFL | -108 | Arizona Cardinals +12.5 | -108
+2026-10-18 | NFL | -110 | Las Vegas Raiders +5.5 | -115
+2026-10-19 | MLB | -110 | Guardians +1.5 | -170
+2026-10-19 | NHL | -110 | Pittsburgh Penguins +1.5 | -164
+2026-10-19 | NHL | -110 | Anaheim Ducks +1.5 | -207
+2026-10-19 | NHL | -110 | Philadelphia Flyers +1.5 | -122
+2026-10-19 | NHL | -110 | San Jose Sharks +1.5 | -202
 2026-10-10 | NBA | -110 | Clippers +4.5 | -110
 2026-10-10 | NBA | -110 | Hawks +2.5 | -110
 2026-10-10 | NBA | -110 | Wizards +5.5 | -110

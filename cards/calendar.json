@@ -168,7 +168,7 @@
       "n": 19,
       "allWin": 190.48,
       "allLose": -190.0,
-      "clv": 1.1,
+      "clv": 1.3,
       "wins": 10,
       "losses": 9,
       "pushes": 0
@@ -178,6 +178,7 @@
       "n": 6,
       "allWin": 54.55,
       "allLose": -60.0,
+      "clv": 20.0,
       "wins": 3,
       "losses": 3,
       "pushes": 0
