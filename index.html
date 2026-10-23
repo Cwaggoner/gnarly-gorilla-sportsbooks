@@ -718,11 +718,22 @@ function rowStake(row){
   if (Number.isFinite(pct) && pct !== 0 && Number.isFinite(profit)) return profit / (pct / 100);
   return 0;
 }
+function openSlips(){
+  const seen = new Set();
+  return dropMatchedPending(load().concat(loadGrade()).concat(gradeFile || [])).filter(b => {
+    if (!b || b.result !== "pending" || isNoPick(b)) return false;
+    const key = [String(b.date || "").slice(0, 10), String(b.sport || "").toUpperCase(), normPick(b.pick)].join("|");
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
 function publishedDashboard(){
   const slips = (gradeFile || []).filter(b => b && b.date && !isNoPick(b) && (b.result === "win" || b.result === "loss" || b.result === "push")).map(b => {
     const close = closeMap[b.date + "|" + b.pick];
     return close ? Object.assign({}, b, {close}) : b;
   });
+  const open = openSlips();
   return lastSevenDates().map(date => {
     const day = publishedCalendar[date] || {};
     const lines = slips.filter(b => b.date === date);
@@ -745,7 +756,7 @@ function publishedDashboard(){
       staked,
       roi: roiText(profit, staked),
       units: (profit / UNIT).toFixed(2) + "u",
-      pending: 0,
+      pending: open.filter(b => String(b.date || "").slice(0, 10) === date).length,
       clv: dayClv
     };
   });
@@ -773,12 +784,13 @@ function drawDashboard(history, manual){
     wins += parts[0] || 0; losses += parts[1] || 0; pushes += parts[2] || 0;
   });
   const clvs = shown.map(row => row.clv === "Matched Bet Price" ? 0 : parseFloat(String(row.clv).replace("%", ""))).filter(n => Number.isFinite(n));
+  const pendingNow = openSlips().filter(b => inSlipWindow(b.date)).length;
   document.getElementById("stats").innerHTML = [
     [wins + "-" + losses + "-" + pushes, "7-Day W/L Record"],
     [moneyHtml(profit), "7-Day Profit"],
     [staked ? roiText(profit, staked) : "-", "7-Day ROI"],
     [(profit / UNIT).toFixed(2) + "u", "7-Day Units"],
-    [shown.reduce((s, row) => s + (Number(row.pending) || 0), 0), "Pending"],
+    [pendingNow, "Pending Slips"],
     [clvs.length ? (clvs.reduce((s, n) => s + n, 0) / clvs.length).toFixed(1) + "%" : "No Close Saved", "7-Day Avg CLV"]
   ].map(x => "<div class='stat'><b>" + x[0] + "</b><span>" + x[1] + "</span></div>").join("");
   document.getElementById("dashrows").innerHTML = shown.map(row => "<tr><td>" + row.date + "</td><td>" + row.record + "</td><td>" + moneyHtml(Number(row.profit)) + "</td><td>" + row.roi + "</td><td>" + row.units + "</td><td>" + (Number(row.pending) === 0 ? "0 - All Pending Has Been Graded" : row.pending) + "</td><td>" + (row.clv === "-" || row.clv == null || row.clv === "" ? "No Close Saved" : row.clv) + "</td></tr>").join("");
