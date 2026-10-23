@@ -1379,12 +1379,20 @@ async function loadDriveCardForCalendar(){
     drawCalendar();
   } catch (err) {}
 }
+function gradedPool(){
+  const poolMap = {};
+  load().concat(loadGrade()).concat(gradeFile).forEach(b => {
+    if (!b || !b.pick || isNoPick(b)) return;
+    const date = String(b.date || "").slice(0, 10);
+    const key = [date, b.sport, b.pick].join("|");
+    const prior = poolMap[key];
+    const better = !prior || (prior.result === "pending" && b.result !== "pending") || (Number.isFinite(Number(b.profit)) && !Number.isFinite(Number(prior.profit)));
+    if (better) poolMap[key] = b;
+  });
+  return Object.values(poolMap);
+}
 function slipsForDay(date){
-  const keep = b => b && b.date === date && b.result !== "pending" && !isNoPick(b);
-  const file = (gradeFile || []).filter(keep);
-  const seen = new Set(file.map(b => [b.sport, b.pick].join("|")));
-  const extra = load().concat(loadGrade()).filter(b => keep(b) && !seen.has([b.sport, b.pick].join("|")));
-  return file.concat(extra);
+  return gradedPool().filter(b => String(b.date || "").slice(0, 10) === date && (b.result === "win" || b.result === "loss" || b.result === "push"));
 }
 function drawCalendar(){
   const mine = personalCalendar() || {};
@@ -1439,8 +1447,7 @@ function drawCalendar(){
         if (!Number.isFinite(odds)) return 0;
         return odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds);
       };
-      const publishedN = Number(day && day.n) || 0;
-      if (slips.length && slips.length >= publishedN) {
+      if (slips.length) {
         day = Object.assign({}, day || {}, {
           pl: slips.reduce((s, b) => s + slipMoney(b), 0),
           n: slips.length,
@@ -1470,9 +1477,9 @@ function drawCalendar(){
       const wins = Number.isFinite(Number(day && day.wins)) ? Number(day.wins) : slips.filter(b => b.result === "win").length;
       const losses = Number.isFinite(Number(day && day.losses)) ? Number(day.losses) : slips.filter(b => b.result === "loss").length;
       const pushes = Number.isFinite(Number(day && day.pushes)) ? Number(day.pushes) : slips.filter(b => b.result === "push").length;
-      const rec = (wins + losses + pushes) ? " " + wins + "-" + losses + "-" + pushes : "";
+      const rec = (wins + losses + pushes) ? "<br><span class='range'>W/L Record " + wins + "-" + losses + "-" + pushes + "</span>" : "";
       const range = (slips.length || (Number.isFinite(publishedWin) && publishedWin > 0)) ? "<br><span class='range'><span class='win'>All Win " + money(winAll) + "</span><span class='slash'> / </span><span class='loss'>All Lose -" + money(loseAll).replace("-", "") + "</span></span>" : "";
-      html += "<div class='daycell' data-date='" + date + "'><b>" + d + "</b><br><span class='" + cls + "'>" + (day && Number.isFinite(pl) ? money(pl) + rec : "") + "</span>" + range + "</div>";
+      html += "<div class='daycell' data-date='" + date + "'><b>" + d + "</b><br><span class='" + cls + "'>" + (day && Number.isFinite(pl) ? money(pl) : "") + "</span>" + rec + range + "</div>";
     }
   }
   document.getElementById("calendar").innerHTML = html;
@@ -1971,17 +1978,9 @@ function render(){
   }
   drawOddsCompare().catch(() => {});
   const y = yesterday();
-  const graded = loadGrade();
   const picked = document.getElementById("reportDay").value;
   const show = document.getElementById("reportShow").value || "both";
-  const poolMap = {};
-  bets.concat(graded).concat(gradeFile).forEach(b => {
-    const key = [b.date, b.sport, b.pick].join("|");
-    const prior = poolMap[key];
-    const better = !prior || (prior.result === "pending" && b.result !== "pending") || (Number.isFinite(Number(b.profit)) && !Number.isFinite(Number(prior.profit)));
-    if (better) poolMap[key] = b;
-  });
-  const pool = Object.values(poolMap);
+  const pool = gradedPool();
   const yDone = pool.some(b => b.date === y && b.result !== "pending" && !isNoPick(b));
   const gradeDate = picked || (yDone ? y : (slateSettled(y) ? y : shiftDate(y, -1)));
   const pending = pool.filter(b => b.result === "pending" && !slateSettled(b.date) && (picked ? b.date === picked : b.date === easternDay() || b.date === shiftDate(easternDay(), -1)));
