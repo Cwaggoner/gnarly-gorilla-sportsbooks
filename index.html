@@ -1637,7 +1637,7 @@ async function nightlyUpdate(){
   const today = easternDay();
   const todays = slateSettled(yesterday()) ? text.split(/\n/).filter(line => line.trim().startsWith(today)) : [];
   if (todays.length) {
-    const added = addCardLines(todays.join("\n"), document.getElementById("cardbook").value || "BetMGM");
+    const added = replaceTodayCard(todays.join("\n"), document.getElementById("cardbook").value || "BetMGM");
     drawCardAnalysis(todays.join("\n"));
     if (note) note.textContent = "After midnight. Yesterday graded. " + (added || 0) + " " + today + " picks loaded.";
     return;
@@ -1652,7 +1652,7 @@ async function nightlyUpdate(){
       if (!lines.length) return;
       clearInterval(window.cardWatch);
       window.cardWatch = null;
-      const added = addCardLines(lines.join("\n"), document.getElementById("cardbook").value || "BetMGM");
+      const added = replaceTodayCard(lines.join("\n"), document.getElementById("cardbook").value || "BetMGM");
       drawCardAnalysis(lines.join("\n"));
       if (note) note.textContent = "Morning card published. " + (added || 0) + " " + easternDay() + " picks loaded.";
       loadPickSlate();
@@ -3103,6 +3103,35 @@ function placePending(list, row){
   list.push(row);
   return true;
 }
+function parseCardLine(line){
+  line = String(line || "").trim();
+  if (!line || line.startsWith("#")) return null;
+  const parts = line.split("|").map(s => s.trim());
+  let date = easternDay();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(parts[0])) date = parts.shift();
+  const [sport, type, pick, odds, notes] = parts;
+  const price = String(odds || "").replace(/\u2212/g, "-");
+  if (!sport || !pick || !price || Number.isNaN(Number(price)) || /no picks|season ended/i.test(pick)) return null;
+  return {date, sport: String(sport).toUpperCase(), type: type || "Spread", pick, odds: Number(price), notes: notes || ""};
+}
+function replaceTodayCard(text, book){
+  const today = easternDay();
+  const rows = String(text || "").split(/\n/).map(parseCardLine).filter(row => row && row.date === today && inSlipWindow(row.date));
+  if (!rows.length) return 0;
+  const stamp = row => [row.sport, normPick(row.pick), Number(row.odds)].join("|");
+  const nextKeys = rows.map(stamp).sort().join("\n");
+  const bets = load();
+  const haveKeys = bets.filter(b => String(b.date).slice(0, 10) === today && b.result === "pending" && b.fromCard).map(stamp).sort().join("\n");
+  if (nextKeys === haveKeys) return rows.length;
+  const kept = bets.filter(b => !(String(b.date).slice(0, 10) === today && b.result === "pending" && b.fromCard));
+  rows.forEach(row => {
+    const slip = markEdge({id: Date.now() + Math.random(), date: row.date, book: book || "BetMGM", sport: row.sport, type: row.type, pick: row.pick, odds: row.odds, stake: 10, result: "pending", notes: row.notes, fromCard: true});
+    if (kept.some(b => sameSlip(b, slip))) return;
+    kept.push(slip);
+  });
+  save(kept);
+  return rows.length;
+}
 function addCardLines(text, book){
   const bets = load();
   let added = 0;
@@ -3126,19 +3155,33 @@ async function cardBundle(){
   const files = ["cards/today.txt","cards/parts/nhl.txt","cards/parts/nba.txt","cards/parts/mlb.txt","cards/parts/nfl.txt","cards/parts/cbb.txt","cards/parts/cfb.txt"];
   const chunks = await Promise.all(files.map(file => fetch(file + "?ts=" + Date.now()).then(r => r.ok ? r.text() : "").catch(() => "")));
   const today = easternDay();
-  const seen = new Set();
-  const lines = [];
-  let sharp = "";
-  let fileLine = "";
-  chunks.join("\n").split(/\n/).forEach(line => {
+  let fileLine = "", todayFile = "", sharp = "";
+  String(chunks[0] || "").split(/\n/).forEach(line => {
     const text = line.trim();
-    if (text.startsWith("# file:") && !fileLine) fileLine = text;
-    if (text.startsWith("# sharp:") && !sharp) { sharp = text; return; }
-    if (!text.startsWith(today) || seen.has(text)) return;
-    seen.add(text);
-    lines.push(text);
+    if (text.startsWith("# file:")) { if (!fileLine) fileLine = text; if (text.includes(today)) todayFile = text; }
+    if (text.startsWith("# sharp:") && !sharp) sharp = text;
   });
-  return [fileLine, sharp, lines.join("\n")].filter(Boolean).join("\n");
+  const main = [], extra = [], sports = new Set(), seen = new Set();
+  String(chunks[0] || "").split(/\n/).forEach(line => {
+    const row = parseCardLine(line);
+    if (!row || row.date !== today) return;
+    sports.add(row.sport);
+    main.push(line.trim());
+  });
+  chunks.slice(1).forEach(text => String(text || "").split(/\n/).forEach(line => {
+    const row = parseCardLine(line);
+    if (!row || row.date !== today || sports.has(row.sport)) return;
+    extra.push(line.trim());
+  }));
+  const lines = [];
+  main.concat(extra).forEach(line => {
+    const row = parseCardLine(line);
+    const key = [row.sport, normPick(row.pick)].join("|");
+    if (seen.has(key)) return;
+    seen.add(key);
+    lines.push(line);
+  });
+  return [todayFile || fileLine, sharp, lines.join("\n")].filter(Boolean).join("\n");
 }
 async function loadDriveCard(){
   const note = document.getElementById("pdfnote");
@@ -3153,10 +3196,10 @@ async function loadDriveCard(){
   }
   const named = text.match(/^#\s*file:\s*(.+)$/m);
   const fileName = (named ? named[1] : "Drive card").replace(/\.(txt|pdf)$/i, "");
-  const added = addCardLines(lines.join("\n"), document.getElementById("cardbook").value || "BetMGM");
+  const added = replaceTodayCard(lines.join("\n"), document.getElementById("cardbook").value || "BetMGM");
   load().forEach(markEdge);
   save(load());
-  note.textContent = "Read " + fileName + ". " + (added || 0) + " slips added for " + today + ".";
+  note.textContent = "Read " + fileName + ". " + (added || 0) + " slips on the card for " + today + ".";
 }
 async function refreshTodayCard(){
   const text = await cardBundle().catch(() => "");
@@ -3164,7 +3207,7 @@ async function refreshTodayCard(){
   const sharp = (text.split(/\n/).find(line => line.trim().startsWith("# sharp:")) || "").trim();
   const lines = text.split(/\n/).filter(line => line.trim().startsWith(today));
   drawCardAnalysis(lines.length ? [sharp, lines.join("\n")].filter(Boolean).join("\n") : text);
-  if (lines.length) addCardLines(lines.join("\n"), (document.getElementById("cardbook") || {}).value || "BetMGM");
+  if (lines.length) replaceTodayCard(lines.join("\n"), (document.getElementById("cardbook") || {}).value || "BetMGM");
   loadPickSlate();
 }
 function gradeRows(text){
