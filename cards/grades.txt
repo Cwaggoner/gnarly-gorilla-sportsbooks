@@ -1,1 +1,14 @@
-PLACEHOLDER_FOR_FULL_CONTENT
+# file: grades
+2026-10-22 | RANGE | All Win 241.30 | All Lose -160.00
+2026-10-22 | CFB | App State +11.5 | close -111 | win | 34-31 OT | 9.09
+2026-10-22 | CFB | Liberty at Kennesaw State Under 50.5 | close -110 | win | 34-6 | 9.09
+2026-10-22 | NFL | Patriots at Bears Under 50.5 | close -108 | loss | 30-24 | -10.00
+2026-10-22 | NFL | Patriots +3 and Patriots at Bears Under 50.5 | close 190 | loss | 30-24 | -10.00
+2026-10-22 | NBA | Cavaliers +3.5 | close -115 | loss | 106-114 | -10.00
+2026-10-22 | NBA | Cavaliers +3.5 and Cavaliers at 76ers Under 235.5 | close 190 | loss | 106-114 | -10.00
+2026-10-22 | NHL | Flames ML | close 170 | win | 2-1 | 17.00
+2026-10-22 | NHL | Flames ML and Wild at Flames Under 5.5 | close 190 | win | 2-1 | 19.00
+2026-10-22 | NHL | Predators ML | close 120 | loss | 0-6 | -10.00
+2026-10-22 | NHL | Jets at Stars Under 5.5 | close -110 | win | 2-3 OT | 10.20
+2026-10-22 | NHL | Anaheim Ducks ML | close 165 | loss | 1-4 | -10.00
+2026-10-22 | NHL | Winnipeg Jets ML | close 172 | loss | 2-3 OT | -10.00
