@@ -39,3 +39,17 @@
 2026-10-21 | MLB | No Picks
 2026-10-21 | NFL | No Picks
 2026-10-21 | CBB | No Picks
+
+2026-10-22 | RANGE | All Win 115.42 | All Lose -80.00
+2026-10-22 | NFL | Patriots at Bears Under 50.5 | -105 | loss | Patriots 24 Bears 30 | -10.00 | close:-105
+2026-10-22 | NFL | SGP Patriots +3 and Patriots at Bears Under 50.5 | 190 | loss | Patriots 24 Bears 30 | -10.00 | close:190
+2026-10-22 | NBA | Cavaliers +3.5 | -115 | loss | Cavaliers 106 76ers 114 | -10.00 | close:-115
+2026-10-22 | NBA | SGP Cavaliers +3.5 and Cavaliers at 76ers Under 235.5 | 190 | loss | Cavaliers 106 76ers 114 | -10.00 | close:190
+2026-10-22 | NHL | Flames ML | 170 | win | Wild 1 Flames 2 | 17.00 | close:170
+2026-10-22 | NHL | SGP Flames ML and Wild at Flames Under 5.5 | 190 | win | Wild 1 Flames 2 | 19.00 | close:190
+2026-10-22 | NHL | Predators ML | 130 | loss | Predators 0 Bruins 6 | -10.00 | close:130
+2026-10-22 | NHL | Jets at Stars Under 5.5 | 102 | win | Jets 2 Stars 3 OT | 10.20 | close:102
+
+2026-10-22 | MLB | No Picks
+2026-10-22 | CFB | No Picks
+2026-10-22 | CBB | No Picks
