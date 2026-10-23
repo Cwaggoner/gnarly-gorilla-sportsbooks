@@ -385,7 +385,8 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </form>
 </section>
 <section class="card" id="slips">
-<div class="section-head"><h2>Slips</h2><p class="warn slips-side">This card keeps today and yesterday only. Older days stay on the calendar and in the published files.</p></div>
+<div class="section-head"><h2>Slips</h2><p class="warn slips-side">This card keeps today and yesterday only. Older days stay on the calendar and in the published files.</p><button type="button" id="livescores">Check Live Scores</button></div>
+<p id="scorenote" class="warn"></p>
 <div class="tools">
 <label>Sport<select id="fSport" class="sport-select"><option value="">All</option><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option></select></label>
 <label>Book<select id="fBook" class="book-select"><option value="">All</option><option>BetMGM</option><option>Caesars</option><option>DraftKings</option><option>Fanatics</option><option>FanDuel</option><option>HardRock</option></select></label>
@@ -733,6 +734,12 @@ function publishedDashboard(){
     const close = closeMap[b.date + "|" + b.pick];
     return close ? Object.assign({}, b, {close}) : b;
   });
+  load().concat(loadGrade()).forEach(b => {
+    if (!b || !b.date || isNoPick(b) || (b.result !== "win" && b.result !== "loss" && b.result !== "push")) return;
+    if (slips.some(s => sameSlip(s, b))) return;
+    const close = closeMap[b.date + "|" + b.pick];
+    slips.push(close ? Object.assign({}, b, {close}) : b);
+  });
   const open = openSlips();
   return lastSevenDates().map(date => {
     const day = publishedCalendar[date] || {};
@@ -952,7 +959,10 @@ function drawCharts(){
   drawLine(line);
 }
 function fileReplacesDay(date, day, slips, personal){
-  if (personal || date >= easternDay() || !slateSettled(date) || !slips.length) return false;
+  if (personal || date >= easternDay() || !slips.length) return false;
+  const stillOpen = load().some(b => b.date === date && b.result === "pending" && !isNoPick(b));
+  if (liveGradedDates.has(date) && !stillOpen) return true;
+  if (!slateSettled(date) || stillOpen) return false;
   if (!(gradeFile || []).some(b => b.date === date && !isNoPick(b))) return false;
   const publishedN = Number(day && day.n) || 0;
   const publishedPl = Number(day && day.pl);
@@ -1030,6 +1040,8 @@ function drawLine(canvas){
   ctx.textAlign = "left";
 }
 let gradeFile = [];
+let liveGradedDates = new Set();
+try { liveGradedDates = new Set(JSON.parse(localStorage.getItem("gg-live-graded") || "[]")); } catch (e) {}
 let edgePicks = new Set();
 function chartClv(b){
   if (b.close === "" || b.close == null || Number(b.close) === Number(b.odds)) return null;
@@ -1342,7 +1354,7 @@ function drawCalendar(){
       const loseAll = open.reduce((s, b) => s + Number(b.stake || 10), 0);
       const lower = open.length ? "<span class='range'><span class='win'>All Win " + money(winAll) + "</span><span class='slash'> / </span><span class='loss'>All Lose -" + money(loseAll).replace("-", "") + "</span></span>" : "<span class='wait'>Picks Not Loaded Until " + formatTime(firstPickAt(), false) + "</span>";
       html += "<div class='" + (isToday ? "today daycell" : "daycell") + "' data-date='" + date + "'><b>" + d + "</b><br><span class='" + resultCls + "'>" + result + "</span><br>" + lower + "</div>";
-    } else if (date === yesterday() && !slateSettled(date)) {
+    } else if (date === yesterday() && !slateSettled(date) && (load().some(b => b.date === date && b.result === "pending" && !isNoPick(b)) || !slipsForDay(date).length)) {
       html += "<div class='daycell' data-date='" + date + "'><b>" + d + "</b><br><span class='wait'>LAST GAME STILL OPEN</span></div>";
     } else {
       const personal = !!(mine[date] && Number.isFinite(Number(mine[date].pl)));
@@ -1896,7 +1908,9 @@ function render(){
     if (better) poolMap[key] = b;
   });
   const pool = Object.values(poolMap);
-  const gradeDate = picked || (slateSettled(y) ? y : shiftDate(y, -1));
+  const yStill = pool.some(b => b.date === y && b.result === "pending" && !isNoPick(b));
+  const yDone = pool.some(b => b.date === y && b.result !== "pending" && !isNoPick(b));
+  const gradeDate = picked || ((slateSettled(y) || (yDone && !yStill)) ? y : shiftDate(y, -1));
   const pending = pool.filter(b => b.result === "pending" && !slateSettled(b.date) && (picked ? b.date === picked : b.date === easternDay() || b.date === shiftDate(easternDay(), -1)));
   const gradedDay = pool.filter(b => b.result !== "pending" && b.date === gradeDate);
   const day = picked ? pool.filter(b => b.date === picked) : gradedDay;
@@ -3107,6 +3121,131 @@ async function applyGrades(){
   localStorage.setItem(KEY, JSON.stringify(bets));
   render();
 }
+const SCORE_FEED = {NFL:"football/nfl", NBA:"basketball/nba", NHL:"hockey/nhl", MLB:"baseball/mlb", CFB:"football/college-football", CBB:"basketball/mens-college-basketball"};
+function teamWords(team){
+  return [team && team.name, team && team.shortDisplayName, team && team.displayName, team && team.location].filter(Boolean).map(s => String(s).toLowerCase());
+}
+function mentionScore(pick, team){
+  const text = " " + expandTeams(pick).replace(/[^a-z0-9.+-]+/g, " ") + " ";
+  let best = 0;
+  teamWords(team).forEach((bit, i) => {
+    const words = bit.split(/\s+/).filter(w => w.length > 2);
+    if (!words.length || !words.every(w => new RegExp("\\b" + w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b").test(text))) return;
+    const size = words.join(" ").length;
+    if (i < 2 && size >= 4) best = Math.max(best, size + 2);
+    else if (words.length >= 2 || words.some(w => w.length >= 5)) best = Math.max(best, size);
+  });
+  return best;
+}
+function findFinalGame(games, pick){
+  let best = null, score = 0, ties = 0;
+  games.forEach(g => {
+    const n = mentionScore(pick, g.home) + mentionScore(pick, g.away);
+    if (n > score) { score = n; best = g; ties = 1; }
+    else if (n && n === score) ties++;
+  });
+  return score >= 4 && ties === 1 ? best : null;
+}
+function gradeLeg(pick, game){
+  if (!game) return null;
+  if (!game.final) return game.postponed ? "postponed" : "live";
+  const home = Number(game.homeScore), away = Number(game.awayScore);
+  if (!Number.isFinite(home) || !Number.isFinite(away)) return null;
+  const ou = String(pick).match(/\b(over|under)\s+([0-9]+(?:\.[0-9]+)?)/i);
+  if (ou) {
+    const line = Number(ou[2]), total = home + away;
+    if (total === line) return "push";
+    return (ou[1].toLowerCase() === "over" ? total > line : total < line) ? "win" : "loss";
+  }
+  const text = expandTeams(pick);
+  const homeAt = teamWords(game.home).reduce((at, bit) => Math.max(at, text.lastIndexOf(bit)), -1);
+  const awayAt = teamWords(game.away).reduce((at, bit) => Math.max(at, text.lastIndexOf(bit)), -1);
+  if (homeAt < 0 && awayAt < 0) return null;
+  let side = homeAt >= awayAt ? "home" : "away";
+  const spread = text.match(/([+-]\s?[0-9]+(?:\.[0-9]+)?)/);
+  if (spread && homeAt >= 0 && awayAt >= 0) {
+    const at = text.indexOf(spread[1]);
+    if (at >= 0) side = Math.abs(at - homeAt) <= Math.abs(at - awayAt) ? "home" : "away";
+  }
+  const mine = side === "home" ? home : away;
+  const opp = side === "home" ? away : home;
+  if (spread) {
+    const adj = mine + Number(spread[1].replace(/\s/g, ""));
+    if (Math.abs(adj - opp) < 0.001) return "push";
+    return adj > opp ? "win" : "loss";
+  }
+  if (mine === opp) return "push";
+  return mine > opp ? "win" : "loss";
+}
+function gradeFromScores(b, games){
+  const type = betType(b);
+  if (type === "Prop") return null;
+  const legs = (type === "SGP" || type === "Parlay") ? String(b.pick).split(/\s+and\s+/i) : [b.pick];
+  const results = legs.map(leg => gradeLeg(leg, findFinalGame(games, leg)));
+  if (results.some(r => !r || r === "live" || r === "postponed")) return results.find(r => r === "live" || r === "postponed") || null;
+  if (results.some(r => r === "loss")) return "loss";
+  if (results.some(r => r === "push")) return "push";
+  return results.every(r => r === "win") ? "win" : null;
+}
+async function scoreboard(sport, date){
+  const path = SCORE_FEED[sport];
+  if (!path) return [];
+  const res = await fetch("https://site.api.espn.com/apis/site/v2/sports/" + path + "/scoreboard?dates=" + String(date).replace(/-/g, "") + "&limit=400");
+  if (!res.ok) return [];
+  const data = await res.json();
+  return (data.events || []).map(ev => {
+    const comp = (ev.competitions || [])[0] || {};
+    const teams = comp.competitors || [];
+    const home = teams.find(t => t.homeAway === "home") || {};
+    const away = teams.find(t => t.homeAway === "away") || {};
+    const status = (comp.status && comp.status.type) || {};
+    return {sport, date, final: status.completed === true || /final/i.test(status.name || status.description || ""), postponed: /postpon|cancel|delay/i.test(status.name || ""), home: home.team || {}, away: away.team || {}, homeScore: Number(home.score), awayScore: Number(away.score)};
+  }).filter(g => g.home.displayName && g.away.displayName);
+}
+document.getElementById("livescores").onclick = async () => {
+  const note = document.getElementById("scorenote");
+  const button = document.getElementById("livescores");
+  if (button.disabled) return;
+  button.disabled = true;
+  note.textContent = "Checking live scores...";
+  try {
+    await Promise.all([loadCalendarFile().catch(() => {}), refreshTodayCard().catch(() => {})]);
+    const pending = load().filter(b => b && b.result === "pending" && !isNoPick(b) && inSlipWindow(b.date));
+    if (!pending.length) { note.textContent = "No pending slips to grade."; return; }
+    const sports = [...new Set(pending.map(b => String(b.sport || "").toUpperCase()))].filter(s => SCORE_FEED[s]);
+    const dates = [...new Set(pending.map(b => String(b.date || "").slice(0, 10)))];
+    const games = [];
+    for (const sport of sports) {
+      for (const date of dates) games.push(...await scoreboard(sport, date).catch(() => []));
+    }
+    if (!games.length) { note.textContent = "Score feed did not answer. No slips were changed."; return; }
+    const bets = load();
+    let graded = 0, live = 0, left = 0;
+    const touched = new Set();
+    bets.forEach(b => {
+      if (!b || b.result !== "pending" || isNoPick(b) || !inSlipWindow(b.date)) return;
+      const result = gradeFromScores(b, games.filter(g => g.sport === String(b.sport || "").toUpperCase()));
+      if (result === "live" || result === "postponed") { live++; return; }
+      if (result !== "win" && result !== "loss" && result !== "push") { left++; return; }
+      b.result = result;
+      delete b.profit;
+      const made = profit(b);
+      b.profit = Number.isFinite(made) ? Number(made.toFixed(2)) : 0;
+      graded++;
+      touched.add(b.date);
+    });
+    localStorage.setItem(KEY, JSON.stringify(bets));
+    archiveSlips(bets);
+    touched.forEach(date => liveGradedDates.add(date));
+    localStorage.setItem("gg-live-graded", JSON.stringify([...liveGradedDates]));
+    render();
+    note.textContent = graded + " slips graded from final scores." + (live ? " " + live + " still in progress." : "") + (left ? " " + left + " left pending." : "") + (graded ? " Dashboard, report card, charts, and calendar updated." : "");
+  } catch (err) {
+    note.textContent = "Score check failed. No slips were changed.";
+  } finally {
+    button.disabled = false;
+  }
+};
 document.getElementById("savedash").onclick = () => {
   const rows = JSON.parse(localStorage.getItem("gg-dashboard-v1") || "[]");
   const name = "GG-DASHBOARD-" + easternDay();
