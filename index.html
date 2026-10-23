@@ -729,6 +729,48 @@ function openSlips(){
     return true;
   });
 }
+function moneyAmount(value){
+  const n = Number(String(value == null ? "" : value).replace(/[$,]/g, "").replace(/^\+/, ""));
+  return Number.isFinite(n) ? n : null;
+}
+function publishedProfit(date){
+  const text = localStorage.getItem("gg-dashboard-published") || "";
+  let found = null;
+  text.split(/\n/).forEach(line => {
+    const parts = line.split("|").map(s => s.trim());
+    if (parts[0] !== date) return;
+    const n = moneyAmount(parts[2]);
+    if (n != null) found = n;
+  });
+  return found;
+}
+function lineMoney(b){
+  if (!b || b.result === "push") return 0;
+  const published = Number(b.profit);
+  if (Number.isFinite(published) && Math.abs(published) >= 0.005) return published;
+  const stake = Number(b.stake) > 0 ? Number(b.stake) : UNIT;
+  const odds = Number(b.odds);
+  if (b.result === "loss") return -stake;
+  if (b.result === "win" && Number.isFinite(odds) && odds !== 0) {
+    const won = odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds);
+    return Number.isFinite(won) ? won : null;
+  }
+  return null;
+}
+function dayProfit(date, lines, day){
+  const saved = publishedProfit(date);
+  const cal = moneyAmount(day && day.pl);
+  const summed = lines.length ? lines.reduce((s, b) => s + (lineMoney(b) || 0), 0) : null;
+  const picks = [saved, cal, summed].filter(n => n != null && Number.isFinite(n));
+  const real = picks.find(n => Math.abs(n) >= 0.005);
+  if (real != null) return Math.round(real * 100) / 100;
+  return picks.length ? 0 : null;
+}
+function profitCell(n){
+  if (n == null || !Number.isFinite(Number(n))) return "<span class='zero'>Not Graded</span>";
+  if (Math.abs(Number(n)) < 0.005) return "<span class='zero'>Break Even</span>";
+  return moneyHtml(n);
+}
 function publishedDashboard(){
   const slips = (gradeFile || []).filter(b => b && b.date && !isNoPick(b) && (b.result === "win" || b.result === "loss" || b.result === "push")).map(b => {
     const close = closeMap[b.date + "|" + b.pick];
@@ -745,7 +787,7 @@ function publishedDashboard(){
     const day = publishedCalendar[date] || {};
     const lines = slips.filter(b => b.date === date);
     const fromLines = lines.length > 0;
-    const profit = fromLines ? lines.reduce((s, b) => s + (Number(b.profit) || 0), 0) : (Number.isFinite(Number(day.pl)) ? Number(day.pl) : 0);
+    const profit = dayProfit(date, lines, day);
     const staked = fromLines ? lines.reduce((s, b) => s + (Number(b.stake) > 0 ? Number(b.stake) : UNIT), 0) : (Number(day.n) || 0) * UNIT;
     const n = fromLines ? lines.length : (Number(day.n) || 0);
     const withClose = lines.filter(b => usableClose(b.close));
@@ -762,7 +804,7 @@ function publishedDashboard(){
       profit,
       staked,
       roi: roiText(profit, staked),
-      units: (profit / UNIT).toFixed(2) + "u",
+      units: Number.isFinite(Number(profit)) ? (profit / UNIT).toFixed(2) + "u" : "-",
       pending: open.filter(b => String(b.date || "").slice(0, 10) === date).length,
       clv: dayClv
     };
@@ -794,13 +836,13 @@ function drawDashboard(history, manual){
   const pendingNow = openSlips().filter(b => inSlipWindow(b.date)).length;
   document.getElementById("stats").innerHTML = [
     [wins + "-" + losses + "-" + pushes, "7-Day W/L Record"],
-    [moneyHtml(profit), "7-Day Profit"],
+    [profitCell(profit), "7-Day Profit"],
     [staked ? roiText(profit, staked) : "-", "7-Day ROI"],
     [(profit / UNIT).toFixed(2) + "u", "7-Day Units"],
     [pendingNow, "Pending Slips"],
     [clvs.length ? (clvs.reduce((s, n) => s + n, 0) / clvs.length).toFixed(1) + "%" : "No Close Saved", "7-Day Avg CLV"]
   ].map(x => "<div class='stat'><b>" + x[0] + "</b><span>" + x[1] + "</span></div>").join("");
-  document.getElementById("dashrows").innerHTML = shown.map(row => "<tr><td>" + row.date + "</td><td>" + row.record + "</td><td>" + moneyHtml(Number(row.profit)) + "</td><td>" + row.roi + "</td><td>" + row.units + "</td><td>" + (Number(row.pending) === 0 ? "0 - All Pending Has Been Graded" : row.pending) + "</td><td>" + (row.clv === "-" || row.clv == null || row.clv === "" ? "No Close Saved" : row.clv) + "</td></tr>").join("");
+  document.getElementById("dashrows").innerHTML = shown.map(row => "<tr><td>" + row.date + "</td><td>" + row.record + "</td><td>" + profitCell(row.profit) + "</td><td>" + row.roi + "</td><td>" + row.units + "</td><td>" + (Number(row.pending) === 0 ? "0 - All Pending Has Been Graded" : row.pending) + "</td><td>" + (row.clv === "-" || row.clv == null || row.clv === "" ? "No Close Saved" : row.clv) + "</td></tr>").join("");
   const canvas = document.getElementById("dashChart");
   const ctx = canvas.getContext("2d");
   const w = Math.max(320, canvas.clientWidth || 640);
@@ -811,7 +853,7 @@ function drawDashboard(history, manual){
   ctx.fillStyle = "#0e0e0e";
   ctx.fillRect(0,0,w,h);
   if (!shown.length) return;
-  const pts = shown.map(row => ({date: row.date, y: Number(row.profit) || 0}));
+  const pts = shown.filter(row => Number.isFinite(Number(row.profit))).map(row => ({date: row.date, y: Number(row.profit)}));
   const min = -500, max = 500, span = max - min;
   const left = 62, right = 62, top = 14, bottom = 22;
   const x = i => left + (w - left - right) * (pts.length === 1 ? 0.5 : i / (pts.length - 1));
@@ -823,12 +865,14 @@ function drawDashboard(history, manual){
     ctx.strokeStyle = v === 0 ? "#ff00ff" : "#243024";
     ctx.lineWidth = v === 0 ? 1.5 : 1;
     ctx.beginPath(); ctx.moveTo(left, yy); ctx.lineTo(w - right, yy); ctx.stroke();
-    const label = v === 0 ? "$0" : (v < 0 ? "-$" + Math.abs(v) : "$" + v);
-    ctx.fillStyle = v === 0 ? "#ff00ff" : (v < 0 ? "#ff6b6b" : "#8fd18a");
-    ctx.textAlign = "right";
-    ctx.fillText(label, left - 6, yy + 3);
-    ctx.textAlign = "left";
-    ctx.fillText(label, w - right + 6, yy + 3);
+    const label = v === 0 ? "" : (v < 0 ? "-$" + Math.abs(v) : "$" + v);
+    ctx.fillStyle = v < 0 ? "#ff6b6b" : "#8fd18a";
+    if (label) {
+      ctx.textAlign = "right";
+      ctx.fillText(label, left - 6, yy + 3);
+      ctx.textAlign = "left";
+      ctx.fillText(label, w - right + 6, yy + 3);
+    }
   }
   ctx.strokeStyle = "#2a3a2a";
   ctx.lineWidth = 1;
@@ -842,7 +886,7 @@ function drawDashboard(history, manual){
   ctx.textAlign = "left";
   ctx.font = "11px sans-serif";
   ctx.fillStyle = "#ff00ff";
-  ctx.fillText("Break Even - $0", left + 96, y(0) - 6);
+  ctx.fillText("Break Even", left + 96, y(0) - 6);
   ctx.strokeStyle = "#39ff14";
   ctx.lineWidth = 2;
   ctx.beginPath();
@@ -853,7 +897,8 @@ function drawDashboard(history, manual){
   const ends = [pts[0], pts[pts.length - 1]];
   ends.forEach((p, n) => {
     const i = n ? pts.length - 1 : 0;
-    const label = money(p.y);
+    if (!p || !Number.isFinite(Number(p.y))) return;
+    const label = Math.abs(p.y) < 0.005 ? "Break Even" : money(p.y);
     const above = y(p.y) > top + 16;
     ctx.textAlign = n ? "right" : "left";
     ctx.fillText(label, x(i) + (n ? -6 : 6), y(p.y) + (above ? -6 : 12));
@@ -3283,7 +3328,7 @@ document.getElementById("loaddash").onchange = async e => {
   try {
     const rows = (await file.text()).split(/\n/).map(l => l.trim()).filter(l => l && !l.startsWith("#")).map(l => {
       const [date, record, profit, roi, units, pending, clv] = l.split("|").map(s => s.trim());
-      return {date, record, profit: Number(profit), roi, units, pending, clv};
+      return {date, record, profit: moneyAmount(profit), roi, units, pending, clv};
     }).filter(row => row.date);
     if (!rows.length) throw new Error("empty");
     sessionStorage.setItem("gg-dashboard-manual", JSON.stringify(rows));
