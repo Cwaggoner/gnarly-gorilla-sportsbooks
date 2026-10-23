@@ -3,6 +3,237 @@
 2026-10-01 | RANGE | All Win 507.79 | All Lose -320.00
 2026-10-01 | NHL | Blue Jackets ML | -102 | win | Sabres 3 Blue Jackets 6 | 9.80 | close:-102
 
+
+
+2026-10-10 | RANGE | All Win 591.00 | All Lose -600.00
+2026-10-10 | CFB | Alabama -2.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-10 | CFB | Arizona -3.5 | -110 | win | - | 9.09 | close:-110
+2026-10-10 | CFB | Arizona State -20.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-10 | CFB | Army -3.5 | -110 | win | - | 9.09 | close:-110
+2026-10-10 | CFB | Boise State -6.5 | -110 | win | - | 9.09 | close:-110
+2026-10-10 | CFB | Duke -6.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-10 | CFB | Florida -10.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-10 | CFB | Illinois -2.5 | -110 | win | - | 9.09 | close:-110
+2026-10-10 | CFB | Indiana -8.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-10 | CFB | Kansas State -2.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-10 | CFB | LSU -8.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-10 | CFB | Minnesota -2.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-10 | CFB | Missouri -3.5 | -110 | win | - | 9.09 | close:-110
+2026-10-10 | CFB | Notre Dame -39.5 | -110 | win | - | 9.09 | close:-110
+2026-10-10 | CFB | Ohio State -33.5 | -110 | win | - | 9.09 | close:-110
+2026-10-10 | CFB | Oklahoma State -10.5 | -110 | win | - | 9.09 | close:-110
+2026-10-10 | CFB | Ole Miss -9.5 | -110 | win | - | 9.09 | close:-110
+2026-10-10 | CFB | Oregon -10.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-10 | CFB | Penn State -1.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-10 | CFB | Pittsburgh -3.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-10 | CFB | Tennessee -13.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-10 | CFB | Texas -7.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-10 | CFB | Utah -15 | -110 | win | - | 9.09 | close:-110
+2026-10-10 | CFB | Virginia Tech -10 | -110 | loss | - | -10.00 | close:-110
+2026-10-10 | CFB | Wake Forest -3.5 | -110 | win | - | 9.09 | close:-110
+2026-10-10 | MLB | CHW ML +118 | -110 | loss | - | -10.00 | close:-110
+2026-10-10 | MLB | SGP CHW ML + Jose Ramirez Over 0.5 Hits | -110 | loss | - | -10.00 | close:-110
+2026-10-10 | MLB | White Sox at Guardians Under 7 | -110 | win | - | 10.00 | close:-110
+2026-10-10 | NBA | 76ers +5.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-10 | NBA | 76ers at Celtics Under 222.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-10 | NBA | Clippers +4.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-10 | NBA | Clippers at Raptors Under 217.5 | -110 | loss | - | -10.00 | close:-107
+2026-10-10 | NBA | Hawks +2.5 | -110 | win | - | 9.09 | close:-110
+2026-10-10 | NBA | Heat +1.5 | -110 | win | - | 9.09 | close:-110
+2026-10-10 | NBA | Kings +5.5 | -110 | win | - | 9.09 | close:-110
+2026-10-10 | NBA | Kings at Warriors Under 229.5 | -110 | win | - | 9.09 | close:-110
+2026-10-10 | NBA | Pistons at Wizards Under 222.5 | -110 | win | - | 9.09 | close:-110
+2026-10-10 | NBA | SGP 76ers +5.5 and Under 222.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-10 | NBA | SGP Kings +5.5 and Under 229.5 | 190 | win | - | 19.00 | close:190
+2026-10-10 | NBA | SGP Suns +7.5 and Under 221.5 | 190 | win | - | 19.00 | close:190
+2026-10-10 | NBA | SGP Wizards +5.5 and Under 222.5 | 190 | win | - | 19.00 | close:190
+2026-10-10 | NBA | Spurs at Suns Under 221.5 | -110 | win | - | 9.09 | close:-110
+2026-10-10 | NBA | Suns +7.5 | -110 | win | - | 9.09 | close:-110
+2026-10-10 | NBA | Wizards +5.5 | -110 | win | - | 9.09 | close:-110
+2026-10-10 | NHL | Anaheim Ducks ML | -110 | win | - | 8.20 | close:-110
+2026-10-10 | NHL | Boston Bruins ML | -110 | win | - | 7.41 | close:-110
+2026-10-10 | NHL | Carolina Hurricanes -1.5 | -110 | win | - | 9.52 | close:-110
+2026-10-10 | NHL | Colorado Avalanche -1.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-10 | NHL | Dallas Stars -1.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-10 | NHL | Detroit Red Wings +1.5 | -110 | win | - | 7.14 | close:-110
+2026-10-10 | NHL | Edmonton Oilers -1.5 | 150 | win | - | 15.00 | close:150
+2026-10-10 | NHL | Florida Panthers ML | -110 | loss | - | -10.00 | close:-110
+2026-10-10 | NHL | New Jersey Devils -1.5 | -110 | win | - | 9.09 | close:-110
+2026-10-10 | NHL | New York Islanders ML | -110 | loss | - | -10.00 | close:-110
+2026-10-10 | NHL | Ottawa Senators -1.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-10 | NHL | Over 6.5 EDM/SJS | -110 | loss | - | -10.00 | close:-110
+2026-10-10 | NHL | SGP CAR -1.5 and Over 5.5 | 190 | win | - | 19.00 | close:190
+2026-10-10 | NHL | St. Louis Blues ML | -110 | win | - | 7.69 | close:-110
+2026-10-10 | NHL | Utah Mammoth ML | -110 | win | - | 9.26 | close:-110
+2026-10-10 | NHL | Vegas Golden Knights -1.5 | -110 | loss | - | -10.00 | close:-110
+
+2026-10-11 | RANGE | All Win 288.55 | All Lose -300.00
+2026-10-11 | MLB | Brewers ML | -110 | win | - | 9.09 | close:-110
+2026-10-11 | MLB | Dodgers at Brewers Under 6 | -110 | win | - | 9.09 | close:-110
+2026-10-11 | MLB | SGP Brewers ML and Dodgers at Brewers Under 6 | 200 | win | - | 20.00 | close:200
+2026-10-11 | NBA | Bucks +4.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-11 | NBA | Bucks at Hornets Under 221.5 | -110 | win | - | 9.09 | close:-110
+2026-10-11 | NBA | Bulls +8.5 | -110 | win | - | 9.09 | close:-110
+2026-10-11 | NBA | Bulls at Nuggets Under 233.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-11 | NBA | Magic +5.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-11 | NBA | Magic at Cavaliers Under 227.5 | -110 | win | - | 9.09 | close:-110
+2026-10-11 | NBA | SGP Bucks +4.5 and Under 221.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-11 | NBA | SGP Bulls +8.5 and Under 233.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-11 | NBA | SGP Magic +5.5 and Under 227.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-11 | NFL | BAL +3.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-11 | NFL | CHI -1.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-11 | NFL | CIN -7 | -110 | push | - | 0.00 | close:-110
+2026-10-11 | NFL | CLE +2.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-11 | NFL | DEN -3.5 | -110 | win | - | 9.09 | close:-110
+2026-10-11 | NFL | DET -5.5 | -110 | win | - | 9.09 | close:-110
+2026-10-11 | NFL | HOU -7 | -110 | win | - | 9.09 | close:-110
+2026-10-11 | NFL | JAX -7.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-11 | NFL | LV +3.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-11 | NFL | MIN -2.5 | -110 | win | - | 9.09 | close:-110
+2026-10-11 | NFL | NYG +3.5 | -110 | win | - | 9.09 | close:-110
+2026-10-11 | NFL | PIT -2.5 | -110 | win | - | 9.09 | close:-110
+2026-10-11 | NFL | SEA -3 | -110 | push | - | 0.00 | close:-110
+2026-10-11 | NHL | Carolina Hurricanes -1.5 | 140 | win | - | 14.00 | close:140
+2026-10-11 | NHL | SGP CAR -1.5 and Over 5.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-11 | NHL | Seattle Kraken +1.5 | -110 | win | - | 9.09 | close:-110
+2026-10-11 | NHL | Under 6.5 SEA/WSH | -110 | loss | - | -10.00 | close:-110
+2026-10-11 | NHL | Vancouver Canucks +1.5 | -110 | loss | - | -10.00 | close:-110
+
+2026-10-12 | RANGE | All Win 268.43 | All Lose -230.00
+2026-10-12 | MLB | Dodgers at Brewers Under 6.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-12 | MLB | Dodgers at Brewers Under 6.5 and Brewers +1.5 | -280 | loss | - | -10.00 | close:-280
+2026-10-12 | MLB | Rays -1.5 | 130 | loss | - | -10.00 | close:130
+2026-10-12 | MLB | Rays -1.5 and Rays at Blue Jays Under 6.5 | 120 | loss | - | -10.00 | close:120
+2026-10-12 | NBA | Jazz +3.5 | -110 | win | - | 9.09 | close:-110
+2026-10-12 | NBA | Nets +3.5 | -110 | win | - | 9.09 | close:-110
+2026-10-12 | NBA | Nets +3.5 and Nets at Wizards Under 222.5 | 190 | loss | - | -10.00 | close:190
+2026-10-12 | NBA | Nets at Wizards Under 222.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-12 | NBA | Spurs at Jazz Under 226.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-12 | NBA | Thunder +8.5 | -110 | win | - | 9.09 | close:-110
+2026-10-12 | NBA | Thunder +8.5 and Thunder at Hawks Under 223.5 | 190 | win | - | 19.00 | close:190
+2026-10-12 | NBA | Thunder at Hawks Under 223.5 | -110 | win | - | 9.09 | close:-110
+2026-10-12 | NBA | Timberwolves +2.5 | -110 | win | - | 9.09 | close:-110
+2026-10-12 | NBA | Timberwolves +2.5 and Timberwolves at Knicks Under 227.5 | 190 | win | - | 19.00 | close:190
+2026-10-12 | NBA | Timberwolves at Knicks Under 227.5 | -110 | win | - | 9.09 | close:-110
+2026-10-12 | NFL | Bills +3.5 | -110 | win | - | 9.09 | close:-110
+2026-10-12 | NFL | Bills +3.5 and Bills at Rams Over 54.5 | 190 | win | - | 19.00 | close:190
+2026-10-12 | NFL | Bills at Rams Over 54.5 | -110 | win | - | 9.09 | close:-110
+2026-10-12 | NHL | Buffalo Sabres ML | -108 | win | - | 9.26 | close:-108
+2026-10-12 | NHL | Ottawa Senators ML | 114 | win | - | 11.40 | close:114
+2026-10-12 | NHL | Panthers at Sabres Under 5.5 | 114 | loss | - | -10.00 | close:114
+2026-10-12 | NHL | Senators ML and Senators at Devils Under 5.5 | 220 | win | - | 22.00 | close:220
+2026-10-12 | NHL | Vegas Golden Knights ML | -102 | loss | - | -10.00 | close:-102
+
+2026-10-13 | RANGE | All Win 129.65 | All Lose -110.00
+2026-10-13 | MLB | Guardians at Rays Under 7 | -110 | win | - | 9.09 | close:-110
+2026-10-13 | NBA | Knicks +10.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-13 | NBA | Knicks at Raptors Under 217.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-13 | NBA | Pacers +10.5 | -110 | win | - | 9.09 | close:-110
+2026-10-13 | NBA | Pacers at Thunder Under 228.5 | -110 | win | - | 9.09 | close:-110
+2026-10-13 | NBA | SGP Knicks +10.5 and Knicks at Raptors Under 217.5 | 190 | loss | - | -10.00 | close:190
+2026-10-13 | NBA | SGP Pacers +10.5 and Pacers at Thunder Under 228.5 | 190 | win | - | 19.00 | close:190
+2026-10-13 | NHL | Buffalo Sabres ML | 135 | loss | - | -10.00 | close:135
+2026-10-13 | NHL | Seattle Kraken ML | 100 | win | - | 10.00 | close:100
+2026-10-13 | NHL | Washington Capitals ML | 136 | loss | - | -10.00 | close:136
+2026-10-13 | NHL | Winnipeg Jets ML | -110 | win | - | 9.09 | close:-110
+
+2026-10-14 | RANGE | All Win 161.97 | All Lose -130.00
+2026-10-14 | MLB | Brewers +1.5 | -120 | win | - | 8.33 | close:-120
+2026-10-14 | MLB | Brewers at Dodgers Under 7.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-14 | MLB | SGP Brewers +1.5 and Brewers at Dodgers Under 7.5 | 160 | loss | - | -10.00 | close:160
+2026-10-14 | NBA | Hornets +8.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-14 | NBA | Hornets at Celtics Under 218.5 | -110 | win | - | 9.09 | close:-110
+2026-10-14 | NBA | Nets +6.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-14 | NBA | Nets at Heat Under 224.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-14 | NBA | SGP Hornets +8.5 and Hornets at Celtics Under 218.5 | 190 | loss | - | -10.00 | close:190
+2026-10-14 | NBA | SGP Nets +6.5 and Nets at Heat Under 224.5 | 190 | loss | - | -10.00 | close:190
+2026-10-14 | NHL | Canadiens at Capitals Under 6.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-14 | NHL | Colorado Avalanche ML | -110 | loss | - | -10.00 | close:-110
+2026-10-14 | NHL | Montreal Canadiens ML | 140 | loss | - | -10.00 | close:140
+2026-10-14 | NHL | SGP Montreal Canadiens ML and Canadiens at Capitals Under 6.5 | 220 | loss | - | -10.00 | close:220
+
+2026-10-15 | RANGE | All Win 229.50 | All Lose -200.00
+2026-10-15 | CFB | Colorado State +14 | -110 | loss | - | -10.00 | close:-110
+2026-10-15 | CFB | Colorado State at Texas State Under 70.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-15 | MLB | Brewers +1.5 | -170 | win | - | 6.25 | close:-170
+2026-10-15 | MLB | Rays at Guardians Over 6.5 | -105 | loss | - | -10.00 | close:-105
+2026-10-15 | MLB | SGP Rays +1.5 and Rays at Guardians Over 6.5 | 190 | loss | - | -10.00 | close:190
+2026-10-15 | NBA | Raptors +5.5 | -110 | win | - | 9.09 | close:-110
+2026-10-15 | NBA | Raptors at Knicks Under 225.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-15 | NBA | Rockets +5.5 | -110 | win | - | 8.70 | close:-110
+2026-10-15 | NBA | SGP Raptors +5.5 and Raptors at Knicks Under 225.5 | 190 | loss | - | -10.00 | close:190
+2026-10-15 | NBA | SGP Rockets +5.5 and Thunder at Rockets Under 223.5 | 190 | win | - | 19.00 | close:190
+2026-10-15 | NBA | Thunder at Rockets Under 223.5 | -110 | win | - | 9.09 | close:-110
+2026-10-15 | NFL | Broncos +2.5 | -105 | win | - | 9.52 | close:-105
+2026-10-15 | NFL | SGP Broncos +2.5 and Seahawks at Broncos Under 40.5 | 190 | win | - | 19.00 | close:190
+2026-10-15 | NFL | Seahawks at Broncos Under 40.5 | -105 | win | - | 9.52 | close:-105
+2026-10-15 | NHL | Buffalo Sabres ML | -102 | win | - | 10.00 | close:-102
+2026-10-15 | NHL | Chicago Blackhawks ML | 110 | win | - | 11.40 | close:110
+2026-10-15 | NHL | New York Islanders ML | 135 | loss | - | -10.00 | close:135
+2026-10-15 | NHL | New York Rangers ML | 110 | loss | - | -10.00 | close:110
+2026-10-15 | NHL | Seattle Kraken +1.5 | -115 | win | - | 8.33 | close:-115
+2026-10-15 | NHL | Utah Mammoth ML | 105 | win | - | 10.50 | close:105
+
+2026-10-16 | RANGE | All Win 173.76 | All Lose -150.00
+2026-10-16 | CFB | Memphis vs Tulane Under 55.5 | -108 | win | - | 9.26 | close:-108
+2026-10-16 | CFB | Tulane +7 | -112 | win | - | 8.93 | close:-112
+2026-10-16 | MLB | Guardians ML | -110 | win | - | 9.09 | close:-105
+2026-10-16 | MLB | Rays @ Guardians Under 6.5 | -110 | win | - | 9.09 | close:-110
+2026-10-16 | MLB | SGP Guardians ML and Under 6.5 | 190 | win | - | 19.00 | close:190
+2026-10-16 | NBA | Bucks +8.5 | -110 | win | - | 9.09 | close:-110
+2026-10-16 | NBA | Bucks at Pacers Under 235.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-16 | NBA | Celtics +5.5 | -110 | win | - | 9.09 | close:-110
+2026-10-16 | NBA | Raptors +9.5 | -110 | win | - | 9.09 | close:-110
+2026-10-16 | NBA | Raptors at Pistons Under 217.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-16 | NBA | SGP Bucks +8.5 and Bucks at Pacers Under 235.5 | 190 | loss | - | -10.00 | close:190
+2026-10-16 | NBA | SGP Raptors +9.5 and Raptors at Pistons Under 217.5 | 190 | loss | - | -10.00 | close:190
+2026-10-16 | NHL | Anaheim Ducks ML | -105 | loss | - | -10.00 | close:-105
+2026-10-16 | NHL | Pittsburgh Penguins +1.5 | -135 | loss | - | -10.00 | close:-135
+2026-10-16 | NHL | Pittsburgh Penguins ML | 180 | loss | - | -10.00 | close:180
+
+2026-10-17 | RANGE | All Win 132.08 | All Lose -130.00
+2026-10-17 | CFB | Alabama vs Tennessee Under 50.5 | -110 | win | - | 9.09 | close:-110
+2026-10-17 | CFB | BYU +10.5 | -110 | win | - | 9.09 | close:-110
+2026-10-17 | CFB | Florida +11.5 | -110 | win | - | 9.09 | close:-110
+2026-10-17 | CFB | Tennessee +7.5 | -110 | win | - | 9.09 | close:-110
+2026-10-17 | MLB | Guardians ML | -104 | loss | - | -10.00 | close:-104
+2026-10-17 | MLB | Rays @ Guardians Under 6.5 | -110 | loss | - | -10.00 | close:-110
+2026-10-17 | MLB | SGP Guardians ML and Under 6.5 | 190 | loss | - | -10.00 | close:190
+2026-10-17 | NHL | Boston Bruins ML | 118 | win | - | 11.80 | close:118
+2026-10-17 | NHL | Buffalo Sabres ML | 120 | loss | - | -10.00 | close:120
+2026-10-17 | NHL | New Jersey Devils ML | 105 | loss | - | -10.00 | close:105
+2026-10-17 | NHL | New York Islanders ML | 114 | win | - | 11.40 | close:114
+2026-10-17 | NHL | Seattle Kraken +1.5 | -160 | loss | - | -10.00 | close:-160
+2026-10-17 | NHL | Winnipeg Jets +1.5 | -165 | win | - | 6.06 | close:-165
+
+2026-10-18 | RANGE | All Win 190.48 | All Lose -190.00
+2026-10-18 | MLB | Guardians +1.5 | -165 | loss | - | -10.00 | close:-156
+2026-10-18 | MLB | Rays @ Guardians Under 6.5 | -118 | win | - | 8.47 | close:-122
+2026-10-18 | MLB | SGP Guardians +1.5 and Rays @ Guardians Under 6.5 | 190 | loss | - | -10.00
+2026-10-18 | NFL | Arizona Cardinals +12.5 | -108 | win | - | 9.26 | close:-108
+2026-10-18 | NFL | Atlanta Falcons +1.5 | -118 | loss | - | -10.00 | close:-118
+2026-10-18 | NFL | Cleveland Browns +3 | -102 | win | - | 9.80 | close:-102
+2026-10-18 | NFL | Dallas Cowboys +1.5 | -118 | loss | - | -10.00
+2026-10-18 | NFL | Houston Texans +2.5 | -102 | win | - | 9.80 | close:-108
+2026-10-18 | NFL | Las Vegas Raiders +5.5 | -110 | win | - | 9.09 | close:-115
+2026-10-18 | NFL | Los Angeles Chargers +7.5 | -112 | loss | - | -10.00 | close:-115
+2026-10-18 | NFL | New York Giants +1.5 | -122 | loss | - | -10.00
+2026-10-18 | NFL | New York Jets +7.5 | -112 | win | - | 8.93 | close:-120
+2026-10-18 | NFL | Philadelphia Eagles +3 | -108 | loss | - | -10.00 | close:-112
+2026-10-18 | NFL | Tampa Bay Buccaneers +2.5 | -105 | loss | - | -10.00 | close:-110
+2026-10-18 | NFL | Tennessee Titans +6.5 | -102 | win | - | 9.80 | close:-115
+2026-10-18 | NHL | Calgary Flames +1.5 | -140 | win | - | 7.14 | close:-140
+2026-10-18 | NHL | Calgary Flames ML | 180 | win | - | 18.00 | close:179
+2026-10-18 | NHL | Columbus Blue Jackets +1.5 | -160 | win | - | 6.25 | close:-158
+2026-10-18 | NHL | Columbus Blue Jackets ML | 160 | loss | - | -10.00 | close:156
+
+2026-10-19 | RANGE | All Win 54.55 | All Lose -60.00
+2026-10-19 | MLB | Guardians +1.5 | -110 | loss | - | -10.00 | close:-170
+2026-10-19 | NFL | Washington Commanders +7.5 | -110 | win | - | 9.09
+2026-10-19 | NHL | Anaheim Ducks +1.5 | -110 | loss | - | -10.00 | close:-207
+2026-10-19 | NHL | Philadelphia Flyers +1.5 | -110 | win | - | 9.09 | close:-122
+2026-10-19 | NHL | Pittsburgh Penguins +1.5 | -110 | win | - | 9.09 | close:-164
+2026-10-19 | NHL | San Jose Sharks +1.5 | -110 | loss | - | -10.00 | close:-202
 2026-10-20 | RANGE | All Win 169.60 | All Lose -120.00
 2026-10-20 | NHL | Vancouver Canucks ML | 240 | loss | Canucks 3 Hurricanes 6 | -10.00 | close:240
 2026-10-20 | NHL | San Jose Sharks ML | 185 | win | Sharks 4 Canadiens 3 OT | 18.50 | close:185

@@ -1439,7 +1439,8 @@ function drawCalendar(){
         if (!Number.isFinite(odds)) return 0;
         return odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds);
       };
-      if (slips.length) {
+      const publishedN = Number(day && day.n) || 0;
+      if (slips.length && slips.length >= publishedN) {
         day = Object.assign({}, day || {}, {
           pl: slips.reduce((s, b) => s + slipMoney(b), 0),
           n: slips.length,
