@@ -243,3 +243,8 @@
 2026-10-22 | NHL | 102 | Jets at Stars Under 5.5 | -110
 2026-10-22 | CFB | -110 | App State +11.5 | -111
 2026-10-22 | CFB | -110 | Liberty at Kennesaw State Under 50.5 | -110
+2026-10-23 | CFB | -110 | Army +1.5 | -110
+2026-10-23 | CFB | -110 | Wyoming +5.5 | -108
+2026-10-23 | MLB | -110 | Under 6.5 Rays @ Brewers | -110
+2026-10-23 | MLB | -150 | Rays +1.5 | -150
+2026-10-23 | NBA | -105 | Pacers -6.5 | -110
