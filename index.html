@@ -1682,12 +1682,22 @@ function drawPassedSlate(){
   const note = document.getElementById("passednote");
   if (!box) return;
   const games = pickSlate && Array.isArray(pickSlate.games) ? pickSlate.games : [];
-  if (!games.length) return;
+  const passed = pickSlate && Array.isArray(pickSlate.passed) ? pickSlate.passed : [];
+  if (!games.length && !passed.length) return;
   const used = matchupGames();
-  if (!used) return;
-  const keys = new Set(used.map(g => g.sport + "|" + g.game));
-  const left = games.filter(g => !keys.has(g.sport + "|" + g.game));
-  const date = pickSlate.date || easternDay();
+  const keys = new Set((used || []).map(g => g.sport + "|" + g.game));
+  const seen = new Set();
+  const left = [];
+  const add = g => {
+    if (!g || !g.game) return;
+    const key = String(g.sport || "") + "|" + g.game;
+    if (seen.has(key) || keys.has(key)) return;
+    seen.add(key);
+    left.push(g);
+  };
+  passed.forEach(add);
+  if (used) games.forEach(add);
+  const date = (pickSlate && pickSlate.date) || easternDay();
   if (note) note.textContent = left.length ? "Games on " + date + " that did not make the day's matchups." : "Every posted game on " + date + " made the day's matchups.";
   box.innerHTML = left.length ? slateTable(left, date) : "";
 }
