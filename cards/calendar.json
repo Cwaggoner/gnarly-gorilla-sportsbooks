@@ -200,6 +200,16 @@
       "wins": 3,
       "losses": 10,
       "pushes": 0
+    },
+    "2026-10-22": {
+      "pl": -3.80,
+      "n": 8,
+      "allWin": 115.42,
+      "allLose": -80.0,
+      "clv": 0.0,
+      "wins": 3,
+      "losses": 5,
+      "pushes": 0
     }
   }
 }
