@@ -1,13 +1,13 @@
 {
   "date": "2026-10-23",
-  "source": "ESPN scoreboard at 4:00 AM. No odds key. Picks post at 9:00 AM.",
-  "passedNote": "Picks post at 9:00 AM. Every game is listed until the card is chosen.",
+  "source": "ESPN scoreboard, no odds key",
+  "passedNote": "Games being played that did not make the picks.",
   "games": [
     {
       "sport": "CFB",
       "game": "Air Force Falcons at Wyoming Cowboys",
       "start": "2026-10-24T01:00Z",
-      "location": "War Memorial Stadium, Laramie, WY",
+      "location": "War Memorial Stadium, Laramie, Wyoming",
       "away": {
         "name": "Air Force Falcons",
         "record": "5-1"
@@ -21,7 +21,7 @@
       "sport": "CFB",
       "game": "Army Black Knights at Tulsa Golden Hurricane",
       "start": "2026-10-24T00:30Z",
-      "location": "H. A. Chapman Stadium, Tulsa, OK",
+      "location": "H. A. Chapman Stadium, Tulsa, Oklahoma",
       "away": {
         "name": "Army Black Knights",
         "record": "4-2"
@@ -29,48 +29,6 @@
       "home": {
         "name": "Tulsa Golden Hurricane",
         "record": "4-3"
-      }
-    },
-    {
-      "sport": "CFB",
-      "game": "Duke Blue Devils at Virginia Cavaliers",
-      "start": "2026-10-23T23:00Z",
-      "location": "Scott Stadium, Charlottesville, VA",
-      "away": {
-        "name": "Duke Blue Devils",
-        "record": "4-2"
-      },
-      "home": {
-        "name": "Virginia Cavaliers",
-        "record": "4-3"
-      }
-    },
-    {
-      "sport": "CFB",
-      "game": "Massachusetts Minutemen at UConn Huskies",
-      "start": "2026-10-23T23:00Z",
-      "location": "Pratt & Whitney Stadium, East Hartford, CT",
-      "away": {
-        "name": "Massachusetts Minutemen",
-        "record": "4-3"
-      },
-      "home": {
-        "name": "UConn Huskies",
-        "record": "3-3"
-      }
-    },
-    {
-      "sport": "CFB",
-      "game": "NC State Wolfpack at Stanford Cardinal",
-      "start": "2026-10-24T02:30Z",
-      "location": "Stanford Stadium, Stanford, CA",
-      "away": {
-        "name": "NC State Wolfpack",
-        "record": "3-3"
-      },
-      "home": {
-        "name": "Stanford Cardinal",
-        "record": "3-4"
       }
     },
     {
@@ -89,9 +47,67 @@
     },
     {
       "sport": "NBA",
+      "game": "Dallas Mavericks at Indiana Pacers",
+      "start": "2026-10-23T23:00Z",
+      "location": "Gainbridge Fieldhouse, Indianapolis, Indiana",
+      "away": {
+        "name": "Dallas Mavericks",
+        "record": "0-1"
+      },
+      "home": {
+        "name": "Indiana Pacers",
+        "record": "1-0"
+      }
+    }
+  ],
+  "passed": [
+    {
+      "sport": "CFB",
+      "game": "Duke Blue Devils at Virginia Cavaliers",
+      "start": "2026-10-23T23:00Z",
+      "location": "Scott Stadium, Charlottesville, Virginia",
+      "away": {
+        "name": "Duke Blue Devils",
+        "record": "4-2"
+      },
+      "home": {
+        "name": "Virginia Cavaliers",
+        "record": "4-3"
+      }
+    },
+    {
+      "sport": "CFB",
+      "game": "Massachusetts Minutemen at UConn Huskies",
+      "start": "2026-10-23T23:00Z",
+      "location": "Pratt & Whitney Stadium, East Hartford, Connecticut",
+      "away": {
+        "name": "Massachusetts Minutemen",
+        "record": "4-3"
+      },
+      "home": {
+        "name": "UConn Huskies",
+        "record": "3-3"
+      }
+    },
+    {
+      "sport": "CFB",
+      "game": "NC State Wolfpack at Stanford Cardinal",
+      "start": "2026-10-24T02:30Z",
+      "location": "Stanford Stadium, Stanford, California",
+      "away": {
+        "name": "NC State Wolfpack",
+        "record": "3-3"
+      },
+      "home": {
+        "name": "Stanford Cardinal",
+        "record": "3-4"
+      }
+    },
+    {
+      "sport": "NBA",
       "game": "Atlanta Hawks at Charlotte Hornets",
       "start": "2026-10-23T23:00Z",
-      "location": "Spectrum Center, Charlotte, NC",
+      "location": "Spectrum Center, Charlotte, North Carolina",
       "away": {
         "name": "Atlanta Hawks",
         "record": "1-0"
@@ -105,7 +121,7 @@
       "sport": "NBA",
       "game": "Chicago Bulls at Milwaukee Bucks",
       "start": "2026-10-23T20:00Z",
-      "location": "Fiserv Forum, Milwaukee, WI",
+      "location": "Fiserv Forum, Milwaukee, Wisconsin",
       "away": {
         "name": "Chicago Bulls",
         "record": "0-1"
@@ -117,23 +133,9 @@
     },
     {
       "sport": "NBA",
-      "game": "Dallas Mavericks at Indiana Pacers",
-      "start": "2026-10-23T23:00Z",
-      "location": "Gainbridge Fieldhouse, Indianapolis, IN",
-      "away": {
-        "name": "Dallas Mavericks",
-        "record": "0-1"
-      },
-      "home": {
-        "name": "Indiana Pacers",
-        "record": "1-0"
-      }
-    },
-    {
-      "sport": "NBA",
       "game": "Detroit Pistons at Miami Heat",
       "start": "2026-10-24T00:00Z",
-      "location": "Kaseya Center, Miami, FL",
+      "location": "Kaseya Center, Miami, Florida",
       "away": {
         "name": "Detroit Pistons",
         "record": "1-0"
@@ -147,7 +149,7 @@
       "sport": "NBA",
       "game": "Houston Rockets at San Antonio Spurs",
       "start": "2026-10-24T01:30Z",
-      "location": "Moody Center, Austin, TX",
+      "location": "Moody Center, Austin, Texas",
       "away": {
         "name": "Houston Rockets",
         "record": "1-0"
@@ -161,7 +163,7 @@
       "sport": "NBA",
       "game": "LA Clippers at Los Angeles Lakers",
       "start": "2026-10-24T02:00Z",
-      "location": "crypto.com Arena, Los Angeles, CA",
+      "location": "crypto.com Arena, Los Angeles, California",
       "away": {
         "name": "LA Clippers",
         "record": "1-0"
@@ -175,7 +177,7 @@
       "sport": "NBA",
       "game": "Memphis Grizzlies at Golden State Warriors",
       "start": "2026-10-24T02:00Z",
-      "location": "Chase Center, San Francisco, CA",
+      "location": "Chase Center, San Francisco, California",
       "away": {
         "name": "Memphis Grizzlies",
         "record": "1-0"
@@ -189,7 +191,7 @@
       "sport": "NBA",
       "game": "Minnesota Timberwolves at Orlando Magic",
       "start": "2026-10-23T23:00Z",
-      "location": "Kia Center, Orlando, FL",
+      "location": "Kia Center, Orlando, Florida",
       "away": {
         "name": "Minnesota Timberwolves",
         "record": "1-0"
@@ -203,7 +205,7 @@
       "sport": "NBA",
       "game": "New Orleans Pelicans at Utah Jazz",
       "start": "2026-10-24T01:30Z",
-      "location": "Delta Center, Salt Lake City, UT",
+      "location": "Delta Center, Salt Lake City, Utah",
       "away": {
         "name": "New Orleans Pelicans",
         "record": "0-1"
@@ -217,7 +219,7 @@
       "sport": "NBA",
       "game": "New York Knicks at Boston Celtics",
       "start": "2026-10-23T23:00Z",
-      "location": "TD Garden, Boston, MA",
+      "location": "TD Garden, Boston, Massachusetts",
       "away": {
         "name": "New York Knicks",
         "record": "0-1"
@@ -231,7 +233,7 @@
       "sport": "NBA",
       "game": "Portland Trail Blazers at Sacramento Kings",
       "start": "2026-10-24T02:00Z",
-      "location": "Golden 1 Center, Sacramento, CA",
+      "location": "Golden 1 Center, Sacramento, California",
       "away": {
         "name": "Portland Trail Blazers",
         "record": "1-0"
@@ -259,7 +261,7 @@
       "sport": "NHL",
       "game": "Montreal Canadiens at Chicago Blackhawks",
       "start": "2026-10-24T00:00Z",
-      "location": "United Center, Chicago, IL",
+      "location": "United Center, Chicago, Illinois",
       "away": {
         "name": "Montreal Canadiens",
         "record": "4-3-2"
@@ -273,7 +275,7 @@
       "sport": "NHL",
       "game": "Tampa Bay Lightning at Colorado Avalanche",
       "start": "2026-10-24T01:00Z",
-      "location": "Ball Arena, Denver, CO",
+      "location": "Ball Arena, Denver, Colorado",
       "away": {
         "name": "Tampa Bay Lightning",
         "record": "7-2-0"
@@ -283,6 +285,5 @@
         "record": "5-4-1"
       }
     }
-  ],
-  "passed": []
+  ]
 }
