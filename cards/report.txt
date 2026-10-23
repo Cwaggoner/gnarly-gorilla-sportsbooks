@@ -1,15 +1,21 @@
 # GG report 2026-10-22
-# Yesterday 2026-10-22 graded. Record 5-5-0. Profit $14.38. CLV +1.2%.
+# Yesterday 2026-10-22 graded. Record 7-9-0. Profit $10.38. CLV +1.2%.
 
 Analysis: Thursday cashed the dogs that were priced like dogs and lost the short numbers. App State +11.5 won outright, 34-31 in overtime. Liberty at Kennesaw State Under 50.5 cashed, 34-6. Calgary +170 won 2-1, and that same-game parlay cashed with the under. Winnipeg at Dallas Under 5.5 cashed in overtime, 3-2. New England +3 did not cover in a 30-24 loss, so the under and the parlay both lost. Cleveland +3.5 lost 114-106, so that parlay lost even though the total stayed under. Nashville +130 lost 6-0.
 
 2026-10-22 | CFB | win | App State +11.5 | EDGE
 2026-10-22 | CFB | win | Liberty at Kennesaw State Under 50.5 | EDGE
 2026-10-22 | NFL | loss | Patriots at Bears Under 50.5
+2026-10-22 | NFL | loss | Patriots +3 and Patriots at Bears Under 50.5
 2026-10-22 | NFL | loss | SGP Patriots +3 and Patriots at Bears Under 50.5
 2026-10-22 | NBA | loss | Cavaliers +3.5
+2026-10-22 | NBA | loss | Cavaliers +3.5 and Cavaliers at 76ers Under 235.5
 2026-10-22 | NBA | loss | SGP Cavaliers +3.5 and Cavaliers at 76ers Under 235.5
-2026-10-22 | NHL | win | Flames ML | EDGE
-2026-10-22 | NHL | win | SGP Flames ML and Wild at Flames Under 5.5 | EDGE
+2026-10-22 | NHL | loss | Anaheim Ducks ML
 2026-10-22 | NHL | loss | Predators ML | EDGE
+2026-10-22 | NHL | loss | Winnipeg Jets ML
+2026-10-22 | NHL | win | Calgary Flames ML
+2026-10-22 | NHL | win | Flames ML | EDGE
+2026-10-22 | NHL | win | Flames ML and Wild at Flames Under 5.5
 2026-10-22 | NHL | win | Jets at Stars Under 5.5 | EDGE
+2026-10-22 | NHL | win | SGP Flames ML and Wild at Flames Under 5.5 | EDGE
