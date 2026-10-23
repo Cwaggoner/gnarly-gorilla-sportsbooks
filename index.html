@@ -559,8 +559,8 @@ function knownStarts(){
     const ms = Date.parse(start || "");
     if (Number.isFinite(ms)) out.push({sport: String(sport || "").toUpperCase(), start: ms});
   };
-  ((pickSlate && pickSlate.games) || []).forEach(g => add(g.sport, g.start));
-  (window.ggSchedule || []).forEach(g => add(g.sport, g.start));
+  ((pickSlate && pickSlate.games) || []).forEach(g => { if (!/tbd/i.test(g.game || g.name || "")) add(g.sport, g.start); });
+  (window.ggSchedule || []).forEach(g => { if (!/tbd/i.test(g.name || "")) add(g.sport, g.start); });
   (window.__ggExtraStarts || []).forEach(g => add(g.sport, g.start));
   return out;
 }
@@ -1439,7 +1439,16 @@ function drawCalendar(){
         if (!Number.isFinite(odds)) return 0;
         return odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds);
       };
-      if (fileReplacesDay(date, day, slips, personal)) {
+      if (slips.length) {
+        day = Object.assign({}, day || {}, {
+          pl: slips.reduce((s, b) => s + slipMoney(b), 0),
+          n: slips.length,
+          wins: slips.filter(b => b.result === "win").length,
+          losses: slips.filter(b => b.result === "loss").length,
+          pushes: slips.filter(b => b.result === "push").length
+        });
+        board[date] = day;
+      } else if (fileReplacesDay(date, day, slips, personal)) {
         day = Object.assign({}, day || {}, {
           pl: slips.reduce((s, b) => s + slipMoney(b), 0),
           n: slips.length,
@@ -1972,9 +1981,8 @@ function render(){
     if (better) poolMap[key] = b;
   });
   const pool = Object.values(poolMap);
-  const yStill = pool.some(b => b.date === y && b.result === "pending" && !isNoPick(b));
   const yDone = pool.some(b => b.date === y && b.result !== "pending" && !isNoPick(b));
-  const gradeDate = picked || ((slateSettled(y) || (yDone && !yStill)) ? y : shiftDate(y, -1));
+  const gradeDate = picked || (yDone ? y : (slateSettled(y) ? y : shiftDate(y, -1)));
   const pending = pool.filter(b => b.result === "pending" && !slateSettled(b.date) && (picked ? b.date === picked : b.date === easternDay() || b.date === shiftDate(easternDay(), -1)));
   const gradedDay = pool.filter(b => b.result !== "pending" && b.date === gradeDate);
   const day = picked ? pool.filter(b => b.date === picked) : gradedDay;

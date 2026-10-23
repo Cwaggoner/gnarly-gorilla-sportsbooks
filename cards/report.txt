@@ -1,12 +1,15 @@
 # GG report 2026-10-22
-# Yesterday 2026-10-21 graded. Record 3-10-0. Profit $-65.22. CLV Matched Bet Price.
+# Yesterday 2026-10-22 graded. Record 5-5-0. Profit $14.38. CLV +1.2%.
 
-Analysis: Wednesday was a dog card and it did not cash. The Bulls were +10.5 and lost by 43. The Mavericks were +9.5 and lost by 18. The Warriors were +6.5 and lost by 22. The Raptors total went under. The Rockets total went over. The Flyers moneyline and the Sabres total both cashed. The Panthers did not. Sam Houston +2.5 lost by 6, and that total went over. Two same-game parlays lost with the spread. No NFL, MLB, or CBB card.
+Analysis: Thursday cashed the dogs that were priced like dogs and lost the short numbers. App State +11.5 won outright, 34-31 in overtime. Liberty at Kennesaw State Under 50.5 cashed, 34-6. Calgary +170 won 2-1, and that same-game parlay cashed with the under. Winnipeg at Dallas Under 5.5 cashed in overtime, 3-2. New England +3 did not cover in a 30-24 loss, so the under and the parlay both lost. Cleveland +3.5 lost 114-106, so that parlay lost even though the total stayed under. Nashville +130 lost 6-0.
 
-2026-10-21 | NBA | loss | Bulls +10.5 | EDGE
-2026-10-21 | NBA | loss | Mavericks +9.5 | EDGE
-2026-10-21 | NBA | loss | SGP Bulls +10.5 and Bulls at Raptors Under 237.5 | EDGE
-2026-10-21 | NBA | loss | SGP Mavericks +9.5 and Mavericks at Rockets Under 230.5 | EDGE
-2026-10-21 | NHL | win | Flyers ML | EDGE
-2026-10-21 | CFB | loss | New Mexico State at Sam Houston Under 45.5 | EDGE
-2026-10-21 | CFB | loss | SGP Sam Houston +2.5 and New Mexico State at Sam Houston Under 45.5 | EDGE
+2026-10-22 | CFB | win | App State +11.5 | EDGE
+2026-10-22 | CFB | win | Liberty at Kennesaw State Under 50.5 | EDGE
+2026-10-22 | NFL | loss | Patriots at Bears Under 50.5
+2026-10-22 | NFL | loss | SGP Patriots +3 and Patriots at Bears Under 50.5
+2026-10-22 | NBA | loss | Cavaliers +3.5
+2026-10-22 | NBA | loss | SGP Cavaliers +3.5 and Cavaliers at 76ers Under 235.5
+2026-10-22 | NHL | win | Flames ML | EDGE
+2026-10-22 | NHL | win | SGP Flames ML and Wild at Flames Under 5.5 | EDGE
+2026-10-22 | NHL | loss | Predators ML | EDGE
+2026-10-22 | NHL | win | Jets at Stars Under 5.5 | EDGE
