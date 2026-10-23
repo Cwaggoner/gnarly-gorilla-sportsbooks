@@ -40,7 +40,7 @@
 2026-10-21 | NFL | No Picks
 2026-10-21 | CBB | No Picks
 
-2026-10-22 | RANGE | All Win 115.42 | All Lose -80.00
+2026-10-22 | RANGE | All Win 133.60 | All Lose -100.00
 2026-10-22 | NFL | Patriots at Bears Under 50.5 | -105 | loss | Patriots 24 Bears 30 | -10.00 | close:-105
 2026-10-22 | NFL | SGP Patriots +3 and Patriots at Bears Under 50.5 | 190 | loss | Patriots 24 Bears 30 | -10.00 | close:190
 2026-10-22 | NBA | Cavaliers +3.5 | -115 | loss | Cavaliers 106 76ers 114 | -10.00 | close:-115
@@ -51,5 +51,6 @@
 2026-10-22 | NHL | Jets at Stars Under 5.5 | 102 | win | Jets 2 Stars 3 OT | 10.20 | close:102
 
 2026-10-22 | MLB | No Picks
-2026-10-22 | CFB | No Picks
+2026-10-22 | CFB | App State +11.5 | -110 | win | James Madison 31 App State 34 | 9.09 | close:-111
+2026-10-22 | CFB | Liberty at Kennesaw State Under 50.5 | -110 | win | Liberty 34 Kennesaw State 6 | 9.09 | close:-110
 2026-10-22 | CBB | No Picks
