@@ -1,13 +1,1 @@
-# file: GG-NBA-2026-10-22
-# mail: still due at 9:00 AM Eastern. Grade 2026-10-21 at 8:30 first.
-2026-10-22 | NBA | Spread | Cavaliers +3.5 | -115 | Medium 56%. Moneyline is +124.
-2026-10-22 | NBA | SGP | Cavaliers +3.5 and Cavaliers at 76ers Under 235.5 | 190 | Estimated +190. Dog and under.
-# prior card kept for the 8:30 grade
-# file: GG-NBA-2026-10-21
-2026-10-21 | NBA | Spread | Bulls +10.5 | -110 | High 62% Edge: Dog on 5.5+ spread.
-2026-10-21 | NBA | Spread | Mavericks +9.5 | -110 | High 60% Edge: Dog on 5.5+ spread.
-2026-10-21 | NBA | Spread | Warriors +6.5 | -110 | Medium 55%
-2026-10-21 | NBA | Total | Bulls at Raptors Under 237.5 | -110 | Medium 54% Named game
-2026-10-21 | NBA | Total | Mavericks at Rockets Under 230.5 | -110 | Medium 53% Named game
-2026-10-21 | NBA | SGP | Bulls +10.5 and Bulls at Raptors Under 237.5 | 190 | Estimated +190. Dog and under. Edge.
-2026-10-21 | NBA | SGP | Mavericks +9.5 and Mavericks at Rockets Under 230.5 | 190 | Estimated +190. Dog and under. Edge.
+2026-10-23 | NBA | Spread | Pacers -6.5 | -105 | High Edge: Healthy Haliburton active, no restriction, home opener after 23-12 return. Pacers spread only.
