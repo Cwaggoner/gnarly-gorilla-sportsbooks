@@ -758,10 +758,10 @@ function lineMoney(b){
   return null;
 }
 function dayProfit(date, lines, day){
+  if (lines.length) return Math.round(lines.reduce((s, b) => s + (lineMoney(b) || 0), 0) * 100) / 100;
   const saved = publishedProfit(date);
   const cal = moneyAmount(day && day.pl);
-  const summed = lines.length ? lines.reduce((s, b) => s + (lineMoney(b) || 0), 0) : null;
-  const picks = [saved, cal, summed].filter(n => n != null && Number.isFinite(n));
+  const picks = [saved, cal].filter(n => n != null && Number.isFinite(n));
   const real = picks.find(n => Math.abs(n) >= 0.005);
   if (real != null) return Math.round(real * 100) / 100;
   return picks.length ? 0 : null;
@@ -1028,7 +1028,7 @@ function monthDays(){
     const personal = !!(mine[date] && Number.isFinite(Number(mine[date].pl)));
     const slips = slipsForDay(date);
     let day = personal ? mine[date] : board[date];
-    if (fileReplacesDay(date, day, slips, personal)) day = {pl: slips.reduce((s, b) => s + slipMoney(b), 0)};
+    if (slips.length && !personal) day = Object.assign({}, day || {}, {pl: Math.round(slips.reduce((s, b) => s + slipMoney(b), 0) * 100) / 100, n: slips.length});
     const pl = Number(day && day.pl);
     if (!Number.isFinite(pl)) continue;
     rows.push({date, pl});
@@ -1448,13 +1448,20 @@ function drawCalendar(){
         return odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds);
       };
       if (slips.length) {
-        day = Object.assign({}, day || {}, {
-          pl: slips.reduce((s, b) => s + slipMoney(b), 0),
+        const wins = slips.filter(b => b.result === "win").length;
+        const losses = slips.filter(b => b.result === "loss").length;
+        const pushes = slips.filter(b => b.result === "push").length;
+        const savedAgrees = day && Number(day.n) === slips.length && Number(day.wins) === wins && Number(day.losses) === losses && Number(day.pushes) === pushes;
+        day = {
+          pl: Math.round(slips.reduce((s, b) => s + slipMoney(b), 0) * 100) / 100,
           n: slips.length,
-          wins: slips.filter(b => b.result === "win").length,
-          losses: slips.filter(b => b.result === "loss").length,
-          pushes: slips.filter(b => b.result === "push").length
-        });
+          wins: wins,
+          losses: losses,
+          pushes: pushes,
+          allWin: savedAgrees && Number(day.allWin) > 0 ? Number(day.allWin) : slips.reduce((s, b) => s + winPay(b), 0),
+          allLose: savedAgrees && Number(day.allLose) ? Number(day.allLose) : -slips.reduce((s, b) => s + (Number(b.stake) || 10), 0),
+          clv: day && day.clv
+        };
         board[date] = day;
       } else if (fileReplacesDay(date, day, slips, personal)) {
         day = Object.assign({}, day || {}, {
@@ -2016,10 +2023,10 @@ function render(){
     body += "</tbody></table>";
   });
   if (!day.length) copy.push("No slips dated yesterday.");
-  copy.push("", "Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u");
+  copy.push("", "W/L Record " + rec(gradedDay) + "   " + money(dayPl) + "   " + (dayPl / UNIT).toFixed(2) + "u");
   const report = document.getElementById("report");
   report.dataset.copy = copy.join("\n");
-  report.innerHTML = "<p>Date " + (picked || easternDay()) + ". Graded " + gradeDate + "</p><p>W/L Record " + rec(gradedDay) + "   P/L " + money(dayPl) + "   Hit rate " + hit + "   Row sum " + money(dayPl) + "</p>" + body + "<p>Running " + rec(bets) + "   " + money(pl) + "   " + (pl / UNIT).toFixed(2) + "u</p>";
+  report.innerHTML = "<p>Date " + (picked || easternDay()) + ". Graded " + gradeDate + "</p><p>W/L Record " + rec(gradedDay) + "   P/L " + money(dayPl) + "   Hit rate " + hit + "   Row sum " + money(dayPl) + "</p>" + body + "<p>W/L Record " + rec(gradedDay) + "   " + money(dayPl) + "   " + (dayPl / UNIT).toFixed(2) + "u</p>";
   try { paintSeasonStatus(); } catch (err) {}
   } finally {
     rendering = false;

@@ -605,7 +605,7 @@
 2026-10-21 | NFL | No Picks
 2026-10-21 | CBB | No Picks
 
-2026-10-22 | RANGE | All Win 100.38 | All Lose -160.00
+2026-10-22 | RANGE | All Win 241.30 | All Lose -160.00
 2026-10-22 | NFL | Patriots at Bears Under 50.5 | -105 | loss | Patriots 24 Bears 30 | -10.00 | close:-105
 2026-10-22 | NFL | Patriots +3 and Patriots at Bears Under 50.5 | 190 | loss | Patriots 24 Bears 30 | -10.00 | close:190
 2026-10-22 | NFL | SGP Patriots +3 and Patriots at Bears Under 50.5 | 190 | loss | Patriots 24 Bears 30 | -10.00 | close:190
