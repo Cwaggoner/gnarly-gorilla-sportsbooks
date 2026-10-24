@@ -1,5 +1,5 @@
 # GG report 2026-10-23
-# Yesterday 2026-10-23 graded. Record 5-1-0. Profit $42.94. CLV Matched Bet Price.
+# Yesterday 2026-10-23 graded. Record 5-1-0. Profit $42.94. CLV +0.2%.
 
 Analysis: Friday cashed the service academy dogs and the Rays total/run-line combo. Army +1.5 won 38-35. Wyoming +5.5 won 28-14. Rays Under 6.5 and Rays +1.5 both cashed in a 3-2 loss, and the same-game parlay cashed. Pacers -6.5 lost 121-105.
 
@@ -10,3 +10,5 @@ Analysis: Friday cashed the service academy dogs and the Rays total/run-line com
 2026-10-23 | MLB | win | Rays +1.5 and Under 6.5 Rays @ Brewers | EDGE
 2026-10-23 | NBA | loss | Pacers -6.5 | EDGE
 2026-10-23 | NHL | No Picks
+2026-10-23 | NFL | No Picks
+2026-10-23 | CBB | No Picks
