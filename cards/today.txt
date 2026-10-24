@@ -1,8 +1,10 @@
-# file: GG-CARD-2026-10-23
-2026-10-23 | CFB | Spread | Army +1.5 | -110 | MUST PLAY Army. Exception to spread-inside-7. Tulsa slight home favorite.
-2026-10-23 | CFB | Spread | Wyoming +5.5 | -110 | MUST PLAY Air Force. Exception to spread-inside-7. Air Force road favorite.
-2026-10-23 | MLB | Total | Under 6.5 Rays @ Brewers | -110 | Edge (total - preferred market 2-0 +$19)
-2026-10-23 | MLB | Run Line | Rays +1.5 | -150 | Edge (run line dog - buy run line, avoid short ML)
-2026-10-23 | MLB | SGP | Rays +1.5 and Under 6.5 Rays @ Brewers | 190 | Estimated +190. Edge. Two-leg same-game parlay pairing total with dog.
-2026-10-23 | NBA | Spread | Pacers -6.5 | -105 | High Edge: Healthy Haliburton active, no restriction, home opener after 23-12 return. Pacers spread only.
-2026-10-23 | NHL | No Picks
+# file: GG-CARD-2026-10-24
+2026-10-24 | CFB | Spread | Michigan +7.5 | -110 | MUST PLAY Indiana. Edge. Dog of 7 or more. Home underdog in Ann Arbor.
+2026-10-24 | CFB | Spread | Navy +3 | -105 | MUST PLAY Navy. Exception to spread-inside-7. Home dog vs North Texas.
+2026-10-24 | MLB | Total | Under 6.5 Rays @ Brewers | -110 | Edge (total - preferred market 2-0 +$19)
+2026-10-24 | MLB | Run Line | Rays +1.5 | -210 | Edge (run line dog - buy run line, avoid short ML)
+2026-10-24 | MLB | SGP | Rays +1.5 and Under 6.5 Rays @ Brewers | +185 | Estimated +185. Edge. Two-leg same-game parlay pairing total with dog.
+2026-10-24 | NBA | No Picks
+2026-10-24 | NHL | Moneyline | San Jose Sharks ML | 161 | Edge: High confidence dog moneyline at Boston.
+2026-10-24 | NHL | Moneyline | Toronto Maple Leafs ML | 152 | Medium confidence dog moneyline at Edmonton.
+2026-10-24 | NHL | Moneyline | Los Angeles Kings ML | 146 | Medium confidence dog moneyline at New Jersey.
