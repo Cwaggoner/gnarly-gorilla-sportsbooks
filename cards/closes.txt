@@ -248,3 +248,10 @@
 2026-10-23 | MLB | -110 | Under 6.5 Rays @ Brewers | -110
 2026-10-23 | MLB | -150 | Rays +1.5 | -150
 2026-10-23 | NBA | -105 | Pacers -6.5 | -110
+2026-10-24 | CFB | -110 | Michigan +7.5 | -110
+2026-10-24 | CFB | -105 | Navy +3 | -105
+2026-10-24 | MLB | -110 | Under 6.5 Rays @ Brewers | -110
+2026-10-24 | MLB | -210 | Rays +1.5 | -210
+2026-10-24 | NHL | 161 | San Jose Sharks ML | 165
+2026-10-24 | NHL | 152 | Toronto Maple Leafs ML | 150
+2026-10-24 | NHL | 146 | Los Angeles Kings ML | 165
