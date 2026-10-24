@@ -588,6 +588,11 @@ function slateSettled(date){
   const end = lastSlateEnd(date);
   return !!(end && Date.now() >= end);
 }
+function dayGraded(date){
+  date = String(date || "").slice(0, 10);
+  return (gradeFile || []).some(b => b && String(b.date || "").slice(0, 10) === date && !isNoPick(b) && (b.result === "win" || b.result === "loss" || b.result === "push"));
+}
+function chartDayReady(date){ return slateSettled(date) || dayGraded(date); }
 function slipsLeftToSettle(list){
   return (list || []).filter(b => b && b.result === "pending" && !isNoPick(b) && !slateSettled(b.date)).length;
 }
@@ -1024,7 +1029,7 @@ function monthDays(){
   const rows = [];
   for (let d = 1; d <= days; d++) {
     const date = y + "-" + String(m + 1).padStart(2, "0") + "-" + String(d).padStart(2, "0");
-    if (date > today || !slateSettled(date)) continue;
+    if (date > today || !chartDayReady(date)) continue;
     const personal = !!(mine[date] && Number.isFinite(Number(mine[date].pl)));
     const slips = slipsForDay(date);
     let day = personal ? mine[date] : board[date];
@@ -1097,7 +1102,7 @@ function chartClv(b){
 }
 function yesterdayGraded(bets){
   const day = yesterday();
-  if (!slateSettled(day)) return [];
+  if (!chartDayReady(day)) return [];
   const seen = new Set();
   const rows = [];
   bets.concat(load()).concat(loadGrade()).concat(gradeFile).forEach(b => {
@@ -1136,7 +1141,7 @@ function drawBars(canvas, bets){
   ctx.fillStyle = "#0e0e0e";
   ctx.fillRect(0,0,cssW,h);
   ctx.font = "12px sans-serif";
-  const label = r => r[1].yday ? "" : (!slateSettled(yesterday()) ? "Last Game Open" : seasonText(r[0]));
+  const label = r => r[1].yday ? "" : (!chartDayReady(yesterday()) ? "Last Game Open" : seasonText(r[0]));
   const labelW = Math.max(...rows.map(r => ctx.measureText(r[0]).width), 36);
   const valueW = Math.max(...rows.map(r => ctx.measureText(money(r[1].pl) + "  " + label(r)).width), 70);
   const left = 12 + labelW + 8;
