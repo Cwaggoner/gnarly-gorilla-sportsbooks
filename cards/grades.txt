@@ -1,12 +1,14 @@
 # file: grades
 2026-10-23 | RANGE | All Win 62.46 | All Lose -60.00
 2026-10-23 | CFB | Army +1.5 | close -110 | win | 38-35 | 9.09
-2026-10-23 | CFB | Wyoming +5.5 | close -110 | win | 28-14 | 9.09
+2026-10-23 | CFB | Wyoming +5.5 | close -108 | win | 28-14 | 9.09
 2026-10-23 | MLB | Under 6.5 Rays @ Brewers | close -110 | win | 2-3 | 9.09
 2026-10-23 | MLB | Rays +1.5 | close -150 | win | 2-3 | 6.67
 2026-10-23 | MLB | Rays +1.5 and Under 6.5 Rays @ Brewers | close 190 | win | 2-3 | 19.00
-2026-10-23 | NBA | Pacers -6.5 | close -105 | loss | 121-105 | -10.00
+2026-10-23 | NBA | Pacers -6.5 | close -110 | loss | 121-105 | -10.00
 2026-10-23 | NHL | No Picks
+2026-10-23 | NFL | No Picks
+2026-10-23 | CBB | No Picks
 2026-10-22 | RANGE | All Win 241.30 | All Lose -160.00
 2026-10-22 | CFB | App State +11.5 | close -111 | win | 34-31 OT | 9.09
 2026-10-22 | CFB | Liberty at Kennesaw State Under 50.5 | close -110 | win | 34-6 | 9.09
