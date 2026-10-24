@@ -1759,11 +1759,9 @@ function gameMatchesSlip(game, slip){
   const words = String(slip.pick || "").toLowerCase().split(/[^a-z0-9]+/).filter(w => w.length > 3 && !/^(under|over|spread|total|moneyline|and)$/.test(w));
   return words.some(w => blob.includes(w));
 }
-function pendingHoldHtml(pending){
+function pendingHoldHtml(){
   const games = pickSlate && Array.isArray(pickSlate.games) ? pickSlate.games : [];
-  const hit = games.filter(g => (pending || []).some(b => gameMatchesSlip(g, b)));
-  const list = hit.length ? hit : games;
-  return list.length ? slateTable(list, pickSlate && pickSlate.date) : slateHtml();
+  return games.length ? slateTable(games, pickSlate && pickSlate.date) : slateHtml();
 }
 function paintSeasonStatus(){
   const box = document.getElementById("seasons");
@@ -1795,12 +1793,55 @@ function drawPickSlate(){
   paintSeasonStatus();
   drawPassedSlate();
 }
+function teamPickScore(team, pick){
+  const ident = String(team || "").toLowerCase().split(/[^a-z0-9]+/).filter(w => w.length > 2 && w !== "the" && w !== "and");
+  const words = new Set(String(pick || "").toLowerCase().split(/[^a-z0-9]+/).filter(w => w.length > 2));
+  const hit = ident.filter(w => words.has(w));
+  if (!hit.length) return -999;
+  return hit.length * 10 - ident.filter(w => !words.has(w)).length;
+}
+function applyPostedCard(data, text){
+  const rows = cardLines(text).filter(r => r[0] === (data.date || easternDay()) && !isNoCard(r));
+  if (!rows.length) return data;
+  const pool = (data.games || []).concat(data.passed || []);
+  const seen = new Set();
+  const unique = pool.filter(g => {
+    const key = (g.sport || "") + "|" + (g.game || "");
+    if (!g.game || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+  const chosen = new Set();
+  rows.forEach(r => {
+    let best = -999, games = [];
+    unique.forEach(g => {
+      if (String(g.sport || "").toUpperCase() !== r[1]) return;
+      const mark = Math.max(teamPickScore(g.away && g.away.name, r[3]), teamPickScore(g.home && g.home.name, r[3]));
+      if (mark > best) { best = mark; games = [g]; }
+      else if (mark === best && mark > 0) games.push(g);
+    });
+    if (best > 0) games.forEach(g => chosen.add(g));
+  });
+  if (!chosen.size) return data;
+  data.games = unique.filter(g => chosen.has(g));
+  data.passed = unique.filter(g => !chosen.has(g));
+  return data;
+}
+async function readJson(url){
+  const res = await fetch(url + "?ts=" + Date.now());
+  if (!res.ok) return null;
+  const text = await res.text();
+  if (!text.trim()) return null;
+  try { return JSON.parse(text); } catch (err) { return null; }
+}
 async function loadPickSlate(){
   try {
-    const res = await fetch("cards/pick-slate.json?ts=" + Date.now());
-    if (!res.ok) return;
-    const data = await res.json();
+    let data = await readJson("cards/pick-slate.json");
+    if (!data || !Array.isArray(data.games) || !data.games.length) data = await readJson("cards/scoreboard.json");
     if (!data || !Array.isArray(data.games) || !data.games.length) return;
+    const card = await fetch("cards/today.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").catch(() => "");
+    applyPostedCard(data, card);
+    if (!data.games.length) return;
     const stamp = JSON.stringify([data.date, data.games, data.passed || []]);
     const same = pickSlate && pickSlate._stamp === stamp;
     data._stamp = stamp;
