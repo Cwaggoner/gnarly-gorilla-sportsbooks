@@ -1776,6 +1776,15 @@ function slateDateLabel(date){
   const stamp = new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]), 16));
   return stamp.toLocaleDateString("en-US", {timeZone: "UTC", month: "long", day: "numeric", year: "numeric"});
 }
+function slateSides(game){
+  const parts = String(game && game.game || "").split(/\s+at\s+/i);
+  const awayName = (game && game.away && game.away.name) || (parts[0] || "").trim();
+  const homeName = (game && game.home && game.home.name) || (parts[1] || "").trim();
+  return {
+    away: {name: awayName, record: (game && game.away && game.away.record) || (game && game.awayRecord) || ""},
+    home: {name: homeName, record: (game && game.home && game.home.record) || (game && game.homeRecord) || ""}
+  };
+}
 function slateTable(list, date, extra){
   const order = ["CBB","CFB","MLB","NBA","NFL","NHL"];
   const games = (Array.isArray(list) ? list : []).slice().sort((a, b) => {
@@ -1785,12 +1794,15 @@ function slateTable(list, date, extra){
   });
   if (!games.length) return "";
   const rows = games.map(game => {
-    const away = game.away || {};
-    const home = game.home || {};
+    const sides = slateSides(game);
+    const away = sides.away;
+    const home = sides.home;
     const when = game.start ? formatTime(game.start, false) : "";
-    const records = [away.name, away.record].filter(Boolean).join(" ") + " / " + [home.name, home.record].filter(Boolean).join(" ");
+    const nick = name => String(name || "").split(/\s+/).slice(-1)[0] || "";
+    const line = side => esc(nick(side.name) + " " + (side.record || "—"));
+    const records = "<div>" + line(away) + "</div><div>" + line(home) + "</div>";
     const add = extra ? " <button type='button' class='add-game' data-sport='" + encodeURIComponent(game.sport || "") + "' data-game='" + encodeURIComponent(game.game || "") + "' data-date='" + encodeURIComponent(date || "") + "'>Add</button>" : "";
-    return "<tr><td>" + esc(game.sport + " " + game.game) + add + "</td><td>" + esc(when) + "</td><td>" + esc(game.location || "") + "</td><td>" + esc(records) + "</td></tr>";
+    return "<tr><td>" + esc(game.sport + " " + game.game) + add + "</td><td>" + esc(when) + "</td><td>" + esc(game.location || "") + "</td><td>" + records + "</td></tr>";
   }).join("");
   const label = slateDateLabel(date);
   const gameHead = label ? "<th><div class='gamehead'><span>Game</span><span class='slate-date'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + esc(label) + "</span></div></th>" : "<th>Game</th>";
@@ -1820,7 +1832,7 @@ function seasonStatus(sport, pending){
 }
 function gameMatchesSlip(game, slip){
   if (!game || !slip || String(slip.sport || "").toUpperCase() !== game.sport) return false;
-  const blob = [game.game, game.away && game.away.name, game.home && game.home.name].join(" ").toLowerCase();
+  const blob = [game.game, slateSides(game).away.name, slateSides(game).home.name].join(" ").toLowerCase();
   const words = String(slip.pick || "").toLowerCase().split(/[^a-z0-9]+/).filter(w => w.length > 3 && !/^(under|over|spread|total|moneyline|and)$/.test(w));
   return words.some(w => blob.includes(w));
 }
@@ -1881,7 +1893,8 @@ function applyPostedCard(data, text){
     let best = -999, games = [];
     unique.forEach(g => {
       if (String(g.sport || "").toUpperCase() !== r[1]) return;
-      const mark = Math.max(teamPickScore(g.away && g.away.name, r[3]), teamPickScore(g.home && g.home.name, r[3]));
+      const sides = slateSides(g);
+      const mark = Math.max(teamPickScore(sides.away.name, r[3]), teamPickScore(sides.home.name, r[3]));
       if (mark > best) { best = mark; games = [g]; }
       else if (mark === best && mark > 0) games.push(g);
     });
@@ -1915,7 +1928,51 @@ async function loadPickSlate(){
       drawPickSlate();
       drawCalendar();
     }
+    refreshSlateRecords();
   } catch (err) {}
+}
+function teamSide(c){
+  const team = Object.assign({}, (c && c.team) || {});
+  const recs = (c && c.records) || [];
+  const overall = recs.find(r => /overall|total/i.test(String(r.name || r.type || ""))) || recs[0];
+  if (overall && overall.summary) team.record = overall.summary;
+  return team;
+}
+function sameClub(a, b){
+  const left = String(a || "").toLowerCase();
+  const right = String(b || "").toLowerCase();
+  if (!left || !right) return false;
+  if (left === right) return true;
+  const nick = s => s.split(/\s+/).slice(-1)[0];
+  return nick(left) === nick(right) && nick(left).length > 3;
+}
+async function refreshSlateRecords(){
+  if (!pickSlate || !Array.isArray(pickSlate.games) || !pickSlate.games.length) return;
+  const date = pickSlate.date || easternDay();
+  const sports = [...new Set(pickSlate.games.concat(pickSlate.passed || []).map(g => g.sport).filter(s => SCORE_FEED[s]))];
+  const found = [];
+  for (const sport of sports) found.push(...await scoreboard(sport, date).catch(() => []));
+  if (!found.length) return;
+  let changed = false;
+  const apply = g => {
+    if (!g) return;
+    const sides = slateSides(g);
+    const hit = found.find(row => row.sport === g.sport && sameClub(row.away.displayName, sides.away.name) && sameClub(row.home.displayName, sides.home.name));
+    if (!hit) return;
+    if (hit.away.record && sides.away.record !== hit.away.record) {
+      g.awayRecord = hit.away.record;
+      if (g.away) g.away.record = hit.away.record;
+      changed = true;
+    }
+    if (hit.home.record && sides.home.record !== hit.home.record) {
+      g.homeRecord = hit.home.record;
+      if (g.home) g.home.record = hit.home.record;
+      changed = true;
+    }
+  };
+  pickSlate.games.forEach(apply);
+  (pickSlate.passed || []).forEach(apply);
+  if (changed) drawPickSlate();
 }
 function seasonEnded(sport){ const end = SEASON_END[String(sport || "").toUpperCase()]; return !!end && easternDay() > end; }
 let seasonChecked = "";
@@ -3457,10 +3514,12 @@ async function scoreboard(sport, date){
   return (data.events || []).map(ev => {
     const comp = (ev.competitions || [])[0] || {};
     const teams = comp.competitors || [];
-    const home = teams.find(t => t.homeAway === "home") || {};
-    const away = teams.find(t => t.homeAway === "away") || {};
+    const homeSide = teams.find(t => t.homeAway === "home") || {};
+    const awaySide = teams.find(t => t.homeAway === "away") || {};
+    const home = teamSide(homeSide);
+    const away = teamSide(awaySide);
     const status = (comp.status && comp.status.type) || {};
-    return {sport, date, final: status.completed === true || /final/i.test(status.name || status.description || ""), postponed: /postpon|cancel|delay/i.test(status.name || ""), home: home.team || {}, away: away.team || {}, homeScore: Number(home.score), awayScore: Number(away.score)};
+    return {sport, date, final: status.completed === true || /final/i.test(status.name || status.description || ""), postponed: /postpon|cancel|delay/i.test(status.name || ""), home: home, away: away, homeScore: Number(homeSide.score), awayScore: Number(awaySide.score)};
   }).filter(g => g.home.displayName && g.away.displayName);
 }
 document.getElementById("livescores").onclick = async () => {
