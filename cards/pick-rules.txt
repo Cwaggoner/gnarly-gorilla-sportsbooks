@@ -1,26 +1,28 @@
-# Pick rules updated 2026-10-23
-# Record that night: 3-10, about -$65 on $10 bets.
-# Wins: Bulls at Raptors Under 237.5 (227), Flyers ML +166 (3-1), Flyers at Sabres Under 6 (4).
-# Losses: Bulls +10.5 (lost by 43), Mavericks +9.5 (lost by 18), Warriors +6.5 (lost by 22),
-# Mavericks at Rockets Under 230.5 (238), both NBA dog-plus-under SGPs,
-# Panthers ML +102 (lost 1-5), Sam Houston +2.5 (lost by 6),
-# New Mexico State at Sam Houston Under 45.5 (54), and that CFB SGP.
+# Pick rules updated 2026-10-24
+# Through 2026-10-23 the card since October 12 was 65-68, +$12.
+# Spreads in that stretch were 30-21, +$53. Side-plus-total parlays were 8-17, -$15.
+# The baseball version of that parlay was 1-6, -$41.
+# 2026-10-24 so far: Michigan +7.5 won. Leafs ML won. Navy +3 lost by 10.
+# Sharks ML and Kings ML lost. Rays under 6.5 and the Rays run-line parlay both died at 8 runs.
+# That parlay was a replay of the 2026-10-23 winner.
 
 These rules override the 2026-10-12 habit of carding every dog of 5.5 or more and pairing it with the under.
+They also override every must-play line that waived a price rule.
 
 1. One dog spread per sport per day. Not three.
 2. A dog spread of +8 or more is not a play in the first 10 games of a season. Pass the game.
-3. Do not build a same-game parlay of a dog spread plus the under. A blowout cashes the under and kills the dog. The Bulls game did that: under won, dog lost by 43, parlay lost.
-4. One named under is allowed. Do not also bet that game's dog.
-5. A moneyline dog must be +140 or longer. +102 is a pick'em. Pass it. The Flyers were +166 and won. The Panthers were +102 and lost by 4.
-6. A college spread inside 7 is not a play. Sam Houston +2.5 lost by 6.
+3. No side-plus-total parlay. A moneyline, a puck line, a run line, and a spread all count as the side. A blowout cashes the under and kills the side. The Bulls game did that. The Rays parlay on 2026-10-24 did it the other way: the total was already 8, so both tickets died.
+4. One play per game. Do not bet the under and also bet a parlay that includes that under. One named under is allowed for the day. Do not also bet that game's dog.
+5. A moneyline dog must be +140 or longer. +102 is a pick'em. Pass it. One moneyline dog per sport. Not three. The Flyers were +166 and won. On 2026-10-24 the Leafs won and the Sharks and Kings lost.
+6. A college spread inside 7 is not a play. Sam Houston +2.5 lost by 6. Navy +3 lost by 10.
 7. A college total under 48 is not a play. 45.5 went to 54.
-8. A standalone NHL total is not a play. A total is allowed only as the second leg with a moneyline already priced +140 or longer.
+8. A standalone NHL total is not a play. Do not add it as a second leg either.
 9. If no number fits, write No Picks for that sport. Do not force a dog onto a bad number.
-10. NBA MUST PLAY: If the Indiana Pacers play today, that game is on the card. Do not write No Picks while they play. One Pacers straight. While Tyrese Haliburton is active, card the Pacers spread. Do not lay a Pacers moneyline of -150 or shorter. Do not pair a Pacers dog with the under. If the Pacers do not play, do not invent a game.
-11. HALIBURTON CHECK: Read the injury report before the card. If he is out or doubtful, do not take the Pacers side. Still include the game: card the dog or the named under. If he is questionable or on a minutes limit, take the dog or the under unless the Pacers spread is small. Resume the Pacers side only when he is playing with no restriction.
-12. CFB MUST PLAY: If Indiana (IU), Army, Navy, or Air Force is on today's college football schedule, that game is on the card. Include every one of those games. Do not write No Picks while one of them plays. These games are the exception to the two-play cap, the spread-inside-7 pass, and the total-under-48 pass. Card one straight on each game: the dog, or the named under if there is no dog, or a moneyline dog of +140 or longer. Do not lay a moneyline of -150 or shorter. Name the game on every total. If none of these teams play, do not invent a game.
-13. CBB MUST PLAY: If Indiana (IU), Purdue, or Notre Dame is on today's college basketball schedule, that game is on the card. Include every one of those games. Do not write No Picks while one of them plays. These games are the exception to the one-dog cap and the first-10-games pass on a dog of +8 or more. Card one straight on each game: the dog spread, or a named under, or a moneyline dog of +140 or longer. Do not lay a moneyline of -150 or shorter. Do not pair the dog with the under. If none of these teams play, do not invent a game. Before 2026-11-02 this rule does not start a card.
-14. NFL MUST PLAY: If the Indianapolis Colts play today, that game is on the card. Do not write No Picks while they play. This game is the exception to the one-dog cap. Card one straight: the dog, or the named under, or a moneyline dog of +140 or longer. Do not lay a moneyline of -150 or shorter. Name the game on every total. If the Colts do not play, do not invent a game.
-15. SLATE FILE: cards/scoreboard.json is the full day's scoreboard. Leave it in place when the card is combined. cards/pick-slate.json games are only the games on that day's card, and every other scoreboard game goes in passed. Never write an empty pick-slate.json. An empty file takes the picks off the Seasons card.
-
+10. Six plays is the cap for the whole card. A must-play that has a legal number comes first. Cut the rest. October 23 was six plays and went 5-1.
+11. Do not replay a ticket because it won last night. The Rays under and the Rays parlay were carded on 2026-10-24 because the same bets won on 2026-10-23.
+12. NBA MUST PLAY: If the Indiana Pacers play today, look at that game before writing No Picks. One Pacers play, and only if the number passes rules 1 through 11. While Tyrese Haliburton is active, the Pacers spread is allowed when it is a dog that passes rule 2. Do not lay a Pacers moneyline of -150 or shorter. Do not lay a short Pacers spread just to put them on the card. If no number passes, write the pass and the reason. If the Pacers do not play, do not invent a game.
+13. HALIBURTON CHECK: Read the injury report before the card. If he is out or doubtful, do not take the Pacers side. Card the dog or the named under only when that number passes rules 1 through 11. If he is questionable or on a minutes limit, take the dog or the under unless the Pacers spread is small. Resume the Pacers side only when he is playing with no restriction.
+14. CFB MUST PLAY: If Indiana (IU), Army, Navy, or Air Force is on today's college football schedule, look at that game. These games do not waive the inside-7 pass or the total-under-48 pass. If the dog is inside 7, the play is a named under or a moneyline dog of +140 or longer. If neither exists, that game is a pass. One play on the game. Do not lay a moneyline of -150 or shorter. Name the game on every total. If none of these teams play, do not invent a game.
+15. CBB MUST PLAY: If Indiana (IU), Purdue, or Notre Dame is on today's college basketball schedule, look at that game. These games do not waive the one-dog cap or the first-10-games pass on a dog of +8 or more. Card the dog spread, a named under, or a moneyline dog of +140 or longer, and only when the number passes rules 1 through 11. If it does not, that game is a pass. Do not lay a moneyline of -150 or shorter. If none of these teams play, do not invent a game. Before 2026-11-02 this rule does not start a card.
+16. NFL MUST PLAY: If the Indianapolis Colts play today, look at that game. This game does not waive the one-dog cap. Card the dog, a named under, or a moneyline dog of +140 or longer, and only when the number passes rules 1 through 11. If it does not, that game is a pass. Do not lay a moneyline of -150 or shorter. Name the game on every total. If the Colts do not play, do not invent a game.
+17. SLATE FILE: cards/scoreboard.json is the full day's scoreboard. Leave it in place when the card is combined. cards/pick-slate.json games are only the games on that day's card, and every other scoreboard game goes in passed. Never write an empty pick-slate.json. An empty file takes the picks off the Seasons card.
