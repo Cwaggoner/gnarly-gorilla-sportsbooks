@@ -1929,6 +1929,7 @@ async function loadPickSlate(){
       drawCalendar();
     }
     refreshSlateRecords();
+    armHourlyScores();
   } catch (err) {}
 }
 function teamSide(c){
@@ -3519,26 +3520,44 @@ async function scoreboard(sport, date){
     const home = teamSide(homeSide);
     const away = teamSide(awaySide);
     const status = (comp.status && comp.status.type) || {};
-    return {sport, date, final: status.completed === true || /final/i.test(status.name || status.description || ""), postponed: /postpon|cancel|delay/i.test(status.name || ""), home: home, away: away, homeScore: Number(homeSide.score), awayScore: Number(awaySide.score)};
+    return {sport, date, final: status.completed === true || /final/i.test(status.name || status.description || ""), postponed: /postpon|cancel|delay/i.test(status.name || ""), home: home, away: away, homeScore: Number(homeSide.score), awayScore: Number(awaySide.score), start: Date.parse(ev.date || "")};
   }).filter(g => g.home.displayName && g.away.displayName);
 }
-document.getElementById("livescores").onclick = async () => {
+let scoreTimer = 0;
+let scoreLoop = 0;
+let scoreBusy = false;
+let scoreArmedFor = 0;
+function firstGameStart(date){
+  const list = ((pickSlate && pickSlate.games) || []).concat((pickSlate && pickSlate.passed) || []);
+  const times = list.map(g => Date.parse(g.start)).filter(ms => Number.isFinite(ms) && slateDateOf(ms) === date);
+  return times.length ? Math.min.apply(null, times) : NaN;
+}
+async function gradeFinishedSlips(quiet){
   const note = document.getElementById("scorenote");
   const button = document.getElementById("livescores");
-  if (button.disabled) return;
-  button.disabled = true;
-  note.textContent = "Checking live scores...";
+  if (scoreBusy) {
+    if (note && !quiet) note.textContent = "Score check already running.";
+    return {graded: 0, live: 0, left: 0};
+  }
+  scoreBusy = true;
+  if (button && !quiet) button.disabled = true;
+  if (note && !quiet) note.textContent = "Checking live scores...";
   try {
-    await Promise.all([loadCalendarFile().catch(() => {}), refreshTodayCard().catch(() => {})]);
     const pending = load().filter(b => b && b.result === "pending" && !isNoPick(b) && inSlipWindow(b.date));
-    if (!pending.length) { note.textContent = "No pending slips to grade."; return; }
+    if (!pending.length) {
+      if (note && !quiet) note.textContent = "No pending slips to grade.";
+      return {graded: 0, live: 0, left: 0};
+    }
     const sports = [...new Set(pending.map(b => String(b.sport || "").toUpperCase()))].filter(s => SCORE_FEED[s]);
     const dates = [...new Set(pending.map(b => String(b.date || "").slice(0, 10)))];
     const games = [];
     for (const sport of sports) {
       for (const date of dates) games.push(...await scoreboard(sport, date).catch(() => []));
     }
-    if (!games.length) { note.textContent = "Score feed did not answer. No slips were changed."; return; }
+    if (!games.length) {
+      if (note && !quiet) note.textContent = "Score feed did not answer. No slips were changed.";
+      return {graded: 0, live: 0, left: 0};
+    }
     const bets = load();
     let graded = 0, live = 0, left = 0;
     const touched = new Set();
@@ -3555,18 +3574,43 @@ document.getElementById("livescores").onclick = async () => {
       graded++;
       touched.add(b.date);
     });
-    localStorage.setItem(KEY, JSON.stringify(bets));
-    archiveSlips(bets);
-    touched.forEach(date => liveGradedDates.add(date));
-    localStorage.setItem("gg-live-graded", JSON.stringify([...liveGradedDates]));
-    render();
-    note.textContent = graded + " slips graded from final scores." + (live ? " " + live + " still in progress." : "") + (left ? " " + left + " left pending." : "") + (graded ? " Dashboard, report card, charts, and calendar updated." : "");
+    if (graded) {
+      localStorage.setItem(KEY, JSON.stringify(bets));
+      archiveSlips(bets);
+      touched.forEach(date => liveGradedDates.add(date));
+      localStorage.setItem("gg-live-graded", JSON.stringify([...liveGradedDates]));
+      render();
+    }
+    if (note && (!quiet || graded)) note.textContent = graded + " slips graded from final scores." + (live ? " " + live + " still in progress." : "") + (left ? " " + left + " left pending." : "") + (graded ? " Slips and calendar updated." : "");
+    return {graded, live, left};
   } catch (err) {
-    note.textContent = "Score check failed. No slips were changed.";
+    if (note && !quiet) note.textContent = "Score check failed. No slips were changed.";
+    return {graded: 0, live: 0, left: 0};
   } finally {
-    button.disabled = false;
+    scoreBusy = false;
+    if (button) button.disabled = false;
   }
-};
+}
+function armHourlyScores(){
+  const first = firstGameStart(easternDay());
+  if (!Number.isFinite(first)) return;
+  if (scoreArmedFor === first && (scoreTimer || scoreLoop)) return;
+  scoreArmedFor = first;
+  clearTimeout(scoreTimer);
+  clearInterval(scoreLoop);
+  scoreLoop = 0;
+  const last = Number(localStorage.getItem("gg-score-check") || 0);
+  const due = Date.now() < first ? first - Date.now() : Math.max(0, 3600000 - (Date.now() - last));
+  const run = () => {
+    gradeFinishedSlips(true).finally(() => localStorage.setItem("gg-score-check", String(Date.now())));
+  };
+  scoreTimer = setTimeout(() => {
+    scoreTimer = 0;
+    run();
+    scoreLoop = setInterval(run, 3600000);
+  }, due);
+}
+document.getElementById("livescores").onclick = () => gradeFinishedSlips(false);
 document.getElementById("savedash").onclick = () => {
   const rows = JSON.parse(localStorage.getItem("gg-dashboard-v1") || "[]");
   const name = "GG-DASHBOARD-" + easternDay();
@@ -4258,6 +4302,7 @@ tzSelect.onchange = () => {
   render();
   if (openDate) openDay(openDate);
   showSeasons();
+  armHourlyScores();
 };
 const hourBtn = document.getElementById("hourmode");
 hourBtn.textContent = "12hr/24hr Toggle";
@@ -4272,6 +4317,14 @@ hourBtn.onclick = () => {
 };
 showClock();
 setInterval(showClock, 1000);
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState !== "visible") return;
+  const first = firstGameStart(easternDay());
+  if (!Number.isFinite(first) || Date.now() < first) return;
+  const last = Number(localStorage.getItem("gg-score-check") || 0);
+  if (Date.now() - last < 3600000) return;
+  gradeFinishedSlips(true).finally(() => localStorage.setItem("gg-score-check", String(Date.now())));
+});
 document.getElementById("prevMonth").onclick = () => { monthCursor.setMonth(monthCursor.getMonth()-1); monthFollowsToday = monthCursor.getFullYear() === Number(easternDay().slice(0,4)) && monthCursor.getMonth() === Number(easternDay().slice(5,7)) - 1; render(); };
 document.getElementById("nextMonth").onclick = () => { monthCursor.setMonth(monthCursor.getMonth()+1); monthFollowsToday = monthCursor.getFullYear() === Number(easternDay().slice(0,4)) && monthCursor.getMonth() === Number(easternDay().slice(5,7)) - 1; render(); };
 [KEY, GRADE_KEY].forEach(k => {
