@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-24T04:00-04:00",
+  "updated": "2026-10-25T07:20-04:00",
   "source": "ESPN scoreboard DraftKings price. Other books stay blank until a paid key is committed.",
   "days": {
     "2026-10-23": {
@@ -3326,6 +3326,950 @@
             "BetMGM": "-",
             "Caesars": "-",
             "DraftKings": "6.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        }
+      ]
+    },
+    "2026-10-25": {
+      "h2h": [
+        {
+          "sport": "NBA",
+          "label": "Detroit Pistons at Philadelphia 76ers",
+          "start": "2026-10-25T23:30Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "+120 / -142",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "Indiana Pacers at Brooklyn Nets",
+          "start": "2026-10-25T22:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "-270 / +220",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "LA Clippers at Oklahoma City Thunder",
+          "start": "2026-10-25T23:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "+800 / -1350",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "Los Angeles Lakers at Utah Jazz",
+          "start": "2026-10-25T21:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "-245 / +200",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "Memphis Grizzlies at Sacramento Kings",
+          "start": "2026-10-26T01:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "-175 / +145",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "Orlando Magic at New York Knicks",
+          "start": "2026-10-25T23:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "+250 / -310",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "Toronto Raptors at Minnesota Timberwolves",
+          "start": "2026-10-25T23:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "-105 / -115",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "Cincinnati Bengals at Baltimore Ravens",
+          "start": "2026-10-25T17:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "-148 / +124",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "Cleveland Browns at Tennessee Titans",
+          "start": "2026-10-25T17:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "-130 / +110",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "Denver Broncos at Arizona Cardinals",
+          "start": "2026-10-25T20:05Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "-225 / +185",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "Green Bay Packers at Detroit Lions",
+          "start": "2026-10-25T20:25Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "+154 / -185",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "Indianapolis Colts at Minnesota Vikings",
+          "start": "2026-10-25T17:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "+260 / -325",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "Kansas City Chiefs at Seattle Seahawks",
+          "start": "2026-10-26T00:20Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "+120 / -142",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "Los Angeles Rams at Las Vegas Raiders",
+          "start": "2026-10-25T20:25Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "-175 / +145",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "Miami Dolphins at New York Jets",
+          "start": "2026-10-25T17:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "+185 / -225",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "New York Giants at Houston Texans",
+          "start": "2026-10-25T17:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "+390 / -520",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "Pittsburgh Steelers at New Orleans Saints",
+          "start": "2026-10-25T13:30Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "-162 / +136",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "San Francisco 49ers at Atlanta Falcons",
+          "start": "2026-10-25T17:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "-142 / +120",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "Tampa Bay Buccaneers at Carolina Panthers",
+          "start": "2026-10-25T17:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "+130 / -155",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NHL",
+          "label": "Colorado Avalanche at Nashville Predators",
+          "start": "2026-10-26T00:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "-230 / +190",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NHL",
+          "label": "Florida Panthers at Chicago Blackhawks",
+          "start": "2026-10-25T19:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "-180 / +150",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NHL",
+          "label": "Minnesota Wild at Vancouver Canucks",
+          "start": "2026-10-26T02:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "-180 / +150",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NHL",
+          "label": "Montreal Canadiens at Winnipeg Jets",
+          "start": "2026-10-25T23:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "-122 / +102",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NHL",
+          "label": "New York Islanders at Dallas Stars",
+          "start": "2026-10-25T22:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "+164 / -198",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        }
+      ],
+      "spreads": [
+        {
+          "sport": "NBA",
+          "label": "Detroit Pistons at Philadelphia 76ers",
+          "start": "2026-10-25T23:30Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "PHI -2.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "Indiana Pacers at Brooklyn Nets",
+          "start": "2026-10-25T22:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "IND -6.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "LA Clippers at Oklahoma City Thunder",
+          "start": "2026-10-25T23:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "OKC -15.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "Los Angeles Lakers at Utah Jazz",
+          "start": "2026-10-25T21:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "LAL -6.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "Memphis Grizzlies at Sacramento Kings",
+          "start": "2026-10-26T01:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "MEM -4.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "Orlando Magic at New York Knicks",
+          "start": "2026-10-25T23:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "NY -7.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "Toronto Raptors at Minnesota Timberwolves",
+          "start": "2026-10-25T23:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "MIN -1.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "Cincinnati Bengals at Baltimore Ravens",
+          "start": "2026-10-25T17:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "CIN -3",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "Cleveland Browns at Tennessee Titans",
+          "start": "2026-10-25T17:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "CLE -1.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "Denver Broncos at Arizona Cardinals",
+          "start": "2026-10-25T20:05Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "DEN -4.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "Green Bay Packers at Detroit Lions",
+          "start": "2026-10-25T20:25Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "DET -3.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "Indianapolis Colts at Minnesota Vikings",
+          "start": "2026-10-25T17:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "MIN -6.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "Kansas City Chiefs at Seattle Seahawks",
+          "start": "2026-10-26T00:20Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "SEA -3",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "Los Angeles Rams at Las Vegas Raiders",
+          "start": "2026-10-25T20:25Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "LAR -3",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "Miami Dolphins at New York Jets",
+          "start": "2026-10-25T17:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "NYJ -4.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "New York Giants at Houston Texans",
+          "start": "2026-10-25T17:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "HOU -10.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "Pittsburgh Steelers at New Orleans Saints",
+          "start": "2026-10-25T13:30Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "PIT -3",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "San Francisco 49ers at Atlanta Falcons",
+          "start": "2026-10-25T17:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "SF -2.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "Tampa Bay Buccaneers at Carolina Panthers",
+          "start": "2026-10-25T17:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "CAR -3",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NHL",
+          "label": "Colorado Avalanche at Nashville Predators",
+          "start": "2026-10-26T00:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "COL -230",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NHL",
+          "label": "Florida Panthers at Chicago Blackhawks",
+          "start": "2026-10-25T19:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "FLA -180",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NHL",
+          "label": "Minnesota Wild at Vancouver Canucks",
+          "start": "2026-10-26T02:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "MIN -180",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NHL",
+          "label": "Montreal Canadiens at Winnipeg Jets",
+          "start": "2026-10-25T23:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "MTL -122",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NHL",
+          "label": "New York Islanders at Dallas Stars",
+          "start": "2026-10-25T22:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "DAL -198",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        }
+      ],
+      "totals": [
+        {
+          "sport": "NBA",
+          "label": "Detroit Pistons at Philadelphia 76ers",
+          "start": "2026-10-25T23:30Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "227.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "Indiana Pacers at Brooklyn Nets",
+          "start": "2026-10-25T22:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "231.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "LA Clippers at Oklahoma City Thunder",
+          "start": "2026-10-25T23:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "222.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "Los Angeles Lakers at Utah Jazz",
+          "start": "2026-10-25T21:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "237.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "Memphis Grizzlies at Sacramento Kings",
+          "start": "2026-10-26T01:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "236.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "Orlando Magic at New York Knicks",
+          "start": "2026-10-25T23:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "223.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "Toronto Raptors at Minnesota Timberwolves",
+          "start": "2026-10-25T23:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "231.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "Cincinnati Bengals at Baltimore Ravens",
+          "start": "2026-10-25T17:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "46.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "Cleveland Browns at Tennessee Titans",
+          "start": "2026-10-25T17:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "36.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "Denver Broncos at Arizona Cardinals",
+          "start": "2026-10-25T20:05Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "43.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "Green Bay Packers at Detroit Lions",
+          "start": "2026-10-25T20:25Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "55.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "Indianapolis Colts at Minnesota Vikings",
+          "start": "2026-10-25T17:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "41.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "Kansas City Chiefs at Seattle Seahawks",
+          "start": "2026-10-26T00:20Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "42.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "Los Angeles Rams at Las Vegas Raiders",
+          "start": "2026-10-25T20:25Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "48.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "Miami Dolphins at New York Jets",
+          "start": "2026-10-25T17:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "39.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "New York Giants at Houston Texans",
+          "start": "2026-10-25T17:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "42.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "Pittsburgh Steelers at New Orleans Saints",
+          "start": "2026-10-25T13:30Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "43.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "San Francisco 49ers at Atlanta Falcons",
+          "start": "2026-10-25T17:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "50.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NFL",
+          "label": "Tampa Bay Buccaneers at Carolina Panthers",
+          "start": "2026-10-25T17:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "44.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NHL",
+          "label": "Colorado Avalanche at Nashville Predators",
+          "start": "2026-10-26T00:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "6.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NHL",
+          "label": "Florida Panthers at Chicago Blackhawks",
+          "start": "2026-10-25T19:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "6.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NHL",
+          "label": "Minnesota Wild at Vancouver Canucks",
+          "start": "2026-10-26T02:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "6.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NHL",
+          "label": "Montreal Canadiens at Winnipeg Jets",
+          "start": "2026-10-25T23:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "5.5",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NHL",
+          "label": "New York Islanders at Dallas Stars",
+          "start": "2026-10-25T22:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "5.5",
             "Fanatics": "-",
             "FanDuel": "-",
             "HardRock": "-"
