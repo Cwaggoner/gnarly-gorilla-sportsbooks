@@ -781,7 +781,12 @@ function profitCell(n){
   if (Math.abs(Number(n)) < 0.005) return "<span class='zero'>Break Even</span>";
   return moneyHtml(n);
 }
-function publishedDashboard(){
+function pendingOnCard(date){
+  const rows = pendingSlips();
+  if (!date) return rows.length;
+  return rows.filter(b => String(b.date || "").slice(0, 10) === date).length;
+}
+function publishedDashboard(only){
   const slips = (gradeFile || []).filter(b => b && b.date && !isNoPick(b) && (b.result === "win" || b.result === "loss" || b.result === "push")).map(b => {
     const close = closeMap[b.date + "|" + b.pick];
     return close ? Object.assign({}, b, {close}) : b;
@@ -792,8 +797,8 @@ function publishedDashboard(){
     const close = closeMap[b.date + "|" + b.pick];
     slips.push(close ? Object.assign({}, b, {close}) : b);
   });
-  const open = openSlips();
-  return lastSevenDates().map(date => {
+  const dates = Array.isArray(only) && only.length ? only : lastSevenDates();
+  return dates.map(date => {
     const day = publishedCalendar[date] || {};
     const lines = slips.filter(b => b.date === date);
     const fromLines = lines.length > 0;
@@ -815,7 +820,7 @@ function publishedDashboard(){
       staked,
       roi: roiText(profit, staked),
       units: Number.isFinite(Number(profit)) ? (profit / UNIT).toFixed(2) + "u" : "-",
-      pending: open.filter(b => String(b.date || "").slice(0, 10) === date).length,
+      pending: pendingOnCard(date),
       clv: dayClv
     };
   });
@@ -832,8 +837,13 @@ function drawDashboard(history, manual){
   let manualRows = null;
   if (!manual) { try { manualRows = JSON.parse(sessionStorage.getItem("gg-dashboard-manual") || "null"); } catch (e) { manualRows = null; } }
   const rows = (manual ? history.slice() : (manualRows || publishedDashboard())).map(ruleRow);
+  rows.forEach(row => { row.pending = pendingOnCard(row.date); });
+  const today = easternDay();
+  const live = rows.some(row => row.date === today) ? null : publishedDashboard([today])[0];
+  if (live) live.pending = pendingOnCard(today);
   if (!manual && !manualRows) localStorage.setItem("gg-dashboard-v1", JSON.stringify(rows));
   const shown = rows;
+  const tableRows = live ? shown.concat([ruleRow(live)]) : shown;
   const profit = shown.reduce((s, row) => s + (Number(row.profit) || 0), 0);
   const staked = shown.reduce((s, row) => s + rowStake(row), 0);
   let wins = 0, losses = 0, pushes = 0;
@@ -843,7 +853,7 @@ function drawDashboard(history, manual){
     wins += parts[0] || 0; losses += parts[1] || 0; pushes += parts[2] || 0;
   });
   const clvs = shown.map(row => row.clv === "Matched Bet Price" ? 0 : parseFloat(String(row.clv).replace("%", ""))).filter(n => Number.isFinite(n));
-  const pendingNow = openSlips().filter(b => inSlipWindow(b.date)).length;
+  const pendingNow = pendingOnCard();
   document.getElementById("stats").innerHTML = [
     [wins + "-" + losses + "-" + pushes, "7-Day W/L Record"],
     [profitCell(profit), "7-Day Profit"],
@@ -852,7 +862,7 @@ function drawDashboard(history, manual){
     [pendingNow, "Pending Slips"],
     [clvs.length ? (clvs.reduce((s, n) => s + n, 0) / clvs.length).toFixed(1) + "%" : "No Close Saved", "7-Day Avg CLV"]
   ].map(x => "<div class='stat'><b>" + x[0] + "</b><span>" + x[1] + "</span></div>").join("");
-  document.getElementById("dashrows").innerHTML = shown.map(row => "<tr><td>" + row.date + "</td><td>" + row.record + "</td><td>" + profitCell(row.profit) + "</td><td>" + row.roi + "</td><td>" + row.units + "</td><td>" + (Number(row.pending) === 0 ? "0 - All Pending Has Been Graded" : row.pending) + "</td><td>" + (row.clv === "-" || row.clv == null || row.clv === "" ? "No Close Saved" : row.clv) + "</td></tr>").join("");
+  document.getElementById("dashrows").innerHTML = tableRows.map(row => "<tr><td>" + row.date + "</td><td>" + row.record + "</td><td>" + profitCell(row.profit) + "</td><td>" + row.roi + "</td><td>" + row.units + "</td><td>" + (Number(row.pending) === 0 ? "0 - All Pending Has Been Graded" : row.pending) + "</td><td>" + (row.clv === "-" || row.clv == null || row.clv === "" ? "No Close Saved" : row.clv) + "</td></tr>").join("");
   const canvas = document.getElementById("dashChart");
   const ctx = canvas.getContext("2d");
   const w = Math.max(320, canvas.clientWidth || 640);
