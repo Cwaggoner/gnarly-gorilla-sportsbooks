@@ -1696,7 +1696,7 @@ function drawPassedSlate(){
   const passed = pickSlate && Array.isArray(pickSlate.passed) ? pickSlate.passed : [];
   const date = (pickSlate && pickSlate.date) || easternDay();
   const cardBox = document.getElementById("cardgames");
-  if (cardBox) cardBox.innerHTML = games.length ? "<p class='warn passed-note'>Posted matchups. Add puts an extra slip in this browser. The posted picks stay.</p>" + slateTable(games, date) : "";
+  if (cardBox) cardBox.innerHTML = games.length ? "<p class='warn passed-note'>Posted matchups. Add puts an extra slip in this browser. The posted picks stay.</p>" + slateTable(games, date, true) : "";
   if (!games.length && !passed.length) return;
   const used = matchupGames();
   const keys = new Set((used || []).map(g => g.sport + "|" + g.game));
@@ -1712,7 +1712,7 @@ function drawPassedSlate(){
   passed.forEach(add);
   if (used) games.forEach(add);
   if (note) note.textContent = left.length ? "Games on " + date + " that did not make the day's matchups." : "Every posted game on " + date + " made the day's matchups.";
-  box.innerHTML = left.length ? slateTable(left, date) : "";
+  box.innerHTML = left.length ? slateTable(left, date, true) : "";
 }
 function teamCodes(name){
   const words = String(name || "").replace(/[^A-Za-z ]/g, "").split(/\s+/).filter(Boolean);
@@ -1809,7 +1809,7 @@ function slateDateLabel(date){
   const stamp = new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]), 16));
   return stamp.toLocaleDateString("en-US", {timeZone: "UTC", month: "long", day: "numeric", year: "numeric"});
 }
-function slateTable(list, date){
+function slateTable(list, date, extra){
   const order = ["CBB","CFB","MLB","NBA","NFL","NHL"];
   const games = (Array.isArray(list) ? list : []).slice().sort((a, b) => {
     const sport = order.indexOf(a.sport) - order.indexOf(b.sport);
@@ -1822,8 +1822,8 @@ function slateTable(list, date){
     const home = game.home || {};
     const when = game.start ? formatTime(game.start, false) : "";
     const records = [away.name, away.record].filter(Boolean).join(" ") + " / " + [home.name, home.record].filter(Boolean).join(" ");
-    const add = "<button type='button' class='add-game' data-sport='" + encodeURIComponent(game.sport || "") + "' data-game='" + encodeURIComponent(game.game || "") + "' data-date='" + encodeURIComponent(date || "") + "'>Add</button>";
-    return "<tr><td>" + esc(game.sport + " " + game.game) + " " + add + "</td><td>" + esc(when) + "</td><td>" + esc(game.location || "") + "</td><td>" + esc(records) + "</td></tr>";
+    const add = extra ? " <button type='button' class='add-game' data-sport='" + encodeURIComponent(game.sport || "") + "' data-game='" + encodeURIComponent(game.game || "") + "' data-date='" + encodeURIComponent(date || "") + "'>Add</button>" : "";
+    return "<tr><td>" + esc(game.sport + " " + game.game) + add + "</td><td>" + esc(when) + "</td><td>" + esc(game.location || "") + "</td><td>" + esc(records) + "</td></tr>";
   }).join("");
   const label = slateDateLabel(date);
   const gameHead = label ? "<th><div class='gamehead'><span>Game</span><span class='slate-date'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + esc(label) + "</span></div></th>" : "<th>Game</th>";
