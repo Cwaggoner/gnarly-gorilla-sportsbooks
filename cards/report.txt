@@ -1,14 +1,16 @@
-# GG report 2026-10-23
-# Yesterday 2026-10-23 graded. Record 5-1-0. Profit $42.94. CLV +0.2%.
+# GG report 2026-10-24
+# Yesterday 2026-10-24 graded. Record 3-5-0. Profit $-20.95. CLV Matched Bet Price.
 
-Analysis: Friday cashed the service academy dogs and the Rays total/run-line combo. Army +1.5 won 38-35. Wyoming +5.5 won 28-14. Rays Under 6.5 and Rays +1.5 both cashed in a 3-2 loss, and the same-game parlay cashed. Pacers -6.5 lost 121-105.
+Analysis: Saturday cashed the Michigan home dog in a 13-6 win and the Rays run line in a 4-5 loss. Navy lost a 49-39 shootout. The Rays under and same-game parlay lost. Leafs moneyline won 7-2. Sharks and Kings moneyline dogs lost.
 
-2026-10-23 | CFB | win | Army +1.5
-2026-10-23 | CFB | win | Wyoming +5.5
-2026-10-23 | MLB | win | Under 6.5 Rays @ Brewers | EDGE
-2026-10-23 | MLB | win | Rays +1.5 | EDGE
-2026-10-23 | MLB | win | Rays +1.5 and Under 6.5 Rays @ Brewers | EDGE
-2026-10-23 | NBA | loss | Pacers -6.5 | EDGE
-2026-10-23 | NHL | No Picks
-2026-10-23 | NFL | No Picks
-2026-10-23 | CBB | No Picks
+2026-10-24 | CFB | win | Michigan +7.5 | EDGE
+2026-10-24 | CFB | loss | Navy +3
+2026-10-24 | MLB | loss | Under 6.5 Rays @ Brewers | EDGE
+2026-10-24 | MLB | win | Rays +1.5 | EDGE
+2026-10-24 | MLB | loss | Rays +1.5 and Under 6.5 Rays @ Brewers | EDGE
+2026-10-24 | NBA | No Picks
+2026-10-24 | NHL | loss | San Jose Sharks ML | EDGE
+2026-10-24 | NHL | win | Toronto Maple Leafs ML
+2026-10-24 | NHL | loss | Los Angeles Kings ML
+2026-10-24 | NFL | No Picks
+2026-10-24 | CBB | No Picks
