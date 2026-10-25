@@ -291,7 +291,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <section class="card" id="liveodds"><div class="section-head"><h2>Live Odds</h2><p class="warn slips-side">Moneyline, spread, and total across books. Use Yesterday or Today.</p><button type="button" id="refreshodds">Refresh</button></div><div id="oddscompare"></div></section>
 <section class="card" id="todaycard">
 <div class="section-head"><h2>Today's Card</h2><p class="warn slips-side">One play per line: Sport | Type | Pick | American odds | Confidence. Stake is $10. Book is the dropdown below. Pending until graded.</p></div>
-<div class="card-analysis" id="cardanalysis"><h3>Analysis</h3><div class="analysis-grid" id="analysisgrid"></div><div class="sharp-read"><b>Analysis:</b><p id="sharpread"></p></div><p class="warn passed-note" id="passednote">Games being played that did not make the picks.</p><div id="passedslate"></div></div>
+<div class="card-analysis" id="cardanalysis"><h3>Analysis</h3><div class="analysis-grid" id="analysisgrid"></div><div class="sharp-read"><b>Analysis:</b><p id="sharpread"></p></div><div id="cardgames"></div><p class="warn passed-note" id="passednote">Games being played that did not make the picks.</p><div id="passedslate"></div></div>
 <div class="card-rest">
 <div class="book-key">
 <label>Book<select id="cardbook" class="book-select">
@@ -622,6 +622,12 @@ let rendering = false;
 function save(bets){
   localStorage.setItem(KEY, JSON.stringify(bets));
   if (!rendering) render();
+}
+function forgetManual(bet){
+  if (!bet) return load();
+  const same = b => b && b.manual && (String(b.id) === String(bet.id) || sameSlip(b, bet));
+  localStorage.setItem(GRADE_KEY, JSON.stringify(loadGrade().filter(b => !same(b))));
+  return load().filter(b => !same(b));
 }
 function slipMoney(b){
   if (!b || b.result === "pending") return 0;
@@ -1688,6 +1694,9 @@ function drawPassedSlate(){
   if (!box) return;
   const games = pickSlate && Array.isArray(pickSlate.games) ? pickSlate.games : [];
   const passed = pickSlate && Array.isArray(pickSlate.passed) ? pickSlate.passed : [];
+  const date = (pickSlate && pickSlate.date) || easternDay();
+  const cardBox = document.getElementById("cardgames");
+  if (cardBox) cardBox.innerHTML = games.length ? "<p class='warn passed-note'>Posted matchups. Add puts an extra slip in this browser. The posted picks stay.</p>" + slateTable(games, date) : "";
   if (!games.length && !passed.length) return;
   const used = matchupGames();
   const keys = new Set((used || []).map(g => g.sport + "|" + g.game));
@@ -1702,10 +1711,98 @@ function drawPassedSlate(){
   };
   passed.forEach(add);
   if (used) games.forEach(add);
-  const date = (pickSlate && pickSlate.date) || easternDay();
   if (note) note.textContent = left.length ? "Games on " + date + " that did not make the day's matchups." : "Every posted game on " + date + " made the day's matchups.";
   box.innerHTML = left.length ? slateTable(left, date) : "";
 }
+function teamCodes(name){
+  const words = String(name || "").replace(/[^A-Za-z ]/g, "").split(/\s+/).filter(Boolean);
+  const out = new Set();
+  if (!words.length) return out;
+  const city = words.slice(0, -1);
+  const nick = words[words.length - 1].toLowerCase();
+  out.add(nick);
+  if (city.length) {
+    out.add(city.join("").toLowerCase());
+    out.add(city.join("").slice(0, 3).toLowerCase());
+    out.add((city.map(w => w[0]).join("") + words[words.length - 1][0]).toLowerCase());
+  }
+  return out;
+}
+function teamForAbbr(abbr, away, home){
+  const code = String(abbr || "").toLowerCase();
+  const awayHit = teamCodes(away).has(code);
+  const homeHit = teamCodes(home).has(code);
+  if (homeHit && !awayHit) return "home";
+  if (awayHit && !homeHit) return "away";
+  return "";
+}
+function boardRow(list, game){
+  const name = String(game || "").toLowerCase();
+  return (list || []).find(r => String(r.label || "").toLowerCase() === name) || null;
+}
+function openGameBet(sport, game, date){
+  const awayHome = String(game || "").split(/\s+at\s+/i);
+  const away = (awayHome[0] || "").trim();
+  const home = (awayHome[1] || "").trim();
+  const nick = s => s.split(/\s+/).slice(-1)[0] || s;
+  form.date.value = date || easternDay();
+  if ([...form.sport.options].some(o => o.value === sport)) form.sport.value = sport;
+  const book = (document.getElementById("cardbook") || {}).value;
+  if (book && [...form.book.options].some(o => o.value === book)) form.book.value = book;
+  const sel = document.getElementById("pickselect");
+  sel.innerHTML = "<option value=''>Select a pick</option>";
+  const day = (window.__ggOddsBoard && window.__ggOddsBoard.days && window.__ggOddsBoard.days[form.date.value]) || {};
+  const money = boardRow(day.h2h, game);
+  const spread = boardRow(day.spreads, game);
+  const total = boardRow(day.totals, game);
+  const addOpt = (label, price, market) => {
+    const opt = document.createElement("option");
+    opt.value = label;
+    opt.textContent = label + (price === "" || price == null ? "" : " (" + price + ")");
+    if (price !== "" && price != null) { opt.dataset.price = price; opt.dataset.close = price; }
+    opt.dataset.market = market;
+    sel.appendChild(opt);
+  };
+  const ml = money && money.books && String(money.books.DraftKings || "");
+  const mlParts = ml.match(/([+-]\d+)\s*\/\s*([+-]\d+)/);
+  if (mlParts && away && home) {
+    addOpt(nick(away) + " ML at " + home, mlParts[1], "Moneyline");
+    addOpt(nick(home) + " ML vs " + away, mlParts[2], "Moneyline");
+  }
+  const sp = spread && spread.books && String(spread.books.DraftKings || "");
+  const spParts = sp.match(/^([A-Za-z]+)\s*([+-]?\d+(?:\.\d+)?)$/);
+  let dog = "";
+  if (spParts && away && home) {
+    const who = teamForAbbr(spParts[1], away, home);
+    const n = Number(spParts[2]);
+    const opp = (n > 0 ? "-" : "+") + Math.abs(n);
+    const fav = (n < 0 ? "" : "+") + n;
+    if (who === "home") {
+      addOpt(nick(home) + " " + (n > 0 ? "+" : "") + n + " vs " + away, "", "Spread");
+      addOpt(nick(away) + " " + opp + " at " + home, "", "Spread");
+      dog = n > 0 ? nick(home) + " " + "+" + n : nick(away) + " " + opp;
+    } else if (who === "away") {
+      addOpt(nick(away) + " " + (n > 0 ? "+" : "") + n + " at " + home, "", "Spread");
+      addOpt(nick(home) + " " + opp + " vs " + away, "", "Spread");
+      dog = n > 0 ? nick(away) + " " + "+" + n : nick(home) + " " + opp;
+    } else addOpt(away + " at " + home + " " + sp, "", "Spread");
+  }
+  const ou = total && total.books && String(total.books.DraftKings || "");
+  const ouNum = ou.match(/\d+(?:\.\d+)?/);
+  if (ouNum && away && home) {
+    addOpt(away + " at " + home + " Over " + ouNum[0], "", "Total");
+    addOpt(away + " at " + home + " Under " + ouNum[0], "", "Total");
+    if (dog) addOpt(dog + " and Under " + ouNum[0] + " " + away + " at " + home, "", "SGP");
+  }
+  document.getElementById("picknote").textContent = sel.options.length > 1 ? "Extra bet on " + game + ". Posted picks stay. Enter the odds when the box is empty, then Save Bet." : "No posted price for " + game + ". Choose the type and type the pick.";
+  document.getElementById("editnote").textContent = "";
+  document.getElementById("addbet").scrollIntoView({behavior:"smooth", block:"start"});
+}
+document.body.addEventListener("click", e => {
+  const btn = e.target.closest && e.target.closest(".add-game");
+  if (!btn) return;
+  openGameBet(decodeURIComponent(btn.dataset.sport || ""), decodeURIComponent(btn.dataset.game || ""), decodeURIComponent(btn.dataset.date || ""));
+});
 function slateDateLabel(date){
   const match = String(date || "").match(/^(\d{4})-(\d{2})-(\d{2})/);
   if (!match) return "";
@@ -1725,7 +1822,8 @@ function slateTable(list, date){
     const home = game.home || {};
     const when = game.start ? formatTime(game.start, false) : "";
     const records = [away.name, away.record].filter(Boolean).join(" ") + " / " + [home.name, home.record].filter(Boolean).join(" ");
-    return "<tr><td>" + esc(game.sport + " " + game.game) + "</td><td>" + esc(when) + "</td><td>" + esc(game.location || "") + "</td><td>" + esc(records) + "</td></tr>";
+    const add = "<button type='button' class='add-game' data-sport='" + encodeURIComponent(game.sport || "") + "' data-game='" + encodeURIComponent(game.game || "") + "' data-date='" + encodeURIComponent(date || "") + "'>Add</button>";
+    return "<tr><td>" + esc(game.sport + " " + game.game) + " " + add + "</td><td>" + esc(when) + "</td><td>" + esc(game.location || "") + "</td><td>" + esc(records) + "</td></tr>";
   }).join("");
   const label = slateDateLabel(date);
   const gameHead = label ? "<th><div class='gamehead'><span>Game</span><span class='slate-date'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + esc(label) + "</span></div></th>" : "<th>Game</th>";
@@ -2555,11 +2653,18 @@ form.onsubmit = e => {
   delete row.editId;
   if (d.editId) {
     const bet = bets.find(b => String(b.id) === d.editId);
-    if (bet) Object.assign(bet, row, {id: bet.id});
-  } else bets.push({id: Date.now(), ...row, result: d.result || "pending", manual: true});
+    if (bet) Object.assign(bet, row, {id: bet.id, manual: !!bet.manual, fromCard: bet.fromCard});
+  } else {
+    const made = {id: Date.now(), ...row, result: d.result || "pending", manual: true};
+    if (!placePending(bets, made)) {
+      document.getElementById("editnote").textContent = "That pick is already on the slips. It was not added again.";
+      return;
+    }
+  }
   save(bets);
   form.pick.value = ""; form.notes.value = ""; form.close.value = ""; form.editId.value = "";
   document.getElementById("savebtn").textContent = "Save Bet";
+  document.getElementById("editnote").textContent = "Saved in this browser. The posted card and the shared files were not changed.";
 };
 document.getElementById("rows").onclick = e => {
   const t = e.target;
@@ -2575,7 +2680,13 @@ document.getElementById("rows").onclick = e => {
     form.scrollIntoView();
     return;
   }
-  if (t.dataset.del) save(load().filter(b => String(b.id) !== t.dataset.del));
+  if (t.dataset.del) {
+    const bets = load();
+    const gone = bets.find(b => String(b.id) === t.dataset.del) || loadGrade().find(b => String(b.id) === t.dataset.del);
+    if (gone && gone.manual) save(forgetManual(gone));
+    else save(bets.filter(b => String(b.id) !== t.dataset.del));
+    return;
+  }
   if (t.dataset.set) {
     const bets = load();
     const bet = bets.find(b => String(b.id) === t.dataset.id);
@@ -2887,7 +2998,10 @@ async function fillPickBoard(useSaved){
 }
 document.getElementById("pickselect").onchange = () => {
   const opt = document.getElementById("pickselect").selectedOptions[0];
-  if (!opt || !opt.dataset.price) return;
+  if (!opt) return;
+  const market = {h2h:"Moneyline", spreads:"Spread", totals:"Total", Moneyline:"Moneyline", Spread:"Spread", Total:"Total", SGP:"SGP"};
+  if (opt.dataset.market && market[opt.dataset.market] && [...form.type.options].some(o => o.value === market[opt.dataset.market])) form.type.value = market[opt.dataset.market];
+  if (!opt.dataset.price) { form.odds.value = ""; form.close.value = ""; return; }
   form.odds.value = opt.dataset.price;
   form.close.value = opt.dataset.close;
 };
