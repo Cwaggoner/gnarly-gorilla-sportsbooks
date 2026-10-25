@@ -165,7 +165,6 @@ label:has(input[type=file]) { position:relative; }
 label:has(#loadcal) { gap:0; }
 .card-analysis { margin:8px 0 10px; border:1px solid #39ff14; border-radius:8px; padding:8px 10px; background:#0e0e0e; }
 .passed-note { margin:12px 0 8px; font-size:13px; }
-#passedslate { margin-bottom:18px; }
 .analysis-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; }
 .analysis-cell { border:1px solid #243024; border-radius:6px; padding:6px 8px; min-height:0; }
 .analysis-cell b { color:#39ff14; font-size:12px; }
@@ -291,7 +290,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <section class="card" id="liveodds"><div class="section-head"><h2>Live Odds</h2><p class="warn slips-side">Moneyline, spread, and total across books. Use Yesterday or Today.</p><button type="button" id="refreshodds">Refresh</button></div><div id="oddscompare"></div></section>
 <section class="card" id="todaycard">
 <div class="section-head"><h2>Today's Card</h2><p class="warn slips-side">One play per line: Sport | Type | Pick | American odds | Confidence. Stake is $10. Book is the dropdown below. Pending until graded.</p></div>
-<div class="card-analysis" id="cardanalysis"><h3>Analysis</h3><div class="analysis-grid" id="analysisgrid"></div><div class="sharp-read"><b>Analysis:</b><p id="sharpread"></p></div><div id="cardgames"></div><p class="warn passed-note" id="passednote">Games being played that did not make the picks.</p><div id="passedslate"></div></div>
+<div class="card-analysis" id="cardanalysis"><h3>Analysis</h3><div class="analysis-grid" id="analysisgrid"></div><div class="sharp-read"><b>Analysis:</b><p id="sharpread"></p></div><div id="cardgames"></div></div>
 <div class="card-rest">
 <div class="book-key">
 <label>Book<select id="cardbook" class="book-select">
@@ -1675,44 +1674,12 @@ let SEASON_END = {MLB:"2026-10-31", CFB:"2027-01-25", NFL:"2027-02-14", CBB:"202
 let SEASON_START = {MLB:"2026-03-25", CFB:"2026-08-27", NFL:"2026-09-09", CBB:"2026-11-02", NHL:"2026-09-29", NBA:"2026-10-20"};
 let pickSlate = null;
 let postedCard = "";
-function postedRows(){
-  const all = cardLines(postedCard || "");
-  const today = easternDay();
-  const dated = all.filter(p => /^\d{4}-\d{2}-\d{2}$/.test(p[0]));
-  return (dated.length ? dated.filter(p => p[0] === today) : all).filter(r => !isNoCard(r));
-}
-function matchupGames(){
-  const games = pickSlate && Array.isArray(pickSlate.games) ? pickSlate.games : [];
-  const pending = pendingSlips();
-  const rows = postedRows();
-  if (!pending.length && !rows.length) return null;
-  return games.filter(g => pending.some(b => gameMatchesSlip(g, b)) || rows.some(r => gameMatchesSlip(g, {sport: r[1], pick: r[3]})));
-}
 function drawPassedSlate(){
-  const box = document.getElementById("passedslate");
-  const note = document.getElementById("passednote");
-  if (!box) return;
-  const games = pickSlate && Array.isArray(pickSlate.games) ? pickSlate.games : [];
-  const passed = pickSlate && Array.isArray(pickSlate.passed) ? pickSlate.passed : [];
-  const date = (pickSlate && pickSlate.date) || easternDay();
   const cardBox = document.getElementById("cardgames");
-  if (cardBox) cardBox.innerHTML = games.length ? "<p class='warn passed-note'>Posted matchups. Add puts an extra slip in this browser. The posted picks stay.</p>" + slateTable(games, date, true) : "";
-  if (!games.length && !passed.length) return;
-  const used = matchupGames();
-  const keys = new Set((used || []).map(g => g.sport + "|" + g.game));
-  const seen = new Set();
-  const left = [];
-  const add = g => {
-    if (!g || !g.game) return;
-    const key = String(g.sport || "") + "|" + g.game;
-    if (seen.has(key) || keys.has(key)) return;
-    seen.add(key);
-    left.push(g);
-  };
-  passed.forEach(add);
-  if (used) games.forEach(add);
-  if (note) note.textContent = left.length ? "Games on " + date + " that did not make the day's matchups." : "Every posted game on " + date + " made the day's matchups.";
-  box.innerHTML = left.length ? slateTable(left, date, true) : "";
+  if (!cardBox) return;
+  const games = pickSlate && Array.isArray(pickSlate.games) ? pickSlate.games : [];
+  const date = (pickSlate && pickSlate.date) || easternDay();
+  cardBox.innerHTML = games.length ? "<p class='warn passed-note'>Posted matchups. Add puts an extra slip in this browser. The posted picks stay.</p>" + slateTable(games, date, true) : "";
 }
 function teamCodes(name){
   const words = String(name || "").replace(/[^A-Za-z ]/g, "").split(/\s+/).filter(Boolean);
