@@ -1,4 +1,11 @@
 # file: GG-CARD-2026-10-25
+2026-10-25 | NBA | Spread | Clippers +14.5 at Thunder | -110 | made Thunder -8, book Thunder -14.5, gap 6.5. Edge. Two-game record, not a trained price.
+2026-10-25 | NBA | Spread | Nets +7.5 vs Pacers | -110 | made Pacers -2, book Pacers -7.5, gap 5.5. Edge. Two-game record, not a trained price.
+2026-10-25 | NBA | Spread | Jazz +6.5 vs Lakers | -110 | made Lakers -2, book Lakers -6.5, gap 4.5. Edge. Two-game record, not a trained price.
+2026-10-25 | NBA | Spread | Magic +7.5 at Knicks | -110 | made Knicks -3, book Knicks -7.5, gap 4.5. Edge. Two-game record, not a trained price.
+2026-10-25 | NBA | Spread | Grizzlies -4.5 at Kings | -110 | made Grizzlies -7, book Grizzlies -4.5, gap 2.5. Edge. Two-game record, not a trained price.
+2026-10-25 | NBA | Spread | Timberwolves -1.5 vs Raptors | -110 | made Timberwolves -3, book Timberwolves -1.5, gap 1.5. Edge. Two-game record, not a trained price.
+2026-10-25 | NBA | Spread | 76ers -1.5 vs Pistons | -110 | made 76ers -3, book 76ers -1.5, gap 1.5. Edge. Two-game record, not a trained price.
 2026-10-25 | NFL | Spread | Giants +10.5 at Texans | -110 | made Texans +1, book Texans -10.5, gap 11.5. Edge. Record formula, not a trained price.
 2026-10-25 | NFL | Spread | Raiders +3 vs Rams | -110 | made Raiders -4.8, book Rams -3, gap 7.8. Edge. Record formula, not a trained price.
 2026-10-25 | NFL | Spread | Chiefs +3 at Seahawks | -110 | made Chiefs -4.5, book Seahawks -3, gap 7.5. Edge. Record formula, not a trained price.
@@ -7,8 +14,6 @@
 2026-10-25 | NFL | Spread | Vikings -6.5 vs Colts | -110 | made Vikings -11.8, book Vikings -6.5, gap 5.3. Edge. Record formula, not a trained price.
 2026-10-25 | NFL | Spread | 49ers -2.5 at Falcons | -110 | made 49ers -6.8, book 49ers -2.5, gap 4.3. Edge. Record formula, not a trained price.
 2026-10-25 | NFL | Spread | Browns -1.5 at Titans | -110 | made Browns -4.5, book Browns -1.5, gap 3.0. Edge. Record formula, not a trained price.
-2026-10-25 | NBA | Spread | Clippers +14.5 at Thunder | -110 | made Thunder -8, book Thunder -14.5, gap 6.5. Edge. Two-game record, not a trained price.
-2026-10-25 | NBA | Spread | Nets +7.5 vs Pacers | -110 | made Pacers -2, book Pacers -7.5, gap 5.5. Edge. Two-game record, not a trained price.
 2026-10-25 | NHL | Moneyline | Predators ML vs Avalanche | +195 | made +101, book +195, gap 94 cents. Edge. Record formula, not a trained price. BetMGM.
-2026-10-25 | NHL | Moneyline | Wild ML at Canucks | -185 | made -260, book -185, gap 75 cents. Edge. Record formula, not a trained price. BetMGM.
+2026-10-25 | NHL | Moneyline | Wild ML at Canucks | -190 | made -260, book -190, gap 70 cents. Edge. Record formula, not a trained price. BetMGM.
 2026-10-25 | NHL | Moneyline | Islanders ML at Stars | +165 | made +127, book +165, gap 38 cents. Edge. Record formula, not a trained price. BetMGM.
