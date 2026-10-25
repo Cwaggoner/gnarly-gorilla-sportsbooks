@@ -1,22 +1,8 @@
 {
   "date": "2026-10-25",
-  "source": "ESPN scoreboard at 5:10 AM. No odds key. Picks are No Picks. No game was the minimum gap off the market.",
-  "passedNote": "Games being played that did not make the picks.",
+  "source": "Record formula at 5:15 AM. ESPN spreads. BetMGM NHL moneylines. No trained price yet.",
+  "passedNote": "Games being played that did not clear the interim gap.",
   "games": [
-    {
-      "sport": "NBA",
-      "game": "Detroit Pistons at Philadelphia 76ers",
-      "start": "2026-10-25T23:30Z",
-      "location": "Xfinity Mobile Arena, Philadelphia, PA",
-      "away": {
-        "name": "Detroit Pistons",
-        "record": "2-0"
-      },
-      "home": {
-        "name": "Philadelphia 76ers",
-        "record": "3-0"
-      }
-    },
     {
       "sport": "NBA",
       "game": "Indiana Pacers at Brooklyn Nets",
@@ -43,6 +29,176 @@
       "home": {
         "name": "Oklahoma City Thunder",
         "record": "2-0"
+      }
+    },
+    {
+      "sport": "NFL",
+      "game": "Cincinnati Bengals at Baltimore Ravens",
+      "start": "2026-10-25T17:00Z",
+      "location": "M&T Bank Stadium, Baltimore, Maryland",
+      "away": {
+        "name": "Cincinnati Bengals",
+        "record": "3-2"
+      },
+      "home": {
+        "name": "Baltimore Ravens",
+        "record": "4-2"
+      }
+    },
+    {
+      "sport": "NFL",
+      "game": "Cleveland Browns at Tennessee Titans",
+      "start": "2026-10-25T17:00Z",
+      "location": "Nissan Stadium, Nashville, Tennessee",
+      "away": {
+        "name": "Cleveland Browns",
+        "record": "4-2"
+      },
+      "home": {
+        "name": "Tennessee Titans",
+        "record": "1-5"
+      }
+    },
+    {
+      "sport": "NFL",
+      "game": "Indianapolis Colts at Minnesota Vikings",
+      "start": "2026-10-25T17:00Z",
+      "location": "U.S. Bank Stadium, Minneapolis, Minnesota",
+      "away": {
+        "name": "Indianapolis Colts",
+        "record": "2-4"
+      },
+      "home": {
+        "name": "Minnesota Vikings",
+        "record": "5-0"
+      }
+    },
+    {
+      "sport": "NFL",
+      "game": "Kansas City Chiefs at Seattle Seahawks",
+      "start": "2026-10-26T00:20Z",
+      "location": "Lumen Field, Seattle, Washington",
+      "away": {
+        "name": "Kansas City Chiefs",
+        "record": "5-0"
+      },
+      "home": {
+        "name": "Seattle Seahawks",
+        "record": "3-3"
+      }
+    },
+    {
+      "sport": "NFL",
+      "game": "Los Angeles Rams at Las Vegas Raiders",
+      "start": "2026-10-25T20:25Z",
+      "location": "Allegiant Stadium, Las Vegas, Nevada",
+      "away": {
+        "name": "Los Angeles Rams",
+        "record": "2-4"
+      },
+      "home": {
+        "name": "Las Vegas Raiders",
+        "record": "3-3"
+      }
+    },
+    {
+      "sport": "NFL",
+      "game": "New York Giants at Houston Texans",
+      "start": "2026-10-25T17:00Z",
+      "location": "NRG Stadium, Houston, Texas",
+      "away": {
+        "name": "New York Giants",
+        "record": "3-2-1"
+      },
+      "home": {
+        "name": "Houston Texans",
+        "record": "2-4"
+      }
+    },
+    {
+      "sport": "NFL",
+      "game": "San Francisco 49ers at Atlanta Falcons",
+      "start": "2026-10-25T17:00Z",
+      "location": "Mercedes-Benz Stadium, Atlanta, Georgia",
+      "away": {
+        "name": "San Francisco 49ers",
+        "record": "6-0"
+      },
+      "home": {
+        "name": "Atlanta Falcons",
+        "record": "2-4"
+      }
+    },
+    {
+      "sport": "NFL",
+      "game": "Tampa Bay Buccaneers at Carolina Panthers",
+      "start": "2026-10-25T17:00Z",
+      "location": "Bank of America Stadium, Charlotte, North Carolina",
+      "away": {
+        "name": "Tampa Bay Buccaneers",
+        "record": "1-5"
+      },
+      "home": {
+        "name": "Carolina Panthers",
+        "record": "3-2"
+      }
+    },
+    {
+      "sport": "NHL",
+      "game": "Colorado Avalanche at Nashville Predators",
+      "start": "2026-10-26T00:00Z",
+      "location": "Bridgestone Arena, Nashville, TN",
+      "away": {
+        "name": "Colorado Avalanche",
+        "record": "6-4-1"
+      },
+      "home": {
+        "name": "Nashville Predators",
+        "record": "3-3-4"
+      }
+    },
+    {
+      "sport": "NHL",
+      "game": "Minnesota Wild at Vancouver Canucks",
+      "start": "2026-10-26T02:00Z",
+      "location": "Rogers Arena, Vancouver, BC",
+      "away": {
+        "name": "Minnesota Wild",
+        "record": "7-3-2"
+      },
+      "home": {
+        "name": "Vancouver Canucks",
+        "record": "2-9-1"
+      }
+    },
+    {
+      "sport": "NHL",
+      "game": "New York Islanders at Dallas Stars",
+      "start": "2026-10-25T22:00Z",
+      "location": "American Airlines Center, Dallas, TX",
+      "away": {
+        "name": "New York Islanders",
+        "record": "5-3-2"
+      },
+      "home": {
+        "name": "Dallas Stars",
+        "record": "6-3-1"
+      }
+    }
+  ],
+  "passed": [
+    {
+      "sport": "NBA",
+      "game": "Detroit Pistons at Philadelphia 76ers",
+      "start": "2026-10-25T23:30Z",
+      "location": "Xfinity Mobile Arena, Philadelphia, PA",
+      "away": {
+        "name": "Detroit Pistons",
+        "record": "2-0"
+      },
+      "home": {
+        "name": "Philadelphia 76ers",
+        "record": "3-0"
       }
     },
     {
@@ -103,34 +259,6 @@
     },
     {
       "sport": "NFL",
-      "game": "Cincinnati Bengals at Baltimore Ravens",
-      "start": "2026-10-25T17:00Z",
-      "location": "M&T Bank Stadium, Baltimore, Maryland",
-      "away": {
-        "name": "Cincinnati Bengals",
-        "record": "3-2"
-      },
-      "home": {
-        "name": "Baltimore Ravens",
-        "record": "4-2"
-      }
-    },
-    {
-      "sport": "NFL",
-      "game": "Cleveland Browns at Tennessee Titans",
-      "start": "2026-10-25T17:00Z",
-      "location": "Nissan Stadium, Nashville, Tennessee",
-      "away": {
-        "name": "Cleveland Browns",
-        "record": "4-2"
-      },
-      "home": {
-        "name": "Tennessee Titans",
-        "record": "1-5"
-      }
-    },
-    {
-      "sport": "NFL",
       "game": "Denver Broncos at Arizona Cardinals",
       "start": "2026-10-25T20:05Z",
       "location": "State Farm Stadium, Glendale, Arizona",
@@ -159,48 +287,6 @@
     },
     {
       "sport": "NFL",
-      "game": "Indianapolis Colts at Minnesota Vikings",
-      "start": "2026-10-25T17:00Z",
-      "location": "U.S. Bank Stadium, Minneapolis, Minnesota",
-      "away": {
-        "name": "Indianapolis Colts",
-        "record": "2-4"
-      },
-      "home": {
-        "name": "Minnesota Vikings",
-        "record": "5-0"
-      }
-    },
-    {
-      "sport": "NFL",
-      "game": "Kansas City Chiefs at Seattle Seahawks",
-      "start": "2026-10-26T00:20Z",
-      "location": "Lumen Field, Seattle, Washington",
-      "away": {
-        "name": "Kansas City Chiefs",
-        "record": "5-0"
-      },
-      "home": {
-        "name": "Seattle Seahawks",
-        "record": "3-3"
-      }
-    },
-    {
-      "sport": "NFL",
-      "game": "Los Angeles Rams at Las Vegas Raiders",
-      "start": "2026-10-25T20:25Z",
-      "location": "Allegiant Stadium, Las Vegas, Nevada",
-      "away": {
-        "name": "Los Angeles Rams",
-        "record": "2-4"
-      },
-      "home": {
-        "name": "Las Vegas Raiders",
-        "record": "3-3"
-      }
-    },
-    {
-      "sport": "NFL",
       "game": "Miami Dolphins at New York Jets",
       "start": "2026-10-25T17:00Z",
       "location": "MetLife Stadium, East Rutherford, New Jersey",
@@ -210,20 +296,6 @@
       },
       "home": {
         "name": "New York Jets",
-        "record": "2-4"
-      }
-    },
-    {
-      "sport": "NFL",
-      "game": "New York Giants at Houston Texans",
-      "start": "2026-10-25T17:00Z",
-      "location": "NRG Stadium, Houston, Texas",
-      "away": {
-        "name": "New York Giants",
-        "record": "3-2-1"
-      },
-      "home": {
-        "name": "Houston Texans",
         "record": "2-4"
       }
     },
@@ -242,48 +314,6 @@
       }
     },
     {
-      "sport": "NFL",
-      "game": "San Francisco 49ers at Atlanta Falcons",
-      "start": "2026-10-25T17:00Z",
-      "location": "Mercedes-Benz Stadium, Atlanta, Georgia",
-      "away": {
-        "name": "San Francisco 49ers",
-        "record": "6-0"
-      },
-      "home": {
-        "name": "Atlanta Falcons",
-        "record": "2-4"
-      }
-    },
-    {
-      "sport": "NFL",
-      "game": "Tampa Bay Buccaneers at Carolina Panthers",
-      "start": "2026-10-25T17:00Z",
-      "location": "Bank of America Stadium, Charlotte, North Carolina",
-      "away": {
-        "name": "Tampa Bay Buccaneers",
-        "record": "1-5"
-      },
-      "home": {
-        "name": "Carolina Panthers",
-        "record": "3-2"
-      }
-    },
-    {
-      "sport": "NHL",
-      "game": "Colorado Avalanche at Nashville Predators",
-      "start": "2026-10-26T00:00Z",
-      "location": "Bridgestone Arena, Nashville, TN",
-      "away": {
-        "name": "Colorado Avalanche",
-        "record": "6-4-1"
-      },
-      "home": {
-        "name": "Nashville Predators",
-        "record": "3-3-4"
-      }
-    },
-    {
       "sport": "NHL",
       "game": "Florida Panthers at Chicago Blackhawks",
       "start": "2026-10-25T19:00Z",
@@ -299,20 +329,6 @@
     },
     {
       "sport": "NHL",
-      "game": "Minnesota Wild at Vancouver Canucks",
-      "start": "2026-10-26T02:00Z",
-      "location": "Rogers Arena, Vancouver, BC",
-      "away": {
-        "name": "Minnesota Wild",
-        "record": "7-3-2"
-      },
-      "home": {
-        "name": "Vancouver Canucks",
-        "record": "2-9-1"
-      }
-    },
-    {
-      "sport": "NHL",
       "game": "Montreal Canadiens at Winnipeg Jets",
       "start": "2026-10-25T23:00Z",
       "location": "Princess Auto Stadium, Winnipeg, MB",
@@ -324,21 +340,6 @@
         "name": "Winnipeg Jets",
         "record": "4-3-3"
       }
-    },
-    {
-      "sport": "NHL",
-      "game": "New York Islanders at Dallas Stars",
-      "start": "2026-10-25T22:00Z",
-      "location": "American Airlines Center, Dallas, TX",
-      "away": {
-        "name": "New York Islanders",
-        "record": "5-3-2"
-      },
-      "home": {
-        "name": "Dallas Stars",
-        "record": "6-3-1"
-      }
     }
-  ],
-  "passed": []
+  ]
 }
