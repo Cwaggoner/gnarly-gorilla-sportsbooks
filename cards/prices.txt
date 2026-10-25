@@ -1,0 +1,5 @@
+# file: prices
+# Training log. One row per graded bet. The next card reads this before it makes a number.
+# date | sport | market | made | bet | close | clv
+# market is side or total. Positive CLV means the close moved toward the bet.
+# Do not adjust a market on a sample smaller than 30 graded rows.

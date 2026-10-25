@@ -1,28 +1,23 @@
-# Pick rules updated 2026-10-24
-# Through 2026-10-23 the card since October 12 was 65-68, +$12.
-# Spreads in that stretch were 30-21, +$53. Side-plus-total parlays were 8-17, -$15.
-# The baseball version of that parlay was 1-6, -$41.
-# 2026-10-24 so far: Michigan +7.5 won. Leafs ML won. Navy +3 lost by 10.
-# Sharks ML and Kings ML lost. Rays under 6.5 and the Rays run-line parlay both died at 8 runs.
-# That parlay was a replay of the 2026-10-23 winner.
+# Pick rules updated 2026-10-25
+# The six-play cap is gone. It was fit to one night: October 23 went 5-1 on six plays.
+# A sharp does not cut a good number to hit a count, and does not invent a bet to fill one.
+# Old rules that picked a side first are gone with it: every dog of 5.5 or more,
+# one dog per sport, no college spread inside 7, no moneyline shorter than +140,
+# one under per day, and every must-play team. Those rules picked the side, then went looking for a reason.
+# Side-plus-total parlays stay off. They were 8-17, -$15, from October 12 through October 23.
 
-These rules override the 2026-10-12 habit of carding every dog of 5.5 or more and pairing it with the under.
-They also override every must-play line that waived a price rule.
+Read cards/prices.txt before making a number. That file is the training log. A bad night does not change the card. The log does.
 
-1. One dog spread per sport per day. Not three.
-2. A dog spread of +8 or more is not a play in the first 10 games of a season. Pass the game.
-3. No side-plus-total parlay. A moneyline, a puck line, a run line, and a spread all count as the side. A blowout cashes the under and kills the side. The Bulls game did that. The Rays parlay on 2026-10-24 did it the other way: the total was already 8, so both tickets died.
-4. One play per game. Do not bet the under and also bet a parlay that includes that under. One named under is allowed for the day. Do not also bet that game's dog.
-5. A moneyline dog must be +140 or longer. +102 is a pick'em. Pass it. One moneyline dog per sport. Not three. The Flyers were +166 and won. On 2026-10-24 the Leafs won and the Sharks and Kings lost.
-6. A college spread inside 7 is not a play. Sam Houston +2.5 lost by 6. Navy +3 lost by 10.
-7. A college total under 48 is not a play. 45.5 went to 54.
-8. A standalone NHL total is not a play. Do not add it as a second leg either.
-9. If no number fits, write No Picks for that sport. Do not force a dog onto a bad number.
-10. Six plays is the cap for the whole card. A must-play that has a legal number comes first. Cut the rest. October 23 was six plays and went 5-1.
-11. Do not replay a ticket because it won last night. The Rays under and the Rays parlay were carded on 2026-10-24 because the same bets won on 2026-10-23.
-12. NBA MUST PLAY: If the Indiana Pacers play today, look at that game before writing No Picks. One Pacers play, and only if the number passes rules 1 through 11. While Tyrese Haliburton is active, the Pacers spread is allowed when it is a dog that passes rule 2. Do not lay a Pacers moneyline of -150 or shorter. Do not lay a short Pacers spread just to put them on the card. If no number passes, write the pass and the reason. If the Pacers do not play, do not invent a game.
-13. HALIBURTON CHECK: Read the injury report before the card. If he is out or doubtful, do not take the Pacers side. Card the dog or the named under only when that number passes rules 1 through 11. If he is questionable or on a minutes limit, take the dog or the under unless the Pacers spread is small. Resume the Pacers side only when he is playing with no restriction.
-14. CFB MUST PLAY: If Indiana (IU), Army, Navy, or Air Force is on today's college football schedule, look at that game. These games do not waive the inside-7 pass or the total-under-48 pass. If the dog is inside 7, the play is a named under or a moneyline dog of +140 or longer. If neither exists, that game is a pass. One play on the game. Do not lay a moneyline of -150 or shorter. Name the game on every total. If none of these teams play, do not invent a game.
-15. CBB MUST PLAY: If Indiana (IU), Purdue, or Notre Dame is on today's college basketball schedule, look at that game. These games do not waive the one-dog cap or the first-10-games pass on a dog of +8 or more. Card the dog spread, a named under, or a moneyline dog of +140 or longer, and only when the number passes rules 1 through 11. If it does not, that game is a pass. Do not lay a moneyline of -150 or shorter. If none of these teams play, do not invent a game. Before 2026-11-02 this rule does not start a card.
-16. NFL MUST PLAY: If the Indianapolis Colts play today, look at that game. This game does not waive the one-dog cap. Card the dog, a named under, or a moneyline dog of +140 or longer, and only when the number passes rules 1 through 11. If it does not, that game is a pass. Do not lay a moneyline of -150 or shorter. Name the game on every total. If the Colts do not play, do not invent a game.
-17. SLATE FILE: cards/scoreboard.json is the full day's scoreboard. Leave it in place when the card is combined. cards/pick-slate.json games are only the games on that day's card, and every other scoreboard game goes in passed. Never write an empty pick-slate.json. An empty file takes the picks off the Seasons card.
+1. Make the number first. For every game on the slate, write a side and a total before looking at which side the old card would have wanted. The book number is the comparison, not the pick.
+2. Bet only the gap. NFL or NBA side: the book is at least 1.5 points off the made number. College side: 2.5 points. NHL puck line or MLB run line: the book is at least a half point off, or the moneyline is at least 15 cents off the made price. NFL or NBA total: 2 points. College total: 3 points. MLB total: 1 run. NHL total: 0.5 goals. If the gap is smaller than that, pass. A favorite is allowed. A dog is allowed. A short price is allowed when the made price is shorter than the book.
+3. One bet per game. Bet the market with the bigger gap. No parlay, no second leg, no cross-game ticket. A parlay adds the book's juice on top of the juice already in each leg.
+4. No team is a must bet. Indiana, Army, Navy, Air Force, the Pacers, the Colts, Purdue, and Notre Dame are games. They are bets only when rule 2 passes. Read the injury report before the number. If the best player is out, make the number with him out. Do not move the number after seeing the book's side.
+5. Do not replay a ticket because it won last night. Do not fade a ticket because it lost last night.
+6. There is no cap and no quota. Two plays is a full card if only two numbers are off. Fourteen is a full card if fourteen numbers are off. Write No Picks for a sport when nothing on that slate passes rule 2.
+7. Every play on the card shows three figures: the made number, the book number, and the gap. If those three are not written, it is not a bet.
+8. Stake stays $10 until that market has 30 graded rows in cards/prices.txt and the average close beat the bet. Then the biggest gap on the card can be $15. Nothing is bigger than $15 until a market is 50 graded bets and still beating the close.
+9. TRAINING: After the closes are saved, append one row per bet to cards/prices.txt:
+   date | sport | market | made | bet | close | clv
+   Market is side or total. CLV is the close minus the bet, in points for a spread or a total and in cents for a moneyline, signed so a positive number means the close moved toward the bet.
+   The next card reads the log first. Adjust a market's made number only when the last 30 graded rows in that sport and market average negative. Move the number toward the close by the size of that average, and write the adjustment at the top of the card. Do not adjust off a sample smaller than 30. Do not drop a market for a losing record if the CLV is positive. Do not keep a market for a winning record if the CLV is negative over 30.
+10. SLATE FILE: cards/scoreboard.json is the full day's scoreboard. Leave it in place when the card is combined. cards/pick-slate.json games are only the games on that day's card, and every other scoreboard game goes in passed. Never write an empty pick-slate.json. An empty file takes the picks off the Seasons card.
