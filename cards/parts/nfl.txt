@@ -1,8 +1,1 @@
-2026-10-25 | NFL | Spread | Giants +10.5 at Texans | -110 | made Texans +1, book Texans -10.5, gap 11.5. Edge. Record formula, not a trained price.
-2026-10-25 | NFL | Spread | Raiders +3 vs Rams | -110 | made Raiders -4.8, book Rams -3, gap 7.8. Edge. Record formula, not a trained price.
-2026-10-25 | NFL | Spread | Chiefs +3 at Seahawks | -110 | made Chiefs -4.5, book Seahawks -3, gap 7.5. Edge. Record formula, not a trained price.
-2026-10-25 | NFL | Spread | Ravens +3 vs Bengals | -110 | made Ravens -3.4, book Bengals -3, gap 6.4. Edge. Record formula, not a trained price.
-2026-10-25 | NFL | Spread | Panthers -3 vs Buccaneers | -110 | made Panthers -8.6, book Panthers -3, gap 5.6. Edge. Record formula, not a trained price.
-2026-10-25 | NFL | Spread | Vikings -6.5 vs Colts | -110 | made Vikings -11.8, book Vikings -6.5, gap 5.3. Edge. Record formula, not a trained price.
-2026-10-25 | NFL | Spread | 49ers -2.5 at Falcons | -110 | made 49ers -6.8, book 49ers -2.5, gap 4.3. Edge. Record formula, not a trained price.
-2026-10-25 | NFL | Spread | Browns -1.5 at Titans | -110 | made Browns -4.5, book Browns -1.5, gap 3.0. Edge. Record formula, not a trained price.
+2026-10-26 | NFL | Spread | Philadelphia Eagles +4.5 | -110 | made Eagles -2.5, book Eagles +4.5, gap 7.0. Edge. Record formula, not a trained price.
