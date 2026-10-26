@@ -1,7 +1,5 @@
-2026-10-25 | NBA | Spread | Clippers +14.5 at Thunder | -110 | made Thunder -8, book Thunder -14.5, gap 6.5. Edge. Two-game record, not a trained price.
-2026-10-25 | NBA | Spread | Nets +7.5 vs Pacers | -110 | made Pacers -2, book Pacers -7.5, gap 5.5. Edge. Two-game record, not a trained price.
-2026-10-25 | NBA | Spread | Jazz +6.5 vs Lakers | -110 | made Lakers -2, book Lakers -6.5, gap 4.5. Edge. Two-game record, not a trained price.
-2026-10-25 | NBA | Spread | Magic +7.5 at Knicks | -110 | made Knicks -3, book Knicks -7.5, gap 4.5. Edge. Two-game record, not a trained price.
-2026-10-25 | NBA | Spread | Grizzlies -4.5 at Kings | -110 | made Grizzlies -7, book Grizzlies -4.5, gap 2.5. Edge. Two-game record, not a trained price.
-2026-10-25 | NBA | Spread | Timberwolves -1.5 vs Raptors | -110 | made Timberwolves -3, book Timberwolves -1.5, gap 1.5. Edge. Two-game record, not a trained price.
-2026-10-25 | NBA | Spread | 76ers -1.5 vs Pistons | -110 | made 76ers -3, book 76ers -1.5, gap 1.5. Edge. Two-game record, not a trained price.
+2026-10-26 | NBA | Spread | Timberwolves +3.5 at Cavaliers | -110 | made Cavaliers -2, book Cavaliers -3.5, gap 1.5. Edge. Early-season record, not a trained price.
+2026-10-26 | NBA | Spread | Bulls +14.5 at Celtics | -110 | made Celtics -4.7, book Celtics -14.5, gap 9.8. Edge. Early-season record, not a trained price.
+2026-10-26 | NBA | Spread | Mavericks +8.5 at Heat | -110 | made Heat -0.3, book Heat -8.5, gap 8.2. Edge. Early-season record, not a trained price.
+2026-10-26 | NBA | Spread | Suns +9.5 at Thunder | -110 | made Thunder -8, book Thunder -9.5, gap 1.5. Edge. Early-season record, not a trained price.
+2026-10-26 | NBA | Spread | Grizzlies +1.5 at Jazz | -110 | made Jazz +3.7, book Jazz -1.5, gap 5.2. Edge. Early-season record, not a trained price.
