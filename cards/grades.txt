@@ -4,20 +4,20 @@
 2026-10-25 | NBA | Nets +7.5 | close -110 | loss | 109-136 | -10.00
 2026-10-25 | NBA | Jazz +6.5 | close -110 | loss | 123-132 | -10.00
 2026-10-25 | NBA | Magic +7.5 | close -110 | win | 111-102 | 9.09
-2026-10-25 | NBA | Grizzlies -4.5 | close -110 | win | 114-106 | 9.09
-2026-10-25 | NBA | Timberwolves -1.5 | close -110 | win | 117-94 | 9.09
+2026-10-25 | NBA | Grizzlies -4.5 | close -105 | win | 123-112 | 9.09
+2026-10-25 | NBA | Timberwolves -1.5 | close -105 | win | 117-94 | 9.09
 2026-10-25 | NBA | 76ers -1.5 | close -110 | loss | 93-106 | -10.00
 2026-10-25 | NFL | Giants +10.5 | close -110 | win | 27-21 | 9.09
 2026-10-25 | NFL | Raiders +3 | close -110 | loss | 21-35 | -10.00
-2026-10-25 | NFL | Chiefs +3 | close -110 | loss | 3-20 | -10.00
-2026-10-25 | NFL | Ravens +3 | close -110 | loss | 13-35 | -10.00
-2026-10-25 | NFL | Panthers -3 | close -110 | loss | 13-43 | -10.00
+2026-10-25 | NFL | Chiefs +3 | close -115 | loss | 3-20 | -10.00
+2026-10-25 | NFL | Ravens +3 | close -115 | loss | 13-35 | -10.00
+2026-10-25 | NFL | Panthers -3 | close -105 | loss | 13-43 | -10.00
 2026-10-25 | NFL | Vikings -6.5 | close -110 | loss | 16-10 | -10.00
-2026-10-25 | NFL | 49ers -2.5 | close -110 | loss | 20-29 | -10.00
+2026-10-25 | NFL | 49ers -2.5 | close -112 | loss | 20-29 | -10.00
 2026-10-25 | NFL | Browns -1.5 | close -110 | win | 27-24 | 9.09
 2026-10-25 | NHL | Predators ML | close 195 | win | 6-2 | 19.50
-2026-10-25 | NHL | Wild ML | close -190 | win | 4-0 | 5.26
-2026-10-25 | NHL | Islanders ML | close 165 | loss | 3-6 | -10.00
+2026-10-25 | NHL | Wild ML | close -200 | win | 4-2 | 5.26
+2026-10-25 | NHL | Islanders ML | close 155 | loss | 3-6 | -10.00
 2026-10-25 | CFB | No Picks
 2026-10-25 | CBB | No Picks
 2026-10-25 | MLB | No Picks
