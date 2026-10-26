@@ -3,3 +3,21 @@
 # date | sport | market | made | bet | close | clv
 # market is side or total. Positive CLV means the close moved toward the bet.
 # Do not adjust a market on a sample smaller than 30 graded rows.
+2026-10-25 | NBA | side | -8 | 14.5 | 14.5 | 0
+2026-10-25 | NBA | side | -2 | 7.5 | 7.5 | 0
+2026-10-25 | NBA | side | -2 | 6.5 | 6.5 | 0
+2026-10-25 | NBA | side | -3 | 7.5 | 7.5 | 0
+2026-10-25 | NBA | side | -7 | 4.5 | 4.5 | 0
+2026-10-25 | NBA | side | -3 | 1.5 | 1.5 | 0
+2026-10-25 | NBA | side | -3 | 1.5 | 1.5 | 0
+2026-10-25 | NFL | side | 1 | 10.5 | 10.5 | 0
+2026-10-25 | NFL | side | -4.8 | 3 | 3 | 0
+2026-10-25 | NFL | side | -4.5 | 3 | 3 | 0
+2026-10-25 | NFL | side | -3.4 | 3 | 3 | 0
+2026-10-25 | NFL | side | -8.6 | 3 | 3 | 0
+2026-10-25 | NFL | side | -11.8 | 6.5 | 6.5 | 0
+2026-10-25 | NFL | side | -6.8 | 2.5 | 2.5 | 0
+2026-10-25 | NFL | side | -4.5 | 1.5 | 1.5 | 0
+2026-10-25 | NHL | side | 101 | 195 | 195 | 0
+2026-10-25 | NHL | side | -260 | -190 | -200 | -10
+2026-10-25 | NHL | side | 127 | 165 | 155 | -10
