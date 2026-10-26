@@ -1,16 +1,1 @@
-# GG report 2026-10-24
-# Yesterday 2026-10-24 graded. Record 3-5-0. Profit $-20.95. CLV Matched Bet Price.
-
-Analysis: Saturday cashed the Michigan home dog in a 13-6 win and the Rays run line in a 4-5 loss. Navy lost a 49-39 shootout. The Rays under and same-game parlay lost. Leafs moneyline won 7-2. Sharks and Kings moneyline dogs lost.
-
-2026-10-24 | CFB | win | Michigan +7.5 | EDGE
-2026-10-24 | CFB | loss | Navy +3
-2026-10-24 | MLB | loss | Under 6.5 Rays @ Brewers | EDGE
-2026-10-24 | MLB | win | Rays +1.5 | EDGE
-2026-10-24 | MLB | loss | Rays +1.5 and Under 6.5 Rays @ Brewers | EDGE
-2026-10-24 | NBA | No Picks
-2026-10-24 | NHL | loss | San Jose Sharks ML | EDGE
-2026-10-24 | NHL | win | Toronto Maple Leafs ML
-2026-10-24 | NHL | loss | Los Angeles Kings ML
-2026-10-24 | NFL | No Picks
-2026-10-24 | CBB | No Picks
+PLACEHOLDER_REP
