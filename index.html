@@ -1934,11 +1934,8 @@ async function loadPickSlate(){
     const same = pickSlate && pickSlate._stamp === stamp;
     data._stamp = stamp;
     pickSlate = data;
-    if (!same) {
-      drawPickSlate();
-      drawCalendar();
-    }
-    refreshSlateRecords();
+    if (!same) drawCalendar();
+    refreshSlateRecords().then(updated => { if (!same && !updated) drawPickSlate(); }).catch(() => { if (!same) drawPickSlate(); });
     armHourlyScores();
   } catch (err) {}
 }
@@ -1957,12 +1954,29 @@ function sameClub(a, b){
   const nick = s => s.split(/\s+/).slice(-1)[0];
   return nick(left) === nick(right) && nick(left).length > 3;
 }
+function finishedOnBoard(game, board){
+  const sides = slateSides(game);
+  return (board || []).some(row => row && row.final && String(row.sport || "").toUpperCase() === String(game.sport || "").toUpperCase() && sameClub(row.away && (row.away.displayName || row.away.name), sides.away.name) && sameClub(row.home && (row.home.displayName || row.home.name), sides.home.name));
+}
+function dropFinishedFromSlate(board){
+  if (!pickSlate || !board || !board.length) return 0;
+  const open = g => !finishedOnBoard(g, board);
+  const before = (pickSlate.games || []).length + (pickSlate.passed || []).length;
+  pickSlate.games = (pickSlate.games || []).filter(open);
+  pickSlate.passed = (pickSlate.passed || []).filter(open);
+  const dropped = before - ((pickSlate.games || []).length + (pickSlate.passed || []).length);
+  if (dropped) drawPickSlate();
+  return dropped;
+}
 async function refreshSlateRecords(){
-  if (!pickSlate || !Array.isArray(pickSlate.games) || !pickSlate.games.length) return;
+  if (!pickSlate || !((pickSlate.games || []).length || (pickSlate.passed || []).length)) return;
   const date = pickSlate.date || easternDay();
+  const days = [...new Set([date, easternDay()].filter(Boolean))];
   const sports = [...new Set(pickSlate.games.concat(pickSlate.passed || []).map(g => g.sport).filter(s => SCORE_FEED[s]))];
   const found = [];
-  for (const sport of sports) found.push(...await scoreboard(sport, date).catch(() => []));
+  for (const sport of sports) {
+    for (const day of days) found.push(...await scoreboard(sport, day).catch(() => []));
+  }
   if (!found.length) return;
   let changed = false;
   const apply = g => {
@@ -1983,7 +1997,9 @@ async function refreshSlateRecords(){
   };
   pickSlate.games.forEach(apply);
   (pickSlate.passed || []).forEach(apply);
-  if (changed) drawPickSlate();
+  const dropped = dropFinishedFromSlate(found);
+  if (changed && !dropped) drawPickSlate();
+  return changed || dropped;
 }
 function seasonEnded(sport){ const end = SEASON_END[String(sport || "").toUpperCase()]; return !!end && easternDay() > end; }
 let seasonChecked = "";
@@ -3556,6 +3572,7 @@ async function gradeFinishedSlips(quiet){
     const pending = load().filter(b => b && b.result === "pending" && !isNoPick(b) && inSlipWindow(b.date));
     if (!pending.length) {
       if (note && !quiet) note.textContent = "No pending slips to grade.";
+      refreshSlateRecords().catch(() => {});
       return {graded: 0, live: 0, left: 0};
     }
     const sports = [...new Set(pending.map(b => String(b.sport || "").toUpperCase()))].filter(s => SCORE_FEED[s]);
@@ -3592,6 +3609,7 @@ async function gradeFinishedSlips(quiet){
       render();
     }
     if (note && (!quiet || graded)) note.textContent = graded + " slips graded from final scores." + (live ? " " + live + " still in progress." : "") + (left ? " " + left + " left pending." : "") + (graded ? " Slips and calendar updated." : "");
+    dropFinishedFromSlate(games);
     return {graded, live, left};
   } catch (err) {
     if (note && !quiet) note.textContent = "Score check failed. No slips were changed.";
