@@ -676,7 +676,9 @@ function dashboardEnd(){
   return end;
 }
 function lastSevenDates(){
-  const end = dashboardEnd();
+  const today = easternDay();
+  let end = dashboardEnd();
+  if (!cardPosted(end) || end > today || (end === today && openSlipCount(end) > 0)) end = shiftDate(today, -1);
   return Array.from({length: 7}, (_, i) => shiftDate(end, i - 6));
 }
 let closeMap = {};
@@ -823,6 +825,25 @@ function pendingOnCard(date){
   if (!date) return rows.length;
   return rows.filter(b => String(b.date || "").slice(0, 10) === date).length;
 }
+function cardPosted(date){
+  date = String(date || "").slice(0, 10);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return false;
+  if (slipsForDay(date).length || openSlipCount(date) > 0) return true;
+  if (driveCard.date === date && (driveCard.lines || []).length) return true;
+  const day = publishedCalendar[date];
+  if (day && (Number(day.n) > 0 || day.picks === "none")) return true;
+  return (gradeFile || []).some(b => b && String(b.date || "").slice(0, 10) === date && !isNoPick(b));
+}
+function unpostedRow(date){
+  return {date: date, record: "No Picks", profit: null, staked: 0, roi: "-", units: "-", pending: "Picks Start at " + zoneTime(9, 0), clv: "No Picks", unposted: true};
+}
+function pendingLabel(row){
+  const date = String(row && row.date || "").slice(0, 10);
+  if ((row && row.unposted) || (!cardPosted(date) && date >= easternDay())) return "Picks Start at " + zoneTime(9, 0);
+  if (!cardPosted(date)) return "No Picks";
+  if (Number(row.pending) === 0) return "0 - All Pending Has Been Graded";
+  return row.pending;
+}
 function publishedDashboard(only){
   const slips = [];
   (gradeFile || []).concat(load()).concat(loadGrade()).forEach(b => {
@@ -860,6 +881,7 @@ function publishedDashboard(only){
   });
 }
 function ruleRow(row){
+  if (row && (row.unposted || /no picks/i.test(String(row.record || "")))) return Object.assign({}, row, {record: "No Picks", profit: null, roi: "-", units: "-", clv: "No Picks", unposted: true});
   const record = String(row.record || "0-0-0");
   if (/split not on file/i.test(record)) return Object.assign({}, row, {record: "Split Not On File", clv: row.clv || "No Close Saved"});
   const parts = record.split("-").map(n => Number(n) || 0);
@@ -873,8 +895,8 @@ function drawDashboard(history, manual){
   const rows = (manual ? history.slice() : (manualRows || publishedDashboard())).map(ruleRow);
   rows.forEach(row => { row.pending = pendingOnCard(row.date); });
   const today = easternDay();
-  const live = rows.some(row => row.date === today) ? null : publishedDashboard([today])[0];
-  if (live) live.pending = pendingOnCard(today);
+  const live = rows.some(row => row.date === today) ? null : (cardPosted(today) ? publishedDashboard([today])[0] : unpostedRow(today));
+  if (live && !live.unposted) live.pending = pendingOnCard(today);
   if (!manual && !manualRows) localStorage.setItem("gg-dashboard-v1", JSON.stringify(rows));
   const shown = rows;
   const tableRows = live ? shown.concat([ruleRow(live)]) : shown;
@@ -896,7 +918,7 @@ function drawDashboard(history, manual){
     [pendingNow, "Pending Slips"],
     [clvs.length ? (clvs.reduce((s, n) => s + n, 0) / clvs.length).toFixed(1) + "%" : "No Close Saved", "7-Day Avg CLV"]
   ].map(x => "<div class='stat'><b>" + x[0] + "</b><span>" + x[1] + "</span></div>").join("");
-  document.getElementById("dashrows").innerHTML = tableRows.map(row => "<tr><td>" + row.date + "</td><td>" + row.record + "</td><td>" + profitCell(row.profit) + "</td><td>" + row.roi + "</td><td>" + row.units + "</td><td>" + (Number(row.pending) === 0 ? "0 - All Pending Has Been Graded" : row.pending) + "</td><td>" + (row.clv === "-" || row.clv == null || row.clv === "" ? "No Close Saved" : row.clv) + "</td></tr>").join("");
+  document.getElementById("dashrows").innerHTML = tableRows.map(row => "<tr><td>" + row.date + "</td><td>" + row.record + "</td><td>" + profitCell(row.profit) + "</td><td>" + row.roi + "</td><td>" + row.units + "</td><td>" + pendingLabel(row) + "</td><td>" + (row.unposted || /no picks/i.test(String(row.record || "")) ? "No Picks" : (row.clv === "-" || row.clv == null || row.clv === "" ? "No Close Saved" : row.clv)) + "</td></tr>").join("");
   const canvas = document.getElementById("dashChart");
   const ctx = canvas.getContext("2d");
   const w = Math.max(320, canvas.clientWidth || 640);
