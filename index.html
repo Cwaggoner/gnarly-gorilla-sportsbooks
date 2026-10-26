@@ -211,6 +211,8 @@ label:has(#loadcal) { gap:0; }
 .cal .dow { min-height:0; color:var(--title); background:transparent; border:0; }
 canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--line); border-radius:8px; display:block; }
 .charts canvas { width:100%; height:192px; }
+.sport-nav { display:flex; justify-content:center; gap:8px; margin-top:8px; }
+#sportday { text-align:center; margin:6px 0 0; color:#d6ffd0; }
 @media (max-width:700px) { .charts { grid-template-columns:1fr; } .bet-top { grid-template-columns:1fr; } #betfields { grid-template-columns:1fr 1fr; } #betload img { max-width:120px; } }
 
 @media (max-width:700px) { table { display:block; overflow-x:auto; } }
@@ -335,7 +337,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <div class="section-head"><h2>Charts</h2><p class="warn slips-side">Profit uses settled slips. CLV needs a paid Odds API key. <span id="plotnote"></span></p><button type="button" id="plot">Plot</button></div>
 <div class="charts">
 <div><h2 id="profitTitle">Cumulative Profit</h2><canvas id="profitChart" width="640" height="220"></canvas><p id="chartlesson" class="warn"></p></div>
-<div><h2>Profit By Sport</h2><canvas id="sportChart" width="420" height="220"></canvas></div>
+<div><h2>Profit By Sport</h2><canvas id="sportChart" width="420" height="220"></canvas><div class="sport-nav"><button type="button" id="sportprev">Previous</button><button type="button" id="sportnext">Next</button></div><p id="sportday"></p></div>
 </div>
 </section>
 <section class="card" id="breaks"></section>
@@ -1226,8 +1228,18 @@ function chartClv(b){
   if (!got || !closed) return null;
   return (got / closed - 1) * 100;
 }
-function yesterdayGraded(bets){
-  const day = yesterday();
+function sportChartDays(){
+  const today = easternDay();
+  const days = Object.keys(publishedCalendar || {}).filter(date => date < today && chartDayReady(date)).sort();
+  return days.length ? days : [yesterday()];
+}
+let sportDay = "";
+function activeSportDay(){
+  const days = sportChartDays();
+  if (days.indexOf(sportDay) < 0) sportDay = days[days.length - 1];
+  return sportDay;
+}
+function gradedOnDay(bets, day){
   if (!chartDayReady(day)) return [];
   const seen = new Set();
   const rows = [];
@@ -1243,20 +1255,34 @@ function yesterdayGraded(bets){
   });
   return rows;
 }
+function yesterdayGraded(bets){
+  return gradedOnDay(bets, yesterday());
+}
 function drawBars(canvas, bets){
   const ctx = canvas.getContext("2d");
   const sports = ["CBB","CFB","MLB","NBA","NFL","NHL"];
   const map = {};
   sports.forEach(sport => { map[sport] = {pl:0, clv:[], n:0, yday:0}; });
-  yesterdayGraded(bets).forEach(b => {
-    const sport = String(b.sport || "").trim().toUpperCase();
-    if (!map[sport]) return;
-    const row = map[sport];
-    row.yday += 1;
-    row.pl += profit(b);
-    const cv = chartClv(b);
-    if (cv != null) row.clv.push(cv);
-  });
+  const day = activeSportDay();
+  const saved = publishedCalendar[day] && publishedCalendar[day].sports;
+  if (saved) {
+    sports.forEach(sport => {
+      const row = saved[sport] || {};
+      map[sport].pl = Number(row.profit) || 0;
+      map[sport].n = Number(row.n) || 0;
+      map[sport].yday = map[sport].n;
+    });
+  } else {
+    gradedOnDay(bets, day).forEach(b => {
+      const sport = String(b.sport || "").trim().toUpperCase();
+      if (!map[sport]) return;
+      const row = map[sport];
+      row.yday += 1;
+      row.pl += profit(b);
+      const cv = chartClv(b);
+      if (cv != null) row.clv.push(cv);
+    });
+  }
   const rows = sports.map(sport => [sport, map[sport]]);
   const cssW = Math.max(320, canvas.clientWidth || 420);
   const rowH = 28;
@@ -1267,7 +1293,7 @@ function drawBars(canvas, bets){
   ctx.fillStyle = "#0e0e0e";
   ctx.fillRect(0,0,cssW,h);
   ctx.font = "12px sans-serif";
-  const label = r => r[1].yday ? "" : (!chartDayReady(yesterday()) ? "Last Game Open" : seasonText(r[0]));
+  const label = r => r[1].yday ? "" : (!chartDayReady(day) ? "Last Game Open" : seasonText(r[0]));
   const labelW = Math.max(...rows.map(r => ctx.measureText(r[0]).width), 36);
   const valueW = Math.max(...rows.map(r => ctx.measureText(money(r[1].pl) + "  " + label(r)).width), 70);
   const left = 12 + labelW + 8;
@@ -1282,6 +1308,14 @@ function drawBars(canvas, bets){
     ctx.fillText(name, 12, y + 12);
     ctx.fillText(money(row.pl) + "  " + label(r), cssW - right, y + 12);
   });
+  const shown = document.getElementById("sportday");
+  if (shown) shown.textContent = new Date(day + "T12:00:00").toLocaleDateString("en-US", {weekday:"long", month:"long", day:"numeric", year:"numeric"});
+  const days = sportChartDays();
+  const at = days.indexOf(day);
+  const prev = document.getElementById("sportprev");
+  const next = document.getElementById("sportnext");
+  if (prev) prev.disabled = at <= 0;
+  if (next) next.disabled = at < 0 || at >= days.length - 1;
 }
 
 
@@ -4516,6 +4550,16 @@ async function fillChartCloses(){
   if (filled) save(bets);
   return filled;
 }
+document.getElementById("sportprev").onclick = () => {
+  const days = sportChartDays();
+  const at = days.indexOf(activeSportDay());
+  if (at > 0) { sportDay = days[at - 1]; drawCharts(); }
+};
+document.getElementById("sportnext").onclick = () => {
+  const days = sportChartDays();
+  const at = days.indexOf(activeSportDay());
+  if (at >= 0 && at < days.length - 1) { sportDay = days[at + 1]; drawCharts(); }
+};
 document.getElementById("plot").onclick = () => {
   const note = document.getElementById("plotnote");
   note.textContent = "Updating CLV for every sport...";
