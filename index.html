@@ -1231,27 +1231,11 @@ function chartClv(b){
   if (!got || !closed) return null;
   return (got / closed - 1) * 100;
 }
-function monthBestSport(day){
-  const month = String(day || "").slice(0, 7);
-  const sports = ["CBB","CFB","MLB","NBA","NFL","NHL"];
-  const totals = {};
-  const counts = {};
-  sports.forEach(sport => { totals[sport] = 0; counts[sport] = 0; });
-  Object.keys(publishedCalendar || {}).forEach(date => {
-    if (String(date).slice(0, 7) !== month) return;
-    const block = publishedCalendar[date] && publishedCalendar[date].sports;
-    if (!block) return;
-    sports.forEach(sport => {
-      const row = block[sport];
-      if (!row) return;
-      totals[sport] += Number(row.profit) || 0;
-      counts[sport] += Number(row.n) || 0;
-    });
-  });
-  const played = sports.filter(sport => counts[sport] > 0);
-  if (!played.length) return "";
-  played.sort((a, b) => totals[b] - totals[a] || a.localeCompare(b));
-  return played[0];
+function bestSport(map){
+  const sports = ["CBB","CFB","MLB","NBA","NFL","NHL"].filter(sport => map[sport] && map[sport].yday > 0);
+  if (!sports.length) return "";
+  sports.sort((a, b) => map[b].pl - map[a].pl || a.localeCompare(b));
+  return sports[0];
 }
 function sportChartDays(){
   const today = easternDay();
@@ -1336,7 +1320,7 @@ function drawBars(canvas, bets){
   const shown = document.getElementById("sportday");
   if (shown) shown.textContent = new Date(day + "T12:00:00").toLocaleDateString("en-US", {weekday:"long", month:"long", day:"numeric", year:"numeric"});
   const best = document.getElementById("sportbest");
-  if (best) best.textContent = monthBestSport(day);
+  if (best) best.textContent = bestSport(map);
   const days = sportChartDays();
   const at = days.indexOf(day);
   const prev = document.getElementById("sportprev");
@@ -4695,6 +4679,13 @@ loadSeasons();
 loadPickSlate();
 setInterval(() => { loadPickSlate(); }, 300000);
 fetch("cards/calendar.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => { if (data && data.dates) publishedCalendar = data.dates; render(); }).catch(() => {});
+setInterval(() => {
+  fetch("cards/calendar.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => {
+    if (!data || !data.dates) return;
+    publishedCalendar = data.dates;
+    drawCharts();
+  }).catch(() => {});
+}, 300000);
 fetch("cards/report.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
   let day = ((text.match(/Yesterday\s+(\d{4}-\d{2}-\d{2})/) || [])[1]) || "";
   text.split(/\n/).forEach(line => {
