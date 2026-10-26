@@ -1273,8 +1273,11 @@ function loadProfitFile(){
     if (!data || !Array.isArray(data.days)) return;
     profitFile = data;
     const node = document.getElementById("monthbest");
-    if (node) node.textContent = monthLeader(typeof activeSportDay === "function" ? activeSportDay() : "");
+    if (node) node.textContent = sportTag("Month", monthLeader(typeof activeSportDay === "function" ? activeSportDay() : ""));
   }).catch(() => {});
+}
+function sportTag(kind, name){
+  return name ? "(" + kind + " " + name + ")" : "";
 }
 function sportChartDays(){
   const today = easternDay();
@@ -1359,9 +1362,9 @@ function drawBars(canvas, bets){
   const shown = document.getElementById("sportday");
   if (shown) shown.textContent = new Date(day + "T12:00:00").toLocaleDateString("en-US", {weekday:"long", month:"long", day:"numeric", year:"numeric"});
   const best = document.getElementById("sportbest");
-  if (best) best.textContent = bestSport(map);
+  if (best) best.textContent = sportTag("Day", bestSport(map));
   const monthNode = document.getElementById("monthbest");
-  if (monthNode) monthNode.textContent = monthLeader(day);
+  if (monthNode) monthNode.textContent = sportTag("Month", monthLeader(day));
   const days = sportChartDays();
   const at = days.indexOf(day);
   const prev = document.getElementById("sportprev");
