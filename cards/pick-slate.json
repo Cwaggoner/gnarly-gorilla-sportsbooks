@@ -1,8 +1,66 @@
 {
   "date": "2026-10-26",
-  "source": "ESPN scoreboard at 4:00 AM. No odds key. Picks post at 9:00 AM.",
+  "source": "ESPN scoreboard, no odds key",
   "passedNote": "Games being played that did not make the picks.",
   "games": [
+    {
+      "sport": "NBA",
+      "game": "Bulls at Celtics",
+      "start": "2026-10-26T23:30:00Z",
+      "location": "TD Garden, Boston, Massachusetts",
+      "awayRecord": "1-2",
+      "homeRecord": "1-1"
+    },
+    {
+      "sport": "NBA",
+      "game": "Grizzlies at Jazz",
+      "start": "2026-10-27T01:00:00Z",
+      "location": "Delta Center, Salt Lake City, Utah",
+      "awayRecord": "3-0",
+      "homeRecord": "1-2"
+    },
+    {
+      "sport": "NBA",
+      "game": "Mavericks at Heat",
+      "start": "2026-10-26T23:30:00Z",
+      "location": "Kaseya Center, Miami, Florida",
+      "awayRecord": "1-2",
+      "homeRecord": "0-3"
+    },
+    {
+      "sport": "NBA",
+      "game": "Suns at Thunder",
+      "start": "2026-10-27T00:00:00Z",
+      "location": "Paycom Center, Oklahoma City, Oklahoma",
+      "awayRecord": "1-1",
+      "homeRecord": "3-0"
+    },
+    {
+      "sport": "NBA",
+      "game": "Timberwolves at Cavaliers",
+      "start": "2026-10-26T23:00:00Z",
+      "location": "Rocket Arena, Cleveland, Ohio",
+      "awayRecord": "3-0",
+      "homeRecord": "1-1"
+    },
+    {
+      "sport": "NFL",
+      "game": "Cowboys at Eagles",
+      "start": "2026-10-27T00:15:00Z",
+      "location": "Lincoln Financial Field, Philadelphia, Pennsylvania",
+      "awayRecord": "2-4",
+      "homeRecord": "2-4"
+    },
+    {
+      "sport": "NHL",
+      "game": "Kings at Rangers",
+      "start": "2026-10-26T23:00:00Z",
+      "location": "Madison Square Garden, New York, New York",
+      "awayRecord": "2-5-2",
+      "homeRecord": "7-5-1"
+    }
+  ],
+  "passed": [
     {
       "sport": "MLB",
       "game": "Brewers at Rays",
@@ -13,65 +71,25 @@
     },
     {
       "sport": "NBA",
-      "game": "Bulls at Celtics",
-      "start": "2026-10-26T23:30:00Z",
-      "location": "TD Garden, Boston, MA",
-      "awayRecord": "1-2",
-      "homeRecord": "1-1"
-    },
-    {
-      "sport": "NBA",
-      "game": "Grizzlies at Jazz",
-      "start": "2026-10-27T01:00:00Z",
-      "location": "Delta Center, Salt Lake City, UT",
-      "awayRecord": "3-0",
-      "homeRecord": "1-2"
-    },
-    {
-      "sport": "NBA",
       "game": "Hawks at Rockets",
       "start": "2026-10-27T00:30:00Z",
-      "location": "Toyota Center (Houston), Houston, TX",
+      "location": "Toyota Center (Houston), Houston, Texas",
       "awayRecord": "2-1",
       "homeRecord": "3-0"
-    },
-    {
-      "sport": "NBA",
-      "game": "Mavericks at Heat",
-      "start": "2026-10-26T23:30:00Z",
-      "location": "Kaseya Center, Miami, FL",
-      "awayRecord": "1-2",
-      "homeRecord": "0-3"
     },
     {
       "sport": "NBA",
       "game": "Pacers at Bucks",
       "start": "2026-10-27T00:00:00Z",
-      "location": "Fiserv Forum, Milwaukee, WI",
+      "location": "Fiserv Forum, Milwaukee, Wisconsin",
       "awayRecord": "2-1",
       "homeRecord": "0-3"
     },
     {
       "sport": "NBA",
-      "game": "Suns at Thunder",
-      "start": "2026-10-27T00:00:00Z",
-      "location": "Paycom Center, Oklahoma City, OK",
-      "awayRecord": "1-1",
-      "homeRecord": "3-0"
-    },
-    {
-      "sport": "NBA",
-      "game": "Timberwolves at Cavaliers",
-      "start": "2026-10-26T23:00:00Z",
-      "location": "Rocket Arena, Cleveland, OH",
-      "awayRecord": "3-0",
-      "homeRecord": "1-1"
-    },
-    {
-      "sport": "NBA",
       "game": "Warriors at Nuggets",
       "start": "2026-10-27T02:00:00Z",
-      "location": "Ball Arena, Denver, CO",
+      "location": "Ball Arena, Denver, Colorado",
       "awayRecord": "0-3",
       "homeRecord": "1-1"
     },
@@ -79,31 +97,15 @@
       "sport": "NBA",
       "game": "Wizards at Hornets",
       "start": "2026-10-26T23:00:00Z",
-      "location": "Spectrum Center, Charlotte, NC",
+      "location": "Spectrum Center, Charlotte, North Carolina",
       "awayRecord": "2-1",
       "homeRecord": "2-1"
-    },
-    {
-      "sport": "NFL",
-      "game": "Cowboys at Eagles",
-      "start": "2026-10-27T00:15:00Z",
-      "location": "Lincoln Financial Field, Philadelphia, PA",
-      "awayRecord": "2-4",
-      "homeRecord": "2-4"
-    },
-    {
-      "sport": "NHL",
-      "game": "Kings at Rangers",
-      "start": "2026-10-26T23:00:00Z",
-      "location": "Madison Square Garden, New York, NY",
-      "awayRecord": "2-5-2",
-      "homeRecord": "7-5-1"
     },
     {
       "sport": "NHL",
       "game": "Maple Leafs at Flames",
       "start": "2026-10-27T00:30:00Z",
-      "location": "Scotiabank Saddledome, Calgary, AB",
+      "location": "Scotiabank Saddledome, Calgary, Alberta",
       "awayRecord": "7-4-2",
       "homeRecord": "4-6-0"
     },
@@ -111,10 +113,9 @@
       "sport": "NHL",
       "game": "Red Wings at Oilers",
       "start": "2026-10-27T01:30:00Z",
-      "location": "Rogers Place, Edmonton, AB",
+      "location": "Rogers Place, Edmonton, Alberta",
       "awayRecord": "4-4-3",
       "homeRecord": "8-2-1"
     }
-  ],
-  "passed": []
+  ]
 }
