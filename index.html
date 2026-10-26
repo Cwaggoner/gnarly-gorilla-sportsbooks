@@ -334,7 +334,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <section class="card" id="charts">
 <div class="section-head"><h2>Charts</h2><p class="warn slips-side">Profit uses settled slips. CLV needs a paid Odds API key. <span id="plotnote"></span></p><button type="button" id="plot">Plot</button></div>
 <div class="charts">
-<div><h2 id="profitTitle">Cumulative Profit</h2><canvas id="profitChart" width="640" height="220"></canvas></div>
+<div><h2 id="profitTitle">Cumulative Profit</h2><canvas id="profitChart" width="640" height="220"></canvas><p id="chartlesson" class="warn"></p></div>
 <div><h2>Profit By Sport</h2><canvas id="sportChart" width="420" height="220"></canvas></div>
 </div>
 </section>
@@ -1124,6 +1124,30 @@ function monthDays(){
   }
   return rows;
 }
+function chartLesson(days){
+  const box = document.getElementById("chartlesson");
+  if (!days.length) {
+    if (box) box.textContent = "No settled days. The chart has nothing to teach yet.";
+    return;
+  }
+  let run = 0;
+  const pts = days.map(d => { run += Number(d.pl) || 0; return {date: d.date, pl: Number(d.pl) || 0, y: run}; });
+  const last = pts[pts.length - 1];
+  let best = pts[0], worst = pts[0];
+  pts.forEach(p => { if (p.y > best.y) best = p; if (p.y < worst.y) worst = p; });
+  const last3 = pts.slice(-3);
+  const sum3 = last3.reduce((s, p) => s + p.pl, 0);
+  const stamp = date => String(date).slice(5);
+  let text = "The line is " + money(last.y) + ". ";
+  text += last.y < -0.005 ? "Still under break even. " : last.y > 0.005 ? "Above break even. " : "On break even. ";
+  text += "Worst was " + money(worst.y) + " on " + stamp(worst.date) + ". Best was " + money(best.y) + " on " + stamp(best.date) + ". ";
+  text += "Last " + last3.length + " days " + money(sum3) + ". ";
+  if (last.y < -0.005 && sum3 < -0.005) text += "The line is still losing. Tighten the gap. Do not add plays to win it back.";
+  else if (last.y < -0.005) text += "The line has not crossed $0. Keep the gap. Do not loosen it, and do not add plays to win the month back.";
+  else if (sum3 < -0.005) text += "Above zero, but the last days are down. Do not add plays.";
+  else text += "The line is paying. Keep the same gap. Do not bet more because it rose.";
+  if (box) box.textContent = text;
+}
 function drawLine(canvas){
   const ctx = canvas.getContext("2d");
   const w = Math.max(320, canvas.clientWidth || 640);
@@ -1136,7 +1160,7 @@ function drawLine(canvas){
   const days = monthDays();
   const title = document.getElementById("profitTitle");
   if (title) title.textContent = "Cumulative Profit · " + monthCursor.toLocaleString(undefined, {month:"long", year:"numeric"});
-  if (!days.length){ ctx.fillStyle = "#8fb898"; ctx.font = "14px sans-serif"; ctx.fillText("No settled days this month.", 16, 32); return; }
+  if (!days.length){ ctx.fillStyle = "#8fb898"; ctx.font = "14px sans-serif"; ctx.fillText("No settled days this month.", 16, 32); chartLesson([]); return; }
   let run = 0;
   const pts = days.map(d => { run += d.pl; return {date:d.date, y:run}; });
   const vals = pts.map(p => p.y);
@@ -1189,6 +1213,7 @@ function drawLine(canvas){
   ctx.textAlign = "right";
   ctx.fillText(label, lx - 6, ly + (above ? -6 : 14));
   ctx.textAlign = "left";
+  chartLesson(days);
 }
 let gradeFile = [];
 let liveGradedDates = new Set();

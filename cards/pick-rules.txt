@@ -1,4 +1,10 @@
-# Pick rules updated 2026-10-25
+# Pick rules updated 2026-10-26
+# The cumulative chart is the record. Read it before the card.
+# Through 2026-10-25 the running total is -$112.81. It never crossed $0.
+# The low was -$220.07 on 10/08. The best the line got was -$18.39 on 10/02.
+# The climb back to -$59.26 on 10/20 was real, then 10/21 gave back $65.22 in one day.
+# Last 7 settled days are -$43.33. Last 3 sum +$1.29 only because 10/23 was +$42.94.
+# 10/24 and 10/25 gave back $41.65. Recompute these figures from cards/calendar.json every morning.
 # The six-play cap is gone. It was fit to one night: October 23 went 5-1 on six plays.
 # A sharp does not cut a good number to hit a count, and does not invent a bet to fill one.
 # Old rules that picked a side first are gone with it: every dog of 5.5 or more,
@@ -24,6 +30,11 @@ Read cards/prices.txt before making a number. That file is the training log. A b
    The next card reads the log first. Adjust a market's made number only when the last 30 graded rows in that sport and market average negative. Move the number toward the close by the size of that average, and write the adjustment at the top of the card. Do not adjust off a sample smaller than 30. Do not drop a market for a losing record if the CLV is positive. Do not keep a market for a winning record if the CLV is negative over 30.
 10. SLATE FILE: cards/scoreboard.json is the full day's scoreboard. Leave it in place when the card is combined. cards/pick-slate.json games are only the games on that day's card, and every other scoreboard game goes in passed. Never write an empty pick-slate.json. An empty file takes the picks off the Seasons card.
 11. If today's part file already has bet lines, and each line shows the made number, the book number, and the gap, keep those lines. Do not replace a posted bet with No Picks.
+12. CHART. Before any number, add up cards/calendar.json from the first settled day through the last. That sum is the cumulative line.
+    If the sum is under $0, stake stays $10. Rule 8 cannot raise it.
+    If the last three settled days sum to a loss, add 1 point to every side gap in rule 2, add 1 point to every football, basketball, and baseball total gap, and add 0.5 goals to the NHL total gap. Do not add a bet to get the money back.
+    If the last three settled days sum to a win, use the gaps in rule 2. Do not make them smaller because the line rose.
+    One green day does not cross the line out of the red. Do not loosen anything until the running total itself is above $0.
 
 INTERIM NUMBER. Use this until that sport and market has 30 graded rows. Then stop, and use rule 9.
 This is a record formula, not a trained price. It exists so a day with games produces bets the log can grade.
