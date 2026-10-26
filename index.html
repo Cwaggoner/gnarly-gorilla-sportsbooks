@@ -661,9 +661,23 @@ function shiftDate(iso, days){
   const dt = new Date(Date.UTC(y, m - 1, d + days));
   return dt.toISOString().slice(0, 10);
 }
-function lastSevenDates(){
+function openSlipCount(date){
+  const rows = pendingSlips();
+  if (!date) return rows.length;
+  return rows.filter(b => String(b.date || "").slice(0, 10) === date).length;
+}
+function dashboardEnd(){
   const today = easternDay();
-  return Array.from({length: 7}, (_, i) => shiftDate(today, i - 7));
+  let end = shiftDate(today, -1);
+  const todayPosted = (driveCard.date === today && (driveCard.lines || []).length) || slipsForDay(today).length || openSlipCount(today) > 0;
+  if (todayPosted && openSlipCount(today) === 0 && slipsForDay(today).length) end = today;
+  let guard = 0;
+  while (openSlipCount(end) > 0 && guard < 8) { end = shiftDate(end, -1); guard++; }
+  return end;
+}
+function lastSevenDates(){
+  const end = dashboardEnd();
+  return Array.from({length: 7}, (_, i) => shiftDate(end, i - 6));
 }
 let closeMap = {};
 let betMap = {};
@@ -810,13 +824,10 @@ function pendingOnCard(date){
   return rows.filter(b => String(b.date || "").slice(0, 10) === date).length;
 }
 function publishedDashboard(only){
-  const slips = (gradeFile || []).filter(b => b && b.date && !isNoPick(b) && (b.result === "win" || b.result === "loss" || b.result === "push")).map(b => {
-    const close = closeMap[b.date + "|" + b.pick];
-    return close ? Object.assign({}, b, {close}) : b;
-  });
-  load().concat(loadGrade()).forEach(b => {
+  const slips = [];
+  (gradeFile || []).concat(load()).concat(loadGrade()).forEach(b => {
     if (!b || !b.date || isNoPick(b) || (b.result !== "win" && b.result !== "loss" && b.result !== "push")) return;
-    if (slips.some(s => sameSlip(s, b))) return;
+    if (slips.some(s => sameSlip(s, b) || sameGrade(s, b))) return;
     const close = closeMap[b.date + "|" + b.pick];
     slips.push(close ? Object.assign({}, b, {close}) : b);
   });
