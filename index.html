@@ -781,8 +781,31 @@ function profitCell(n){
   if (Math.abs(Number(n)) < 0.005) return "<span class='zero'>Break Even</span>";
   return moneyHtml(n);
 }
+function finishedGameList(){
+  try { return JSON.parse(sessionStorage.getItem("gg-finished-games") || "[]"); } catch (e) { return []; }
+}
+function rememberFinished(games){
+  const saved = finishedGameList().filter(g => g && inSlipWindow(g.date));
+  (games || []).forEach(g => {
+    if (!g || !g.game) return;
+    const date = String(g.date || (pickSlate && pickSlate.date) || "").slice(0, 10);
+    const id = [date, g.sport, g.game].join("|");
+    if (saved.some(s => s.id === id)) return;
+    const sides = slateSides(g);
+    saved.push({id, date, sport: g.sport, game: g.game, away: {name: sides.away.name}, home: {name: sides.home.name}});
+  });
+  try { sessionStorage.setItem("gg-finished-games", JSON.stringify(saved)); } catch (e) {}
+}
+function slipGameFinished(slip){
+  const day = String(slip && slip.date || "").slice(0, 10);
+  return finishedGameList().some(g => {
+    const gDay = String(g.date || "").slice(0, 10);
+    if (gDay && day && gDay !== day) return false;
+    return gameMatchesSlip(g, slip);
+  });
+}
 function pendingOnCard(date){
-  const rows = pendingSlips();
+  const rows = pendingSlips().filter(b => !slipGameFinished(b));
   if (!date) return rows.length;
   return rows.filter(b => String(b.date || "").slice(0, 10) === date).length;
 }
@@ -1964,11 +1987,16 @@ function finishedOnBoard(game, board){
 function dropFinishedFromSlate(board){
   if (!pickSlate || !board || !board.length) return 0;
   const open = g => !finishedOnBoard(g, board);
+  const droppedGames = (pickSlate.games || []).concat(pickSlate.passed || []).filter(g => !open(g));
   const before = (pickSlate.games || []).length + (pickSlate.passed || []).length;
   pickSlate.games = (pickSlate.games || []).filter(open);
   pickSlate.passed = (pickSlate.passed || []).filter(open);
   const dropped = before - ((pickSlate.games || []).length + (pickSlate.passed || []).length);
-  if (dropped) drawPickSlate();
+  if (dropped) {
+    rememberFinished(droppedGames);
+    drawPickSlate();
+    try { drawDashboard(); } catch (e) {}
+  }
   return dropped;
 }
 async function refreshSlateRecords(){
