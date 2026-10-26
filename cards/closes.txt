@@ -273,3 +273,10 @@
 2026-10-25 | NHL | 195 | Predators ML | 195
 2026-10-25 | NHL | -190 | Wild ML | -200
 2026-10-25 | NHL | 165 | Islanders ML | 155
+2026-10-26 | NBA | -110 | Timberwolves +3.5 at Cavaliers | -110
+2026-10-26 | NBA | -110 | Bulls +14.5 at Celtics | -110
+2026-10-26 | NBA | -110 | Mavericks +8.5 at Heat | -110
+2026-10-26 | NBA | -110 | Suns +9.5 at Thunder | -105
+2026-10-26 | NBA | -110 | Grizzlies +1.5 at Jazz | -110
+2026-10-26 | NFL | -110 | Philadelphia Eagles +4.5 | -110
+2026-10-26 | NHL | -140 | Rangers ML vs Kings | -130
