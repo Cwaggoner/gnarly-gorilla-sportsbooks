@@ -1836,9 +1836,12 @@ function pendingSlips(){
   return cardSlips().filter(b => b.result === "pending");
 }
 function seasonStatus(sport, pending){
-  const n = (pending || []).filter(b => String(b.sport || "").toUpperCase() === sport).length;
+  const code = String(sport || "").toUpperCase();
+  const listed = pickSlate && Array.isArray(pickSlate.games) ? pickSlate.games.filter(g => String(g.sport || "").toUpperCase() === code) : null;
+  if (listed && !listed.length) return seasonEnded(code) ? "Season Ended" : "Open";
+  const n = (pending || []).filter(b => String(b.sport || "").toUpperCase() === code).length;
   if (n) return n + " Pending";
-  return seasonEnded(sport) ? "Season Ended" : "Open";
+  return seasonEnded(code) ? "Season Ended" : "Open";
 }
 function gameMatchesSlip(game, slip){
   if (!game || !slip || String(slip.sport || "").toUpperCase() !== game.sport) return false;
