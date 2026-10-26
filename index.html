@@ -456,6 +456,11 @@ function easternAt(hour, minute){
 function zoneTime(hour, minute){ return formatTime(easternAt(hour, minute), false); }
 function liveByText(){
   const place = siteZone().replace(/_/g, " ").split("/").pop();
+  const today = easternDay();
+  const prior = shiftDate(today, -1);
+  if (cardPosted(today) && !picksAreFinal(today)) return "Picks are live. The site grades when the last game ends.";
+  const gradedDay = picksAreFinal(today) ? today : (!cardPosted(today) && picksAreFinal(prior) ? prior : "");
+  if (gradedDay) return "Graded. " + slateDateLabel(gradedDay) + " is final. Next picks at " + zoneTime(9, 0) + " " + place + ".";
   return "All picks live by " + zoneTime(9, 30) + " " + place + ". Closed Value Lines update at " + zoneTime(18, 0) + ".";
 }
 function showClock(){
@@ -580,12 +585,20 @@ function lastSlateEnd(date){
   const raw = starts.reduce((end, g) => Math.max(end, g.start + gameLengthMs(g.sport, date)), 0);
   return Math.min(raw, slateCutoff(date));
 }
+let finalSlates = new Set();
+try { finalSlates = new Set(JSON.parse(sessionStorage.getItem("gg-picks-final") || "[]")); } catch (e) {}
+function picksAreFinal(date){ return finalSlates.has(String(date || "").slice(0, 10)); }
+function markSlateFinal(date){
+  date = String(date || "").slice(0, 10);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || finalSlates.has(date)) return;
+  finalSlates.add(date);
+  try { sessionStorage.setItem("gg-picks-final", JSON.stringify([...finalSlates])); } catch (e) {}
+}
 function slateSettled(date){
   date = String(date || "").slice(0, 10);
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return false;
-  if (Date.now() >= slateCutoff(date)) return true;
-  const end = lastSlateEnd(date);
-  return !!(end && Date.now() >= end);
+  if (picksAreFinal(date)) return true;
+  return Date.now() >= slateCutoff(date);
 }
 function dayGraded(date){
   date = String(date || "").slice(0, 10);
@@ -3745,23 +3758,99 @@ async function gradeFinishedSlips(quiet){
   }
 }
 function armHourlyScores(){
+  if (gradeTimer) return;
   const first = firstGameStart(easternDay());
-  if (!Number.isFinite(first)) return;
-  if (scoreArmedFor === first && (scoreTimer || scoreLoop)) return;
-  scoreArmedFor = first;
-  clearTimeout(scoreTimer);
-  clearInterval(scoreLoop);
-  scoreLoop = 0;
-  const last = Number(localStorage.getItem("gg-score-check") || 0);
-  const due = Date.now() < first ? first - Date.now() : Math.max(0, 3600000 - (Date.now() - last));
-  const run = () => {
-    gradeFinishedSlips(true).finally(() => localStorage.setItem("gg-score-check", String(Date.now())));
-  };
-  scoreTimer = setTimeout(() => {
-    scoreTimer = 0;
-    run();
-    scoreLoop = setInterval(run, 3600000);
-  }, due);
+  const due = Number.isFinite(first) && Date.now() < first ? Math.max(0, first - Date.now()) : 0;
+  scheduleGradeCheck(due);
+}
+let gradeTimer = 0;
+function scheduleGradeCheck(ms){
+  clearTimeout(gradeTimer);
+  gradeTimer = setTimeout(() => { gradeTimer = 0; gradeOpenSlate().catch(() => {}); }, ms);
+}
+function slipBoardGames(slip, games){
+  const type = betType(slip);
+  const legs = (type === "SGP" || type === "Parlay") ? String(slip.pick || "").split(/\s+and\s+/i) : [slip.pick];
+  return legs.map(leg => findFinalGame((games || []).filter(g => !slip.sport || g.sport === String(slip.sport || "").toUpperCase()), leg));
+}
+async function postedCardRows(){
+  const files = ["cards/today.txt", "cards/parts/nhl.txt", "cards/parts/nba.txt", "cards/parts/mlb.txt", "cards/parts/nfl.txt", "cards/parts/cbb.txt", "cards/parts/cfb.txt"];
+  const chunks = await Promise.all(files.map(file => fetch(file + "?ts=" + Date.now()).then(r => r.ok ? r.text() : "").catch(() => "")));
+  const rows = [];
+  const seen = new Set();
+  chunks.forEach(text => String(text || "").split(/\n/).forEach(line => {
+    const row = parseCardLine(line);
+    if (!row || !inSlipWindow(row.date)) return;
+    const key = [row.date, row.sport, normPick(row.pick)].join("|");
+    if (seen.has(key)) return;
+    seen.add(key);
+    rows.push(row);
+  }));
+  return rows;
+}
+function seedCardSlips(rows){
+  const bets = load();
+  let added = 0;
+  (rows || []).forEach(row => {
+    if (picksAreFinal(row.date)) return;
+    if (gradedPool().some(b => (sameSlip(b, row) || sameGrade(b, row)) && b.result !== "pending")) return;
+    if (bets.some(b => sameSlip(b, row) || sameGrade(b, row))) return;
+    bets.push({id: "card-" + [row.date, row.sport, normPick(row.pick)].join("|"), date: row.date, book: "BetMGM", sport: row.sport, type: row.type || "Spread", pick: row.pick, odds: row.odds, stake: 10, result: "pending", fromCard: true, notes: row.notes || ""});
+    added++;
+  });
+  if (added) save(bets);
+  return added;
+}
+async function gradeOpenSlate(){
+  if (scoreBusy) { scheduleGradeCheck(15000); return; }
+  const rows = await postedCardRows().catch(() => []);
+  seedCardSlips(rows);
+  const pending = gradedPool().filter(b => b && b.result === "pending" && !isNoPick(b) && inSlipWindow(b.date));
+  const today = easternDay();
+  const dates = [...new Set(rows.map(r => r.date).concat(pending.map(b => String(b.date || "").slice(0, 10))))].filter(date => date === today || date === yesterday());
+  dates.forEach(date => {
+    if (date < today && Date.now() >= slateCutoff(date) && openSlipCount(date) === 0 && slipsForDay(date).length) markSlateFinal(date);
+  });
+  const openDates = dates.filter(date => !picksAreFinal(date));
+  if (!openDates.length) { scheduleGradeCheck(300000); showClock(); return; }
+  const sports = [...new Set(openDates.reduce((list, date) => list.concat(rows.filter(r => r.date === date).map(r => r.sport), pending.filter(b => String(b.date || "").slice(0, 10) === date).map(b => String(b.sport || "").toUpperCase())), []))].filter(s => SCORE_FEED[s]);
+  if (!sports.length) { scheduleGradeCheck(300000); showClock(); return; }
+  scoreBusy = true;
+  try {
+    const games = [];
+    for (const sport of sports) {
+      for (const date of openDates) games.push(...await scoreboard(sport, date).catch(() => []));
+    }
+    if (games.length) applyFinalGrades(games);
+    let stillLive = false;
+    let nextStart = 0;
+    openDates.forEach(date => {
+      const slips = gradedPool().filter(b => String(b.date || "").slice(0, 10) === date && b.result === "pending" && !isNoPick(b));
+      const targets = slips.length ? slips : rows.filter(r => r.date === date);
+      if (!targets.length) {
+        if (date < today && slipsForDay(date).length) markSlateFinal(date);
+        return;
+      }
+      const hits = targets.reduce((list, slip) => list.concat(slipBoardGames(slip, games)), []);
+      const starts = hits.filter(g => g && Number.isFinite(g.start)).map(g => g.start);
+      if (starts.length) nextStart = nextStart ? Math.min(nextStart, Math.min.apply(null, starts)) : Math.min.apply(null, starts);
+      if (!hits.length || hits.some(g => !g || (!g.final && !g.postponed))) { stillLive = true; return; }
+      if (slips.length) { stillLive = true; return; }
+      markSlateFinal(date);
+    });
+    const note = document.getElementById("scorenote");
+    const gradedDay = picksAreFinal(today) ? today : (!cardPosted(today) && picksAreFinal(yesterday()) ? yesterday() : "");
+    if (note && gradedDay && !stillLive) note.textContent = "Graded. Last game is final. The site is updated.";
+    render();
+    showClock();
+    if (!stillLive) scheduleGradeCheck(300000);
+    else if (nextStart && nextStart > Date.now() + 60000) scheduleGradeCheck(nextStart - Date.now());
+    else scheduleGradeCheck(60000);
+  } catch (err) {
+    scheduleGradeCheck(60000);
+  } finally {
+    scoreBusy = false;
+  }
 }
 document.getElementById("livescores").onclick = () => gradeFinishedSlips(false);
 document.getElementById("savedash").onclick = () => {
@@ -3837,6 +3926,7 @@ async function catchUp(){
   await applyGrades().catch(() => {});
   clearStalePending();
   render();
+  gradeOpenSlate().catch(() => {});
 }
 catchUp();
 let stateRules = {};
