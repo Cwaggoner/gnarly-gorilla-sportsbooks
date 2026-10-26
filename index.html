@@ -2000,10 +2000,12 @@ function dropFinishedFromSlate(board){
   return dropped;
 }
 async function refreshSlateRecords(){
-  if (!pickSlate || !((pickSlate.games || []).length || (pickSlate.passed || []).length)) return;
-  const date = pickSlate.date || easternDay();
-  const days = [...new Set([date, easternDay()].filter(Boolean))];
-  const sports = [...new Set(pickSlate.games.concat(pickSlate.passed || []).map(g => g.sport).filter(s => SCORE_FEED[s]))];
+  const pending = gradedPool().filter(b => b && b.result === "pending" && !isNoPick(b) && inSlipWindow(b.date));
+  const slateGames = ((pickSlate && pickSlate.games) || []).concat((pickSlate && pickSlate.passed) || []);
+  if (!slateGames.length && !pending.length) return;
+  const date = (pickSlate && pickSlate.date) || easternDay();
+  const days = [...new Set([date, easternDay(), yesterday()].concat(pending.map(b => String(b.date || "").slice(0, 10))).filter(Boolean))];
+  const sports = [...new Set(slateGames.map(g => g.sport).concat(pending.map(b => String(b.sport || "").toUpperCase())).filter(s => SCORE_FEED[s]))];
   const found = [];
   for (const sport of sports) {
     for (const day of days) found.push(...await scoreboard(sport, day).catch(() => []));
@@ -2011,7 +2013,7 @@ async function refreshSlateRecords(){
   if (!found.length) return;
   let changed = false;
   const apply = g => {
-    if (!g) return;
+    if (!g || !pickSlate) return;
     const sides = slateSides(g);
     const hit = found.find(row => row.sport === g.sport && sameClub(row.away.displayName, sides.away.name) && sameClub(row.home.displayName, sides.home.name));
     if (!hit) return;
@@ -2026,11 +2028,14 @@ async function refreshSlateRecords(){
       changed = true;
     }
   };
-  pickSlate.games.forEach(apply);
-  (pickSlate.passed || []).forEach(apply);
+  if (pickSlate) {
+    (pickSlate.games || []).forEach(apply);
+    (pickSlate.passed || []).forEach(apply);
+  }
   const dropped = dropFinishedFromSlate(found);
-  if (changed && !dropped) drawPickSlate();
-  return changed || dropped;
+  const graded = applyFinalGrades(found);
+  if (changed && !dropped && !graded) drawPickSlate();
+  return changed || dropped || graded;
 }
 function seasonEnded(sport){ const end = SEASON_END[String(sport || "").toUpperCase()]; return !!end && easternDay() > end; }
 let seasonChecked = "";
@@ -2124,9 +2129,7 @@ function sameGrade(a, b){
   if (!a || !b) return false;
   if (String(a.date || "").slice(0, 10) !== String(b.date || "").slice(0, 10)) return false;
   if (String(a.sport || "").toUpperCase() !== String(b.sport || "").toUpperCase()) return false;
-  const strip = p => normPick(p).replace(/^sgp\s+/, "");
-  const left = strip(a.pick), right = strip(b.pick);
-  return !!left && left === right;
+  return samePick(a.pick, b.pick);
 }
 function dropMatchedPending(rows){
   const list = (rows || []).filter(Boolean);
@@ -2223,11 +2226,17 @@ function render(){
   const y = yesterday();
   const picked = document.getElementById("reportDay").value;
   const show = document.getElementById("reportShow").value || "both";
-  const pool = gradedPool();
+  const pool = dropMatchedPending(gradedPool());
   const yDone = pool.some(b => b.date === y && b.result !== "pending" && !isNoPick(b));
   const gradeDate = picked || (yDone ? y : (slateSettled(y) ? y : shiftDate(y, -1)));
-  const pending = pool.filter(b => b.result === "pending" && !slateSettled(b.date) && (picked ? b.date === picked : b.date === easternDay() || b.date === shiftDate(easternDay(), -1)));
-  const gradedDay = pool.filter(b => b.result !== "pending" && b.date === gradeDate);
+  const pending = pool.filter(b => b.result === "pending" && (picked ? b.date === picked : b.date === easternDay() || b.date === y));
+  const gradedDay = pool.filter(b => {
+    if (!b || b.result === "pending" || isNoPick(b)) return false;
+    const d = String(b.date || "").slice(0, 10);
+    if (picked) return d === picked;
+    return d === gradeDate || d === easternDay() || d === y;
+  });
+  const gradeLabel = picked || [...new Set(gradedDay.map(b => String(b.date || "").slice(0, 10)))].sort().join(", ") || gradeDate;
   const day = picked ? pool.filter(b => b.date === picked) : gradedDay;
   const daySettled = gradedDay.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
   const dayPl = gradedDay.reduce((s,b) => s + slipMoney(b), 0);
@@ -2235,7 +2244,7 @@ function render(){
   const blocks = [];
   if (show !== "graded") blocks.push(["Pending", pending]);
   if (show !== "pending") blocks.push(["Graded", gradedDay]);
-  const copy = ["GNARLY GORILLA REPORT CARD", gradeDate, "W/L Record " + rec(gradedDay) + "   P/L " + money(dayPl) + "   on $10 slips", "Hit rate " + hit, "Row sum " + money(dayPl)];
+  const copy = ["GNARLY GORILLA REPORT CARD", gradeLabel, "W/L Record " + rec(gradedDay) + "   P/L " + money(dayPl) + "   on $10 slips", "Hit rate " + hit, "Row sum " + money(dayPl)];
   let body = "";
   blocks.forEach(([title, list]) => {
     const sorted = list.slice().sort((a,b) => String(a.sport).localeCompare(String(b.sport)) || String(a.result).localeCompare(String(b.result)) || String(a.pick).localeCompare(String(b.pick)));
@@ -2262,7 +2271,7 @@ function render(){
   copy.push("", "W/L Record " + rec(gradedDay) + "   " + money(dayPl) + "   " + (dayPl / UNIT).toFixed(2) + "u");
   const report = document.getElementById("report");
   report.dataset.copy = copy.join("\n");
-  report.innerHTML = "<p>Date " + (picked || easternDay()) + ". Graded " + gradeDate + "</p><p>W/L Record " + rec(gradedDay) + "   P/L " + money(dayPl) + "   Hit rate " + hit + "   Row sum " + money(dayPl) + "</p>" + body + "<p>W/L Record " + rec(gradedDay) + "   " + money(dayPl) + "   " + (dayPl / UNIT).toFixed(2) + "u</p>";
+  report.innerHTML = "<p>Date " + (picked || easternDay()) + ". Graded " + gradeLabel + "</p><p>W/L Record " + rec(gradedDay) + "   P/L " + money(dayPl) + "   Hit rate " + hit + "   Row sum " + money(dayPl) + "</p>" + body + "<p>W/L Record " + rec(gradedDay) + "   " + money(dayPl) + "   " + (dayPl / UNIT).toFixed(2) + "u</p>";
   try { paintSeasonStatus(); } catch (err) {}
   } finally {
     rendering = false;
@@ -3589,6 +3598,48 @@ function firstGameStart(date){
   const times = list.map(g => Date.parse(g.start)).filter(ms => Number.isFinite(ms) && slateDateOf(ms) === date);
   return times.length ? Math.min.apply(null, times) : NaN;
 }
+function applyFinalGrades(games){
+  const finals = (games || []).filter(g => g && g.final);
+  if (!finals.length) return 0;
+  const bets = load();
+  const extras = [];
+  let graded = 0;
+  const touched = new Set();
+  const gradeOne = b => {
+    if (!b || b.result !== "pending" || isNoPick(b) || !inSlipWindow(b.date)) return false;
+    const sport = String(b.sport || "").toUpperCase();
+    const day = String(b.date || "").slice(0, 10);
+    const result = gradeFromScores(b, finals.filter(g => g.sport === sport && (!g.date || String(g.date).slice(0, 10) === day)));
+    if (result !== "win" && result !== "loss" && result !== "push") return false;
+    b.result = result;
+    delete b.profit;
+    const made = profit(b);
+    b.profit = Number.isFinite(made) ? Number(made.toFixed(2)) : 0;
+    stampFileClose(b);
+    graded++;
+    touched.add(day);
+    return true;
+  };
+  bets.forEach(gradeOne);
+  gradedPool().forEach(b => {
+    if (!b || b.result !== "pending" || bets.some(s => sameSlip(s, b) || sameGrade(s, b))) return;
+    const copy = Object.assign({}, b, {id: b.id || ("live-" + [b.date, b.sport, b.pick].join("|"))});
+    if (gradeOne(copy)) extras.push(copy);
+  });
+  if (!graded) return 0;
+  localStorage.setItem(KEY, JSON.stringify(bets));
+  archiveSlips(bets.concat(extras));
+  bets.concat(extras).forEach(b => {
+    if (!b || b.result === "pending") return;
+    let hit = (gradeFile || []).find(g => sameGrade(g, b));
+    if (hit) Object.assign(hit, {result: b.result, profit: b.profit, odds: b.odds});
+    else gradeFile.push(b);
+  });
+  touched.forEach(date => liveGradedDates.add(date));
+  try { localStorage.setItem("gg-live-graded", JSON.stringify([...liveGradedDates])); } catch (e) {}
+  render();
+  return graded;
+}
 async function gradeFinishedSlips(quiet){
   const note = document.getElementById("scorenote");
   const button = document.getElementById("livescores");
@@ -3600,7 +3651,7 @@ async function gradeFinishedSlips(quiet){
   if (button && !quiet) button.disabled = true;
   if (note && !quiet) note.textContent = "Checking live scores...";
   try {
-    const pending = load().filter(b => b && b.result === "pending" && !isNoPick(b) && inSlipWindow(b.date));
+    const pending = gradedPool().filter(b => b && b.result === "pending" && !isNoPick(b) && inSlipWindow(b.date));
     if (!pending.length) {
       if (note && !quiet) note.textContent = "No pending slips to grade.";
       refreshSlateRecords().catch(() => {});
@@ -3616,30 +3667,10 @@ async function gradeFinishedSlips(quiet){
       if (note && !quiet) note.textContent = "Score feed did not answer. No slips were changed.";
       return {graded: 0, live: 0, left: 0};
     }
-    const bets = load();
-    let graded = 0, live = 0, left = 0;
-    const touched = new Set();
-    bets.forEach(b => {
-      if (!b || b.result !== "pending" || isNoPick(b) || !inSlipWindow(b.date)) return;
-      const result = gradeFromScores(b, games.filter(g => g.sport === String(b.sport || "").toUpperCase()));
-      if (result === "live" || result === "postponed") { live++; return; }
-      if (result !== "win" && result !== "loss" && result !== "push") { left++; return; }
-      b.result = result;
-      delete b.profit;
-      const made = profit(b);
-      b.profit = Number.isFinite(made) ? Number(made.toFixed(2)) : 0;
-      stampFileClose(b);
-      graded++;
-      touched.add(b.date);
-    });
-    if (graded) {
-      localStorage.setItem(KEY, JSON.stringify(bets));
-      archiveSlips(bets);
-      touched.forEach(date => liveGradedDates.add(date));
-      localStorage.setItem("gg-live-graded", JSON.stringify([...liveGradedDates]));
-      render();
-    }
-    if (note && (!quiet || graded)) note.textContent = graded + " slips graded from final scores." + (live ? " " + live + " still in progress." : "") + (left ? " " + left + " left pending." : "") + (graded ? " Slips and calendar updated." : "");
+    const graded = applyFinalGrades(games);
+    const left = gradedPool().filter(b => b && b.result === "pending" && !isNoPick(b) && inSlipWindow(b.date)).length;
+    const live = Math.max(0, pending.length - graded - left);
+    if (note && (!quiet || graded)) note.textContent = graded + " slips graded from final scores." + (live ? " " + live + " still in progress." : "") + (left ? " " + left + " left pending." : "") + (graded ? " Report Card updated." : "");
     dropFinishedFromSlate(games);
     return {graded, live, left};
   } catch (err) {
