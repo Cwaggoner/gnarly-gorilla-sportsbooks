@@ -1437,6 +1437,19 @@ function gradedPool(){
 function slipsForDay(date){
   return gradedPool().filter(b => String(b.date || "").slice(0, 10) === date && (b.result === "win" || b.result === "loss" || b.result === "push"));
 }
+function ticketsForDay(date){
+  date = String(date || "").slice(0, 10);
+  const graded = slipsForDay(date);
+  const pending = dropMatchedPending(gradedPool()).filter(b => String(b.date || "").slice(0, 10) === date && b.result === "pending" && !isNoPick(b));
+  if (date === easternDay() && driveCard.date === date) {
+    (driveCard.lines || []).forEach(row => {
+      if (pending.some(b => sameSlip(b, row) || sameGrade(b, row))) return;
+      if (graded.some(b => sameSlip(b, row) || sameGrade(b, row))) return;
+      pending.push(Object.assign({stake: 10, result: "pending"}, row));
+    });
+  }
+  return {graded, pending};
+}
 function drawCalendar(){
   const mine = personalCalendar() || {};
   const board = Object.assign({}, publishedCalendar);
@@ -1455,22 +1468,32 @@ function drawCalendar(){
     const date = y + "-" + String(m + 1).padStart(2, "0") + "-" + String(d).padStart(2, "0");
     const cardDay = easternDay();
     const isToday = date === today;
-    if (date === cardDay) {
-      const local = load().filter(b => b.date === cardDay && b.result === "pending" && !isNoPick(b));
-      const posted = driveCard.date === cardDay ? driveCard.lines : [];
-      const open = local.slice();
-      posted.forEach(row => { if (!open.some(b => sameSlip(b, row))) open.push(Object.assign({stake: 10, result: "pending"}, row)); });
-      const graded = slipsForDay(today);
-      const settled = graded;
-      const result = settled.length ? moneyHtml(settled.reduce((s, b) => s + slipMoney(b), 0)) : "";
-      const todayPl = settled.reduce((s, b) => s + slipMoney(b), 0);
-      const resultCls = settled.length && todayPl > 0 ? "win" : settled.length && todayPl < 0 ? "loss" : (settled.length ? "zero" : "");
-      const winAll = open.reduce((s, b) => { const odds = Number(b.odds), stake = Number(b.stake) || 10; if (!Number.isFinite(odds) || odds === 0) return s; return s + (odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds)); }, 0);
-      const loseAll = open.reduce((s, b) => s + Number(b.stake || 10), 0);
-      const lower = open.length ? "<span class='range'><span class='win'>All Win " + money(winAll) + "</span><span class='slash'> / </span><span class='loss'>All Lose -" + money(loseAll).replace("-", "") + "</span></span>" : "<span class='wait'>Picks Not Loaded Until " + formatTime(firstPickAt(), false) + "</span>";
-      html += "<div class='" + (isToday ? "today daycell" : "daycell") + "' data-date='" + date + "'><b>" + d + "</b><br><span class='" + resultCls + "'>" + result + "</span><br>" + lower + "</div>";
-    } else if (date === yesterday() && !slateSettled(date) && (load().some(b => b.date === date && b.result === "pending" && !isNoPick(b)) || !slipsForDay(date).length)) {
-      html += "<div class='daycell' data-date='" + date + "'><b>" + d + "</b><br><span class='wait'>LAST GAME STILL OPEN</span></div>";
+    const personalDay = !!(mine[date] && Number.isFinite(Number(mine[date].pl)));
+    const live = date === today || (date === yesterday() && !slateSettled(date) && !personalDay);
+    if (live) {
+      const pack = ticketsForDay(date);
+      const graded = pack.graded;
+      const open = pack.pending;
+      const card = graded.concat(open);
+      const pl = graded.reduce((s, b) => s + slipMoney(b), 0);
+      const resultCls = !graded.length ? "" : pl > 0 ? "win" : pl < 0 ? "loss" : "zero";
+      const result = graded.length ? money(pl) : "";
+      const wins = graded.filter(b => b.result === "win").length;
+      const losses = graded.filter(b => b.result === "loss").length;
+      const pushes = graded.filter(b => b.result === "push").length;
+      const recLine = graded.length ? "<br><span class='range'>W/L Record " + wins + "-" + losses + "-" + pushes + "</span>" : "";
+      const winPay = b => {
+        const odds = Number(b.odds), stake = Number(b.stake) || 10;
+        if (!Number.isFinite(odds) || odds === 0) return 0;
+        return odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds);
+      };
+      const winAll = card.reduce((s, b) => s + winPay(b), 0);
+      const loseAll = card.reduce((s, b) => s + (Number(b.stake) || 10), 0);
+      let lower = "";
+      if (!card.length && date === today) lower = "<br><span class='wait'>Picks Not Loaded Until " + formatTime(firstPickAt(), false) + "</span>";
+      else if (!graded.length && date !== today) lower = "<br><span class='wait'>LAST GAME STILL OPEN</span>";
+      else if (card.length) lower = "<br><span class='range'><span class='win'>All Win " + money(winAll) + "</span><span class='slash'> / </span><span class='loss'>All Lose -" + money(loseAll).replace("-", "") + "</span></span>";
+      html += "<div class='" + (isToday ? "today daycell" : "daycell") + "' data-date='" + date + "'><b>" + d + "</b><br><span class='" + resultCls + "'>" + result + "</span>" + recLine + lower + "</div>";
     } else {
       const personal = !!(mine[date] && Number.isFinite(Number(mine[date].pl)));
       const slips = slipsForDay(date);
@@ -1535,9 +1558,16 @@ function drawCalendar(){
   document.getElementById("calendar").innerHTML = html;
   const prefix = y + "-" + String(m + 1).padStart(2, "0") + "-";
   let gain = 0, loss = 0;
-  Object.keys(board).forEach(date => {
-    if (!date.startsWith(prefix) || !slateSettled(date)) return;
-    const pl = Number(board[date] && board[date].pl);
+  const monthDates = new Set(Object.keys(board).filter(date => date.startsWith(prefix)));
+  gradedPool().forEach(b => {
+    const date = String(b && b.date || "").slice(0, 10);
+    if (date.startsWith(prefix) && date <= today) monthDates.add(date);
+  });
+  monthDates.forEach(date => {
+    const slips = slipsForDay(date);
+    if (!slateSettled(date) && !slips.length) return;
+    let pl = Number(board[date] && board[date].pl);
+    if ((!slateSettled(date) || !Number.isFinite(pl)) && slips.length) pl = Math.round(slips.reduce((s, b) => s + slipMoney(b), 0) * 100) / 100;
     if (!Number.isFinite(pl) || pl === 0) return;
     if (pl > 0) gain += pl; else loss += Math.abs(pl);
   });
