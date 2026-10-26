@@ -1,0 +1,1918 @@
+{
+  "file": "GG-PROFIT-BY-DAY",
+  "saved": "2026-10-26T06:58:45Z",
+  "unit": 10,
+  "through": "2026-10-25",
+  "source": "Graded $10 slips for October 1 through October 25. Each day matches the cumulative Profit By Day line. This file is the season log. It is not on the website.",
+  "reading": "Through October 25 the month is -$112.81. Best sport is NFL at $11.29 (33-34-4). Worst sport is NHL at -$45.35 (81-99-2). CBB has no graded slips. NFL is the only sport above $0.",
+  "days": [
+    {
+      "date": "2026-10-01",
+      "profit": -122.2,
+      "n": 32,
+      "wins": 10,
+      "losses": 22,
+      "pushes": 0,
+      "record": "10-22-0",
+      "sports": {
+        "CFB": {
+          "profit": -20.44,
+          "n": 6,
+          "wins": 2,
+          "losses": 4,
+          "pushes": 0,
+          "record": "2-4-0"
+        },
+        "MLB": {
+          "profit": -10.22,
+          "n": 3,
+          "wins": 1,
+          "losses": 2,
+          "pushes": 0,
+          "record": "1-2-0"
+        },
+        "NFL": {
+          "profit": -10.22,
+          "n": 3,
+          "wins": 1,
+          "losses": 2,
+          "pushes": 0,
+          "record": "1-2-0"
+        },
+        "NHL": {
+          "profit": -81.32,
+          "n": 20,
+          "wins": 6,
+          "losses": 14,
+          "pushes": 0,
+          "record": "6-14-0"
+        }
+      },
+      "seasonToDate": {
+        "CBB": {
+          "profit": 0.0,
+          "record": "0-0-0",
+          "n": 0
+        },
+        "CFB": {
+          "profit": -20.44,
+          "record": "2-4-0",
+          "n": 6
+        },
+        "MLB": {
+          "profit": -10.22,
+          "record": "1-2-0",
+          "n": 3
+        },
+        "NBA": {
+          "profit": 0.0,
+          "record": "0-0-0",
+          "n": 0
+        },
+        "NFL": {
+          "profit": -10.22,
+          "record": "1-2-0",
+          "n": 3
+        },
+        "NHL": {
+          "profit": -81.32,
+          "record": "6-14-0",
+          "n": 20
+        }
+      }
+    },
+    {
+      "date": "2026-10-02",
+      "profit": 103.81,
+      "n": 18,
+      "wins": 11,
+      "losses": 7,
+      "pushes": 0,
+      "record": "11-7-0",
+      "sports": {
+        "CFB": {
+          "profit": 59.0,
+          "n": 7,
+          "wins": 5,
+          "losses": 2,
+          "pushes": 0,
+          "record": "5-2-0"
+        },
+        "NHL": {
+          "profit": 44.81,
+          "n": 11,
+          "wins": 6,
+          "losses": 5,
+          "pushes": 0,
+          "record": "6-5-0"
+        }
+      },
+      "seasonToDate": {
+        "CBB": {
+          "profit": 0.0,
+          "record": "0-0-0",
+          "n": 0
+        },
+        "CFB": {
+          "profit": 38.56,
+          "record": "7-6-0",
+          "n": 13
+        },
+        "MLB": {
+          "profit": -10.22,
+          "record": "1-2-0",
+          "n": 3
+        },
+        "NBA": {
+          "profit": 0.0,
+          "record": "0-0-0",
+          "n": 0
+        },
+        "NFL": {
+          "profit": -10.22,
+          "record": "1-2-0",
+          "n": 3
+        },
+        "NHL": {
+          "profit": -36.51,
+          "record": "12-19-0",
+          "n": 31
+        }
+      }
+    },
+    {
+      "date": "2026-10-03",
+      "profit": -10.19,
+      "n": 105,
+      "wins": 50,
+      "losses": 54,
+      "pushes": 1,
+      "record": "50-54-1",
+      "sports": {
+        "CFB": {
+          "profit": -26.1,
+          "n": 85,
+          "wins": 40,
+          "losses": 45,
+          "pushes": 0,
+          "record": "40-45-0"
+        },
+        "MLB": {
+          "profit": 1.78,
+          "n": 6,
+          "wins": 3,
+          "losses": 3,
+          "pushes": 0,
+          "record": "3-3-0"
+        },
+        "NBA": {
+          "profit": 10.59,
+          "n": 1,
+          "wins": 1,
+          "losses": 0,
+          "pushes": 0,
+          "record": "1-0-0"
+        },
+        "NHL": {
+          "profit": 3.54,
+          "n": 13,
+          "wins": 6,
+          "losses": 6,
+          "pushes": 1,
+          "record": "6-6-1"
+        }
+      },
+      "seasonToDate": {
+        "CBB": {
+          "profit": 0.0,
+          "record": "0-0-0",
+          "n": 0
+        },
+        "CFB": {
+          "profit": 12.46,
+          "record": "47-51-0",
+          "n": 98
+        },
+        "MLB": {
+          "profit": -8.44,
+          "record": "4-5-0",
+          "n": 9
+        },
+        "NBA": {
+          "profit": 10.59,
+          "record": "1-0-0",
+          "n": 1
+        },
+        "NFL": {
+          "profit": -10.22,
+          "record": "1-2-0",
+          "n": 3
+        },
+        "NHL": {
+          "profit": -32.97,
+          "record": "18-25-1",
+          "n": 44
+        }
+      }
+    },
+    {
+      "date": "2026-10-04",
+      "profit": 1.04,
+      "n": 31,
+      "wins": 13,
+      "losses": 15,
+      "pushes": 3,
+      "record": "13-15-3",
+      "sports": {
+        "MLB": {
+          "profit": 1.62,
+          "n": 2,
+          "wins": 1,
+          "losses": 1,
+          "pushes": 0,
+          "record": "1-1-0"
+        },
+        "NBA": {
+          "profit": -20.0,
+          "n": 2,
+          "wins": 0,
+          "losses": 2,
+          "pushes": 0,
+          "record": "0-2-0"
+        },
+        "NFL": {
+          "profit": 37.8,
+          "n": 22,
+          "wins": 11,
+          "losses": 9,
+          "pushes": 2,
+          "record": "11-9-2"
+        },
+        "NHL": {
+          "profit": -18.38,
+          "n": 5,
+          "wins": 1,
+          "losses": 3,
+          "pushes": 1,
+          "record": "1-3-1"
+        }
+      },
+      "seasonToDate": {
+        "CBB": {
+          "profit": 0.0,
+          "record": "0-0-0",
+          "n": 0
+        },
+        "CFB": {
+          "profit": 12.46,
+          "record": "47-51-0",
+          "n": 98
+        },
+        "MLB": {
+          "profit": -6.82,
+          "record": "5-6-0",
+          "n": 11
+        },
+        "NBA": {
+          "profit": -9.41,
+          "record": "1-2-0",
+          "n": 3
+        },
+        "NFL": {
+          "profit": 27.58,
+          "record": "12-11-2",
+          "n": 25
+        },
+        "NHL": {
+          "profit": -51.35,
+          "record": "19-28-2",
+          "n": 49
+        }
+      }
+    },
+    {
+      "date": "2026-10-05",
+      "profit": -76.64,
+      "n": 21,
+      "wins": 8,
+      "losses": 13,
+      "pushes": 0,
+      "record": "8-13-0",
+      "sports": {
+        "MLB": {
+          "profit": -6.66,
+          "n": 4,
+          "wins": 2,
+          "losses": 2,
+          "pushes": 0,
+          "record": "2-2-0"
+        },
+        "NBA": {
+          "profit": -39.99,
+          "n": 9,
+          "wins": 3,
+          "losses": 6,
+          "pushes": 0,
+          "record": "3-6-0"
+        },
+        "NFL": {
+          "profit": -10.0,
+          "n": 1,
+          "wins": 0,
+          "losses": 1,
+          "pushes": 0,
+          "record": "0-1-0"
+        },
+        "NHL": {
+          "profit": -19.99,
+          "n": 7,
+          "wins": 3,
+          "losses": 4,
+          "pushes": 0,
+          "record": "3-4-0"
+        }
+      },
+      "seasonToDate": {
+        "CBB": {
+          "profit": 0.0,
+          "record": "0-0-0",
+          "n": 0
+        },
+        "CFB": {
+          "profit": 12.46,
+          "record": "47-51-0",
+          "n": 98
+        },
+        "MLB": {
+          "profit": -13.48,
+          "record": "7-8-0",
+          "n": 15
+        },
+        "NBA": {
+          "profit": -49.4,
+          "record": "4-8-0",
+          "n": 12
+        },
+        "NFL": {
+          "profit": 17.58,
+          "record": "12-12-2",
+          "n": 26
+        },
+        "NHL": {
+          "profit": -71.34,
+          "record": "22-32-2",
+          "n": 56
+        }
+      }
+    },
+    {
+      "date": "2026-10-06",
+      "profit": -83.64,
+      "n": 16,
+      "wins": 4,
+      "losses": 12,
+      "pushes": 0,
+      "record": "4-12-0",
+      "sports": {
+        "CFB": {
+          "profit": -10.0,
+          "n": 1,
+          "wins": 0,
+          "losses": 1,
+          "pushes": 0,
+          "record": "0-1-0"
+        },
+        "MLB": {
+          "profit": -0.91,
+          "n": 2,
+          "wins": 1,
+          "losses": 1,
+          "pushes": 0,
+          "record": "1-1-0"
+        },
+        "NBA": {
+          "profit": -20.91,
+          "n": 4,
+          "wins": 1,
+          "losses": 3,
+          "pushes": 0,
+          "record": "1-3-0"
+        },
+        "NHL": {
+          "profit": -51.82,
+          "n": 9,
+          "wins": 2,
+          "losses": 7,
+          "pushes": 0,
+          "record": "2-7-0"
+        }
+      },
+      "seasonToDate": {
+        "CBB": {
+          "profit": 0.0,
+          "record": "0-0-0",
+          "n": 0
+        },
+        "CFB": {
+          "profit": 2.46,
+          "record": "47-52-0",
+          "n": 99
+        },
+        "MLB": {
+          "profit": -14.39,
+          "record": "8-9-0",
+          "n": 17
+        },
+        "NBA": {
+          "profit": -70.31,
+          "record": "5-11-0",
+          "n": 16
+        },
+        "NFL": {
+          "profit": 17.58,
+          "record": "12-12-2",
+          "n": 26
+        },
+        "NHL": {
+          "profit": -123.16,
+          "record": "24-39-2",
+          "n": 65
+        }
+      }
+    },
+    {
+      "date": "2026-10-07",
+      "profit": -5.74,
+      "n": 24,
+      "wins": 10,
+      "losses": 14,
+      "pushes": 0,
+      "record": "10-14-0",
+      "sports": {
+        "CFB": {
+          "profit": -6.57,
+          "n": 3,
+          "wins": 1,
+          "losses": 2,
+          "pushes": 0,
+          "record": "1-2-0"
+        },
+        "MLB": {
+          "profit": 0.28,
+          "n": 7,
+          "wins": 3,
+          "losses": 4,
+          "pushes": 0,
+          "record": "3-4-0"
+        },
+        "NBA": {
+          "profit": 3.69,
+          "n": 9,
+          "wins": 4,
+          "losses": 5,
+          "pushes": 0,
+          "record": "4-5-0"
+        },
+        "NHL": {
+          "profit": -3.14,
+          "n": 5,
+          "wins": 2,
+          "losses": 3,
+          "pushes": 0,
+          "record": "2-3-0"
+        }
+      },
+      "seasonToDate": {
+        "CBB": {
+          "profit": 0.0,
+          "record": "0-0-0",
+          "n": 0
+        },
+        "CFB": {
+          "profit": -4.11,
+          "record": "48-54-0",
+          "n": 102
+        },
+        "MLB": {
+          "profit": -14.11,
+          "record": "11-13-0",
+          "n": 24
+        },
+        "NBA": {
+          "profit": -66.62,
+          "record": "9-16-0",
+          "n": 25
+        },
+        "NFL": {
+          "profit": 17.58,
+          "record": "12-12-2",
+          "n": 26
+        },
+        "NHL": {
+          "profit": -126.3,
+          "record": "26-42-2",
+          "n": 70
+        }
+      }
+    },
+    {
+      "date": "2026-10-08",
+      "profit": -26.51,
+      "n": 43,
+      "wins": 18,
+      "losses": 25,
+      "pushes": 0,
+      "record": "18-25-0",
+      "sports": {
+        "CFB": {
+          "profit": 9.68,
+          "n": 8,
+          "wins": 4,
+          "losses": 4,
+          "pushes": 0,
+          "record": "4-4-0"
+        },
+        "MLB": {
+          "profit": 2.41,
+          "n": 2,
+          "wins": 1,
+          "losses": 1,
+          "pushes": 0,
+          "record": "1-1-0"
+        },
+        "NBA": {
+          "profit": 2.06,
+          "n": 11,
+          "wins": 5,
+          "losses": 6,
+          "pushes": 0,
+          "record": "5-6-0"
+        },
+        "NFL": {
+          "profit": -20.0,
+          "n": 2,
+          "wins": 0,
+          "losses": 2,
+          "pushes": 0,
+          "record": "0-2-0"
+        },
+        "NHL": {
+          "profit": -20.66,
+          "n": 20,
+          "wins": 8,
+          "losses": 12,
+          "pushes": 0,
+          "record": "8-12-0"
+        }
+      },
+      "seasonToDate": {
+        "CBB": {
+          "profit": 0.0,
+          "record": "0-0-0",
+          "n": 0
+        },
+        "CFB": {
+          "profit": 5.57,
+          "record": "52-58-0",
+          "n": 110
+        },
+        "MLB": {
+          "profit": -11.7,
+          "record": "12-14-0",
+          "n": 26
+        },
+        "NBA": {
+          "profit": -64.56,
+          "record": "14-22-0",
+          "n": 36
+        },
+        "NFL": {
+          "profit": -2.42,
+          "record": "12-14-2",
+          "n": 28
+        },
+        "NHL": {
+          "profit": -146.96,
+          "record": "34-54-2",
+          "n": 90
+        }
+      }
+    },
+    {
+      "date": "2026-10-09",
+      "profit": 15.13,
+      "n": 29,
+      "wins": 15,
+      "losses": 14,
+      "pushes": 0,
+      "record": "15-14-0",
+      "sports": {
+        "CFB": {
+          "profit": 12.05,
+          "n": 11,
+          "wins": 6,
+          "losses": 5,
+          "pushes": 0,
+          "record": "6-5-0"
+        },
+        "NBA": {
+          "profit": 1.03,
+          "n": 6,
+          "wins": 3,
+          "losses": 3,
+          "pushes": 0,
+          "record": "3-3-0"
+        },
+        "NHL": {
+          "profit": 2.05,
+          "n": 12,
+          "wins": 6,
+          "losses": 6,
+          "pushes": 0,
+          "record": "6-6-0"
+        }
+      },
+      "seasonToDate": {
+        "CBB": {
+          "profit": 0.0,
+          "record": "0-0-0",
+          "n": 0
+        },
+        "CFB": {
+          "profit": 17.62,
+          "record": "58-63-0",
+          "n": 121
+        },
+        "MLB": {
+          "profit": -11.7,
+          "record": "12-14-0",
+          "n": 26
+        },
+        "NBA": {
+          "profit": -63.53,
+          "record": "17-25-0",
+          "n": 42
+        },
+        "NFL": {
+          "profit": -2.42,
+          "record": "12-14-2",
+          "n": 28
+        },
+        "NHL": {
+          "profit": -144.91,
+          "record": "40-60-2",
+          "n": 102
+        }
+      }
+    },
+    {
+      "date": "2026-10-10",
+      "profit": 52.02,
+      "n": 60,
+      "wins": 32,
+      "losses": 28,
+      "pushes": 0,
+      "record": "32-28-0",
+      "sports": {
+        "CFB": {
+          "profit": -40.01,
+          "n": 25,
+          "wins": 11,
+          "losses": 14,
+          "pushes": 0,
+          "record": "11-14-0"
+        },
+        "MLB": {
+          "profit": -10.0,
+          "n": 3,
+          "wins": 1,
+          "losses": 2,
+          "pushes": 0,
+          "record": "1-2-0"
+        },
+        "NBA": {
+          "profit": 79.72,
+          "n": 16,
+          "wins": 11,
+          "losses": 5,
+          "pushes": 0,
+          "record": "11-5-0"
+        },
+        "NHL": {
+          "profit": 22.31,
+          "n": 16,
+          "wins": 9,
+          "losses": 7,
+          "pushes": 0,
+          "record": "9-7-0"
+        }
+      },
+      "seasonToDate": {
+        "CBB": {
+          "profit": 0.0,
+          "record": "0-0-0",
+          "n": 0
+        },
+        "CFB": {
+          "profit": -22.39,
+          "record": "69-77-0",
+          "n": 146
+        },
+        "MLB": {
+          "profit": -21.7,
+          "record": "13-16-0",
+          "n": 29
+        },
+        "NBA": {
+          "profit": 16.19,
+          "record": "28-30-0",
+          "n": 58
+        },
+        "NFL": {
+          "profit": -2.42,
+          "record": "12-14-2",
+          "n": 28
+        },
+        "NHL": {
+          "profit": -122.6,
+          "record": "49-67-2",
+          "n": 118
+        }
+      }
+    },
+    {
+      "date": "2026-10-11",
+      "profit": 3.08,
+      "n": 30,
+      "wins": 14,
+      "losses": 14,
+      "pushes": 2,
+      "record": "14-14-2",
+      "sports": {
+        "MLB": {
+          "profit": 38.18,
+          "n": 3,
+          "wins": 3,
+          "losses": 0,
+          "pushes": 0,
+          "record": "3-0-0"
+        },
+        "NBA": {
+          "profit": -32.73,
+          "n": 9,
+          "wins": 3,
+          "losses": 6,
+          "pushes": 0,
+          "record": "3-6-0"
+        },
+        "NFL": {
+          "profit": 4.54,
+          "n": 13,
+          "wins": 6,
+          "losses": 5,
+          "pushes": 2,
+          "record": "6-5-2"
+        },
+        "NHL": {
+          "profit": -6.91,
+          "n": 5,
+          "wins": 2,
+          "losses": 3,
+          "pushes": 0,
+          "record": "2-3-0"
+        }
+      },
+      "seasonToDate": {
+        "CBB": {
+          "profit": 0.0,
+          "record": "0-0-0",
+          "n": 0
+        },
+        "CFB": {
+          "profit": -22.39,
+          "record": "69-77-0",
+          "n": 146
+        },
+        "MLB": {
+          "profit": 16.48,
+          "record": "16-16-0",
+          "n": 32
+        },
+        "NBA": {
+          "profit": -16.54,
+          "record": "31-36-0",
+          "n": 67
+        },
+        "NFL": {
+          "profit": 2.12,
+          "record": "18-19-4",
+          "n": 41
+        },
+        "NHL": {
+          "profit": -129.51,
+          "record": "51-70-2",
+          "n": 123
+        }
+      }
+    },
+    {
+      "date": "2026-10-12",
+      "profit": 82.38,
+      "n": 23,
+      "wins": 14,
+      "losses": 9,
+      "pushes": 0,
+      "record": "14-9-0",
+      "sports": {
+        "MLB": {
+          "profit": -40.0,
+          "n": 4,
+          "wins": 0,
+          "losses": 4,
+          "pushes": 0,
+          "record": "0-4-0"
+        },
+        "NBA": {
+          "profit": 62.54,
+          "n": 11,
+          "wins": 8,
+          "losses": 3,
+          "pushes": 0,
+          "record": "8-3-0"
+        },
+        "NFL": {
+          "profit": 37.18,
+          "n": 3,
+          "wins": 3,
+          "losses": 0,
+          "pushes": 0,
+          "record": "3-0-0"
+        },
+        "NHL": {
+          "profit": 22.66,
+          "n": 5,
+          "wins": 3,
+          "losses": 2,
+          "pushes": 0,
+          "record": "3-2-0"
+        }
+      },
+      "seasonToDate": {
+        "CBB": {
+          "profit": 0.0,
+          "record": "0-0-0",
+          "n": 0
+        },
+        "CFB": {
+          "profit": -22.39,
+          "record": "69-77-0",
+          "n": 146
+        },
+        "MLB": {
+          "profit": -23.52,
+          "record": "16-20-0",
+          "n": 36
+        },
+        "NBA": {
+          "profit": 46.0,
+          "record": "39-39-0",
+          "n": 78
+        },
+        "NFL": {
+          "profit": 39.3,
+          "record": "21-19-4",
+          "n": 44
+        },
+        "NHL": {
+          "profit": -106.85,
+          "record": "54-72-2",
+          "n": 128
+        }
+      }
+    },
+    {
+      "date": "2026-10-13",
+      "profit": 15.36,
+      "n": 11,
+      "wins": 6,
+      "losses": 5,
+      "pushes": 0,
+      "record": "6-5-0",
+      "sports": {
+        "MLB": {
+          "profit": 9.09,
+          "n": 1,
+          "wins": 1,
+          "losses": 0,
+          "pushes": 0,
+          "record": "1-0-0"
+        },
+        "NBA": {
+          "profit": 7.18,
+          "n": 6,
+          "wins": 3,
+          "losses": 3,
+          "pushes": 0,
+          "record": "3-3-0"
+        },
+        "NHL": {
+          "profit": -0.91,
+          "n": 4,
+          "wins": 2,
+          "losses": 2,
+          "pushes": 0,
+          "record": "2-2-0"
+        }
+      },
+      "seasonToDate": {
+        "CBB": {
+          "profit": 0.0,
+          "record": "0-0-0",
+          "n": 0
+        },
+        "CFB": {
+          "profit": -22.39,
+          "record": "69-77-0",
+          "n": 146
+        },
+        "MLB": {
+          "profit": -14.43,
+          "record": "17-20-0",
+          "n": 37
+        },
+        "NBA": {
+          "profit": 53.18,
+          "record": "42-42-0",
+          "n": 84
+        },
+        "NFL": {
+          "profit": 39.3,
+          "record": "21-19-4",
+          "n": 44
+        },
+        "NHL": {
+          "profit": -107.76,
+          "record": "56-74-2",
+          "n": 132
+        }
+      }
+    },
+    {
+      "date": "2026-10-14",
+      "profit": -92.58,
+      "n": 13,
+      "wins": 2,
+      "losses": 11,
+      "pushes": 0,
+      "record": "2-11-0",
+      "sports": {
+        "MLB": {
+          "profit": -11.67,
+          "n": 3,
+          "wins": 1,
+          "losses": 2,
+          "pushes": 0,
+          "record": "1-2-0"
+        },
+        "NBA": {
+          "profit": -40.91,
+          "n": 6,
+          "wins": 1,
+          "losses": 5,
+          "pushes": 0,
+          "record": "1-5-0"
+        },
+        "NHL": {
+          "profit": -40.0,
+          "n": 4,
+          "wins": 0,
+          "losses": 4,
+          "pushes": 0,
+          "record": "0-4-0"
+        }
+      },
+      "seasonToDate": {
+        "CBB": {
+          "profit": 0.0,
+          "record": "0-0-0",
+          "n": 0
+        },
+        "CFB": {
+          "profit": -22.39,
+          "record": "69-77-0",
+          "n": 146
+        },
+        "MLB": {
+          "profit": -26.1,
+          "record": "18-22-0",
+          "n": 40
+        },
+        "NBA": {
+          "profit": 12.27,
+          "record": "43-47-0",
+          "n": 90
+        },
+        "NFL": {
+          "profit": 39.3,
+          "record": "21-19-4",
+          "n": 44
+        },
+        "NHL": {
+          "profit": -147.76,
+          "record": "56-78-2",
+          "n": 136
+        }
+      }
+    },
+    {
+      "date": "2026-10-15",
+      "profit": 50.4,
+      "n": 20,
+      "wins": 12,
+      "losses": 8,
+      "pushes": 0,
+      "record": "12-8-0",
+      "sports": {
+        "CFB": {
+          "profit": -20.0,
+          "n": 2,
+          "wins": 0,
+          "losses": 2,
+          "pushes": 0,
+          "record": "0-2-0"
+        },
+        "MLB": {
+          "profit": -13.75,
+          "n": 3,
+          "wins": 1,
+          "losses": 2,
+          "pushes": 0,
+          "record": "1-2-0"
+        },
+        "NBA": {
+          "profit": 25.88,
+          "n": 6,
+          "wins": 4,
+          "losses": 2,
+          "pushes": 0,
+          "record": "4-2-0"
+        },
+        "NFL": {
+          "profit": 38.04,
+          "n": 3,
+          "wins": 3,
+          "losses": 0,
+          "pushes": 0,
+          "record": "3-0-0"
+        },
+        "NHL": {
+          "profit": 20.23,
+          "n": 6,
+          "wins": 4,
+          "losses": 2,
+          "pushes": 0,
+          "record": "4-2-0"
+        }
+      },
+      "seasonToDate": {
+        "CBB": {
+          "profit": 0.0,
+          "record": "0-0-0",
+          "n": 0
+        },
+        "CFB": {
+          "profit": -42.39,
+          "record": "69-79-0",
+          "n": 148
+        },
+        "MLB": {
+          "profit": -39.85,
+          "record": "19-24-0",
+          "n": 43
+        },
+        "NBA": {
+          "profit": 38.15,
+          "record": "47-49-0",
+          "n": 96
+        },
+        "NFL": {
+          "profit": 77.34,
+          "record": "24-19-4",
+          "n": 47
+        },
+        "NHL": {
+          "profit": -127.53,
+          "record": "60-80-2",
+          "n": 142
+        }
+      }
+    },
+    {
+      "date": "2026-10-16",
+      "profit": 12.64,
+      "n": 15,
+      "wins": 8,
+      "losses": 7,
+      "pushes": 0,
+      "record": "8-7-0",
+      "sports": {
+        "CFB": {
+          "profit": 18.19,
+          "n": 2,
+          "wins": 2,
+          "losses": 0,
+          "pushes": 0,
+          "record": "2-0-0"
+        },
+        "MLB": {
+          "profit": 37.18,
+          "n": 3,
+          "wins": 3,
+          "losses": 0,
+          "pushes": 0,
+          "record": "3-0-0"
+        },
+        "NBA": {
+          "profit": -12.73,
+          "n": 7,
+          "wins": 3,
+          "losses": 4,
+          "pushes": 0,
+          "record": "3-4-0"
+        },
+        "NHL": {
+          "profit": -30.0,
+          "n": 3,
+          "wins": 0,
+          "losses": 3,
+          "pushes": 0,
+          "record": "0-3-0"
+        }
+      },
+      "seasonToDate": {
+        "CBB": {
+          "profit": 0.0,
+          "record": "0-0-0",
+          "n": 0
+        },
+        "CFB": {
+          "profit": -24.2,
+          "record": "71-79-0",
+          "n": 150
+        },
+        "MLB": {
+          "profit": -2.67,
+          "record": "22-24-0",
+          "n": 46
+        },
+        "NBA": {
+          "profit": 25.42,
+          "record": "50-53-0",
+          "n": 103
+        },
+        "NFL": {
+          "profit": 77.34,
+          "record": "24-19-4",
+          "n": 47
+        },
+        "NHL": {
+          "profit": -157.53,
+          "record": "60-83-2",
+          "n": 145
+        }
+      }
+    },
+    {
+      "date": "2026-10-17",
+      "profit": 5.62,
+      "n": 13,
+      "wins": 7,
+      "losses": 6,
+      "pushes": 0,
+      "record": "7-6-0",
+      "sports": {
+        "CFB": {
+          "profit": 36.36,
+          "n": 4,
+          "wins": 4,
+          "losses": 0,
+          "pushes": 0,
+          "record": "4-0-0"
+        },
+        "MLB": {
+          "profit": -30.0,
+          "n": 3,
+          "wins": 0,
+          "losses": 3,
+          "pushes": 0,
+          "record": "0-3-0"
+        },
+        "NHL": {
+          "profit": -0.74,
+          "n": 6,
+          "wins": 3,
+          "losses": 3,
+          "pushes": 0,
+          "record": "3-3-0"
+        }
+      },
+      "seasonToDate": {
+        "CBB": {
+          "profit": 0.0,
+          "record": "0-0-0",
+          "n": 0
+        },
+        "CFB": {
+          "profit": 12.16,
+          "record": "75-79-0",
+          "n": 154
+        },
+        "MLB": {
+          "profit": -32.67,
+          "record": "22-27-0",
+          "n": 49
+        },
+        "NBA": {
+          "profit": 25.42,
+          "record": "50-53-0",
+          "n": 103
+        },
+        "NFL": {
+          "profit": 77.34,
+          "record": "24-19-4",
+          "n": 47
+        },
+        "NHL": {
+          "profit": -158.27,
+          "record": "63-86-2",
+          "n": 151
+        }
+      }
+    },
+    {
+      "date": "2026-10-18",
+      "profit": 6.54,
+      "n": 19,
+      "wins": 10,
+      "losses": 9,
+      "pushes": 0,
+      "record": "10-9-0",
+      "sports": {
+        "MLB": {
+          "profit": -11.53,
+          "n": 3,
+          "wins": 1,
+          "losses": 2,
+          "pushes": 0,
+          "record": "1-2-0"
+        },
+        "NFL": {
+          "profit": -3.32,
+          "n": 12,
+          "wins": 6,
+          "losses": 6,
+          "pushes": 0,
+          "record": "6-6-0"
+        },
+        "NHL": {
+          "profit": 21.39,
+          "n": 4,
+          "wins": 3,
+          "losses": 1,
+          "pushes": 0,
+          "record": "3-1-0"
+        }
+      },
+      "seasonToDate": {
+        "CBB": {
+          "profit": 0.0,
+          "record": "0-0-0",
+          "n": 0
+        },
+        "CFB": {
+          "profit": 12.16,
+          "record": "75-79-0",
+          "n": 154
+        },
+        "MLB": {
+          "profit": -44.2,
+          "record": "23-29-0",
+          "n": 52
+        },
+        "NBA": {
+          "profit": 25.42,
+          "record": "50-53-0",
+          "n": 103
+        },
+        "NFL": {
+          "profit": 74.02,
+          "record": "30-25-4",
+          "n": 59
+        },
+        "NHL": {
+          "profit": -136.88,
+          "record": "66-87-2",
+          "n": 155
+        }
+      }
+    },
+    {
+      "date": "2026-10-19",
+      "profit": -2.73,
+      "n": 6,
+      "wins": 3,
+      "losses": 3,
+      "pushes": 0,
+      "record": "3-3-0",
+      "sports": {
+        "MLB": {
+          "profit": -10.0,
+          "n": 1,
+          "wins": 0,
+          "losses": 1,
+          "pushes": 0,
+          "record": "0-1-0"
+        },
+        "NFL": {
+          "profit": 9.09,
+          "n": 1,
+          "wins": 1,
+          "losses": 0,
+          "pushes": 0,
+          "record": "1-0-0"
+        },
+        "NHL": {
+          "profit": -1.82,
+          "n": 4,
+          "wins": 2,
+          "losses": 2,
+          "pushes": 0,
+          "record": "2-2-0"
+        }
+      },
+      "seasonToDate": {
+        "CBB": {
+          "profit": 0.0,
+          "record": "0-0-0",
+          "n": 0
+        },
+        "CFB": {
+          "profit": 12.16,
+          "record": "75-79-0",
+          "n": 154
+        },
+        "MLB": {
+          "profit": -54.2,
+          "record": "23-30-0",
+          "n": 53
+        },
+        "NBA": {
+          "profit": 25.42,
+          "record": "50-53-0",
+          "n": 103
+        },
+        "NFL": {
+          "profit": 83.11,
+          "record": "31-25-4",
+          "n": 60
+        },
+        "NHL": {
+          "profit": -138.7,
+          "record": "68-89-2",
+          "n": 159
+        }
+      }
+    },
+    {
+      "date": "2026-10-20",
+      "profit": 12.95,
+      "n": 12,
+      "wins": 6,
+      "losses": 6,
+      "pushes": 0,
+      "record": "6-6-0",
+      "sports": {
+        "CFB": {
+          "profit": -20.74,
+          "n": 4,
+          "wins": 1,
+          "losses": 3,
+          "pushes": 0,
+          "record": "1-3-0"
+        },
+        "NBA": {
+          "profit": 18.19,
+          "n": 2,
+          "wins": 2,
+          "losses": 0,
+          "pushes": 0,
+          "record": "2-0-0"
+        },
+        "NHL": {
+          "profit": 15.5,
+          "n": 6,
+          "wins": 3,
+          "losses": 3,
+          "pushes": 0,
+          "record": "3-3-0"
+        }
+      },
+      "seasonToDate": {
+        "CBB": {
+          "profit": 0.0,
+          "record": "0-0-0",
+          "n": 0
+        },
+        "CFB": {
+          "profit": -8.58,
+          "record": "76-82-0",
+          "n": 158
+        },
+        "MLB": {
+          "profit": -54.2,
+          "record": "23-30-0",
+          "n": 53
+        },
+        "NBA": {
+          "profit": 43.61,
+          "record": "52-53-0",
+          "n": 105
+        },
+        "NFL": {
+          "profit": 83.11,
+          "record": "31-25-4",
+          "n": 60
+        },
+        "NHL": {
+          "profit": -123.2,
+          "record": "71-92-2",
+          "n": 165
+        }
+      }
+    },
+    {
+      "date": "2026-10-21",
+      "profit": -65.22,
+      "n": 13,
+      "wins": 3,
+      "losses": 10,
+      "pushes": 0,
+      "record": "3-10-0",
+      "sports": {
+        "CFB": {
+          "profit": -30.0,
+          "n": 3,
+          "wins": 0,
+          "losses": 3,
+          "pushes": 0,
+          "record": "0-3-0"
+        },
+        "NBA": {
+          "profit": -50.91,
+          "n": 7,
+          "wins": 1,
+          "losses": 6,
+          "pushes": 0,
+          "record": "1-6-0"
+        },
+        "NHL": {
+          "profit": 15.69,
+          "n": 3,
+          "wins": 2,
+          "losses": 1,
+          "pushes": 0,
+          "record": "2-1-0"
+        }
+      },
+      "seasonToDate": {
+        "CBB": {
+          "profit": 0.0,
+          "record": "0-0-0",
+          "n": 0
+        },
+        "CFB": {
+          "profit": -38.58,
+          "record": "76-85-0",
+          "n": 161
+        },
+        "MLB": {
+          "profit": -54.2,
+          "record": "23-30-0",
+          "n": 53
+        },
+        "NBA": {
+          "profit": -7.3,
+          "record": "53-59-0",
+          "n": 112
+        },
+        "NFL": {
+          "profit": 83.11,
+          "record": "31-25-4",
+          "n": 60
+        },
+        "NHL": {
+          "profit": -107.51,
+          "record": "73-93-2",
+          "n": 168
+        }
+      }
+    },
+    {
+      "date": "2026-10-22",
+      "profit": 10.38,
+      "n": 16,
+      "wins": 7,
+      "losses": 9,
+      "pushes": 0,
+      "record": "7-9-0",
+      "sports": {
+        "CFB": {
+          "profit": 18.18,
+          "n": 2,
+          "wins": 2,
+          "losses": 0,
+          "pushes": 0,
+          "record": "2-0-0"
+        },
+        "NBA": {
+          "profit": -30.0,
+          "n": 3,
+          "wins": 0,
+          "losses": 3,
+          "pushes": 0,
+          "record": "0-3-0"
+        },
+        "NFL": {
+          "profit": -30.0,
+          "n": 3,
+          "wins": 0,
+          "losses": 3,
+          "pushes": 0,
+          "record": "0-3-0"
+        },
+        "NHL": {
+          "profit": 52.2,
+          "n": 8,
+          "wins": 5,
+          "losses": 3,
+          "pushes": 0,
+          "record": "5-3-0"
+        }
+      },
+      "seasonToDate": {
+        "CBB": {
+          "profit": 0.0,
+          "record": "0-0-0",
+          "n": 0
+        },
+        "CFB": {
+          "profit": -20.4,
+          "record": "78-85-0",
+          "n": 163
+        },
+        "MLB": {
+          "profit": -54.2,
+          "record": "23-30-0",
+          "n": 53
+        },
+        "NBA": {
+          "profit": -37.3,
+          "record": "53-62-0",
+          "n": 115
+        },
+        "NFL": {
+          "profit": 53.11,
+          "record": "31-28-4",
+          "n": 63
+        },
+        "NHL": {
+          "profit": -55.31,
+          "record": "78-96-2",
+          "n": 176
+        }
+      }
+    },
+    {
+      "date": "2026-10-23",
+      "profit": 42.94,
+      "n": 6,
+      "wins": 5,
+      "losses": 1,
+      "pushes": 0,
+      "record": "5-1-0",
+      "sports": {
+        "CFB": {
+          "profit": 18.18,
+          "n": 2,
+          "wins": 2,
+          "losses": 0,
+          "pushes": 0,
+          "record": "2-0-0"
+        },
+        "MLB": {
+          "profit": 34.76,
+          "n": 3,
+          "wins": 3,
+          "losses": 0,
+          "pushes": 0,
+          "record": "3-0-0"
+        },
+        "NBA": {
+          "profit": -10.0,
+          "n": 1,
+          "wins": 0,
+          "losses": 1,
+          "pushes": 0,
+          "record": "0-1-0"
+        }
+      },
+      "seasonToDate": {
+        "CBB": {
+          "profit": 0.0,
+          "record": "0-0-0",
+          "n": 0
+        },
+        "CFB": {
+          "profit": -2.22,
+          "record": "80-85-0",
+          "n": 165
+        },
+        "MLB": {
+          "profit": -19.44,
+          "record": "26-30-0",
+          "n": 56
+        },
+        "NBA": {
+          "profit": -47.3,
+          "record": "53-63-0",
+          "n": 116
+        },
+        "NFL": {
+          "profit": 53.11,
+          "record": "31-28-4",
+          "n": 63
+        },
+        "NHL": {
+          "profit": -55.31,
+          "record": "78-96-2",
+          "n": 176
+        }
+      }
+    },
+    {
+      "date": "2026-10-24",
+      "profit": -20.95,
+      "n": 8,
+      "wins": 3,
+      "losses": 5,
+      "pushes": 0,
+      "record": "3-5-0",
+      "sports": {
+        "CFB": {
+          "profit": -0.91,
+          "n": 2,
+          "wins": 1,
+          "losses": 1,
+          "pushes": 0,
+          "record": "1-1-0"
+        },
+        "MLB": {
+          "profit": -15.24,
+          "n": 3,
+          "wins": 1,
+          "losses": 2,
+          "pushes": 0,
+          "record": "1-2-0"
+        },
+        "NHL": {
+          "profit": -4.8,
+          "n": 3,
+          "wins": 1,
+          "losses": 2,
+          "pushes": 0,
+          "record": "1-2-0"
+        }
+      },
+      "seasonToDate": {
+        "CBB": {
+          "profit": 0.0,
+          "record": "0-0-0",
+          "n": 0
+        },
+        "CFB": {
+          "profit": -3.13,
+          "record": "81-86-0",
+          "n": 167
+        },
+        "MLB": {
+          "profit": -34.68,
+          "record": "27-32-0",
+          "n": 59
+        },
+        "NBA": {
+          "profit": -47.3,
+          "record": "53-63-0",
+          "n": 116
+        },
+        "NFL": {
+          "profit": 53.11,
+          "record": "31-28-4",
+          "n": 63
+        },
+        "NHL": {
+          "profit": -60.11,
+          "record": "79-98-2",
+          "n": 179
+        }
+      }
+    },
+    {
+      "date": "2026-10-25",
+      "profit": -20.7,
+      "n": 18,
+      "wins": 8,
+      "losses": 10,
+      "pushes": 0,
+      "record": "8-10-0",
+      "sports": {
+        "NBA": {
+          "profit": 6.36,
+          "n": 7,
+          "wins": 4,
+          "losses": 3,
+          "pushes": 0,
+          "record": "4-3-0"
+        },
+        "NFL": {
+          "profit": -41.82,
+          "n": 8,
+          "wins": 2,
+          "losses": 6,
+          "pushes": 0,
+          "record": "2-6-0"
+        },
+        "NHL": {
+          "profit": 14.76,
+          "n": 3,
+          "wins": 2,
+          "losses": 1,
+          "pushes": 0,
+          "record": "2-1-0"
+        }
+      },
+      "seasonToDate": {
+        "CBB": {
+          "profit": 0.0,
+          "record": "0-0-0",
+          "n": 0
+        },
+        "CFB": {
+          "profit": -3.13,
+          "record": "81-86-0",
+          "n": 167
+        },
+        "MLB": {
+          "profit": -34.68,
+          "record": "27-32-0",
+          "n": 59
+        },
+        "NBA": {
+          "profit": -40.94,
+          "record": "57-66-0",
+          "n": 123
+        },
+        "NFL": {
+          "profit": 11.29,
+          "record": "33-34-4",
+          "n": 71
+        },
+        "NHL": {
+          "profit": -45.35,
+          "record": "81-99-2",
+          "n": 182
+        }
+      }
+    }
+  ],
+  "month": {
+    "2026-10": {
+      "profit": -112.81,
+      "n": 602,
+      "record": "279-317-6",
+      "best": "NFL",
+      "worst": "NHL",
+      "sports": {
+        "CBB": {
+          "profit": 0.0,
+          "n": 0,
+          "wins": 0,
+          "losses": 0,
+          "pushes": 0,
+          "record": "0-0-0"
+        },
+        "CFB": {
+          "profit": -3.13,
+          "n": 167,
+          "wins": 81,
+          "losses": 86,
+          "pushes": 0,
+          "record": "81-86-0"
+        },
+        "MLB": {
+          "profit": -34.68,
+          "n": 59,
+          "wins": 27,
+          "losses": 32,
+          "pushes": 0,
+          "record": "27-32-0"
+        },
+        "NBA": {
+          "profit": -40.94,
+          "n": 123,
+          "wins": 57,
+          "losses": 66,
+          "pushes": 0,
+          "record": "57-66-0"
+        },
+        "NFL": {
+          "profit": 11.29,
+          "n": 71,
+          "wins": 33,
+          "losses": 34,
+          "pushes": 4,
+          "record": "33-34-4"
+        },
+        "NHL": {
+          "profit": -45.35,
+          "n": 182,
+          "wins": 81,
+          "losses": 99,
+          "pushes": 2,
+          "record": "81-99-2"
+        }
+      }
+    }
+  },
+  "season": {
+    "CBB": {
+      "profit": 0.0,
+      "n": 0,
+      "wins": 0,
+      "losses": 0,
+      "pushes": 0,
+      "record": "0-0-0",
+      "from": "2026-10-01",
+      "through": "2026-10-25"
+    },
+    "CFB": {
+      "profit": -3.13,
+      "n": 167,
+      "wins": 81,
+      "losses": 86,
+      "pushes": 0,
+      "record": "81-86-0",
+      "from": "2026-10-01",
+      "through": "2026-10-25"
+    },
+    "MLB": {
+      "profit": -34.68,
+      "n": 59,
+      "wins": 27,
+      "losses": 32,
+      "pushes": 0,
+      "record": "27-32-0",
+      "from": "2026-10-01",
+      "through": "2026-10-25"
+    },
+    "NBA": {
+      "profit": -40.94,
+      "n": 123,
+      "wins": 57,
+      "losses": 66,
+      "pushes": 0,
+      "record": "57-66-0",
+      "from": "2026-10-01",
+      "through": "2026-10-25"
+    },
+    "NFL": {
+      "profit": 11.29,
+      "n": 71,
+      "wins": 33,
+      "losses": 34,
+      "pushes": 4,
+      "record": "33-34-4",
+      "from": "2026-10-01",
+      "through": "2026-10-25"
+    },
+    "NHL": {
+      "profit": -45.35,
+      "n": 182,
+      "wins": 81,
+      "losses": 99,
+      "pushes": 2,
+      "record": "81-99-2",
+      "from": "2026-10-01",
+      "through": "2026-10-25"
+    }
+  }
+}
