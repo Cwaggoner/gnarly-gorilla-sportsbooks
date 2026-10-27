@@ -71,8 +71,15 @@ h2.split-title, h3.split-title { margin:16px 0 12px; font-size:16px; color:var(-
 .card-analysis { margin:0 0 10px; border:0; padding:0; background:transparent; }
 .card-analysis h3.split-title { margin:0 0 12px; }
 .charts h2.split-title, .charts .sport-title { margin:0 0 12px; }
+.api-note, .slips-side, .fine, .passed-note, .warn { color:var(--amber); font-size:12px; line-height:1.35; }
 .api-note { margin-top:18px; }
-.api-note a { color:var(--title); }
+.api-note button, .api-note select { font-size:13px; color:var(--text); }
+.api-note button { color:var(--title); }
+a, .api-note a, .warn a, .slips-side a { color:var(--title); }
+.api-note .best-price, .warn .best-price, .best-price { color:#ff00ff; font-weight:700; }
+.api-note .win, .warn .win, .win { color:var(--title); }
+.api-note .loss, .warn .loss, .loss { color:var(--red); }
+.api-note .zero, .warn .zero, .zero { color:#ffffff; font-style:italic; }
 .print-preview { margin-top:12px; }
 .print-preview img { width:100%; height:auto; border:1px solid #39ff14; border-radius:10px; background:#0a0a0a; }
 h2 { margin:0 0 10px; font-size:16px; color:var(--title); }
@@ -170,10 +177,11 @@ input[type=file] { position:absolute; width:1px; height:1px; opacity:0; }
 label:has(input[type=file]) { position:relative; }
 #loadcal { height:38px; }
 label:has(#loadcal) { gap:0; }
-.passed-note { margin:12px 0 8px; font-size:13px; }
+.passed-note { margin:12px 0 8px; }
 table.season-hold.filled th.add-col, table.season-hold.filled td.add-col { text-align:center; width:1%; white-space:nowrap; vertical-align:middle; }
 table.season-hold.filled .add-game { width:auto; min-width:7ch; display:inline-block; }
 table.season-hold.filled th.note-col, table.season-hold.filled td.note-col { width:32%; min-width:220px; max-width:420px; white-space:normal; vertical-align:top; font-size:12px; line-height:1.35; }
+table.season-hold.filled td.note-col, table.season-hold.filled td.note-col p { color:var(--amber); font-size:12px; }
 table.season-hold.filled td.note-col p { margin:0; display:-webkit-box; -webkit-line-clamp:6; -webkit-box-orient:vertical; overflow:hidden; }
 table.season-hold.filled .note-name { color:var(--amber); font-weight:700; }
 .analysis-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; }
