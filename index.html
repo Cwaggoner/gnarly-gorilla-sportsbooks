@@ -168,6 +168,8 @@ label:has(input[type=file]) { position:relative; }
 label:has(#loadcal) { gap:0; }
 .card-analysis { margin:8px 0 10px; border:1px solid #39ff14; border-radius:8px; padding:8px 10px; background:#0e0e0e; }
 .passed-note { margin:12px 0 8px; font-size:13px; }
+#cardgames td.add-col, #cardgames th.add-col { text-align:center; width:1%; white-space:nowrap; vertical-align:middle; }
+#cardgames .add-game { width:auto; min-width:7ch; display:inline-block; }
 .analysis-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; }
 .analysis-cell { border:1px solid #243024; border-radius:6px; padding:6px 8px; min-height:0; }
 .analysis-cell b { color:#39ff14; font-size:12px; }
@@ -2259,12 +2261,13 @@ function slateTable(list, date, extra){
     const nick = name => String(name || "").split(/\s+/).slice(-1)[0] || "";
     const line = side => esc(nick(side.name) + " " + (side.record || "—"));
     const records = "<div>" + line(away) + "</div><div>" + line(home) + "</div>";
-    const add = extra ? " <button type='button' class='add-game' data-sport='" + encodeURIComponent(game.sport || "") + "' data-game='" + encodeURIComponent(game.game || "") + "' data-date='" + encodeURIComponent(date || "") + "'>Add</button>" : "";
-    return "<tr><td>" + esc(game.sport + " " + game.game) + add + "</td><td>" + esc(when) + "</td><td>" + esc(game.location || "") + "</td><td>" + records + "</td></tr>";
+    const add = extra ? "<button type='button' class='add-game' data-sport='" + encodeURIComponent(game.sport || "") + "' data-game='" + encodeURIComponent(game.game || "") + "' data-date='" + encodeURIComponent(date || "") + "'>Add</button>" : "";
+    return "<tr><td>" + esc(game.sport + " " + game.game) + "</td><td>" + esc(when) + "</td><td>" + esc(game.location || "") + "</td><td>" + records + "</td>" + (extra ? "<td class='add-col'>" + add + "</td>" : "") + "</tr>";
   }).join("");
   const label = slateDateLabel(date);
   const gameHead = label ? "<th><div class='gamehead'><span>Game</span><span class='slate-date'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + esc(label) + "</span></div></th>" : "<th>Game</th>";
-  return "<table class='season-hold filled'><thead><tr>" + gameHead + "<th>Time</th><th>Location</th><th>Record</th></tr></thead><tbody>" + rows + "</tbody></table>";
+  const addHead = extra ? "<th class='add-col'>Add</th>" : "";
+  return "<table class='season-hold filled'><thead><tr>" + gameHead + "<th>Time</th><th>Location</th><th>Record</th>" + addHead + "</tr></thead><tbody>" + rows + "</tbody></table>";
 }
 function slateHtml(){
   const games = pickSlate && Array.isArray(pickSlate.games) ? pickSlate.games : [];
