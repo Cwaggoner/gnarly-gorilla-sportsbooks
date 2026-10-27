@@ -170,6 +170,9 @@ label:has(#loadcal) { gap:0; }
 .passed-note { margin:12px 0 8px; font-size:13px; }
 table.season-hold.filled th.add-col, table.season-hold.filled td.add-col { text-align:center; width:1%; white-space:nowrap; vertical-align:middle; }
 table.season-hold.filled .add-game { width:auto; min-width:7ch; display:inline-block; }
+table.season-hold.filled th.note-col, table.season-hold.filled td.note-col { width:32%; min-width:220px; max-width:420px; white-space:normal; vertical-align:top; font-size:12px; line-height:1.35; }
+table.season-hold.filled td.note-col p { margin:0; display:-webkit-box; -webkit-line-clamp:6; -webkit-box-orient:vertical; overflow:hidden; }
+table.season-hold.filled .note-name { color:var(--amber); font-weight:700; }
 .analysis-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; }
 .analysis-cell { border:1px solid #243024; border-radius:6px; padding:6px 8px; min-height:0; }
 .analysis-cell b { color:#39ff14; font-size:12px; }
@@ -1107,7 +1110,7 @@ function drawCardAnalysis(text){
     grid.innerHTML = "<p class='warn'>Today's card is not posted yet. Yesterday's picks stay off this card.</p>";
     if (title) title.textContent = "Analysis · " + today;
     if (read) read.textContent = "No card is live yet. It posts with the morning picks. Yesterday is not carried onto this card.";
-    drawPassedSlate();
+    paintSeasonStatus();
     return;
   }
   const sports = ["CBB","CFB","MLB","NBA","NFL","NHL"];
@@ -1126,7 +1129,7 @@ function drawCardAnalysis(text){
   }).join("");
   if (title) title.textContent = "Analysis · " + day;
   if (read) read.textContent = sharpRead(rows);
-  drawPassedSlate();
+  paintSeasonStatus();
 }
 function sharpRead(rows){
   const custom = String(postedCard || "").split(/\n/).map(l => l.trim()).find(l => l.startsWith("# sharp:"));
@@ -2245,6 +2248,98 @@ function slateSides(game){
     home: {name: homeName, record: (game && game.home && game.home.record) || (game && game.homeRecord) || ""}
   };
 }
+function noteCity(location){
+  const parts = String(location || "").split(",").map(s => s.trim()).filter(Boolean);
+  return parts.length >= 2 ? parts[1] : (parts[0] || "");
+}
+function sideNick(name){
+  return String(name || "").split(/\s+/).filter(Boolean).slice(-1)[0] || "Side";
+}
+function slatePlays(game, date){
+  const day = String(date || "").slice(0, 10);
+  const sport = String(game && game.sport || "").toUpperCase();
+  const sides = slateSides(game);
+  return cardLines(postedCard).filter(r => !isNoCard(r) && r[0] === day && r[1] === sport).map(r => {
+    return {row: r, mark: Math.max(teamPickScore(sides.away.name, r[3]), teamPickScore(sides.home.name, r[3]))};
+  }).filter(x => x.mark > 0).sort((a, b) => b.mark - a.mark).map(x => x.row);
+}
+function priceTalk(row){
+  const raw = String((row && row[5]) || "").replace(/\s+/g, " ").trim();
+  const made = raw.match(/made\s+(.+?),\s*book\s+(.+?),\s*gap\s+([0-9]+(?:\.[0-9]+)?)\s*(cents)?/i);
+  if (made) {
+    let talk = "I made " + made[1].trim() + " and the book is " + made[2].trim() + ", a " + made[3] + (made[4] ? "-cent" : "-point") + " gap.";
+    if (/edge/i.test(raw)) talk += " That gap is why it is on the card.";
+    if (/early-season/i.test(raw)) talk += " Early-season record, not a trained price.";
+    else if (/record formula|not a trained/i.test(raw)) talk += " Record read, not a trained price.";
+    return talk;
+  }
+  const must = raw.match(/must play\s+([^.]+)\.?\s*(.*)/i);
+  if (must) {
+    const rest = String(must[2] || "").replace(/\bedge\b\.?/ig, "").replace(/\s+/g, " ").trim().replace(/^\.\s*/, "").replace(/\.\s*$/, "");
+    const bits = rest.split(/\.\s+/).filter(Boolean).map(s => s.charAt(0).toLowerCase() + s.slice(1));
+    return "The card marks " + must[1].trim() + " a must-play" + (bits.length ? ": " + bits.join(", ") : "") + ". That is the edge, and I still need the number to hold.";
+  }
+  if (raw) return raw.charAt(0).toUpperCase() + raw.slice(1).replace(/\.\s*$/, "") + ".";
+  return "The number is posted. I still need it near -110.";
+}
+function shopLine(row){
+  const n = parseInt(row && row[4], 10);
+  if (!Number.isFinite(n)) return " I shop the price before I click it.";
+  if (n <= -130) return " It is already shorter than -110. I am in on the gap, and I pass if it gets shorter.";
+  if (n < 0) return " If the price is -115 or shorter, I pass.";
+  return " I need the plus money to hold. If it flips to a short favorite, I pass.";
+}
+function recordLean(away, home, awayRec, homeRec){
+  const parse = rec => {
+    const m = String(rec || "").match(/(\d+)-(\d+)/);
+    return m ? {w: Number(m[1]), l: Number(m[2])} : null;
+  };
+  const a = parse(awayRec), h = parse(homeRec);
+  if (!a || !h) return "";
+  const aw = a.w / Math.max(1, a.w + a.l), hw = h.w / Math.max(1, h.w + h.l);
+  if (Math.abs(aw - hw) < 0.08) return "The records are close, so I would need a dog price, not a team name.";
+  if (hw > aw) return "The record leans " + home + ", which is how a short favorite gets born. I do not bet that lean unless the card prices a dog.";
+  return "The record leans " + away + " on the road. I still need the card to name a number.";
+}
+function passRule(sport){
+  const code = String(sport || "").toUpperCase();
+  if (code === "NBA") return "I want a dog spread at -110. A short favorite is a pass.";
+  if (code === "NHL") return "I want the dog moneyline or a puck line, not a short favorite.";
+  if (code === "NFL") return "I want the dog if the spread is a number, and I name the total.";
+  if (code === "CFB") return "A home dog of 7 or more gets the look. Inside a field goal I pass.";
+  if (code === "MLB") return "I want the dog or a run line, not a short moneyline.";
+  if (code === "CBB") return "I want a dog spread at -110, and I do not force a side.";
+  return "I want a dog at -110. I do not invent a price.";
+}
+function gorillaNote(game, date){
+  const sides = slateSides(game);
+  const away = sideNick(sides.away.name);
+  const home = sideNick(sides.home.name);
+  const awayRec = sides.away.record || "";
+  const homeRec = sides.home.record || "";
+  const recBit = (awayRec || homeRec) ? " (" + (awayRec || "—") + " at " + (homeRec || "—") + ")" : "";
+  const city = noteCity(game && game.location);
+  const where = city ? " in " + city : "";
+  const day = String(date || "").slice(0, 10);
+  const plays = slatePlays(game, date);
+  if (!plays.length) {
+    const lines = cardLines(postedCard).filter(r => r[0] === day);
+    const passed = lines.some(r => r[1] === String(game.sport || "").toUpperCase() && isNoCard(r));
+    const lean = recordLean(away, home, awayRec, homeRec);
+    let body;
+    if (seasonEnded(game.sport)) body = game.sport + " is closed. " + away + " at " + home + where + " can sit on the slate, but I do not price a sport after its last card.";
+    else if (passed) body = away + " at " + home + recBit + where + ". The card passed " + game.sport + " on purpose. " + (lean || "I am not adding a side the card refused.");
+    else if (!lines.length) body = away + " at " + home + recBit + where + ". The morning card has not priced this game. " + (lean || passRule(game.sport));
+    else body = away + " at " + home + recBit + where + ". It is on the slate and not on the card. " + (lean || passRule(game.sport));
+    return body.replace(/\s+/g, " ").trim();
+  }
+  const main = plays[0];
+  const price = main[4] ? " (" + main[4] + ")" : "";
+  let body = "I am on " + main[3] + price + ". " + priceTalk(main);
+  if (plays[1]) body += " Same game also has " + plays[1][3] + (plays[1][4] ? " (" + plays[1][4] + ")" : "") + ".";
+  body += shopLine(main);
+  return body.replace(/\s+/g, " ").trim();
+}
 function slateTable(list, date, extra){
   const order = ["CBB","CFB","MLB","NBA","NFL","NHL"];
   const games = (Array.isArray(list) ? list : []).slice().sort((a, b) => {
@@ -2262,12 +2357,14 @@ function slateTable(list, date, extra){
     const line = side => esc(nick(side.name) + " " + (side.record || "—"));
     const records = "<div>" + line(away) + "</div><div>" + line(home) + "</div>";
     const add = extra ? "<button type='button' class='add-game' data-sport='" + encodeURIComponent(game.sport || "") + "' data-game='" + encodeURIComponent(game.game || "") + "' data-date='" + encodeURIComponent(date || "") + "'>Add</button>" : "";
-    return "<tr><td>" + esc(game.sport + " " + game.game) + "</td><td>" + esc(when) + "</td><td>" + esc(game.location || "") + "</td><td>" + records + "</td>" + (extra ? "<td class='add-col'>" + add + "</td>" : "") + "</tr>";
+    const spoken = gorillaNote(game, date);
+    const note = "<td class='note-col' title='" + esc(spoken).replace(/'/g, "") + "'><p><b class='note-name'>Gnarly Gorilla: </b>" + esc(spoken) + "</p></td>";
+    return "<tr><td>" + esc(game.sport + " " + game.game) + "</td><td>" + esc(when) + "</td><td>" + esc(game.location || "") + "</td><td>" + records + "</td>" + note + (extra ? "<td class='add-col'>" + add + "</td>" : "") + "</tr>";
   }).join("");
   const label = slateDateLabel(date);
   const gameHead = label ? "<th><div class='gamehead'><span>Game</span><span class='slate-date'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + esc(label) + "</span></div></th>" : "<th>Game</th>";
   const addHead = extra ? "<th class='add-col'>Add</th>" : "";
-  return "<table class='season-hold filled'><thead><tr>" + gameHead + "<th>Time</th><th>Location</th><th>Record</th>" + addHead + "</tr></thead><tbody>" + rows + "</tbody></table>";
+  return "<table class='season-hold filled'><thead><tr>" + gameHead + "<th>Time</th><th>Location</th><th>Record</th><th class='note-col'>Notes</th>" + addHead + "</tr></thead><tbody>" + rows + "</tbody></table>";
 }
 function slateHtml(){
   const games = pickSlate && Array.isArray(pickSlate.games) ? pickSlate.games : [];
