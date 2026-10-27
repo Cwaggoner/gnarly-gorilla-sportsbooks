@@ -1,26 +1,15 @@
-# GG report 2026-10-25
-# Yesterday 2026-10-25 graded. Record 8-10-0. Profit $-20.70. CLV Matched Bet Price.
+# GG report 2026-10-26
+# Yesterday 2026-10-26 graded. Record 3-4-0. Profit $-12.73. CLV Matched Bet Price.
 
-Analysis: Sunday cashed the Clippers, Magic, Grizzlies and Timberwolves spreads plus the Giants and Browns NFL dogs and both Predators and Wild moneylines. The Nets, Jazz and 76ers spreads lost. Most NFL spreads lost including the Raiders, Chiefs, Ravens, Panthers, Vikings and 49ers. Islanders moneyline lost.
+Analysis: Monday cashed the Timberwolves, Mavericks and Grizzlies spreads. The Bulls and Suns spreads lost. The Eagles NFL spread lost and the Rangers moneyline lost.
 
-2026-10-25 | NBA | win | Clippers +14.5 | EDGE
-2026-10-25 | NBA | loss | Nets +7.5 | EDGE
-2026-10-25 | NBA | loss | Jazz +6.5 | EDGE
-2026-10-25 | NBA | win | Magic +7.5 | EDGE
-2026-10-25 | NBA | win | Grizzlies -4.5 | EDGE
-2026-10-25 | NBA | win | Timberwolves -1.5 | EDGE
-2026-10-25 | NBA | loss | 76ers -1.5 | EDGE
-2026-10-25 | NFL | win | Giants +10.5 | EDGE
-2026-10-25 | NFL | loss | Raiders +3 | EDGE
-2026-10-25 | NFL | loss | Chiefs +3 | EDGE
-2026-10-25 | NFL | loss | Ravens +3 | EDGE
-2026-10-25 | NFL | loss | Panthers -3 | EDGE
-2026-10-25 | NFL | loss | Vikings -6.5 | EDGE
-2026-10-25 | NFL | loss | 49ers -2.5 | EDGE
-2026-10-25 | NFL | win | Browns -1.5 | EDGE
-2026-10-25 | NHL | win | Predators ML | EDGE
-2026-10-25 | NHL | win | Wild ML | EDGE
-2026-10-25 | NHL | loss | Islanders ML | EDGE
-2026-10-25 | CFB | No Picks
-2026-10-25 | CBB | No Picks
-2026-10-25 | MLB | No Picks
+2026-10-26 | NBA | win | Timberwolves +3.5 | EDGE
+2026-10-26 | NBA | loss | Bulls +14.5 | EDGE
+2026-10-26 | NBA | win | Mavericks +8.5 | EDGE
+2026-10-26 | NBA | loss | Suns +9.5 | EDGE
+2026-10-26 | NBA | win | Grizzlies +1.5 | EDGE
+2026-10-26 | NFL | loss | Philadelphia Eagles +4.5 | EDGE
+2026-10-26 | NHL | loss | Rangers ML | EDGE
+2026-10-26 | MLB | No Picks
+2026-10-26 | CFB | No Picks
+2026-10-26 | CBB | No Picks
