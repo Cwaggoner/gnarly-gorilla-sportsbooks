@@ -110,6 +110,9 @@ input, select, button, textarea { background:#0e0e0e; color:var(--text); border:
 #betfields input[type=date] { width:16ch; min-width:16ch; max-width:16ch; }
 .book-key { display:flex; align-items:flex-end; gap:12px; }
 #oddskeybox { display:flex; margin:0; }
+.key-box { margin-top:10px; border:1px solid #39ff14; border-radius:10px; padding:10px; }
+.key-row { display:flex; align-items:flex-end; gap:12px; flex-wrap:wrap; }
+.key-box .api-note { margin-top:10px; }
 #seasons { margin-bottom:18px; }
 #seasons table { margin-bottom:28px; }
 .season-hold, .season-hold td { border:0; background:transparent; box-shadow:none; width:100%; }
@@ -306,9 +309,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <option>FanDuel</option>
 <option>HardRock</option>
 </select></label>
-<label id="oddskeybox">Odds key<input id="oddskey" type="password" placeholder="Free or paid key" autocomplete="off"></label><button type="button" id="commitkey">Commit</button>
 </div>
-<p class="api-note">Paste a free or paid Odds API key here. Load Picks in Add A Bet uses this key. CLV and Close need a paid subscription. A free key loads the board only. Add A Bet Book drives the list. This Book only stamps a card you load from this section.<br><a href="https://the-odds-api.com/" target="_blank" rel="noopener noreferrer">Open The Odds API</a></p>
 <textarea id="paste" placeholder="NFL | Spread | Chiefs -3.5 | -110 | High 62%"></textarea>
 <div class="tools">
 <label>Upload Pick-Card PDF<input type="file" id="cardpdf" accept="application/pdf,.pdf"><span class="file-face">No File Chosen</span></label>
@@ -381,12 +382,20 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <span id="editnote" class="warn"></span>
 </div>
 </div>
-<label class="notes-field"><span class="notes-head">Notes <span class="warn fine">Load Picks uses the Odds API key from Today's Card and the Book selected here. Moneyline, Spread, and Total fill from that book. A refresh restores the last list with no new call.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span><textarea name="notes" placeholder="High 62%"></textarea></label>
+<label class="notes-field"><span class="notes-head">Notes <span class="warn fine">Load Picks uses the Odds API key below and the Book selected here. Moneyline, Spread, and Total fill from that book. A refresh restores the last list with no new call.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span><textarea name="notes" placeholder="High 62%"></textarea></label>
 <div class="stack">
 <button type="submit" id="savebtn">Save Bet</button>
 <button type="button" id="canceledit">Cancel Edit</button>
 </div>
 </form>
+<div class="key-box">
+<div class="key-row">
+<label id="oddskeybox">Odds Key<input id="oddskey" type="password" placeholder="Free or paid key" autocomplete="off"></label>
+<button type="button" id="commitkey">Commit</button>
+<span id="keynote" class="warn"></span>
+</div>
+<p class="api-note">Paste a free or paid Odds API key here. Load Picks uses this key. CLV and Close need a paid subscription. A free key loads the board only. The Book selected above drives the list. Today's Card Book only stamps a card loaded there.<br><a href="https://the-odds-api.com/" target="_blank" rel="noopener noreferrer">Open The Odds API</a></p>
+</div>
 </section>
 <section class="card" id="slips">
 <div class="section-head"><h2>Slips</h2><p class="warn slips-side">This card keeps today and yesterday only. Older days stay on the calendar and in the published files.</p><button type="button" id="livescores">Check Live Scores</button></div>
@@ -408,7 +417,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <thead><tr><th>Date</th><th>Book</th><th>Sport</th><th>Type</th><th>Pick</th><th>Odds</th><th class="col-close">Close</th><th>CLV</th><th>Stake</th><th>Result</th><th>P/L</th><th>Grade</th></tr></thead>
 <tbody id="rows"></tbody>
 </table></div>
-<p class="api-note">Live prices need the Odds API key from Today's Card. CLV and Close need a paid subscription. A free key loads the board only. The pick list is filled in Add A Bet. A saved list returns on refresh with no new call. A new book calls the API once, then uses the save for 15 minutes.<br><a href="https://the-odds-api.com/" target="_blank" rel="noopener noreferrer">Open The Odds API</a></p>
+<p class="api-note">Live prices need the Odds API key on Add A Bet. CLV and Close need a paid subscription. A free key loads the board only. The pick list is filled in Add A Bet. A saved list returns on refresh with no new call. A new book calls the API once, then uses the save for 15 minutes.<br><a href="https://the-odds-api.com/" target="_blank" rel="noopener noreferrer">Open The Odds API</a></p>
 </section>
 <section class="card" id="calendarcard">
 <div class="section-head"><h2>Calendar</h2><span id="monthpl" style="margin-left:10ch;color:#d6ffd0"></span><p class="warn slips-side">Everyone sees the shared $10 calendar until they upload a file. An uploaded file stays in this browser only.<br>Other users do not see it. Use Shared Calendar to go back.</p></div>
@@ -2534,7 +2543,7 @@ async function drawOddsCompare(force){
   }
   if (!key) {
     box.innerHTML = wantToday
-      ? "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>Today. Paste the Odds API key on Today's Card, then press Today again.</p>"
+      ? "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>Today. Paste the Odds API key on Add A Bet, then press Today again.</p>"
       : (boards[market] || boards.h2h || "");
     wireCompare();
     return;
@@ -3209,7 +3218,7 @@ async function fillPickBoard(useSaved){
   const note = document.getElementById("picknote");
   const current = sel.value;
   sel.innerHTML = "<option value=''>Select a pick</option>";
-  if (!key) { note.textContent = "Add the odds key in Today's Card. Then this list follows " + book + "."; return; }
+  if (!key) { note.textContent = "Add the Odds Key below. Then this list follows " + book + "."; return; }
   if (!bookKey) { note.textContent = book + " has no live board."; return; }
   const day = form.date.value;
   const today = easternDay();
@@ -3482,8 +3491,8 @@ document.getElementById("commitkey").onclick = () => {
   oddskey.value = key;
   Object.keys(localStorage).filter(k => k.startsWith("gg-compare") || k.startsWith("gg-board")).forEach(k => localStorage.removeItem(k));
   Object.keys(sessionStorage).filter(k => k.startsWith("gg-odds")).forEach(k => sessionStorage.removeItem(k));
-  const note = document.getElementById("pdfnote");
-  note.textContent = key ? "Key committed. Refreshing Live Odds." : "Key cleared.";
+  const note = document.getElementById("keynote");
+  if (note) note.textContent = key ? "Key committed. Refreshing Live Odds." : "Key cleared.";
   drawOddsCompare(true).catch(() => {});
   if (typeof fillPickBoard === "function") fillPickBoard().catch(() => {});
 };
