@@ -280,3 +280,4 @@
 2026-10-26 | NBA | -110 | Grizzlies +1.5 at Jazz | -110
 2026-10-26 | NFL | -110 | Philadelphia Eagles +4.5 | -110
 2026-10-26 | NHL | -140 | Rangers ML vs Kings | -130
+2026-10-27 | NBA | -110 | Nets +11.5 at Celtics | -110
