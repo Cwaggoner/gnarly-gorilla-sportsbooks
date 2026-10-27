@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Gnarly Gorilla Sportsbooks | Bet Ledger For NFL, NBA, NHL, MLB, CBB, CFB</title>
-<meta name="description" content="Gnarly Gorilla Sportsbooks is a free bet ledger for Chrome and Chromebook. Log BetMGM, Caesars, DraftKings, Fanatics, FanDuel, and HardRock slips for NFL, NBA, NHL, MLB, CBB, and CFB, then grade them into a report card.">
+<title>Gnarly Gorilla Sportsbooks | Bet Ledger For CBB, CFB, MLB, NBA, NFL, NHL</title>
+<meta name="description" content="Gnarly Gorilla Sportsbooks is a free bet ledger for Chrome and Chromebook. Log BetMGM, Caesars, DraftKings, Fanatics, FanDuel, and HardRock slips for CBB, CFB, MLB, NBA, NFL, and NHL, then grade them into a report card.">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="theme-color" content="#0a0a0a">
 <link rel="canonical" href="https://cwaggoner.github.io/gnarly-gorilla-sportsbooks/">
@@ -20,7 +20,7 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Gnarly Gorilla Sportsbooks | Bet Ledger">
-<meta name="twitter:description" content="Free sports bet ledger for NFL, NBA, NHL, MLB, CBB, and CFB. Grade yesterday and copy the report.">
+<meta name="twitter:description" content="Free sports bet ledger for CBB, CFB, MLB, NBA, NFL, and NHL. Grade yesterday and copy the report.">
 <meta name="twitter:image" content="https://cwaggoner.github.io/gnarly-gorilla-sportsbooks/og-image.png">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"WebApplication","name":"Gnarly Gorilla Sportsbooks","url":"https://cwaggoner.github.io/gnarly-gorilla-sportsbooks/","applicationCategory":"SportsApplication","operatingSystem":"Chrome, ChromeOS","description":"Free bet ledger for logging and grading sports slips across BetMGM, Caesars, DraftKings, Fanatics, FanDuel, and HardRock.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"image":"https://cwaggoner.github.io/gnarly-gorilla-sportsbooks/og-image.png"}
@@ -281,7 +281,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <div class="head-icon"><img src="gg-icon.png" alt="Gnarly Gorilla"></div>
 <div class="head-text">
 <h1><span class="gg-name">Gnarly Gorilla</span> Sportsbooks</h1>
-<p>Free bet ledger for <span class="gg-name">Gnarly Gorilla</span> Sports Decks. Log NFL, NBA, NHL, MLB, CBB, and CFB slips, grade them the next day, and copy the report card.</p>
+<p>Free bet ledger for <span class="gg-name">Gnarly Gorilla</span> Sports Decks. Log CBB, CFB, MLB, NBA, NFL, and NHL slips, grade them the next day, and copy the report card.</p>
 <p id="liveline" class="warn" style="margin:6px 0 0;font-size:12px;">All picks live by 9:30 AM. Closed Value Lines update at 6:00 PM.</p>
 </div>
 <div class="head-flag" aria-label="United States"><svg viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg" role="img"><defs><linearGradient id="flaggloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".45" stop-color="#fff" stop-opacity=".08"/><stop offset="1" stop-color="#000" stop-opacity=".25"/></linearGradient></defs><rect width="28" height="18" fill="#b22234"/><g fill="#fff"><rect y="1.38" width="28" height="1.38"/><rect y="4.15" width="28" height="1.38"/><rect y="6.92" width="28" height="1.38"/><rect y="9.69" width="28" height="1.38"/><rect y="12.46" width="28" height="1.38"/><rect y="15.23" width="28" height="1.38"/></g><rect width="11.2" height="9.7" fill="#3c3b6e"/><rect width="28" height="18" fill="url(#flaggloss)"/></svg><span>USA</span><span id="headregion"></span><span id="headrules">BETTING RULES</span></div>
@@ -336,7 +336,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <span id="dashnote" class="warn"></span>
 </div>
 </section>
-<section class="card" id="liveodds"><div class="section-head"><h2>Live Odds</h2><p class="warn slips-side">Moneyline, spread, and total across books. Refresh pulls the live price.</p></div><div class="odds-tools" id="compareday"><button type="button" id="day-yesterday">Yesterday</button><button type="button" id="day-today">Today</button><select id="comparesport"><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option><option selected>All</option></select><select id="comparemarket"><option value="h2h" selected>Moneyline</option><option value="spreads">Spread</option><option value="totals">Total</option></select><button type="button" id="refreshodds">Refresh</button></div><div id="oddscompare"></div></section>
+<section class="card" id="liveodds"><div class="section-head"><h2>Live Odds</h2><p class="warn slips-side">Moneyline, spread, and total across books. Refresh pulls the live price.</p></div><div class="odds-tools" id="compareday"><button type="button" id="day-yesterday">Yesterday</button><button type="button" id="day-today">Today</button><select id="comparesport"><option selected>All</option><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option></select><select id="comparemarket"><option value="h2h" selected>Moneyline</option><option value="spreads">Spread</option><option value="totals">Total</option></select><button type="button" id="refreshodds">Refresh</button></div><div id="oddscompare"></div></section>
 <section class="card" id="todaycard">
 <div class="section-head"><h2>Today's Card</h2><p class="warn slips-side">One play per line: Sport | Type | Pick | American odds | Confidence. Stake is $10. Book is the dropdown below. Pending until graded.</p></div>
 <div class="card-analysis" id="cardanalysis"><h3 class="split-title">Analysis</h3><div class="analysis-grid" id="analysisgrid"></div><div class="sharp-read"><b>Analysis:</b><p id="sharpread"></p></div><div id="cardgames"></div></div>
@@ -352,16 +352,16 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <li>A filing pushed today is what everyone sees. Before that push, the page reads the public report.</li>
 <li>The times below are when a new filing is actually due, in Eastern time.</li>
 </ul>
-<p class="api-note injury-filters"><select id="injurysport"><option selected>All</option><option>NFL</option><option>NBA</option><option>NHL</option><option>MLB</option><option>CFB</option><option>CBB</option></select> <select id="injuryshow"><option value="posted" selected>Posted</option><option value="all">All rows</option><option value="out">Out</option><option value="maybe">May still play</option></select></p>
+<p class="api-note injury-filters"><select id="injurysport"><option selected>All</option><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option></select> <select id="injuryshow"><option value="posted" selected>Posted</option><option value="all">All rows</option><option value="out">Out</option><option value="maybe">May still play</option></select></p>
 <table class="compare" id="injuryclock">
 <thead><tr><th>Sport</th><th>Week</th><th>Weekend</th><th>Tournament</th></tr></thead>
 <tbody>
-<tr data-sport="NFL"><td>NFL</td><td>Sunday games file Wednesday, Thursday, and Friday at 4:00 PM. Friday is the game status. A Thursday game files Monday through Wednesday.</td><td>A Saturday game files Tuesday through Thursday. A Monday game files Thursday through Saturday. Inactives are 90 minutes before kickoff.</td><td>The playoffs and the Super Bowl use the same clock as that game's weekday. Inactives stay 90 minutes before kickoff.</td></tr>
-<tr data-sport="NBA"><td>NBA</td><td>8:00 PM the night before covers every club's 5:00 PM local report. 4:00 PM on game day covers the 1:00 PM local update. A tip at 5:00 PM or earlier needs a 10:00 AM pull.</td><td>Same clock. The second night of a back-to-back is due at 1:00 PM local, which is inside the 4:00 PM pull.</td><td>The playoffs use the same windows. The inactive list can still change 30 minutes before tip.</td></tr>
-<tr data-sport="NHL"><td>NHL</td><td>Morning skate is the report. 11:00 AM for the East, 2:00 PM for the Central, 5:00 PM for the Pacific.</td><td>Same skates. The starting goalie is often not final until an hour before puck drop.</td><td>A playoff series uses the same skates, then one more look 60 minutes before puck drop.</td></tr>
-<tr data-sport="MLB"><td>MLB</td><td>There is no league injury report. The lineup is the report. Night games: 4 hours before first pitch, then 90 minutes prior. Day games: 9:30 AM.</td><td>Same. A getaway-day lineup can post late, so keep the 90-minute check.</td><td>The postseason and the World Series: 3 hours before first pitch, then 45 minutes prior.</td></tr>
-<tr data-sport="CFB"><td>CFB</td><td>Wednesday 6:00 PM is the first availability. Friday 6:00 PM is the report for Saturday.</td><td>A Friday night game is Thursday at 6:00 PM. Noon kicks also need Saturday at 10:00 AM.</td><td>Championship week, bowls, and the playoff: Friday 6:00 PM, Saturday 10:00 AM, and 90 minutes before kickoff.</td></tr>
 <tr data-sport="CBB"><td>CBB</td><td>No league report. 8:00 PM the night before, and 10:00 AM on game day.</td><td>Same two pulls.</td><td>Conference tournaments and March Madness: about 11:00 PM after the previous session, then 90 minutes before the session's first tip.</td></tr>
+<tr data-sport="CFB"><td>CFB</td><td>Wednesday 6:00 PM is the first availability. Friday 6:00 PM is the report for Saturday.</td><td>A Friday night game is Thursday at 6:00 PM. Noon kicks also need Saturday at 10:00 AM.</td><td>Championship week, bowls, and the playoff: Friday 6:00 PM, Saturday 10:00 AM, and 90 minutes before kickoff.</td></tr>
+<tr data-sport="MLB"><td>MLB</td><td>There is no league injury report. The lineup is the report. Night games: 4 hours before first pitch, then 90 minutes prior. Day games: 9:30 AM.</td><td>Same. A getaway-day lineup can post late, so keep the 90-minute check.</td><td>The postseason and the World Series: 3 hours before first pitch, then 45 minutes prior.</td></tr>
+<tr data-sport="NBA"><td>NBA</td><td>8:00 PM the night before covers every club's 5:00 PM local report. 4:00 PM on game day covers the 1:00 PM local update. A tip at 5:00 PM or earlier needs a 10:00 AM pull.</td><td>Same clock. The second night of a back-to-back is due at 1:00 PM local, which is inside the 4:00 PM pull.</td><td>The playoffs use the same windows. The inactive list can still change 30 minutes before tip.</td></tr>
+<tr data-sport="NFL"><td>NFL</td><td>Sunday games file Wednesday, Thursday, and Friday at 4:00 PM. Friday is the game status. A Thursday game files Monday through Wednesday.</td><td>A Saturday game files Tuesday through Thursday. A Monday game files Thursday through Saturday. Inactives are 90 minutes before kickoff.</td><td>The playoffs and the Super Bowl use the same clock as that game's weekday. Inactives stay 90 minutes before kickoff.</td></tr>
+<tr data-sport="NHL"><td>NHL</td><td>Morning skate is the report. 11:00 AM for the East, 2:00 PM for the Central, 5:00 PM for the Pacific.</td><td>Same skates. The starting goalie is often not final until an hour before puck drop.</td><td>A playoff series uses the same skates, then one more look 60 minutes before puck drop.</td></tr>
 </tbody>
 </table>
 <div id="injuryreport"><p class="api-note">Loading today's reports.</p></div>
@@ -499,7 +499,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </main>
 <footer class="card" id="about">
 <h2>About This Ledger</h2>
-<p><span class="gg-name">Gnarly Gorilla</span> Sportsbooks is a free browser bet ledger for the daily <span class="gg-name">Gnarly Gorilla</span> pick cards. It tracks American-odds slips for NFL, NBA, NHL, MLB, college basketball, and college football at BetMGM, Caesars, DraftKings, Fanatics, FanDuel, and HardRock. Bets stay in this browser. The page does not log into a sportsbook and does not place wagers.</p>
+<p><span class="gg-name">Gnarly Gorilla</span> Sportsbooks is a free browser bet ledger for the daily <span class="gg-name">Gnarly Gorilla</span> pick cards. It tracks American-odds slips for CBB, CFB, MLB, NBA, NFL, and NHL at BetMGM, Caesars, DraftKings, Fanatics, FanDuel, and HardRock. Bets stay in this browser. The page does not log into a sportsbook and does not place wagers.</p>
 <p class="warn" id="staterule">Bet Responsibly. Gambling involves risk. Wagers can lose the full stake. This ledger is a record of picks and results, not a sportsbook, not betting advice, and not an offer to place a wager. You must be 21 or older where sports betting is legal. If gambling is causing problems, call or text 1-800-GAMBLER.</p>
 <p class="warn" id="statebooks">State rules load from the visitor location.</p>
 </footer>
@@ -532,6 +532,12 @@ document.addEventListener("click", e => {
 const KEY = "gnarly-gorilla-sportsbooks-v1";
 const GRADE_KEY = "gnarly-gorilla-grading-v1";
 const UNIT = 10;
+const SPORTS = ["CBB","CFB","MLB","NBA","NFL","NHL"];
+function sportRank(name){
+  const code = String(name || "").toUpperCase().split(/\s+/)[0];
+  const at = SPORTS.indexOf(code);
+  return at < 0 ? SPORTS.length : at;
+}
 const form = document.getElementById("form");
 form.date.value = easternDay();
 function ymd(d){ return d.toISOString().slice(0,10); }
@@ -2261,7 +2267,7 @@ function stateName(code){ return STATE_NAME[code] || code; }
 async function dayGames(date){
   const board = await loadSchedule();
   const games = board.filter(g => (g.start ? slateDateOf(g.start) : g.date) === date).map(g => Object.assign({}, g));
-  games.sort((a, b) => String(a.start).localeCompare(String(b.start)) || a.sport.localeCompare(b.sport));
+  games.sort((a, b) => String(a.start).localeCompare(String(b.start)) || sportRank(a.sport) - sportRank(b.sport));
   for (const game of games) {
     if (game.wx) continue;
     try { game.wx = await venueWeather(game.city, game.state, game.start); } catch (e) { game.wx = null; }
@@ -2608,9 +2614,8 @@ function gorillaNote(game, date){
   return body.replace(/\s+/g, " ").trim();
 }
 function slateTable(list, date, extra){
-  const order = ["CBB","CFB","MLB","NBA","NFL","NHL"];
   const games = (Array.isArray(list) ? list : []).slice().sort((a, b) => {
-    const sport = order.indexOf(a.sport) - order.indexOf(b.sport);
+    const sport = sportRank(a.sport) - sportRank(b.sport);
     if (sport) return sport;
     return String(a.game || "").localeCompare(String(b.game || ""));
   });
@@ -2788,7 +2793,8 @@ async function drawInjuryReport(){
     box.innerHTML = "<p class='api-note'>No card games to match yet.</p>";
     return;
   }
-  const sports = [...new Set(wanted.map(row => row.sport))];
+  wanted.sort((a, b) => sportRank(a.sport) - sportRank(b.sport) || String(a.game).localeCompare(String(b.game)) || String(a.name).localeCompare(String(b.name)));
+  const sports = [...new Set(wanted.map(row => row.sport))].sort((a, b) => sportRank(a) - sportRank(b));
   const published = await readJson("cards/injuries.json");
   const bySport = {};
   if (published && published.date === easternDay() && published.sports) {
@@ -3127,7 +3133,7 @@ function render(){
   const settled = totals.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
   try { drawDashboard(); } catch (err) {}
   const typeRank = t => t === "SGP" ? 99 : ["Moneyline","Parlay","Prop","Spread","Total"].indexOf(t) + 1 || 50;
-  const grouped = filtered(slipsForBooks(windowed)).sort((a,b) => String(a.sport).localeCompare(String(b.sport)) || typeRank(a.type) - typeRank(b.type) || b.date.localeCompare(a.date) || String(a.book).localeCompare(String(b.book)));
+  const grouped = filtered(slipsForBooks(windowed)).sort((a,b) => sportRank(a.sport) - sportRank(b.sport) || typeRank(a.type) - typeRank(b.type) || b.date.localeCompare(a.date) || String(a.book).localeCompare(String(b.book)));
   let lastSport = "", lastType = "";
   document.getElementById("rows").innerHTML = grouped.map(b => {
     try {
@@ -3199,7 +3205,7 @@ function render(){
   const copy = ["GNARLY GORILLA REPORT CARD", gradeLabel, "W/L Record " + rec(gradedDay) + "   P/L " + money(dayPl) + "   on $10 slips", "Hit rate " + hit, "Row sum " + money(dayPl)];
   let body = "";
   blocks.forEach(([title, list]) => {
-    const sorted = list.slice().sort((a,b) => String(a.sport).localeCompare(String(b.sport)) || String(a.result).localeCompare(String(b.result)) || String(a.pick).localeCompare(String(b.pick)));
+    const sorted = list.slice().sort((a,b) => sportRank(a.sport) - sportRank(b.sport) || String(a.result).localeCompare(String(b.result)) || String(a.pick).localeCompare(String(b.pick)));
     copy.push("", title);
     if (title === "Pending" || (title === "Graded" && show !== "graded")) body += "<hr class='split'>";
     body += "<h2 class='split-title'>" + title + "</h2>";
@@ -3265,11 +3271,7 @@ function shopAdd(row, market, day, index, book, price, point, split){
 }
 function bestPriceHtml(rows, market, day){
   const books = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
-  const order = ["CBB","CFB","MLB","NBA","NFL","NHL"];
-  const list = (rows || []).slice().sort((a, b) => {
-    const as = order.indexOf(a.sport), bs = order.indexOf(b.sport);
-    return (as < 0 ? 9 : as) - (bs < 0 ? 9 : bs) || String(a.label || "").localeCompare(String(b.label || ""));
-  });
+  const list = (rows || []).slice().sort((a, b) => sportRank(a.sport) - sportRank(b.sport) || String(a.label || "").localeCompare(String(b.label || "")));
   const body = list.map(row => [0, 1].map(index => {
     const posted = books.map(name => {
       const sides = shopSides(row.books && row.books[name]);
@@ -3407,7 +3409,7 @@ function rowsFromLive(games, day, market){
       books[name] = liveBookCell(market, g, bk);
     });
     return {sport: g._sport, label: g.away_team + " at " + g.home_team, start: g.commence_time, books: books};
-  }).sort((a, b) => String(a.start).localeCompare(String(b.start)) || String(a.sport).localeCompare(String(b.sport)) || a.label.localeCompare(b.label));
+  }).sort((a, b) => sportRank(a.sport) - sportRank(b.sport) || String(a.start).localeCompare(String(b.start)) || a.label.localeCompare(b.label));
 }
 async function pullLiveBoard(key){
   const ids = Object.values(BOOK_KEY).join(",");
@@ -3600,19 +3602,16 @@ function applyGameStarts(){
 }
 function paintOddsTimes(){ applyGameStarts(); }
 function sortOddsRows(){
-  const order = ["CBB","CFB","MLB","NBA","NFL","NHL"];
   const tbody = document.querySelector("#oddscompare tbody");
   if (!tbody) return;
-  const rank = text => {
-    const sport = String(text || "").trim().split(/\s+/)[0];
-    const i = order.indexOf(sport);
-    return i < 0 ? order.length : i;
-  };
   [...tbody.querySelectorAll("tr")].sort((a, b) => {
     const at = (a.querySelector("td") || {}).textContent || "";
     const bt = (b.querySelector("td") || {}).textContent || "";
-    const sport = rank(at) - rank(bt);
+    const sport = sportRank(at) - sportRank(bt);
     if (sport) return sport;
+    const atime = ((a.querySelector(".gametime") || {}).dataset || {}).start || "";
+    const btime = ((b.querySelector(".gametime") || {}).dataset || {}).start || "";
+    if (atime !== btime) return atime < btime ? -1 : 1;
     return at.localeCompare(bt);
   }).forEach(row => tbody.appendChild(row));
 }
@@ -3657,7 +3656,7 @@ function ensureSport(){
   if (!note) return;
   const sel = document.createElement("select");
   sel.id = "comparesport";
-  ["CBB","CFB","MLB","NBA","NFL","NHL","All"].forEach(s => {
+  ["All"].concat(SPORTS).forEach(s => {
     const o = document.createElement("option");
     o.value = s; o.textContent = s;
     if (s === (localStorage.getItem("gg-compare-sport") || "All")) o.selected = true;
@@ -4544,7 +4543,7 @@ async function fillPickBoard(useSaved){
     if (!day) return true;
     if (!game.commence_time) return true;
     return slateDateOf(game.commence_time) === day;
-  }).sort((a, b) => String(a._sport).localeCompare(b._sport) || String(a.commence_time || "").localeCompare(String(b.commence_time || "")));
+  }).sort((a, b) => sportRank(a._sport) - sportRank(b._sport) || String(a.commence_time || "").localeCompare(String(b.commence_time || "")));
   const started = dayGames.filter(game => game.commence_time && Date.parse(game.commence_time) <= Date.now());
   const openGames = dayGames.filter(game => !game.commence_time || Date.parse(game.commence_time) > Date.now());
   openGames.forEach(game => {
