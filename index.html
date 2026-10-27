@@ -238,6 +238,8 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 .compare { width:100%; border-collapse:collapse; font-size:12px; }
 .compare th, .compare td { border-bottom:1px solid #1f3a1f; padding:4px 6px; text-align:left; }
 .compare th { color:#39ff14; }
+#oddscompare table.shop { margin-top:8px; }
+#oddscompare tr.edge td { color:#f0e14a; }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
@@ -2859,6 +2861,82 @@ function render(){
   }
 }
 
+function shopChunk(chunk){
+  const nums = String(chunk || "").match(/[+-]?\d+(?:\.\d+)?/g) || [];
+  const price = priceToken(chunk);
+  if (!usableClose(price)) return null;
+  const point = nums.map(Number).find(n => n !== price);
+  return {text: String(chunk || "").trim(), price: price, point: Number.isFinite(point) ? point : null};
+}
+function shopSides(cell){
+  const text = String(cell || "").trim();
+  if (!text || text === "-") return null;
+  const bits = text.split("/").map(s => s.trim());
+  if (bits.length < 2) return null;
+  const sides = bits.slice(0, 2).map(shopChunk);
+  if (sides.some(s => !s)) return null;
+  return sides;
+}
+function shopFair(price, opp){
+  const other = usableClose(opp) ? opp : holdOpp(price);
+  const fair = fairProb(price, other);
+  return fair > 0 ? fair : 0;
+}
+function shopPoint(market, point){
+  if (!Number.isFinite(point)) return "";
+  if (market === "totals") return String(point);
+  return (point > 0 ? "+" : "") + point;
+}
+function bestPriceHtml(rows, market){
+  const books = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
+  const order = ["CBB","CFB","MLB","NBA","NFL","NHL"];
+  const list = (rows || []).slice().sort((a, b) => {
+    const as = order.indexOf(a.sport), bs = order.indexOf(b.sport);
+    return (as < 0 ? 9 : as) - (bs < 0 ? 9 : bs) || String(a.label || "").localeCompare(String(b.label || ""));
+  });
+  const body = list.map(row => [0, 1].map(index => {
+    const posted = books.map(name => {
+      const sides = shopSides(row.books && row.books[name]);
+      return sides ? {name: name, side: sides[index], opp: sides[1 - index]} : null;
+    }).filter(Boolean);
+    const sideWord = market === "totals" ? (index === 0 ? "Over" : "Under") : (index === 0 ? "Away" : "Home");
+    const game = esc((row.sport ? row.sport + " " : "") + (row.label || ""));
+    if (!posted.length) return "<tr class='shop-row'><td>" + game + "</td><td>" + sideWord + "</td><td>-</td><td>-</td><td>-</td></tr>";
+    const keys = [...new Set(posted.map(x => x.side.point == null ? "" : String(x.side.point)))];
+    if (keys.length > 1) {
+      const split = [];
+      keys.forEach(key => {
+        const group = posted.filter(x => (x.side.point == null ? "" : String(x.side.point)) === key);
+        const label = key === "" ? "ML" : shopPoint(market, group[0].side.point);
+        split.push(label + " " + group.map(x => x.name).join(", "));
+      });
+      return "<tr class='shop-row'><td>" + game + "</td><td>" + sideWord + "</td><td>" + esc((posted.find(x => x.name === "BetMGM") || {}).side ? posted.find(x => x.name === "BetMGM").side.text : "-") + "</td><td>" + esc(split.join(" · ")) + "</td><td class='warn'>Number split</td></tr>";
+    }
+    const mgm = posted.find(x => x.name === "BetMGM");
+    const others = posted.filter(x => x.name !== "BetMGM").sort((a, b) => b.side.price - a.side.price || books.indexOf(a.name) - books.indexOf(b.name));
+    const point = posted[0].side.point;
+    const side = sideWord + (point == null ? "" : " " + shopPoint(market, point));
+    const mgmCell = mgm ? esc(mgm.side.text) : "-";
+    if (!mgm || !others.length) {
+      const only = mgm || others[0];
+      return "<tr class='shop-row'><td>" + game + "</td><td>" + esc(side) + "</td><td>" + mgmCell + "</td><td>" + esc(only.name + " " + (only.side.price > 0 ? "+" : "") + only.side.price) + "</td><td>-</td></tr>";
+    }
+    const best = others[0];
+    const fairBest = shopFair(best.side.price, best.opp.price);
+    const fairMgm = shopFair(mgm.side.price, mgm.opp.price);
+    if (!fairBest || !fairMgm) return "<tr class='shop-row'><td>" + game + "</td><td>" + esc(side) + "</td><td>" + mgmCell + "</td><td>" + esc(best.name + " " + (best.side.price > 0 ? "+" : "") + best.side.price) + "</td><td>-</td></tr>";
+    const gap = (fairBest - fairMgm) * 100;
+    const winner = mgm.side.price > best.side.price || (mgm.side.price === best.side.price && fairMgm <= fairBest) ? mgm : best;
+    const bestCell = esc(winner.name + " " + (winner.side.price > 0 ? "+" : "") + winner.side.price);
+    const matched = Math.abs(gap) < 0.05;
+    const gapCell = matched ? "Matched" : (gap > 0 ? "+" : "") + gap.toFixed(1) + "%";
+    const cls = "shop-row" + (!matched && gap < 0 ? " edge" : "");
+    const gapHtml = matched ? "Matched" : "<span class='" + (gap > 0 ? "win" : "") + "'>" + gapCell + "</span>";
+    return "<tr class='" + cls + "'><td>" + game + "</td><td>" + esc(side) + "</td><td>" + mgmCell + "</td><td>" + bestCell + "</td><td>" + gapHtml + "</td></tr>";
+  }).join("")).join("");
+  const note = "Same market as the board above. The gap removes each book's cut, then compares BetMGM with the best same number. A matched price is zero. A minus gap means BetMGM is short. A different point is a number split, not a better price.";
+  return "<h2 class='split-title'>Best Price</h2><p class='api-note'>" + note + "</p><table class='compare shop'><thead><tr><th>Game</th><th>Side</th><th>BetMGM</th><th>Best Same Number</th><th>No-Vig Gap</th></tr></thead><tbody>" + (body || "<tr class='shop-row'><td colspan='5'>No posted prices for this market.</td></tr>") + "</tbody></table>";
+}
 function publishedOddsHtml(day, market){
   const board = window.__ggOddsBoard;
   const rows = board && board.days && board.days[day] && board.days[day][market];
@@ -2870,7 +2948,7 @@ function publishedOddsHtml(day, market){
   const select = "<select id='comparesport'><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option><option selected>All</option></select> <select id='comparemarket'>" + opt("h2h","Moneyline") + opt("spreads","Spread") + opt("totals","Total") + "</select>";
   const head = "<tr><th>Game</th><th class='timecol'>Time</th>" + books.map(b => "<th>" + b + "</th>").join("") + "</tr>";
   const body = rows.map(r => "<tr><td>" + esc(r.sport + " " + r.label) + "</td><td class='gametime' data-start='" + esc(r.start || "") + "'>" + esc(r.start ? formatTime(r.start, false) : "") + "</td>" + books.map(b => "<td>" + esc((r.books && r.books[b]) || "-") + "</td>").join("") + "</tr>").join("");
-  return "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>" + which + ". " + label + ". Posted at " + zoneTime(4, 0) + " from the public board. " + select + "</p><table class='compare'><thead>" + head + "</thead><tbody>" + body + "</tbody></table>";
+  return "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>" + which + ". " + label + ". Posted at " + zoneTime(4, 0) + " from the public board. " + select + "</p><table class='compare'><thead>" + head + "</thead><tbody>" + body + "</tbody></table>" + bestPriceHtml(rows, market);
 }
 async function drawOddsCompare(force){
   const key = oddskey.value.trim();
@@ -3064,6 +3142,7 @@ function seedBoardStarts(){
 function applyGameStarts(){
   const map = seedBoardStarts();
   document.querySelectorAll("#oddscompare tbody tr").forEach(tr => {
+    if (tr.classList.contains("shop-row")) return;
     const game = tr.querySelector("td");
     if (!game) return;
     let td = tr.querySelector(".gametime");
