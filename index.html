@@ -1848,12 +1848,22 @@ function clvListText(list){
   if (!xs.length) return "No Bet Price";
   return formatClv(xs.reduce((s,v)=>s+v,0)/xs.length);
 }
+function bookKey(name){
+  const raw = String(name || "").toLowerCase().replace(/\(not listed\)/g, "").replace(/[^a-z0-9]/g, "");
+  if (raw.startsWith("betmgm") || raw === "mgm") return "betmgm";
+  if (raw.startsWith("caesars")) return "caesars";
+  if (raw.startsWith("draftkings") || raw === "dk") return "draftkings";
+  if (raw.startsWith("fanatics")) return "fanatics";
+  if (raw.startsWith("fanduel") || raw === "fd") return "fanduel";
+  if (raw.startsWith("hardrock")) return "hardrock";
+  return raw;
+}
 function filtered(bets){
   const sport = document.getElementById("fSport").value;
   const book = document.getElementById("fBook").value;
   const type = document.getElementById("fType").value;
   const result = document.getElementById("fResult").value;
-  return bets.filter(b => (!sport || b.sport === sport) && (!book || b.book === book) && (!type || b.type === type) && (!result || b.result === result));
+  return bets.filter(b => (!sport || b.sport === sport) && (!book || bookKey(b.book) === bookKey(book)) && (!type || b.type === type) && (!result || b.result === result));
 }
 let monthCursor = (() => { const [y, m] = easternDay().split("-").map(Number); return new Date(y, m - 1, 1); })();
 let monthFollowsToday = true;
@@ -2979,7 +2989,7 @@ function render(){
     const rowCls = b.result === "win" ? "row-win" : b.result === "loss" ? "row-loss" : b.result === "pending" ? (edge ? "row-pending edge" : "row-pending") : (b.manual ? "manual" : b.fromCard ? "fromcard" : "");
     return head + "<tr" + (rowCls ? " class='" + rowCls + "'" : "") + "><td>" + b.date + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td>" + esc(b.pick) + "</td><td>" + (usableClose(b.odds) ? b.odds : dash) + "</td><td class='col-close'>" + (usableClose(b.close) ? b.close : dash) + "</td><td class='" + (cv > 0 ? "win" : cv < 0 ? "loss" : "") + "'>" + clvText(b) + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='result " + cls + "'>" + b.result + "</td><td class='" + cls + "'>" + (b.result === "pending" ? dash : moneyHtml(p)) + "</td><td>" + grade + " <button data-edit='" + b.id + "'>Edit</button> <button class='danger' data-del='" + b.id + "'>Delete</button></td></tr>";
     } catch (err) { return ""; }
-  }).join("") || "<tr><td colspan='12'>No bets yet.</td></tr>";
+  }).join("") || "<tr><td colspan='12'>" + ((document.getElementById("fBook") || {}).value ? "No slips for " + esc(document.getElementById("fBook").value) + "." : "No bets yet.") + "</td></tr>";
   try { drawCharts(); } catch (err) { document.getElementById("plotnote").textContent = "Chart failed. The rest of the page is still live."; }
   document.getElementById("plotnote").textContent = settled.length + " settled slips plotted. " + slipsLeftToSettle(bets) + " slips left to settle.";
   drawCalendar();
@@ -4063,11 +4073,7 @@ function refreshPicks(){
 form.date.onchange = refreshPicks;
 form.type.onchange = refreshPicks;
 form.book.onchange = () => {
-  const book = form.book.value;
-  const filter = document.getElementById("fBook");
-  if (filter && [...filter.options].some(o => o.value === book)) filter.value = book;
   refreshPicks();
-  render();
   repriceSlips().catch(err => { document.getElementById("picknote").textContent = err.message; });
 };
 form.sport.onchange = refreshPicks;
@@ -4856,10 +4862,13 @@ function applyState(name){
   if (books) books.textContent = rule.books.length ? "Listed books for " + name + ": " + rule.books.join(", ") + ". A book not on that list is not treated as available here. The posted line is the book line, not a state-adjusted price." : "No listed book from this site is available in " + name + ".";
   document.querySelectorAll("select.book-select").forEach(sel => {
     [...sel.options].forEach(opt => {
-      if (!opt.value && opt.textContent === "All") return;
-      const ok = rule.books.includes(opt.value || opt.textContent);
+      const label = String(opt.getAttribute("value") || opt.textContent || "").replace(/ \(not listed\)$/, "");
+      if (!label || label === "All") return;
+      opt.setAttribute("value", label);
+      opt.value = label;
+      const ok = rule.books.includes(label);
       opt.disabled = !ok;
-      opt.textContent = (opt.value || opt.textContent).replace(/ \(not listed\)$/, "") + (ok ? "" : " (not listed)");
+      opt.textContent = label + (ok ? "" : " (not listed)");
     });
     if (sel.selectedOptions[0] && sel.selectedOptions[0].disabled) {
       const open = [...sel.options].find(opt => !opt.disabled && opt.value !== "");
