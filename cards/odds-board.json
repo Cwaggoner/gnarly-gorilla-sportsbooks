@@ -1,6 +1,6 @@
 {
-  "updated": "2026-10-27T06:10-04:00",
-  "source": "Public NetArbs boards. Each game is merged from both name rows so BetMGM, Caesars, DraftKings, Fanatics, FanDuel, and HardRock keep their own number. A dash means that book posted no number.",
+  "updated": "2026-10-27T07:10-04:00",
+  "source": "Public NetArbs boards, plus posted Caesars, Fanatics, and Hard Rock prices from each book's own line. A dash means that book posted no number.",
   "days": {
     "2026-10-26": {
       "h2h": [
@@ -10,11 +10,11 @@
           "start": "2026-10-27T00:00:00Z",
           "books": {
             "BetMGM": "-102 / -118",
-            "Caesars": "-",
+            "Caesars": "+100 / -120",
             "DraftKings": "+100 / -112",
-            "Fanatics": "-",
+            "Fanatics": "-105 / -115",
             "FanDuel": "+102 / -116",
-            "HardRock": "-"
+            "HardRock": "+100 / -120"
           }
         },
         {
@@ -23,11 +23,11 @@
           "start": "2026-10-27T00:30:00Z",
           "books": {
             "BetMGM": "+155 / -190",
-            "Caesars": "-",
+            "Caesars": "+158 / -190",
             "DraftKings": "+160 / -192",
-            "Fanatics": "-",
+            "Fanatics": "+160 / -195",
             "FanDuel": "+154 / -184",
-            "HardRock": "-"
+            "HardRock": "+170 / -200"
           }
         },
         {
@@ -36,11 +36,11 @@
           "start": "2026-10-26T23:30:00Z",
           "books": {
             "BetMGM": "+550 / -800",
-            "Caesars": "-",
+            "Caesars": "+550 / -800",
             "DraftKings": "+525 / -750",
-            "Fanatics": "-",
+            "Fanatics": "+550 / -800",
             "FanDuel": "+480 / -650",
-            "HardRock": "-"
+            "HardRock": "+550 / -800"
           }
         },
         {
@@ -49,11 +49,11 @@
           "start": "2026-10-26T23:30:00Z",
           "books": {
             "BetMGM": "+220 / -285",
-            "Caesars": "-",
+            "Caesars": "+222 / -278",
             "DraftKings": "+220 / -270",
-            "Fanatics": "-",
+            "Fanatics": "+220 / -275",
             "FanDuel": "+215 / -260",
-            "HardRock": "-"
+            "HardRock": "+225 / -275"
           }
         },
         {
@@ -62,11 +62,11 @@
           "start": "2026-10-27T02:00:00Z",
           "books": {
             "BetMGM": "+220 / -285",
-            "Caesars": "-",
+            "Caesars": "+215 / -267",
             "DraftKings": "+220 / -270",
-            "Fanatics": "-",
+            "Fanatics": "+220 / -275",
             "FanDuel": "+205 / -250",
-            "HardRock": "-"
+            "HardRock": "+220 / -275"
           }
         },
         {
@@ -75,11 +75,11 @@
           "start": "2026-10-27T00:00:00Z",
           "books": {
             "BetMGM": "-155 / +125",
-            "Caesars": "-",
+            "Caesars": "-155 / +130",
             "DraftKings": "-155 / +130",
-            "Fanatics": "-",
+            "Fanatics": "-155 / +130",
             "FanDuel": "-154 / +130",
-            "HardRock": "-"
+            "HardRock": "-160 / +135"
           }
         },
         {
@@ -88,11 +88,11 @@
           "start": "2026-10-27T01:00:00Z",
           "books": {
             "BetMGM": "-118 / -102",
-            "Caesars": "-",
+            "Caesars": "-125 / +105",
             "DraftKings": "-112 / -108",
-            "Fanatics": "-",
+            "Fanatics": "-120 / +100",
             "FanDuel": "-116 / -102",
-            "HardRock": "-"
+            "HardRock": "-115 / -105"
           }
         },
         {
@@ -101,11 +101,11 @@
           "start": "2026-10-26T23:00:00Z",
           "books": {
             "BetMGM": "+125 / -155",
-            "Caesars": "-",
+            "Caesars": "+122 / -145",
             "DraftKings": "+130 / -155",
-            "Fanatics": "-",
+            "Fanatics": "+130 / -155",
             "FanDuel": "+122 / -144",
-            "HardRock": "-"
+            "HardRock": "+125 / -145"
           }
         },
         {
@@ -114,11 +114,11 @@
           "start": "2026-10-27T00:00:00Z",
           "books": {
             "BetMGM": "+260 / -325",
-            "Caesars": "-",
+            "Caesars": "+250 / -320",
             "DraftKings": "+260 / -325",
-            "Fanatics": "-",
+            "Fanatics": "+260 / -330",
             "FanDuel": "+245 / -300",
-            "HardRock": "-"
+            "HardRock": "+275 / -325"
           }
         },
         {
@@ -127,11 +127,11 @@
           "start": "2026-10-26T23:00:00Z",
           "books": {
             "BetMGM": "+125 / -150",
-            "Caesars": "-",
+            "Caesars": "+126 / -150",
             "DraftKings": "+120 / -142",
-            "Fanatics": "-",
+            "Fanatics": "+125 / -150",
             "FanDuel": "+126 / -148",
-            "HardRock": "-"
+            "HardRock": "+120 / -145"
           }
         },
         {
@@ -140,11 +140,11 @@
           "start": "2026-10-27T01:30:00Z",
           "books": {
             "BetMGM": "+145 / -175",
-            "Caesars": "-",
+            "Caesars": "+151 / -179",
             "DraftKings": "+142 / -170",
-            "Fanatics": "-",
+            "Fanatics": "+145 / -175",
             "FanDuel": "+146 / -178",
-            "HardRock": "-"
+            "HardRock": "+140 / -180"
           }
         },
         {
@@ -153,11 +153,11 @@
           "start": "2026-10-26T23:00:00Z",
           "books": {
             "BetMGM": "+110 / -130",
-            "Caesars": "-",
+            "Caesars": "+110 / -130",
             "DraftKings": "+110 / -130",
-            "Fanatics": "-",
+            "Fanatics": "+105 / -125",
             "FanDuel": "+105 / -126",
-            "HardRock": "-"
+            "HardRock": "+105 / -135"
           }
         },
         {
@@ -166,11 +166,11 @@
           "start": "2026-10-27T00:30:00Z",
           "books": {
             "BetMGM": "-140 / +118",
-            "Caesars": "-",
+            "Caesars": "-139 / +117",
             "DraftKings": "-135 / +114",
-            "Fanatics": "-",
+            "Fanatics": "-140 / +115",
             "FanDuel": "-142 / +118",
-            "HardRock": "-"
+            "HardRock": "-140 / +110"
           }
         }
       ],
@@ -181,11 +181,11 @@
           "start": "2026-10-27T00:00:00Z",
           "books": {
             "BetMGM": "-1.5 +170 / +1.5 -210",
-            "Caesars": "-",
+            "Caesars": "-1.5 +174 / +1.5 -209",
             "DraftKings": "-1.5 +167 / +1.5 -204",
-            "Fanatics": "-",
+            "Fanatics": "-1.5 +170 / +1.5 -215",
             "FanDuel": "-1.5 +168 / +1.5 -205",
-            "HardRock": "-"
+            "HardRock": "-1.5 +170 / +1.5 -210"
           }
         },
         {
@@ -194,11 +194,11 @@
           "start": "2026-10-27T00:30:00Z",
           "books": {
             "BetMGM": "+4.5 -110 / -4.5 -110",
-            "Caesars": "-",
+            "Caesars": "+4.5 -105 / -4.5 -115",
             "DraftKings": "+4.5 -108 / -4.5 -112",
-            "Fanatics": "-",
+            "Fanatics": "+4.5 -105 / -4.5 -115",
             "FanDuel": "+4.5 -106 / -4.5 -114",
-            "HardRock": "-"
+            "HardRock": "+4.5 -105 / -4.5 -115"
           }
         },
         {
@@ -207,11 +207,11 @@
           "start": "2026-10-26T23:30:00Z",
           "books": {
             "BetMGM": "+14.5 -115 / -14.5 -105",
-            "Caesars": "-",
+            "Caesars": "+15 -120 / -15 +100",
             "DraftKings": "+14.5 -115 / -14.5 -105",
-            "Fanatics": "-",
+            "Fanatics": "+14.5 -115 / -14.5 -105",
             "FanDuel": "+13.5 -104 / -13.5 -118",
-            "HardRock": "-"
+            "HardRock": "+14.5 -110 / -14.5 -110"
           }
         },
         {
@@ -220,11 +220,11 @@
           "start": "2026-10-26T23:30:00Z",
           "books": {
             "BetMGM": "+7.5 -110 / -7.5 -110",
-            "Caesars": "-",
+            "Caesars": "+6.5 +100 / -6.5 -120",
             "DraftKings": "+7.5 -110 / -7.5 -110",
-            "Fanatics": "-",
+            "Fanatics": "+7.5 -110 / -7.5 -110",
             "FanDuel": "+7.5 -110 / -7.5 -110",
-            "HardRock": "-"
+            "HardRock": "+7.5 +100 / -7.5 -120"
           }
         },
         {
@@ -233,11 +233,11 @@
           "start": "2026-10-27T02:00:00Z",
           "books": {
             "BetMGM": "+7.5 -115 / -7.5 -105",
-            "Caesars": "-",
+            "Caesars": "+7 -110 / -7 -110",
             "DraftKings": "+6.5 -102 / -6.5 -118",
-            "Fanatics": "-",
+            "Fanatics": "+7 -110 / -7 -110",
             "FanDuel": "+6.5 -104 / -6.5 -118",
-            "HardRock": "-"
+            "HardRock": "+7.5 -115 / -7.5 -105"
           }
         },
         {
@@ -246,11 +246,11 @@
           "start": "2026-10-27T00:00:00Z",
           "books": {
             "BetMGM": "-3.5 -110 / +3.5 -110",
-            "Caesars": "-",
+            "Caesars": "-3.5 -110 / +3.5 -110",
             "DraftKings": "-3.5 -110 / +3.5 -110",
-            "Fanatics": "-",
+            "Fanatics": "-3.5 -110 / +3.5 -110",
             "FanDuel": "-3.5 -105 / +3.5 -115",
-            "HardRock": "-"
+            "HardRock": "-3.5 -105 / +3.5 -115"
           }
         },
         {
@@ -259,11 +259,11 @@
           "start": "2026-10-27T01:00:00Z",
           "books": {
             "BetMGM": "-1.5 -105 / +1.5 -115",
-            "Caesars": "-",
+            "Caesars": "-1 -115 / +1 -105",
             "DraftKings": "-1.5 -102 / +1.5 -118",
-            "Fanatics": "-",
+            "Fanatics": "-1.5 -110 / +1.5 -110",
             "FanDuel": "-1.5 -106 / +1.5 -114",
-            "HardRock": "-"
+            "HardRock": "-1.5 -105 / +1.5 -115"
           }
         },
         {
@@ -272,11 +272,11 @@
           "start": "2026-10-26T23:00:00Z",
           "books": {
             "BetMGM": "+3.5 -110 / -3.5 -110",
-            "Caesars": "-",
+            "Caesars": "+3.5 -115 / -3.5 -105",
             "DraftKings": "+3.5 -115 / -3.5 -105",
-            "Fanatics": "-",
+            "Fanatics": "+3.5 -110 / -3.5 -110",
             "FanDuel": "+3.5 -114 / -3.5 -106",
-            "HardRock": "-"
+            "HardRock": "+3.5 -115 / -3.5 -105"
           }
         },
         {
@@ -285,11 +285,11 @@
           "start": "2026-10-27T00:00:00Z",
           "books": {
             "BetMGM": "+8.5 -115 / -8.5 -105",
-            "Caesars": "-",
+            "Caesars": "+8.5 -110 / -8.5 -110",
             "DraftKings": "+8.5 -110 / -8.5 -110",
-            "Fanatics": "-",
+            "Fanatics": "+8.5 -115 / -8.5 -105",
             "FanDuel": "+8.5 -115 / -8.5 -105",
-            "HardRock": "-"
+            "HardRock": "+8.5 -110 / -8.5 -110"
           }
         },
         {
@@ -298,11 +298,11 @@
           "start": "2026-10-26T23:00:00Z",
           "books": {
             "BetMGM": "+2.5 -105 / -2.5 -115",
-            "Caesars": "-",
+            "Caesars": "+2.5 -105 / -2.5 -115",
             "DraftKings": "+2.5 -110 / -2.5 -110",
-            "Fanatics": "-",
+            "Fanatics": "+3 -110 / -3 -110",
             "FanDuel": "+2.5 -108 / -2.5 -112",
-            "HardRock": "-"
+            "HardRock": "+3.5 -115 / -3.5 -105"
           }
         },
         {
@@ -313,9 +313,9 @@
             "BetMGM": "+1.5 -160 / -1.5 +135",
             "Caesars": "-",
             "DraftKings": "+1.5 -162 / -1.5 +136",
-            "Fanatics": "-",
+            "Fanatics": "+1.5 -165 / -1.5 +135",
             "FanDuel": "+1.5 -164 / -1.5 +134",
-            "HardRock": "-"
+            "HardRock": "+1.5 -165 / -1.5 +130"
           }
         },
         {
@@ -326,9 +326,9 @@
             "BetMGM": "+1.5 -225 / -1.5 +185",
             "Caesars": "-",
             "DraftKings": "+1.5 -230 / -1.5 +190",
-            "Fanatics": "-",
+            "Fanatics": "+1.5 -235 / -1.5 +185",
             "FanDuel": "+1.5 -230 / -1.5 +184",
-            "HardRock": "-"
+            "HardRock": "+1.5 -250 / -1.5 +180"
           }
         },
         {
@@ -339,9 +339,9 @@
             "BetMGM": "-1.5 +165 / +1.5 -200",
             "Caesars": "-",
             "DraftKings": "-1.5 +164 / +1.5 -198",
-            "Fanatics": "-",
+            "Fanatics": "-1.5 +165 / +1.5 -205",
             "FanDuel": "-1.5 +160 / +1.5 -200",
-            "HardRock": "-"
+            "HardRock": "-1.5 +175 / +1.5 -230"
           }
         }
       ],
@@ -352,11 +352,11 @@
           "start": "2026-10-27T00:00:00Z",
           "books": {
             "BetMGM": "7 -110 / -110",
-            "Caesars": "-",
+            "Caesars": "7 -110 / -108",
             "DraftKings": "7 -109 / -110",
-            "Fanatics": "-",
+            "Fanatics": "7 -110 / -110",
             "FanDuel": "7.5 +112 / -138",
-            "HardRock": "-"
+            "HardRock": "7.5 +115 / -135"
           }
         },
         {
@@ -365,11 +365,11 @@
           "start": "2026-10-27T00:30:00Z",
           "books": {
             "BetMGM": "229.5 -110 / -110",
-            "Caesars": "-",
+            "Caesars": "229.5 -110 / -110",
             "DraftKings": "228.5 -115 / -105",
-            "Fanatics": "-",
+            "Fanatics": "229.5 -110 / -110",
             "FanDuel": "229.5 -112 / -108",
-            "HardRock": "-"
+            "HardRock": "229.5 -110 / -110"
           }
         },
         {
@@ -378,11 +378,11 @@
           "start": "2026-10-26T23:30:00Z",
           "books": {
             "BetMGM": "233.5 -105 / -115",
-            "Caesars": "-",
+            "Caesars": "233 -110 / -110",
             "DraftKings": "233.5 -105 / -115",
-            "Fanatics": "-",
+            "Fanatics": "233 -110 / -110",
             "FanDuel": "233.5 -105 / -115",
-            "HardRock": "-"
+            "HardRock": "232.5 -115 / -105"
           }
         },
         {
@@ -391,11 +391,11 @@
           "start": "2026-10-26T23:30:00Z",
           "books": {
             "BetMGM": "239.5 -110 / -110",
-            "Caesars": "-",
+            "Caesars": "240.5 -110 / -110",
             "DraftKings": "240.5 -108 / -112",
-            "Fanatics": "-",
+            "Fanatics": "240.5 -110 / -110",
             "FanDuel": "240.5 -105 / -115",
-            "HardRock": "-"
+            "HardRock": "240.5 -110 / -110"
           }
         },
         {
@@ -404,11 +404,11 @@
           "start": "2026-10-27T02:00:00Z",
           "books": {
             "BetMGM": "235.5 -110 / -110",
-            "Caesars": "-",
+            "Caesars": "236 -110 / -110",
             "DraftKings": "236.5 -105 / -115",
-            "Fanatics": "-",
+            "Fanatics": "236 -110 / -110",
             "FanDuel": "236.5 -104 / -118",
-            "HardRock": "-"
+            "HardRock": "236.5 -105 / -115"
           }
         },
         {
@@ -417,11 +417,11 @@
           "start": "2026-10-27T00:00:00Z",
           "books": {
             "BetMGM": "239.5 -110 / -110",
-            "Caesars": "-",
+            "Caesars": "239.5 -105 / -115",
             "DraftKings": "239.5 -108 / -112",
-            "Fanatics": "-",
+            "Fanatics": "239.5 -110 / -110",
             "FanDuel": "239.5 -118 / -104",
-            "HardRock": "-"
+            "HardRock": "239.5 -110 / -110"
           }
         },
         {
@@ -430,11 +430,11 @@
           "start": "2026-10-27T01:00:00Z",
           "books": {
             "BetMGM": "237.5 -110 / -110",
-            "Caesars": "-",
+            "Caesars": "237.5 -110 / -110",
             "DraftKings": "237.5 -110 / -110",
-            "Fanatics": "-",
+            "Fanatics": "237 -110 / -110",
             "FanDuel": "237.5 -105 / -115",
-            "HardRock": "-"
+            "HardRock": "237.5 -110 / -110"
           }
         },
         {
@@ -443,11 +443,11 @@
           "start": "2026-10-26T23:00:00Z",
           "books": {
             "BetMGM": "234.5 -105 / -115",
-            "Caesars": "-",
+            "Caesars": "234.5 -110 / -110",
             "DraftKings": "234.5 -108 / -112",
-            "Fanatics": "-",
+            "Fanatics": "234 -110 / -110",
             "FanDuel": "234.5 -106 / -114",
-            "HardRock": "-"
+            "HardRock": "234.5 -110 / -110"
           }
         },
         {
@@ -456,11 +456,11 @@
           "start": "2026-10-27T00:00:00Z",
           "books": {
             "BetMGM": "222.5 -110 / -110",
-            "Caesars": "-",
+            "Caesars": "221.5 -110 / -110",
             "DraftKings": "221.5 -110 / -110",
-            "Fanatics": "-",
+            "Fanatics": "221.5 -110 / -110",
             "FanDuel": "222.5 -110 / -110",
-            "HardRock": "-"
+            "HardRock": "221.5 -110 / -110"
           }
         },
         {
@@ -469,11 +469,11 @@
           "start": "2026-10-26T23:00:00Z",
           "books": {
             "BetMGM": "225.5 -115 / -105",
-            "Caesars": "-",
+            "Caesars": "225.5 -115 / -105",
             "DraftKings": "225.5 -108 / -112",
-            "Fanatics": "-",
+            "Fanatics": "226 -110 / -110",
             "FanDuel": "226.5 -106 / -114",
-            "HardRock": "-"
+            "HardRock": "225.5 -115 / -105"
           }
         },
         {
@@ -482,11 +482,11 @@
           "start": "2026-10-27T01:30:00Z",
           "books": {
             "BetMGM": "6.5 -130 / +110",
-            "Caesars": "-",
+            "Caesars": "6.5 -129 / +105",
             "DraftKings": "6.5 -125 / +105",
-            "Fanatics": "-",
+            "Fanatics": "6.5 -125 / +105",
             "FanDuel": "6.5 -132 / +108",
-            "HardRock": "-"
+            "HardRock": "6.5 -145 / +115"
           }
         },
         {
@@ -495,11 +495,11 @@
           "start": "2026-10-26T23:00:00Z",
           "books": {
             "BetMGM": "5.5 -115 / -105",
-            "Caesars": "-",
+            "Caesars": "5.5 -120 / -104",
             "DraftKings": "5.5 -118 / -102",
-            "Fanatics": "-",
+            "Fanatics": "5.5 -115 / -105",
             "FanDuel": "5.5 -114 / -106",
-            "HardRock": "-"
+            "HardRock": "5.5 -115 / -105"
           }
         },
         {
@@ -508,11 +508,11 @@
           "start": "2026-10-27T00:30:00Z",
           "books": {
             "BetMGM": "6.5 -120 / +100",
-            "Caesars": "-",
+            "Caesars": "6.5 -125 / +102",
             "DraftKings": "6.5 -120 / +100",
-            "Fanatics": "-",
+            "Fanatics": "6.5 -120 / +100",
             "FanDuel": "6.5 -128 / +104",
-            "HardRock": "-"
+            "HardRock": "6.5 -120 / +100"
           }
         }
       ]
