@@ -246,6 +246,8 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 .compare { width:100%; border-collapse:collapse; font-size:12px; }
 .compare th, .compare td { border-bottom:1px solid #1f3a1f; padding:4px 6px; text-align:left; }
 .compare th { color:#39ff14; }
+.compare tr.filter-row th { background:transparent; border-bottom:0; text-align:center; padding:2px 6px 8px; }
+.compare tr.filter-row .compare-filters select { margin:0 4px; }
 .compare th.add-col, .compare td.add-col { text-align:center; width:1%; white-space:nowrap; vertical-align:middle; }
 .best-price { color:#ff00ff; font-weight:700; }
 #oddscompare table.shop { margin-top:8px; }
@@ -3143,12 +3145,15 @@ function publishedOddsHtml(day, market){
   const which = day === easternDay() ? "Today" : "Yesterday";
   const opt = (value, text) => "<option value='" + value + "'" + (market === value ? " selected" : "") + ">" + text + "</option>";
   const select = "<select id='comparesport'><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option><option selected>All</option></select> <select id='comparemarket'>" + opt("h2h","Moneyline") + opt("spreads","Spread") + opt("totals","Total") + "</select>";
-  const head = "<tr><th>Game</th><th class='timecol'>Time</th>" + books.map(b => "<th>" + b + "</th>").join("") + "</tr>";
+  const head = "<th>Game</th><th class='timecol'>Time</th>" + books.map(b => "<th>" + b + "</th>").join("");
   const body = rows.map(r => {
     const flags = bestPriceFlags(r.books, books);
     return "<tr><td>" + esc(r.sport + " " + r.label) + "</td><td class='gametime' data-start='" + esc(r.start || "") + "'>" + esc(r.start ? formatTime(r.start, false) : "") + "</td>" + books.map(b => "<td>" + paintBookCell(r.books && r.books[b], flags[b]) + "</td>").join("") + "</tr>";
   }).join("");
-  return "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>" + which + ". " + label + ". Posted at " + zoneTime(4, 0) + " from the public board. <span class='best-price'>Magenta</span> text on this site means the best price: the highest number on that side among books that posted the same point. Books that share that best price are all marked. A price every book shares is not marked. A different point is not marked. " + select + "</p><table class='compare'><thead>" + head + "</thead><tbody>" + body + "</tbody></table>" + bestPriceHtml(rows, market, day);
+  const lead = which + ". " + label + ". Posted at " + zoneTime(4, 0) + " from the public board.";
+  const magenta = "<span class='best-price'>Magenta</span> text on this site means the best price: the highest number on that side among books that posted the same point. Books that share that best price are all marked. A price every book shares is not marked. A different point is not marked.";
+  const filters = "<tr class='filter-row'><th colspan='3'></th><th class='compare-filters' colspan='5'>" + select + "</th></tr>";
+  return "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>" + lead + "<br>" + magenta + "</p><table class='compare'><thead>" + filters + "<tr class='cols'>" + head + "</tr></thead><tbody>" + body + "</tbody></table>" + bestPriceHtml(rows, market, day);
 }
 async function drawOddsCompare(force){
   const key = oddskey.value.trim();
@@ -3289,7 +3294,7 @@ const ODDS_START = {
 function ensureOddsTimeColumn(){
   const table = document.querySelector("#oddscompare table.compare");
   if (!table) return;
-  const head = table.querySelector("thead tr");
+  const head = table.querySelector("thead tr.cols") || table.querySelector("thead tr");
   if (head && !head.querySelector(".timecol")) {
     const th = document.createElement("th");
     th.className = "timecol";
@@ -3388,18 +3393,18 @@ function filterCompare(){
   rows.forEach(r => { r.style.display = matches.indexOf(r) >= 0 ? "" : "none"; });
 }
 function ensureSport(){
+  if (document.getElementById("comparesport")) return;
   const note = document.querySelector("#oddscompare .api-note");
-  if (note && !note.querySelector("#comparesport")) {
-    const sel = document.createElement("select");
-    sel.id = "comparesport";
-    ["CBB","CFB","MLB","NBA","NFL","NHL","All"].forEach(s => {
-      const o = document.createElement("option");
-      o.value = s; o.textContent = s;
-      if (s === (localStorage.getItem("gg-compare-sport") || "All")) o.selected = true;
-      sel.appendChild(o);
-    });
-    note.prepend(sel);
-  }
+  if (!note) return;
+  const sel = document.createElement("select");
+  sel.id = "comparesport";
+  ["CBB","CFB","MLB","NBA","NFL","NHL","All"].forEach(s => {
+    const o = document.createElement("option");
+    o.value = s; o.textContent = s;
+    if (s === (localStorage.getItem("gg-compare-sport") || "All")) o.selected = true;
+    sel.appendChild(o);
+  });
+  note.prepend(sel);
 }
 function wireCompare(){
   ensureSport();
