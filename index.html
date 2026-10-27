@@ -422,6 +422,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <label class="notes-field"><span class="notes-head">Notes <span class="warn fine">Load Picks uses the Odds API key below and the Book selected here. Moneyline, Spread, and Total fill from that book. A refresh restores the last list with no new call.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span><textarea name="notes" placeholder="High 62%"></textarea></label>
 <div class="stack">
 <button type="submit" id="savebtn">Save Bet</button>
+<button type="button" id="clearbet">Clear</button>
 <button type="button" id="canceledit">Cancel Edit</button>
 </div>
 </form>
@@ -5332,6 +5333,16 @@ document.getElementById("plot").onclick = () => {
     const sports = [...new Set(plotted.map(b => String(b.sport || "").trim().toUpperCase()))].filter(Boolean);
     note.textContent = (plotted.length ? plotted.length + " settled slips plotted." : "No settled slips yet.") + " " + pending + " slips left to settle. CLV checked for " + sports.join(", ") + "." + (filled ? " " + filled + " closes saved." : "");
   }).catch(err => { note.textContent = err.message || "CLV update failed."; });
+};
+document.getElementById("clearbet").onclick = event => {
+  event.preventDefault();
+  form.reset();
+  form.date.value = easternDay();
+  form.editId.value = "";
+  document.getElementById("pickselect").innerHTML = "<option value=''>Select a pick</option>";
+  document.getElementById("savebtn").textContent = "Save Bet";
+  document.getElementById("picknote").textContent = "";
+  document.getElementById("editnote").textContent = "";
 };
 document.getElementById("canceledit").onclick = event => {
   event.preventDefault();
