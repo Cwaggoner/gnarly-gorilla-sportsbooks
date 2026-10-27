@@ -5334,7 +5334,6 @@ function showBookIcon(name){
   img.src = book || "gg-icon.png";
   img.alt = book ? name : "Gnarly Gorilla";
 }
-document.querySelectorAll("select.book-select").forEach(sel => sel.addEventListener("change", () => showBookIcon(sel.value)));
 showBookIcon((document.getElementById("fBook") || {}).value || "");
 ["reportDay","reportShow"].forEach(id => document.getElementById(id).onchange = render);
 async function keyIsPaid(key){
