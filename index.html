@@ -463,7 +463,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </section>
 <section class="card" id="slips">
 <div class="section-head"><h2>Slips</h2><p class="warn slips-side">This card keeps today and yesterday only. Older days stay on the calendar and in the published files.</p><button type="button" id="livescores">Check Live Scores</button></div>
-<div class="book-slot"><div id="bookbadge"><img id="bookbadgeimg" alt="" hidden></div></div>
+<div class="book-slot"><div id="bookbadge"><img id="bookbadgeimg" src="gg-icon.png" alt="Gnarly Gorilla"></div></div>
 <p id="scorenote" class="warn"></p>
 <div class="tools">
 <label>Sport<select id="fSport" class="sport-select"><option value="">All</option><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option></select></label>
@@ -5329,10 +5329,10 @@ const BOOK_ICON = {BetMGM:"books/betmgm.png", Caesars:"books/caesars.png", Draft
 function showBookIcon(name){
   const img = document.getElementById("bookbadgeimg");
   if (!img) return;
-  const src = BOOK_ICON[name] || "";
-  img.hidden = !src;
-  if (src) { img.src = src; img.alt = name; }
-  else { img.removeAttribute("src"); img.alt = ""; }
+  const src = BOOK_ICON[name] || "gg-icon.png";
+  img.hidden = false;
+  img.src = src;
+  img.alt = name || "Gnarly Gorilla";
 }
 document.querySelectorAll("select.book-select").forEach(sel => sel.addEventListener("change", () => showBookIcon(sel.value)));
 showBookIcon((document.getElementById("fBook") || {}).value || "");
