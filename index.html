@@ -246,8 +246,8 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 .compare { width:100%; border-collapse:collapse; font-size:12px; }
 .compare th, .compare td { border-bottom:1px solid #1f3a1f; padding:4px 6px; text-align:left; }
 .compare th { color:#39ff14; }
-#liveodds > .section-head { margin-bottom:4px; justify-content:flex-start; gap:12px; flex-wrap:wrap; }
-.odds-tools { display:flex; flex-direction:row; align-items:center; justify-content:flex-start; gap:8px; margin:0; flex-wrap:wrap; }
+#liveodds > .section-head { margin-bottom:4px; }
+.odds-tools { display:flex; flex-direction:row; align-items:center; justify-content:flex-start; gap:8px; margin:0 0 6px; flex-wrap:wrap; }
 .odds-tools button, .odds-tools select { height:32px; padding:4px 10px; box-sizing:border-box; }
 .odds-notes { list-style:none; margin:0 0 8px; padding:0; }
 .odds-notes li { color:var(--amber); font-size:12px; line-height:1.35; margin:0; }
@@ -325,7 +325,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <span id="dashnote" class="warn"></span>
 </div>
 </section>
-<section class="card" id="liveodds"><div class="section-head"><h2>Live Odds</h2><div class="odds-tools" id="compareday"><button type="button" id="day-yesterday">Yesterday</button><button type="button" id="day-today">Today</button><select id="comparesport"><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option><option selected>All</option></select><select id="comparemarket"><option value="h2h" selected>Moneyline</option><option value="spreads">Spread</option><option value="totals">Total</option></select><button type="button" id="refreshodds">Refresh</button></div></div><div id="oddscompare"></div></section>
+<section class="card" id="liveodds"><div class="section-head"><h2>Live Odds</h2><p class="warn slips-side">Moneyline, spread, and total across books. Use Yesterday or Today.</p></div><div class="odds-tools" id="compareday"><button type="button" id="day-yesterday">Yesterday</button><button type="button" id="day-today">Today</button><select id="comparesport"><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option><option selected>All</option></select><select id="comparemarket"><option value="h2h" selected>Moneyline</option><option value="spreads">Spread</option><option value="totals">Total</option></select><button type="button" id="refreshodds">Refresh</button></div><div id="oddscompare"></div></section>
 <section class="card" id="todaycard">
 <div class="section-head"><h2>Today's Card</h2><p class="warn slips-side">One play per line: Sport | Type | Pick | American odds | Confidence. Stake is $10. Book is the dropdown below. Pending until graded.</p></div>
 <div class="card-analysis" id="cardanalysis"><h3 class="split-title">Analysis</h3><div class="analysis-grid" id="analysisgrid"></div><div class="sharp-read"><b>Analysis:</b><p id="sharpread"></p></div><div id="cardgames"></div></div>
