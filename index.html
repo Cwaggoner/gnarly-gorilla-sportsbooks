@@ -252,6 +252,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 .odds-notes { list-style:none; margin:0 0 8px; padding:0; }
 .odds-notes li { color:var(--amber); font-size:12px; line-height:1.35; margin:0; }
 .odds-notes li::before { content:"•"; color:#ff00ff; font-weight:700; margin-right:6px; }
+.injury-filters { margin-top:8px; }
 #oddscompare > .odds-tools { margin:4px 0 8px; }
 #oddscompare > h2.split-title:first-of-type { margin-top:0; margin-bottom:4px; }
 .compare th.add-col, .compare td.add-col { text-align:center; width:1%; white-space:nowrap; vertical-align:middle; }
@@ -331,7 +332,17 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <div class="section-head"><h2>Today's Card</h2><p class="warn slips-side">One play per line: Sport | Type | Pick | American odds | Confidence. Stake is $10. Book is the dropdown below. Pending until graded.</p></div>
 <div class="card-analysis" id="cardanalysis"><h3 class="split-title">Analysis</h3><div class="analysis-grid" id="analysisgrid"></div><div class="sharp-read"><b>Analysis:</b><p id="sharpread"></p></div><div id="cardgames"></div></div>
 <h2 class="split-title">Injury Reports</h2>
-<p class="api-note"><select id="injurysport"><option selected>All</option><option>NFL</option><option>NBA</option><option>NHL</option><option>MLB</option><option>CFB</option><option>CBB</option></select> <select id="injuryshow"><option value="posted" selected>Posted</option><option value="all">All rows</option><option value="out">Out</option><option value="maybe">May still play</option></select> Sport keeps one category. Posted hides teams with nothing filed, so the list stays short. Out is a player who will not play. May still play is questionable or day to day. Red means out. Amber means he may still play. The page pulls the public report when the card loads and again every few minutes. The times below are when a new filing is actually due, in Eastern time.</p>
+<ul class="odds-notes">
+<li>Sport keeps one category.</li>
+<li>Posted hides teams with nothing filed, so the list stays short.</li>
+<li>Out is a player who will not play.</li>
+<li>May still play is questionable or day to day.</li>
+<li>Red means out.</li>
+<li>Amber means he may still play.</li>
+<li>The page pulls the public report when the card loads and again every few minutes.</li>
+<li>The times below are when a new filing is actually due, in Eastern time.</li>
+</ul>
+<p class="api-note injury-filters"><select id="injurysport"><option selected>All</option><option>NFL</option><option>NBA</option><option>NHL</option><option>MLB</option><option>CFB</option><option>CBB</option></select> <select id="injuryshow"><option value="posted" selected>Posted</option><option value="all">All rows</option><option value="out">Out</option><option value="maybe">May still play</option></select></p>
 <table class="compare" id="injuryclock">
 <thead><tr><th>Sport</th><th>Week</th><th>Weekend</th><th>Tournament</th></tr></thead>
 <tbody>
