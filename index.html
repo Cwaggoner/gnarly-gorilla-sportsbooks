@@ -2990,7 +2990,7 @@ function render(){
     }
     const edge = markEdge(b).edge;
     const rowCls = b.result === "win" ? "row-win" : b.result === "loss" ? "row-loss" : b.result === "pending" ? (edge ? "row-pending edge" : "row-pending") : (b.manual ? "manual" : b.fromCard ? "fromcard" : "");
-    return head + "<tr" + (rowCls ? " class='" + rowCls + "'" : "") + "><td>" + b.date + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td>" + esc(b.pick) + "</td><td>" + (b.priceText ? esc(b.priceText) : (usableClose(b.odds) ? b.odds : dash)) + "</td><td class='col-close'>" + (usableClose(b.close) ? b.close : dash) + "</td><td class='" + (cv > 0 ? "win" : cv < 0 ? "loss" : "") + "'>" + clvText(b) + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='result " + cls + "'>" + b.result + "</td><td class='" + cls + "'>" + (b.result === "pending" || p == null ? dash : moneyHtml(p)) + "</td><td>" + grade + (b.viewOnly ? "" : " <button data-edit='" + b.id + "'>Edit</button> <button class='danger' data-del='" + b.id + "'>Delete</button>") + "</td></tr>";
+    return head + "<tr" + (rowCls ? " class='" + rowCls + "'" : "") + "><td>" + b.date + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td>" + esc(b.pick) + "</td><td>" + (b.priceText ? esc(b.priceText) : (usableClose(b.odds) ? b.odds : dash)) + "</td><td class='col-close'>" + (b.closeText ? esc(b.closeText) : (usableClose(b.close) ? b.close : dash)) + "</td><td class='" + (cv > 0 ? "win" : cv < 0 ? "loss" : "") + "'>" + clvText(b) + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='result " + cls + "'>" + b.result + "</td><td class='" + cls + "'>" + (b.result === "pending" || p == null ? dash : moneyHtml(p)) + "</td><td>" + grade + (b.viewOnly ? "" : " <button data-edit='" + b.id + "'>Edit</button> <button class='danger' data-del='" + b.id + "'>Delete</button>") + "</td></tr>";
     } catch (err) { return ""; }
   }).join("") || "<tr><td colspan='12'>" + ((document.getElementById("fBook") || {}).value ? "No slips for " + esc(document.getElementById("fBook").value) + "." : "No bets yet.") + "</td></tr>";
   try { drawCharts(); } catch (err) { document.getElementById("plotnote").textContent = "Chart failed. The rest of the page is still live."; }
@@ -3595,10 +3595,16 @@ function bookPair(slip, book){
   const games = day && day[String(slip.sport || "").toUpperCase()];
   if (!games) return null;
   const pick = String(slip.pick || "");
-  const label = Object.keys(games).find(k => {
+  const keys = Object.keys(games);
+  const both = keys.filter(k => {
     const teams = k.split(/\s+at\s+/i);
     return teams.length > 1 && teams.every(team => sideHit(pick, team));
   });
+  const one = keys.filter(k => {
+    const teams = k.split(/\s+at\s+/i);
+    return teams.length > 1 && teams.some(team => sideHit(pick, team));
+  });
+  const label = both.length === 1 ? both[0] : (both.length ? "" : (one.length === 1 ? one[0] : ""));
   if (!label) return null;
   const type = slip.type || betType(slip);
   const market = type === "Total" ? "totals" : type === "Moneyline" ? "h2h" : "spreads";
@@ -3629,14 +3635,16 @@ function bookOutcome(slip, book){
 }
 let bookCloses = {};
 function quotedClose(slip, book){
-  if (!slip || bookKey(book) !== "draftkings") return null;
+  if (!slip || !book) return null;
   const games = (((bookCloses.days || {})[String(slip.date || "").slice(0, 10)] || {})[String(slip.sport || "").toUpperCase()]) || [];
-  const game = games.find(g => sideHit(slip.pick, g.away) && sideHit(slip.pick, g.home));
-  const dk = game && game.books && game.books.DraftKings;
+  const named = games.filter(g => sideHit(slip.pick, g.away) || sideHit(slip.pick, g.home));
+  const game = named.length === 1 ? named[0] : games.find(g => sideHit(slip.pick, g.away) && sideHit(slip.pick, g.home));
+  const dk = game && game.books && game.books[book];
   if (!dk) return null;
   const type = slip.type || betType(slip);
   if (type === "SGP" || /\band\b/i.test(String(slip.pick || ""))) return null;
   if (type === "Total") {
+    if (!dk.total) return null;
     const under = /under/i.test(slip.pick);
     const price = under ? dk.total.under : dk.total.over;
     const opp = under ? dk.total.over : dk.total.under;
@@ -3667,6 +3675,15 @@ function sameBookNumber(slip, hit){
   const nums = String(slip.pick || "").match(/[+-]?\d+(?:\.\d+)?/g) || [];
   return nums.some(n => Math.abs(Math.abs(Number(n)) - Math.abs(Number(hit.point))) < 0.01);
 }
+function lineLabel(point, price){
+  const p = Number(point);
+  const j = Number(price);
+  if (!Number.isFinite(p) || !Number.isFinite(j)) return "";
+  const whole = Math.abs(p - Math.round(p)) < 0.001;
+  const pt = (p > 0 ? "+" : "") + (whole ? String(Math.round(p)) : String(p));
+  const juice = j > 0 ? "+" + j : String(j);
+  return pt + " " + juice;
+}
 function slipsForBooks(list){
   const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
   const owned = new Set(list.map(b => [String(b.date).slice(0, 10), b.sport, normPick(b.pick), bookKey(b.book)].join("|")));
@@ -3685,21 +3702,30 @@ function slipsForBooks(list){
         return;
       }
       if (owned.has(key)) return;
+      const signedPoint = (row) => {
+        const type = b.type || betType(b);
+        if (type === "Moneyline") return true;
+        if (!row || row.point == null || row.point === "") return false;
+        const nums = String(b.pick || "").match(/[+-]?\d+(?:\.\d+)?/g) || [];
+        return nums.some(n => Math.abs(Number(n) - Number(row.point)) < 0.01);
+      };
+      const onNumber = !!(hit && signedPoint(hit));
+      const closeOnNumber = !!(closed && signedPoint(closed));
       const copy = Object.assign({}, b, {
         book: book,
         id: String(b.id) + "|" + book,
         viewOnly: true,
-        odds: hit && hit.price != null ? hit.price : "",
-        close: closed ? closed.price : "",
+        odds: onNumber && hit.price != null ? hit.price : "",
+        close: closed && closed.price != null ? closed.price : "",
         closeOpp: closed && closed.opp != null ? closed.opp : "",
         closePoint: closed ? closed.point : "",
         realClose: !!closed,
-        priceText: "",
+        priceText: hit && !onNumber ? lineLabel(hit.point, hit.price) : "",
+        closeText: closed && !closeOnNumber ? lineLabel(closed.point, closed.price) : "",
         noPrice: !hit,
-        lineDiffers: !!(hit && !sameBookNumber(b, hit))
+        lineDiffers: !!(hit && !onNumber)
       });
       delete copy.profit;
-      if (copy.lineDiffers) copy.result = "pending";
       out.push(copy);
     });
   });

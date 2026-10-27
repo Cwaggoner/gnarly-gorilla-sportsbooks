@@ -1,5 +1,5 @@
 {
-  "source": "ESPN DraftKings close",
+  "source": "DraftKings close kept. Caesars, FanDuel, Fanatics, and HardRock closes are the Odds API price after the October 26 games started.",
   "days": {
     "2026-10-25": {
       "NBA": [
@@ -814,6 +814,54 @@
                 "over": -108,
                 "under": -112
               }
+            },
+            "FanDuel": {
+              "spread": {
+                "away": {
+                  "point": 3.5,
+                  "price": -120
+                },
+                "home": {
+                  "point": -3.5,
+                  "price": -110
+                }
+              }
+            },
+            "Fanatics": {
+              "spread": {
+                "away": {
+                  "point": 3.5,
+                  "price": -115
+                },
+                "home": {
+                  "point": -3.5,
+                  "price": -115
+                }
+              }
+            },
+            "Caesars": {
+              "spread": {
+                "away": {
+                  "point": 3.5,
+                  "price": -125
+                },
+                "home": {
+                  "point": -3.5,
+                  "price": -105
+                }
+              }
+            },
+            "HardRock": {
+              "spread": {
+                "away": {
+                  "point": 3.5,
+                  "price": -110
+                },
+                "home": {
+                  "point": -3.5,
+                  "price": -115
+                }
+              }
             }
           }
         },
@@ -845,6 +893,54 @@
                 "over": -105,
                 "under": -115
               }
+            },
+            "Caesars": {
+              "spread": {
+                "away": {
+                  "point": 12.5,
+                  "price": 110
+                },
+                "home": {
+                  "point": -12.5,
+                  "price": -130
+                }
+              }
+            },
+            "Fanatics": {
+              "spread": {
+                "away": {
+                  "point": 14.5,
+                  "price": -115
+                },
+                "home": {
+                  "point": -14.5,
+                  "price": -105
+                }
+              }
+            },
+            "FanDuel": {
+              "spread": {
+                "away": {
+                  "point": 13.5,
+                  "price": -104
+                },
+                "home": {
+                  "point": -13.5,
+                  "price": -118
+                }
+              }
+            },
+            "HardRock": {
+              "spread": {
+                "away": {
+                  "point": 14.5,
+                  "price": -110
+                },
+                "home": {
+                  "point": -14.5,
+                  "price": -110
+                }
+              }
             }
           }
         },
@@ -875,6 +971,54 @@
                 "point": 240.5,
                 "over": -108,
                 "under": -112
+              }
+            },
+            "Caesars": {
+              "spread": {
+                "away": {
+                  "point": 6.5,
+                  "price": 100
+                },
+                "home": {
+                  "point": -6.5,
+                  "price": -120
+                }
+              }
+            },
+            "Fanatics": {
+              "spread": {
+                "away": {
+                  "point": 7.5,
+                  "price": -110
+                },
+                "home": {
+                  "point": -7.5,
+                  "price": -110
+                }
+              }
+            },
+            "FanDuel": {
+              "spread": {
+                "away": {
+                  "point": 7.5,
+                  "price": -110
+                },
+                "home": {
+                  "point": -7.5,
+                  "price": -110
+                }
+              }
+            },
+            "HardRock": {
+              "spread": {
+                "away": {
+                  "point": 7.5,
+                  "price": 100
+                },
+                "home": {
+                  "point": -7.5,
+                  "price": -120
+                }
               }
             }
           }
@@ -938,6 +1082,54 @@
                 "over": -110,
                 "under": -110
               }
+            },
+            "FanDuel": {
+              "spread": {
+                "away": {
+                  "point": 8.5,
+                  "price": -115
+                },
+                "home": {
+                  "point": -8.5,
+                  "price": -105
+                }
+              }
+            },
+            "Fanatics": {
+              "spread": {
+                "away": {
+                  "point": 8.5,
+                  "price": -115
+                },
+                "home": {
+                  "point": -8.5,
+                  "price": -105
+                }
+              }
+            },
+            "Caesars": {
+              "spread": {
+                "away": {
+                  "point": 8.5,
+                  "price": -110
+                },
+                "home": {
+                  "point": -8.5,
+                  "price": -110
+                }
+              }
+            },
+            "HardRock": {
+              "spread": {
+                "away": {
+                  "point": 8.5,
+                  "price": -110
+                },
+                "home": {
+                  "point": -8.5,
+                  "price": -110
+                }
+              }
             }
           }
         },
@@ -999,6 +1191,54 @@
                 "point": 237.5,
                 "over": -110,
                 "under": -110
+              }
+            },
+            "FanDuel": {
+              "spread": {
+                "away": {
+                  "point": -1.5,
+                  "price": -106
+                },
+                "home": {
+                  "point": 1.5,
+                  "price": -114
+                }
+              }
+            },
+            "Fanatics": {
+              "spread": {
+                "away": {
+                  "point": -1.5,
+                  "price": -105
+                },
+                "home": {
+                  "point": 1.5,
+                  "price": -115
+                }
+              }
+            },
+            "Caesars": {
+              "spread": {
+                "away": {
+                  "point": -1.5,
+                  "price": -105
+                },
+                "home": {
+                  "point": 1.5,
+                  "price": -115
+                }
+              }
+            },
+            "HardRock": {
+              "spread": {
+                "away": {
+                  "point": -1.5,
+                  "price": -110
+                },
+                "home": {
+                  "point": 1.5,
+                  "price": -110
+                }
               }
             }
           }
@@ -1063,6 +1303,46 @@
                 "point": 5.5,
                 "over": -118,
                 "under": -102
+              }
+            },
+            "Fanatics": {
+              "h2h": {
+                "away": {
+                  "price": 100
+                },
+                "home": {
+                  "price": -130
+                }
+              }
+            },
+            "Caesars": {
+              "h2h": {
+                "away": {
+                  "price": 110
+                },
+                "home": {
+                  "price": -130
+                }
+              }
+            },
+            "FanDuel": {
+              "h2h": {
+                "away": {
+                  "price": 102
+                },
+                "home": {
+                  "price": -130
+                }
+              }
+            },
+            "HardRock": {
+              "h2h": {
+                "away": {
+                  "price": 105
+                },
+                "home": {
+                  "price": -135
+                }
               }
             }
           }
@@ -1158,6 +1438,54 @@
                 "point": 43.5,
                 "over": -115,
                 "under": -105
+              }
+            },
+            "Caesars": {
+              "spread": {
+                "away": {
+                  "point": -4.0,
+                  "price": -109
+                },
+                "home": {
+                  "point": 4.0,
+                  "price": -109
+                }
+              }
+            },
+            "FanDuel": {
+              "spread": {
+                "away": {
+                  "point": -4.5,
+                  "price": -105
+                },
+                "home": {
+                  "point": 4.5,
+                  "price": -115
+                }
+              }
+            },
+            "Fanatics": {
+              "spread": {
+                "away": {
+                  "point": -4.0,
+                  "price": -110
+                },
+                "home": {
+                  "point": 4.0,
+                  "price": -110
+                }
+              }
+            },
+            "HardRock": {
+              "spread": {
+                "away": {
+                  "point": -4.5,
+                  "price": -110
+                },
+                "home": {
+                  "point": 4.5,
+                  "price": -110
+                }
               }
             }
           }
