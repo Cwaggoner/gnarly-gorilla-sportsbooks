@@ -146,9 +146,9 @@ table { width:100%; border-collapse:separate; border-spacing:0; margin-top:8px; 
 #slips .table-wrap { overflow:auto; margin-top:8px; border:1px solid #39ff14; border-radius:10px; }
 #slips table { width:max-content; min-width:100%; margin-top:0; border:0; border-radius:0; background:transparent; }
 #slips tr:last-child td { border-bottom:0; }
-#slips .book-slot { position:relative; height:0; margin:0; border:0; overflow:visible; }
-#bookbadge { position:absolute; right:0; top:0; width:72px; height:72px; border:1px solid #39ff14; border-radius:12px; background:#0a0a0a; overflow:hidden; z-index:2; pointer-events:none; }
-#bookbadge img { width:100%; height:100%; object-fit:contain; display:block; }
+#slips .book-slot { position:relative; height:0; margin:0; border:0; overflow:visible; z-index:4; }
+#bookbadge { position:absolute; right:0; top:0; width:72px; height:72px; box-sizing:border-box; border:1px solid #39ff14; border-radius:12px; background:#0a0a0a; overflow:hidden; pointer-events:none; }
+#bookbadge img { width:100%; height:100%; object-fit:cover; display:block; }
 #slips th, #slips td { white-space:nowrap; }
 #slips th.col-close, #slips td.col-close { display:table-cell; visibility:visible; min-width:8ch; color:#d6ffd0; overflow:visible; }
 canvas { max-width:100%; height:auto; }
@@ -4866,7 +4866,7 @@ function applyState(name){
       if (open) sel.value = open.value || open.textContent;
     }
   });
-  showBookIcon((document.getElementById("fBook") || {}).value || (document.querySelector("#form select.book-select") || {}).value || "");
+  showBookIcon((document.getElementById("fBook") || {}).value || "");
 }
 fetch("cards/state-rules.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => {
   stateRules = (data && data.states) || {};
@@ -5329,10 +5329,10 @@ const BOOK_ICON = {BetMGM:"books/betmgm.png", Caesars:"books/caesars.png", Draft
 function showBookIcon(name){
   const img = document.getElementById("bookbadgeimg");
   if (!img) return;
-  const src = BOOK_ICON[name] || "gg-icon.png";
+  const book = BOOK_ICON[name] || "";
   img.hidden = false;
-  img.src = src;
-  img.alt = name || "Gnarly Gorilla";
+  img.src = book || "gg-icon.png";
+  img.alt = book ? name : "Gnarly Gorilla";
 }
 document.querySelectorAll("select.book-select").forEach(sel => sel.addEventListener("change", () => showBookIcon(sel.value)));
 showBookIcon((document.getElementById("fBook") || {}).value || "");
