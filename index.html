@@ -2963,15 +2963,18 @@ function render(){
   const settled = totals.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
   try { drawDashboard(); } catch (err) {}
   const typeRank = t => t === "SGP" ? 99 : ["Moneyline","Parlay","Prop","Spread","Total"].indexOf(t) + 1 || 50;
-  const grouped = bets.slice().sort((a,b) => String(a.sport).localeCompare(String(b.sport)) || typeRank(a.type) - typeRank(b.type) || b.date.localeCompare(a.date) || b.id - a.id);
+  const grouped = filtered(slipsForBooks(windowed)).sort((a,b) => String(a.sport).localeCompare(String(b.sport)) || typeRank(a.type) - typeRank(b.type) || b.date.localeCompare(a.date) || String(a.book).localeCompare(String(b.book)));
   let lastSport = "", lastType = "";
   document.getElementById("rows").innerHTML = grouped.map(b => {
     try {
-    const p = slipMoney(b);
+    const noMoney = b.viewOnly && (b.noPrice || b.lineDiffers);
+    const p = noMoney ? null : slipMoney(b);
     const cls = b.result === "win" ? "win" : b.result === "loss" ? "loss" : "push";
     const finished = slateSettled(b.date);
     const graded = b.result === "win" || b.result === "loss" || b.result === "push";
-    const grade = graded
+    const grade = b.viewOnly
+      ? (b.noPrice ? "No Price Saved" : b.lineDiffers ? "Line differs" : dash)
+      : graded
       ? "<button data-set='pending' data-id='" + b.id + "'>Undo</button>"
       : !finished ? "Game not finished"
       : "<button data-set='win' data-id='" + b.id + "'>Win</button> <button class='danger' data-set='loss' data-id='" + b.id + "'>Loss</button> <button class='amber' data-set='push' data-id='" + b.id + "'>Push</button>";
@@ -2987,7 +2990,7 @@ function render(){
     }
     const edge = markEdge(b).edge;
     const rowCls = b.result === "win" ? "row-win" : b.result === "loss" ? "row-loss" : b.result === "pending" ? (edge ? "row-pending edge" : "row-pending") : (b.manual ? "manual" : b.fromCard ? "fromcard" : "");
-    return head + "<tr" + (rowCls ? " class='" + rowCls + "'" : "") + "><td>" + b.date + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td>" + esc(b.pick) + "</td><td>" + (usableClose(b.odds) ? b.odds : dash) + "</td><td class='col-close'>" + (usableClose(b.close) ? b.close : dash) + "</td><td class='" + (cv > 0 ? "win" : cv < 0 ? "loss" : "") + "'>" + clvText(b) + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='result " + cls + "'>" + b.result + "</td><td class='" + cls + "'>" + (b.result === "pending" ? dash : moneyHtml(p)) + "</td><td>" + grade + " <button data-edit='" + b.id + "'>Edit</button> <button class='danger' data-del='" + b.id + "'>Delete</button></td></tr>";
+    return head + "<tr" + (rowCls ? " class='" + rowCls + "'" : "") + "><td>" + b.date + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td>" + esc(b.pick) + "</td><td>" + (b.priceText ? esc(b.priceText) : (usableClose(b.odds) ? b.odds : dash)) + "</td><td class='col-close'>" + (usableClose(b.close) ? b.close : dash) + "</td><td class='" + (cv > 0 ? "win" : cv < 0 ? "loss" : "") + "'>" + clvText(b) + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='result " + cls + "'>" + b.result + "</td><td class='" + cls + "'>" + (b.result === "pending" || p == null ? dash : moneyHtml(p)) + "</td><td>" + grade + (b.viewOnly ? "" : " <button data-edit='" + b.id + "'>Edit</button> <button class='danger' data-del='" + b.id + "'>Delete</button>") + "</td></tr>";
     } catch (err) { return ""; }
   }).join("") || "<tr><td colspan='12'>" + ((document.getElementById("fBook") || {}).value ? "No slips for " + esc(document.getElementById("fBook").value) + "." : "No bets yet.") + "</td></tr>";
   try { drawCharts(); } catch (err) { document.getElementById("plotnote").textContent = "Chart failed. The rest of the page is still live."; }
@@ -3577,7 +3580,7 @@ function rememberBooks(sport, games){
   Object.keys(all).forEach(d => { if (d < cutoff) delete all[d]; });
   localStorage.setItem("gg-book-prices", JSON.stringify(all));
 }
-function savedBookPrice(slip, book){
+function bookOutcome(slip, book){
   let all = {};
   try { all = bookStore(); } catch (e) { return null; }
   const day = all[String(slip.date || "").slice(0, 10)];
@@ -3591,11 +3594,49 @@ function savedBookPrice(slip, book){
   const outcomes = ((games[label][book] || {})[market]) || [];
   if (type === "Total") {
     const side = /under/i.test(pick) ? "Under" : "Over";
-    const hit = outcomes.find(o => o.name === side);
-    return hit ? hit.price : null;
+    return outcomes.find(o => o.name === side) || null;
   }
-  const hit = outcomes.find(o => pick.includes(o.name) || teamHit(pick, o.name));
+  return outcomes.find(o => pick.includes(o.name) || teamHit(pick, o.name)) || null;
+}
+function savedBookPrice(slip, book){
+  const hit = bookOutcome(slip, book);
   return hit ? hit.price : null;
+}
+function sameBookNumber(slip, hit){
+  const type = slip.type || betType(slip);
+  if (type === "Moneyline") return true;
+  if (!hit || hit.point == null) return false;
+  const nums = String(slip.pick || "").match(/[+-]?\d+(?:\.\d+)?/g) || [];
+  return nums.some(n => Math.abs(Math.abs(Number(n)) - Math.abs(Number(hit.point))) < 0.01);
+}
+function slipsForBooks(list){
+  const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
+  const owned = new Set(list.map(b => [String(b.date).slice(0, 10), b.sport, normPick(b.pick), bookKey(b.book)].join("|")));
+  const out = [];
+  list.forEach(b => {
+    names.forEach(book => {
+      const key = [String(b.date).slice(0, 10), b.sport, normPick(b.pick), bookKey(book)].join("|");
+      if (bookKey(b.book) === bookKey(book)) { out.push(b); return; }
+      if (owned.has(key)) return;
+      const parlay = b.type === "SGP" || /\band\b/i.test(String(b.pick || ""));
+      const hit = parlay ? null : bookOutcome(b, book);
+      const copy = Object.assign({}, b, {
+        book: book,
+        id: String(b.id) + "|" + book,
+        viewOnly: true,
+        odds: hit && hit.price != null ? hit.price : "",
+        close: "",
+        realClose: false,
+        priceText: hit ? ((hit.point != null && (b.type || betType(b)) !== "Moneyline") ? hit.point + " " + hit.price : String(hit.price)) : "",
+        noPrice: !hit,
+        lineDiffers: !!(hit && !sameBookNumber(b, hit))
+      });
+      delete copy.profit;
+      if (copy.lineDiffers) copy.result = "pending";
+      out.push(copy);
+    });
+  });
+  return out;
 }
 function bookFigures(slips){
   const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
