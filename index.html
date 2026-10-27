@@ -210,7 +210,8 @@ table.season-hold.filled td.note-col p { margin:0; display:-webkit-box; -webkit-
 .charts { display:grid; grid-template-columns:1.4fr 1fr; gap:12px; }
 .cal { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; text-transform:uppercase; }
 .cal div { height:84px; background:#0e0e0e; border:1px solid var(--line); border-radius:6px; font-size:12px; padding:4px; line-height:1.15; overflow:hidden; }
-.cal .range { font-size:11px; line-height:1.15; display:block; white-space:normal; overflow:visible; }
+.slip-time { display:block; font-size:11px; line-height:1.2; color:#8fb898; }
+.slip-time.late { color:#f0e14a; }
 .cal .win { color:#39ff14; }
 .cal .loss { color:#ff6b6b; }
 .cal .slash { color:#39ff14; }
@@ -327,6 +328,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <thead><tr><th>Date</th><th>W/L Record</th><th>Profit</th><th>ROI</th><th>Units</th><th>Pending</th><th>Avg CLV</th></tr></thead>
 <tbody id="dashrows"></tbody>
 </table>
+<p id="sharpcheck" class="api-note warn"></p>
 <div class="tools dash-tools">
 <div class="btn-pair"><span>Data Save/Reset</span><div><button type="button" id="savedash">Save Dashboard</button><button type="button" id="resetdash">Reset</button></div></div>
 <label>Load Dashboard<input type="file" id="loaddash" accept=".txt,text/plain"><span class="file-face">No File Chosen</span></label>
@@ -462,7 +464,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </div>
 </section>
 <section class="card" id="slips">
-<div class="section-head"><h2>Slips</h2><p class="warn slips-side">Today and yesterday only. Pull Odds & Close uses the Odds API key. Odds is the price at the start of the game. Close is the next price after it starts. A game that has not started stays open.</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" id="pulllines">Pull Odds & Close</button><button type="button" id="livescores">Check Live Scores</button></div></div>
+<div class="section-head"><h2>Slips</h2><p class="warn slips-side">Today and yesterday only. Pull Odds & Close uses the Odds API key and stores the Pinnacle close with the other books. Odds is the price at the start of the game. Close is the next price after it starts. Sharp CLV is that price against Pinnacle with the juice removed. The time under the date is when the slip was written. A game that has not started stays open.</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" id="pulllines">Pull Odds & Close</button><button type="button" id="livescores">Check Live Scores</button></div></div>
 <p id="pullnote" class="warn"></p>
 <div class="book-slot"><div id="bookbadge"><img id="bookbadgeimg" src="gg-icon.png" alt="Gnarly Gorilla"></div></div>
 <p id="scorenote" class="warn"></p>
@@ -480,7 +482,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <div class="btn-pair"><span>Exporting</span><div><button type="button" id="exportpdf">Export PDF</button><button type="button" id="export">Export Spreadsheet</button><button type="button" class="danger" id="clear">Clear All</button></div></div>
 </div>
 <div class="table-wrap"><table>
-<thead><tr><th>Date</th><th>Book</th><th>Sport</th><th>Type</th><th>Pick</th><th>Odds</th><th class="col-close">Close</th><th>No-Vig CLV</th><th>Stake</th><th>Result</th><th>P/L</th><th>Grade</th></tr></thead>
+<thead><tr><th>Date</th><th>Book</th><th>Sport</th><th>Type</th><th>Pick</th><th>Odds</th><th class="col-close">Close</th><th>No-Vig CLV</th><th>Sharp CLV</th><th>Stake</th><th>Result</th><th>P/L</th><th>Grade</th></tr></thead>
 <tbody id="rows"></tbody>
 </table></div>
 <p class="api-note warn">Live prices need the Odds API key on Add A Bet. Close needs a paid subscription. CLV is no-vig: the book's cut is removed, and a moved spread or total is counted. A matched -110 close is about -4.5%, not zero. When the other side was not saved, it is estimated at a -110 hold until Plot stores the real pair. A free key loads the board only. A saved list returns on refresh with no new call.<br><button type="button" class="odds-link" onclick="window.open('https://the-odds-api.com/','_blank','noopener,noreferrer')">Open The Odds API</button></p>
@@ -1075,7 +1077,8 @@ function drawDashboard(history, manual){
     [staked ? roiText(profit, staked) : "-", "7-Day ROI"],
     [(profit / UNIT).toFixed(2) + "u", "7-Day Units"],
     [pendingNow, "Pending Slips"],
-    [clvs.length ? formatClv(clvs.reduce((s, n) => s + n, 0) / clvs.length) : "No Close Saved", "7-Day Avg CLV"]
+    [clvs.length ? formatClv(clvs.reduce((s, n) => s + n, 0) / clvs.length) : "No Close Saved", "7-Day Avg CLV"],
+    [beatCloseText(beatCloseStats(gradedPool().filter(b => shown.some(row => String(row.date || "").slice(0, 10) === String(b.date || "").slice(0, 10))))), "7-Day Beat Close"]
   ].map(x => "<div class='stat'><b>" + x[0] + "</b><span>" + x[1] + "</span></div>").join("");
   document.getElementById("dashrows").innerHTML = tableRows.map(row => "<tr><td>" + row.date + "</td><td>" + row.record + "</td><td>" + profitCell(row.profit) + "</td><td>" + row.roi + "</td><td>" + row.units + "</td><td>" + pendingLabel(row) + "</td><td>" + (row.unposted || /no picks/i.test(String(row.record || "")) ? "No Picks" : (row.clv === "-" || row.clv == null || row.clv === "" ? "No Close Saved" : row.clv)) + "</td></tr>").join("");
   const canvas = document.getElementById("dashChart");
@@ -1560,6 +1563,123 @@ function formatClv(v){
   if (v == null || !Number.isFinite(v)) return "No Close Saved";
   if (Math.abs(v) < 0.05) return "Matched Fair Price";
   return (v > 0 ? "+" : "") + v.toFixed(1) + "%";
+}
+function confidenceOf(b){
+  if (!b) return null;
+  const saved = /^(High|Medium|Low)$/.test(b.confidence || "") ? b.confidence : "";
+  const savedPct = Number(b.confidencePct);
+  const m = String(b.notes || "").match(/\b(high|medium|low)\b(?:[^0-9%]{0,16}(\d{1,3})\s*%)?/i);
+  const band = saved || (m ? m[1].charAt(0).toUpperCase() + m[1].slice(1).toLowerCase() : "");
+  if (!band) return null;
+  let pct = Number.isFinite(savedPct) && savedPct >= 1 && savedPct <= 99 ? savedPct : null;
+  if (pct == null && m && m[2]) {
+    const n = Number(m[2]);
+    if (n >= 1 && n <= 99) pct = n;
+  }
+  return {band: band, pct: pct};
+}
+function stampConfidence(b){
+  const found = confidenceOf(b);
+  if (!found) return b;
+  b.confidence = found.band;
+  if (found.pct != null) b.confidencePct = found.pct;
+  return b;
+}
+function stampPlaced(b){
+  if (b && !b.placed) b.placed = new Date().toISOString();
+  return stampConfidence(b);
+}
+function placedText(b){
+  if (!b || !b.placed || Number.isNaN(Date.parse(b.placed))) return "<span class='slip-time'>No Time Saved</span>";
+  const wrote = Date.parse(b.placed);
+  let start = NaN;
+  try {
+    const pack = loadLineWindow();
+    const day = String(b.date || "").slice(0, 10);
+    const sport = String(b.sport || "").toUpperCase();
+    const known = (((pack && pack.games) || {})[day] || {})[sport] || [];
+    const hit = known.find(g => sideHit(b.pick, g.away) && sideHit(b.pick, g.home)) || known.find(g => sideHit(b.pick, g.away) || sideHit(b.pick, g.home));
+    if (hit && hit.commence) start = Date.parse(hit.commence);
+  } catch (e) {}
+  if (!Number.isFinite(start) && typeof pickSlate !== "undefined" && pickSlate) {
+    const list = (pickSlate.games || []).concat(pickSlate.passed || []);
+    const g = list.find(row => row && (sideHit(b.pick, (row.away && row.away.name) || row.away) || sideHit(b.pick, (row.home && row.home.name) || row.home)));
+    if (g && g.start) start = Number(g.start);
+  }
+  const late = Number.isFinite(start) && wrote >= start;
+  const mark = formatTime(b.placed, false) + (Number.isFinite(start) ? (late ? " after start" : " before start") : "");
+  return "<span class='slip-time" + (late ? " late" : "") + "'>" + esc(mark) + "</span>";
+}
+function sharpClv(b){
+  if (!b || b.result === "pending" || b.result === "void" || !usableClose(b.odds)) return null;
+  if (b.type === "SGP" || /\band\b/i.test(String(b.pick || ""))) return null;
+  let q = null;
+  try { q = quotedClose(b, "Pinnacle"); } catch (e) { q = null; }
+  if (!q || !usableClose(q.price) || !usableClose(q.opp)) return null;
+  const bet = pickPoint(b);
+  if (bet && q.point != null && Number.isFinite(Number(q.point))) {
+    const point = bet.kind === "total" ? Math.abs(bet.point) : bet.point;
+    const close = bet.kind === "total" ? Math.abs(Number(q.point)) : Number(q.point);
+    if (Math.abs(point - close) > 0.01) return "differs";
+  }
+  const fair = fairProb(q.price, q.opp);
+  const got = decimal(b.odds);
+  if (!got || !(fair > 0)) return null;
+  return (got * fair - 1) * 100;
+}
+function sharpLabel(cv, b){
+  if (!b || b.result === "pending" || b.result === "void") return "-";
+  if (cv === "differs") return "Line differs";
+  if (typeof cv === "number") return formatClv(cv);
+  return "No Sharp Close";
+}
+function ownSlips(list){
+  return (list || []).filter(b => b && !b.viewOnly && !isNoPick(b));
+}
+function beatCloseStats(list){
+  let beat = 0, scored = 0;
+  ownSlips(list).forEach(b => {
+    if (b.result !== "win" && b.result !== "loss" && b.result !== "push") return;
+    const cv = clv(b);
+    if (cv == null) return;
+    scored++;
+    if (cv > 0.05) beat++;
+  });
+  return {beat: beat, scored: scored};
+}
+function beatCloseText(stats){
+  if (!stats || !stats.scored) return "No Close Saved";
+  return stats.beat + " of " + stats.scored + " (" + Math.round(stats.beat / stats.scored * 100) + "%)";
+}
+function confidenceReport(list){
+  const settled = ownSlips(list).filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
+  const parts = ["High", "Medium", "Low"].map(band => {
+    const rows = settled.filter(b => (confidenceOf(b) || {}).band === band);
+    if (!rows.length) return band + ": No Slips";
+    const decided = rows.filter(b => b.result === "win" || b.result === "loss");
+    const wins = decided.filter(b => b.result === "win").length;
+    const pcts = rows.map(b => confidenceOf(b).pct).filter(n => n != null);
+    const said = pcts.length ? Math.round(pcts.reduce((s, n) => s + n, 0) / pcts.length) : null;
+    const got = decided.length ? Math.round(wins / decided.length * 100) : null;
+    const gap = said != null && got != null ? got - said : null;
+    const mark = gap == null ? "" : (Math.abs(gap) <= 5 ? ", holds" : (gap > 0 ? ", ran hot" : ", ran cold"));
+    return band + ": said " + (said == null ? "no percent" : said + "%") + ", won " + (got == null ? "no grade" : got + "%") + " (" + wins + "-" + (decided.length - wins) + ")" + mark;
+  });
+  const unlabeled = settled.filter(b => !confidenceOf(b)).length;
+  if (unlabeled) parts.push("No label: " + unlabeled);
+  return parts.join(" | ");
+}
+function paintSharpCheck(){
+  const el = document.getElementById("sharpcheck");
+  if (!el) return;
+  const all = gradedPool();
+  const dates = new Set();
+  document.querySelectorAll("#dashrows td:first-child").forEach(td => {
+    const day = String(td.textContent || "").slice(0, 10);
+    if (/^\d{4}-\d{2}-\d{2}$/.test(day)) dates.add(day);
+  });
+  const week = all.filter(b => dates.has(String(b.date || "").slice(0, 10)));
+  el.innerHTML = "Beat the close, 7 days: " + beatCloseText(beatCloseStats(week)) + ". Beat the close, graded slips on this browser: " + beatCloseText(beatCloseStats(all)) + ".<br>Confidence: " + confidenceReport(all) + ". A beat is a no-vig CLV above zero. Sharp CLV uses Pinnacle with the juice removed. Pull Odds & Close stores that price. A slip with no clock time was already on the ledger before the clock was added.";
 }
 function clvNumber(text){
   const s = String(text == null ? "" : text);
@@ -2896,6 +3016,13 @@ function collapseSlips(rows){
     if (!usableClose(keep.close) && usableClose(other.close)) { keep.close = other.close; keep.realClose = true; }
     if (String(other.pick || "").length > String(keep.pick || "").length) keep.pick = other.pick;
     if ((keep.odds === "" || keep.odds == null || Number.isNaN(Number(keep.odds))) && other.odds !== "" && other.odds != null) keep.odds = other.odds;
+    const keptConf = confidenceOf(keep);
+    const otherConf = confidenceOf(other);
+    if (!keptConf && otherConf) {
+      keep.confidence = otherConf.band;
+      if (otherConf.pct != null) keep.confidencePct = otherConf.pct;
+    }
+    if (!keep.placed && other.placed) keep.placed = other.placed;
     byKey[key] = keep;
   });
   return Object.values(byKey);
@@ -2999,20 +3126,22 @@ function render(){
       : !finished ? "Game not finished"
       : "<button data-set='win' data-id='" + b.id + "'>Win</button> <button class='danger' data-set='loss' data-id='" + b.id + "'>Loss</button> <button class='amber' data-set='push' data-id='" + b.id + "'>Push</button>";
     const cv = clv(b);
+    const sharpCv = sharpClv(b);
+    const sharpCls = sharpCv === "differs" ? "warn" : (typeof sharpCv === "number" ? (sharpCv > 0.05 ? "win" : (sharpCv < -0.05 ? "loss" : "")) : "");
     let head = "";
-    if (b.sport !== lastSport) { lastSport = b.sport; lastType = ""; head += "<tr class='sport'><td colspan='12'>" + esc(b.sport || "Other") + (seasonEnded(b.sport) ? " Season Ended" : "") + "</td></tr>"; }
+    if (b.sport !== lastSport) { lastSport = b.sport; lastType = ""; head += "<tr class='sport'><td colspan='13'>" + esc(b.sport || "Other") + (seasonEnded(b.sport) ? " Season Ended" : "") + "</td></tr>"; }
     if (b.type !== lastType) {
       lastType = b.type;
       const same = grouped.filter(x => x.sport === b.sport && x.type === b.type);
       const n = k => same.filter(x => x.result === k).length;
       const count = "(" + n("win") + " win · " + n("loss") + " loss · " + n("push") + " push · " + n("pending") + " pending · " + same.length + " total)";
-      head += "<tr class='type'><td colspan='12'><div class='type-row'><span>" + esc(b.type || "Other") + "</span><span class='type-count'>" + count + "</span></div></td></tr>";
+      head += "<tr class='type'><td colspan='13'><div class='type-row'><span>" + esc(b.type || "Other") + "</span><span class='type-count'>" + count + "</span></div></td></tr>";
     }
     const edge = markEdge(b).edge;
     const rowCls = b.result === "win" ? "row-win" : b.result === "loss" ? "row-loss" : b.result === "pending" ? (edge ? "row-pending edge" : "row-pending") : (b.manual ? "manual" : b.fromCard ? "fromcard" : "");
-    return head + "<tr" + (rowCls ? " class='" + rowCls + "'" : "") + "><td>" + b.date + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td>" + esc(b.pick) + "</td><td>" + (b.priceText ? esc(b.priceText) : (usableClose(b.odds) ? b.odds : dash)) + "</td><td class='col-close'>" + (b.closeText ? esc(b.closeText) : (usableClose(b.close) ? b.close : dash)) + "</td><td class='" + (cv > 0 ? "win" : cv < 0 ? "loss" : "") + "'>" + clvText(b) + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='result " + cls + "'>" + b.result + "</td><td class='" + cls + "'>" + (b.result === "pending" || p == null ? dash : moneyHtml(p)) + "</td><td>" + grade + "</td></tr>";
+    return head + "<tr" + (rowCls ? " class='" + rowCls + "'" : "") + "><td>" + b.date + placedText(b) + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td>" + esc(b.pick) + "</td><td>" + (b.priceText ? esc(b.priceText) : (usableClose(b.odds) ? b.odds : dash)) + "</td><td class='col-close'>" + (b.closeText ? esc(b.closeText) : (usableClose(b.close) ? b.close : dash)) + "</td><td class='" + (cv > 0 ? "win" : cv < 0 ? "loss" : "") + "'>" + clvText(b) + "</td><td class='" + sharpCls + "'>" + esc(sharpLabel(sharpCv, b)) + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='result " + cls + "'>" + b.result + "</td><td class='" + cls + "'>" + (b.result === "pending" || p == null ? dash : moneyHtml(p)) + "</td><td>" + grade + "</td></tr>";
     } catch (err) { return ""; }
-  }).join("") || "<tr><td colspan='12'>" + ((document.getElementById("fBook") || {}).value ? "No slips for " + esc(document.getElementById("fBook").value) + "." : "No bets yet.") + "</td></tr>";
+  }).join("") || "<tr><td colspan='13'>" + ((document.getElementById("fBook") || {}).value ? "No slips for " + esc(document.getElementById("fBook").value) + "." : "No bets yet.") + "</td></tr>";
   try { drawCharts(); } catch (err) { document.getElementById("plotnote").textContent = "Chart failed. The rest of the page is still live."; }
   document.getElementById("plotnote").textContent = settled.length + " settled slips plotted. " + slipsLeftToSettle(bets) + " slips left to settle.";
   drawCalendar();
@@ -3080,6 +3209,7 @@ function render(){
   report.dataset.copy = copy.join("\n");
   report.innerHTML = "<p>Date " + (picked || easternDay()) + ". Graded " + gradeLabel + "</p><p>W/L Record " + rec(gradedDay) + "   P/L " + money(dayPl) + "   Hit rate " + hit + "   Row sum " + money(dayPl) + "</p>" + body + "<p>W/L Record " + rec(gradedDay) + "   " + money(dayPl) + "   " + (dayPl / UNIT).toFixed(2) + "u</p>";
   try { paintSeasonStatus(); } catch (err) {}
+  try { paintSharpCheck(); } catch (err) {}
   } finally {
     rendering = false;
   }
@@ -3718,7 +3848,7 @@ function lineLabel(point, price){
   const juice = j > 0 ? "+" + j : String(j);
   return pt + " " + juice;
 }
-const WINDOW_BOOK = {betmgm:"BetMGM", williamhill_us:"Caesars", draftkings:"DraftKings", fanatics:"Fanatics", fanduel:"FanDuel", hardrockbet:"HardRock"};
+const WINDOW_BOOK = {betmgm:"BetMGM", williamhill_us:"Caesars", draftkings:"DraftKings", fanatics:"Fanatics", fanduel:"FanDuel", hardrockbet:"HardRock", pinnacle:"Pinnacle"};
 function loadLineWindow(){
   try { return JSON.parse(localStorage.getItem("gg-line-window") || "null"); } catch (e) { return null; }
 }
@@ -3808,9 +3938,9 @@ function slimSnapGame(g){
 }
 async function oddsSnap(sportKey, iso, key, remain){
   const cache = snapCache();
-  const id = sportKey + "|" + iso;
+  const id = sportKey + "|pin|" + iso;
   if (cache[id] && cache[id].data) return Object.assign({cached: true}, cache[id]);
-  const url = "https://api.the-odds-api.com/v4/historical/sports/" + sportKey + "/odds?apiKey=" + encodeURIComponent(key) + "&regions=us,us2&markets=spreads,totals,h2h&oddsFormat=american&bookmakers=betmgm,williamhill_us,draftkings,fanatics,fanduel,hardrockbet&date=" + encodeURIComponent(iso);
+  const url = "https://api.the-odds-api.com/v4/historical/sports/" + sportKey + "/odds?apiKey=" + encodeURIComponent(key) + "&regions=us,us2&markets=spreads,totals,h2h&oddsFormat=american&bookmakers=betmgm,williamhill_us,draftkings,fanatics,fanduel,hardrockbet,pinnacle&date=" + encodeURIComponent(iso);
   const res = await fetch(url);
   if (remain) remain.n = res.headers.get("x-requests-remaining") || remain.n;
   if (!res.ok) {
@@ -4084,9 +4214,12 @@ form.onsubmit = e => {
   delete row.editId;
   if (d.editId) {
     const bet = bets.find(b => String(b.id) === d.editId);
-    if (bet) Object.assign(bet, row, {id: bet.id, manual: !!bet.manual, fromCard: bet.fromCard});
+    if (bet) {
+      Object.assign(bet, row, {id: bet.id, manual: !!bet.manual, fromCard: bet.fromCard, placed: bet.placed || ""});
+      stampConfidence(bet);
+    }
   } else {
-    const made = {id: Date.now(), ...row, result: d.result || "pending", manual: true};
+    const made = stampPlaced({id: Date.now(), ...row, result: d.result || "pending", manual: true});
     if (!placePending(bets, made)) {
       document.getElementById("editnote").textContent = "That pick is already on the slips. It was not added again.";
       return;
@@ -4667,7 +4800,7 @@ async function loadPending(){
     if (!sport || !pick || !odds || Number.isNaN(Number(odds)) || /no picks|season ended/i.test(pick)) return;
     if (!inSlipWindow(date)) return;
     if (/^(over|under)\s+\d/i.test(pick)) { note.textContent = "Skipped " + pick + ". A total needs the game, such as Bruins at Rangers Under 5.5."; return; }
-    const row = {id: Date.now() + Math.random(), date, book, sport, type: type || "Spread", pick, odds: Number(odds), stake: 10, result: "pending", notes: notes || "", fromCard: true};
+    const row = stampPlaced({id: Date.now() + Math.random(), date, book, sport, type: type || "Spread", pick, odds: Number(odds), stake: 10, result: "pending", notes: notes || "", fromCard: true});
     if (!placePending(bets, row)) return;
   });
   const added = bets.length - before;
@@ -4753,7 +4886,7 @@ function replaceTodayCard(text, book){
   if (nextKeys === haveKeys) return rows.length;
   const kept = bets.filter(b => !(String(b.date).slice(0, 10) === today && b.result === "pending" && b.fromCard));
   rows.forEach(row => {
-    const slip = markEdge({id: Date.now() + Math.random(), date: row.date, book: book || "BetMGM", sport: row.sport, type: row.type, pick: row.pick, odds: row.odds, stake: 10, result: "pending", notes: row.notes, fromCard: true});
+    const slip = stampPlaced(markEdge({id: Date.now() + Math.random(), date: row.date, book: book || "BetMGM", sport: row.sport, type: row.type, pick: row.pick, odds: row.odds, stake: 10, result: "pending", notes: row.notes, fromCard: true}));
     if (kept.some(b => sameSlip(b, slip))) return;
     kept.push(slip);
   });
@@ -4772,7 +4905,7 @@ function addCardLines(text, book){
     [sport, type, pick, odds, notes] = parts;
     odds = String(odds || "").replace(/\u2212/g, "-");
     if (!sport || !pick || !odds || Number.isNaN(Number(odds)) || /no picks|season ended/i.test(pick) || !inSlipWindow(date)) return;
-    const row = markEdge({id: Date.now() + Math.random(), date, book: book || "BetMGM", sport, type: type || "Spread", pick, odds: Number(odds), stake: 10, result: "pending", notes: notes || "", fromCard: true});
+    const row = stampPlaced(markEdge({id: Date.now() + Math.random(), date, book: book || "BetMGM", sport, type: type || "Spread", pick, odds: Number(odds), stake: 10, result: "pending", notes: notes || "", fromCard: true}));
     if (!placePending(bets, row)) return;
     added++;
   });
@@ -5108,7 +5241,7 @@ function seedCardSlips(rows){
     if (picksAreFinal(row.date)) return;
     if (gradedPool().some(b => (sameSlip(b, row) || sameGrade(b, row)) && b.result !== "pending")) return;
     if (bets.some(b => sameSlip(b, row) || sameGrade(b, row))) return;
-    bets.push({id: "card-" + [row.date, row.sport, normPick(row.pick)].join("|"), date: row.date, book: "BetMGM", sport: row.sport, type: row.type || "Spread", pick: row.pick, odds: row.odds, stake: 10, result: "pending", fromCard: true, notes: row.notes || ""});
+    bets.push(stampPlaced({id: "card-" + [row.date, row.sport, normPick(row.pick)].join("|"), date: row.date, book: "BetMGM", sport: row.sport, type: row.type || "Spread", pick: row.pick, odds: row.odds, stake: 10, result: "pending", fromCard: true, notes: row.notes || ""}));
     added++;
   });
   if (added) save(bets);
@@ -5553,7 +5686,7 @@ function buildPdf(bets){
       "0.063 0.125 0.063 rg", "0 760 612 32 re", "f",
       "0.22 1 0.08 rg", "BT", "/F2 11 Tf", "1 0 0 1 28 772 Tm (GNARLY GORILLA SPORTSBOOKS) Tj", "ET",
       "0.84 1 0.82 rg", "BT", "/F1 8 Tf", "1 0 0 1 250 772 Tm (Ledger card  |  daily pick companion) Tj", "ET",
-      "0.94 0.88 0.29 rg", "BT", "/F1 8 Tf", "1 0 0 1 28 742 Tm (" + pdfEscape("W/L Record " + rec(bets) + "    Profit " + money(pl) + "    Units " + (pl / UNIT).toFixed(2) + "u    $10 slips") + ") Tj", "ET",
+      "0.94 0.88 0.29 rg", "BT", "/F1 8 Tf", "1 0 0 1 28 742 Tm (" + pdfEscape("W/L Record " + rec(bets) + "    Profit " + money(pl) + "    Beat close " + beatCloseText(beatCloseStats(bets)) + "    $10 slips") + ") Tj", "ET",
       "0.063 0.125 0.063 rg", "28 724 556 14 re", "f",
       "0.22 1 0.08 rg", "BT", "/F2 7 Tf"
     ];
@@ -5641,8 +5774,12 @@ function zipStore(files){
 }
 function xmlEsc(s){ return String(s == null ? "" : s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
 function buildSheet(bets){
-  const rows = [["Date","Book","Sport","Type","Pick","Odds","Stake","Result","Profit","Notes"]];
-  bets.slice().sort((a,b) => a.date.localeCompare(b.date)).forEach(b => rows.push([b.date, b.book, b.sport, b.type, b.pick, b.odds, b.stake, b.result, b.result === "pending" ? "" : profit(b).toFixed(2), b.notes || ""]));
+  const rows = [["Date","Book","Sport","Type","Pick","Odds","Stake","Result","Profit","Notes","Placed","Sharp CLV","Beat Close"]];
+  bets.slice().sort((a,b) => a.date.localeCompare(b.date)).forEach(b => {
+    const cv = sharpClv(b);
+    const beat = clv(b);
+    rows.push([b.date, b.book, b.sport, b.type, b.pick, b.odds, b.stake, b.result, b.result === "pending" ? "" : profit(b).toFixed(2), b.notes || "", b.placed ? formatTime(b.placed, false) : "No Time Saved", sharpLabel(cv, b), beat == null ? "" : (beat > 0.05 ? "Beat" : "Missed")]);
+  });
   const sheet = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0" zoomScale="100"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><sheetFormatPr defaultRowHeight="12"/><cols><col min="1" max="1" width="12"/><col min="2" max="4" width="12"/><col min="5" max="5" width="22"/><col min="6" max="10" width="12"/></cols><sheetData>' + rows.map((r,i) => "<row r=\"" + (i+1) + "\" ht=\"12\" customHeight=\"1\">" + r.map((c,j) => "<c r=\"" + String.fromCharCode(65+j) + (i+1) + "\" t=\"inlineStr\" s=\"" + (i === 0 ? 2 : 1) + "\"><is><t>" + xmlEsc(c) + "</t></is></c>").join("") + "</row>").join("") + "</sheetData></worksheet>";
   const styles = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="3"><font><sz val="8"/><name val="Calibri"/></font><font><sz val="8"/><color rgb="FFD6FFD0"/><name val="Calibri"/></font><font><b/><sz val="8"/><color rgb="FF39FF14"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF102010"/></patternFill></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="3"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/><xf numFmtId="0" fontId="2" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/></cellXfs></styleSheet>';
   return zipStore([
