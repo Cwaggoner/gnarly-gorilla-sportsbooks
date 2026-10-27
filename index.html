@@ -75,6 +75,7 @@ h2.split-title, h3.split-title { margin:16px 0 12px; font-size:16px; color:var(-
 .api-note { margin-top:18px; }
 .api-note button, .api-note select { font-size:13px; color:var(--text); }
 .api-note button { color:var(--title); }
+button.odds-link { margin-top:8px; }
 a, .api-note a, .warn a, .slips-side a { color:var(--title); }
 .api-note .best-price, .warn .best-price, .best-price { color:#ff00ff; font-weight:700; }
 .api-note .win, .warn .win, .win { color:var(--title); }
@@ -452,7 +453,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <button type="button" id="commitkey">Commit</button>
 <span id="keynote" class="warn"></span>
 </div>
-<p class="api-note">Paste a free or paid Odds API key here. Load Picks uses this key. Close needs a paid subscription so the other side of the market can be saved. CLV then removes that book's cut. A free key loads the board only. The Book selected above drives the list. Today's Card Book only stamps a card loaded there.<br><a href="https://the-odds-api.com/" target="_blank" rel="noopener noreferrer">Open The Odds API</a></p>
+<p class="api-note">Paste a free or paid Odds API key here. Load Picks uses this key. Close needs a paid subscription so the other side of the market can be saved. CLV then removes that book's cut. A free key loads the board only. The Book selected above drives the list. Today's Card Book only stamps a card loaded there.<br><button type="button" class="odds-link" onclick="window.open('https://the-odds-api.com/','_blank','noopener,noreferrer')">Open The Odds API</button></p>
 </div>
 </section>
 <section class="card" id="slips">
@@ -475,7 +476,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <thead><tr><th>Date</th><th>Book</th><th>Sport</th><th>Type</th><th>Pick</th><th>Odds</th><th class="col-close">Close</th><th>No-Vig CLV</th><th>Stake</th><th>Result</th><th>P/L</th><th>Grade</th></tr></thead>
 <tbody id="rows"></tbody>
 </table></div>
-<p class="api-note warn">Live prices need the Odds API key on Add A Bet. Close needs a paid subscription. CLV is no-vig: the book's cut is removed, and a moved spread or total is counted. A matched -110 close is about -4.5%, not zero. When the other side was not saved, it is estimated at a -110 hold until Plot stores the real pair. A free key loads the board only. A saved list returns on refresh with no new call.<br><a href="https://the-odds-api.com/" target="_blank" rel="noopener noreferrer">Open The Odds API</a></p>
+<p class="api-note warn">Live prices need the Odds API key on Add A Bet. Close needs a paid subscription. CLV is no-vig: the book's cut is removed, and a moved spread or total is counted. A matched -110 close is about -4.5%, not zero. When the other side was not saved, it is estimated at a -110 hold until Plot stores the real pair. A free key loads the board only. A saved list returns on refresh with no new call.<br><button type="button" class="odds-link" onclick="window.open('https://the-odds-api.com/','_blank','noopener,noreferrer')">Open The Odds API</button></p>
 </section>
 <section class="card" id="calendarcard">
 <div class="section-head"><h2>Calendar</h2><span id="monthpl" style="margin-left:10ch;color:#d6ffd0"></span><p class="warn slips-side">Everyone sees the shared $10 calendar until they upload a file. An uploaded file stays in this browser only.<br>Other users do not see it. Use Shared Calendar to go back.</p></div>
