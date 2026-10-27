@@ -168,8 +168,8 @@ label:has(input[type=file]) { position:relative; }
 label:has(#loadcal) { gap:0; }
 .card-analysis { margin:8px 0 10px; border:1px solid #39ff14; border-radius:8px; padding:8px 10px; background:#0e0e0e; }
 .passed-note { margin:12px 0 8px; font-size:13px; }
-#cardgames td.add-col, #cardgames th.add-col { text-align:center; width:1%; white-space:nowrap; vertical-align:middle; }
-#cardgames .add-game { width:auto; min-width:7ch; display:inline-block; }
+table.season-hold.filled th.add-col, table.season-hold.filled td.add-col { text-align:center; width:1%; white-space:nowrap; vertical-align:middle; }
+table.season-hold.filled .add-game { width:auto; min-width:7ch; display:inline-block; }
 .analysis-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; }
 .analysis-cell { border:1px solid #243024; border-radius:6px; padding:6px 8px; min-height:0; }
 .analysis-cell b { color:#39ff14; font-size:12px; }
@@ -2271,7 +2271,7 @@ function slateTable(list, date, extra){
 }
 function slateHtml(){
   const games = pickSlate && Array.isArray(pickSlate.games) ? pickSlate.games : [];
-  return games.length ? slateTable(games, pickSlate && pickSlate.date) : "<table class='season-hold'><tbody><tr><td></td><td></td></tr><tr><td></td><td></td></tr></tbody></table>";
+  return games.length ? slateTable(games, pickSlate && pickSlate.date, true) : "<table class='season-hold'><tbody><tr><td></td><td></td></tr><tr><td></td><td></td></tr></tbody></table>";
 }
 function cardSlips(){
   const all = load().concat(loadGrade()).concat(gradeFile || []).filter(b => b && b.pick && !isNoPick(b));
@@ -2296,7 +2296,7 @@ function gameMatchesSlip(game, slip){
 }
 function pendingHoldHtml(){
   const games = pickSlate && Array.isArray(pickSlate.games) ? pickSlate.games : [];
-  return games.length ? slateTable(games, pickSlate && pickSlate.date) : slateHtml();
+  return games.length ? slateTable(games, pickSlate && pickSlate.date, true) : slateHtml();
 }
 function paintSeasonStatus(){
   const box = document.getElementById("seasons");
