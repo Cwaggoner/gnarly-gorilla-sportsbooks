@@ -716,14 +716,45 @@ function priceNumber(v){
   const n = Number(String(v).replace(/[^\d+.\-]/g, ""));
   return Number.isFinite(n) && n !== 0 ? n : null;
 }
-function noteClose(date, sport, pick, close){
+function oddsFromWin(profit, stake){
+  const p = Number(profit), s = Number(stake) || UNIT;
+  if (!(p > 0) || !(s > 0)) return null;
+  const minus = -Math.round(s * 100 / p);
+  const plus = Math.round(p * 100 / s);
+  if (Math.abs(minus) >= 100 && Math.abs(s * 100 / Math.abs(minus) - p) <= 0.05) return minus;
+  if (plus >= 100 && Math.abs(s * plus / 100 - p) <= 0.05) return plus;
+  return null;
+}
+function betPriceFor(b){
+  if (!b || !b.date || !b.pick) return null;
+  const date = String(b.date).slice(0, 10);
+  const sport = String(b.sport || "").toUpperCase();
+  const hits = closeRows.filter(r => r.date === date && (!sport || !r.sport || r.sport === sport) && r.bet != null && sameWager(r.pick, b.pick));
+  const prices = [...new Set(hits.map(r => r.bet))];
+  return prices.length === 1 ? prices[0] : null;
+}
+function ticketOdds(b){
+  if (!b) return null;
+  if (b.result === "win") {
+    const implied = oddsFromWin(b.profit, b.stake || UNIT);
+    if (implied != null) return implied;
+  }
+  const filed = betPriceFor(b);
+  if (filed != null) return filed;
+  const own = priceNumber(b.odds);
+  if (!usableClose(own)) return null;
+  if (b.result && b.result !== "pending" && usableClose(b.close) && Number(own) === Number(b.close)) return null;
+  return own;
+}
+function noteClose(date, sport, pick, close, bet){
   const n = priceNumber(close);
-  if (n == null || !date || !pick) return;
+  const ticket = priceNumber(bet);
+  if ((n == null && ticket == null) || !date || !pick) return;
   const sportU = String(sport || "").toUpperCase();
-  closeMap[date + "|" + pick] = String(n);
+  if (n != null) closeMap[date + "|" + pick] = String(n);
   const id = date + "|" + sportU + "|" + pick;
   const at = closeRows.findIndex(r => r.id === id);
-  const row = {id: id, date: date, sport: sportU, pick: pick, close: n};
+  const row = {id: id, date: date, sport: sportU, pick: pick, close: n, bet: ticket};
   if (at >= 0) closeRows[at] = row;
   else closeRows.push(row);
 }
@@ -765,7 +796,7 @@ function loadCloses(){
     text.split(/\n/).forEach(line => {
       const parts = line.split("|").map(s => s.trim());
       if (parts.length < 5 || !/^\d{4}-\d{2}-\d{2}$/.test(parts[0])) return;
-      noteClose(parts[0], parts[1], parts[3], parts[4]);
+      noteClose(parts[0], parts[1], parts[3], parts[4], parts[2]);
       if (parts[2]) betMap[parts[0] + "|" + parts[3]] = parts[2];
     });
   }).catch(() => {});
@@ -901,15 +932,20 @@ function publishedDashboard(only){
   return dates.map(date => {
     const day = publishedCalendar[date] || {};
     const lines = slips.filter(b => b.date === date);
-    const fromLines = lines.length > 0;
-    const profit = dayProfit(date, lines, day);
+    const expected = Number(day.n);
+    const complete = !expected || lines.length === expected;
+    const fromLines = complete && lines.length > 0;
+    const profit = fromLines ? dayProfit(date, lines, day) : (Number.isFinite(Number(day.pl)) ? Number(day.pl) : (lines.length ? dayProfit(date, lines, day) : null));
     const staked = fromLines ? lines.reduce((s, b) => s + (Number(b.stake) > 0 ? Number(b.stake) : UNIT), 0) : (Number(day.n) || 0) * UNIT;
     const n = fromLines ? lines.length : (Number(day.n) || 0);
-    const withClose = lines.filter(b => usableClose(b.close));
-    const clvs = withClose.map(b => { const v = clv(b); return v == null ? 0 : v; });
+    const priced = lines.filter(b => usableClose(b.close) && usableClose(b.odds));
+    const clvs = priced.map(b => clv(b)).filter(v => v != null);
     let dayClv = "No Close Saved";
-    if (!lines.length) dayClv = "No Close Saved";
-    else if (!withClose.length) dayClv = "Close Not On File";
+    if (!complete && day && day.clv != null && day.clv !== "") {
+      const n = Number(day.clv);
+      dayClv = n === 0 ? "Matched Bet Price" : (Number.isFinite(n) ? (n > 0 ? "+" : "") + n.toFixed(1) + "%" : String(day.clv));
+    } else if (!lines.length) dayClv = "No Close Saved";
+    else if (!priced.length) dayClv = lines.some(b => usableClose(b.close)) ? "No Bet Price" : "Close Not On File";
     else if (clvs.every(v => Math.abs(v) < 0.05)) dayClv = "Matched Bet Price";
     else dayClv = (clvs.reduce((s, v) => s + v, 0) / clvs.length).toFixed(1) + "%";
     const record = fromLines ? rec(lines) : (day.wins != null ? (Number(day.wins) || 0) + "-" + (Number(day.losses) || 0) + "-" + (Number(day.pushes) || 0) : (n ? "Split Not On File" : "0-0-0"));
@@ -1422,6 +1458,7 @@ function clvText(b){
   if (!paidKey) return "-";
   if (b.result === "pending" || b.result === "void") return "-";
   if (!usableClose(b.close)) return "No Close Saved";
+  if (!usableClose(b.odds)) return "No Bet Price";
   const cv = clv(b);
   if (cv == null || Math.abs(cv) < 0.05) return "Matched Bet Price";
   return cv.toFixed(1) + "%";
@@ -1454,11 +1491,7 @@ const LAST_API_ROWS = [
   {market:"totals", label:"Pittsburgh Penguins at Colorado Avalanche", betmgm:"6.5 -110 / -110"}
 ];
 function teamHit(pick, label){
-  const p = String(pick || "").toLowerCase();
-  const t = String(label || "").toLowerCase();
-  if (!p || !t) return false;
-  if (p.includes(t) || t.includes(p)) return true;
-  return t.split(/\s+/).filter(w => w.length > 3 && !["tampa","york"].includes(w)).some(w => p.includes(w));
+  return sameClub(pick, label);
 }
 function priceToken(chunk){
   const nums = String(chunk || "").match(/[+-]?\d+(?:\.\d+)?/g) || [];
@@ -1576,7 +1609,8 @@ function weekClv(){
   });
   const withClose = slips.filter(b => b.close !== "" && b.close != null && Number.isFinite(Number(b.close)));
   if (!slips.length || !withClose.length) return "No Close Saved";
-  const vals = withClose.map(b => { const v = clv(b); return v == null ? 0 : v; });
+  const vals = withClose.map(b => clv(b)).filter(v => v != null);
+  if (!vals.length) return "No Bet Price";
   const avg = vals.reduce((s, n) => s + n, 0) / vals.length;
   if (!Number.isFinite(avg) || Math.abs(avg) < 0.05) return "0.0%";
   return avg.toFixed(1) + "%";
@@ -1587,7 +1621,8 @@ function clvListText(list){
   const withClose = graded.filter(b => b.close !== "" && b.close != null);
   if (!withClose.length) return "No Close Saved";
   const xs = withClose.map(clv).filter(v => v != null);
-  if (!xs.length || xs.every(v => Math.abs(v) < 0.05)) return "Matched Bet Price";
+  if (!xs.length) return "No Bet Price";
+  if (xs.every(v => Math.abs(v) < 0.05)) return "Matched Bet Price";
   return (xs.reduce((s,v)=>s+v,0)/xs.length).toFixed(1) + "%";
 }
 function filtered(bets){
@@ -1728,15 +1763,17 @@ function drawCalendar(){
         const wins = slips.filter(b => b.result === "win").length;
         const losses = slips.filter(b => b.result === "loss").length;
         const pushes = slips.filter(b => b.result === "push").length;
-        const savedAgrees = day && Number(day.n) === slips.length && Number(day.wins) === wins && Number(day.losses) === losses && Number(day.pushes) === pushes;
+        const pays = slips.map(winPay);
+        const computedWin = Math.round(pays.reduce((s, n) => s + n, 0) * 100) / 100;
+        const payReady = slips.length > 0 && pays.every(n => n > 0);
         day = {
           pl: Math.round(slips.reduce((s, b) => s + slipMoney(b), 0) * 100) / 100,
           n: slips.length,
           wins: wins,
           losses: losses,
           pushes: pushes,
-          allWin: savedAgrees && Number(day.allWin) > 0 ? Number(day.allWin) : slips.reduce((s, b) => s + winPay(b), 0),
-          allLose: savedAgrees && Number(day.allLose) ? Number(day.allLose) : -slips.reduce((s, b) => s + (Number(b.stake) || 10), 0),
+          allWin: payReady ? computedWin : (Number(day && day.allWin) > 0 ? Number(day.allWin) : computedWin),
+          allLose: -slips.reduce((s, b) => s + (Number(b.stake) || 10), 0),
           clv: day && day.clv
         };
         board[date] = day;
@@ -2208,12 +2245,16 @@ function teamSide(c){
   return team;
 }
 function sameClub(a, b){
-  const left = String(a || "").toLowerCase();
-  const right = String(b || "").toLowerCase();
-  if (!left || !right) return false;
-  if (left === right) return true;
-  const nick = s => s.split(/\s+/).slice(-1)[0];
-  return nick(left) === nick(right) && nick(left).length > 3;
+  const words = s => String(s || "").toLowerCase().replace(/[^a-z0-9&]/g, " ").split(/\s+/).filter(w => w && !/^(the|at|vs|and|over|under|ml|moneyline)$/.test(w) && !/^[+-]?\d/.test(w));
+  const A = words(a), B = words(b);
+  if (!A.length || !B.length) return false;
+  const generic = {state:1, tech:1, university:1, college:1};
+  const closeWord = (x, y) => x === y || (x.length >= 3 && y.indexOf(x) === 0) || (y.length >= 3 && x.indexOf(y) === 0);
+  const short = A.length <= B.length ? A : B;
+  const long = short === A ? B : A;
+  const specific = short.filter(w => !generic[w]);
+  if (!specific.length) return false;
+  return specific.every(w => long.some(x => closeWord(w, x)));
 }
 function finishedOnBoard(game, board){
   const sides = slateSides(game);
@@ -2334,7 +2375,7 @@ async function loadSeasons(){
   } catch (err) { showSeasons(); }
 }
 function seasonText(sport){ return seasonEnded(sport) ? "Season Ended" : "No Picks"; }
-const TEAM_ALIAS = {fla:"panthers", buf:"sabres", ott:"senators", nj:"devils", njd:"devils", tb:"rays", tor:"blue jays", lad:"dodgers", mil:"brewers", okc:"thunder", atl:"hawks", bkn:"nets", wsh:"wizards", min:"timberwolves", ny:"knicks", utah:"jazz", sa:"spurs", vgk:"golden knights", buf2:"sabres"};
+const TEAM_ALIAS = {njd:"devils", vgk:"knights", okc:"thunder", lad:"dodgers", bkn:"nets"};
 function expandTeams(text){
   return String(text || "").toLowerCase().replace(/\b[a-z]{2,4}\b/g, w => TEAM_ALIAS[w] || w);
 }
@@ -2446,7 +2487,9 @@ function render(){
     if (!b.book) b.book = "BetMGM";
     b.type = betType(b);
     if (!b.stake) b.stake = 10;
-    if (b.odds === "" || b.odds == null || Number.isNaN(Number(b.odds))) b.odds = usableClose(b.close) ? b.close : -110;
+    const ticket = ticketOdds(b);
+    if (ticket != null) b.odds = ticket;
+    else if (b.result !== "pending" && usableClose(b.close) && Number(b.odds) === Number(b.close)) b.odds = "";
   });
   unique = dropMatchedPending(unique);
   const windowed = unique.filter(b => inSlipWindow(b.date));
@@ -2480,7 +2523,7 @@ function render(){
     }
     const edge = markEdge(b).edge;
     const rowCls = b.result === "win" ? "row-win" : b.result === "loss" ? "row-loss" : b.result === "pending" ? (edge ? "row-pending edge" : "row-pending") : (b.manual ? "manual" : b.fromCard ? "fromcard" : "");
-    return head + "<tr" + (rowCls ? " class='" + rowCls + "'" : "") + "><td>" + b.date + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td>" + esc(b.pick) + "</td><td>" + (b.odds === "" || b.odds == null ? (usableClose(b.close) ? b.close : -110) : b.odds) + "</td><td class='col-close'>" + (usableClose(b.close) ? b.close : dash) + "</td><td class='" + (cv > 0 ? "win" : cv < 0 ? "loss" : "") + "'>" + clvText(b) + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='result " + cls + "'>" + b.result + "</td><td class='" + cls + "'>" + (b.result === "pending" ? dash : moneyHtml(p)) + "</td><td>" + grade + " <button data-edit='" + b.id + "'>Edit</button> <button class='danger' data-del='" + b.id + "'>Delete</button></td></tr>";
+    return head + "<tr" + (rowCls ? " class='" + rowCls + "'" : "") + "><td>" + b.date + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td>" + esc(b.pick) + "</td><td>" + (usableClose(b.odds) ? b.odds : dash) + "</td><td class='col-close'>" + (usableClose(b.close) ? b.close : dash) + "</td><td class='" + (cv > 0 ? "win" : cv < 0 ? "loss" : "") + "'>" + clvText(b) + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='result " + cls + "'>" + b.result + "</td><td class='" + cls + "'>" + (b.result === "pending" ? dash : moneyHtml(p)) + "</td><td>" + grade + " <button data-edit='" + b.id + "'>Edit</button> <button class='danger' data-del='" + b.id + "'>Delete</button></td></tr>";
     } catch (err) { return ""; }
   }).join("") || "<tr><td colspan='12'>No bets yet.</td></tr>";
   try { drawCharts(); } catch (err) { document.getElementById("plotnote").textContent = "Chart failed. The rest of the page is still live."; }
@@ -3611,14 +3654,13 @@ function parseGradeLine(line){
   let money = parts[parts.length - 1];
   let close = "";
   if (/^close:/i.test(money)) { close = money.replace(/^close:/i, ""); money = parts[parts.length - 2]; }
-  const odds = (parts[3].match(/-?\d+/) || [""])[0];
   const result = (parts[4].match(/win|loss|push/i) || [""])[0].toLowerCase();
   if (!result) return null;
   const profit = Number(String(money).replace(/[$,+]/g, ""));
   const closeField = parts.find((p, i) => i >= 3 && /^close\b/i.test(p)) || "";
   const nclose = priceNumber(closeField);
   const goodClose = usableClose(nclose);
-  return {date: parts[0], sport: parts[1], pick: parts[2], odds: odds || -110, close: goodClose ? nclose : "", result: result, stake: 10, profit: Number.isFinite(profit) ? profit : 0, realClose: false};
+  return {date: parts[0], sport: parts[1], pick: parts[2], odds: "", close: goodClose ? nclose : "", result: result, stake: 10, profit: Number.isFinite(profit) ? profit : 0, realClose: goodClose};
 }
 function keepClose(b){
   if (!b) return b;
@@ -3821,20 +3863,41 @@ function gradeLeg(pick, game){
     if (total === line) return "push";
     return (ou[1].toLowerCase() === "over" ? total > line : total < line) ? "win" : "loss";
   }
-  const text = expandTeams(pick);
-  const homeAt = teamWords(game.home).reduce((at, bit) => Math.max(at, text.lastIndexOf(bit)), -1);
-  const awayAt = teamWords(game.away).reduce((at, bit) => Math.max(at, text.lastIndexOf(bit)), -1);
+  const text = " " + expandTeams(pick) + " ";
+  const spanOf = team => {
+    let at = -1, end = -1;
+    teamWords(team).forEach(bit => {
+      const found = text.lastIndexOf(bit);
+      if (found > at) { at = found; end = found + bit.length; }
+    });
+    return {at: at, end: end};
+  };
+  const homeSpan = spanOf(game.home);
+  const awaySpan = spanOf(game.away);
+  const homeAt = homeSpan.at, awayAt = awaySpan.at;
   if (homeAt < 0 && awayAt < 0) return null;
-  let side = homeAt >= awayAt ? "home" : "away";
-  const spread = text.match(/([+-]\s?[0-9]+(?:\.[0-9]+)?)/);
-  if (spread && homeAt >= 0 && awayAt >= 0) {
-    const at = text.indexOf(spread[1]);
-    if (at >= 0) side = Math.abs(at - homeAt) <= Math.abs(at - awayAt) ? "home" : "away";
+  const gap = (span, marker) => {
+    if (span.at < 0) return Infinity;
+    if (marker >= span.at && marker <= span.end) return 0;
+    return Math.min(Math.abs(marker - span.at), Math.abs(marker - span.end));
+  };
+  const priced = (text.match(/[+-]\s?[0-9]+(?:\.[0-9]+)?/g) || []).map(s => Number(String(s).replace(/\s/g, ""))).filter(n => n && Math.abs(n) < 50);
+  const spread = priced.length ? priced[0] : null;
+  let side = "";
+  if (spread != null && homeAt >= 0 && awayAt >= 0) {
+    const token = (spread > 0 ? "+" : "") + spread;
+    const at = text.indexOf(token) >= 0 ? text.indexOf(token) : text.indexOf(String(Math.abs(spread)));
+    if (at >= 0) side = gap(homeSpan, at) <= gap(awaySpan, at) ? "home" : "away";
   }
+  if (!side && /\bml\b|moneyline/.test(text) && homeAt >= 0 && awayAt >= 0) {
+    const at = text.search(/\bml\b|moneyline/);
+    if (at >= 0) side = gap(homeSpan, at) <= gap(awaySpan, at) ? "home" : "away";
+  }
+  if (!side) side = homeAt >= awayAt ? "home" : "away";
   const mine = side === "home" ? home : away;
   const opp = side === "home" ? away : home;
-  if (spread) {
-    const adj = mine + Number(spread[1].replace(/\s/g, ""));
+  if (spread != null) {
+    const adj = mine + spread;
     if (Math.abs(adj - opp) < 0.001) return "push";
     return adj > opp ? "win" : "loss";
   }
@@ -4830,7 +4893,7 @@ fetch("cards/closes.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(
     if (!line || line.startsWith("#") || /no close saved|matched bet price|bet price/i.test(line)) return;
     const parts = line.split("|").map(s => s.trim());
     if (!/^\d{4}-\d{2}-\d{2}$/.test(parts[0]) || parts.length < 5) return;
-    noteClose(parts[0], parts[1], parts[3], parts[4]);
+    noteClose(parts[0], parts[1], parts[3], parts[4], parts[2]);
     if (parts[2]) betMap[parts[0] + "|" + parts[3]] = parts[2];
     const close = priceNumber(parts[4]);
     if (!usableClose(close)) return;

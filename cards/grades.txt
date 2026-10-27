@@ -1,5 +1,5 @@
 # file: grades
-2026-10-26 | RANGE | All Win 52.59 | All Lose -70.00
+2026-10-26 | RANGE | All Win 61.69 | All Lose -70.00
 2026-10-26 | NBA | Timberwolves +3.5 | close -110 | win | 125-127 | 9.09
 2026-10-26 | NBA | Bulls +14.5 | close -110 | loss | 99-134 | -10.00
 2026-10-26 | NBA | Mavericks +8.5 | close -110 | win | 113-109 | 9.09
