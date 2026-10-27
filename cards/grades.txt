@@ -3,10 +3,10 @@
 2026-10-26 | NBA | Timberwolves +3.5 | close -110 | win | 125-127 | 9.09
 2026-10-26 | NBA | Bulls +14.5 | close -110 | loss | 99-134 | -10.00
 2026-10-26 | NBA | Mavericks +8.5 | close -110 | win | 113-109 | 9.09
-2026-10-26 | NBA | Suns +9.5 | close -110 | loss | 114-125 | -10.00
+2026-10-26 | NBA | Suns +9.5 | close -105 | loss | 114-125 | -10.00
 2026-10-26 | NBA | Grizzlies +1.5 | close -110 | win | 110-105 | 9.09
 2026-10-26 | NFL | Philadelphia Eagles +4.5 | close -110 | loss | 38-21 | -10.00
-2026-10-26 | NHL | Rangers ML | close -140 | loss | 6-3 | -10.00
+2026-10-26 | NHL | Rangers ML | close -130 | loss | 6-3 | -10.00
 2026-10-26 | MLB | No Picks
 2026-10-26 | CFB | No Picks
 2026-10-26 | CBB | No Picks
