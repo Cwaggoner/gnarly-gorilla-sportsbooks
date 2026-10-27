@@ -7,41 +7,49 @@
 
 Read cards/prices.txt before making a number. A bad night does not flip the next card. The log moves a number only after 30 counted rows.
 
-1. Make the number first. For every game, write the side before looking at which side yesterday's card would have wanted. The book number is the comparison, not the pick.
-2. Bet only these gaps. There is no smaller exception.
+These four come before every other rule. Read them in this order.
+
+1. The book is the number. Win percentage can move it, but it cannot be the only reason the play exists. Still write the formula number before you open the book. A bet needs one of these written in the note: an injury the book has not fully priced, a back-to-back, a confirmed goalie or starter change, or a rest edge. If the note is only the record formula, delete the play.
+2. Move the tired team before you measure the gap. In the NBA, shift a back-to-back team by 2 points. In the NHL, shift it by 15 cents. Then apply the gap rule to that new number. A team on no rest does not get a normal number.
+3. An unconfirmed NHL starter is a pass. If the goalie is not named by 9:00 AM, that game is not a bet.
+4. No total until that sport has 30 counted total rows. The formula makes a side. It does not make a total.
+
+5. For every game, write the side before looking at which side yesterday's card would have wanted. The book number is the comparison, not the pick.
+6. Bet only these gaps. There is no smaller exception.
    NFL side: 3 points. NBA side: 5 points. College side: 4 points.
    NHL: the book is at least 25 cents better than the made price, and the bet price is +100 or longer. A minus price in the NHL is a pass.
    MLB run line: half a run. MLB moneyline: 15 cents.
-   Totals, and only after a total is made the same way as a side: NFL or NBA 2 points, college 3 points, MLB 1 run, NHL half a goal.
-3. If the made number and the book disagree on who is favored, pass that game. A made favorite against a book dog is a pass. A made dog against a book favorite is a pass. That split means the record formula is missing an injury, a rest day, or a real team difference. The Celtics -4.7 against a book -14.5 was a pass. The Eagles -2.5 against a book +4.5 was a pass.
-4. Pass any dog from +3 through +5.5 unless the gap is 6 points or more. Dogs shorter than +3 are allowed when the gap clears. Dogs of +7 or more are allowed when the gap clears. That middle band is 1-6 and -$50.91.
-5. One bet per game. Bet the market with the bigger gap. No parlay, no second leg, no cross-game ticket.
-6. While the sum of cards/calendar.json is under $0, write at most one play for this sport. The 9:25 AM publish task keeps the three largest gaps across every sport and drops the rest. Two plays is a complete day. When the running total itself is above $0, the three-play cap comes off. One play per game stays. Do not add a bet to get the money back.
-7. No team is a must bet. Indiana, Army, Navy, Air Force, the Pacers, the Colts, Purdue, and Notre Dame are games. They are bets only when rule 2 and rule 3 both pass. Read the injury report before the number. If the best player is out, make the number with him out. Do not move the number after seeing the book's side.
-8. Do not replay a ticket because it won last night. Do not bet the other side because it lost last night.
-9. Every play shows the made number, the book number, and the gap. If those three are not written, delete the play. Name the game on every total. Never write only "Under 5.5".
-10. Stake stays $10 while the running total is under $0. Do not use the $15 raise until that total is above $0 and the market has 30 counted rows whose average close beat the bet.
-11. TRAINING. Append one row per graded bet to cards/prices.txt:
+   Do not bet a total. Rule 4 is the total rule until 30 counted total rows exist.
+7. If the made number and the book disagree on who is favored, pass that game. A made favorite against a book dog is a pass. A made dog against a book favorite is a pass. That split means the record formula is missing an injury, a rest day, or a real team difference. The Celtics -4.7 against a book -14.5 was a pass. The Eagles -2.5 against a book +4.5 was a pass.
+8. Pass any dog from +3 through +5.5 unless the gap is 6 points or more. Dogs shorter than +3 are allowed when the gap clears. Dogs of +7 or more are allowed when the gap clears. That middle band is 1-6 and -$50.91.
+9. One bet per game, and it is a side. No parlay, no second leg, no cross-game ticket.
+10. While the sum of cards/calendar.json is under $0, write at most one play for this sport. The 9:25 AM publish task keeps the three largest gaps across every sport and drops the rest. Two plays is a complete day. When the running total itself is above $0, the three-play cap comes off. One play per game stays. Do not add a bet to get the money back.
+11. No team is a must bet. Indiana, Army, Navy, Air Force, the Pacers, the Colts, Purdue, and Notre Dame are games. They are bets only when rule 1, rule 6, and rule 7 all pass. Read the injury report before the number. If the best player is out, make the number with him out. Do not move the number after seeing the book's side.
+12. Do not replay a ticket because it won last night. Do not bet the other side because it lost last night.
+13. Every play shows the made number, the book number, the gap, and the reason from rule 1. If any of those are missing, delete the play. Name the game on every line. Never write only "Under 5.5".
+14. Stake stays $10 while the running total is under $0. Do not use the $15 raise until that total is above $0 and the market has 30 counted rows whose average close beat the bet.
+15. TRAINING. Append one row per graded bet to cards/prices.txt:
     date | sport | market | made | bet | close | clv
     Market is side or total. CLV is the close minus the bet, in points for a spread or a total and in cents for a moneyline, signed so a positive number means the close moved toward the bet.
-    A row counts toward the 30 only when the close is a different number from the bet. A close copied from the ticket is written and then ignored. Do not adjust a market on fewer than 30 counted rows. When those 30 average negative, move the made number toward the close by that average and write the adjustment at the top of the card. Do not drop a market for a losing record if the counted CLV is positive. Do not keep a market for a winning record if the counted CLV is negative.
-12. SLATE FILE. cards/scoreboard.json is the full day's scoreboard. Leave it in place when the card is combined. cards/pick-slate.json games are only the games on that day's card, and every other scoreboard game goes in passed. Never write an empty pick-slate.json.
-13. If today's part file already has bet lines, and each line shows the made number, the book number, and the gap, keep those lines. Do not replace a posted bet with No Picks.
-14. CHART. Add up cards/calendar.json from the first settled day through the last before any number.
-    If that sum is under $0, rule 6 and rule 10 stay on.
-    If the last three settled days sum to a loss, add 1 point to every side gap in rule 2, add 1 point to every football, basketball, and baseball total gap, and add 0.5 goals to the NHL total gap.
-    If the last three settled days sum to a win, use the gaps in rule 2. Do not make them smaller because the line rose.
+    A row counts toward the 30 only when the close is a different number from the bet. A close copied from the ticket is written and then ignored. Do not adjust a market on fewer than 30 counted rows. When those 30 average negative, move the made number toward the close by that average and write the adjustment at the top of the card. Do not drop a market for a losing record if the counted CLV is positive. Do not keep a market for a winning record if the counted CLV is negative. Count total rows separately from side rows. A side row does not unlock a total.
+16. SLATE FILE. cards/scoreboard.json is the full day's scoreboard. Leave it in place when the card is combined. cards/pick-slate.json games are only the games on that day's card, and every other scoreboard game goes in passed. Never write an empty pick-slate.json.
+17. If today's part file already has bet lines, and each line shows the made number, the book number, and the gap, keep those lines. Do not replace a posted bet with No Picks.
+18. CHART. Add up cards/calendar.json from the first settled day through the last before any number.
+    If that sum is under $0, rule 10 and rule 14 stay on.
+    If the last three settled days sum to a loss, add 1 point to every side gap in rule 6, and add 1 point to every football, basketball, and baseball total gap and 0.5 goals to the NHL total gap only after rule 4 allows a total.
+    If the last three settled days sum to a win, use the gaps in rule 6. Do not make them smaller because the line rose.
     One green day does not lift the cap. The running total has to be above $0.
 
-INTERIM NUMBER. Use this until that sport and market has 30 counted rows. Then stop, and use rule 11.
-This is a record formula, not a trained price. It exists so a day with games can produce a bet the log can grade.
+INTERIM NUMBER. Use this until that sport and market has 30 counted rows. Then stop, and use rule 15.
+This is a record formula, not a trained price. It exists so a day with games can produce a side the log can grade.
 Do not mark any play High until those 30 counted rows exist. Edge still goes on every play that clears.
-The formula is a side number. Do not add a total until a total is made the same way.
+The formula is a side number. Rule 4 forbids a total until 30 counted total rows exist.
 
 Until both teams have played six games, use the smaller multiplier. After both have six, use the full one.
+Apply rule 2 before you measure the gap. Apply rule 1 before you keep the play.
 
-NFL. Full multiplier 14. Early multiplier 7. Home spread = (home win% - away win%) times the multiplier, plus 2.5. A neutral site uses 0 instead of 2.5. Win% is wins plus half a tie, divided by games played. Bet when the gap is at least 3 points and rule 3 and rule 4 pass. Price -110 if the juice is not posted.
-NBA. Full multiplier 10. Early multiplier 5. Home spread = (home win% - away win%) times the multiplier, plus 3. Bet when the gap is at least 5 points and rule 3 and rule 4 pass. A short early-season record does not lower the 5-point gap. Price -110 if the juice is not posted.
-NHL. Points percentage is points divided by games played times 2. Fair share is one team's points percentage divided by the sum of both. Move 4 percentage points to the home team. Convert that probability to an American price. Bet only when the book is at least 25 cents better than that price and the bet is +100 or longer. If the made side is a minus price at the book, pass. Do not lay -140 because the formula says -207.
-CFB and CBB. Full multiplier 17. Early multiplier 8. Home spread = (home win% - away win%) times the multiplier, plus 3. Bet when the gap is at least 4 points and rule 3 and rule 4 pass. Price -110 if the juice is not posted.
-MLB. Use season win% the same way as the NHL moneyline, with a 4 percentage point home bump. Bet the moneyline when it is 15 cents better than that price, or the run line when it is at least half a run off. Rule 3 still applies. If there is no game, do not write a file.
+NFL. Full multiplier 14. Early multiplier 7. Home spread = (home win% - away win%) times the multiplier, plus 2.5. A neutral site uses 0 instead of 2.5. Win% is wins plus half a tie, divided by games played. Bet when the gap is at least 3 points and rule 1, rule 7, and rule 8 pass. Price -110 if the juice is not posted.
+NBA. Full multiplier 10. Early multiplier 5. Home spread = (home win% - away win%) times the multiplier, plus 3. Shift a back-to-back team by 2 points before the gap. Bet when the gap is at least 5 points and rule 1, rule 7, and rule 8 pass. A short early-season record does not lower the 5-point gap. Price -110 if the juice is not posted.
+NHL. Points percentage is points divided by games played times 2. Fair share is one team's points percentage divided by the sum of both. Move 4 percentage points to the home team. Convert that probability to an American price. Shift a back-to-back team by 15 cents before the gap. If the goalie is not named by 9:00 AM, pass. Bet only when the book is at least 25 cents better than that price and the bet is +100 or longer. If the made side is a minus price at the book, pass. Do not lay -140 because the formula says -207. Rule 1 still applies.
+CFB and CBB. Full multiplier 17. Early multiplier 8. Home spread = (home win% - away win%) times the multiplier, plus 3. Bet when the gap is at least 4 points and rule 1, rule 7, and rule 8 pass. Price -110 if the juice is not posted.
+MLB. Use season win% the same way as the NHL moneyline, with a 4 percentage point home bump. Bet the moneyline when it is 15 cents better than that price, or the run line when it is at least half a run off. Rule 1 and rule 7 still apply. A starter who is not named by 9:00 AM is a pass. If there is no game, do not write a file.
