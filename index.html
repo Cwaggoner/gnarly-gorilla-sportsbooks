@@ -252,8 +252,8 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 .odds-notes { list-style:none; margin:0 0 8px; padding:0; }
 .odds-notes li { color:var(--amber); font-size:12px; line-height:1.35; margin:0; }
 .odds-notes li::before { content:"•"; color:#ff00ff; font-weight:700; margin-right:6px; }
-#oddscompare > .odds-tools { margin:8px 0 4px; }
-#oddscompare > h2.split-title:first-of-type { margin-top:0; }
+#oddscompare > .odds-tools { margin:4px 0 8px; }
+#oddscompare > h2.split-title:first-of-type { margin-top:0; margin-bottom:4px; }
 .compare th.add-col, .compare td.add-col { text-align:center; width:1%; white-space:nowrap; vertical-align:middle; }
 .best-price { color:#ff00ff; font-weight:700; }
 #oddscompare table.shop { margin-top:8px; }
@@ -3403,7 +3403,7 @@ function placeOddsTools(){
   const box = document.getElementById("oddscompare");
   if (!tools || !box) return;
   const title = box.querySelector("h2.split-title");
-  if (title) box.insertBefore(tools, title);
+  if (title) title.insertAdjacentElement("afterend", tools);
   else box.appendChild(tools);
   const table = box.querySelector("table.compare:not(.shop)");
   if (!table) { tools.style.marginLeft = ""; return; }
