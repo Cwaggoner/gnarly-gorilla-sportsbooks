@@ -2642,17 +2642,17 @@ async function drawInjuryReport(){
     const club = ((feed && feed.injuries) || []).find(item => sameClub(item.displayName || (item.team && item.team.displayName), team.name));
     const list = ((club && club.injuries) || []).filter(item => injuryWorth(item.status)).sort((a, b) => injuryRank(a.status) - injuryRank(b.status)).slice(0, 6);
     if (!list.length) {
-      rows.push("<tr data-sport='" + esc(team.sport) + "' data-kind='none'><td>" + esc(team.game) + "</td><td>" + esc(team.name) + "</td><td>-</td><td>-</td><td>No report posted</td></tr>");
+      rows.push("<tr data-sport='" + esc(team.sport) + "' data-kind='none'><td>" + esc(team.game) + "</td><td>" + esc(team.name) + "</td><td>-</td><td>-</td><td>-</td><td>No report posted</td></tr>");
       return;
     }
     list.forEach(item => {
       const athlete = item.athlete || {};
-      const pos = athlete.position && athlete.position.abbreviation ? " " + athlete.position.abbreviation : "";
+      const pos = (athlete.position && (athlete.position.abbreviation || athlete.position.displayName)) || "-";
       const detail = item.shortComment || (item.details && (item.details.detail || item.details.type)) || (item.type && (item.type.description || item.type.name)) || "";
-      rows.push("<tr data-sport='" + esc(team.sport) + "' data-kind='" + injuryKind(item.status) + "'><td>" + esc(team.game) + "</td><td>" + esc(team.name) + "</td><td>" + esc((athlete.displayName || "Player") + pos) + "</td><td class='" + injuryStatusClass(item.status) + "'>" + esc(item.status || "-") + "</td><td>" + esc(String(detail).replace(/\s+/g, " ").slice(0, 160)) + "</td></tr>");
+      rows.push("<tr data-sport='" + esc(team.sport) + "' data-kind='" + injuryKind(item.status) + "'><td>" + esc(team.game) + "</td><td>" + esc(team.name) + "</td><td>" + esc(athlete.displayName || "Player") + "</td><td>" + esc(pos) + "</td><td class='" + injuryStatusClass(item.status) + "'>" + esc(item.status || "-") + "</td><td>" + esc(String(detail).replace(/\s+/g, " ").slice(0, 160)) + "</td></tr>");
     });
   });
-  box.innerHTML = "<table class='compare'><thead><tr><th>Game</th><th>Team</th><th>Player</th><th>Status</th><th>Report</th></tr></thead><tbody>" + rows.join("") + "<tr id='injuryempty' hidden><td colspan='5'>No rows for that filter.</td></tr></tbody></table>";
+  box.innerHTML = "<table class='compare'><thead><tr><th>Game</th><th>Team</th><th>Player</th><th>Position</th><th>Status</th><th>Report</th></tr></thead><tbody>" + rows.join("") + "<tr id='injuryempty' hidden><td colspan='6'>No rows for that filter.</td></tr></tbody></table>";
   filterInjury();
 }
 async function readJson(url){
