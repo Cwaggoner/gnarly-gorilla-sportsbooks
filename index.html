@@ -1410,7 +1410,11 @@ function clvText(b){
 }
 function fileCloseFor(b){
   if (!b || !b.date || !b.pick) return null;
-  const num = v => { const n = Number(String(v).replace(/[^\d+-]/g, "")); return Number.isFinite(n) ? n : null; };
+  const num = v => {
+    if (v == null || String(v).trim() === "") return null;
+    const n = Number(String(v).replace(/[^\d+-]/g, ""));
+    return Number.isFinite(n) && n !== 0 ? n : null;
+  };
   const direct = num(closeMap[b.date + "|" + b.pick]);
   if (direct != null) return direct;
   const key = Object.keys(closeMap).find(k => k.indexOf(b.date + "|") === 0 && samePick(k.slice(b.date.length + 1), b.pick));
