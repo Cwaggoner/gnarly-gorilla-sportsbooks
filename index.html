@@ -65,8 +65,12 @@ footer.card { width:100%; max-width:none; margin:14px 0 0; box-sizing:border-box
 .section-head h2 { margin:0; }
 .slips-side { margin:0; text-align:left; max-width:62%; font-size:12px; }
 .card-analysis h3 { margin:0 0 8px; color:var(--title); font-size:16px; }
-.card > h2, .card > .section-head { background:rgba(57,255,20,.12); border-bottom:1px solid #39ff14; margin:-14px -14px 12px; padding:10px 14px; }
-h2.split-title { margin:16px 0 12px; border:1px solid #39ff14; border-radius:10px; background:rgba(57,255,20,.12); padding:10px 14px; }
+.card > h2, .card > .section-head, h2.split-title, h3.split-title, .sport-title { background:rgba(57,255,20,.12); border:1px solid #39ff14; border-radius:10px; padding:10px 14px; }
+.card > h2, .card > .section-head { margin:0 0 12px; }
+h2.split-title, h3.split-title { margin:16px 0 12px; font-size:16px; color:var(--title); }
+.card-analysis { margin:0 0 10px; border:0; padding:0; background:transparent; }
+.card-analysis h3.split-title { margin:0 0 12px; }
+.charts h2.split-title, .charts .sport-title { margin:0 0 12px; }
 .api-note { margin-top:18px; }
 .api-note a { color:var(--title); }
 .print-preview { margin-top:12px; }
@@ -166,7 +170,6 @@ input[type=file] { position:absolute; width:1px; height:1px; opacity:0; }
 label:has(input[type=file]) { position:relative; }
 #loadcal { height:38px; }
 label:has(#loadcal) { gap:0; }
-.card-analysis { margin:8px 0 10px; border:1px solid #39ff14; border-radius:8px; padding:8px 10px; background:#0e0e0e; }
 .passed-note { margin:12px 0 8px; font-size:13px; }
 table.season-hold.filled th.add-col, table.season-hold.filled td.add-col { text-align:center; width:1%; white-space:nowrap; vertical-align:middle; }
 table.season-hold.filled .add-game { width:auto; min-width:7ch; display:inline-block; }
@@ -220,8 +223,8 @@ table.season-hold.filled .note-name { color:var(--amber); font-weight:700; }
 canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--line); border-radius:8px; display:block; }
 .charts canvas { width:100%; height:192px; }
 .sport-nav { display:flex; justify-content:center; gap:8px; margin-top:8px; }
-.sport-title { display:flex; align-items:baseline; margin:0 0 10px; }
-.sport-title h2 { margin:0; }
+.sport-title { display:flex; align-items:center; gap:8px; }
+.sport-title h2 { margin:0; border:0; background:transparent; padding:0; }
 #sportbest, #monthbest { margin-left:10px; color:#39ff14; font-weight:700; }
 #sportday { text-align:center; margin:6px 0 0; color:#d6ffd0; }
 @media (max-width:700px) { .charts { grid-template-columns:1fr; } .bet-top { grid-template-columns:1fr; } #betfields { grid-template-columns:1fr 1fr; } #betload img { max-width:120px; } }
@@ -303,7 +306,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <section class="card" id="liveodds"><div class="section-head"><h2>Live Odds</h2><p class="warn slips-side">Moneyline, spread, and total across books. Use Yesterday or Today.</p><button type="button" id="refreshodds">Refresh</button></div><div id="oddscompare"></div></section>
 <section class="card" id="todaycard">
 <div class="section-head"><h2>Today's Card</h2><p class="warn slips-side">One play per line: Sport | Type | Pick | American odds | Confidence. Stake is $10. Book is the dropdown below. Pending until graded.</p></div>
-<div class="card-analysis" id="cardanalysis"><h3>Analysis</h3><div class="analysis-grid" id="analysisgrid"></div><div class="sharp-read"><b>Analysis:</b><p id="sharpread"></p></div><div id="cardgames"></div></div>
+<div class="card-analysis" id="cardanalysis"><h3 class="split-title">Analysis</h3><div class="analysis-grid" id="analysisgrid"></div><div class="sharp-read"><b>Analysis:</b><p id="sharpread"></p></div><div id="cardgames"></div></div>
 <div class="card-rest">
 <div class="book-key">
 <label>Book<select id="cardbook" class="book-select">
@@ -345,7 +348,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <section class="card" id="charts">
 <div class="section-head"><h2>Charts</h2><p class="warn slips-side">Profit uses settled slips. CLV is no-vig: your price against a fair close, with the book's cut removed. A matched -110 is about -4.5%. <span id="plotnote"></span></p><button type="button" id="plot">Plot</button></div>
 <div class="charts">
-<div><h2 id="profitTitle">Cumulative Profit</h2><canvas id="profitChart" width="640" height="220"></canvas><p id="chartlesson" class="warn"></p></div>
+<div><h2 id="profitTitle" class="split-title">Cumulative Profit</h2><canvas id="profitChart" width="640" height="220"></canvas><p id="chartlesson" class="warn"></p></div>
 <div><div class="sport-title"><h2>Profit By Sport</h2><b id="sportbest"></b><b id="monthbest"></b></div><canvas id="sportChart" width="420" height="220"></canvas><div class="sport-nav"><button type="button" id="sportprev">Previous</button><button type="button" id="sportnext">Next</button></div><p id="sportday"></p></div>
 </div>
 </section>
@@ -2828,7 +2831,7 @@ function render(){
     const sorted = list.slice().sort((a,b) => String(a.sport).localeCompare(String(b.sport)) || String(a.result).localeCompare(String(b.result)) || String(a.pick).localeCompare(String(b.pick)));
     copy.push("", title);
     if (title === "Pending" || (title === "Graded" && show !== "graded")) body += "<hr class='split'>";
-    body += "<h2>" + title + "</h2>";
+    body += "<h2 class='split-title'>" + title + "</h2>";
     if (!sorted.length) { const empty = title === "Pending" ? "None - Picks Start at " + zoneTime(9, 0) : "None"; copy.push(empty); body += "<p>" + empty + "</p>"; return; }
     body += "<table><thead><tr><th>Date</th><th>Result</th><th>Sport</th><th>Pick</th><th>Odds</th><th>P/L</th></tr></thead><tbody>";
     ["CBB","CFB","MLB","NBA","NFL","NHL"].forEach(sport => {
