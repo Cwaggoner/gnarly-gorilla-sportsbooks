@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-27T07:10-04:00",
+  "updated": "2026-10-27T07:20-04:00",
   "source": "Public NetArbs boards, plus posted Caesars, Fanatics, and Hard Rock prices from each book's own line. A dash means that book posted no number.",
   "days": {
     "2026-10-26": {
@@ -760,7 +760,7 @@
           "label": "Delaware Fightin Blue Hens at Western Kentucky Hilltoppers",
           "start": "2026-10-27T23:00:00Z",
           "books": {
-            "BetMGM": "-2.5 -102 / -2 +100",
+            "BetMGM": "-1 -110 / +1 -108",
             "Caesars": "-1.5 -108 / +1.5 -113",
             "DraftKings": "-1.5 -108 / +1.5 -112",
             "Fanatics": "-1 -110 / +1 -110",
@@ -773,7 +773,7 @@
           "label": "Sam Houston State Bearkats at Missouri State Bears",
           "start": "2026-10-28T00:00:00Z",
           "books": {
-            "BetMGM": "+4 -102 / -6.5 +100",
+            "BetMGM": "+5 -110 / -5 -108",
             "Caesars": "+4.5 -106 / -4.5 -114",
             "DraftKings": "+4.5 -105 / -4.5 -115",
             "Fanatics": "+5 -110 / -5 -110",
@@ -799,7 +799,7 @@
           "label": "Brooklyn Nets at Boston Celtics",
           "start": "2026-10-27T23:30:00Z",
           "books": {
-            "BetMGM": "+10.5 +105 / -12.5 +105",
+            "BetMGM": "+11.5 -110 / -11.5 -110",
             "Caesars": "+11.5 -110 / -11.5 -110",
             "DraftKings": "+11.5 -110 / -11.5 -110",
             "Fanatics": "+11.5 -110 / -11.5 -110",
@@ -812,7 +812,7 @@
           "label": "Detroit Pistons at New York Knicks",
           "start": "2026-10-28T00:00:00Z",
           "books": {
-            "BetMGM": "+3.5 +100 / -4.5 -105",
+            "BetMGM": "+4.5 -115 / -4.5 -105",
             "Caesars": "+4 -110 / -4 -110",
             "DraftKings": "+4.5 -112 / -4.5 -108",
             "Fanatics": "+4 -110 / -4 -110",
@@ -825,7 +825,7 @@
           "label": "Portland Trail Blazers at Los Angeles Lakers",
           "start": "2026-10-28T03:00:00Z",
           "books": {
-            "BetMGM": "+2.5 -102 / -4.5 +110",
+            "BetMGM": "+2.5 -105 / -2.5 -115",
             "Caesars": "+3 -110 / -3 -110",
             "DraftKings": "+2.5 -110 / -2.5 -110",
             "Fanatics": "+2.5 -105 / -2.5 -115",
@@ -838,7 +838,7 @@
           "label": "Sacramento Kings at San Antonio Spurs",
           "start": "2026-10-28T00:00:00Z",
           "books": {
-            "BetMGM": "+17.5 -102 / -19.5 +105",
+            "BetMGM": "+18.5 -110 / -18.5 -110",
             "Caesars": "+18 -115 / -18 -105",
             "DraftKings": "+17.5 -105 / -17.5 -115",
             "Fanatics": "+18 -110 / -18 -110",
@@ -903,7 +903,7 @@
           "label": "Los Angeles Kings at Chicago Blackhawks",
           "start": "2026-10-28T00:00:00Z",
           "books": {
-            "BetMGM": "-1.5 +195 / -1.5 +220",
+            "BetMGM": "-1.5 +195 / +1.5 -235",
             "Caesars": "-",
             "DraftKings": "-1.5 +200 / +1.5 -245",
             "Fanatics": "-1.5 +200 / +1.5 -255",
@@ -929,7 +929,7 @@
           "label": "Montreal Canadiens at St. Louis Blues",
           "start": "2026-10-28T00:00:00Z",
           "books": {
-            "BetMGM": "-1.5 +220 / -1.5 +195",
+            "BetMGM": "-1.5 +225 / +1.5 -285",
             "Caesars": "-",
             "DraftKings": "+1.5 -250 / -1.5 +205",
             "Fanatics": "+1.5 -255 / -1.5 +200",
@@ -955,7 +955,7 @@
           "label": "New York Islanders at Nashville Predators",
           "start": "2026-10-28T00:00:00Z",
           "books": {
-            "BetMGM": "-1.5 +220 / -1.5 +200",
+            "BetMGM": "+1.5 -235 / -1.5 +190",
             "Caesars": "-",
             "DraftKings": "+1.5 -245 / -1.5 +200",
             "Fanatics": "+1.5 -255 / -1.5 +200",
