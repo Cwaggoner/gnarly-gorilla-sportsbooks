@@ -1,1 +1,153 @@
-PLACEHOLDER
+{
+  "date": "2026-10-27",
+  "source": "ESPN scoreboard, no odds key",
+  "passedNote": "Games being played that did not make the picks.",
+  "games": [
+    {
+      "sport": "NBA",
+      "game": "Brooklyn Nets at Boston Celtics",
+      "start": "2026-10-27T23:30Z",
+      "location": "TD Garden, Boston, Massachusetts",
+      "away_record": "0-3",
+      "home_record": "2-1"
+    }
+  ],
+  "passed": [
+    {
+      "sport": "CFB",
+      "game": "Delaware Blue Hens at Western Kentucky Hilltoppers",
+      "start": "2026-10-27T23:00Z",
+      "location": "Houchens Industries-L.T. Smith Stadium, Bowling Green, Kentucky",
+      "away_record": "3-4",
+      "home_record": "3-4"
+    },
+    {
+      "sport": "CFB",
+      "game": "Sam Houston Bearkats at Missouri State Bears",
+      "start": "2026-10-28T00:00Z",
+      "location": "Robert W. Plaster Stadium, Springfield, Missouri",
+      "away_record": "1-6",
+      "home_record": "2-5"
+    },
+    {
+      "sport": "MLB",
+      "game": "Milwaukee Brewers at Tampa Bay Rays",
+      "start": "2026-10-28T00:00Z",
+      "location": "Tropicana Field, St. Petersburg, Florida",
+      "away_record": "103-59",
+      "home_record": "98-64"
+    },
+    {
+      "sport": "NBA",
+      "game": "Detroit Pistons at New York Knicks",
+      "start": "2026-10-28T00:00Z",
+      "location": "Madison Square Garden, New York, New York",
+      "away_record": "3-0",
+      "home_record": "0-3"
+    },
+    {
+      "sport": "NBA",
+      "game": "Portland Trail Blazers at Los Angeles Lakers",
+      "start": "2026-10-28T03:00Z",
+      "location": "crypto.com Arena, Los Angeles, California",
+      "away_record": "2-0",
+      "home_record": "3-0"
+    },
+    {
+      "sport": "NBA",
+      "game": "Sacramento Kings at San Antonio Spurs",
+      "start": "2026-10-28T00:00Z",
+      "location": "Frost Bank Center, San Antonio, Texas",
+      "away_record": "0-3",
+      "home_record": "1-2"
+    },
+    {
+      "sport": "NHL",
+      "game": "Boston Bruins at Carolina Hurricanes",
+      "start": "2026-10-28T00:00Z",
+      "location": "Lenovo Center, Raleigh, North Carolina",
+      "away_record": "9-2-1",
+      "home_record": "9-2-2"
+    },
+    {
+      "sport": "NHL",
+      "game": "Buffalo Sabres at San Jose Sharks",
+      "start": "2026-10-28T02:30Z",
+      "location": "SAP Center at San Jose, San Jose, California",
+      "away_record": "4-4-3",
+      "home_record": "6-5-1"
+    },
+    {
+      "sport": "NHL",
+      "game": "Columbus Blue Jackets at Philadelphia Flyers",
+      "start": "2026-10-27T23:00Z",
+      "location": "Xfinity Mobile Arena, Philadelphia, Pennsylvania",
+      "away_record": "4-5-0",
+      "home_record": "3-7-3"
+    },
+    {
+      "sport": "NHL",
+      "game": "Florida Panthers at Winnipeg Jets",
+      "start": "2026-10-28T00:00Z",
+      "location": "Canada Life Centre, Winnipeg, Manitoba",
+      "away_record": "6-4-2",
+      "home_record": "4-4-3"
+    },
+    {
+      "sport": "NHL",
+      "game": "Los Angeles Kings at Chicago Blackhawks",
+      "start": "2026-10-28T00:00Z",
+      "location": "United Center, Chicago, Illinois",
+      "away_record": "3-5-2",
+      "home_record": "3-8-0"
+    },
+    {
+      "sport": "NHL",
+      "game": "Minnesota Wild at Utah Mammoth",
+      "start": "2026-10-28T01:00Z",
+      "location": "Delta Center, Salt Lake City, Utah",
+      "away_record": "8-3-2",
+      "home_record": "8-4-0"
+    },
+    {
+      "sport": "NHL",
+      "game": "Montreal Canadiens at St. Louis Blues",
+      "start": "2026-10-28T00:00Z",
+      "location": "Enterprise Center, St. Louis, Missouri",
+      "away_record": "6-3-2",
+      "home_record": "5-5-1"
+    },
+    {
+      "sport": "NHL",
+      "game": "New Jersey Devils at Dallas Stars",
+      "start": "2026-10-28T00:00Z",
+      "location": "American Airlines Center, Dallas, Texas",
+      "away_record": "7-4-0",
+      "home_record": "7-3-1"
+    },
+    {
+      "sport": "NHL",
+      "game": "New York Islanders at Nashville Predators",
+      "start": "2026-10-28T00:00Z",
+      "location": "Bridgestone Arena, Nashville, Tennessee",
+      "away_record": "5-4-2",
+      "home_record": "4-3-4"
+    },
+    {
+      "sport": "NHL",
+      "game": "Ottawa Senators at Vegas Golden Knights",
+      "start": "2026-10-28T02:00Z",
+      "location": "T-Mobile Arena, Las Vegas, Nevada",
+      "away_record": "8-4-0",
+      "home_record": "8-4-1"
+    },
+    {
+      "sport": "NHL",
+      "game": "Vancouver Canucks at Anaheim Ducks",
+      "start": "2026-10-28T02:00Z",
+      "location": "Honda Center, Anaheim, California",
+      "away_record": "2-10-1",
+      "home_record": "5-6-0"
+    }
+  ]
+}
