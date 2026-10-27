@@ -685,14 +685,9 @@ function rec(list){
   const p = list.filter(b => b.result === "push").length;
   return w + "-" + l + "-" + p;
 }
-function esc(s){ return String(s == null ? "" : s).replace(/&/g,"&").replace(/</g,"<").replace(/>/g,">"); }
+function esc(s){ return String(s == null ? "" : s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
 
 
-function shiftDate(iso, days){
-  const [y, m, d] = iso.split("-").map(Number);
-  const dt = new Date(Date.UTC(y, m - 1, d + days));
-  return dt.toISOString().slice(0, 10);
-}
 function openSlipCount(date){
   const rows = pendingSlips();
   if (!date) return rows.length;
@@ -2364,7 +2359,7 @@ function slateTable(list, date, extra){
   const label = slateDateLabel(date);
   const gameHead = label ? "<th><div class='gamehead'><span>Game</span><span class='slate-date'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + esc(label) + "</span></div></th>" : "<th>Game</th>";
   const addHead = extra ? "<th class='add-col'>Add</th>" : "";
-  return "<table class='season-hold filled'><thead><tr>" + gameHead + "<th>Time</th><th>Location</th><th>Record</th><th class='note-col'>Notes</th>" + addHead + "</tr></thead><tbody>" + rows + "</tbody></table>";
+  return "<div class='table-wrap'><table class='season-hold filled'><thead><tr>" + gameHead + "<th>Time</th><th>Location</th><th>Record</th><th class='note-col'>Notes</th>" + addHead + "</tr></thead><tbody>" + rows + "</tbody></table></div>";
 }
 function slateHtml(){
   const games = pickSlate && Array.isArray(pickSlate.games) ? pickSlate.games : [];
@@ -2412,7 +2407,8 @@ function paintSeasonStatus(){
   if (!hold) { drawPassedSlate(); return; }
   const wrap = document.createElement("div");
   wrap.innerHTML = pendingHoldHtml(pending);
-  if (wrap.firstElementChild) hold.replaceWith(wrap.firstElementChild);
+  const next = wrap.firstElementChild;
+  if (next) (hold.closest(".table-wrap") || hold).replaceWith(next);
   drawPassedSlate();
 }
 function drawPickSlate(){
@@ -2420,7 +2416,7 @@ function drawPickSlate(){
   if (old) {
     const holder = document.createElement("div");
     holder.innerHTML = slateHtml();
-    old.replaceWith(holder.firstElementChild);
+    if (holder.firstElementChild) (old.closest(".table-wrap") || old).replaceWith(holder.firstElementChild);
   }
   paintSeasonStatus();
   drawPassedSlate();
@@ -3226,8 +3222,10 @@ function bookFigures(slips){
   slips.forEach(b => {
     if (b.result !== "win" && b.result !== "loss" && b.result !== "push") return;
     const parlay = b.type === "SGP" || /\band\b/i.test(b.pick);
+    const home = String(b.book || "BetMGM");
     names.forEach(book => {
-      const price = parlay ? (book === "BetMGM" ? b.odds : null) : (savedBookPrice(b, book) || (book === "BetMGM" ? b.odds : null));
+      let price = parlay ? null : savedBookPrice(b, book);
+      if ((price == null || price === "") && book === home) price = ticketOdds(b);
       if (price == null || price === "") return;
       const got = priceProfit(b.result, price, b.stake);
       if (got == null) return;
@@ -4846,8 +4844,7 @@ function zipStore(files){
   parts.push(end);
   return new Blob(parts, {type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
 }
-function xmlEsc(s){ return String(s).replace(/&/g,"&").replace(/</g,"<").replace(/>/g,">"); }
-function xmlEsc(s){ return String(s).replace(/&/g,"&").replace(/</g,"<").replace(/>/g,">"); }
+function xmlEsc(s){ return String(s == null ? "" : s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
 function buildSheet(bets){
   const rows = [["Date","Book","Sport","Type","Pick","Odds","Stake","Result","Profit","Notes"]];
   bets.slice().sort((a,b) => a.date.localeCompare(b.date)).forEach(b => rows.push([b.date, b.book, b.sport, b.type, b.pick, b.odds, b.stake, b.result, b.result === "pending" ? "" : profit(b).toFixed(2), b.notes || ""]));
