@@ -257,6 +257,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 .odds-tools { display:flex; flex-direction:row; align-items:center; justify-content:flex-start; gap:8px; margin:0 0 6px; flex-wrap:nowrap; width:max-content; max-width:100%; }
 .odds-tools button, .odds-tools select { height:32px; padding:4px 10px; box-sizing:border-box; }
 .odds-notes { list-style:none; margin:0 0 8px; padding:0; }
+#dashboard .odds-notes { margin:12px 0 0; }
 .odds-notes li { color:var(--amber); font-size:12px; line-height:1.35; margin:0; }
 .odds-notes li::before { content:"•"; color:#ff00ff; font-weight:700; margin-right:6px; }
 #injuryreport th.player-col, #injuryreport td.player-col, #injuryreport th.game-col, #injuryreport td.game-col, #injuryreport th.team-col, #injuryreport td.team-col, #injuryreport th.status-col, #injuryreport td.status-col { white-space:nowrap; }
@@ -322,19 +323,23 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <div id="seasons" class="card"><div class="section-head"><h2>Season Dates</h2><p class="warn slips-side">Checked in the month each league publishes its schedule.</p></div></div>
 <main>
 <section class="card" id="dashboard">
-<div class="section-head"><h2>Dashboard</h2><p class="warn slips-side">Last 7 days on this card. The full history stays in the saved file.</p></div>
+<div class="section-head"><h2>Dashboard</h2></div>
 <section class="stats" id="stats"></section>
 <canvas id="dashChart" width="640" height="320"></canvas>
 <table>
 <thead><tr><th>Date</th><th>W/L Record</th><th>Profit</th><th>ROI</th><th>Units</th><th>Pending</th><th>Avg CLV</th></tr></thead>
 <tbody id="dashrows"></tbody>
 </table>
-<p id="sharpcheck" class="api-note warn"></p>
 <div class="tools dash-tools">
 <div class="btn-pair"><span>Data Save/Reset</span><div><button type="button" id="savedash">Save Dashboard</button><button type="button" id="resetdash">Reset</button></div></div>
 <label>Load Dashboard<input type="file" id="loaddash" accept=".txt,text/plain"><span class="file-face">No File Chosen</span></label>
 <span id="dashnote" class="warn"></span>
 </div>
+<ul class="odds-notes">
+<li>Last 7 days on this card.</li>
+<li>The full history stays in the saved file.</li>
+</ul>
+<ul class="odds-notes" id="sharpcheck"></ul>
 </section>
 <section class="card" id="liveodds"><div class="section-head"><h2>Live Odds</h2><p class="warn slips-side">Moneyline, spread, and total across books. Refresh pulls the live price.</p></div><div class="odds-tools" id="compareday"><button type="button" id="day-yesterday">Yesterday</button><button type="button" id="day-today">Today</button><select id="comparesport"><option selected>All</option><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option></select><select id="comparemarket"><option value="h2h" selected>Moneyline</option><option value="spreads">Spread</option><option value="totals">Total</option></select><button type="button" id="refreshodds">Refresh</button></div><div id="oddscompare"></div></section>
 <section class="card" id="todaycard">
@@ -1702,7 +1707,8 @@ function paintSharpCheck(){
     if (/^\d{4}-\d{2}-\d{2}$/.test(day)) dates.add(day);
   });
   const week = all.filter(b => dates.has(String(b.date || "").slice(0, 10)));
-  el.innerHTML = "Beat the close, 7 days: " + beatCloseText(beatCloseStats(week)) + ". Beat the close, graded slips on this browser: " + beatCloseText(beatCloseStats(all)) + ".<br>Confidence: " + confidenceReport(all) + ". A beat is a no-vig CLV above zero. Sharp CLV uses Pinnacle with the juice removed. Pull Odds & Close stores that price. A slip with no clock time was already on the ledger before the clock was added.";
+  const text = "Beat the close, 7 days: " + beatCloseText(beatCloseStats(week)) + ". Beat the close, graded slips on this browser: " + beatCloseText(beatCloseStats(all)) + ". Confidence: " + confidenceReport(all) + ". A beat is a no-vig CLV above zero. Sharp CLV uses Pinnacle with the juice removed. Pull Odds & Close stores that price. A slip with no clock time was already on the ledger before the clock was added.";
+  el.innerHTML = text.split(/\.\s+/).map(part => part.replace(/\.$/, "").trim()).filter(Boolean).map(part => "<li>" + esc(part) + ".</li>").join("");
 }
 function clvNumber(text){
   const s = String(text == null ? "" : text);
