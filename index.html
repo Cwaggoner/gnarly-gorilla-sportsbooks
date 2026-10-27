@@ -247,7 +247,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 .compare th, .compare td { border-bottom:1px solid #1f3a1f; padding:4px 6px; text-align:left; }
 .compare th { color:#39ff14; }
 #liveodds > .section-head { margin-bottom:4px; }
-.odds-tools { display:flex; flex-direction:row; align-items:center; justify-content:flex-start; gap:8px; margin:0 0 6px; flex-wrap:wrap; }
+.odds-tools { display:flex; flex-direction:row; align-items:center; justify-content:flex-start; gap:8px; margin:0 0 6px; flex-wrap:nowrap; width:max-content; max-width:100%; }
 .odds-tools button, .odds-tools select { height:32px; padding:4px 10px; box-sizing:border-box; }
 .odds-notes { list-style:none; margin:0 0 8px; padding:0; }
 .odds-notes li { color:var(--amber); font-size:12px; line-height:1.35; margin:0; }
@@ -3396,6 +3396,21 @@ function sortOddsRows(){
     return at.localeCompare(bt);
   }).forEach(row => tbody.appendChild(row));
 }
+function placeOddsTools(){
+  const tools = document.getElementById("compareday");
+  const table = document.querySelector("#oddscompare table.compare:not(.shop)");
+  if (!tools) return;
+  if (!table) { tools.style.marginLeft = ""; return; }
+  const heads = [...table.querySelectorAll("thead tr.cols th")];
+  const start = heads.find(th => (th.textContent || "").trim() === "Caesars");
+  const end = heads.find(th => (th.textContent || "").trim() === "HardRock");
+  if (!start || !end) { tools.style.marginLeft = ""; return; }
+  const spanMid = (start.getBoundingClientRect().left + end.getBoundingClientRect().right) / 2;
+  const shift = parseFloat(tools.style.marginLeft) || 0;
+  const base = tools.getBoundingClientRect().left - shift;
+  const left = spanMid - base - tools.offsetWidth / 2;
+  tools.style.marginLeft = Math.max(0, Math.round(left)) + "px";
+}
 function filterCompare(){
   const sport = (document.getElementById("comparesport") || {}).value || "All";
   const rows = [...document.querySelectorAll("#oddscompare tbody tr")];
@@ -3449,6 +3464,7 @@ function wireCompare(){
   ensureOddsTimeColumn();
   applyGameStarts();
   sortOddsRows();
+  requestAnimationFrame(placeOddsTools);
 }
 function priceProfit(result, price, stake){
   stake = Number(stake) || 10;
@@ -4174,6 +4190,7 @@ async function repriceSlips(){
   note.textContent = priced + " pending slips repriced at " + book + ".";
 }
 document.getElementById("refreshodds").onclick = () => drawOddsCompare(true).then(() => { document.getElementById("pdfnote").textContent = "Live Odds refreshed."; }).catch(e => { document.getElementById("pdfnote").textContent = "Refresh failed: " + (e && e.message || e); });
+window.addEventListener("resize", () => requestAnimationFrame(placeOddsTools));
 document.getElementById("commitkey").onclick = () => {
   const key = oddskey.value.trim();
   localStorage.setItem("gg-odds-key", key);
