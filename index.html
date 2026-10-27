@@ -2180,6 +2180,11 @@ function openGameBet(sport, game, date){
   const money = boardRow(day.h2h, game);
   const spread = boardRow(day.spreads, game);
   const total = boardRow(day.totals, game);
+  const cellFor = row => {
+    const books = (row && row.books) || {};
+    const chosen = book && books[book] && books[book] !== "-" ? books[book] : "";
+    return String(chosen || books.DraftKings || books.BetMGM || "");
+  };
   const addOpt = (label, price, market) => {
     const opt = document.createElement("option");
     opt.value = label;
@@ -2188,36 +2193,34 @@ function openGameBet(sport, game, date){
     opt.dataset.market = market;
     sel.appendChild(opt);
   };
-  const ml = money && money.books && String(money.books.DraftKings || "");
-  const mlParts = ml.match(/([+-]\d+)\s*\/\s*([+-]\d+)/);
+  const mlParts = cellFor(money).match(/([+-]\d+)\s*\/\s*([+-]\d+)/);
   if (mlParts && away && home) {
     addOpt(nick(away) + " ML at " + home, mlParts[1], "Moneyline");
     addOpt(nick(home) + " ML vs " + away, mlParts[2], "Moneyline");
   }
-  const sp = spread && spread.books && String(spread.books.DraftKings || "");
-  const spParts = sp.match(/^([A-Za-z]+)\s*([+-]?\d+(?:\.\d+)?)$/);
+  const spreadSides = cellFor(spread).split("/").map(s => s.trim());
+  const spreadSide = text => {
+    const hit = String(text || "").match(/([+-]?\d+(?:\.\d+)?)\s+([+-]\d+)/);
+    if (!hit) return null;
+    const point = Number(hit[1]);
+    const shown = (point > 0 ? "+" : "") + point;
+    return {shown, price: hit[2]};
+  };
+  const awaySpread = spreadSide(spreadSides[0]);
+  const homeSpread = spreadSide(spreadSides[1]);
   let dog = "";
-  if (spParts && away && home) {
-    const who = teamForAbbr(spParts[1], away, home);
-    const n = Number(spParts[2]);
-    const opp = (n > 0 ? "-" : "+") + Math.abs(n);
-    const fav = (n < 0 ? "" : "+") + n;
-    if (who === "home") {
-      addOpt(nick(home) + " " + (n > 0 ? "+" : "") + n + " vs " + away, "", "Spread");
-      addOpt(nick(away) + " " + opp + " at " + home, "", "Spread");
-      dog = n > 0 ? nick(home) + " " + "+" + n : nick(away) + " " + opp;
-    } else if (who === "away") {
-      addOpt(nick(away) + " " + (n > 0 ? "+" : "") + n + " at " + home, "", "Spread");
-      addOpt(nick(home) + " " + opp + " vs " + away, "", "Spread");
-      dog = n > 0 ? nick(away) + " " + "+" + n : nick(home) + " " + opp;
-    } else addOpt(away + " at " + home + " " + sp, "", "Spread");
+  if (awaySpread && homeSpread && away && home) {
+    addOpt(nick(away) + " " + awaySpread.shown + " at " + home, awaySpread.price, "Spread");
+    addOpt(nick(home) + " " + homeSpread.shown + " vs " + away, homeSpread.price, "Spread");
+    dog = Number(awaySpread.shown) > 0 ? nick(away) + " " + awaySpread.shown : nick(home) + " " + homeSpread.shown;
   }
-  const ou = total && total.books && String(total.books.DraftKings || "");
-  const ouNum = ou.match(/\d+(?:\.\d+)?/);
-  if (ouNum && away && home) {
-    addOpt(away + " at " + home + " Over " + ouNum[0], "", "Total");
-    addOpt(away + " at " + home + " Under " + ouNum[0], "", "Total");
-    if (dog) addOpt(dog + " and Under " + ouNum[0] + " " + away + " at " + home, "", "SGP");
+  const totalSides = cellFor(total).split("/").map(s => s.trim());
+  const over = String(totalSides[0] || "").match(/(\d+(?:\.\d+)?)\s+([+-]\d+)/);
+  const under = String(totalSides[1] || "").match(/(?:(\d+(?:\.\d+)?)\s+)?([+-]\d+)/);
+  if (over && under && away && home) {
+    addOpt(away + " at " + home + " Over " + over[1], over[2], "Total");
+    addOpt(away + " at " + home + " Under " + (under[1] || over[1]), under[2], "Total");
+    if (dog) addOpt(dog + " and Under " + (under[1] || over[1]) + " " + away + " at " + home, "", "SGP");
   }
   document.getElementById("picknote").textContent = sel.options.length > 1 ? "Extra bet on " + game + ". Posted picks stay. Enter the odds when the box is empty, then Save Bet." : "No posted price for " + game + ". Choose the type and type the pick.";
   document.getElementById("editnote").textContent = "";
@@ -2866,11 +2869,14 @@ async function drawOddsCompare(force){
   const market = (document.getElementById("comparemarket") || {}).value || localStorage.getItem("gg-compare-market") || "h2h";
   localStorage.setItem("gg-compare-market", market);
   const published = publishedOddsHtml(day, market);
-  if (published && !(force && key)) {
+  if (published) {
     box.innerHTML = published;
     wireCompare();
     return;
   }
+  box.innerHTML = "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>" + (day === easternDay() ? "Today" : "Yesterday") + ". No posted board for " + esc(day) + ".</p>";
+  wireCompare();
+  return;
   const stamp = localStorage.getItem("gg-compare-stamp-" + market);
   let table = localStorage.getItem("gg-compare-html-" + market) || "";
     const boards = {'h2h': "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>Yesterday. Moneyline, away / home. <select id='comparesport'><option value='CBB'>CBB</option><option value='CFB'>CFB</option><option value='MLB'>MLB</option><option value='NBA'>NBA</option><option value='NFL'>NFL</option><option value='NHL'>NHL</option><option value='All' selected>All</option></select> <select id='comparemarket'><option value='h2h' selected>Moneyline</option><option value='spreads'>Spread</option><option value='totals'>Total</option></select></p><table class='compare'><thead><tr><th>Game</th><th class='timecol'>Time</th><th>BetMGM</th><th>Caesars</th><th>DraftKings</th><th>Fanatics</th><th>FanDuel</th><th>HardRock</th></tr></thead><tbody><tr><td>CBB Season Ended</td><td class='gametime'></td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>CFB Tulane at Memphis</td><td class='gametime' data-start='2026-10-16T23:30:00Z'>7:30 PM</td><td>+7 -112</td><td>-</td><td>+7 -112</td><td>-</td><td>+7 -112</td><td>+7 -112</td></tr><tr><td>CFB Washington at Purdue</td><td class='gametime' data-start='2026-10-17T00:00:00Z'>8:00 PM</td><td>+140 / -165</td><td>-</td><td>+142 / -170</td><td>-</td><td>+132 / -160</td><td>+140 / -165</td></tr><tr><td>CFB App State at Coastal Carolina</td><td class='gametime' data-start='2026-10-17T00:00:00Z'>8:00 PM</td><td>-118 / -102</td><td>-</td><td>-118 / -102</td><td>-</td><td>-115 / -104</td><td>-118 / -102</td></tr><tr><td>MLB Tampa Bay Rays at Cleveland Guardians</td><td class='gametime' data-start='2026-10-15T17:00:00Z'>1:00 PM</td><td>-115 / -105</td><td>-115 / -102</td><td>-116 / -104</td><td>-</td><td>-112 / -104</td><td>-115 / -105</td></tr><tr><td>NBA Milwaukee Bucks at Indiana Pacers</td><td class='gametime' data-start='2026-10-16T23:00:00Z'>7:00 PM</td><td>+8.5 -110</td><td>-</td><td>+8.5 -110</td><td>-</td><td>+8.5 -110</td><td>+8.5 -110</td></tr><tr><td>NBA Toronto Raptors at Detroit Pistons</td><td class='gametime' data-start='2026-10-16T23:00:00Z'>7:00 PM</td><td>+9.5 -110</td><td>-</td><td>+9.5 -110</td><td>-</td><td>+9.5 -110</td><td>+9.5 -110</td></tr><tr><td>NBA Boston Celtics at Philadelphia 76ers</td><td class='gametime' data-start='2026-10-16T23:00:00Z'>7:00 PM</td><td>+5.5 -110</td><td>-</td><td>+5.5 -110</td><td>-</td><td>+5.5 -110</td><td>+5.5 -110</td></tr><tr><td>NBA Miami Heat at Orlando Magic</td><td class='gametime' data-start='2026-10-16T23:00:00Z'>7:00 PM</td><td>+120 / -140</td><td>-</td><td>+120 / -140</td><td>-</td><td>+120 / -140</td><td>+120 / -140</td></tr><tr><td>NBA Boston Celtics at Philadelphia 76ers</td><td class='gametime' data-start='2026-10-16T23:00:00Z'>7:00 PM</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NBA Atlanta Hawks at Dallas Mavericks</td><td class='gametime' data-start='2026-10-17T00:00:00Z'>8:00 PM</td><td>-105 / -115</td><td>-</td><td>-105 / -115</td><td>-</td><td>-105 / -115</td><td>-105 / -115</td></tr><tr><td>NBA Sacramento Kings at San Antonio Spurs</td><td class='gametime' data-start='2026-10-17T00:00:00Z'>8:00 PM</td><td>+625 / -950</td><td>-</td><td>+625 / -950</td><td>-</td><td>+625 / -950</td><td>+625 / -950</td></tr><tr><td>NBA Charlotte Hornets at Memphis Grizzlies</td><td class='gametime' data-start='2026-10-17T00:00:00Z'>8:00 PM</td><td>-120 / +100</td><td>-</td><td>-120 / +100</td><td>-</td><td>-120 / +100</td><td>-120 / +100</td></tr><tr><td>NBA Washington Wizards at New Orleans Pelicans</td><td class='gametime' data-start='2026-10-17T00:00:00Z'>8:00 PM</td><td>-130 / +110</td><td>-</td><td>-130 / +110</td><td>-</td><td>-130 / +110</td><td>-130 / +110</td></tr><tr><td>NBA Minnesota Timberwolves at Chicago Bulls</td><td class='gametime' data-start='2026-10-17T00:00:00Z'>8:00 PM</td><td>-120 / +100</td><td>-</td><td>-120 / +100</td><td>-</td><td>-120 / +100</td><td>-120 / +100</td></tr><tr><td>NBA Portland Trail Blazers at Golden State Warriors</td><td class='gametime' data-start='2026-10-17T02:00:00Z'>10:00 PM</td><td>-205 / +170</td><td>-</td><td>-205 / +170</td><td>-</td><td>-205 / +170</td><td>-205 / +170</td></tr><tr><td>NBA Utah Jazz at Phoenix Suns</td><td class='gametime' data-start='2026-10-17T02:00:00Z'>10:00 PM</td><td>+165 / -200</td><td>-</td><td>+165 / -200</td><td>-</td><td>+165 / -200</td><td>+165 / -200</td></tr><tr><td>NBA Denver Nuggets at Los Angeles Lakers</td><td class='gametime' data-start='2026-10-17T02:30:00Z'>10:30 PM</td><td>+180 / -220</td><td>-</td><td>+180 / -220</td><td>-</td><td>+180 / -220</td><td>+180 / -220</td></tr><tr><td>NFL No Picks</td><td class='gametime'></td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NHL Pittsburgh Penguins at Colorado Avalanche</td><td class='gametime' data-start='2026-10-17T01:00:00Z'>9:00 PM</td><td>+180 / -220</td><td>-</td><td>+175 / -215</td><td>-</td><td>+175 / -210</td><td>+180 / -220</td></tr><tr><td>NHL Anaheim Ducks</td><td class='gametime'></td><td>-105</td><td>-</td><td>-105</td><td>-</td><td>-105</td><td>-105</td></tr></tbody></table>", 'spreads': "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>Yesterday. Spread, away / home. <select id='comparesport'><option value='CBB'>CBB</option><option value='CFB'>CFB</option><option value='MLB'>MLB</option><option value='NBA'>NBA</option><option value='NFL'>NFL</option><option value='NHL'>NHL</option><option value='All' selected>All</option></select> <select id='comparemarket'><option value='h2h'>Moneyline</option><option value='spreads' selected>Spread</option><option value='totals'>Total</option></select></p><table class='compare'><thead><tr><th>Game</th><th class='timecol'>Time</th><th>BetMGM</th><th>Caesars</th><th>DraftKings</th><th>Fanatics</th><th>FanDuel</th><th>HardRock</th></tr></thead><tbody><tr><td>CBB Season Ended</td><td class='gametime'></td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>CFB Tulane at Memphis</td><td class='gametime' data-start='2026-10-16T23:30:00Z'>7:30 PM</td><td>+7 -112</td><td>-</td><td>+7 -112</td><td>-</td><td>+7 -112</td><td>+7 -112</td></tr><tr><td>CFB Washington at Purdue</td><td class='gametime' data-start='2026-10-17T00:00:00Z'>8:00 PM</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>CFB App State at Coastal Carolina</td><td class='gametime' data-start='2026-10-17T00:00:00Z'>8:00 PM</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>MLB Tampa Bay Rays at Cleveland Guardians</td><td class='gametime' data-start='2026-10-15T17:00:00Z'>1:00 PM</td><td>-1.5 +155 / +1.5 -190</td><td>-1.5 +159 / +1.5 -189</td><td>-1.5 +153 / +1.5 -187</td><td>-</td><td>-1.5 +160 / +1.5 -194</td><td>-1.5 +160 / +1.5 -190</td></tr><tr><td>NBA Milwaukee Bucks at Indiana Pacers</td><td class='gametime' data-start='2026-10-16T23:00:00Z'>7:00 PM</td><td>+8.5 -110</td><td>-</td><td>+8.5 -110</td><td>-</td><td>+8.5 -110</td><td>+8.5 -110</td></tr><tr><td>NBA Toronto Raptors at Detroit Pistons</td><td class='gametime' data-start='2026-10-16T23:00:00Z'>7:00 PM</td><td>+9.5 -110</td><td>-</td><td>+9.5 -110</td><td>-</td><td>+9.5 -110</td><td>+9.5 -110</td></tr><tr><td>NBA Boston Celtics at Philadelphia 76ers</td><td class='gametime' data-start='2026-10-16T23:00:00Z'>7:00 PM</td><td>+5.5 -110</td><td>-</td><td>+5.5 -110</td><td>-</td><td>+5.5 -110</td><td>+5.5 -110</td></tr><tr><td>NBA Miami Heat at Orlando Magic</td><td class='gametime' data-start='2026-10-16T23:00:00Z'>7:00 PM</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NBA Boston Celtics at Philadelphia 76ers</td><td class='gametime' data-start='2026-10-16T23:00:00Z'>7:00 PM</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NBA Atlanta Hawks at Dallas Mavericks</td><td class='gametime' data-start='2026-10-17T00:00:00Z'>8:00 PM</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NBA Sacramento Kings at San Antonio Spurs</td><td class='gametime' data-start='2026-10-17T00:00:00Z'>8:00 PM</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NBA Charlotte Hornets at Memphis Grizzlies</td><td class='gametime' data-start='2026-10-17T00:00:00Z'>8:00 PM</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NBA Washington Wizards at New Orleans Pelicans</td><td class='gametime' data-start='2026-10-17T00:00:00Z'>8:00 PM</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NBA Minnesota Timberwolves at Chicago Bulls</td><td class='gametime' data-start='2026-10-17T00:00:00Z'>8:00 PM</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NBA Portland Trail Blazers at Golden State Warriors</td><td class='gametime' data-start='2026-10-17T02:00:00Z'>10:00 PM</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NBA Utah Jazz at Phoenix Suns</td><td class='gametime' data-start='2026-10-17T02:00:00Z'>10:00 PM</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NBA Denver Nuggets at Los Angeles Lakers</td><td class='gametime' data-start='2026-10-17T02:30:00Z'>10:30 PM</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NFL No Picks</td><td class='gametime'></td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NHL Pittsburgh Penguins at Colorado Avalanche</td><td class='gametime' data-start='2026-10-17T01:00:00Z'>9:00 PM</td><td>+1.5 -135</td><td>-</td><td>+1.5 -135</td><td>-</td><td>+1.5 -135</td><td>+1.5 -135</td></tr></tbody></table>", 'totals': "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>Yesterday. Total, over point and price / under price. <select id='comparesport'><option value='CBB'>CBB</option><option value='CFB'>CFB</option><option value='MLB'>MLB</option><option value='NBA'>NBA</option><option value='NFL'>NFL</option><option value='NHL'>NHL</option><option value='All' selected>All</option></select> <select id='comparemarket'><option value='h2h'>Moneyline</option><option value='spreads'>Spread</option><option value='totals' selected>Total</option></select></p><table class='compare'><thead><tr><th>Game</th><th class='timecol'>Time</th><th>BetMGM</th><th>Caesars</th><th>DraftKings</th><th>Fanatics</th><th>FanDuel</th><th>HardRock</th></tr></thead><tbody><tr><td>CBB Season Ended</td><td class='gametime'></td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>CFB Memphis vs Tulane</td><td class='gametime' data-start='2026-10-16T23:30:00Z'>7:30 PM</td><td>55.5 -108 / -108</td><td>-</td><td>55.5 -108 / -108</td><td>-</td><td>55.5 -108 / -108</td><td>55.5 -108 / -108</td></tr><tr><td>MLB Tampa Bay Rays at Cleveland Guardians</td><td class='gametime' data-start='2026-10-15T17:00:00Z'>1:00 PM</td><td>6.5 -110 / -110</td><td>6.5 -106 / -111</td><td>6.5 -108 / -112</td><td>-</td><td>6.5 -110 / -110</td><td>6.5 -110 / -110</td></tr><tr><td>NBA Milwaukee Bucks at Indiana Pacers</td><td class='gametime' data-start='2026-10-16T23:00:00Z'>7:00 PM</td><td>235.5 -110 / -110</td><td>-</td><td>235.5 -110 / -110</td><td>-</td><td>235.5 -110 / -110</td><td>235.5 -110 / -110</td></tr><tr><td>NBA Toronto Raptors at Detroit Pistons</td><td class='gametime' data-start='2026-10-16T23:00:00Z'>7:00 PM</td><td>217.5 -110 / -110</td><td>-</td><td>217.5 -110 / -110</td><td>-</td><td>217.5 -110 / -110</td><td>217.5 -110 / -110</td></tr><tr><td>NFL No Picks</td><td class='gametime'></td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>NHL Pittsburgh Penguins at Colorado Avalanche</td><td class='gametime' data-start='2026-10-17T01:00:00Z'>9:00 PM</td><td>6.5 -110 / -110</td><td>-</td><td>6.5 -110 / -110</td><td>-</td><td>6.5 -110 / -110</td><td>6.5 -110 / -110</td></tr></tbody></table>"};
@@ -3110,7 +3116,7 @@ function wireCompare(){
     wrap.innerHTML = "<button type='button' id='day-yesterday'>Yesterday</button> <button type='button' id='day-today'>Today</button> ";
     note.insertBefore(wrap, note.firstChild);
     document.getElementById("day-yesterday").onclick = () => { localStorage.setItem("gg-compare-day", "yesterday"); drawOddsCompare(false).catch(() => {}); };
-    document.getElementById("day-today").onclick = () => { localStorage.setItem("gg-compare-day", "today"); drawOddsCompare(true).catch(() => {}); };
+    document.getElementById("day-today").onclick = () => { localStorage.setItem("gg-compare-day", "today"); drawOddsCompare(false).catch(() => {}); };
   }
   const mode = localStorage.getItem("gg-compare-day") === "today" ? "today" : "yesterday";
   const yBtn = document.getElementById("day-yesterday");
@@ -3125,7 +3131,7 @@ function wireCompare(){
   const sport = document.getElementById("comparesport");
   if (sport && !sport.dataset.wired) {
     sport.dataset.wired = "1";
-    sport.value = "All";
+    sport.value = localStorage.getItem("gg-compare-sport") || "All";
     sport.onchange = () => { localStorage.setItem("gg-compare-sport", sport.value); filterCompare(); };
   }
   filterCompare();
@@ -5154,8 +5160,59 @@ setInterval(refreshTodayCard, 60000);
 (async () => { const k = (document.getElementById("oddskey") || {}).value || ""; if (k.trim()) { paidKey = true; } })();
 loadDriveCardForCalendar();
 setInterval(loadDriveCardForCalendar, 60000);
-fetch("cards/book-prices.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => { if (data) { publishedBooks = data; render(); } }).catch(() => {});
-fetch("cards/odds-board.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => { if (data && data.days) { window.__ggOddsBoard = data; drawOddsCompare(false).catch(() => {}); } }).catch(() => {});
+function booksFromOddsBoard(board){
+  const out = {};
+  const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
+  Object.keys((board && board.days) || {}).forEach(day => {
+    const markets = board.days[day] || {};
+    const dayOut = out[day] || (out[day] = {});
+    ["h2h","spreads","totals"].forEach(market => {
+      (markets[market] || []).forEach(row => {
+        const sport = String(row.sport || "").toUpperCase();
+        const label = row.label || "";
+        const teams = label.split(/\s+at\s+/i);
+        const away = (teams[0] || "").trim();
+        const home = (teams[1] || "").trim();
+        if (!sport || !away || !home) return;
+        const sportRow = dayOut[sport] || (dayOut[sport] = {});
+        const game = sportRow[label] || (sportRow[label] = {});
+        names.forEach(book => {
+          const cell = String((row.books || {})[book] || "").trim();
+          if (!cell || cell === "-") return;
+          const bits = cell.split("/").map(s => s.trim());
+          const entry = game[book] || (game[book] = {});
+          if (market === "h2h") {
+            const prices = cell.match(/[+-]\d+/g) || [];
+            if (prices.length < 2) return;
+            entry.h2h = [{name: away, price: Number(prices[0]), point: null}, {name: home, price: Number(prices[1]), point: null}];
+          } else if (market === "spreads") {
+            const side = bit => {
+              const hit = String(bit || "").match(/([+-]?\d+(?:\.\d+)?)\s+([+-]\d+)/);
+              return hit ? {point: Number(hit[1]), price: Number(hit[2])} : null;
+            };
+            const a = side(bits[0]);
+            const h = side(bits[1]);
+            if (!a || !h || Math.abs(a.point + h.point) > 0.05) return;
+            entry.spreads = [{name: away, price: a.price, point: a.point}, {name: home, price: h.price, point: h.point}];
+          } else {
+            const over = String(bits[0] || "").match(/(\d+(?:\.\d+)?)\s+([+-]\d+)/);
+            const under = String(bits[1] || "").match(/(?:(\d+(?:\.\d+)?)\s+)?([+-]\d+)/);
+            if (!over || !under) return;
+            entry.totals = [{name: "Over", price: Number(over[2]), point: Number(over[1])}, {name: "Under", price: Number(under[2]), point: Number(under[1] || over[1])}];
+          }
+        });
+      });
+    });
+  });
+  return out;
+}
+let fileBooks = {};
+function applyPublishedBooks(){
+  publishedBooks = Object.assign({}, fileBooks, booksFromOddsBoard(window.__ggOddsBoard || {}));
+  render();
+}
+fetch("cards/book-prices.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => { if (data) { fileBooks = data; applyPublishedBooks(); } }).catch(() => {});
+fetch("cards/odds-board.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => { if (data && data.days) { window.__ggOddsBoard = data; applyPublishedBooks(); drawOddsCompare(false).catch(() => {}); } }).catch(() => {});
 fetch("cards/closes.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
   const store = closeStore();
   text.split(/\n/).forEach(line => {
