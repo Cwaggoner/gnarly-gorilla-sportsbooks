@@ -321,6 +321,20 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <section class="card" id="todaycard">
 <div class="section-head"><h2>Today's Card</h2><p class="warn slips-side">One play per line: Sport | Type | Pick | American odds | Confidence. Stake is $10. Book is the dropdown below. Pending until graded.</p></div>
 <div class="card-analysis" id="cardanalysis"><h3 class="split-title">Analysis</h3><div class="analysis-grid" id="analysisgrid"></div><div class="sharp-read"><b>Analysis:</b><p id="sharpread"></p></div><div id="cardgames"></div></div>
+<h2 class="split-title">Injury Reports</h2>
+<p class="api-note">These are the teams on today's card. Red means the player is out. Amber means he may still play. The page pulls the public report when the card loads and again every few minutes. The times below are when a new filing is actually due, in Eastern time.</p>
+<table class="compare">
+<thead><tr><th>Sport</th><th>Week</th><th>Weekend</th><th>Tournament</th></tr></thead>
+<tbody>
+<tr><td>NFL</td><td>Sunday games file Wednesday, Thursday, and Friday at 4:00 PM. Friday is the game status. A Thursday game files Monday through Wednesday.</td><td>A Saturday game files Tuesday through Thursday. A Monday game files Thursday through Saturday. Inactives are 90 minutes before kickoff.</td><td>The playoffs and the Super Bowl use the same clock as that game's weekday. Inactives stay 90 minutes before kickoff.</td></tr>
+<tr><td>NBA</td><td>8:00 PM the night before covers every club's 5:00 PM local report. 4:00 PM on game day covers the 1:00 PM local update. A tip at 5:00 PM or earlier needs a 10:00 AM pull.</td><td>Same clock. The second night of a back-to-back is due at 1:00 PM local, which is inside the 4:00 PM pull.</td><td>The playoffs use the same windows. The inactive list can still change 30 minutes before tip.</td></tr>
+<tr><td>NHL</td><td>Morning skate is the report. 11:00 AM for the East, 2:00 PM for the Central, 5:00 PM for the Pacific.</td><td>Same skates. The starting goalie is often not final until an hour before puck drop.</td><td>A playoff series uses the same skates, then one more look 60 minutes before puck drop.</td></tr>
+<tr><td>MLB</td><td>There is no league injury report. The lineup is the report. Night games: 4 hours before first pitch, then 90 minutes prior. Day games: 9:30 AM.</td><td>Same. A getaway-day lineup can post late, so keep the 90-minute check.</td><td>The postseason and the World Series: 3 hours before first pitch, then 45 minutes prior.</td></tr>
+<tr><td>CFB</td><td>Wednesday 6:00 PM is the first availability. Friday 6:00 PM is the report for Saturday.</td><td>A Friday night game is Thursday at 6:00 PM. Noon kicks also need Saturday at 10:00 AM.</td><td>Championship week, bowls, and the playoff: Friday 6:00 PM, Saturday 10:00 AM, and 90 minutes before kickoff.</td></tr>
+<tr><td>CBB</td><td>No league report. 8:00 PM the night before, and 10:00 AM on game day.</td><td>Same two pulls.</td><td>Conference tournaments and March Madness: about 11:00 PM after the previous session, then 90 minutes before the session's first tip.</td></tr>
+</tbody>
+</table>
+<div id="injuryreport"><p class="api-note">Loading today's reports.</p></div>
 <div class="card-rest">
 <div class="book-key">
 <label>Book<select id="cardbook" class="book-select">
@@ -2492,6 +2506,64 @@ function applyPostedCard(data, text){
   data.passed = unique.filter(g => !chosen.has(g));
   return data;
 }
+function injuryWorth(status){
+  const s = String(status || "");
+  if (/active|probable|healthy/i.test(s)) return false;
+  return /out|doubt|question|day-to-day|day to day|reserve|\bil\b|suspend/i.test(s);
+}
+function injuryRank(status){
+  const s = String(status || "");
+  if (/reserve|\bil\b|suspend|out for season/i.test(s)) return 0;
+  if (/^out$/i.test(s)) return 1;
+  if (/doubt/i.test(s)) return 2;
+  if (/question/i.test(s)) return 3;
+  return 4;
+}
+function injuryStatusClass(status){
+  if (/out|reserve|\bil\b|suspend/i.test(status)) return "loss";
+  if (/doubt|question|day-to-day|day to day/i.test(status)) return "warn";
+  return "";
+}
+async function drawInjuryReport(){
+  const box = document.getElementById("injuryreport");
+  if (!box) return;
+  const games = ((pickSlate && pickSlate.games) || []).concat((pickSlate && pickSlate.passed) || []);
+  const wanted = [];
+  games.forEach(game => {
+    const sides = slateSides(game);
+    const sport = String(game.sport || "").toUpperCase();
+    if (!SCORE_FEED[sport]) return;
+    [sides.away.name, sides.home.name].forEach(name => {
+      if (!name || wanted.some(row => row.sport === sport && sameClub(row.name, name))) return;
+      wanted.push({sport: sport, name: name, game: (game.sport ? game.sport + " " : "") + (game.game || [sides.away.name, sides.home.name].filter(Boolean).join(" at "))});
+    });
+  });
+  if (!wanted.length) {
+    box.innerHTML = "<p class='api-note'>No card games to match yet.</p>";
+    return;
+  }
+  const sports = [...new Set(wanted.map(row => row.sport))];
+  const packs = await Promise.all(sports.map(sport => fetch("https://site.api.espn.com/apis/site/v2/sports/" + SCORE_FEED[sport] + "/injuries").then(r => r.ok ? r.json() : null).catch(() => null)));
+  const bySport = {};
+  sports.forEach((sport, i) => { bySport[sport] = packs[i]; });
+  const rows = [];
+  wanted.forEach(team => {
+    const feed = bySport[team.sport];
+    const club = ((feed && feed.injuries) || []).find(item => sameClub(item.displayName || (item.team && item.team.displayName), team.name));
+    const list = ((club && club.injuries) || []).filter(item => injuryWorth(item.status)).sort((a, b) => injuryRank(a.status) - injuryRank(b.status)).slice(0, 6);
+    if (!list.length) {
+      rows.push("<tr><td>" + esc(team.game) + "</td><td>" + esc(team.name) + "</td><td>-</td><td>-</td><td>No report posted</td></tr>");
+      return;
+    }
+    list.forEach(item => {
+      const athlete = item.athlete || {};
+      const pos = athlete.position && athlete.position.abbreviation ? " " + athlete.position.abbreviation : "";
+      const detail = item.shortComment || (item.details && (item.details.detail || item.details.type)) || (item.type && (item.type.description || item.type.name)) || "";
+      rows.push("<tr><td>" + esc(team.game) + "</td><td>" + esc(team.name) + "</td><td>" + esc((athlete.displayName || "Player") + pos) + "</td><td class='" + injuryStatusClass(item.status) + "'>" + esc(item.status || "-") + "</td><td>" + esc(String(detail).replace(/\s+/g, " ").slice(0, 160)) + "</td></tr>");
+    });
+  });
+  box.innerHTML = "<table class='compare'><thead><tr><th>Game</th><th>Team</th><th>Player</th><th>Status</th><th>Report</th></tr></thead><tbody>" + rows.join("") + "</tbody></table>";
+}
 async function readJson(url){
   const res = await fetch(url + "?ts=" + Date.now());
   if (!res.ok) return null;
@@ -2503,14 +2575,15 @@ async function loadPickSlate(){
   try {
     let data = await readJson("cards/pick-slate.json");
     if (!data || !Array.isArray(data.games) || !data.games.length) data = await readJson("cards/scoreboard.json");
-    if (!data || !Array.isArray(data.games) || !data.games.length) return;
+    if (!data || !Array.isArray(data.games) || !data.games.length) { drawInjuryReport().catch(() => {}); return; }
     const card = await fetch("cards/today.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").catch(() => "");
     applyPostedCard(data, card);
-    if (!data.games.length) return;
+    if (!data.games.length) { drawInjuryReport().catch(() => {}); return; }
     const stamp = JSON.stringify([data.date, data.games, data.passed || []]);
     const same = pickSlate && pickSlate._stamp === stamp;
     data._stamp = stamp;
     pickSlate = data;
+    drawInjuryReport().catch(() => {});
     if (!same) drawCalendar();
     refreshSlateRecords().then(updated => { if (!same && !updated) drawPickSlate(); }).catch(() => { if (!same) drawPickSlate(); });
     armHourlyScores();
