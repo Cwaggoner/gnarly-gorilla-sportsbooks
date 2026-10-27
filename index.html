@@ -2940,6 +2940,24 @@ function clearStalePending(){
   const kept = bets.filter(b => inSlipWindow(b.date));
   if (kept.length !== load().length) save(kept);
 }
+function gradeNote(b){
+  const result = b && b.result;
+  if (result !== "win" && result !== "loss" && result !== "push") return "";
+  if (result === "push") return "Push";
+  const type = b.type || betType(b);
+  const pick = String(b.pick || "");
+  if (type === "Total" || /\b(over|under)\b/i.test(pick)) {
+    const under = /\bunder\b/i.test(pick);
+    const num = (pick.match(/\b(?:over|under)\s+(\d+(?:\.\d+)?)/i) || [])[1] || "";
+    const side = (under ? "Under" : "Over") + (num ? " " + num : "");
+    return result === "win" ? side + " hit" : side + " missed";
+  }
+  if (type === "Moneyline" || /\bml\b|moneyline/i.test(pick)) return result === "win" ? "Won ML" : "Lost ML";
+  if (type === "SGP" || type === "Parlay") return result === "win" ? "Both legs hit" : "A leg missed";
+  const line = (pick.match(/[+-]\d+(?:\.\d+)?/) || [])[0] || "";
+  if (result === "win") return line ? "Covered " + line : "Covered";
+  return line ? "Missed " + line : "Missed";
+}
 function render(){
   if (rendering) return;
   rendering = true;
@@ -2973,11 +2991,11 @@ function render(){
     const p = noMoney ? null : slipMoney(b);
     const cls = b.result === "win" ? "win" : b.result === "loss" ? "loss" : "push";
     const finished = slateSettled(b.date);
-    const graded = b.result === "win" || b.result === "loss" || b.result === "push";
+    const note = gradeNote(b);
     const grade = b.viewOnly
-      ? (b.noPrice ? "No Price Saved" : b.lineDiffers ? "Line differs" : dash)
-      : graded
-      ? dash
+      ? (b.noPrice ? "No Price Saved" : b.lineDiffers ? "Line differs" : (note ? "<span class='" + cls + "'>" + esc(note) + "</span>" : dash))
+      : note
+      ? "<span class='" + cls + "'>" + esc(note) + "</span>"
       : !finished ? "Game not finished"
       : "<button data-set='win' data-id='" + b.id + "'>Win</button> <button class='danger' data-set='loss' data-id='" + b.id + "'>Loss</button> <button class='amber' data-set='push' data-id='" + b.id + "'>Push</button>";
     const cv = clv(b);
