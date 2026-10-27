@@ -710,6 +710,23 @@ function lastSevenDates(){
 }
 let closeMap = {};
 let betMap = {};
+let closeRows = [];
+function priceNumber(v){
+  if (v == null || String(v).trim() === "") return null;
+  const n = Number(String(v).replace(/[^\d+.\-]/g, ""));
+  return Number.isFinite(n) && n !== 0 ? n : null;
+}
+function noteClose(date, sport, pick, close){
+  const n = priceNumber(close);
+  if (n == null || !date || !pick) return;
+  const sportU = String(sport || "").toUpperCase();
+  closeMap[date + "|" + pick] = String(n);
+  const id = date + "|" + sportU + "|" + pick;
+  const at = closeRows.findIndex(r => r.id === id);
+  const row = {id: id, date: date, sport: sportU, pick: pick, close: n};
+  if (at >= 0) closeRows[at] = row;
+  else closeRows.push(row);
+}
 async function fillHistoricalCloses(){
   const key = (document.getElementById("oddskey") || {}).value.trim();
   if (!key) return;
@@ -744,10 +761,11 @@ function loadCloses(){
   return fetch("cards/closes.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
     closeMap = {};
     betMap = {};
+    closeRows = [];
     text.split(/\n/).forEach(line => {
       const parts = line.split("|").map(s => s.trim());
       if (parts.length < 5 || !/^\d{4}-\d{2}-\d{2}$/.test(parts[0])) return;
-      closeMap[parts[0] + "|" + parts[3]] = parts[4];
+      noteClose(parts[0], parts[1], parts[3], parts[4]);
       if (parts[2]) betMap[parts[0] + "|" + parts[3]] = parts[2];
     });
   }).catch(() => {});
@@ -1410,16 +1428,13 @@ function clvText(b){
 }
 function fileCloseFor(b){
   if (!b || !b.date || !b.pick) return null;
-  const num = v => {
-    if (v == null || String(v).trim() === "") return null;
-    const n = Number(String(v).replace(/[^\d+-]/g, ""));
-    return Number.isFinite(n) && n !== 0 ? n : null;
-  };
-  const direct = num(closeMap[b.date + "|" + b.pick]);
+  const date = String(b.date).slice(0, 10);
+  const sport = String(b.sport || "").toUpperCase();
+  const direct = priceNumber(closeMap[date + "|" + b.pick]);
   if (direct != null) return direct;
-  const key = Object.keys(closeMap).find(k => k.indexOf(b.date + "|") === 0 && samePick(k.slice(b.date.length + 1), b.pick));
-  if (key) return num(closeMap[key]);
-  return null;
+  const hits = closeRows.filter(r => r.date === date && (!sport || !r.sport || r.sport === sport) && sameWager(r.pick, b.pick));
+  const prices = [...new Set(hits.map(r => r.close))];
+  return prices.length === 1 ? prices[0] : null;
 }
 const LAST_API_DAY = "2026-10-16";
 const LAST_API_ROWS = [
@@ -1488,13 +1503,28 @@ function rememberApiBoard(day, market, rows){
   });
   localStorage.setItem("gg-api-close", JSON.stringify(pack));
 }
+function storeCloseFor(b){
+  if (!b) return null;
+  const store = closeStore();
+  const exact = store[closeKey(b)];
+  const take = row => row && usableClose(row.close) && row.realClose !== false ? Number(row.close) : null;
+  const direct = take(exact);
+  if (direct != null) return direct;
+  const date = String(b.date || "").slice(0, 10);
+  const sport = String(b.sport || "").toUpperCase();
+  const hits = Object.values(store).filter(s => s && String(s.date || "").slice(0, 10) === date && (!sport || String(s.sport || "").toUpperCase() === sport) && sameWager(s.pick, b.pick));
+  const prices = [...new Set(hits.map(take).filter(n => n != null))];
+  return prices.length === 1 ? prices[0] : null;
+}
 function savedCloseFor(b){
   if (!b) return null;
   const hist = fileCloseFor(b);
   if (usableClose(hist)) return Number(hist);
-  const saved = closeStore()[closeKey(b)];
-  if (saved && usableClose(saved.close)) return Number(saved.close);
-  const hit = (gradeFile || []).find(g => g && g.date === b.date && samePick(g.pick, b.pick) && usableClose(g.close));
+  const stored = storeCloseFor(b);
+  if (usableClose(stored)) return Number(stored);
+  const date = String(b.date || "").slice(0, 10);
+  const sport = String(b.sport || "").toUpperCase();
+  const hit = (gradeFile || []).find(g => g && String(g.date || "").slice(0, 10) === date && (!sport || !g.sport || String(g.sport).toUpperCase() === sport) && sameWager(g.pick, b.pick) && usableClose(g.close));
   if (hit) return Number(hit.close);
   const api = apiCloseFor(b);
   if (usableClose(api)) return Number(api);
@@ -1613,16 +1643,7 @@ async function loadDriveCardForCalendar(){
   } catch (err) {}
 }
 function gradedPool(){
-  const poolMap = {};
-  load().concat(loadGrade()).concat(gradeFile).forEach(b => {
-    if (!b || !b.pick || isNoPick(b)) return;
-    const date = String(b.date || "").slice(0, 10);
-    const key = [date, b.sport, b.pick].join("|");
-    const prior = poolMap[key];
-    const better = !prior || (prior.result === "pending" && b.result !== "pending") || (Number.isFinite(Number(b.profit)) && !Number.isFinite(Number(prior.profit)));
-    if (better) poolMap[key] = b;
-  });
-  return Object.values(poolMap);
+  return collapseSlips(load().concat(loadGrade()).concat(gradeFile).filter(b => b && b.pick && !isNoPick(b)));
 }
 function slipsForDay(date){
   return gradedPool().filter(b => String(b.date || "").slice(0, 10) === date && (b.result === "win" || b.result === "loss" || b.result === "push"));
@@ -2067,13 +2088,7 @@ function slateHtml(){
 }
 function cardSlips(){
   const all = load().concat(loadGrade()).concat(gradeFile || []).filter(b => b && b.pick && !isNoPick(b));
-  const byKey = {};
-  all.forEach(b => {
-    const key = [b.date, b.sport, b.pick].join("|");
-    const prior = byKey[key];
-    if (!prior || (prior.result === "pending" && b.result !== "pending")) byKey[key] = b;
-  });
-  return dropMatchedPending(Object.values(byKey)).filter(b => inSlipWindow(b.date));
+  return dropMatchedPending(collapseSlips(all)).filter(b => inSlipWindow(b.date));
 }
 function pendingSlips(){
   return cardSlips().filter(b => b.result === "pending");
@@ -2326,6 +2341,58 @@ function expandTeams(text){
 function pickTokens(pick){
   return expandTeams(pick).replace(/[^a-z0-9.+-]+/g, " ").split(/\s+/).filter(w => w.length > 1);
 }
+function wagerParts(pick){
+  const text = normPick(pick);
+  const ou = text.match(/\b(over|under)\s+([0-9]+(?:\.[0-9]+)?)/);
+  const ml = /\bml\b|\bmoneyline\b/.test(text);
+  let line = null;
+  if (!ou) {
+    const nums = text.match(/[+-]\d+(?:\.\d+)?/g) || [];
+    const found = nums.map(Number).find(n => n !== 0 && Math.abs(n) < 50);
+    if (found != null) line = found;
+  }
+  const teams = text.split(" ").filter(w => w.length >= 3 && !/^(over|under|moneyline|spread|total|close|game|picks|points|vs|and|the|for|at|ml)$/.test(w) && !/^[+-]?\d/.test(w));
+  return {text: text, ou: ou ? ou[1] + " " + String(Number(ou[2])) : "", ml: ml, line: line, teams: teams};
+}
+function sameWager(a, b){
+  const left = normPick(a), right = normPick(b);
+  if (!left || !right) return false;
+  if (left === right) return true;
+  if (/\band\b/.test(left) || /\band\b/.test(right)) return false;
+  const A = wagerParts(a), B = wagerParts(b);
+  if (A.ou || B.ou) { if (A.ou !== B.ou) return false; }
+  else if (A.ml !== B.ml) return false;
+  else if (A.line !== B.line) return false;
+  else if (A.line == null && !A.ml) return false;
+  if (!A.teams.length || !B.teams.length) return false;
+  const short = A.teams.length <= B.teams.length ? A.teams : B.teams;
+  const long = short === A.teams ? B.teams : A.teams;
+  return short.every(w => long.includes(w));
+}
+function collapseSlips(rows){
+  const byKey = {};
+  (rows || []).forEach(b => {
+    if (!b || !b.pick) return;
+    const date = String(b.date || "").slice(0, 10);
+    const sport = String(b.sport || "").toUpperCase();
+    const hit = Object.keys(byKey).find(k => {
+      const prior = byKey[k];
+      return String(prior.date || "").slice(0, 10) === date && String(prior.sport || "").toUpperCase() === sport && sameWager(prior.pick, b.pick);
+    });
+    const key = hit || [date, sport, normPick(b.pick)].join("|");
+    const prior = byKey[key];
+    if (!prior) { byKey[key] = b; return; }
+    const incoming = Number(b.profit), had = Number(prior.profit);
+    const takeNext = (prior.result === "pending" && b.result !== "pending") || (prior.result === b.result && Number.isFinite(incoming) && incoming !== 0 && (!Number.isFinite(had) || had === 0));
+    const keep = takeNext ? b : prior;
+    const other = takeNext ? prior : b;
+    if (!usableClose(keep.close) && usableClose(other.close)) { keep.close = other.close; keep.realClose = true; }
+    if (String(other.pick || "").length > String(keep.pick || "").length) keep.pick = other.pick;
+    if ((keep.odds === "" || keep.odds == null || Number.isNaN(Number(keep.odds))) && other.odds !== "" && other.odds != null) keep.odds = other.odds;
+    byKey[key] = keep;
+  });
+  return Object.values(byKey);
+}
 function samePick(a, b){
   const left = expandTeams(a), right = expandTeams(b);
   if (!left || !right) return false;
@@ -2349,7 +2416,7 @@ function sameGrade(a, b){
   if (!a || !b) return false;
   if (String(a.date || "").slice(0, 10) !== String(b.date || "").slice(0, 10)) return false;
   if (String(a.sport || "").toUpperCase() !== String(b.sport || "").toUpperCase()) return false;
-  return samePick(a.pick, b.pick);
+  return sameWager(a.pick, b.pick);
 }
 function dropMatchedPending(rows){
   const list = (rows || []).filter(Boolean);
@@ -2373,24 +2440,14 @@ function render(){
   try {
   const all = load().concat(loadGrade()).concat(gradeFile).filter(b => b && b.pick && !isNoPick(b) && !/^RANGE$/i.test(b.pick) && !/^all win/i.test(b.result || ""));
   all.forEach(stampFileClose);
-  let unique = [];
-  const seen = new Set();
-  const byKey = {};
-  all.forEach(b => {
-    const key = [b.date, b.sport, b.pick].join("|");
-    const prior = byKey[key];
-    const incoming = Number(b.profit), had = Number(prior && prior.profit);
-    const better = !prior || (prior.result === "pending" && b.result !== "pending") || (prior.result === b.result && Number.isFinite(incoming) && incoming !== 0 && (!Number.isFinite(had) || had === 0));
-    if (!better) return;
-    if (!b.id) b.id = key;
+  let unique = collapseSlips(all);
+  unique.forEach(b => {
+    if (!b.id) b.id = [b.date, b.sport, b.pick].join("|");
     if (!b.book) b.book = "BetMGM";
     b.type = betType(b);
     if (!b.stake) b.stake = 10;
-    if ((b.odds === "" || b.odds == null || Number.isNaN(Number(b.odds))) && prior && prior.odds !== "" && prior.odds != null) b.odds = prior.odds;
-    if (b.odds === "" || b.odds == null || Number.isNaN(Number(b.odds))) b.odds = b.close || -110;
-    byKey[key] = b;
+    if (b.odds === "" || b.odds == null || Number.isNaN(Number(b.odds))) b.odds = usableClose(b.close) ? b.close : -110;
   });
-  unique.push(...Object.values(byKey));
   unique = dropMatchedPending(unique);
   const windowed = unique.filter(b => inSlipWindow(b.date));
   const bets = filtered(windowed.sort((a,b) => String(b.date).localeCompare(String(a.date))));
@@ -3412,13 +3469,12 @@ function rememberPrice(b, price, real){
   saveCloseStore(store);
 }
 function applySavedCloses(bets){
-  const store = closeStore();
   let n = 0;
   bets.forEach(b => {
     if (b.result === "pending" || b.type === "SGP") return;
-    const saved = store[closeKey(b)];
-    if (!saved || !usableClose(saved.close) || !saved.realClose) return;
-    b.close = Number(saved.close);
+    const saved = storeCloseFor(b);
+    if (!usableClose(saved)) return;
+    b.close = Number(saved);
     b.realClose = true;
     n++;
   });
@@ -3559,17 +3615,20 @@ function parseGradeLine(line){
   const result = (parts[4].match(/win|loss|push/i) || [""])[0].toLowerCase();
   if (!result) return null;
   const profit = Number(String(money).replace(/[$,+]/g, ""));
-  const nclose = Number(String(close).replace(/[^\d+-]/g, ""));
+  const closeField = parts.find((p, i) => i >= 3 && /^close\b/i.test(p)) || "";
+  const nclose = priceNumber(closeField);
   const goodClose = usableClose(nclose);
-  return {date: parts[0], sport: parts[1], pick: parts[2], odds: odds || -110, close: goodClose ? nclose : "", result: result, stake: 10, profit: Number.isFinite(profit) ? profit : 0, realClose: goodClose};
+  return {date: parts[0], sport: parts[1], pick: parts[2], odds: odds || -110, close: goodClose ? nclose : "", result: result, stake: 10, profit: Number.isFinite(profit) ? profit : 0, realClose: false};
 }
 function keepClose(b){
+  if (!b) return b;
   b.type = betType(b);
+  if (b.result === "pending") { b.close = ""; b.realClose = false; return b; }
+  const hist = savedCloseFor(b);
+  if (usableClose(hist)) { b.close = Number(hist); b.realClose = true; return b; }
   if (!usableClose(b.close)) b.close = "";
   if (b.close !== "" && Number(b.close) === Number(b.odds) && !b.realClose) b.close = "";
-  if (usableClose(b.close)) return b;
-  const hit = (gradeFile || []).find(g => g.date === b.date && samePick(g.pick, b.pick) && usableClose(g.close));
-  if (hit) { b.close = hit.close; b.realClose = true; }
+  if (usableClose(b.close)) b.realClose = true;
   return b;
 }
 function markEdge(b){
@@ -4771,10 +4830,10 @@ fetch("cards/closes.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(
     if (!line || line.startsWith("#") || /no close saved|matched bet price|bet price/i.test(line)) return;
     const parts = line.split("|").map(s => s.trim());
     if (!/^\d{4}-\d{2}-\d{2}$/.test(parts[0]) || parts.length < 5) return;
-    const close = Number(String(parts[4]).replace(/[^\d+-]/g, ""));
-    if (!Number.isFinite(close) || !usableClose(close)) return;
-    closeMap[parts[0] + "|" + parts[3]] = parts[4];
+    noteClose(parts[0], parts[1], parts[3], parts[4]);
     if (parts[2]) betMap[parts[0] + "|" + parts[3]] = parts[2];
+    const close = priceNumber(parts[4]);
+    if (!usableClose(close)) return;
     const key = [parts[0], parts[1], parts[3]].join("|");
     store[key] = {date: parts[0], sport: parts[1], pick: parts[3], odds: parts[2], close: close, at: Date.now(), realClose: true, fromFile: true};
   });
