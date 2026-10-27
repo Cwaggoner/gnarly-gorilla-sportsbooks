@@ -338,7 +338,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </div>
 </section>
 <section class="card" id="charts">
-<div class="section-head"><h2>Charts</h2><p class="warn slips-side">Profit uses settled slips. CLV needs a paid Odds API key. <span id="plotnote"></span></p><button type="button" id="plot">Plot</button></div>
+<div class="section-head"><h2>Charts</h2><p class="warn slips-side">Profit uses settled slips. CLV is no-vig: your price against a fair close, with the book's cut removed. A matched -110 is about -4.5%. <span id="plotnote"></span></p><button type="button" id="plot">Plot</button></div>
 <div class="charts">
 <div><h2 id="profitTitle">Cumulative Profit</h2><canvas id="profitChart" width="640" height="220"></canvas><p id="chartlesson" class="warn"></p></div>
 <div><div class="sport-title"><h2>Profit By Sport</h2><b id="sportbest"></b><b id="monthbest"></b></div><canvas id="sportChart" width="420" height="220"></canvas><div class="sport-nav"><button type="button" id="sportprev">Previous</button><button type="button" id="sportnext">Next</button></div><p id="sportday"></p></div>
@@ -394,7 +394,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <button type="button" id="commitkey">Commit</button>
 <span id="keynote" class="warn"></span>
 </div>
-<p class="api-note">Paste a free or paid Odds API key here. Load Picks uses this key. CLV and Close need a paid subscription. A free key loads the board only. The Book selected above drives the list. Today's Card Book only stamps a card loaded there.<br><a href="https://the-odds-api.com/" target="_blank" rel="noopener noreferrer">Open The Odds API</a></p>
+<p class="api-note">Paste a free or paid Odds API key here. Load Picks uses this key. Close needs a paid subscription so the other side of the market can be saved. CLV then removes that book's cut. A free key loads the board only. The Book selected above drives the list. Today's Card Book only stamps a card loaded there.<br><a href="https://the-odds-api.com/" target="_blank" rel="noopener noreferrer">Open The Odds API</a></p>
 </div>
 </section>
 <section class="card" id="slips">
@@ -414,10 +414,10 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <div class="btn-pair"><span>Exporting</span><div><button type="button" id="exportpdf">Export PDF</button><button type="button" id="export">Export Spreadsheet</button><button type="button" class="danger" id="clear">Clear All</button></div></div>
 </div>
 <div class="table-wrap"><table>
-<thead><tr><th>Date</th><th>Book</th><th>Sport</th><th>Type</th><th>Pick</th><th>Odds</th><th class="col-close">Close</th><th>CLV</th><th>Stake</th><th>Result</th><th>P/L</th><th>Grade</th></tr></thead>
+<thead><tr><th>Date</th><th>Book</th><th>Sport</th><th>Type</th><th>Pick</th><th>Odds</th><th class="col-close">Close</th><th>No-Vig CLV</th><th>Stake</th><th>Result</th><th>P/L</th><th>Grade</th></tr></thead>
 <tbody id="rows"></tbody>
 </table></div>
-<p class="api-note">Live prices need the Odds API key on Add A Bet. CLV and Close need a paid subscription. A free key loads the board only. The pick list is filled in Add A Bet. A saved list returns on refresh with no new call. A new book calls the API once, then uses the save for 15 minutes.<br><a href="https://the-odds-api.com/" target="_blank" rel="noopener noreferrer">Open The Odds API</a></p>
+<p class="api-note">Live prices need the Odds API key on Add A Bet. Close needs a paid subscription. CLV is no-vig: the book's cut is removed, and a moved spread or total is counted. A matched -110 close is about -4.5%, not zero. When the other side was not saved, it is estimated at a -110 hold until Plot stores the real pair. A free key loads the board only. A saved list returns on refresh with no new call.<br><a href="https://the-odds-api.com/" target="_blank" rel="noopener noreferrer">Open The Odds API</a></p>
 </section>
 <section class="card" id="calendarcard">
 <div class="section-head"><h2>Calendar</h2><span id="monthpl" style="margin-left:10ch;color:#d6ffd0"></span><p class="warn slips-side">Everyone sees the shared $10 calendar until they upload a file. An uploaded file stays in this browser only.<br>Other users do not see it. Use Shared Calendar to go back.</p></div>
@@ -743,7 +743,6 @@ function ticketOdds(b){
   if (filed != null) return filed;
   const own = priceNumber(b.odds);
   if (!usableClose(own)) return null;
-  if (b.result && b.result !== "pending" && usableClose(b.close) && Number(own) === Number(b.close)) return null;
   return own;
 }
 function noteClose(date, sport, pick, close, bet){
@@ -782,7 +781,11 @@ async function fillHistoricalCloses(){
         const mk = (book.markets || []).find(m => m.key === market);
         if (!mk) return;
         const hit = (mk.outcomes || []).find(o => b.pick.includes(o.name) || (o.point != null && b.pick.includes(String(o.point))));
-        if (hit) b.close = hit.price;
+        if (!hit) return;
+        b.close = hit.price;
+        const opp = oppositeOutcome(mk.outcomes, hit, market);
+        if (opp && opp.price != null) b.closeOpp = Number(opp.price);
+        if (hit.point != null) b.closePoint = Number(hit.point);
       });
     }
   }
@@ -941,13 +944,11 @@ function publishedDashboard(only){
     const priced = lines.filter(b => usableClose(b.close) && usableClose(b.odds));
     const clvs = priced.map(b => clv(b)).filter(v => v != null);
     let dayClv = "No Close Saved";
-    if (!complete && day && day.clv != null && day.clv !== "") {
-      const n = Number(day.clv);
-      dayClv = n === 0 ? "Matched Bet Price" : (Number.isFinite(n) ? (n > 0 ? "+" : "") + n.toFixed(1) + "%" : String(day.clv));
-    } else if (!lines.length) dayClv = "No Close Saved";
-    else if (!priced.length) dayClv = lines.some(b => usableClose(b.close)) ? "No Bet Price" : "Close Not On File";
-    else if (clvs.every(v => Math.abs(v) < 0.05)) dayClv = "Matched Bet Price";
-    else dayClv = (clvs.reduce((s, v) => s + v, 0) / clvs.length).toFixed(1) + "%";
+    if (priced.length && clvs.length) dayClv = formatClv(clvs.reduce((s, v) => s + v, 0) / clvs.length);
+    else if (!lines.length) dayClv = "No Close Saved";
+    else if (lines.some(b => usableClose(b.close))) dayClv = "No Bet Price";
+    else if (day && day.clv != null && day.clv !== "") dayClv = clvNumber(day.clv) == null ? String(day.clv) : formatClv(clvNumber(day.clv));
+    else dayClv = "Close Not On File";
     const record = fromLines ? rec(lines) : (day.wins != null ? (Number(day.wins) || 0) + "-" + (Number(day.losses) || 0) + "-" + (Number(day.pushes) || 0) : (n ? "Split Not On File" : "0-0-0"));
     return {
       date,
@@ -989,7 +990,7 @@ function drawDashboard(history, manual){
     if (parts.length < 3 || /no picks/i.test(row.record)) return;
     wins += parts[0] || 0; losses += parts[1] || 0; pushes += parts[2] || 0;
   });
-  const clvs = shown.map(row => row.clv === "Matched Bet Price" ? 0 : parseFloat(String(row.clv).replace("%", ""))).filter(n => Number.isFinite(n));
+  const clvs = shown.map(row => clvNumber(row.clv)).filter(n => n != null);
   const pendingNow = pendingOnCard();
   document.getElementById("stats").innerHTML = [
     [wins + "-" + losses + "-" + pushes, "7-Day W/L Record"],
@@ -997,7 +998,7 @@ function drawDashboard(history, manual){
     [staked ? roiText(profit, staked) : "-", "7-Day ROI"],
     [(profit / UNIT).toFixed(2) + "u", "7-Day Units"],
     [pendingNow, "Pending Slips"],
-    [clvs.length ? (clvs.reduce((s, n) => s + n, 0) / clvs.length).toFixed(1) + "%" : "No Close Saved", "7-Day Avg CLV"]
+    [clvs.length ? formatClv(clvs.reduce((s, n) => s + n, 0) / clvs.length) : "No Close Saved", "7-Day Avg CLV"]
   ].map(x => "<div class='stat'><b>" + x[0] + "</b><span>" + x[1] + "</span></div>").join("");
   document.getElementById("dashrows").innerHTML = tableRows.map(row => "<tr><td>" + row.date + "</td><td>" + row.record + "</td><td>" + profitCell(row.profit) + "</td><td>" + row.roi + "</td><td>" + row.units + "</td><td>" + pendingLabel(row) + "</td><td>" + (row.unposted || /no picks/i.test(String(row.record || "")) ? "No Picks" : (row.clv === "-" || row.clv == null || row.clv === "" ? "No Close Saved" : row.clv)) + "</td></tr>").join("");
   const canvas = document.getElementById("dashChart");
@@ -1287,13 +1288,7 @@ let gradeFile = [];
 let liveGradedDates = new Set();
 try { liveGradedDates = new Set(JSON.parse(localStorage.getItem("gg-live-graded") || "[]")); } catch (e) {}
 let edgePicks = new Set();
-function chartClv(b){
-  if (!usableClose(b.close) || !usableClose(b.odds)) return null;
-  if (Number(b.close) === Number(b.odds)) return 0;
-  const got = decimal(b.odds), closed = decimal(b.close);
-  if (!got || !closed) return null;
-  return (got / closed - 1) * 100;
-}
+function chartClv(b){ return clv(b); }
 function bestSport(map){
   const sports = ["CBB","CFB","MLB","NBA","NFL","NHL"].filter(sport => map[sport] && map[sport].yday > 0);
   if (!sports.length) return "";
@@ -1437,31 +1432,92 @@ function drawBars(canvas, bets){
 }
 
 
+const HOLD_SUM = 220 / 210;
+const POINT_WIN = {NFL: 0.03, CFB: 0.025, NBA: 0.033, CBB: 0.038, NHL: 0.11, MLB: 0.10};
 function decimal(odds){
   odds = Number(odds);
   if (!Number.isFinite(odds) || Math.abs(odds) < 100) return 0;
   return odds > 0 ? 1 + odds / 100 : 1 + 100 / Math.abs(odds);
+}
+function impliedProb(odds){
+  odds = Number(odds);
+  if (!Number.isFinite(odds) || Math.abs(odds) < 100) return 0;
+  return odds < 0 ? Math.abs(odds) / (Math.abs(odds) + 100) : 100 / (odds + 100);
+}
+function americanFromProb(p){
+  if (!(p > 0.02) || !(p < 0.98)) return null;
+  const n = p >= 0.5 ? -p / (1 - p) * 100 : (1 - p) / p * 100;
+  const rounded = Math.round(n);
+  if (Math.abs(rounded) < 100) return rounded < 0 ? -100 : 100;
+  return rounded;
+}
+function holdOpp(odds){
+  const p = impliedProb(odds);
+  if (!p) return null;
+  return americanFromProb(HOLD_SUM - p);
+}
+function fairProb(side, other){
+  const a = impliedProb(side), b = impliedProb(other);
+  if (!a || !b) return 0;
+  return a / (a + b);
+}
+function pickPoint(b){
+  const pick = String(b && b.pick || "");
+  const total = pick.match(/(over|under)\s+(\d+(?:\.\d+)?)/i);
+  if (total) return {kind: "total", side: total[1].toLowerCase(), point: Number(total[2])};
+  if (betType(b) === "Moneyline") return null;
+  const sp = pick.match(/([+-]\d+(?:\.\d+)?)\s*$/);
+  if (!sp) return null;
+  return {kind: "spread", side: "spread", point: Number(sp[1])};
+}
+function lineEdge(b){
+  const bet = pickPoint(b);
+  const close = Number(b && b.closePoint);
+  if (!bet || !Number.isFinite(close) || close === bet.point) return 0;
+  const moved = bet.kind === "total" ? (bet.side === "under" ? bet.point - close : close - bet.point) : bet.point - close;
+  if (!moved) return 0;
+  const per = POINT_WIN[String(b.sport || "").toUpperCase()] || 0.03;
+  return moved * (bet.kind === "total" ? per * 0.7 : per);
+}
+function formatClv(v){
+  if (v == null || !Number.isFinite(v)) return "No Close Saved";
+  if (Math.abs(v) < 0.05) return "Matched Fair Price";
+  return (v > 0 ? "+" : "") + v.toFixed(1) + "%";
+}
+function clvNumber(text){
+  const s = String(text == null ? "" : text);
+  if (/matched fair|matched bet/i.test(s)) return 0;
+  const n = parseFloat(s.replace("%", ""));
+  return Number.isFinite(n) ? n : null;
 }
 function usableClose(n){
   n = Number(n);
   return Number.isFinite(n) && Math.abs(n) >= 100;
 }
 function clv(b){
+  if (!b || b.result === "pending" || b.result === "void") return null;
   if (!usableClose(b.close) || !usableClose(b.odds)) return null;
-  if (Number(b.close) === Number(b.odds)) return 0;
-  const got = decimal(b.odds), closed = decimal(b.close);
-  if (!got || !closed) return null;
-  return (got / closed - 1) * 100;
+  attachPair(b);
+  const got = decimal(b.odds);
+  if (!got) return null;
+  let fair = Number(b.fairClose);
+  if (!(fair > 0.02 && fair < 0.98)) {
+    const opp = usableClose(b.closeOpp) ? Number(b.closeOpp) : holdOpp(b.close);
+    fair = fairProb(b.close, opp);
+  }
+  if (!(fair > 0)) return null;
+  fair = Math.min(0.97, Math.max(0.03, fair + lineEdge(b)));
+  return (got * fair - 1) * 100;
 }
 let paidKey = true;
 function clvText(b){
   if (!paidKey) return "-";
-  if (b.result === "pending" || b.result === "void") return "-";
+  if (!b || b.result === "pending" || b.result === "void") return "-";
   if (!usableClose(b.close)) return "No Close Saved";
   if (!usableClose(b.odds)) return "No Bet Price";
   const cv = clv(b);
-  if (cv == null || Math.abs(cv) < 0.05) return "Matched Bet Price";
-  return cv.toFixed(1) + "%";
+  if (cv == null) return "No Close Saved";
+  return formatClv(cv);
 }
 function fileCloseFor(b){
   if (!b || !b.date || !b.pick) return null;
@@ -1509,6 +1565,53 @@ function rowApiPrice(label, cell, b){
   const home = teams[1] || "";
   const onHome = home && teamHit(b.pick, home) && !teamHit(b.pick, away);
   return priceToken(onHome ? (bits[1] || bits[0]) : bits[0]);
+}
+function oppositeOutcome(outcomes, outcome, market){
+  const rest = (outcomes || []).filter(o => o && o !== outcome && o.price != null);
+  if (!outcome) return rest[0] || null;
+  if (market === "totals") {
+    const same = rest.filter(o => String(o.name).toLowerCase() !== String(outcome.name).toLowerCase() && (o.point == null || outcome.point == null || Number(o.point) === Number(outcome.point)));
+    return same[0] || null;
+  }
+  if (market === "spreads") {
+    const mirror = rest.filter(o => o.name !== outcome.name && (o.point == null || outcome.point == null || Math.abs(Number(o.point) + Number(outcome.point)) < 0.051));
+    return mirror[0] || rest.find(o => o.name !== outcome.name) || null;
+  }
+  return rest.find(o => o.name !== outcome.name) || null;
+}
+function splitApiCell(label, cell, b){
+  const bits = String(cell || "").split("/").map(s => s.trim()).filter(Boolean);
+  if (bits.length < 2) return null;
+  const type = betType(b);
+  if (type === "Total") {
+    const over = priceToken(bits[0]);
+    const under = priceToken(bits[1]);
+    const underSide = /under/i.test(b.pick);
+    return {close: underSide ? under : over, opp: underSide ? over : under};
+  }
+  const teams = String(label).split(/\s+at\s+|\s+vs\s+/i);
+  const away = teams[0] || "";
+  const home = teams[1] || "";
+  const onHome = home && teamHit(b.pick, home) && !teamHit(b.pick, away);
+  const mine = priceToken(onHome ? bits[1] : bits[0]);
+  const other = priceToken(onHome ? bits[0] : bits[1]);
+  return {close: mine, opp: other && other !== mine ? other : null};
+}
+function apiPairFor(b){
+  if (!b || !b.date || !b.pick) return null;
+  const type = betType(b);
+  if (type === "SGP" || /\band\b/i.test(b.pick)) return null;
+  const market = type === "Total" ? "totals" : type === "Moneyline" ? "h2h" : "spreads";
+  let fresh = [];
+  try {
+    const pack = JSON.parse(localStorage.getItem("gg-api-close") || "null");
+    if (pack && pack.rows) fresh = pack.rows.filter(r => r.day === b.date && r.market === market && r.betmgm && r.betmgm !== "-");
+  } catch (e) {}
+  const freshHit = fresh.find(r => teamHit(b.pick, r.label));
+  if (freshHit) return splitApiCell(freshHit.label, freshHit.betmgm, b);
+  if (b.date !== LAST_API_DAY) return null;
+  const baked = LAST_API_ROWS.find(r => r.market === market && teamHit(b.pick, r.label));
+  return baked ? splitApiCell(baked.label, baked.betmgm, b) : null;
 }
 function apiCloseFor(b){
   if (!b || !b.date || !b.pick) return null;
@@ -1563,14 +1666,61 @@ function savedCloseFor(b){
   if (usableClose(api)) return Number(api);
   return null;
 }
+function storeRow(b){
+  if (!b) return null;
+  const store = closeStore();
+  const exact = store[closeKey(b)];
+  if (exact && usableClose(exact.close) && exact.realClose !== false) return exact;
+  const date = String(b.date || "").slice(0, 10);
+  const sport = String(b.sport || "").toUpperCase();
+  const hits = Object.values(store).filter(s => s && String(s.date || "").slice(0, 10) === date && (!sport || String(s.sport || "").toUpperCase() === sport) && sameWager(s.pick, b.pick) && usableClose(s.close) && s.realClose !== false);
+  return hits.length === 1 ? hits[0] : null;
+}
+function boardsFor(b){
+  try {
+    const sportKey = SPORT_KEY[String(b.sport || "").toUpperCase()];
+    const bookKey = BOOK_KEY[b.book] || "betmgm";
+    const date = String(b.date || "").slice(0, 10);
+    if (!sportKey || !date) return null;
+    const pack = JSON.parse(localStorage.getItem("gg-hist-" + sportKey + "-" + bookKey + "-" + date) || "null");
+    const games = pack && pack.games ? pack.games : (Array.isArray(pack) ? pack : null);
+    return games && games.length ? games : null;
+  } catch (e) { return null; }
+}
+function attachPair(b){
+  if (!b || b.result === "pending" || b.result === "void") return;
+  try {
+    const row = storeRow(b);
+    if (row) {
+      if (!usableClose(b.closeOpp) && usableClose(row.closeOpp)) b.closeOpp = Number(row.closeOpp);
+      if ((b.closePoint == null || b.closePoint === "") && row.closePoint != null && Number.isFinite(Number(row.closePoint))) b.closePoint = Number(row.closePoint);
+      if (!(Number(b.fairClose) > 0) && Number(row.fairClose) > 0 && Number(row.fairClose) < 1) b.fairClose = Number(row.fairClose);
+    }
+    if (!usableClose(b.closeOpp)) {
+      const pair = apiPairFor(b);
+      if (pair && usableClose(pair.opp)) b.closeOpp = Number(pair.opp);
+    }
+    if (!usableClose(b.closeOpp)) {
+      const games = boardsFor(b);
+      const bookKey = (typeof BOOK_KEY !== "undefined" && BOOK_KEY[b.book]) || "betmgm";
+      const hit = games && findBookPrice(games, bookKey, betType(b), b.pick);
+      if (hit && hit.opposite && usableClose(hit.opposite.price)) {
+        b.closeOpp = Number(hit.opposite.price);
+        if (hit.outcome && hit.outcome.point != null) b.closePoint = Number(hit.outcome.point);
+        if (hit.fairClose > 0 && hit.fairClose < 1) b.fairClose = hit.fairClose;
+        if (usableClose(b.close)) rememberPrice(b, b.close, true);
+      }
+    }
+  } catch (e) {}
+}
 function stampFileClose(b){
   if (!b || b.result === "void") return b;
-  if (b.result === "pending") { b.close = ""; b.realClose = false; return b; }
+  if (b.result === "pending") { b.close = ""; b.closeOpp = ""; b.fairClose = 0; b.realClose = false; return b; }
   if (!usableClose(b.close)) b.close = "";
-  if (usableClose(b.close) && b.realClose && Number(b.close) !== Number(b.odds)) return b;
+  if (usableClose(b.close) && b.realClose && Number(b.close) !== Number(b.odds)) { attachPair(b); return b; }
   const hist = savedCloseFor(b);
-  if (hist != null) { b.close = hist; b.realClose = true; return b; }
-  if (usableClose(b.close)) { b.realClose = true; return b; }
+  if (hist != null) { b.close = hist; b.realClose = true; attachPair(b); return b; }
+  if (usableClose(b.close)) { b.realClose = true; attachPair(b); return b; }
   b.close = "";
   b.realClose = false;
   return b;
@@ -1611,9 +1761,7 @@ function weekClv(){
   if (!slips.length || !withClose.length) return "No Close Saved";
   const vals = withClose.map(b => clv(b)).filter(v => v != null);
   if (!vals.length) return "No Bet Price";
-  const avg = vals.reduce((s, n) => s + n, 0) / vals.length;
-  if (!Number.isFinite(avg) || Math.abs(avg) < 0.05) return "0.0%";
-  return avg.toFixed(1) + "%";
+  return formatClv(vals.reduce((s, n) => s + n, 0) / vals.length);
 }
 function clvListText(list){
   const graded = list.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
@@ -1622,8 +1770,7 @@ function clvListText(list){
   if (!withClose.length) return "No Close Saved";
   const xs = withClose.map(clv).filter(v => v != null);
   if (!xs.length) return "No Bet Price";
-  if (xs.every(v => Math.abs(v) < 0.05)) return "Matched Bet Price";
-  return (xs.reduce((s,v)=>s+v,0)/xs.length).toFixed(1) + "%";
+  return formatClv(xs.reduce((s,v)=>s+v,0)/xs.length);
 }
 function filtered(bets){
   const sport = document.getElementById("fSport").value;
@@ -2489,7 +2636,6 @@ function render(){
     if (!b.stake) b.stake = 10;
     const ticket = ticketOdds(b);
     if (ticket != null) b.odds = ticket;
-    else if (b.result !== "pending" && usableClose(b.close) && Number(b.odds) === Number(b.close)) b.odds = "";
   });
   unique = dropMatchedPending(unique);
   const windowed = unique.filter(b => inSlipWindow(b.date));
@@ -3485,7 +3631,19 @@ function findBookPrice(games, bookKey, type, pick){
     const outcome = matchOutcome(mk.outcomes, info.name || (game.home_team + " " + game.away_team), info.side);
     if (!outcome || outcome.price == null) continue;
     if (!gameHits(game, info.game || info.name)) continue;
-    return {outcome, game};
+    const opposite = oppositeOutcome(mk.outcomes, outcome, market);
+    const fairs = [];
+    (game.bookmakers || []).forEach(book => {
+      const m2 = (book.markets || []).find(m => m.key === market);
+      if (!m2) return;
+      const mine = matchOutcome(m2.outcomes, info.name || (game.home_team + " " + game.away_team), info.side);
+      if (!mine || mine.price == null) return;
+      if (outcome.point != null && mine.point != null && Math.abs(Number(mine.point) - Number(outcome.point)) > 0.051) return;
+      const other = oppositeOutcome(m2.outcomes, mine, market);
+      const fair = other ? fairProb(mine.price, other.price) : 0;
+      if (fair > 0) fairs.push(fair);
+    });
+    return {outcome, opposite, game, fairClose: fairs.length ? fairs.reduce((s, n) => s + n, 0) / fairs.length : 0};
   }
   return null;
 }
@@ -3508,7 +3666,15 @@ function rememberPrice(b, price, real){
   if (price == null || price === "" || !real) return;
   const store = closeStore();
   const key = closeKey(b);
-  store[key] = {date: b.date, sport: b.sport, pick: b.pick, odds: b.odds, close: Number(price), at: Date.now(), realClose: true};
+  const prior = store[key] || {};
+  store[key] = {
+    date: b.date, sport: b.sport, pick: b.pick, odds: b.odds,
+    close: Number(price),
+    closeOpp: usableClose(b.closeOpp) ? Number(b.closeOpp) : prior.closeOpp,
+    closePoint: b.closePoint != null && b.closePoint !== "" && Number.isFinite(Number(b.closePoint)) ? Number(b.closePoint) : prior.closePoint,
+    fairClose: Number(b.fairClose) > 0 && Number(b.fairClose) < 1 ? Number(b.fairClose) : prior.fairClose,
+    at: Date.now(), realClose: true
+  };
   saveCloseStore(store);
 }
 function applySavedCloses(bets){
@@ -3526,16 +3692,23 @@ function applySavedCloses(bets){
 function applyCloses(bets, games, bookKey){
   let filled = 0;
   bets.forEach(b => {
-    if (b.close && b.realClose) return;
     if (b.type === "SGP" || BOOK_KEY[b.book] !== bookKey) return;
     const hit = findBookPrice(games, bookKey, b.type, b.pick);
-    if (hit) b.lastPrice = Number(hit.outcome.price);
-    const started = !!(hit && hit.game && hit.game.commence_time && Date.parse(hit.game.commence_time) <= Date.now());
-    if (!started || !b.lastPrice) return;
-    b.close = Number(b.lastPrice);
-    b.realClose = true;
+    if (!hit) return;
+    if (hit.outcome && hit.outcome.price != null) b.lastPrice = Number(hit.outcome.price);
+    const started = !!(hit.game && hit.game.commence_time && Date.parse(hit.game.commence_time) <= Date.now());
+    if (!started) return;
+    const had = usableClose(b.close) && b.realClose;
+    if (!had && b.lastPrice) {
+      b.close = Number(b.lastPrice);
+      b.realClose = true;
+    }
+    if (!usableClose(b.close)) return;
+    if (hit.opposite && usableClose(hit.opposite.price)) b.closeOpp = Number(hit.opposite.price);
+    if (hit.outcome && hit.outcome.point != null) b.closePoint = Number(hit.outcome.point);
+    if (hit.fairClose > 0 && hit.fairClose < 1) b.fairClose = hit.fairClose;
     rememberPrice(b, b.close, true);
-    filled++;
+    if (!had) filled++;
   });
   return filled;
 }
@@ -4711,7 +4884,7 @@ async function fillChartCloses(){
   let filled = 0;
   const paid = key ? await keyIsPaid(key) : false;
   if (paid) {
-    const need = bets.filter(b => (!b.realClose || b.close === "" || b.close == null) && b.type !== "SGP" && BOOK_KEY[b.book] && SPORT_KEY[b.sport]);
+    const need = bets.filter(b => b.result !== "pending" && b.type !== "SGP" && BOOK_KEY[b.book] && SPORT_KEY[b.sport] && (!b.realClose || !usableClose(b.close) || !usableClose(b.closeOpp)));
     const groups = new Map();
     need.forEach(b => {
       const id = b.sport + "|" + b.book + "|" + b.date;
