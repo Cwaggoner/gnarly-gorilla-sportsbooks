@@ -3627,6 +3627,35 @@ function bookOutcome(slip, book){
   const pair = bookPair(slip, book);
   return pair ? pair.hit : null;
 }
+let bookCloses = {};
+function quotedClose(slip, book){
+  if (!slip || bookKey(book) !== "draftkings") return null;
+  const games = (((bookCloses.days || {})[String(slip.date || "").slice(0, 10)] || {})[String(slip.sport || "").toUpperCase()]) || [];
+  const game = games.find(g => sideHit(slip.pick, g.away) && sideHit(slip.pick, g.home));
+  const dk = game && game.books && game.books.DraftKings;
+  if (!dk) return null;
+  const type = slip.type || betType(slip);
+  if (type === "SGP" || /\band\b/i.test(String(slip.pick || ""))) return null;
+  if (type === "Total") {
+    const under = /under/i.test(slip.pick);
+    const price = under ? dk.total.under : dk.total.over;
+    const opp = under ? dk.total.over : dk.total.under;
+    return price == null ? null : {price: price, opp: opp, point: dk.total.point};
+  }
+  const awayOn = sideHit(slip.pick, game.away);
+  const homeOn = sideHit(slip.pick, game.home);
+  let side = "away";
+  if (homeOn && !awayOn) side = "home";
+  else if (awayOn && homeOn) {
+    const named = String(slip.pick).match(/([A-Za-z0-9 .&']+?)\s+[+-]\d/);
+    if (named && sideHit(named[1], game.home) && !sideHit(named[1], game.away)) side = "home";
+  }
+  const market = type === "Moneyline" ? "h2h" : "spread";
+  const row = (dk[market] || {})[side];
+  const other = (dk[market] || {})[side === "home" ? "away" : "home"];
+  if (!row || row.price == null) return null;
+  return {price: row.price, opp: other && other.price, point: row.point};
+}
 function savedBookPrice(slip, book){
   const hit = bookOutcome(slip, book);
   return hit ? hit.price : null;
@@ -3649,11 +3678,10 @@ function slipsForBooks(list){
       const pair = parlay ? null : bookPair(b, book);
       const hit = pair && pair.hit;
       const opp = pair && pair.opp;
-      const settled = slateSettled(b.date);
+      const closed = parlay ? null : quotedClose(b, book);
       if (bookKey(b.book) === bookKey(book)) {
-        if (hit && settled && !usableClose(b.close)) {
-          out.push(Object.assign({}, b, {close: hit.price, closeOpp: opp && opp.price != null ? opp.price : b.closeOpp, realClose: true}));
-        } else out.push(b);
+        if (closed) out.push(Object.assign({}, b, {close: closed.price, closeOpp: closed.opp != null ? closed.opp : b.closeOpp, closePoint: closed.point, realClose: true}));
+        else out.push(b);
         return;
       }
       if (owned.has(key)) return;
@@ -3662,9 +3690,10 @@ function slipsForBooks(list){
         id: String(b.id) + "|" + book,
         viewOnly: true,
         odds: hit && hit.price != null ? hit.price : "",
-        close: hit && settled && hit.price != null ? hit.price : "",
-        closeOpp: opp && settled && opp.price != null ? opp.price : "",
-        realClose: !!(hit && settled),
+        close: closed ? closed.price : "",
+        closeOpp: closed && closed.opp != null ? closed.opp : "",
+        closePoint: closed ? closed.point : "",
+        realClose: !!closed,
         priceText: "",
         noPrice: !hit,
         lineDiffers: !!(hit && !sameBookNumber(b, hit))
@@ -5689,6 +5718,7 @@ function applyPublishedBooks(){
   render();
 }
 fetch("cards/book-prices.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => { if (data) { fileBooks = data; applyPublishedBooks(); } }).catch(() => {});
+fetch("cards/book-closes.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => { if (data && data.days) { bookCloses = data; render(); } }).catch(() => {});
 fetch("cards/odds-board.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => { if (data && data.days) { window.__ggOddsBoard = data; applyPublishedBooks(); drawOddsCompare(false).catch(() => {}); } }).catch(() => {});
 fetch("cards/closes.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
   const store = closeStore();
