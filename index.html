@@ -462,7 +462,8 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </div>
 </section>
 <section class="card" id="slips">
-<div class="section-head"><h2>Slips</h2><p class="warn slips-side">This card keeps today and yesterday only. Older days stay on the calendar and in the published files.</p><button type="button" id="livescores">Check Live Scores</button></div>
+<div class="section-head"><h2>Slips</h2><p class="warn slips-side">Today and yesterday only. Pull Odds & Close uses the Odds API key. Odds is the price at the start of the game. Close is the next price after it starts. A game that has not started stays open.</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" id="pulllines">Pull Odds & Close</button><button type="button" id="livescores">Check Live Scores</button></div></div>
+<p id="pullnote" class="warn"></p>
 <div class="book-slot"><div id="bookbadge"><img id="bookbadgeimg" src="gg-icon.png" alt="Gnarly Gorilla"></div></div>
 <p id="scorenote" class="warn"></p>
 <div class="tools">
@@ -2944,6 +2945,7 @@ function render(){
   rendering = true;
   const dash = "—";
   try {
+  applyLineWindowCloses();
   const all = load().concat(loadGrade()).concat(gradeFile).filter(b => b && b.pick && !isNoPick(b) && !/^RANGE$/i.test(b.pick) && !/^all win/i.test(b.result || ""));
   all.forEach(stampFileClose);
   let unique = collapseSlips(all);
@@ -3551,6 +3553,7 @@ function bookStore(){
       });
     });
   });
+  overlayWindowPrices(all);
   return all;
 }
 function rememberBooks(sport, games){
@@ -3683,6 +3686,232 @@ function lineLabel(point, price){
   const pt = (p > 0 ? "+" : "") + (whole ? String(Math.round(p)) : String(p));
   const juice = j > 0 ? "+" + j : String(j);
   return pt + " " + juice;
+}
+const WINDOW_BOOK = {betmgm:"BetMGM", williamhill_us:"Caesars", draftkings:"DraftKings", fanatics:"Fanatics", fanduel:"FanDuel", hardrockbet:"HardRock"};
+function loadLineWindow(){
+  try { return JSON.parse(localStorage.getItem("gg-line-window") || "null"); } catch (e) { return null; }
+}
+function trimLineWindow(pack){
+  pack = pack || {};
+  pack.closes = pack.closes || {};
+  pack.prices = pack.prices || {};
+  pack.done = pack.done || {};
+  pack.games = pack.games || {};
+  const allow = new Set([yesterday(), easternDay()]);
+  Object.keys(pack.closes).forEach(day => { if (!allow.has(day)) delete pack.closes[day]; });
+  Object.keys(pack.prices).forEach(day => { if (!allow.has(day)) delete pack.prices[day]; });
+  Object.keys(pack.games).forEach(day => { if (!allow.has(day)) delete pack.games[day]; });
+  Object.keys(pack.done).forEach(id => { if (!allow.has(String(id).slice(0, 10))) delete pack.done[id]; });
+  return pack;
+}
+function lineWindowPrices(){
+  const pack = trimLineWindow(loadLineWindow() || {});
+  return pack.prices || {};
+}
+function overlayWindowPrices(all){
+  const win = lineWindowPrices();
+  Object.keys(win).forEach(day => {
+    if (!inSlipWindow(day)) return;
+    const destDay = all[day] || (all[day] = {});
+    Object.keys(win[day] || {}).forEach(sport => {
+      const destSport = destDay[sport] || (destDay[sport] = {});
+      Object.keys(win[day][sport] || {}).forEach(label => {
+        const destGame = destSport[label] || (destSport[label] = {});
+        Object.keys(win[day][sport][label] || {}).forEach(book => {
+          const src = win[day][sport][label][book] || {};
+          const dest = destGame[book] || (destGame[book] = {});
+          ["spreads","h2h","totals"].forEach(market => { if (src[market] && src[market].length) dest[market] = src[market]; });
+        });
+      });
+    });
+  });
+}
+function applyLineWindowCloses(){
+  const pack = trimLineWindow(loadLineWindow() || {});
+  if (!bookCloses.days) bookCloses.days = {};
+  Object.keys(pack.closes || {}).forEach(day => {
+    if (!inSlipWindow(day)) return;
+    const destDay = bookCloses.days[day] || (bookCloses.days[day] = {});
+    Object.keys(pack.closes[day] || {}).forEach(sport => {
+      const list = destDay[sport] || (destDay[sport] = []);
+      (pack.closes[day][sport] || []).forEach(g => {
+        if (!g || !g.away || !g.home) return;
+        let hit = list.find(row => row.away === g.away && row.home === g.home);
+        if (!hit) { hit = {away: g.away, home: g.home, books: {}}; list.push(hit); }
+        hit.books = hit.books || {};
+        Object.keys(g.books || {}).forEach(book => { hit.books[book] = Object.assign({}, hit.books[book] || {}, g.books[book]); });
+      });
+    });
+  });
+}
+function slipsOnWindow(){
+  const rows = load().concat(loadGrade()).concat(gradeFile || []);
+  if (typeof driveCard !== "undefined" && driveCard && driveCard.date && inSlipWindow(driveCard.date)) {
+    (driveCard.lines || []).forEach(row => rows.push(Object.assign({result: "pending", book: "BetMGM"}, row)));
+  }
+  return rows.filter(b => b && b.pick && !isNoPick(b) && inSlipWindow(b.date) && SPORT_KEY[String(b.sport || "").toUpperCase()]);
+}
+function snapCache(){
+  try { return JSON.parse(localStorage.getItem("gg-snap-cache") || "{}"); } catch (e) { return {}; }
+}
+function saveSnapCache(cache){
+  const cutoff = Date.now() - 3 * 86400000;
+  Object.keys(cache).forEach(id => {
+    const iso = id.slice(id.indexOf("|") + 1);
+    const ms = Date.parse(iso);
+    if (Number.isFinite(ms) && ms < cutoff) delete cache[id];
+  });
+  try { localStorage.setItem("gg-snap-cache", JSON.stringify(cache)); }
+  catch (e) { try { localStorage.removeItem("gg-snap-cache"); } catch (err) {} }
+}
+function slimSnapGame(g){
+  return {
+    away_team: g.away_team,
+    home_team: g.home_team,
+    commence_time: g.commence_time,
+    bookmakers: (g.bookmakers || []).filter(bk => WINDOW_BOOK[bk.key]).map(bk => ({
+      key: bk.key,
+      markets: (bk.markets || []).map(m => ({key: m.key, outcomes: (m.outcomes || []).map(o => ({name: o.name, price: o.price, point: o.point == null ? null : o.point}))}))
+    }))
+  };
+}
+async function oddsSnap(sportKey, iso, key, remain){
+  const cache = snapCache();
+  const id = sportKey + "|" + iso;
+  if (cache[id] && cache[id].data) return Object.assign({cached: true}, cache[id]);
+  const url = "https://api.the-odds-api.com/v4/historical/sports/" + sportKey + "/odds?apiKey=" + encodeURIComponent(key) + "&regions=us,us2&markets=spreads,totals,h2h&oddsFormat=american&bookmakers=betmgm,williamhill_us,draftkings,fanatics,fanduel,hardrockbet&date=" + encodeURIComponent(iso);
+  const res = await fetch(url);
+  if (remain) remain.n = res.headers.get("x-requests-remaining") || remain.n;
+  if (!res.ok) {
+    if (res.status === 401 || res.status === 403) throw new Error("Odds API key was rejected.");
+    throw new Error("Odds API returned " + res.status + ".");
+  }
+  const body = await res.json();
+  const slim = {timestamp: body.timestamp, next_timestamp: body.next_timestamp, previous_timestamp: body.previous_timestamp, data: (body.data || []).map(slimSnapGame)};
+  cache[id] = slim;
+  saveSnapCache(cache);
+  return slim;
+}
+function findSnapGame(snap, g){
+  return ((snap && snap.data) || []).find(row => row.away_team === g.away_team && row.home_team === g.home_team) || null;
+}
+function marketBundle(g){
+  const prices = {};
+  const closes = {};
+  (g.bookmakers || []).forEach(bk => {
+    const name = WINDOW_BOOK[bk.key];
+    if (!name) return;
+    const quote = {};
+    const board = {};
+    (bk.markets || []).forEach(m => {
+      const outcomes = m.outcomes || [];
+      if (m.key === "spreads") {
+        const away = outcomes.find(o => o.name === g.away_team);
+        const home = outcomes.find(o => o.name === g.home_team);
+        if (away && home && away.price != null && home.price != null) quote.spread = {away: {point: away.point, price: away.price}, home: {point: home.point, price: home.price}};
+        board.spreads = outcomes.map(o => ({name: o.name, price: o.price, point: o.point}));
+      } else if (m.key === "h2h") {
+        const away = outcomes.find(o => o.name === g.away_team);
+        const home = outcomes.find(o => o.name === g.home_team);
+        if (away && home && away.price != null && home.price != null) quote.h2h = {away: {price: away.price}, home: {price: home.price}};
+        board.h2h = outcomes.map(o => ({name: o.name, price: o.price, point: null}));
+      } else if (m.key === "totals") {
+        const over = outcomes.find(o => o.name === "Over");
+        const under = outcomes.find(o => o.name === "Under");
+        if (over && under && over.price != null && under.price != null) quote.total = {point: over.point, over: over.price, under: under.price};
+        board.totals = outcomes.map(o => ({name: o.name, price: o.price, point: o.point}));
+      }
+    });
+    if (Object.keys(board).length) prices[name] = board;
+    if (Object.keys(quote).length) closes[name] = quote;
+  });
+  return {prices, closes};
+}
+function writeWindowOpen(pack, day, sport, g){
+  const built = marketBundle(g);
+  const label = g.away_team + " at " + g.home_team;
+  const sportRow = (pack.prices[day] || (pack.prices[day] = {}))[sport] || (pack.prices[day][sport] = {});
+  sportRow[label] = Object.assign(sportRow[label] || {}, built.prices);
+}
+function writeWindowClose(pack, day, sport, g){
+  const built = marketBundle(g);
+  const list = (pack.closes[day] || (pack.closes[day] = {}))[sport] || (pack.closes[day][sport] = []);
+  let row = list.find(item => item.away === g.away_team && item.home === g.home_team);
+  if (!row) { row = {away: g.away_team, home: g.home_team, books: {}}; list.push(row); }
+  Object.keys(built.closes).forEach(book => { row.books[book] = Object.assign({}, row.books[book] || {}, built.closes[book]); });
+}
+async function pullSlipWindow(){
+  if (window.__ggPulling) return;
+  window.__ggPulling = true;
+  const note = document.getElementById("pullnote");
+  try {
+    const key = ((document.getElementById("oddskey") || {}).value || "").trim();
+    if (!key) { note.textContent = "Paste the Odds API key on Add A Bet and press Commit, then pull again."; return; }
+    localStorage.setItem("gg-odds-key", key);
+    const days = [yesterday(), easternDay()];
+    const slips = slipsOnWindow();
+    if (!slips.length) { note.textContent = "No slips on " + days[0] + " or " + days[1] + "."; return; }
+    const sports = [...new Set(slips.map(b => String(b.sport || "").toUpperCase()))];
+    note.textContent = "Pulling " + days[0] + " and " + days[1] + " for " + sports.join(", ") + "...";
+    const pack = trimLineWindow(loadLineWindow() || {});
+    const remain = {n: ""};
+    let opened = 0, closed = 0;
+    const waiting = [];
+    for (const day of days) {
+      const daySlips = slips.filter(b => String(b.date).slice(0, 10) === day);
+      const daySports = [...new Set(daySlips.map(b => String(b.sport || "").toUpperCase()))];
+      for (const sport of daySports) {
+        const sportSlips = daySlips.filter(b => String(b.sport || "").toUpperCase() === sport);
+        const gameId = g => day + "|" + sport + "|" + g.away + " at " + g.home;
+        let known = (((pack.games || {})[day] || {})[sport]) || [];
+        const unmatched = sportSlips.filter(s => !known.some(g => sideHit(s.pick, g.away) || sideHit(s.pick, g.home)));
+        if (!known.length || unmatched.length) {
+          const probe = await oddsSnap(SPORT_KEY[sport], day + "T16:00:00Z", key, remain);
+          known = (probe.data || []).filter(g => slateDateOf(g.commence_time) === day && sportSlips.some(s => sideHit(s.pick, g.away_team) || sideHit(s.pick, g.home_team))).map(g => ({away: g.away_team, home: g.home_team, commence: g.commence_time}));
+          ((pack.games[day] || (pack.games[day] = {}))[sport] = known);
+        }
+        const byStart = new Map();
+        known.forEach(g => {
+          const id = gameId(g);
+          if ((pack.done[id] || {}).close) return;
+          if (g.commence && Date.parse(g.commence) > Date.now() + 15000) { waiting.push(g.away + " at " + g.home); return; }
+          const row = {away_team: g.away, home_team: g.home, commence_time: g.commence};
+          const list = byStart.get(g.commence) || [];
+          list.push(row);
+          byStart.set(g.commence, list);
+        });
+        for (const [start, list] of byStart) {
+          if (!start || Date.parse(start) > Date.now() + 15000) {
+            list.forEach(g => waiting.push(g.away_team + " at " + g.home_team));
+            continue;
+          }
+          const open = await oddsSnap(SPORT_KEY[sport], start, key, remain);
+          const next = open.next_timestamp;
+          const after = next && Date.parse(next) <= Date.now() + 15000 ? await oddsSnap(SPORT_KEY[sport], next, key, remain) : null;
+          list.forEach(g => {
+            const id = day + "|" + sport + "|" + g.away_team + " at " + g.home_team;
+            const liveOpen = findSnapGame(open, g);
+            const liveClose = after ? findSnapGame(after, g) : null;
+            if (liveOpen) { writeWindowOpen(pack, day, sport, liveOpen); opened++; }
+            if (liveClose) { writeWindowClose(pack, day, sport, liveClose); closed++; }
+            pack.done[id] = {open: liveOpen ? (open.timestamp || start) : "", close: liveClose ? (after.timestamp || next) : ""};
+          });
+        }
+      }
+    }
+    pack.saved = new Date().toISOString();
+    trimLineWindow(pack);
+    localStorage.setItem("gg-line-window", JSON.stringify(pack));
+    render();
+    const left = remain.n ? " Credits left " + remain.n + "." : "";
+    const wait = waiting.length ? " Not started yet: " + [...new Set(waiting)].join(", ") + "." : "";
+    const saved = "Saved " + opened + " start prices and " + closed + " closes for " + days[0] + " and " + days[1] + ".";
+    note.textContent = (!opened && !closed && !waiting.length ? "Today and yesterday are already saved." : saved + wait) + left;
+  } catch (err) {
+    if (note) note.textContent = (err && err.message) || "Pull failed.";
+  } finally {
+    window.__ggPulling = false;
+  }
 }
 function slipsForBooks(list){
   const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
@@ -4899,6 +5128,7 @@ async function gradeOpenSlate(){
     scoreBusy = false;
   }
 }
+document.getElementById("pulllines").onclick = () => { pullSlipWindow(); };
 document.getElementById("livescores").onclick = () => gradeFinishedSlips(false);
 document.getElementById("savedash").onclick = () => {
   const rows = JSON.parse(localStorage.getItem("gg-dashboard-v1") || "[]");
