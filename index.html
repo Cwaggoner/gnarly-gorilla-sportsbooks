@@ -746,6 +746,19 @@ function slipMoney(b){
   if (b.result === "push") return 0;
   return profit(b);
 }
+function rowPl(b){
+  if (!b || b.result === "pending" || b.result === "void" || b.result === "push") return 0;
+  if (!b.viewOnly) return slipMoney(b);
+  let price = Number(b.odds);
+  if (!Number.isFinite(price) || Math.abs(price) < 100) {
+    const juice = String(b.priceText || "").match(/([+-]\d+)\s*$/);
+    price = juice ? Number(juice[1]) : -110;
+  }
+  const stake = Number(b.stake) || 10;
+  if (b.result === "loss") return -stake;
+  const won = price > 0 ? stake * price / 100 : stake * 100 / Math.abs(price);
+  return Number.isFinite(won) ? won : 0;
+}
 function profit(b){
   if (b.result === "pending" || b.result === "void" || b.result === "push") return 0;
   if ((b.result === "win" || b.result === "loss") && Number.isFinite(Number(b.profit))) return Number(b.profit);
@@ -3114,8 +3127,7 @@ function render(){
   let lastSport = "", lastType = "";
   document.getElementById("rows").innerHTML = grouped.map(b => {
     try {
-    const noMoney = b.viewOnly && (b.noPrice || b.lineDiffers);
-    const p = noMoney ? null : slipMoney(b);
+    const p = rowPl(b);
     const cls = b.result === "win" ? "win" : b.result === "loss" ? "loss" : "push";
     const finished = slateSettled(b.date);
     const note = gradeNote(b);
@@ -3139,7 +3151,7 @@ function render(){
     }
     const edge = markEdge(b).edge;
     const rowCls = b.result === "win" ? "row-win" : b.result === "loss" ? "row-loss" : b.result === "pending" ? (edge ? "row-pending edge" : "row-pending") : (b.manual ? "manual" : b.fromCard ? "fromcard" : "");
-    return head + "<tr" + (rowCls ? " class='" + rowCls + "'" : "") + "><td>" + b.date + placedText(b) + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td>" + esc(b.pick) + "</td><td>" + (b.priceText ? esc(b.priceText) : (usableClose(b.odds) ? b.odds : dash)) + "</td><td class='col-close'>" + (b.closeText ? esc(b.closeText) : (usableClose(b.close) ? b.close : dash)) + "</td><td class='" + (cv > 0 ? "win" : cv < 0 ? "loss" : "") + "'>" + clvText(b) + "</td><td class='" + sharpCls + "'>" + esc(sharpLabel(sharpCv, b)) + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='result " + cls + "'>" + b.result + "</td><td class='" + cls + "'>" + (b.result === "pending" || p == null ? dash : moneyHtml(p)) + "</td><td>" + grade + "</td></tr>";
+    return head + "<tr" + (rowCls ? " class='" + rowCls + "'" : "") + "><td>" + b.date + placedText(b) + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td>" + esc(b.pick) + "</td><td>" + (b.priceText ? esc(b.priceText) : (usableClose(b.odds) ? b.odds : dash)) + "</td><td class='col-close'>" + (b.closeText ? esc(b.closeText) : (usableClose(b.close) ? b.close : dash)) + "</td><td class='" + (cv > 0 ? "win" : cv < 0 ? "loss" : "") + "'>" + clvText(b) + "</td><td class='" + sharpCls + "'>" + esc(sharpLabel(sharpCv, b)) + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='result " + cls + "'>" + b.result + "</td><td class='" + cls + "'>" + moneyHtml(p) + "</td><td>" + grade + "</td></tr>";
     } catch (err) { return ""; }
   }).join("") || "<tr><td colspan='13'>" + ((document.getElementById("fBook") || {}).value ? "No slips for " + esc(document.getElementById("fBook").value) + "." : "No bets yet.") + "</td></tr>";
   try { drawCharts(); } catch (err) { document.getElementById("plotnote").textContent = "Chart failed. The rest of the page is still live."; }
