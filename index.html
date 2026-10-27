@@ -153,7 +153,7 @@ tr.fromcard td { color:#b0b0b0; }
 tr.row-win td { color:#39ff14; }
 tr.row-loss td { color:#ff6b6b; }
 tr.row-pending td { color:var(--amber); }
-tr.row-pending.edge td { color:#ff00ff; }
+tr.row-pending.edge td { color:var(--amber); }
 tr.row-pending.edge td.result { color:var(--amber); }
 .tools { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; align-items:flex-end; }
 .jump { display:flex; gap:6px; margin:6px 0; justify-content:center; align-items:center; }
@@ -238,6 +238,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 .compare { width:100%; border-collapse:collapse; font-size:12px; }
 .compare th, .compare td { border-bottom:1px solid #1f3a1f; padding:4px 6px; text-align:left; }
 .compare th { color:#39ff14; }
+.best-price { color:#ff00ff; font-weight:700; }
 #oddscompare table.shop { margin-top:8px; }
 #oddscompare tr.edge td { color:#f0e14a; }
 </style>
@@ -2937,6 +2938,39 @@ function bestPriceHtml(rows, market){
   const note = "Same market as the board above. The gap removes each book's cut, then compares BetMGM with the best same number. A matched price is zero. A minus gap means BetMGM is short. A different point is a number split, not a better price.";
   return "<h2 class='split-title'>Best Price</h2><p class='api-note'>" + note + "</p><table class='compare shop'><thead><tr><th>Game</th><th>Side</th><th>BetMGM</th><th>Best Same Number</th><th>No-Vig Gap</th></tr></thead><tbody>" + (body || "<tr class='shop-row'><td colspan='5'>No posted prices for this market.</td></tr>") + "</tbody></table>";
 }
+function paintBookCell(cell, hot){
+  const text = String(cell || "").trim();
+  if (!text || text === "-") return "-";
+  const bits = text.split("/").map(s => s.trim());
+  if (bits.length < 2 || !hot) return esc(text);
+  return [0, 1].map(i => {
+    const raw = bits[i];
+    const shown = String(raw).match(/([+-]?\d+(?:\.\d+)?)\s*$/);
+    if (!hot[i] || !shown) return esc(raw);
+    return esc(raw.slice(0, shown.index)) + "<span class='best-price'>" + esc(shown[1]) + "</span>";
+  }).join(" / ");
+}
+function bestPriceFlags(booksMap, bookNames){
+  const hot = {};
+  bookNames.forEach(name => { hot[name] = [false, false]; });
+  const parsed = bookNames.map(name => ({name: name, sides: shopSides(booksMap && booksMap[name])}));
+  [0, 1].forEach(index => {
+    const groups = {};
+    parsed.forEach(item => {
+      if (!item.sides) return;
+      const key = item.sides[index].point == null ? "" : String(item.sides[index].point);
+      (groups[key] || (groups[key] = [])).push(item);
+    });
+    Object.keys(groups).forEach(key => {
+      const group = groups[key];
+      if (group.length < 2) return;
+      const max = Math.max.apply(null, group.map(item => item.sides[index].price));
+      if (!group.some(item => item.sides[index].price < max)) return;
+      group.forEach(item => { if (item.sides[index].price === max) hot[item.name][index] = true; });
+    });
+  });
+  return hot;
+}
 function publishedOddsHtml(day, market){
   const board = window.__ggOddsBoard;
   const rows = board && board.days && board.days[day] && board.days[day][market];
@@ -2947,8 +2981,11 @@ function publishedOddsHtml(day, market){
   const opt = (value, text) => "<option value='" + value + "'" + (market === value ? " selected" : "") + ">" + text + "</option>";
   const select = "<select id='comparesport'><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option><option selected>All</option></select> <select id='comparemarket'>" + opt("h2h","Moneyline") + opt("spreads","Spread") + opt("totals","Total") + "</select>";
   const head = "<tr><th>Game</th><th class='timecol'>Time</th>" + books.map(b => "<th>" + b + "</th>").join("") + "</tr>";
-  const body = rows.map(r => "<tr><td>" + esc(r.sport + " " + r.label) + "</td><td class='gametime' data-start='" + esc(r.start || "") + "'>" + esc(r.start ? formatTime(r.start, false) : "") + "</td>" + books.map(b => "<td>" + esc((r.books && r.books[b]) || "-") + "</td>").join("") + "</tr>").join("");
-  return "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>" + which + ". " + label + ". Posted at " + zoneTime(4, 0) + " from the public board. " + select + "</p><table class='compare'><thead>" + head + "</thead><tbody>" + body + "</tbody></table>" + bestPriceHtml(rows, market);
+  const body = rows.map(r => {
+    const flags = bestPriceFlags(r.books, books);
+    return "<tr><td>" + esc(r.sport + " " + r.label) + "</td><td class='gametime' data-start='" + esc(r.start || "") + "'>" + esc(r.start ? formatTime(r.start, false) : "") + "</td>" + books.map(b => "<td>" + paintBookCell(r.books && r.books[b], flags[b]) + "</td>").join("") + "</tr>";
+  }).join("");
+  return "<h2 class='split-title'>Live Odds Comparison</h2><p class='api-note'>" + which + ". " + label + ". Posted at " + zoneTime(4, 0) + " from the public board. <span class='best-price'>Magenta</span> text on this site means the best price: the highest number on that side among books that posted the same point. Books that share that best price are all marked. A price every book shares is not marked. A different point is not marked. " + select + "</p><table class='compare'><thead>" + head + "</thead><tbody>" + body + "</tbody></table>" + bestPriceHtml(rows, market);
 }
 async function drawOddsCompare(force){
   const key = oddskey.value.trim();
