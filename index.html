@@ -440,6 +440,22 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <div class="page-end"></div>
 </div>
 <script>
+(function(){
+  const raw = window.fetch.bind(window);
+  const bag = new Map();
+  window.fetch = function(url, opts){
+    const href = typeof url === "string" ? url : "";
+    const keep = href && (!opts || !opts.method || opts.method === "GET") && (href.indexOf("cards/") === 0 || href.indexOf("site.api.espn.com") !== -1);
+    if (!keep) return raw(url, opts);
+    const key = href.replace(/([?&])ts=\d+/, "");
+    let hit = bag.get(key);
+    if (!hit || Date.now() - hit.at > 8000) {
+      hit = {at: Date.now(), promise: raw(url, opts).then(async r => ({status: r.status, text: await r.text()})).catch(() => ({status: 0, text: ""}))};
+      bag.set(key, hit);
+    }
+    return hit.promise.then(pack => new Response(pack.text, {status: pack.status || 503}));
+  };
+})();
 document.addEventListener("click", e => {
   const btn = e.target.closest("[data-jump]");
   if (!btn) return;
@@ -2528,10 +2544,7 @@ async function refreshSlateRecords(){
   const date = (pickSlate && pickSlate.date) || easternDay();
   const days = [...new Set([date, easternDay(), yesterday()].concat(pending.map(b => String(b.date || "").slice(0, 10))).filter(Boolean))];
   const sports = [...new Set(slateGames.map(g => g.sport).concat(pending.map(b => String(b.sport || "").toUpperCase())).filter(s => SCORE_FEED[s]))];
-  const found = [];
-  for (const sport of sports) {
-    for (const day of days) found.push(...await scoreboard(sport, day).catch(() => []));
-  }
+  const found = (await Promise.all(sports.flatMap(sport => days.map(day => scoreboard(sport, day).catch(() => []))))).flat();
   if (!found.length) return;
   let changed = false;
   const apply = g => {
@@ -3682,7 +3695,6 @@ async function autoLoadBoard(){
   await fillPickBoard().catch(() => {});
 }
 applyGrades().catch(() => {});
-drawOddsCompare().catch(() => {});
 document.getElementById("loadpicks").onclick = () => {
   document.getElementById("loadnote").textContent = "Loading...";
   fillPickBoard().catch(err => {
@@ -4042,9 +4054,9 @@ async function cardBundle(){
   });
   return [todayFile || fileLine, sharp, lines.join("\n")].filter(Boolean).join("\n");
 }
-async function loadDriveCard(){
+async function loadDriveCard(ready){
   const note = document.getElementById("pdfnote");
-  const text = await cardBundle();
+  const text = ready == null ? await cardBundle() : ready;
   const today = easternDay();
   const sharp = (text.split(/\n/).find(line => line.trim().startsWith("# sharp:")) || "").trim();
   const lines = text.split(/\n/).filter(line => line.trim().startsWith(today));
@@ -4078,10 +4090,14 @@ function gradeRows(text){
     return {date: r[0], sport: wide ? r[1] : "", pick: wide ? r[2] : r[1], result: (wide ? r[4] : r[2] || "").toLowerCase(), close: "", odds: Number.isNaN(odds) ? -110 : odds};
   }).filter(row => row && row.date && row.pick && row.result && !/no picks|season ended|^range$/i.test(row.pick + " " + row.result));
 }
-async function applyGrades(){
-  const res = await fetch("cards/grades.txt?ts=" + Date.now());
-  if (!res.ok) return;
-  const text = await res.text();
+async function applyGrades(ready){
+  let text = ready;
+  if (text == null) {
+    const res = await fetch("cards/grades.txt?ts=" + Date.now());
+    if (!res.ok) return;
+    text = await res.text();
+  }
+  if (!text) return;
   const rules = text.split(/\n/).map(parseGradeLine).filter(Boolean);
   const bets = load();
   const graded = loadGrade();
@@ -4278,10 +4294,7 @@ async function gradeFinishedSlips(quiet){
     }
     const sports = [...new Set(pending.map(b => String(b.sport || "").toUpperCase()))].filter(s => SCORE_FEED[s]);
     const dates = [...new Set(pending.map(b => String(b.date || "").slice(0, 10)))];
-    const games = [];
-    for (const sport of sports) {
-      for (const date of dates) games.push(...await scoreboard(sport, date).catch(() => []));
-    }
+    const games = (await Promise.all(sports.flatMap(sport => dates.map(date => scoreboard(sport, date).catch(() => []))))).flat();
     if (!games.length) {
       if (note && !quiet) note.textContent = "Score feed did not answer. No slips were changed.";
       return {graded: 0, live: 0, left: 0};
@@ -4360,10 +4373,7 @@ async function gradeOpenSlate(){
   if (!sports.length) { scheduleGradeCheck(300000); showClock(); return; }
   scoreBusy = true;
   try {
-    const games = [];
-    for (const sport of sports) {
-      for (const date of openDates) games.push(...await scoreboard(sport, date).catch(() => []));
-    }
+    const games = (await Promise.all(sports.flatMap(sport => openDates.map(date => scoreboard(sport, date).catch(() => []))))).flat();
     if (games.length) applyFinalGrades(games);
     let stillLive = false;
     let nextStart = 0;
@@ -4435,12 +4445,16 @@ document.getElementById("loaddrive").onclick = async () => {
   await loadDriveCard().catch(err => { note.textContent = err.message; });
 };
 async function catchUp(){
+  const ledgerP = localStorage.getItem("gg-hold-ledger") === "1" ? Promise.resolve(null) : fetch("cards/ledger.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).catch(() => null);
+  const cardP = cardBundle().catch(() => "");
+  let gradesText = "";
   try {
     const [cal, grades, dash] = await Promise.all([
       fetch("cards/calendar.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).catch(() => null),
       fetch("cards/grades.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").catch(() => ""),
       fetch("cards/dashboard.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").catch(() => "")
     ]);
+    gradesText = grades || "";
     if (cal && cal.dates) {
       Object.keys(cal.dates).forEach(date => {
         const prior = publishedCalendar[date] || {};
@@ -4456,17 +4470,16 @@ async function catchUp(){
   if (localStorage.getItem("gg-hold-ledger") !== "1") {
     const kept = load().filter(b => b && b.manual && inSlipWindow(b.date));
     try {
-      const res = await fetch("cards/ledger.json?ts=" + Date.now());
-      if (res.ok) {
-        const data = await res.json();
+      const data = await ledgerP;
+      if (data) {
         const published = (Array.isArray(data) ? data : (data.bets || [])).filter(b => b && inSlipWindow(b.date) && !isNoPick(b));
         published.forEach(b => { if (!kept.some(x => sameSlip(x, b))) kept.push(b); });
       }
     } catch (err) {}
     localStorage.setItem(KEY, JSON.stringify(kept));
   }
-  await loadDriveCard().catch(() => {});
-  await applyGrades().catch(() => {});
+  await loadDriveCard(await cardP).catch(() => {});
+  await applyGrades(gradesText).catch(() => {});
   clearStalePending();
   render();
   gradeOpenSlate().catch(() => {});
