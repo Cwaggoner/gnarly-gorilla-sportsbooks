@@ -3580,23 +3580,52 @@ function rememberBooks(sport, games){
   Object.keys(all).forEach(d => { if (d < cutoff) delete all[d]; });
   localStorage.setItem("gg-book-prices", JSON.stringify(all));
 }
-function bookOutcome(slip, book){
+function sideHit(pick, team){
+  const words = s => String(s || "").toLowerCase().replace(/[^a-z0-9&]/g, " ").split(/\s+/).filter(w => w && !/^(the|at|vs|and|over|under|ml|moneyline)$/.test(w) && !/^[+-]\d/.test(w) && !/^\d+(?:\.\d+)?$/.test(w));
+  const teamWords = words(team);
+  const pickWords = words(pick);
+  if (!teamWords.length || !pickWords.length) return false;
+  const last = teamWords[teamWords.length - 1];
+  return pickWords.some(w => w === last || (w.length >= 4 && last.length >= 4 && (last.indexOf(w) === 0 || w.indexOf(last) === 0)));
+}
+function bookPair(slip, book){
   let all = {};
   try { all = bookStore(); } catch (e) { return null; }
   const day = all[String(slip.date || "").slice(0, 10)];
   const games = day && day[String(slip.sport || "").toUpperCase()];
   if (!games) return null;
   const pick = String(slip.pick || "");
-  const label = Object.keys(games).find(k => k.split(" at ").every(team => pick.includes(team) || teamHit(pick, team)));
+  const label = Object.keys(games).find(k => {
+    const teams = k.split(/\s+at\s+/i);
+    return teams.length > 1 && teams.every(team => sideHit(pick, team));
+  });
   if (!label) return null;
   const type = slip.type || betType(slip);
   const market = type === "Total" ? "totals" : type === "Moneyline" ? "h2h" : "spreads";
   const outcomes = ((games[label][book] || {})[market]) || [];
+  if (!outcomes.length) return null;
   if (type === "Total") {
     const side = /under/i.test(pick) ? "Under" : "Over";
-    return outcomes.find(o => o.name === side) || null;
+    const hit = outcomes.find(o => o.name === side) || null;
+    return hit ? {hit: hit, opp: oppositeOutcome(outcomes, hit, market)} : null;
   }
-  return outcomes.find(o => pick.includes(o.name) || teamHit(pick, o.name)) || null;
+  const teams = label.split(/\s+at\s+/i);
+  const away = teams[0] || "";
+  const home = teams[1] || "";
+  const awayOn = sideHit(pick, away);
+  const homeOn = sideHit(pick, home);
+  let want = away;
+  if (homeOn && !awayOn) want = home;
+  else if (awayOn && homeOn) {
+    const named = pick.match(/([A-Za-z0-9 .&']+?)\s+[+-]\d/);
+    if (named && sideHit(named[1], home) && !sideHit(named[1], away)) want = home;
+  }
+  const hit = outcomes.find(o => sideHit(o.name, want) || sideHit(want, o.name)) || null;
+  return hit ? {hit: hit, opp: oppositeOutcome(outcomes, hit, market)} : null;
+}
+function bookOutcome(slip, book){
+  const pair = bookPair(slip, book);
+  return pair ? pair.hit : null;
 }
 function savedBookPrice(slip, book){
   const hit = bookOutcome(slip, book);
@@ -3616,18 +3645,27 @@ function slipsForBooks(list){
   list.forEach(b => {
     names.forEach(book => {
       const key = [String(b.date).slice(0, 10), b.sport, normPick(b.pick), bookKey(book)].join("|");
-      if (bookKey(b.book) === bookKey(book)) { out.push(b); return; }
-      if (owned.has(key)) return;
       const parlay = b.type === "SGP" || /\band\b/i.test(String(b.pick || ""));
-      const hit = parlay ? null : bookOutcome(b, book);
+      const pair = parlay ? null : bookPair(b, book);
+      const hit = pair && pair.hit;
+      const opp = pair && pair.opp;
+      const settled = slateSettled(b.date);
+      if (bookKey(b.book) === bookKey(book)) {
+        if (hit && settled && !usableClose(b.close)) {
+          out.push(Object.assign({}, b, {close: hit.price, closeOpp: opp && opp.price != null ? opp.price : b.closeOpp, realClose: true}));
+        } else out.push(b);
+        return;
+      }
+      if (owned.has(key)) return;
       const copy = Object.assign({}, b, {
         book: book,
         id: String(b.id) + "|" + book,
         viewOnly: true,
         odds: hit && hit.price != null ? hit.price : "",
-        close: "",
-        realClose: false,
-        priceText: hit ? ((hit.point != null && (b.type || betType(b)) !== "Moneyline") ? hit.point + " " + hit.price : String(hit.price)) : "",
+        close: hit && settled && hit.price != null ? hit.price : "",
+        closeOpp: opp && settled && opp.price != null ? opp.price : "",
+        realClose: !!(hit && settled),
+        priceText: "",
         noPrice: !hit,
         lineDiffers: !!(hit && !sameBookNumber(b, hit))
       });
