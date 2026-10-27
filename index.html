@@ -342,6 +342,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <li>Red means out.</li>
 <li>Amber means he may still play.</li>
 <li>The page pulls the public report when the card loads and again every few minutes.</li>
+<li>A filing pushed today is what everyone sees. Before that push, the page reads the public report.</li>
 <li>The times below are when a new filing is actually due, in Eastern time.</li>
 </ul>
 <p class="api-note injury-filters"><select id="injurysport"><option selected>All</option><option>NFL</option><option>NBA</option><option>NHL</option><option>MLB</option><option>CFB</option><option>CBB</option></select> <select id="injuryshow"><option value="posted" selected>Posted</option><option value="all">All rows</option><option value="out">Out</option><option value="maybe">May still play</option></select></p>
@@ -2635,9 +2636,16 @@ async function drawInjuryReport(){
     return;
   }
   const sports = [...new Set(wanted.map(row => row.sport))];
-  const packs = await Promise.all(sports.map(sport => fetch("https://site.api.espn.com/apis/site/v2/sports/" + SCORE_FEED[sport] + "/injuries").then(r => r.ok ? r.json() : null).catch(() => null)));
+  const published = await readJson("cards/injuries.json");
   const bySport = {};
-  sports.forEach((sport, i) => { bySport[sport] = packs[i]; });
+  if (published && published.date === easternDay() && published.sports) {
+    sports.forEach(sport => { if (published.sports[sport]) bySport[sport] = published.sports[sport]; });
+  }
+  const missing = sports.filter(sport => !bySport[sport]);
+  if (missing.length) {
+    const packs = await Promise.all(missing.map(sport => fetch("https://site.api.espn.com/apis/site/v2/sports/" + SCORE_FEED[sport] + "/injuries").then(r => r.ok ? r.json() : null).catch(() => null)));
+    missing.forEach((sport, i) => { bySport[sport] = packs[i]; });
+  }
   const rows = [];
   wanted.forEach(team => {
     const feed = bySport[team.sport];
