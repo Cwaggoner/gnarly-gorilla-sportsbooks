@@ -3166,6 +3166,47 @@ function oddsTableHtml(rows, day, market, lead){
   const magenta = "<span class='best-price'>Magenta</span> text on this site means the best price: the highest number on that side among books that posted the same point. Books that share that best price are all marked. A price every book shares is not marked. A different point is not marked.";
   return oddsBullets([line, magenta]) + "<h2 class='split-title'>Live Odds Comparison</h2><table class='compare'><thead><tr class='cols'>" + head + "</tr></thead><tbody>" + body + "</tbody></table>" + bestPriceHtml(rows, market, day);
 }
+function usableBoard(data){
+  if (!data || !data.days || typeof data.days !== "object") return false;
+  return Object.keys(data.days).some(day => {
+    const block = data.days[day];
+    return block && ["h2h","spreads","totals"].some(market => Array.isArray(block[market]) && block[market].length);
+  });
+}
+function savedBoard(){
+  try {
+    const pack = JSON.parse(localStorage.getItem("gg-odds-board-file") || "null");
+    return pack && usableBoard(pack.data) ? pack.data : null;
+  } catch (e) { return null; }
+}
+function rememberBoard(data){
+  if (!usableBoard(data)) return false;
+  window.__ggOddsBoard = data;
+  try { localStorage.setItem("gg-odds-board-file", JSON.stringify({at: Date.now(), data: data})); } catch (e) {}
+  return true;
+}
+function mergeBoardRows(day, market, rows){
+  if (!day || !rows || !rows.length) return;
+  const board = window.__ggOddsBoard && window.__ggOddsBoard.days ? window.__ggOddsBoard : {days: {}};
+  board.days = board.days || {};
+  const block = board.days[day] || (board.days[day] = {});
+  const old = Array.isArray(block[market]) ? block[market] : [];
+  const keyOf = row => String(row && row.label || "").toLowerCase();
+  const index = {};
+  old.forEach(row => { index[keyOf(row)] = row; });
+  rows.forEach(row => {
+    const prev = index[keyOf(row)];
+    if (!prev) { old.push(row); index[keyOf(row)] = row; return; }
+    prev.books = prev.books || {};
+    Object.keys(row.books || {}).forEach(book => {
+      const val = row.books[book];
+      if (val && val !== "-") prev.books[book] = val;
+    });
+    if (row.start) prev.start = row.start;
+  });
+  block[market] = old;
+  rememberBoard(board);
+}
 function publishedOddsHtml(day, market){
   const board = window.__ggOddsBoard;
   const rows = board && board.days && board.days[day] && board.days[day][market];
@@ -3280,6 +3321,8 @@ async function drawOddsCompare(force){
     }
     const label = market === "spreads" ? "Spread, away / home" : market === "totals" ? "Total, over point and price / under price" : "Moneyline, away / home";
     if (rows.length) {
+      const days = new Set((live.games || []).map(g => g && g.commence_time && slateDateOf(g.commence_time)).filter(Boolean));
+      days.forEach(d => ["h2h","spreads","totals"].forEach(m => mergeBoardRows(d, m, rowsFromLive(live.games, d, m))));
       const when = formatTime(live.at) || "just now";
       const which = shownDay === day ? "" : "Yesterday has started, so this is today. ";
       box.innerHTML = oddsTableHtml(rows, shownDay, market, "Live as of " + when + ". " + which + label + ". Press Refresh for the next pull. A dash means that book has no number up.");
@@ -5879,7 +5922,13 @@ function applyPublishedBooks(){
 }
 fetch("cards/book-prices.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => { if (data) { fileBooks = data; applyPublishedBooks(); } }).catch(() => {});
 fetch("cards/book-closes.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => { if (data && data.days) { bookCloses = data; render(); } }).catch(() => {});
-fetch("cards/odds-board.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => { if (data && data.days) { window.__ggOddsBoard = data; applyPublishedBooks(); drawOddsCompare(false).catch(() => {}); } }).catch(() => {});
+function loadOddsBoard(data){
+  if (!usableBoard(data)) data = savedBoard();
+  if (!rememberBoard(data)) return;
+  applyPublishedBooks();
+  drawOddsCompare(false).catch(() => {});
+}
+fetch("cards/odds-board.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(loadOddsBoard).catch(() => loadOddsBoard(null));
 fetch("cards/closes.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
   const store = closeStore();
   text.split(/\n/).forEach(line => {
