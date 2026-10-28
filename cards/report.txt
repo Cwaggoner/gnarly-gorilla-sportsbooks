@@ -1,15 +1,1 @@
-# GG report 2026-10-26
-# Yesterday 2026-10-26 graded. Record 3-4-0. Profit $-12.73. CLV Matched Bet Price.
-
-Analysis: Monday cashed the Timberwolves, Mavericks and Grizzlies spreads. The Bulls and Suns spreads lost. The Eagles NFL spread lost and the Rangers moneyline lost.
-
-2026-10-26 | NBA | win | Timberwolves +3.5 | EDGE
-2026-10-26 | NBA | loss | Bulls +14.5 | EDGE
-2026-10-26 | NBA | win | Mavericks +8.5 | EDGE
-2026-10-26 | NBA | loss | Suns +9.5 | EDGE
-2026-10-26 | NBA | win | Grizzlies +1.5 | EDGE
-2026-10-26 | NFL | loss | Philadelphia Eagles +4.5 | EDGE
-2026-10-26 | NHL | loss | Rangers ML | EDGE
-2026-10-26 | MLB | No Picks
-2026-10-26 | CFB | No Picks
-2026-10-26 | CBB | No Picks
+PLACEHOLDER
