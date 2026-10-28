@@ -452,7 +452,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <label>Close Odds<input name="close" type="number" step="1" placeholder="-120"></label>
 <input type="hidden" name="editId">
 <label>Stake $<input name="stake" type="number" step="0.01" min="0" value="10" required></label>
-<p class="warn fine field-note">Load Picks uses the Odds API key below and the Book selected here. Moneyline, Spread, and Total fill from that book. A refresh restores the last list with no new call.</p>
+<p class="warn fine field-note">Load Picks uses the date, book, sport, and type to the left. The icon under Load Picks loads every open pick for every book. A refresh restores the last list with no new call.</p>
 </div>
 <label class="notes-field">Notes<textarea name="notes" placeholder="High 62%"></textarea></label>
 </div>
@@ -4493,7 +4493,8 @@ async function repricePaste(){
   note.textContent = priced + " lines repriced at " + book + (missed ? ". " + missed + " kept the card price." : ".");
 }
 
-async function fillPickBoard(useSaved){
+async function fillPickBoard(useSaved, scope){
+  const allBooks = scope === "all";
   const book = form.book.value;
   const bookKey = BOOK_KEY[book];
   const key = oddskey.value.trim();
@@ -4501,22 +4502,34 @@ async function fillPickBoard(useSaved){
   const note = document.getElementById("picknote");
   const current = sel.value;
   sel.innerHTML = "<option value=''>Select a pick</option>";
-  if (!key) { note.textContent = "Add the Odds Key below. Then this list follows " + book + "."; return; }
-  if (!bookKey) { note.textContent = book + " has no live board."; return; }
+  if (!key) { note.textContent = "Add the Odds Key below. Then Load Picks follows the dropdowns."; return; }
+  if (!allBooks && !bookKey) { note.textContent = book + " has no live board."; return; }
   const day = form.date.value;
   const today = easternDay();
   const yesterday = shiftDate(today, -1);
-  note.textContent = "Loading " + book + " picks for every sport on " + day + "...";
-  const sports = Object.keys(SPORT_KEY);
+  const sport = form.sport.value;
+  const marketFor = {Moneyline:"h2h", Spread:"spreads", Total:"totals"};
+  const type = form.type.value;
+  const want = marketFor[type] || "";
+  if (!allBooks && !want) {
+    note.textContent = type + " has no board lines. Moneyline, Spread, and Total come from the selected book.";
+    document.getElementById("loadnote").textContent = "No board lines for " + type + ".";
+    return;
+  }
+  const sports = allBooks ? SPORTS.slice() : [sport];
+  const books = allBooks ? Object.keys(BOOK_KEY) : [book];
+  const markets = allBooks ? ["h2h","spreads","totals"] : [want];
+  note.textContent = allBooks ? "Loading every book for " + day + "..." : "Loading " + book + " " + sport + " " + type + " for " + day + "...";
   let allGames = [];
-  for (const sport of sports) {
-    const sportKey = SPORT_KEY[sport];
-    const dayKey = "gg-day-" + day + "-" + sportKey + "-" + bookKey;
+  for (const one of sports) {
+    const sportKey = SPORT_KEY[one];
+    if (!sportKey) continue;
+    const dayKey = "gg-day-" + day + "-" + sportKey + "-" + (bookKey || Object.values(BOOK_KEY)[0]);
     let games = [];
     if (day && day < today) {
       try { games = JSON.parse(localStorage.getItem(dayKey) || "null") || []; } catch (e) { games = []; }
     } else {
-      games = useSaved ? (cachedBoard(sport, bookKey) || []) : await fetchBook(sportKey, bookKey, key);
+      games = useSaved ? (cachedBoard(one, bookKey || Object.values(BOOK_KEY)[0]) || []) : await fetchBook(sportKey, bookKey || Object.values(BOOK_KEY)[0], key);
       const byDay = {};
       games.forEach(game => {
         const calDay = game.commence_time ? new Date(game.commence_time).toLocaleDateString("en-CA", {timeZone: siteZone()}) : day;
@@ -4527,9 +4540,9 @@ async function fillPickBoard(useSaved){
           byDay[d].push(game);
         });
       });
-      Object.entries(byDay).forEach(([d, list]) => localStorage.setItem("gg-day-" + d + "-" + sportKey + "-" + bookKey, JSON.stringify(list)));
+      Object.entries(byDay).forEach(([d, list]) => localStorage.setItem("gg-day-" + d + "-" + sportKey + "-" + (bookKey || Object.values(BOOK_KEY)[0]), JSON.stringify(list)));
     }
-    games.forEach(g => { g._sport = sport; allGames.push(g); });
+    games.forEach(g => { g._sport = one; allGames.push(g); });
   }
   window.__ggExtraStarts = allGames.filter(g => g.commence_time).map(g => ({sport: g._sport, start: g.commence_time}));
   const lastEnd = lastSlateEnd(yesterday);
@@ -4539,18 +4552,8 @@ async function fillPickBoard(useSaved){
     document.getElementById("loadnote").textContent = "Waiting On Yesterday";
     return;
   }
-  const sport = form.sport.value;
-  const marketFor = {Moneyline:"h2h", Spread:"spreads", Total:"totals"};
-  const type = form.type.value;
-  const want = marketFor[type] || "";
-  if (!want) {
-    note.textContent = type + " has no board lines. Moneyline, Spread, and Total update from the saved board.";
-    document.getElementById("loadnote").textContent = "No board lines for " + type + ".";
-    return;
-  }
   let count = 0;
   const dayGames = allGames.filter(game => {
-    if (sport && game._sport !== sport) return false;
     if (!day) return true;
     if (!game.commence_time) return true;
     return slateDateOf(game.commence_time) === day;
@@ -4558,44 +4561,58 @@ async function fillPickBoard(useSaved){
   const started = dayGames.filter(game => game.commence_time && Date.parse(game.commence_time) <= Date.now());
   const openGames = dayGames.filter(game => !game.commence_time || Date.parse(game.commence_time) > Date.now());
   openGames.forEach(game => {
-    const bk = (game.bookmakers || []).find(b => b.key === bookKey);
-    if (!bk) return;
-    (bk.markets || []).forEach(mk => {
-      if (want && mk.key !== want) return;
-      (mk.outcomes || []).forEach(o => {
-        if (o.price == null) return;
-        const kick = game.commence_time ? " " + formatTime(game.commence_time) : "";
-        let label = game._sport + " " + game.away_team + " at " + game.home_team + kick + " " + o.name + (mk.key === "h2h" ? " ML" : "");
-        if (mk.key === "spreads" && o.point != null) label = game._sport + " " + game.away_team + " at " + game.home_team + kick + " " + o.name.split(" ").slice(-1)[0] + " " + (o.point > 0 ? "+" : "") + o.point;
-        if (mk.key === "totals" && o.point != null) label = game._sport + " " + totalLabel(game, o.name.toLowerCase(), o.point);
-        const opt = document.createElement("option");
-        opt.value = label;
-        opt.textContent = label + " (" + o.price + ")";
-        opt.dataset.price = o.price;
-        opt.dataset.close = o.price;
-        opt.dataset.market = mk.key;
-        opt.dataset.sport = game._sport;
-        sel.appendChild(opt);
-        count++;
+    books.forEach(bookName => {
+      const thisKey = BOOK_KEY[bookName];
+      const bk = (game.bookmakers || []).find(b => b.key === thisKey);
+      if (!bk) return;
+      (bk.markets || []).forEach(mk => {
+        if (markets.indexOf(mk.key) < 0) return;
+        (mk.outcomes || []).forEach(o => {
+          if (o.price == null) return;
+          const kick = game.commence_time ? " " + formatTime(game.commence_time) : "";
+          let label = game._sport + " " + game.away_team + " at " + game.home_team + kick + " " + o.name + (mk.key === "h2h" ? " ML" : "");
+          if (mk.key === "spreads" && o.point != null) label = game._sport + " " + game.away_team + " at " + game.home_team + kick + " " + o.name.split(" ").slice(-1)[0] + " " + (o.point > 0 ? "+" : "") + o.point;
+          if (mk.key === "totals" && o.point != null) label = game._sport + " " + totalLabel(game, o.name.toLowerCase(), o.point);
+          if (allBooks) label = bookName + " " + label;
+          const opt = document.createElement("option");
+          opt.value = label;
+          opt.textContent = label + " (" + o.price + ")";
+          opt.dataset.price = o.price;
+          opt.dataset.close = o.price;
+          opt.dataset.market = mk.key;
+          opt.dataset.sport = game._sport;
+          opt.dataset.book = bookName;
+          sel.appendChild(opt);
+          count++;
+        });
       });
     });
   });
   if (current) sel.value = current;
-  const msg = count ? "Loaded " + count + " " + book + " " + (sport || "all sports") + " picks for " + day + "." + (started.length ? " " + started.length + " started games closed." : "") : "No " + book + " lines for " + day + ".";
+  const who = allBooks ? "every book" : book + " " + sport + " " + type;
+  const msg = count ? "Loaded " + count + " " + who + " picks for " + day + "." + (started.length ? " " + started.length + " started games closed." : "") : "No lines for " + who + " on " + day + ".";
   note.textContent = msg;
   document.getElementById("loadnote").textContent = count ? "Load successful." : "No Lines";
-  if (count) localStorage.setItem("gg-pick-board", JSON.stringify({book, sport: "ALL", day, value: sel.value, options: [...sel.options].map(o => ({value:o.value, text:o.textContent, price:o.dataset.price || "", close:o.dataset.close || ""}))}));
+  if (count) localStorage.setItem("gg-pick-board", JSON.stringify({book: allBooks ? "All" : book, sport: allBooks ? "All" : sport, day, value: sel.value, options: [...sel.options].map(o => ({value:o.value, text:o.textContent, price:o.dataset.price || "", close:o.dataset.close || "", market:o.dataset.market || "", sport:o.dataset.sport || "", book:o.dataset.book || ""}))}));
 }
 document.getElementById("pickselect").onchange = () => {
   const opt = document.getElementById("pickselect").selectedOptions[0];
   if (!opt) return;
   const market = {h2h:"Moneyline", spreads:"Spread", totals:"Total", Moneyline:"Moneyline", Spread:"Spread", Total:"Total", SGP:"SGP"};
   if (opt.dataset.market && market[opt.dataset.market] && [...form.type.options].some(o => o.value === market[opt.dataset.market])) form.type.value = market[opt.dataset.market];
+  if (opt.dataset.sport && [...form.sport.options].some(o => o.value === opt.dataset.sport)) form.sport.value = opt.dataset.sport;
+  if (opt.dataset.book && [...form.book.options].some(o => o.value === opt.dataset.book)) form.book.value = opt.dataset.book;
   if (!opt.dataset.price) { form.odds.value = ""; form.close.value = ""; return; }
   form.odds.value = opt.dataset.price;
   form.close.value = opt.dataset.close;
 };
-document.getElementById("loadicon").onclick = () => document.getElementById("loadpicks").click();
+document.getElementById("loadicon").onclick = () => {
+  document.getElementById("loadnote").textContent = "Loading...";
+  fillPickBoard(false, "all").catch(err => {
+    document.getElementById("picknote").textContent = err.message || "Feed error.";
+    document.getElementById("loadnote").textContent = /key|401|403/i.test(err.message || "") ? "Bad Key" : "Feed Error";
+  });
+};
 async function autoLoadBoard(){
   const key = oddskey.value.trim();
   if (!key) return;
@@ -4630,7 +4647,7 @@ form.book.onchange = () => {
   repriceSlips().catch(err => { document.getElementById("picknote").textContent = err.message; });
 };
 form.sport.onchange = refreshPicks;
-document.getElementById("picknote").textContent = "Press Load Picks. The list follows the date in Add A Bet.";
+document.getElementById("picknote").textContent = "Press Load Picks for the dropdowns. The icon loads every book.";
 try {
   const savedPicks = JSON.parse(localStorage.getItem("gg-pick-board") || "null");
   if (savedPicks && savedPicks.options && savedPicks.options.length) {
@@ -4642,6 +4659,9 @@ try {
       opt.textContent = o.text;
       if (o.price) opt.dataset.price = o.price;
       if (o.close) opt.dataset.close = o.close;
+      if (o.market) opt.dataset.market = o.market;
+      if (o.sport) opt.dataset.sport = o.sport;
+      if (o.book) opt.dataset.book = o.book;
       sel.appendChild(opt);
     });
     if (savedPicks.value) sel.value = savedPicks.value;
