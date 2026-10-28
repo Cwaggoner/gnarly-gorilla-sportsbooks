@@ -1,6 +1,6 @@
 {
-  "updated": "2026-10-28T19:34-04:00",
-  "source": "October 26 and 27 from the posted public boards. October 28 is the live book price where the game is still on the board, and the ESPN DraftKings price after a game has tipped. A dash means that book posted no number.",
+  "updated": "2026-10-28T19:54-04:00",
+  "source": "October 28 prices refreshed from the live books. A game that has tipped keeps the last price from before the feed dropped it. A dash means that book posted no number.",
   "days": {
     "2026-10-26": {
       "h2h": [
@@ -1247,12 +1247,12 @@
           "label": "Kennesaw State Owls at Middle Tennessee Blue Raiders",
           "start": "2026-10-28T23:00:00Z",
           "books": {
-            "BetMGM": "+105 / -135",
-            "Caesars": "+109 / -139",
-            "DraftKings": "+114 / -152",
-            "Fanatics": "+125 / -165",
-            "FanDuel": "+140 / -178",
-            "HardRock": "+155 / -210"
+            "BetMGM": "+110 / -145",
+            "Caesars": "+111 / -143",
+            "DraftKings": "+113 / -151",
+            "Fanatics": "+115 / -150",
+            "FanDuel": "+110 / -138",
+            "HardRock": "+105 / -145"
           }
         },
         {
@@ -1263,9 +1263,9 @@
             "BetMGM": "-160 / +130",
             "Caesars": "-157 / +132",
             "DraftKings": "-155 / +130",
-            "Fanatics": "-155 / +130",
+            "Fanatics": "-160 / +135",
             "FanDuel": "-150 / +126",
-            "HardRock": "-150 / +125"
+            "HardRock": "-160 / +130"
           }
         },
         {
@@ -1274,9 +1274,9 @@
           "start": "2026-10-29T00:10:00Z",
           "books": {
             "BetMGM": "-145 / +120",
-            "Caesars": "-143 / +123",
-            "DraftKings": "-139 / +124",
-            "Fanatics": "-145 / +120",
+            "Caesars": "-150 / +125",
+            "DraftKings": "-138 / +123",
+            "Fanatics": "-140 / +115",
             "FanDuel": "-136 / +122",
             "HardRock": "-145 / +125"
           }
@@ -1286,12 +1286,12 @@
           "label": "Charlotte Hornets at Detroit Pistons",
           "start": "2026-10-28T23:11:00Z",
           "books": {
-            "BetMGM": "+190 / -250",
-            "Caesars": "+230 / -300",
-            "DraftKings": "+155 / -210",
-            "Fanatics": "+210 / -285",
-            "FanDuel": "+200 / -265",
-            "HardRock": "+190 / -250"
+            "BetMGM": "+120 / -155",
+            "Caesars": "-105 / -125",
+            "DraftKings": "+110 / -145",
+            "Fanatics": "+110 / -145",
+            "FanDuel": "+108 / -138",
+            "HardRock": "+145 / -190"
           }
         },
         {
@@ -1299,12 +1299,12 @@
           "label": "Washington Wizards at Cleveland Cavaliers",
           "start": "2026-10-28T23:11:00Z",
           "books": {
-            "BetMGM": "+275 / -375",
-            "Caesars": "+280 / -380",
-            "DraftKings": "+300 / -450",
-            "Fanatics": "+265 / -375",
-            "FanDuel": "+290 / -410",
-            "HardRock": "+275 / -425"
+            "BetMGM": "+115 / -150",
+            "Caesars": "-105 / -125",
+            "DraftKings": "+100 / -130",
+            "Fanatics": "+105 / -140",
+            "FanDuel": "+116 / -148",
+            "HardRock": "+105 / -135"
           }
         },
         {
@@ -1312,12 +1312,12 @@
           "label": "Miami Heat at Atlanta Hawks",
           "start": "2026-10-28T23:12:00Z",
           "books": {
-            "BetMGM": "-210 / +160",
-            "Caesars": "-210 / +165",
-            "DraftKings": "-175 / +130",
-            "Fanatics": "-205 / +155",
-            "FanDuel": "-235 / +180",
-            "HardRock": "-240 / +175"
+            "BetMGM": "-250 / +190",
+            "Caesars": "-230 / +180",
+            "DraftKings": "-240 / +180",
+            "Fanatics": "-245 / +180",
+            "FanDuel": "-265 / +200",
+            "HardRock": "-220 / +165"
           }
         },
         {
@@ -1325,25 +1325,25 @@
           "label": "Philadelphia 76ers at Indiana Pacers",
           "start": "2026-10-28T23:13:00Z",
           "books": {
-            "BetMGM": "-375 / +270",
-            "Caesars": "-350 / +260",
-            "DraftKings": "-350 / +255",
-            "Fanatics": "-375 / +265",
-            "FanDuel": "-410 / +290",
-            "HardRock": "-300 / +210"
+            "BetMGM": "-285 / +210",
+            "Caesars": "-240 / +185",
+            "DraftKings": "-225 / +170",
+            "Fanatics": "-250 / +185",
+            "FanDuel": "-265 / +200",
+            "HardRock": "-275 / +200"
           }
         },
         {
           "sport": "NBA",
           "label": "Orlando Magic at Toronto Raptors",
-          "start": "2026-10-28T23:40:00Z",
+          "start": "2026-10-28T23:42:00Z",
           "books": {
-            "BetMGM": "+170 / -210",
-            "Caesars": "+162 / -195",
-            "DraftKings": "+160 / -192",
-            "Fanatics": "+165 / -200",
-            "FanDuel": "+164 / -196",
-            "HardRock": "+165 / -200"
+            "BetMGM": "+115 / -150",
+            "Caesars": "+115 / -145",
+            "DraftKings": "+100 / -135",
+            "Fanatics": "+120 / -160",
+            "FanDuel": "+112 / -142",
+            "HardRock": "-105 / -130"
           }
         },
         {
@@ -1351,11 +1351,11 @@
           "label": "Denver Nuggets at New Orleans Pelicans",
           "start": "2026-10-29T00:10:00Z",
           "books": {
-            "BetMGM": "-185 / +150",
-            "Caesars": "-180 / +152",
+            "BetMGM": "-180 / +145",
+            "Caesars": "-178 / +150",
             "DraftKings": "-180 / +150",
-            "Fanatics": "-180 / +150",
-            "FanDuel": "-180 / +152",
+            "Fanatics": "-175 / +145",
+            "FanDuel": "-178 / +150",
             "HardRock": "-185 / +155"
           }
         },
@@ -1390,7 +1390,7 @@
           "label": "New York Knicks at Chicago Bulls",
           "start": "2026-10-29T00:10:00Z",
           "books": {
-            "BetMGM": "-275 / +225",
+            "BetMGM": "-285 / +225",
             "Caesars": "-278 / +222",
             "DraftKings": "-278 / +225",
             "Fanatics": "-280 / +225",
@@ -1403,7 +1403,7 @@
           "label": "San Antonio Spurs at Utah Jazz",
           "start": "2026-10-29T01:10:00Z",
           "books": {
-            "BetMGM": "-800 / +550",
+            "BetMGM": "-750 / +525",
             "Caesars": "-700 / +500",
             "DraftKings": "-650 / +470",
             "Fanatics": "-700 / +500",
@@ -1416,17 +1416,17 @@
           "label": "Oklahoma City Thunder at Dallas Mavericks",
           "start": "2026-10-29T01:40:00Z",
           "books": {
-            "BetMGM": "-210 / +170",
-            "Caesars": "-205 / +170",
-            "DraftKings": "-205 / +170",
-            "Fanatics": "-205 / +170",
-            "FanDuel": "-205 / +172",
-            "HardRock": "-220 / +175"
+            "BetMGM": "-190 / +155",
+            "Caesars": "-190 / +158",
+            "DraftKings": "-192 / +160",
+            "Fanatics": "-190 / +155",
+            "FanDuel": "-180 / +152",
+            "HardRock": "-195 / +160"
           }
         },
         {
           "sport": "NBA",
-          "label": "Los Angeles Lakers at LA Clippers",
+          "label": "Los Angeles Lakers at Los Angeles Clippers",
           "start": "2026-10-29T02:40:00Z",
           "books": {
             "BetMGM": "-105 / -115",
@@ -1440,14 +1440,14 @@
         {
           "sport": "NHL",
           "label": "Philadelphia Flyers at Washington Capitals",
-          "start": "2026-10-28T23:40:00Z",
+          "start": "2026-10-28T23:38:42Z",
           "books": {
-            "BetMGM": "+195 / -235",
-            "Caesars": "+195 / -240",
-            "DraftKings": "+200 / -245",
-            "Fanatics": "+200 / -245",
-            "FanDuel": "+198 / -245",
-            "HardRock": "+180 / -250"
+            "BetMGM": "+310 / -425",
+            "Caesars": "+305 / -440",
+            "DraftKings": "+325 / -475",
+            "Fanatics": "+320 / -475",
+            "FanDuel": "+300 / -430",
+            "HardRock": "+325 / -475"
           }
         },
         {
@@ -1496,12 +1496,12 @@
           "label": "Kennesaw State Owls at Middle Tennessee Blue Raiders",
           "start": "2026-10-28T23:00:00Z",
           "books": {
-            "BetMGM": "+2.5 -112 / -2.5 -115",
-            "Caesars": "+2.5 -106 / -2.5 -122",
-            "DraftKings": "+2.5 -106 / -2.5 -126",
-            "Fanatics": "+3.5 -135 / -3.5 +100",
-            "FanDuel": "+3.5 -118 / -3.5 -112",
-            "HardRock": "+3.5 -110 / -3.5 -120"
+            "BetMGM": "+2.5 -120 / -2.5 -110",
+            "Caesars": "+2.5 -124 / -2.5 -106",
+            "DraftKings": "+2.5 -122 / -2.5 -109",
+            "Fanatics": "+2.5 -115 / -2.5 -115",
+            "FanDuel": "+1.5 -104 / -1.5 -128",
+            "HardRock": "+2.5 -120 / -2.5 -110"
           }
         },
         {
@@ -1512,9 +1512,9 @@
             "BetMGM": "-3 -110 / +3 -108",
             "Caesars": "-3 -113 / +3 -108",
             "DraftKings": "-3 -110 / +3 -110",
-            "Fanatics": "-3 -110 / +3 -110",
+            "Fanatics": "-3 -115 / +3 -105",
             "FanDuel": "-3.5 +102 / +3.5 -124",
-            "HardRock": "-3.5 -105 / +3.5 -120"
+            "HardRock": "-3.5 -110 / +3.5 -110"
           }
         },
         {
@@ -1524,7 +1524,7 @@
           "books": {
             "BetMGM": "-1.5 +125 / +1.5 -150",
             "Caesars": "-1.5 +130 / +1.5 -152",
-            "DraftKings": "-1.5 +128 / +1.5 -155",
+            "DraftKings": "-1.5 +130 / +1.5 -157",
             "Fanatics": "-1.5 +130 / +1.5 -160",
             "FanDuel": "-1.5 +136 / +1.5 -164",
             "HardRock": "-1.5 +125 / +1.5 -155"
@@ -1535,12 +1535,12 @@
           "label": "Charlotte Hornets at Detroit Pistons",
           "start": "2026-10-28T23:11:00Z",
           "books": {
-            "BetMGM": "+6.5 -110 / -6.5 -118",
-            "Caesars": "+7.5 -110 / -7.5 -120",
-            "DraftKings": "+5.5 -115 / -5.5 -115",
-            "Fanatics": "+6.5 -105 / -6.5 -125",
-            "FanDuel": "+5.5 +102 / -5.5 -136",
-            "HardRock": "+5.5 -105 / -5.5 -120"
+            "BetMGM": "+3.5 -125 / -3.5 -105",
+            "Caesars": "+2.5 -115 / -2.5 -115",
+            "DraftKings": "+2.5 -115 / -2.5 -115",
+            "Fanatics": "+2.5 -120 / -2.5 -110",
+            "FanDuel": "+2.5 -128 / -2.5 -104",
+            "HardRock": "+3.5 -110 / -3.5 -120"
           }
         },
         {
@@ -1548,12 +1548,12 @@
           "label": "Washington Wizards at Cleveland Cavaliers",
           "start": "2026-10-28T23:11:00Z",
           "books": {
-            "BetMGM": "+9.5 -125 / -9.5 -105",
-            "Caesars": "+8.5 -120 / -8.5 -110",
-            "DraftKings": "+9.5 -115 / -9.5 -115",
-            "Fanatics": "+8.5 -110 / -8.5 -120",
-            "FanDuel": "+9.5 -128 / -9.5 -104",
-            "HardRock": "+8.5 -110 / -8.5 -120"
+            "BetMGM": "+3.5 -125 / -3.5 -105",
+            "Caesars": "+1.5 -115 / -1.5 -115",
+            "DraftKings": "+1.5 -110 / -1.5 -120",
+            "Fanatics": "+2.5 -110 / -2.5 -120",
+            "FanDuel": "+1.5 +102 / -1.5 -136",
+            "HardRock": "+1.5 -110 / -1.5 -120"
           }
         },
         {
@@ -1561,12 +1561,12 @@
           "label": "Miami Heat at Atlanta Hawks",
           "start": "2026-10-28T23:12:00Z",
           "books": {
-            "BetMGM": "-4.5 -118 / +4.5 -110",
-            "Caesars": "-5.5 -110 / +5.5 -120",
-            "DraftKings": "-4.5 -110 / +4.5 -120",
-            "Fanatics": "-5.5 -105 / +5.5 -125",
-            "FanDuel": "-5.5 -120 / +5.5 -110",
-            "HardRock": "-5.5 -120 / +5.5 -105"
+            "BetMGM": "-5.5 -115 / +5.5 -110",
+            "Caesars": "-5.5 -120 / +5.5 -110",
+            "DraftKings": "-6.5 -110 / +6.5 -120",
+            "Fanatics": "-5.5 -120 / +5.5 -110",
+            "FanDuel": "-5.5 -128 / +5.5 -104",
+            "HardRock": "-5.5 -110 / +5.5 -115"
           }
         },
         {
@@ -1574,25 +1574,25 @@
           "label": "Philadelphia 76ers at Indiana Pacers",
           "start": "2026-10-28T23:13:00Z",
           "books": {
-            "BetMGM": "-8.5 -110 / +8.5 -118",
-            "Caesars": "-8.5 -120 / +8.5 -110",
-            "DraftKings": "-9.5 -120 / +9.5 -110",
-            "Fanatics": "-8.5 -120 / +8.5 -110",
-            "FanDuel": "-7.5 -152 / +7.5 +114",
-            "HardRock": "-8.5 -120 / +8.5 -110"
+            "BetMGM": "-6.5 -118 / +6.5 -110",
+            "Caesars": "-5.5 -125 / +5.5 -105",
+            "DraftKings": "-6.5 -110 / +6.5 -120",
+            "Fanatics": "-6.5 -115 / +6.5 -115",
+            "FanDuel": "-6.5 -112 / +6.5 -118",
+            "HardRock": "-6.5 -120 / +6.5 -110"
           }
         },
         {
           "sport": "NBA",
           "label": "Orlando Magic at Toronto Raptors",
-          "start": "2026-10-28T23:40:00Z",
+          "start": "2026-10-28T23:42:00Z",
           "books": {
-            "BetMGM": "+5.5 -118 / -5.5 -102",
-            "Caesars": "+5 -110 / -5 -110",
-            "DraftKings": "+5.5 -118 / -5.5 -102",
-            "Fanatics": "+5 -110 / -5 -110",
-            "FanDuel": "+4.5 -105 / -4.5 -115",
-            "HardRock": "+4.5 -105 / -4.5 -115"
+            "BetMGM": "+2.5 -110 / -2.5 -118",
+            "Caesars": "+2.5 -115 / -2.5 -115",
+            "DraftKings": "+2.5 -120 / -2.5 -110",
+            "Fanatics": "+3.5 -125 / -3.5 -105",
+            "FanDuel": "+3.5 -128 / -3.5 -104",
+            "HardRock": "+1.5 -110 / -1.5 -120"
           }
         },
         {
@@ -1603,9 +1603,9 @@
             "BetMGM": "-4.5 -110 / +4.5 -110",
             "Caesars": "-4.5 -110 / +4.5 -110",
             "DraftKings": "-4.5 -110 / +4.5 -110",
-            "Fanatics": "-4.5 -110 / +4.5 -110",
+            "Fanatics": "-4.5 -105 / +4.5 -115",
             "FanDuel": "-4.5 -110 / +4.5 -110",
-            "HardRock": "-4.5 -105 / +4.5 -115"
+            "HardRock": "-4.5 -110 / +4.5 -110"
           }
         },
         {
@@ -1613,9 +1613,9 @@
           "label": "Golden State Warriors at Minnesota Timberwolves",
           "start": "2026-10-29T00:10:00Z",
           "books": {
-            "BetMGM": "+3.5 -105 / -3.5 -115",
+            "BetMGM": "+3.5 -102 / -3.5 -118",
             "Caesars": "+4 -110 / -4 -110",
-            "DraftKings": "+4.5 -120 / -4.5 +100",
+            "DraftKings": "+3.5 -102 / -3.5 -118",
             "Fanatics": "+4 -110 / -4 -110",
             "FanDuel": "+3.5 -105 / -3.5 -115",
             "HardRock": "+3.5 -105 / -3.5 -115"
@@ -1627,7 +1627,7 @@
           "start": "2026-10-29T00:10:00Z",
           "books": {
             "BetMGM": "-8.5 -105 / +8.5 -115",
-            "Caesars": "-8.5 -105 / +8.5 -115",
+            "Caesars": "-8.5 -110 / +8.5 -110",
             "DraftKings": "-8.5 -105 / +8.5 -115",
             "Fanatics": "-8.5 -105 / +8.5 -115",
             "FanDuel": "-8.5 -105 / +8.5 -115",
@@ -1665,17 +1665,17 @@
           "label": "Oklahoma City Thunder at Dallas Mavericks",
           "start": "2026-10-29T01:40:00Z",
           "books": {
-            "BetMGM": "-5.5 -110 / +5.5 -110",
-            "Caesars": "-5.5 -110 / +5.5 -110",
-            "DraftKings": "-5.5 -110 / +5.5 -110",
-            "Fanatics": "-5.5 -115 / +5.5 -105",
-            "FanDuel": "-6.5 -102 / +6.5 -120",
-            "HardRock": "-5.5 -110 / +5.5 -110"
+            "BetMGM": "-4.5 -115 / +4.5 -105",
+            "Caesars": "-5 -110 / +5 -110",
+            "DraftKings": "-4.5 -115 / +4.5 -105",
+            "Fanatics": "-5 -110 / +5 -110",
+            "FanDuel": "-5.5 -102 / +5.5 -120",
+            "HardRock": "-4.5 -115 / +4.5 +100"
           }
         },
         {
           "sport": "NBA",
-          "label": "Los Angeles Lakers at LA Clippers",
+          "label": "Los Angeles Lakers at Los Angeles Clippers",
           "start": "2026-10-29T02:40:00Z",
           "books": {
             "BetMGM": "+1.5 -115 / -1.5 -105",
@@ -1689,14 +1689,14 @@
         {
           "sport": "NHL",
           "label": "Philadelphia Flyers at Washington Capitals",
-          "start": "2026-10-28T23:40:00Z",
+          "start": "2026-10-28T23:38:42Z",
           "books": {
-            "BetMGM": "+1.5 -130 / -1.5 +110",
+            "BetMGM": "+2.5 -140 / -2.5 +105",
             "Caesars": "-",
-            "DraftKings": "+1.5 -125 / -1.5 +105",
-            "Fanatics": "+1.5 -125 / -1.5 +105",
-            "FanDuel": "+1.5 -128 / -1.5 +104",
-            "HardRock": "+1.5 -145 / -1.5 +115"
+            "DraftKings": "+2.5 -140 / -2.5 +110",
+            "Fanatics": "+2.5 -145 / -2.5 +110",
+            "FanDuel": "+2.5 -130 / -2.5 +100",
+            "HardRock": "+2.5 -145 / -2.5 +115"
           }
         },
         {
@@ -1719,7 +1719,7 @@
           "books": {
             "BetMGM": "+1.5 -190 / -1.5 +155",
             "Caesars": "-",
-            "DraftKings": "+1.5 -198 / -1.5 +164",
+            "DraftKings": "+1.5 -192 / -1.5 +160",
             "Fanatics": "+1.5 -200 / -1.5 +160",
             "FanDuel": "+1.5 -205 / -1.5 +164",
             "HardRock": "+1.5 -210 / -1.5 +160"
@@ -1733,7 +1733,7 @@
             "BetMGM": "-1.5 +180 / +1.5 -220",
             "Caesars": "-",
             "DraftKings": "-1.5 +180 / +1.5 -218",
-            "Fanatics": "-1.5 +175 / +1.5 -220",
+            "Fanatics": "-1.5 +170 / +1.5 -215",
             "FanDuel": "-1.5 +168 / +1.5 -210",
             "HardRock": "-1.5 +160 / +1.5 -210"
           }
@@ -1745,12 +1745,12 @@
           "label": "Kennesaw State Owls at Middle Tennessee Blue Raiders",
           "start": "2026-10-28T23:00:00Z",
           "books": {
-            "BetMGM": "54.5 -110 / -120",
-            "Caesars": "54.5 -118 / -110",
-            "DraftKings": "54.5 -112 / -119",
-            "Fanatics": "54.5 -115 / -115",
-            "FanDuel": "54.5 -128 / -104",
-            "HardRock": "55.5 -110 / -120"
+            "BetMGM": "60.5 -112 / -105",
+            "Caesars": "60.5 -118 / -110",
+            "DraftKings": "60.5 -111 / -120",
+            "Fanatics": "60.5 -115 / -115",
+            "FanDuel": "60.5 -118 / -112",
+            "HardRock": "61.5 -115 / -115"
           }
         },
         {
@@ -1761,7 +1761,7 @@
             "BetMGM": "49.5 -120 / -110",
             "Caesars": "50.5 -107 / -113",
             "DraftKings": "50.5 -108 / -112",
-            "Fanatics": "49.5 -110 / -110",
+            "Fanatics": "50 -110 / -110",
             "FanDuel": "50.5 -106 / -114",
             "HardRock": "50.5 -110 / -110"
           }
@@ -1771,10 +1771,10 @@
           "label": "Milwaukee Brewers at Tampa Bay Rays",
           "start": "2026-10-29T00:10:00Z",
           "books": {
-            "BetMGM": "6 -118 / -102",
-            "Caesars": "6 -117 / -102",
+            "BetMGM": "6.5 +100 / -120",
+            "Caesars": "6.5 +102 / -120",
             "DraftKings": "6 -112 / -107",
-            "Fanatics": "6.5 +100 / -120",
+            "Fanatics": "6 -115 / -105",
             "FanDuel": "6.5 +102 / -124",
             "HardRock": "6.5 +100 / -120"
           }
@@ -1784,12 +1784,12 @@
           "label": "Charlotte Hornets at Detroit Pistons",
           "start": "2026-10-28T23:11:00Z",
           "books": {
-            "BetMGM": "205.5 -110 / -115",
-            "Caesars": "205.5 -115 / -115",
-            "DraftKings": "208.5 -110 / -120",
-            "Fanatics": "207.5 +110 / -145",
-            "FanDuel": "208.5 -108 / -122",
-            "HardRock": "206.5 -115 / -110"
+            "BetMGM": "203.5 -110 / -118",
+            "Caesars": "201.5 -115 / -115",
+            "DraftKings": "204.5 -115 / -115",
+            "Fanatics": "203.5 -115 / -115",
+            "FanDuel": "203.5 -132 / +100",
+            "HardRock": "203.5 +100 / -125"
           }
         },
         {
@@ -1797,12 +1797,12 @@
           "label": "Washington Wizards at Cleveland Cavaliers",
           "start": "2026-10-28T23:11:00Z",
           "books": {
-            "BetMGM": "252.5 -115 / -110",
+            "BetMGM": "253.5 -110 / -118",
             "Caesars": "253.5 -110 / -120",
-            "DraftKings": "250.5 -120 / -110",
-            "Fanatics": "251.5 -120 / -110",
-            "FanDuel": "251.5 -144 / +108",
-            "HardRock": "-"
+            "DraftKings": "253.5 -115 / -115",
+            "Fanatics": "253.5 -115 / -115",
+            "FanDuel": "253.5 -136 / +102",
+            "HardRock": "252.5 -120 / -110"
           }
         },
         {
@@ -1810,12 +1810,12 @@
           "label": "Miami Heat at Atlanta Hawks",
           "start": "2026-10-28T23:12:00Z",
           "books": {
-            "BetMGM": "238.5 -115 / -110",
-            "Caesars": "238.5 -115 / -115",
-            "DraftKings": "238.5 -115 / -115",
-            "Fanatics": "238.5 -115 / -115",
-            "FanDuel": "238.5 -114 / -114",
-            "HardRock": "239.5 -115 / -115"
+            "BetMGM": "241.5 -110 / -118",
+            "Caesars": "242.5 -115 / -115",
+            "DraftKings": "239.5 -115 / -115",
+            "Fanatics": "241.5 +100 / -130",
+            "FanDuel": "238.5 -140 / +106",
+            "HardRock": "241.5 -110 / -115"
           }
         },
         {
@@ -1823,25 +1823,25 @@
           "label": "Philadelphia 76ers at Indiana Pacers",
           "start": "2026-10-28T23:13:00Z",
           "books": {
-            "BetMGM": "224.5 -110 / -115",
-            "Caesars": "224.5 -115 / -115",
-            "DraftKings": "226.5 -110 / -120",
-            "Fanatics": "223.5 -115 / -115",
-            "FanDuel": "223.5 -114 / -114",
-            "HardRock": "224.5 -120 / -105"
+            "BetMGM": "222.5 -115 / -115",
+            "Caesars": "221.5 -115 / -115",
+            "DraftKings": "221.5 -110 / -120",
+            "Fanatics": "219.5 -115 / -115",
+            "FanDuel": "222.5 -110 / -120",
+            "HardRock": "220.5 -115 / -115"
           }
         },
         {
           "sport": "NBA",
           "label": "Orlando Magic at Toronto Raptors",
-          "start": "2026-10-28T23:40:00Z",
+          "start": "2026-10-28T23:42:00Z",
           "books": {
-            "BetMGM": "225.5 -105 / -115",
-            "Caesars": "224.5 -115 / -105",
-            "DraftKings": "224.5 -115 / -105",
-            "Fanatics": "224.5 -110 / -110",
-            "FanDuel": "224.5 -110 / -110",
-            "HardRock": "224.5 -110 / -110"
+            "BetMGM": "222.5 -115 / -115",
+            "Caesars": "226.5 -115 / -115",
+            "DraftKings": "221.5 -115 / -115",
+            "Fanatics": "222.5 -110 / -120",
+            "FanDuel": "225.5 +106 / -140",
+            "HardRock": "225.5 -115 / -115"
           }
         },
         {
@@ -1850,7 +1850,7 @@
           "start": "2026-10-29T00:10:00Z",
           "books": {
             "BetMGM": "240.5 -115 / -105",
-            "Caesars": "240.5 -110 / -110",
+            "Caesars": "241 -110 / -110",
             "DraftKings": "240.5 -112 / -108",
             "Fanatics": "240.5 -110 / -110",
             "FanDuel": "240.5 -110 / -110",
@@ -1863,7 +1863,7 @@
           "start": "2026-10-29T00:10:00Z",
           "books": {
             "BetMGM": "227.5 -110 / -110",
-            "Caesars": "227.5 -110 / -110",
+            "Caesars": "227.5 -115 / -105",
             "DraftKings": "227.5 -110 / -110",
             "Fanatics": "227.5 -110 / -110",
             "FanDuel": "227.5 -110 / -110",
@@ -1877,7 +1877,7 @@
           "books": {
             "BetMGM": "226.5 -110 / -110",
             "Caesars": "227.5 -105 / -115",
-            "DraftKings": "226.5 -105 / -115",
+            "DraftKings": "226.5 -110 / -110",
             "Fanatics": "227 -110 / -110",
             "FanDuel": "226.5 -115 / -105",
             "HardRock": "226.5 -115 / -105"
@@ -1889,7 +1889,7 @@
           "start": "2026-10-29T00:10:00Z",
           "books": {
             "BetMGM": "232.5 -115 / -105",
-            "Caesars": "233 -110 / -110",
+            "Caesars": "233.5 -110 / -110",
             "DraftKings": "232.5 -110 / -110",
             "Fanatics": "233 -110 / -110",
             "FanDuel": "232.5 -110 / -110",
@@ -1914,17 +1914,17 @@
           "label": "Oklahoma City Thunder at Dallas Mavericks",
           "start": "2026-10-29T01:40:00Z",
           "books": {
-            "BetMGM": "226.5 -115 / -105",
-            "Caesars": "226.5 -110 / -110",
-            "DraftKings": "227.5 -105 / -115",
-            "Fanatics": "227 -110 / -110",
-            "FanDuel": "227.5 -104 / -118",
-            "HardRock": "226.5 -115 / +100"
+            "BetMGM": "228.5 -105 / -115",
+            "Caesars": "228 -105 / -115",
+            "DraftKings": "228.5 -105 / -115",
+            "Fanatics": "228 -110 / -110",
+            "FanDuel": "228.5 -106 / -114",
+            "HardRock": "227.5 -110 / -110"
           }
         },
         {
           "sport": "NBA",
-          "label": "Los Angeles Lakers at LA Clippers",
+          "label": "Los Angeles Lakers at Los Angeles Clippers",
           "start": "2026-10-29T02:40:00Z",
           "books": {
             "BetMGM": "224.5 -110 / -110",
@@ -1938,14 +1938,14 @@
         {
           "sport": "NHL",
           "label": "Philadelphia Flyers at Washington Capitals",
-          "start": "2026-10-28T23:40:00Z",
+          "start": "2026-10-28T23:38:42Z",
           "books": {
-            "BetMGM": "6 +100 / -120",
-            "Caesars": "6 +101 / -124",
-            "DraftKings": "5.5 -125 / +105",
-            "Fanatics": "5.5 -125 / +105",
-            "FanDuel": "5.5 -130 / +106",
-            "HardRock": "5.5 -130 / +105"
+            "BetMGM": "6.5 +110 / -150",
+            "Caesars": "6.5 +110 / -137",
+            "DraftKings": "6.5 +110 / -140",
+            "Fanatics": "6.5 +110 / -145",
+            "FanDuel": "6.5 +108 / -140",
+            "HardRock": "6.5 +105 / -130"
           }
         },
         {
@@ -1954,8 +1954,8 @@
           "start": "2026-10-29T00:40:00Z",
           "books": {
             "BetMGM": "6.5 -125 / +105",
-            "Caesars": "6.5 -128 / +105",
-            "DraftKings": "6.5 -130 / +110",
+            "Caesars": "6.5 -120 / -107",
+            "DraftKings": "6.5 -122 / +102",
             "Fanatics": "6.5 -120 / +100",
             "FanDuel": "6.5 -122 / +100",
             "HardRock": "6.5 -120 / +100"

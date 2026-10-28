@@ -8,8 +8,8 @@
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="theme-color" content="#0a0a0a">
 <link rel="canonical" href="https://cwaggoner.github.io/gnarly-gorilla-sportsbooks/">
-<link rel="preload" href="cards/ledger.json?v=20261028e" as="fetch">
-<link rel="preload" href="cards/odds-board.json?v=20261028e" as="fetch">
+<link rel="preload" href="cards/ledger.json?v=20261028f" as="fetch">
+<link rel="preload" href="cards/odds-board.json?v=20261028f" as="fetch">
 <link rel="icon" href="gg-icon.png" type="image/png">
 <link rel="apple-touch-icon" href="gg-icon.png">
 <meta property="og:type" content="website">
@@ -544,7 +544,7 @@ document.addEventListener("click", e => {
 const KEY = "gnarly-gorilla-sportsbooks-v1";
 const GRADE_KEY = "gnarly-gorilla-grading-v1";
 const UNIT = 10;
-const ASSET = "20261028e";
+const ASSET = "20261028f";
 function cardUrl(path){ return path + "?v=" + ASSET; }
 function later(fn){ setTimeout(fn, 0); }
 const SPORTS = ["CBB","CFB","MLB","NBA","NFL","NHL"];
@@ -3114,7 +3114,7 @@ function bestPriceHtml(rows, market, day){
     const gapHtml = matched ? "Matched" : "<span class='" + (gap > 0 ? "win" : "") + "'>" + gapCell + "</span>";
     return "<tr class='" + cls + "'><td>" + game + "</td><td>" + esc(side) + "</td><td>" + mgmCell + "</td><td>" + bestCell + "</td><td>" + gapHtml + "</td>" + shopAdd(row, market, day, index, winner.name, winner.side.price, winner.side.point, false) + "</tr>";
   }).join("")).join("");
-  const note = "Same market as the board above. The gap removes each book's cut, then compares BetMGM with the best same number. A matched price is zero. A minus gap means BetMGM is short. A different point is a number split, not a better price. Add fills that best price into Add A Bet. Save Bet puts it on the slip card.";
+  const note = "Updated " + boardWhen() + ". Same market as the board above. The gap removes each book's cut, then compares BetMGM with the best same number. A matched price is zero. A minus gap means BetMGM is short. A different point is a number split, not a better price. A game that has started keeps the last price from before tip. Add fills that best price into Add A Bet. Save Bet puts it on the slip card.";
   return "<h2 class='split-title'>Best Price</h2><p class='api-note'>" + note + "</p><table class='compare shop'><thead><tr><th>Game</th><th>Side</th><th>BetMGM</th><th>Best Same Number</th><th>No-Vig Gap</th><th class='add-col'>Add</th></tr></thead><tbody>" + (body || "<tr class='shop-row'><td colspan='6'>No posted prices for this market.</td></tr>") + "</tbody></table>";
 }
 function paintBookCell(cell, hot){
@@ -3158,6 +3158,11 @@ function oddsBullets(parts){
   }));
   return "<ul class='odds-notes'>" + items.map(text => "<li>" + text + "</li>").join("") + "</ul>";
 }
+function boardWhen(){
+  const raw = (window.__ggOddsBoard && window.__ggOddsBoard.updated) || "";
+  const when = raw && formatTime(raw, false);
+  return when || zoneTime(4, 0);
+}
 function oddsTableHtml(rows, day, market, lead){
   if (!rows || !rows.length) return "";
   const books = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
@@ -3167,7 +3172,7 @@ function oddsTableHtml(rows, day, market, lead){
     const flags = bestPriceFlags(r.books, books);
     return "<tr><td>" + esc(r.sport + " " + r.label) + "</td><td class='gametime' data-start='" + esc(r.start || "") + "'>" + esc(r.start ? formatTime(r.start, false) : "") + "</td>" + books.map(b => "<td>" + paintBookCell(r.books && r.books[b], flags[b]) + "</td>").join("") + "</tr>";
   }).join("");
-  const line = lead || ((day === easternDay() ? "Today" : "Yesterday") + ". " + label + ". Posted at " + zoneTime(4, 0) + " from the public board.");
+  const line = lead || ((day === easternDay() ? "Today" : "Yesterday") + ". " + label + ". Updated " + boardWhen() + ".");
   const magenta = "<span class='best-price'>Magenta</span> text on this site means the best price: the highest number on that side among books that posted the same point. Books that share that best price are all marked. A price every book shares is not marked. A different point is not marked.";
   return oddsBullets([line, magenta]) + "<h2 class='split-title'>Live Odds Comparison</h2><table class='compare'><thead><tr class='cols'>" + head + "</tr></thead><tbody>" + body + "</tbody></table>" + bestPriceHtml(rows, market, day);
 }
@@ -3280,7 +3285,7 @@ async function drawOddsCompare(force){
     localStorage.setItem("gg-compare-day", "today");
     localStorage.setItem("gg-compare-locked", easternDay());
   }
-  const day = (localStorage.getItem("gg-compare-day") === "today") ? easternDay() : yesterday();
+  const day = localStorage.getItem("gg-compare-day") === "yesterday" ? yesterday() : easternDay();
   const marketSel = document.getElementById("comparemarket");
   const savedMarket = localStorage.getItem("gg-compare-market");
   if (marketSel && savedMarket && [...marketSel.options].some(o => o.value === savedMarket)) marketSel.value = savedMarket;
@@ -3517,7 +3522,7 @@ function wireCompare(){
     tBtn.dataset.wired = "1";
     tBtn.onclick = () => { localStorage.setItem("gg-compare-day", "today"); drawOddsCompare(false).catch(() => {}); };
   }
-  const mode = localStorage.getItem("gg-compare-day") === "today" ? "today" : "yesterday";
+  const mode = localStorage.getItem("gg-compare-day") === "yesterday" ? "yesterday" : "today";
   if (yBtn) yBtn.style.outline = mode === "yesterday" ? "1px solid #39ff14" : "";
   if (tBtn) tBtn.style.outline = mode === "today" ? "1px solid #39ff14" : "";
   const sel = document.getElementById("comparemarket");
