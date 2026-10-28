@@ -681,7 +681,7 @@ function knownStarts(){
     const ms = Date.parse(start || "");
     if (Number.isFinite(ms)) out.push({sport: String(sport || "").toUpperCase(), start: ms});
   };
-  ((pickSlate && pickSlate.games) || []).forEach(g => { if (!/tbd/i.test(g.game || g.name || "")) add(g.sport, g.start); });
+  ((pickSlate && pickSlate.games) || []).forEach(g => { if (!/tbd/i.test(g.game || g.name || "")) add(g.sport, slateStart(g)); });
   (window.ggSchedule || []).forEach(g => { if (!/tbd/i.test(g.name || "")) add(g.sport, g.start); });
   (window.__ggExtraStarts || []).forEach(g => add(g.sport, g.start));
   return out;
@@ -2523,6 +2523,29 @@ function slateDateLabel(date){
   const stamp = new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3]), 16));
   return stamp.toLocaleDateString("en-US", {timeZone: "UTC", month: "long", day: "numeric", year: "numeric"});
 }
+function slateStart(game){
+  return (game && (game.start || game.startTimeUTC || game.commence_time || game.startTime)) || "";
+}
+function slateLocation(game){
+  if (!game) return "";
+  if (game.location) return game.location;
+  const place = [game.city, game.state].filter(Boolean).join(", ");
+  return [game.venue, place].filter(Boolean).join(", ");
+}
+function normalizeSlateGame(game){
+  if (!game || typeof game !== "object") return game;
+  const start = slateStart(game);
+  const location = slateLocation(game);
+  if (start) game.start = start;
+  if (location) game.location = location;
+  return game;
+}
+function normalizeSlate(data){
+  if (!data) return data;
+  (data.games || []).forEach(normalizeSlateGame);
+  (data.passed || []).forEach(normalizeSlateGame);
+  return data;
+}
 function slateSides(game){
   const parts = String(game && game.game || "").split(/\s+at\s+/i);
   const awayName = (game && game.away && game.away.name) || (parts[0] || "").trim();
@@ -2628,21 +2651,22 @@ function slateTable(list, date, extra){
   const games = (Array.isArray(list) ? list : []).slice().sort((a, b) => {
     const sport = sportRank(a.sport) - sportRank(b.sport);
     if (sport) return sport;
-    return String(a.game || "").localeCompare(String(b.game || ""));
+    return String(slateStart(a)).localeCompare(String(slateStart(b))) || String(a.game || "").localeCompare(String(b.game || ""));
   });
   if (!games.length) return "";
   const rows = games.map(game => {
+    normalizeSlateGame(game);
     const sides = slateSides(game);
     const away = sides.away;
     const home = sides.home;
-    const when = game.start ? formatTime(game.start, false) : "";
+    const when = slateStart(game) ? formatTime(slateStart(game), false) : "";
     const nick = name => String(name || "").split(/\s+/).slice(-1)[0] || "";
     const line = side => esc(nick(side.name) + " " + (side.record || "—"));
     const records = "<div>" + line(away) + "</div><div>" + line(home) + "</div>";
     const add = extra ? "<button type='button' class='add-game' data-sport='" + encodeURIComponent(game.sport || "") + "' data-game='" + encodeURIComponent(game.game || "") + "' data-date='" + encodeURIComponent(date || "") + "'>Add</button>" : "";
     const spoken = gorillaNote(game, date);
     const note = "<td class='note-col' title='" + esc(spoken).replace(/'/g, "") + "'><p><b class='gg-name'>Gnarly Gorilla: </b>" + esc(spoken) + "</p></td>";
-    return "<tr><td>" + esc(game.sport + " " + game.game) + "</td><td>" + esc(when) + "</td><td>" + esc(game.location || "") + "</td><td>" + records + "</td>" + note + (extra ? "<td class='add-col'>" + add + "</td>" : "") + "</tr>";
+    return "<tr><td>" + esc(game.sport + " " + game.game) + "</td><td>" + esc(when) + "</td><td>" + esc(slateLocation(game)) + "</td><td>" + records + "</td>" + note + (extra ? "<td class='add-col'>" + add + "</td>" : "") + "</tr>";
   }).join("");
   const label = slateDateLabel(date);
   const gameHead = label ? "<th><div class='gamehead'><span>Game</span><span class='slate-date'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + esc(label) + "</span></div></th>" : "<th>Game</th>";
@@ -2849,6 +2873,7 @@ async function loadPickSlate(){
     if (!data || !Array.isArray(data.games) || !data.games.length) { drawInjuryReport().catch(() => {}); return; }
     const card = await fetch("cards/today.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").catch(() => "");
     applyPostedCard(data, card);
+    normalizeSlate(data);
     if (!data.games.length) { drawInjuryReport().catch(() => {}); return; }
     const stamp = JSON.stringify([data.date, data.games, data.passed || []]);
     const same = pickSlate && pickSlate._stamp === stamp;
