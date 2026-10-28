@@ -2377,12 +2377,8 @@ function drawPassedSlate(){
   const cardBox = document.getElementById("cardgames");
   if (!cardBox) return;
   const games = pickSlate && Array.isArray(pickSlate.games) ? pickSlate.games : [];
-  const passed = pickSlate && Array.isArray(pickSlate.passed) ? pickSlate.passed : [];
   const date = (pickSlate && pickSlate.date) || easternDay();
-  let html = "";
-  if (games.length) html += "<p class='warn passed-note'>Posted matchups. Add puts an extra slip in this browser. The posted picks stay.</p>" + slateTable(games, date, true);
-  if (passed.length) html += "<p class='warn passed-note'>" + esc((pickSlate && pickSlate.passedNote) || "Games being played that did not make the picks.") + "</p>" + slateTable(passed, date, true);
-  cardBox.innerHTML = html;
+  cardBox.innerHTML = games.length ? "<p class='warn passed-note'>Posted matchups. Add puts an extra slip in this browser. The posted picks stay.</p>" + slateTable(games, date, true) : "";
 }
 function teamCodes(name){
   const words = String(name || "").replace(/[^A-Za-z ]/g, "").split(/\s+/).filter(Boolean);
@@ -2677,19 +2673,10 @@ function slateTable(list, date, extra){
   const addHead = extra ? "<th class='add-col'>Add</th>" : "";
   return "<div class='table-wrap'><table class='season-hold filled'><thead><tr>" + gameHead + "<th>Time</th><th>Location</th><th>Record</th><th class='note-col'>Notes</th>" + addHead + "</tr></thead><tbody>" + rows + "</tbody></table></div>";
 }
-function slateList(){
-  if (!pickSlate) return [];
-  const seen = new Set();
-  return ((pickSlate.games || []).concat(pickSlate.passed || [])).filter(game => {
-    const key = String(game && game.sport || "") + "|" + String(game && game.game || "");
-    if (!game || !game.game || seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
-}
 function slateHtml(){
-  const games = slateList();
-  return games.length ? slateTable(games, pickSlate && pickSlate.date, true) : "<table class='season-hold'><tbody><tr><td></td><td></td></tr><tr><td></td><td></td></tr></tbody></table>";
+  const games = (pickSlate && pickSlate.passed) || [];
+  if (!games.length) return "";
+  return "<div class='board-rest'><p class='warn passed-note'>On the board today. Not on the card.</p>" + slateTable(games, pickSlate && pickSlate.date, true) + "</div>";
 }
 function cardSlips(){
   const all = load().concat(loadGrade()).concat(gradeFile || []).filter(b => b && b.pick && !isNoPick(b));
@@ -2713,8 +2700,7 @@ function gameMatchesSlip(game, slip){
   return words.some(w => blob.includes(w));
 }
 function pendingHoldHtml(){
-  const games = slateList();
-  return games.length ? slateTable(games, pickSlate && pickSlate.date, true) : slateHtml();
+  return slateHtml();
 }
 function paintSeasonStatus(){
   const box = document.getElementById("seasons");
