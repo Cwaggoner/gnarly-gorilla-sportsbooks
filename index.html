@@ -8,6 +8,8 @@
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="theme-color" content="#0a0a0a">
 <link rel="canonical" href="https://cwaggoner.github.io/gnarly-gorilla-sportsbooks/">
+<link rel="preload" href="cards/ledger.json?v=20261028e" as="fetch">
+<link rel="preload" href="cards/odds-board.json?v=20261028e" as="fetch">
 <link rel="icon" href="gg-icon.png" type="image/png">
 <link rel="apple-touch-icon" href="gg-icon.png">
 <meta property="og:type" content="website">
@@ -542,6 +544,9 @@ document.addEventListener("click", e => {
 const KEY = "gnarly-gorilla-sportsbooks-v1";
 const GRADE_KEY = "gnarly-gorilla-grading-v1";
 const UNIT = 10;
+const ASSET = "20261028e";
+function cardUrl(path){ return path + "?v=" + ASSET; }
+function later(fn){ setTimeout(fn, 0); }
 const SPORTS = ["CBB","CFB","MLB","NBA","NFL","NHL"];
 function sportRank(name){
   const code = String(name || "").toUpperCase().split(/\s+/)[0];
@@ -1311,7 +1316,7 @@ function monthLeader(day){
   return played[0];
 }
 function loadProfitFile(){
-  return fetch("cards/profit-by-day.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => {
+  return fetch(cardUrl("cards/profit-by-day.json")).then(r => r.ok ? r.json() : null).then(data => {
     if (!data || !Array.isArray(data.days)) return;
     profitFile = data;
     const node = document.getElementById("monthbest");
@@ -2076,7 +2081,7 @@ async function venueWeather(city, state, iso){
 }
 async function loadSchedule(){
   if (window.ggSchedule) return window.ggSchedule;
-  const res = await fetch("cards/schedule.json?ts=" + Date.now());
+  const res = await fetch(cardUrl("cards/schedule.json"));
   if (!res.ok) return [];
   const data = await res.json();
   window.ggSchedule = data.games || [];
@@ -2630,7 +2635,7 @@ async function drawInjuryReport(){
   filterInjury();
 }
 async function readJson(url){
-  const res = await fetch(url + "?ts=" + Date.now());
+  const res = await fetch(cardUrl(url));
   if (!res.ok) return null;
   const text = await res.text();
   if (!text.trim()) return null;
@@ -2640,16 +2645,16 @@ async function loadPickSlate(){
   try {
     let data = await readJson("cards/pick-slate.json");
     if (!data || !Array.isArray(data.games) || !data.games.length) data = await readJson("cards/scoreboard.json");
-    if (!data || !Array.isArray(data.games) || !data.games.length) { drawInjuryReport().catch(() => {}); return; }
+    if (!data || !Array.isArray(data.games) || !data.games.length) { later(() => { drawInjuryReport().catch(() => {}); }); return; }
     const card = await fetch("cards/today.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").catch(() => "");
     applyPostedCard(data, card);
     normalizeSlate(data);
-    if (!data.games.length) { drawInjuryReport().catch(() => {}); return; }
+    if (!data.games.length) { later(() => { drawInjuryReport().catch(() => {}); }); return; }
     const stamp = JSON.stringify([data.date, data.games, data.passed || []]);
     const same = pickSlate && pickSlate._stamp === stamp;
     data._stamp = stamp;
     pickSlate = data;
-    drawInjuryReport().catch(() => {});
+    later(() => { drawInjuryReport().catch(() => {}); });
     if (!same) drawCalendar();
     refreshSlateRecords().then(updated => { if (!same && !updated) drawPickSlate(); }).catch(() => { if (!same) drawPickSlate(); });
     armHourlyScores();
@@ -5099,7 +5104,7 @@ document.getElementById("loaddrive").onclick = async () => {
   await loadDriveCard().catch(err => { note.textContent = err.message; });
 };
 async function catchUp(){
-  const ledgerP = localStorage.getItem("gg-hold-ledger") === "1" ? Promise.resolve(null) : fetch("cards/ledger.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).catch(() => null);
+  const ledgerP = localStorage.getItem("gg-hold-ledger") === "1" ? Promise.resolve(null) : fetch(cardUrl("cards/ledger.json")).then(r => r.ok ? r.json() : null).catch(() => null);
   const cardP = cardBundle().catch(() => "");
   let gradesText = "";
   try {
@@ -5178,7 +5183,7 @@ async function locateVisitor(){
   if (ip && (ip.country_code || ip.region)) return {country: String(ip.country_code || "").toUpperCase(), region: ip.region || ""};
   return null;
 }
-fetch("cards/state-rules.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(async data => {
+later(() => { fetch(cardUrl("cards/state-rules.json")).then(r => r.ok ? r.json() : null).then(async data => {
   stateRules = (data && data.states) || {};
   const place = await locateVisitor();
   const books = document.getElementById("statebooks");
@@ -5195,7 +5200,7 @@ fetch("cards/state-rules.json?ts=" + Date.now()).then(r => r.ok ? r.json() : nul
 }).catch(() => {
   const books = document.getElementById("statebooks");
   if (books) books.textContent = "State rules could not be read from this connection. The ledger is still available.";
-});
+}); });
 ["injurysport", "injuryshow"].forEach(id => { const el = document.getElementById(id); if (el) el.onchange = filterInjury; });
 document.getElementById("loadcard").onclick = () => loadPending();
 
@@ -5586,7 +5591,7 @@ document.getElementById("syncledger").onclick = async () => {
   const note = document.getElementById("ledgernote");
   note.textContent = "Syncing ledger and graded slips...";
   try {
-    const res = await fetch("cards/ledger.json?ts=" + Date.now());
+    const res = await fetch(cardUrl("cards/ledger.json"));
     if (!res.ok) throw new Error("missing");
     const data = await res.json();
     const bets = Array.isArray(data) ? data : data.bets;
@@ -5920,15 +5925,15 @@ function applyPublishedBooks(){
   publishedBooks = Object.assign({}, fileBooks, booksFromOddsBoard(window.__ggOddsBoard || {}));
   render();
 }
-fetch("cards/book-prices.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => { if (data) { fileBooks = data; applyPublishedBooks(); } }).catch(() => {});
-fetch("cards/book-closes.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => { if (data && data.days) { bookCloses = data; render(); } }).catch(() => {});
+fetch(cardUrl("cards/book-prices.json")).then(r => r.ok ? r.json() : null).then(data => { if (data) { fileBooks = data; applyPublishedBooks(); } }).catch(() => {});
+fetch(cardUrl("cards/book-closes.json")).then(r => r.ok ? r.json() : null).then(data => { if (data && data.days) { bookCloses = data; render(); } }).catch(() => {});
 function loadOddsBoard(data){
   if (!usableBoard(data)) data = savedBoard();
   if (!rememberBoard(data)) return;
   applyPublishedBooks();
   drawOddsCompare(false).catch(() => {});
 }
-fetch("cards/odds-board.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(loadOddsBoard).catch(() => loadOddsBoard(null));
+fetch(cardUrl("cards/odds-board.json")).then(r => r.ok ? r.json() : null).then(loadOddsBoard).catch(() => loadOddsBoard(null));
 fetch("cards/closes.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
   const store = closeStore();
   text.split(/\n/).forEach(line => {
