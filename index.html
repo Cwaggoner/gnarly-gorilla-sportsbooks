@@ -111,7 +111,6 @@ form, .row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1f
 #betnotes { display:flex; flex-direction:column; justify-content:center; gap:8px; min-height:120px; }
 .notes-field { width:100%; margin:0; }
 .notes-field textarea { width:100%; min-height:64px; }
-.notes-head { display:flex; align-items:baseline; justify-content:space-between; gap:12px; width:100%; }
 .fine { font-size:12px; line-height:1.2; margin:0; margin-left:auto; text-align:right; }
 
 label { display:flex; flex-direction:column; align-items:center; text-align:center; gap:4px; font-size:12px; color:var(--muted); }
@@ -253,7 +252,6 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 @media (max-width:700px) { table { display:block; overflow-x:auto; } }
 .ekg{display:block;width:100%;height:36px;margin:0 auto}
 .ekg svg{width:100%;height:36px}
-.ekg-dot{position:absolute;top:13px;width:10px;height:10px;border-radius:50%;background:#fff;transform:translateX(-50%)}
 .ekg .base{fill:none;stroke:#163016;stroke-width:1.5;vector-effect:non-scaling-stroke}
 .ekg .trace{fill:none;stroke:#39ff14;stroke-width:1.5;stroke-linecap:round;vector-effect:non-scaling-stroke}
 .compare { width:100%; border-collapse:collapse; font-size:12px; }
@@ -601,90 +599,11 @@ function zoneClock(date){
   const get = k => parts.find(p => p.type === k).value;
   return {date: get("year") + "-" + get("month") + "-" + get("day"), hour: Number(get("hour")), minute: Number(get("minute"))};
 }
-function cbbPlayoff(date){
-  const iso = String(date || "").slice(0, 10);
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return false;
-  const year = iso.slice(0, 4);
-  const start = year + "-03-13";
-  let end = year + "-04-10";
-  const published = (typeof SEASON_END !== "undefined" && SEASON_END && SEASON_END.CBB) || "";
-  if (/^\d{4}-\d{2}-\d{2}$/.test(published) && published.slice(0, 4) === year && published > end && published.slice(5, 7) <= "04") end = published;
-  return iso >= start && iso <= end;
-}
-function nhlPlayoff(date){
-  const iso = String(date || "").slice(0, 10);
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return false;
-  const year = iso.slice(0, 4);
-  const start = year + "-04-11";
-  let end = year + "-06-30";
-  const published = (typeof SEASON_END !== "undefined" && SEASON_END && SEASON_END.NHL) || "";
-  if (/^\d{4}-\d{2}-\d{2}$/.test(published) && published.slice(0, 4) === year && published > end) end = published;
-  return iso >= start && iso <= end;
-}
-function nbaPlayoff(date){
-  const iso = String(date || "").slice(0, 10);
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return false;
-  const year = iso.slice(0, 4);
-  const start = year + "-04-12";
-  let end = year + "-06-30";
-  const published = (typeof SEASON_END !== "undefined" && SEASON_END && SEASON_END.NBA) || "";
-  if (/^\d{4}-\d{2}-\d{2}$/.test(published) && published.slice(0, 4) === year && published > end) end = published;
-  return iso >= start && iso <= end;
-}
-function mlbPlayoff(date){
-  const iso = String(date || "").slice(0, 10);
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return false;
-  const year = iso.slice(0, 4);
-  const start = year + "-10-01";
-  let end = year + "-11-05";
-  const published = (typeof SEASON_END !== "undefined" && SEASON_END && SEASON_END.MLB) || "";
-  if (/^\d{4}-\d{2}-\d{2}$/.test(published) && published.slice(0, 4) === year && published > end) end = published;
-  return iso >= start && iso <= end;
-}
-function nflPlayoff(date){
-  const iso = String(date || "").slice(0, 10);
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return false;
-  const year = iso.slice(0, 4);
-  const start = year + "-01-11";
-  let end = year + "-02-15";
-  const published = (typeof SEASON_END !== "undefined" && SEASON_END && SEASON_END.NFL) || "";
-  if (/^\d{4}-\d{2}-\d{2}$/.test(published) && published.slice(0, 4) === year && published > end) end = published;
-  return iso >= start && iso <= end;
-}
-function cfbPlayoff(date){
-  const iso = String(date || "").slice(0, 10);
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return false;
-  const month = iso.slice(5, 7);
-  if (month === "12" || (month === "01" && iso.slice(8, 10) <= "31")) return true;
-  const published = (typeof SEASON_END !== "undefined" && SEASON_END && SEASON_END.CFB) || "";
-  return !!published && iso <= published && iso >= shiftDate(published, -45);
-}
-function lateSlate(date){
-  return cbbPlayoff(date) || nhlPlayoff(date) || nbaPlayoff(date) || mlbPlayoff(date) || nflPlayoff(date) || cfbPlayoff(date);
-}
-function gameLengthMs(sport, when){
-  const name = String(sport || "").toUpperCase();
-  const hours = {NHL:4, NBA:3, CBB:2.5, NFL:4, CFB:4, MLB:4.5};
-  if (name === "CBB" && cbbPlayoff(when)) return 4 * 3600000;
-  if ((name === "NHL" && nhlPlayoff(when)) || (name === "NBA" && nbaPlayoff(when)) || (name === "MLB" && mlbPlayoff(when)) || (name === "NFL" && nflPlayoff(when)) || (name === "CFB" && cfbPlayoff(when))) return 12 * 3600000;
-  return (hours[name] || 4) * 3600000;
-}
 function slateDateOf(iso){
   const ms = typeof iso === "number" ? iso : Date.parse(iso || "");
   if (!Number.isFinite(ms)) return "";
   const clock = zoneClock(new Date(ms));
   return clock.hour < 4 ? shiftDate(clock.date, -1) : clock.date;
-}
-function knownStarts(){
-  const out = [];
-  const add = (sport, start) => {
-    const ms = Date.parse(start || "");
-    if (Number.isFinite(ms)) out.push({sport: String(sport || "").toUpperCase(), start: ms});
-  };
-  ((pickSlate && pickSlate.games) || []).concat((pickSlate && pickSlate.passed) || []).forEach(g => { if (!/tbd/i.test(g.game || g.name || "")) add(g.sport, slateStart(g)); });
-  (window.ggSchedule || []).forEach(g => { if (!/tbd/i.test(g.name || "")) add(g.sport, g.start); });
-  (window.__ggExtraStarts || []).forEach(g => add(g.sport, g.start));
-  return out;
 }
 function instantAt(date, hour, minute){
   let ms = Date.parse(date + "T" + String(hour).padStart(2, "0") + ":" + String(minute).padStart(2, "0") + ":00Z");
@@ -697,12 +616,6 @@ function instantAt(date, hour, minute){
   return ms;
 }
 function slateCutoff(date){ return instantAt(shiftDate(date, 1), 4, 0); }
-function lastSlateEnd(date){
-  const starts = knownStarts().filter(g => slateDateOf(g.start) === date);
-  if (!starts.length) return 0;
-  const raw = starts.reduce((end, g) => Math.max(end, g.start + gameLengthMs(g.sport, date)), 0);
-  return Math.min(raw, slateCutoff(date));
-}
 let finalSlates = new Set();
 try { finalSlates = new Set(JSON.parse(sessionStorage.getItem("gg-picks-final") || "[]")); } catch (e) {}
 function picksAreFinal(date){ return finalSlates.has(String(date || "").slice(0, 10)); }
@@ -869,40 +782,6 @@ function noteClose(date, sport, pick, close, bet){
   if (at >= 0) closeRows[at] = row;
   else closeRows.push(row);
 }
-async function fillHistoricalCloses(){
-  const key = (document.getElementById("oddskey") || {}).value.trim();
-  if (!key) return;
-  const missing = (gradeFile || []).filter(b => b && b.date && !isNoPick(b) && (b.close === "" || b.close == null || Number(b.close) === Number(b.odds)));
-  if (!missing.length) return;
-  const bySport = {};
-  missing.forEach(b => { (bySport[b.sport] = bySport[b.sport] || []).push(b); });
-  for (const sport of Object.keys(bySport)) {
-    const sportKey = SPORT_KEY[sport];
-    if (!sportKey) continue;
-    const dates = [...new Set(bySport[sport].map(b => b.date))];
-    for (const date of dates) {
-      const url = "https://api.the-odds-api.com/v4/historical/sports/" + sportKey + "/odds?apiKey=" + encodeURIComponent(key) + "&regions=us&markets=h2h,spreads,totals&oddsFormat=american&date=" + date + "T23:00:00Z";
-      const data = await fetch(url).then(r => r.ok ? r.json() : null).catch(() => null);
-      if (!data || !data.data) continue;
-      bySport[sport].filter(b => b.date === date).forEach(b => {
-        const game = (data.data || []).find(g => (g.away_team + " at " + g.home_team).includes(b.pick.split(" ")[0]) || b.pick.includes(g.away_team) || b.pick.includes(g.home_team));
-        if (!game) return;
-        const book = (game.bookmakers || [])[0];
-        if (!book) return;
-        const market = b.type === "Total" ? "totals" : b.type === "Spread" ? "spreads" : "h2h";
-        const mk = (book.markets || []).find(m => m.key === market);
-        if (!mk) return;
-        const hit = (mk.outcomes || []).find(o => b.pick.includes(o.name) || (o.point != null && b.pick.includes(String(o.point))));
-        if (!hit) return;
-        b.close = hit.price;
-        const opp = oppositeOutcome(mk.outcomes, hit, market);
-        if (opp && opp.price != null) b.closeOpp = Number(opp.price);
-        if (hit.point != null) b.closePoint = Number(hit.point);
-      });
-    }
-  }
-  render();
-}
 function loadCloses(){
   return fetch("cards/closes.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
     closeMap = {};
@@ -935,16 +814,6 @@ function rowStake(row){
   const profit = Number(row && row.profit);
   if (Number.isFinite(pct) && pct !== 0 && Number.isFinite(profit)) return profit / (pct / 100);
   return 0;
-}
-function openSlips(){
-  const seen = new Set();
-  return dropMatchedPending(load().concat(loadGrade()).concat(gradeFile || [])).filter(b => {
-    if (!b || b.result !== "pending" || isNoPick(b)) return false;
-    const key = [String(b.date || "").slice(0, 10), String(b.sport || "").toUpperCase(), normPick(b.pick)].join("|");
-    if (!key || seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
 }
 function moneyAmount(value){
   const n = Number(String(value == null ? "" : value).replace(/[$,]/g, "").replace(/^\+/, ""));
@@ -1477,9 +1346,6 @@ function gradedOnDay(bets, day){
   });
   return rows;
 }
-function yesterdayGraded(bets){
-  return gradedOnDay(bets, yesterday());
-}
 function drawBars(canvas, bets){
   const ctx = canvas.getContext("2d");
   const sports = ["CBB","CFB","MLB","NBA","NFL","NHL"];
@@ -1860,16 +1726,6 @@ function apiCloseFor(b){
   const baked = LAST_API_ROWS.find(r => r.market === market && teamHit(b.pick, r.label));
   return baked ? rowApiPrice(baked.label, baked.betmgm, b) : null;
 }
-function rememberApiBoard(day, market, rows){
-  let pack = {at: Date.now(), rows: []};
-  try { const old = JSON.parse(localStorage.getItem("gg-api-close") || "null"); if (old && old.rows) pack.rows = old.rows.filter(r => !(r.day === day && r.market === market)); } catch (e) {}
-  (rows || []).forEach(r => {
-    const price = r.cells && r.cells[0];
-    if (!price || price === "-") return;
-    pack.rows.push({day: day, market: market, sport: r.sport, label: r.label, betmgm: price, at: Date.now()});
-  });
-  localStorage.setItem("gg-api-close", JSON.stringify(pack));
-}
 function storeCloseFor(b){
   if (!b) return null;
   const store = closeStore();
@@ -1955,53 +1811,6 @@ function stampFileClose(b){
   b.close = "";
   b.realClose = false;
   return b;
-}
-function weekRows(){
-  return publishedDashboard().map(row => ({date: row.date, profit: Number(row.profit) || 0, staked: rowStake(row), record: row.record, clv: row.clv}));
-}
-function publishedWeek(){
-  return Object.entries(publishedCalendar).filter(([date]) => slateSettled(date)).sort(([a],[b]) => a.localeCompare(b)).slice(-7);
-}
-function weekProfit(){
-  return publishedDashboard().reduce((s, row) => s + (Number(row.profit) || 0), 0);
-}
-function weekRoi(){
-  const rows = publishedDashboard();
-  const profit = rows.reduce((s, row) => s + (Number(row.profit) || 0), 0);
-  const staked = rows.reduce((s, row) => s + rowStake(row), 0);
-  return roiText(profit, staked);
-}
-function weekRecord(){
-  let w = 0, l = 0, p = 0;
-  publishedDashboard().forEach(row => {
-    const parts = String(row.record || "0-0").split("-").map(n => Number(n) || 0);
-    if (parts.length < 2 || /slips|no picks/i.test(row.record)) return;
-    w += parts[0] || 0;
-    l += parts[1] || 0;
-    p += parts[2] || 0;
-  });
-  return w + "-" + l + (p ? "-" + p : "");
-}
-function weekClv(){
-  const dates = new Set(lastSevenDates());
-  const slips = (gradeFile || []).filter(b => b && dates.has(b.date) && !isNoPick(b) && (b.result === "win" || b.result === "loss" || b.result === "push")).map(b => {
-    const close = closeMap[b.date + "|" + b.pick];
-    return close ? Object.assign({}, b, {close}) : b;
-  });
-  const withClose = slips.filter(b => b.close !== "" && b.close != null && Number.isFinite(Number(b.close)));
-  if (!slips.length || !withClose.length) return "No Close Saved";
-  const vals = withClose.map(b => clv(b)).filter(v => v != null);
-  if (!vals.length) return "No Bet Price";
-  return formatClv(vals.reduce((s, n) => s + n, 0) / vals.length);
-}
-function clvListText(list){
-  const graded = list.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
-  if (!graded.length) return "No Close Saved";
-  const withClose = graded.filter(b => b.close !== "" && b.close != null);
-  if (!withClose.length) return "No Close Saved";
-  const xs = withClose.map(clv).filter(v => v != null);
-  if (!xs.length) return "No Bet Price";
-  return formatClv(xs.reduce((s,v)=>s+v,0)/xs.length);
 }
 function bookKey(name){
   const raw = String(name || "").toLowerCase().replace(/\(not listed\)/g, "").replace(/[^a-z0-9]/g, "");
@@ -2313,7 +2122,6 @@ document.getElementById("calendar").onclick = ev => {
   if (day && day.dataset.date) openDay(day.dataset.date);
 };
 
-function todayEt(){ return new Date().toLocaleDateString("en-CA", {timeZone: siteZone()}); }
 function easternDay(){ return new Date().toLocaleDateString("en-CA", {timeZone:"America/New_York"}); }
 function msUntilMidnightEt(){
   const parts = new Intl.DateTimeFormat("en-US", {timeZone: "America/New_York", hour:"numeric", minute:"numeric", second:"numeric", hourCycle:"h23"}).formatToParts(new Date());
@@ -2379,28 +2187,6 @@ function drawPassedSlate(){
   const games = pickSlate && Array.isArray(pickSlate.games) ? pickSlate.games : [];
   const date = (pickSlate && pickSlate.date) || easternDay();
   cardBox.innerHTML = games.length ? "<p class='warn passed-note'>Posted matchups. Add puts an extra slip in this browser. The posted picks stay.</p>" + slateTable(games, date, true) : "";
-}
-function teamCodes(name){
-  const words = String(name || "").replace(/[^A-Za-z ]/g, "").split(/\s+/).filter(Boolean);
-  const out = new Set();
-  if (!words.length) return out;
-  const city = words.slice(0, -1);
-  const nick = words[words.length - 1].toLowerCase();
-  out.add(nick);
-  if (city.length) {
-    out.add(city.join("").toLowerCase());
-    out.add(city.join("").slice(0, 3).toLowerCase());
-    out.add((city.map(w => w[0]).join("") + words[words.length - 1][0]).toLowerCase());
-  }
-  return out;
-}
-function teamForAbbr(abbr, away, home){
-  const code = String(abbr || "").toLowerCase();
-  const awayHit = teamCodes(away).has(code);
-  const homeHit = teamCodes(home).has(code);
-  if (homeHit && !awayHit) return "home";
-  if (awayHit && !homeHit) return "away";
-  return "";
 }
 function boardRow(list, game){
   const name = String(game || "").toLowerCase();
@@ -2673,11 +2459,6 @@ function slateTable(list, date, extra){
   const addHead = extra ? "<th class='add-col'>Add</th>" : "";
   return "<div class='table-wrap'><table class='season-hold filled'><thead><tr>" + gameHead + "<th>Time</th><th>Location</th><th>Record</th><th class='note-col'>Notes</th>" + addHead + "</tr></thead><tbody>" + rows + "</tbody></table></div>";
 }
-function slateHtml(){
-  const games = (pickSlate && pickSlate.passed) || [];
-  if (!games.length) return "";
-  return "<div class='board-rest'><p class='warn passed-note'>On the board today. Not on the card.</p>" + slateTable(games, pickSlate && pickSlate.date, true) + "</div>";
-}
 function cardSlips(){
   const all = load().concat(loadGrade()).concat(gradeFile || []).filter(b => b && b.pick && !isNoPick(b));
   return dropMatchedPending(collapseSlips(all)).filter(b => inSlipWindow(b.date));
@@ -2698,9 +2479,6 @@ function gameMatchesSlip(game, slip){
   const blob = [game.game, slateSides(game).away.name, slateSides(game).home.name].join(" ").toLowerCase();
   const words = String(slip.pick || "").toLowerCase().split(/[^a-z0-9]+/).filter(w => w.length > 3 && !/^(under|over|spread|total|moneyline|and)$/.test(w));
   return words.some(w => blob.includes(w));
-}
-function pendingHoldHtml(){
-  return "";
 }
 function paintSeasonStatus(){
   const box = document.getElementById("seasons");
@@ -3014,9 +2792,6 @@ const TEAM_ALIAS = {njd:"devils", vgk:"knights", okc:"thunder", lad:"dodgers", b
 function expandTeams(text){
   return String(text || "").toLowerCase().replace(/\b[a-z]{2,4}\b/g, w => TEAM_ALIAS[w] || w);
 }
-function pickTokens(pick){
-  return expandTeams(pick).replace(/[^a-z0-9.+-]+/g, " ").split(/\s+/).filter(w => w.length > 1);
-}
 function wagerParts(pick){
   const text = normPick(pick);
   const ou = text.match(/\b(over|under)\s+([0-9]+(?:\.[0-9]+)?)/);
@@ -3075,13 +2850,6 @@ function collapseSlips(rows){
     byKey[key] = keep;
   });
   return Object.values(byKey);
-}
-function samePick(a, b){
-  const left = expandTeams(a), right = expandTeams(b);
-  if (!left || !right) return false;
-  if (left === right || left.includes(right) || right.includes(left)) return true;
-  const parts = pickTokens(a);
-  return parts.filter(w => right.includes(w)).length >= Math.min(3, parts.length);
 }
 function normPick(pick){
   return expandTeams(pick).replace(/[^a-z0-9.+-]+/g, " ").replace(/\s+/g, " ").trim();
@@ -3575,9 +3343,6 @@ function ensureOddsTimeColumn(){
     game.insertAdjacentElement("afterend", td);
   });
 }
-function cacheHasTimes(html){
-  return /data-start=['"][^'"]+['"]/.test(html || "");
-}
 function gameStarts(){
   try { return JSON.parse(localStorage.getItem("gg-game-starts") || "{}"); } catch (e) { return {}; }
 }
@@ -3872,13 +3637,6 @@ function quotedClose(slip, book){
 function savedBookPrice(slip, book){
   const hit = bookOutcome(slip, book);
   return hit ? hit.price : null;
-}
-function sameBookNumber(slip, hit){
-  const type = slip.type || betType(slip);
-  if (type === "Moneyline") return true;
-  if (!hit || hit.point == null) return false;
-  const nums = String(slip.pick || "").match(/[+-]?\d+(?:\.\d+)?/g) || [];
-  return nums.some(n => Math.abs(Math.abs(Number(n)) - Math.abs(Number(hit.point))) < 0.01);
 }
 function lineLabel(point, price){
   const p = Number(point);
@@ -4200,49 +3958,6 @@ function group(bets, key){
   const rows = Object.entries(map).sort((a,b) => a[0].localeCompare(b[0]));
   return "<p>" + rows.map(([k,v]) => esc(k) + ": " + (v.n ? moneyHtml(v.pl) + " (" + v.n + ")" : empty)).join(" | ") + "</p>";
 }
-async function repriceBooks(){
-  const key = oddskey.value.trim();
-  if (!key) return;
-  const stamp = localStorage.getItem("gg-books-stamp");
-  if (stamp === easternDay()) return;
-  const settled = load().filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
-  if (!settled.length) return;
-  const books = Object.keys(BOOK_KEY);
-  const bySport = {};
-  settled.forEach(b => { if (SPORT_KEY[b.sport]) (bySport[b.sport] = bySport[b.sport] || []).push(b); });
-  const boards = {};
-  for (const sport of Object.keys(bySport)) {
-    boards[sport] = {};
-    for (const book of books) {
-      boards[sport][book] = await fetchBook(SPORT_KEY[sport], BOOK_KEY[book], key).catch(() => []);
-    }
-  }
-  const map = {};
-  books.forEach(book => map[book] = {pl:0, n:0});
-  settled.forEach(b => {
-    books.forEach(book => {
-      const games = (boards[b.sport] || {})[book] || [];
-      const hit = games.find(g => String(b.pick).includes(g.home_team) || String(b.pick).includes(g.away_team));
-      const price = hit ? priceFrom(hit, BOOK_KEY[book], b) : Number(b.odds);
-      const copy = {...b, odds: price};
-      map[book].pl += slipMoney(copy);
-      map[book].n++;
-    });
-  });
-  localStorage.setItem("gg-books-stamp", easternDay());
-  localStorage.setItem("gg-books-figures", JSON.stringify(map));
-  render();
-}
-function priceFrom(game, bookKey, slip){
-  const bk = (game.bookmakers || []).find(b => b.key === bookKey);
-  if (!bk) return Number(slip.odds);
-  const market = slip.type === "Total" ? "totals" : slip.type === "Moneyline" ? "h2h" : "spreads";
-  const mk = (bk.markets || []).find(m => m.key === market);
-  if (!mk) return Number(slip.odds);
-  const name = String(slip.pick).split(" ").slice(-2)[0];
-  const o = (mk.outcomes || []).find(x => String(slip.pick).includes(x.name) || (x.point != null && String(slip.pick).includes(String(x.point))));
-  return o && o.price != null ? o.price : Number(slip.odds);
-}
 form.onsubmit = e => {
   e.preventDefault();
   const d = Object.fromEntries(new FormData(form));
@@ -4441,11 +4156,6 @@ async function fetchOne(sportKey, bookKey, key, fresh){
   }
   return games;
 }
-function cardPicks(sport, type){
-  const lines = (driveCard.lines || []).filter(l => l.sport === sport);
-  if (!type) return lines;
-  return lines.filter(l => l.type === type || (type === "Total" && /under|over/i.test(l.pick)) || (type === "Spread" && /[+-]\d/.test(l.pick)) || (type === "Moneyline" && /\bml\b|moneyline/i.test(l.pick)));
-}
 async function fetchBook(sport, bookKey, key, fresh){
   const name = Object.keys(SPORT_KEY).find(s => SPORT_KEY[s] === sport) || sport;
   const list = sportKeys(name);
@@ -4631,20 +4341,6 @@ document.getElementById("loadicon").onclick = () => {
     document.getElementById("loadnote").textContent = /key|401|403/i.test(err.message || "") ? "Bad Key" : "Feed Error";
   });
 };
-async function autoLoadBoard(){
-  const key = oddskey.value.trim();
-  if (!key) return;
-  const day = form.date.value || easternDay();
-  const stamp = localStorage.getItem("gg-board-auto");
-  if (stamp === day) return;
-  const yest = new Date(day + "T12:00:00Z");
-  yest.setUTCDate(yest.getUTCDate() - 1);
-  const yesterday = yest.toISOString().slice(0, 10);
-  const bookKey = BOOK_KEY[form.book.value] || "betmgm";
-  if (!slateSettled(yesterday)) return;
-  localStorage.setItem("gg-board-auto", day);
-  await fillPickBoard().catch(() => {});
-}
 applyGrades().catch(() => {});
 document.getElementById("loadpicks").onclick = () => {
   document.getElementById("loadnote").textContent = "Loading...";
@@ -4780,21 +4476,6 @@ function applyCloses(bets, games, bookKey){
   });
   return filled;
 }
-function captureCloses(){
-  const bets = load();
-  const open = bets.filter(b => !b.close && BOOK_KEY[b.book] && SPORT_KEY[b.sport]);
-  let filled = 0;
-  const seen = new Set();
-  open.forEach(b => {
-    const key = b.sport + "|" + b.book;
-    if (seen.has(key)) return;
-    seen.add(key);
-    const games = cachedBoard(b.sport, BOOK_KEY[b.book]);
-    if (games) filled += applyCloses(bets, games, BOOK_KEY[b.book]);
-  });
-  if (filled) save(bets);
-  return filled;
-}
 async function repriceSlips(){
   const note = document.getElementById("pdfnote");
   const book = form.book.value;
@@ -4880,7 +4561,6 @@ async function loadPending(){
   document.getElementById("slips").scrollIntoView({behavior:"smooth", block:"start"});
   document.getElementById("rows").scrollIntoView({behavior:"smooth", block:"center"});
 }
-function slipKey(b){ return [b.date, b.sport, b.pick].join("|"); }
 function betType(b){
   const pick = String(b && b.pick || "");
   const given = String(b && b.type || "");
@@ -4959,25 +4639,6 @@ function replaceTodayCard(text, book){
   save(kept);
   return rows.length;
 }
-function addCardLines(text, book){
-  const bets = load();
-  let added = 0;
-  text.split(/\r?\n/).forEach(line => {
-    line = line.trim();
-    if (!line || line.startsWith("#")) return;
-    const parts = line.split("|").map(s => s.trim());
-    let date = easternDay(), sport, type, pick, odds, notes;
-    if (/^\d{4}-\d{2}-\d{2}$/.test(parts[0])) date = parts.shift();
-    [sport, type, pick, odds, notes] = parts;
-    odds = String(odds || "").replace(/\u2212/g, "-");
-    if (!sport || !pick || !odds || Number.isNaN(Number(odds)) || /no picks|season ended/i.test(pick) || !inSlipWindow(date)) return;
-    const row = stampPlaced(markEdge({id: Date.now() + Math.random(), date, book: book || "BetMGM", sport, type: type || "Spread", pick, odds: Number(odds), stake: 10, result: "pending", notes: notes || "", fromCard: true}));
-    if (!placePending(bets, row)) return;
-    added++;
-  });
-  if (added) save(bets);
-  return added;
-}
 async function cardBundle(){
   const files = ["cards/today.txt","cards/parts/nhl.txt","cards/parts/nba.txt","cards/parts/mlb.txt","cards/parts/nfl.txt","cards/parts/cbb.txt","cards/parts/cfb.txt"];
   const chunks = await Promise.all(files.map(file => fetch(file + "?ts=" + Date.now()).then(r => r.ok ? r.text() : "").catch(() => "")));
@@ -5036,15 +4697,6 @@ async function refreshTodayCard(){
   drawCardAnalysis(lines.length ? [sharp, lines.join("\n")].filter(Boolean).join("\n") : text);
   if (lines.length) replaceTodayCard(lines.join("\n"), (document.getElementById("cardbook") || {}).value || "BetMGM");
   loadPickSlate();
-}
-function gradeRows(text){
-  return text.split(/\n/).map(l => l.trim()).filter(l => l && !l.startsWith("#")).map(l => {
-    const r = l.split("|").map(s => s.trim());
-    if (/^RANGE$/i.test(r[1] || "") || /all win|all lose/i.test(l)) return null;
-    const wide = r.length >= 5 && /^(NBA|NHL|NFL|MLB|CBB|CFB)$/.test(r[1]);
-    const odds = Number(String(wide ? r[3] : r[3]).replace(/[^\d+-]/g, ""));
-    return {date: r[0], sport: wide ? r[1] : "", pick: wide ? r[2] : r[1], result: (wide ? r[4] : r[2] || "").toLowerCase(), close: "", odds: Number.isNaN(odds) ? -110 : odds};
-  }).filter(row => row && row.date && row.pick && row.result && !/no picks|season ended|^range$/i.test(row.pick + " " + row.result));
 }
 async function applyGrades(ready){
   let text = ready;
