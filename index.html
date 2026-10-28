@@ -681,7 +681,7 @@ function knownStarts(){
     const ms = Date.parse(start || "");
     if (Number.isFinite(ms)) out.push({sport: String(sport || "").toUpperCase(), start: ms});
   };
-  ((pickSlate && pickSlate.games) || []).forEach(g => { if (!/tbd/i.test(g.game || g.name || "")) add(g.sport, slateStart(g)); });
+  ((pickSlate && pickSlate.games) || []).concat((pickSlate && pickSlate.passed) || []).forEach(g => { if (!/tbd/i.test(g.game || g.name || "")) add(g.sport, slateStart(g)); });
   (window.ggSchedule || []).forEach(g => { if (!/tbd/i.test(g.name || "")) add(g.sport, g.start); });
   (window.__ggExtraStarts || []).forEach(g => add(g.sport, g.start));
   return out;
@@ -2377,8 +2377,12 @@ function drawPassedSlate(){
   const cardBox = document.getElementById("cardgames");
   if (!cardBox) return;
   const games = pickSlate && Array.isArray(pickSlate.games) ? pickSlate.games : [];
+  const passed = pickSlate && Array.isArray(pickSlate.passed) ? pickSlate.passed : [];
   const date = (pickSlate && pickSlate.date) || easternDay();
-  cardBox.innerHTML = games.length ? "<p class='warn passed-note'>Posted matchups. Add puts an extra slip in this browser. The posted picks stay.</p>" + slateTable(games, date, true) : "";
+  let html = "";
+  if (games.length) html += "<p class='warn passed-note'>Posted matchups. Add puts an extra slip in this browser. The posted picks stay.</p>" + slateTable(games, date, true);
+  if (passed.length) html += "<p class='warn passed-note'>" + esc((pickSlate && pickSlate.passedNote) || "Games being played that did not make the picks.") + "</p>" + slateTable(passed, date, true);
+  cardBox.innerHTML = html;
 }
 function teamCodes(name){
   const words = String(name || "").replace(/[^A-Za-z ]/g, "").split(/\s+/).filter(Boolean);
@@ -2673,8 +2677,18 @@ function slateTable(list, date, extra){
   const addHead = extra ? "<th class='add-col'>Add</th>" : "";
   return "<div class='table-wrap'><table class='season-hold filled'><thead><tr>" + gameHead + "<th>Time</th><th>Location</th><th>Record</th><th class='note-col'>Notes</th>" + addHead + "</tr></thead><tbody>" + rows + "</tbody></table></div>";
 }
+function slateList(){
+  if (!pickSlate) return [];
+  const seen = new Set();
+  return ((pickSlate.games || []).concat(pickSlate.passed || [])).filter(game => {
+    const key = String(game && game.sport || "") + "|" + String(game && game.game || "");
+    if (!game || !game.game || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
 function slateHtml(){
-  const games = pickSlate && Array.isArray(pickSlate.games) ? pickSlate.games : [];
+  const games = slateList();
   return games.length ? slateTable(games, pickSlate && pickSlate.date, true) : "<table class='season-hold'><tbody><tr><td></td><td></td></tr><tr><td></td><td></td></tr></tbody></table>";
 }
 function cardSlips(){
@@ -2699,7 +2713,7 @@ function gameMatchesSlip(game, slip){
   return words.some(w => blob.includes(w));
 }
 function pendingHoldHtml(){
-  const games = pickSlate && Array.isArray(pickSlate.games) ? pickSlate.games : [];
+  const games = slateList();
   return games.length ? slateTable(games, pickSlate && pickSlate.date, true) : slateHtml();
 }
 function paintSeasonStatus(){
