@@ -4559,8 +4559,7 @@ async function fillPickBoard(useSaved, scope){
     return slateDateOf(game.commence_time) === day;
   }).sort((a, b) => sportRank(a._sport) - sportRank(b._sport) || String(a.commence_time || "").localeCompare(String(b.commence_time || "")));
   const started = dayGames.filter(game => game.commence_time && Date.parse(game.commence_time) <= Date.now());
-  const openGames = dayGames.filter(game => !game.commence_time || Date.parse(game.commence_time) > Date.now());
-  openGames.forEach(game => {
+  dayGames.forEach(game => {
     books.forEach(bookName => {
       const thisKey = BOOK_KEY[bookName];
       const bk = (game.bookmakers || []).find(b => b.key === thisKey);
@@ -4590,7 +4589,8 @@ async function fillPickBoard(useSaved, scope){
   });
   if (current) sel.value = current;
   const who = allBooks ? "every book" : book + " " + sport + " " + type;
-  const msg = count ? "Loaded " + count + " " + who + " picks for " + day + "." + (started.length ? " " + started.length + " started games closed." : "") : "No lines for " + who + " on " + day + ".";
+  const startedNote = started.length ? " " + started.length + " already started." : "";
+  const msg = count ? "Loaded " + count + " " + who + " picks for " + day + "." + startedNote : (allGames.length ? "No " + who + " lines matched " + day + "." : "The feed returned no " + (allBooks ? "games" : sport + " games") + " for " + day + ".");
   note.textContent = msg;
   document.getElementById("loadnote").textContent = count ? "Load successful." : "No Lines";
   if (count) localStorage.setItem("gg-pick-board", JSON.stringify({book: allBooks ? "All" : book, sport: allBooks ? "All" : sport, day, value: sel.value, options: [...sel.options].map(o => ({value:o.value, text:o.textContent, price:o.dataset.price || "", close:o.dataset.close || "", market:o.dataset.market || "", sport:o.dataset.sport || "", book:o.dataset.book || ""}))}));
@@ -4636,8 +4636,17 @@ document.getElementById("loadpicks").onclick = () => {
   });
 };
 function refreshPicks(){
-  const games = cachedBoard(form.sport.value, BOOK_KEY[form.book.value]);
-  if (!games) { document.getElementById("picknote").textContent = "Press Load Picks for this date. The saved board is not here yet."; return; }
+  const sport = form.sport.value;
+  const bookKey = BOOK_KEY[form.book.value];
+  const saved = cachedBoard(sport, bookKey);
+  if (!saved) {
+    document.getElementById("loadnote").textContent = "Loading...";
+    fillPickBoard(false).catch(err => {
+      document.getElementById("picknote").textContent = err.message || "Feed error.";
+      document.getElementById("loadnote").textContent = /key|401|403/i.test(err.message || "") ? "Bad Key" : "Feed Error";
+    });
+    return;
+  }
   fillPickBoard(true).catch(err => { document.getElementById("picknote").textContent = err.message; });
 }
 form.date.onchange = refreshPicks;
