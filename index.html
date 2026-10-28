@@ -82,6 +82,7 @@ h2.split-title, h3.split-title { margin:16px 0 12px; font-size:16px; color:var(-
 .api-note button, .api-note select { font-size:13px; color:var(--text); }
 .api-note button { color:var(--title); }
 button.odds-link { margin-top:8px; }
+.key-row button.odds-link { margin-top:0; }
 a, .api-note a, .warn a, .slips-side a { color:var(--title); }
 .api-note .best-price, .warn .best-price, .best-price { color:#ff00ff; font-weight:700; }
 .api-note .win, .warn .win, .win { color:var(--title); }
@@ -471,9 +472,10 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <div class="key-row">
 <label id="oddskeybox">Odds Key<input id="oddskey" type="password" placeholder="Free or paid key" autocomplete="off"></label>
 <button type="button" id="commitkey">Commit</button>
+<button type="button" class="odds-link" onclick="window.open('https://the-odds-api.com/','_blank','noopener,noreferrer')">Open The Odds API</button>
 <span id="keynote" class="warn"></span>
 </div>
-<p class="api-note">Paste a free or paid Odds API key here. Load Picks uses this key. Close needs a paid subscription so the other side of the market can be saved. CLV then removes that book's cut. A free key loads the board only. The Book selected above drives the list. Today's Card Book only stamps a card loaded there.<br><button type="button" class="odds-link" onclick="window.open('https://the-odds-api.com/','_blank','noopener,noreferrer')">Open The Odds API</button></p>
+<p class="api-note">Paste a free or paid Odds API key here. Load Picks uses this key. Close needs a paid subscription so the other side of the market can be saved. CLV then removes that book's cut. A free key loads the board only. The Book selected above drives the list. Today's Card Book only stamps a card loaded there.</p>
 </div>
 </section>
 <section class="card" id="slips">
