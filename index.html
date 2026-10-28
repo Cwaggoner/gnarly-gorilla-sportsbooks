@@ -62,7 +62,7 @@ footer.card { width:100%; max-width:none; margin:14px 0 0; box-sizing:border-box
 .stat b .zero { color:#ffffff; font-style:italic; }
 .card { padding:14px; margin-top:14px; scroll-margin-top:var(--pin, 150px); }
 .section-head { display:flex; align-items:center; justify-content:space-between; gap:12px; }
-#slips .slip-actions { display:flex; flex-direction:row; flex-wrap:nowrap; align-items:center; gap:8px; margin:0 0 12px; }
+#slips .slip-actions { display:flex; flex-direction:row; flex-wrap:nowrap; align-items:center; gap:8px; margin:0 0 12px; overflow-x:auto; }
 #slips .slip-actions button { white-space:nowrap; flex:0 0 auto; }
 .section-head h2 { margin:0; }
 .slips-side { margin:0; text-align:left; max-width:62%; font-size:12px; }
@@ -475,8 +475,8 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </div>
 </section>
 <section class="card" id="slips">
-<div class="slip-actions"><button type="button" id="pulllines">Pull Odds & Close</button><button type="button" id="livescores">Check Live Scores</button></div>
 <div class="section-head"><h2>Slips</h2><p class="warn slips-side">Today and yesterday only. Pull Odds & Close uses the Odds API key and stores the Pinnacle close with the other books. Odds is the price at the start of the game. Close is the next price after it starts. Sharp CLV is that price against Pinnacle with the juice removed. The time under the date is when the slip was written. A game that has not started stays open.</p></div>
+<div class="slip-actions"><button type="button" id="pulllines">Pull Odds & Close</button><button type="button" id="livescores">Check Live Scores</button><button type="button" id="syncledger">Sync Ledger</button><button type="button" id="saveledger">Save Ledger</button><button type="button" id="exportpdf">Export PDF</button><button type="button" id="export">Export Spreadsheet</button><button type="button" class="danger" id="clear">Clear All</button></div>
 <p id="pullnote" class="warn"></p>
 <div class="book-slot"><div id="bookbadge"><img id="bookbadgeimg" src="gg-icon.png" alt="Gnarly Gorilla"></div></div>
 <p id="scorenote" class="warn"></p>
@@ -488,10 +488,8 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </div>
 <div class="tools">
 <label>Load Ledger<input type="file" id="loadledger" accept=".json,application/json"><span class="file-face">No File Chosen</span></label>
-<div class="btn-pair"><span>Ledger Data</span><div><button type="button" id="syncledger">Sync Ledger</button><button type="button" id="saveledger">Save Ledger</button></div></div>
 <span id="ledgernote" class="warn"></span>
 <label>Import CSV<input type="file" id="import" accept=".csv,text/csv"><span class="file-face">No File Chosen</span></label>
-<div class="btn-pair"><span>Exporting</span><div><button type="button" id="exportpdf">Export PDF</button><button type="button" id="export">Export Spreadsheet</button><button type="button" class="danger" id="clear">Clear All</button></div></div>
 </div>
 <div class="table-wrap"><table>
 <thead><tr><th>Date</th><th>Book</th><th>Sport</th><th>Type</th><th>Pick</th><th>Odds</th><th class="col-close">Close</th><th>No-Vig CLV</th><th>Sharp CLV</th><th>Stake</th><th>Result</th><th>P/L</th><th>Grade</th></tr></thead>
