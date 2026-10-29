@@ -1,1 +1,1 @@
-2026-10-26 | NFL | Spread | Philadelphia Eagles +4.5 | -110 | made Eagles -2.5, book Eagles +4.5, gap 7.0. Edge. Record formula, not a trained price.
+2026-10-29 | NFL | Spread | Packers -3.5 vs Panthers | -110 | made GB -3.5, book GB -3.5, gap 0, reason turnovers. Turnover: Green Bay +5, Carolina -1. Bench: Love and Young both start.

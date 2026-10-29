@@ -1,5 +1,8 @@
-# file: GG-CARD-2026-10-28
-2026-10-28 | NHL | No Picks
-2026-10-28 | NBA | Spread | Hornets +6.5 at Pistons | -110 | made DET -1, book DET -6.5, gap 5.5, reason back-to-back. Edge.
-2026-10-28 | MLB | No Picks
-2026-10-28 | CFB | No Picks
+# file: GG-CARD-2026-10-29
+# sharp: Four sides. A dog is the bet only when that dog is not the team that gives it away.
+2026-10-29 | CBB | No Picks
+2026-10-29 | CFB | Spread | FAU +14.5 at North Texas | -112 | made UNT -3, book UNT -14.5, gap 11.5, reason equal records. Turnover: Veltkamp 4 INT, Jackson 5 INT. Bench: Veltkamp and Messer play, FAU OL questionable, North Texas healthy. Edge.
+2026-10-29 | MLB | Season Ended
+2026-10-29 | NBA | Spread | Grizzlies +7.5 at Trail Blazers | -110 | made POR -1, book POR -7.5, gap 6.5, reason Sharpe out. Turnover: no giveaway flag. Bench: Sharpe out, Memphis has nobody out. Edge.
+2026-10-29 | NFL | Spread | Packers -3.5 vs Panthers | -110 | made GB -3.5, book GB -3.5, gap 0, reason turnovers. Turnover: Green Bay +5, Carolina -1. Bench: Love and Young both start.
+2026-10-29 | NHL | Moneyline | Jets +200 at Lightning | +200 | made +176, book +200, gap 24 cents, reason price. Turnover: giveaway rate not posted. Bench: Hagel day-to-day, Skinner and Vasilevskiy expected.
