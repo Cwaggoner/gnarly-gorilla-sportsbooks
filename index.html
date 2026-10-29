@@ -310,7 +310,14 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 #oddscompare tr.edge td { color:#f0e14a; }
 .win { color:var(--title) !important; }
 .loss { color:var(--red) !important; }
-.zero { color:#ffffff !important; font-style:italic; }
+.view { display:none; }
+.view.on { display:block; }
+#sitenav button.on { color:#39ff14; outline:1px solid #39ff14; }
+.game-row { border:1px solid #39ff14; border-radius:10px; margin:8px 0; padding:10px; background:#101610; }
+.game-row h3 { margin:0 0 8px; color:#39ff14; font-size:15px; }
+.game-lines { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
+.game-lines h4 { margin:0 0 4px; color:#8fb898; font-size:12px; font-weight:600; }
+@media (max-width:800px) { .game-lines { grid-template-columns:1fr; } }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
@@ -331,6 +338,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <nav class="sitenav" id="sitenav">
 <div class="nav-cell left"><span class="clock" id="zonedate"></span><span class="clock" id="zonetime"></span></div>
 <div class="nav-cell mid">
+<button type="button" data-jump="games" class="on">Games</button>
 <button type="button" data-jump="seasons">Seasons</button>
 <button type="button" data-jump="dashboard">Dashboard</button>
 <button type="button" data-jump="todaycard">Today</button><button type="button" data-jump="liveodds">Live Odds</button>
@@ -360,9 +368,17 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </div>
 </nav>
 </div>
-<div id="seasons" class="card"><div class="section-head"><h2>Season Dates</h2><p class="warn slips-side">Checked in the month each league publishes its schedule.</p></div></div>
+<div id="seasons" class="card view"><div class="section-head"><h2>Season Dates</h2><p class="warn slips-side">Checked in the month each league publishes its schedule.</p></div></div>
 <main>
-<section class="card" id="dashboard">
+<section class="card view on" id="games">
+<div class="section-head"><h2>Games</h2><p class="warn slips-side">Tap a price. Nothing is sent to a book.</p></div>
+<div class="odds-tools">
+<label>Book<select id="gamebook" class="book-select"><option>BetMGM</option><option>Caesars</option><option>DraftKings</option><option>Fanatics</option><option>FanDuel</option><option>HardRock</option></select></label>
+<label>Sport<select id="gamesport" class="sport-select"><option selected>All</option><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option></select></label>
+</div>
+<div id="gameboard"><p class="warn">Loading the board.</p></div>
+</section>
+<section class="card view" id="dashboard">
 <div class="section-head"><h2>Dashboard</h2></div>
 <section class="stats" id="stats"></section>
 <canvas id="dashChart" width="640" height="320"></canvas>
@@ -381,8 +397,8 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </ul>
 <ul class="odds-notes" id="sharpcheck"></ul>
 </section>
-<section class="card" id="liveodds"><div class="section-head"><h2>Live Odds</h2><p class="warn slips-side">Moneyline, spread, and total across books. Refresh pulls the live price.</p></div><div class="odds-tools" id="compareday"><button type="button" id="day-yesterday">Yesterday</button><button type="button" id="day-today">Today</button><select id="comparesport"><option selected>All</option><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option></select><select id="comparemarket"><option value="h2h" selected>Moneyline</option><option value="spreads">Spread</option><option value="totals">Total</option></select><button type="button" id="refreshodds">Refresh</button></div><div id="oddscompare"></div></section>
-<section class="card" id="todaycard">
+<section class="card view" id="liveodds"><div class="section-head"><h2>Live Odds</h2><p class="warn slips-side">Moneyline, spread, and total across books. Refresh pulls the live price.</p></div><div class="odds-tools" id="compareday"><button type="button" id="day-yesterday">Yesterday</button><button type="button" id="day-today">Today</button><select id="comparesport"><option selected>All</option><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option></select><select id="comparemarket"><option value="h2h" selected>Moneyline</option><option value="spreads">Spread</option><option value="totals">Total</option></select><button type="button" id="refreshodds">Refresh</button></div><div id="oddscompare"></div></section>
+<section class="card view" id="todaycard">
 <div class="section-head"><h2>Today's Card</h2><p class="warn slips-side">Click a price to put it on the slip.</p></div>
 <div class="payout-box">
 <h3>$10 Win</h3>
@@ -436,7 +452,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <p id="pdfnote" class="warn"></p>
 </div>
 </section>
-<section class="card" id="reportcard">
+<section class="card view" id="reportcard">
 <h2>Report Card</h2>
 <div class="jump"><button type="button" data-jump="printpreview">Page 1</button><button type="button" data-jump="printpreview2">Page 2</button></div>
 <div class="tools">
@@ -455,15 +471,15 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <img id="printimg2" alt="Report card second page" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
 </div>
 </section>
-<section class="card" id="charts">
+<section class="card view" id="charts">
 <div class="section-head"><h2>Charts</h2><p class="warn slips-side">Profit uses settled slips. CLV is no-vig: your price against a fair close, with the book's cut removed. A matched -110 is about -4.5%. <span id="plotnote"></span></p><button type="button" id="plot">Plot</button></div>
 <div class="charts">
 <div><h2 id="profitTitle" class="split-title">Cumulative Profit</h2><canvas id="profitChart" width="640" height="220"></canvas><p id="chartlesson" class="warn"></p></div>
 <div><div class="sport-title"><h2>Profit By Sport</h2><b id="sportbest"></b><b id="monthbest"></b></div><canvas id="sportChart" width="420" height="220"></canvas><div class="sport-nav"><button type="button" id="sportprev">Previous</button><button type="button" id="sportnext">Next</button></div><p id="sportday"></p></div>
 </div>
 </section>
-<section class="card" id="breaks"></section>
-<section class="card" id="addbet">
+<section class="card view" id="breaks"></section>
+<section class="card view" id="addbet">
 <h2>Add A Bet</h2>
 <form id="form">
 <div class="bet-top">
@@ -504,19 +520,6 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <span id="editnote" class="warn"></span>
 </div>
 </div>
-<div class="bet-box" id="sgpbox">
-<h3>Bet Slip <button type="button" id="slipdock">Hide</button></h3>
-<p class="warn">Click a price. Nothing is sent to a book.</p>
-<div class="sgp-legs" id="sgplegs"></div>
-<div class="sgp-partner">
-<label>Same-game second leg<input id="sgppartner" placeholder="Under in that game"></label>
-<label>Price<input id="sgppartnerodds" type="number" step="1" placeholder="-110"></label>
-</div>
-<div class="sgp-ideas" id="sgpideas"></div>
-<p id="sgpprice" class="warn"></p>
-<p id="sgprisk" class="warn sgp-risk"></p>
-<div class="slip-actions"><button type="button" id="sgpadd">Add</button><button type="button" id="slipimage">Save Image</button><button type="button" id="slipclear">Clear Slip</button></div>
-</div>
 <div class="stack">
 <button type="submit" id="savebtn">Save Bet</button>
 <button type="button" id="clearbet">Clear</button>
@@ -533,7 +536,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <p class="api-note">Paste the key and press Commit. A free key loads the board. Close needs the paid key.</p>
 </div>
 </section>
-<section class="card" id="slips">
+<section class="card view" id="slips">
 <div class="section-head"><h2>Slips</h2><p class="warn slips-side">Today and yesterday only. Pull Odds & Close uses the Odds API key and stores the Pinnacle close with the other books. Odds is the price at the start of the game. Close is the next price after it starts. Sharp CLV is that price against Pinnacle with the juice removed. The time under the date is when the slip was written. A game that has not started stays open.</p></div>
 <p id="pullnote" class="warn"></p>
 <div class="book-slot"><div id="bookbadge"><img id="bookbadgeimg" src="gg-icon.png" alt="Gnarly Gorilla"></div></div>
@@ -556,18 +559,31 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </table></div>
 <p class="api-note warn">Live prices need the Odds API key on Add A Bet. Close needs a paid subscription. CLV is no-vig: the book's cut is removed, and a moved spread or total is counted. A matched -110 close is about -4.5%, not zero. When the other side was not saved, it is estimated at a -110 hold until Plot stores the real pair. A free key loads the board only. A saved list returns on refresh with no new call.<br><button type="button" class="odds-link" onclick="window.open('https://the-odds-api.com/','_blank','noopener,noreferrer')">Open The Odds API</button></p>
 </section>
-<section class="card" id="calendarcard">
+<section class="card view" id="calendarcard">
 <div class="section-head"><h2>Calendar</h2><span id="monthpl" style="margin-left:10ch;color:#d6ffd0"></span><p class="warn slips-side">Everyone sees the shared $10 calendar until they upload a file. An uploaded file stays in this browser only.<br>Other users do not see it. Use Shared Calendar to go back.</p></div>
 <div class="tools"><div class="btn-pair"><span>Navigation</span><div><button type="button" id="prevMonth">Prev</button><button type="button" id="nextMonth">Next</button></div></div><label>Load My Calendar<input type="file" id="loadcal" accept=".json,application/json"><span class="file-face">No File Chosen</span></label><div class="btn-pair"><span class="pair-title"><span id="calnote" class="warn"></span></span><div><button type="button" id="resetcal">Use Shared Calendar</button></div></div></div>
 <div class="cal" id="calendar"></div>
 </section>
 </main>
-<footer class="card" id="about">
+<footer class="card view" id="about">
 <h2>About This Ledger</h2>
 <p><span class="gg-name">Gnarly Gorilla</span> Sportsbooks is a free browser bet ledger for the daily <span class="gg-name">Gnarly Gorilla</span> pick cards. It tracks American-odds slips for CBB, CFB, MLB, NBA, NFL, and NHL at BetMGM, Caesars, DraftKings, Fanatics, FanDuel, and HardRock. Bets stay in this browser. The page does not log into a sportsbook and does not place wagers.</p>
 <p class="warn" id="staterule">Bet Responsibly. Gambling involves risk. Wagers can lose the full stake. This ledger is a record of picks and results, not a sportsbook, not betting advice, and not an offer to place a wager. You must be 21 or older where sports betting is legal. If gambling is causing problems, call or text 1-800-GAMBLER.</p>
 <p class="warn" id="statebooks">State rules load from the visitor location.</p>
 </footer>
+<div class="bet-box" id="sgpbox">
+<h3>Bet Slip <button type="button" id="slipdock">Hide</button></h3>
+<p class="warn">Click a price. Nothing is sent to a book.</p>
+<div class="sgp-legs" id="sgplegs"></div>
+<div class="sgp-partner">
+<label>Same-game second leg<input id="sgppartner" placeholder="Under in that game"></label>
+<label>Price<input id="sgppartnerodds" type="number" step="1" placeholder="-110"></label>
+</div>
+<div class="sgp-ideas" id="sgpideas"></div>
+<p id="sgpprice" class="warn"></p>
+<p id="sgprisk" class="warn sgp-risk"></p>
+<div class="slip-actions"><button type="button" id="sgpadd">Add</button><button type="button" id="slipimage">Save Image</button><button type="button" id="slipclear">Clear Slip</button></div>
+</div>
 <div id="below-about"></div>
 <div class="page-end"></div>
 </div>
@@ -3280,6 +3296,7 @@ function rememberBoard(data){
   if (!usableBoard(data)) return false;
   window.__ggOddsBoard = data;
   try { localStorage.setItem("gg-odds-board-file", JSON.stringify({at: Date.now(), data: data})); } catch (e) {}
+  try { drawGameBoard(); } catch (e) {}
   return true;
 }
 function mergeBoardRows(day, market, rows){
@@ -6281,17 +6298,70 @@ fetch("cards/grades.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(
   render();
 }).catch(() => {});
 
-function jumpToCard(id){
-  if (id === "seasons") { window.scrollTo({top: 0, behavior:"smooth"}); return; }
+function drawGameBoard(){
+  const box = document.getElementById("gameboard");
+  if (!box) return;
+  const bookEl = document.getElementById("gamebook");
+  const sportEl = document.getElementById("gamesport");
+  const book = bookEl ? bookEl.value : "BetMGM";
+  const sport = sportEl ? sportEl.value : "All";
+  const day = easternDay();
+  const block = window.__ggOddsBoard && window.__ggOddsBoard.days && window.__ggOddsBoard.days[day];
+  if (!block) { box.innerHTML = "<p class='warn'>No board for today yet.</p>"; return; }
+  const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
+  const index = {};
+  ["h2h","spreads","totals"].forEach(market => {
+    (block[market] || []).forEach(row => {
+      if (!row || !row.label) return;
+      const key = (row.sport || "") + "|" + row.label;
+      const hit = index[key] || (index[key] = {sport: row.sport || "", label: row.label, start: row.start || "", markets: {}});
+      hit.markets[market] = row;
+      if (!hit.start && row.start) hit.start = row.start;
+    });
+  });
+  let games = Object.values(index);
+  if (sport !== "All") games = games.filter(g => g.sport === sport);
+  games.sort((a, b) => sportRank(a.sport) - sportRank(b.sport) || String(a.start || "").localeCompare(String(b.start || "")) || a.label.localeCompare(b.label));
+  if (!games.length) { box.innerHTML = "<p class='warn'>No games posted for this sport today.</p>"; return; }
+  box.innerHTML = games.map(g => {
+    const cell = market => {
+      const row = g.markets[market];
+      if (!row || !row.books || !row.books[book] || row.books[book] === "-") return "<p class='warn'>No number</p>";
+      const flags = bestPriceFlags(row.books, names)[book];
+      return paintBookCell(row.books[book], flags, row, market, day, book);
+    };
+    const when = g.start ? formatTime(g.start, false) : "";
+    return "<article class='game-row'><h3>" + esc((g.sport ? g.sport + "  " : "") + (when ? when + "  " : "") + g.label) + "</h3><div class='game-lines'><div><h4>Spread</h4>" + cell("spreads") + "</div><div><h4>Moneyline</h4>" + cell("h2h") + "</div><div><h4>Total</h4>" + cell("totals") + "</div></div></article>";
+  }).join("");
+}
+function showView(id){
   const box = document.getElementById(id);
   if (!box) return;
-  const bar = document.querySelector(".topbar");
-  const barH = bar ? bar.offsetHeight : 0;
-  document.documentElement.style.setProperty("--pin", (barH + 8) + "px");
-  const y = box.getBoundingClientRect().top + window.pageYOffset - barH - 8;
-  window.scrollTo({top: Math.max(0, y), behavior:"smooth"});
+  const view = box.classList.contains("view") ? box : box.closest(".view");
+  if (view) {
+    document.querySelectorAll(".view").forEach(el => el.classList.toggle("on", el === view));
+    document.querySelectorAll("#sitenav [data-jump]").forEach(btn => btn.classList.toggle("on", btn.getAttribute("data-jump") === view.id));
+    if (view.id === "games") drawGameBoard();
+  }
+  if (!view || box !== view) {
+    const bar = document.querySelector(".topbar");
+    const barH = bar ? bar.offsetHeight : 0;
+    const y = box.getBoundingClientRect().top + window.pageYOffset - barH - 8;
+    window.scrollTo({top: Math.max(0, y), behavior:"smooth"});
+  } else window.scrollTo({top: 0, behavior:"smooth"});
+}
+function jumpToCard(id){
+  showView(id);
 }
 pinOffset();
+["gamebook","gamesport"].forEach(id => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.onchange = () => {
+    if (id === "gamebook" && form && form.book && [...form.book.options].some(o => o.value === el.value)) form.book.value = el.value;
+    drawGameBoard();
+  };
+});
 window.addEventListener("resize", pinOffset);
 function pinOffset(){
   const bar = document.querySelector(".topbar");
