@@ -2347,7 +2347,8 @@ function openGameBet(sport, game, date){
   }
   document.getElementById("picknote").textContent = sel.options.length > 1 ? "Extra bet on " + game + ". Posted picks stay. Enter the odds when the box is empty, then Save Bet." : "No posted price for " + game + ". Choose the type and type the pick.";
   document.getElementById("editnote").textContent = "";
-  document.getElementById("addbet").scrollIntoView({behavior:"smooth", block:"start"});
+  stashForm();
+  goPage("addbet");
 }
 function openBestBet(btn, scroll){
   const sport = decodeURIComponent(btn.dataset.sport || "");
@@ -2391,7 +2392,7 @@ function openBestBet(btn, scroll){
   document.getElementById("picknote").textContent = book + " " + price + " is on the bet slip and filled in above. Add writes the slip. Save Bet still saves this one leg by itself." + (split ? " The books do not share one number, so this is the BetMGM side." : "");
   document.getElementById("editnote").textContent = "";
   addSlipLeg({date: date, sport: sport, type: type, pick: pick, odds: Number(price), book: book, edge: false});
-  if (scroll !== false) document.getElementById("addbet").scrollIntoView({behavior:"smooth", block:"start"});
+  if (scroll !== false) { stashForm(); goPage("addbet"); }
 }
 document.body.addEventListener("click", e => {
   const boardBtn = e.target.closest && e.target.closest(".board-price");
@@ -2413,6 +2414,7 @@ document.body.addEventListener("click", e => {
   const drop = e.target.closest && e.target.closest(".slip-x");
   if (drop) {
     betSlip.splice(Number(drop.dataset.i), 1);
+    rememberSlip();
     paintSlip();
     return;
   }
@@ -4296,6 +4298,7 @@ document.getElementById("sgpadd").onclick = () => {
   }
   save(bets);
   if (note) note.textContent = "Added to Slips. Nothing was sent to a sportsbook. " + row.pick + " at " + (built.odds > 0 ? "+" : "") + built.odds + ".";
+  goPage("slips");
 };
 document.getElementById("slipclear").onclick = () => {
   betSlip = [];
@@ -4404,7 +4407,8 @@ document.getElementById("rows").onclick = e => {
     form.close.value = bet.close || "";
     form.editId.value = bet.id;
     document.getElementById("savebtn").textContent = "Update Bet";
-    form.scrollIntoView();
+    stashForm();
+    goPage("addbet");
     return;
   }
   if (t.dataset.del) {
@@ -4965,8 +4969,7 @@ async function loadPending(){
   save(bets);
   document.getElementById("paste").value = "";
   note.textContent = added + " pending slips loaded at " + book + ". They are in the Slips table.";
-  document.getElementById("slips").scrollIntoView({behavior:"smooth", block:"start"});
-  document.getElementById("rows").scrollIntoView({behavior:"smooth", block:"center"});
+  goPage("slips");
 }
 function betType(b){
   const pick = String(b && b.pick || "");
@@ -5936,7 +5939,7 @@ document.getElementById("loadledger").onchange = e => {
       render();
       requestAnimationFrame(render);
     note.textContent = "Loaded " + bets.length + " slips.";
-      document.getElementById("slips").scrollIntoView({behavior:"smooth", block:"start"});
+      goPage("slips");
     } catch (err) {
       note.textContent = "Load failed. Use a Save Ledger JSON file.";
     }
@@ -5972,7 +5975,7 @@ document.getElementById("syncledger").onclick = async () => {
     save(filled);
     const graded = filled.concat(loadGrade()).concat(gradeFile).filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
     note.textContent = "Synced ledger. " + bets.length + " slips loaded. " + graded.length + " graded slips are in the Slips card.";
-    document.getElementById("slips").scrollIntoView({behavior:"smooth", block:"start"});
+    goPage("slips");
   } catch (err) {
     note.textContent = "Sync failed. Ledger is not on the site yet.";
   }
@@ -6143,7 +6146,7 @@ document.getElementById("loadcal").onchange = e => {
       localStorage.setItem("gg-calendar-personal", JSON.stringify(dates));
       drawCalendar();
       note.textContent = "Private calendar loaded. Only this browser can see it.";
-      document.getElementById("calendarcard").scrollIntoView({behavior:"smooth", block:"start"});
+      goPage("calendarcard");
     } catch (err) {
       note.textContent = "Load failed. Use a calendar JSON or a ledger JSON.";
     }
@@ -6351,6 +6354,46 @@ function drawGameBoard(){
     return "<article class='game-row'><h3>" + esc((g.sport ? g.sport + "  " : "") + (when ? when + "  " : "") + g.label) + "</h3><div class='game-lines'><div><h4>Spread</h4>" + cell("spreads") + "</div><div><h4>Moneyline</h4>" + cell("h2h") + "</div><div><h4>Total</h4>" + cell("totals") + "</div></div></article>";
   }).join("");
 }
+function pageFor(id){
+  return {games:"games", seasons:"seasons", dashboard:"dashboard", todaycard:"today", liveodds:"live", slips:"slips", reportcard:"report", charts:"charts", breaks:"books", addbet:"add", calendarcard:"calendar", about:"about"}[id] || "";
+}
+function screenNow(){
+  const page = new URLSearchParams(location.search).get("page") || "games";
+  return {games:"games", seasons:"seasons", dashboard:"dashboard", today:"todaycard", live:"liveodds", slips:"slips", report:"reportcard", charts:"charts", books:"breaks", add:"addbet", calendar:"calendarcard", about:"about"}[page] || "games";
+}
+function goPage(id){
+  if (screenNow() === id) { showView(id); return; }
+  const page = pageFor(id);
+  if (page) location.assign("?page=" + page);
+}
+function stashForm(){
+  if (!form) return;
+  const data = {};
+  ["date","book","sport","type","pick","odds","close","stake","result","notes","editId"].forEach(k => { if (form[k]) data[k] = form[k].value; });
+  const note = document.getElementById("picknote");
+  if (note) data.picknote = note.textContent || "";
+  try { sessionStorage.setItem("gg-form-handoff", JSON.stringify(data)); } catch (e) {}
+}
+function restoreForm(){
+  if (screenNow() !== "addbet" || !form) return;
+  let data = null;
+  try { data = JSON.parse(sessionStorage.getItem("gg-form-handoff") || "null"); } catch (e) {}
+  sessionStorage.removeItem("gg-form-handoff");
+  if (!data) return;
+  ["date","book","sport","type","odds","close","stake","result","notes","editId"].forEach(k => { if (form[k] && data[k] != null) form[k].value = data[k]; });
+  if (data.pick) {
+    if (![...form.pick.options].some(o => o.value === data.pick)) {
+      const opt = document.createElement("option");
+      opt.value = data.pick;
+      opt.textContent = data.pick;
+      form.pick.appendChild(opt);
+    }
+    form.pick.value = data.pick;
+  }
+  if (data.editId) document.getElementById("savebtn").textContent = "Update Bet";
+  const note = document.getElementById("picknote");
+  if (note && data.picknote) note.textContent = data.picknote;
+}
 function showView(id){
   const screens = ["games","seasons","dashboard","todaycard","liveodds","slips","reportcard","charts","breaks","addbet","calendarcard","about"];
   const box = document.getElementById(id);
@@ -6392,10 +6435,12 @@ function showView(id){
   }
 }
 function jumpToCard(id){
+  const page = pageFor(id);
+  if (page && screenNow() !== id) { location.assign("?page=" + page); return; }
   showView(id);
 }
-const PAGE_TO_SCREEN = {games:"games", seasons:"seasons", dashboard:"dashboard", today:"todaycard", live:"liveodds", slips:"slips", report:"reportcard", charts:"charts", books:"breaks", add:"addbet", calendar:"calendarcard", about:"about"};
-showView(PAGE_TO_SCREEN[new URLSearchParams(location.search).get("page")] || "games");
+showView(screenNow());
+restoreForm();
 pinOffset();
 const gamebook = document.getElementById("gamebook");
 if (gamebook) gamebook.onchange = () => {
