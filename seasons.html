@@ -8,8 +8,8 @@
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="theme-color" content="#0a0a0a">
 <link rel="canonical" href="https://cwaggoner.github.io/gnarly-gorilla-sportsbooks/">
-<link rel="preload" href="cards/ledger.json?v=20261028f" as="fetch">
-<link rel="preload" href="cards/odds-board.json?v=20261028f" as="fetch">
+<link rel="preload" href="cards/ledger.json?v=20261029a" as="fetch">
+<link rel="preload" href="cards/odds-board.json?v=20261029a" as="fetch">
 <link rel="icon" href="gg-icon.png" type="image/png">
 <link rel="apple-touch-icon" href="gg-icon.png">
 <meta property="og:type" content="website">
@@ -608,8 +608,9 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
     if (!keep) return raw(url, opts);
     const key = href.replace(/([?&])ts=\d+/, "");
     let hit = bag.get(key);
+    const fresh = Object.assign({}, opts || {}, {cache: "no-store"});
     if (!hit || Date.now() - hit.at > 8000) {
-      hit = {at: Date.now(), promise: raw(url, opts).then(async r => ({status: r.status, text: await r.text()})).catch(() => ({status: 0, text: ""}))};
+      hit = {at: Date.now(), promise: raw(href, fresh).then(async r => ({status: r.status, text: await r.text()})).catch(() => ({status: 0, text: ""}))};
       bag.set(key, hit);
     }
     return hit.promise.then(pack => new Response(pack.text, {status: pack.status || 503}));
@@ -624,7 +625,7 @@ document.addEventListener("click", e => {
 const KEY = "gnarly-gorilla-sportsbooks-v1";
 const GRADE_KEY = "gnarly-gorilla-grading-v1";
 const UNIT = 10;
-const ASSET = "20261028f";
+const ASSET = "20261029a";
 function cardUrl(path){ return path + "?v=" + ASSET; }
 function later(fn){ setTimeout(fn, 0); }
 const SPORTS = ["CBB","CFB","MLB","NBA","NFL","NHL"];
@@ -1042,6 +1043,7 @@ function ruleRow(row){
 function drawDashboard(history, manual){
   let manualRows = null;
   if (!manual) { try { manualRows = JSON.parse(sessionStorage.getItem("gg-dashboard-manual") || "null"); } catch (e) { manualRows = null; } }
+  if (manualRows && !dataIsCurrent(manualRows.map(row => row && row.date))) { manualRows = null; sessionStorage.removeItem("gg-dashboard-manual"); }
   const rows = (manual ? history.slice() : (manualRows || publishedDashboard())).map(ruleRow);
   rows.forEach(row => { row.pending = pendingOnCard(row.date); });
   const today = easternDay();
@@ -1934,7 +1936,17 @@ function followMonth(){
   monthCursor = new Date(y, m - 1, 1);
 }
 let publishedCalendar = {};
-try { publishedCalendar = JSON.parse(localStorage.getItem("gg-calendar-published") || "{}"); } catch (err) { publishedCalendar = {}; }
+function newestDate(keys){
+  return (keys || []).map(d => String(d || "").slice(0, 10)).filter(d => /^\d{4}-\d{2}-\d{2}$/.test(d)).sort().pop() || "";
+}
+function dataIsCurrent(keys){
+  const last = newestDate(keys);
+  return !!last && last >= shiftDate(easternDay(), -1);
+}
+try {
+  const savedCal = JSON.parse(localStorage.getItem("gg-calendar-published") || "{}");
+  if (dataIsCurrent(Object.keys(savedCal))) publishedCalendar = savedCal;
+} catch (err) { publishedCalendar = {}; }
 function personalCalendar(){
   try { return JSON.parse(localStorage.getItem("gg-calendar-personal") || "null"); } catch (err) { return null; }
 }
@@ -3302,7 +3314,9 @@ function usableBoard(data){
 function savedBoard(){
   try {
     const pack = JSON.parse(localStorage.getItem("gg-odds-board-file") || "null");
-    return pack && usableBoard(pack.data) ? pack.data : null;
+    if (!pack || !usableBoard(pack.data)) return null;
+    if (!dataIsCurrent(Object.keys(pack.data.days || {}))) return null;
+    return pack.data;
   } catch (e) { return null; }
 }
 function rememberBoard(data){
