@@ -1,6 +1,6 @@
 {
-  "checked": "2026-10-24",
-  "check_note": "2026-10-24 is Saturday, not the first Monday of a schedule-publication month (NFL May, NHL/MLB July, NBA/CFB August, CBB September). No sport was due for check. MLB end 2026-10-31 confirmed. CFB 2027-01-25, NFL 2027-02-14, CBB 2027-04-05 confirmed. NHL end 2027-06-30 and NBA end 2027-06-30 remain working ends pending July/August published Cup and Finals dates.",
+  "checked": "2026-10-29",
+  "check_note": "2026-10-29 is Thursday, not the first Monday of a schedule-publication month (NFL May, NHL/MLB July, NBA/CFB August, CBB September). No sport was due for check. MLB end 2026-10-31 confirmed. CFB 2027-01-25, NFL 2027-02-14, CBB 2027-04-05 confirmed. NHL end 2027-06-30 and NBA end 2027-06-30 remain working ends pending July/August published Cup and Finals dates. World Series ended 2026-10-28 but end date not changed per rules.",
   "sports": [
     {
       "sport": "MLB",
