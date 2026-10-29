@@ -251,7 +251,8 @@ table.season-hold.filled td.note-col p { margin:0; display:-webkit-box; -webkit-
 .sharp-read p { margin:4px 0 0; color:#d6ffd0; font-size:12px; line-height:1.35; }
 .card-rest { margin-top:10px; border:1px solid #39ff14; border-radius:8px; padding:10px; }
 @media (max-width:700px) { .analysis-grid { grid-template-columns:1fr 1fr; } }
-#dashboard { display:flex; flex-direction:column; }
+#dashboard.view.on { display:flex; flex-direction:column; }
+#dashboard.view:not(.on) { display:none !important; }
 #dashboard .dash-tools { margin-top:14px; }
 #dashChart { border:1px solid #39ff14; border-radius:8px; margin:0 0 16px; }
 #report table, #report th, #report td { border:0; background:transparent; box-shadow:none; }
