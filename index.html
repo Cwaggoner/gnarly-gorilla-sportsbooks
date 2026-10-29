@@ -6345,25 +6345,44 @@ function drawGameBoard(){
   }).join("");
 }
 function showView(id){
+  const screens = ["games","seasons","dashboard","todaycard","liveodds","slips","reportcard","charts","breaks","addbet","calendarcard","about"];
   const box = document.getElementById(id);
   if (!box) return;
-  box.classList.add("view");
-  document.querySelectorAll(".view").forEach(el => {
-    const on = el.id === id;
+  const parent = screens.indexOf(id) >= 0 ? null : box.closest(".view");
+  const screen = screens.indexOf(id) >= 0 ? id : (parent && screens.indexOf(parent.id) >= 0 ? parent.id : "");
+  if (!screen) return;
+  screens.forEach(key => {
+    const el = document.getElementById(key);
+    if (!el) return;
+    const on = key === screen;
+    el.classList.add("view");
     el.classList.toggle("on", on);
     el.hidden = !on;
   });
   document.querySelectorAll("#sitenav [data-jump]").forEach(btn => {
-    const on = btn.getAttribute("data-jump") === id;
+    const on = btn.getAttribute("data-jump") === screen;
     btn.classList.toggle("on", on);
-    if (on) btn.scrollIntoView({inline:"center", block:"nearest"});
+    if (!on) return;
+    const scroller = btn.parentElement;
+    if (!scroller) return;
+    const left = btn.offsetLeft - (scroller.clientWidth - btn.offsetWidth) / 2;
+    scroller.scrollTo({left: Math.max(0, left), behavior:"smooth"});
   });
-  if (id === "games") drawGameBoard();
-  if (id === "liveodds") {
+  if (screen === "games") drawGameBoard();
+  if (screen === "dashboard") { try { drawDashboard(); } catch (e) {} }
+  if (screen === "charts") { try { drawCharts(); } catch (e) {} }
+  if (screen === "calendarcard") { try { drawCalendar(); } catch (e) {} }
+  if (screen === "liveodds") {
     try { parkOddsTools(); } catch (e) {}
     drawOddsCompare(false).catch(() => {});
   }
   window.scrollTo({top: 0, behavior:"smooth"});
+  if (id !== screen) {
+    const bar = document.querySelector(".topbar");
+    const barH = bar ? bar.offsetHeight : 0;
+    const y = box.getBoundingClientRect().top + window.pageYOffset - barH - 8;
+    window.scrollTo({top: Math.max(0, y), behavior:"smooth"});
+  }
 }
 function jumpToCard(id){
   showView(id);
