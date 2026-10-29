@@ -360,7 +360,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <p>Free bet ledger for <span class="gg-name">Gnarly Gorilla</span> Sports Decks. Log CBB, CFB, MLB, NBA, NFL, and NHL slips, grade them the next day, and copy the report card.</p>
 <p id="liveline" class="warn" style="margin:6px 0 0;font-size:12px;">All picks live by 9:30 AM. Closed Value Lines update at 6:00 PM.</p>
 </div>
-<div class="head-flag" aria-label="United States"><svg viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg" role="img"><defs><linearGradient id="flaggloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".45" stop-color="#fff" stop-opacity=".08"/><stop offset="1" stop-color="#000" stop-opacity=".25"/></linearGradient></defs><rect width="28" height="18" fill="#b22234"/><g fill="#fff"><rect y="1.38" width="28" height="1.38"/><rect y="4.15" width="28" height="1.38"/><rect y="6.92" width="28" height="1.38"/><rect y="9.69" width="28" height="1.38"/><rect y="12.46" width="28" height="1.38"/><rect y="15.23" width="28" height="1.38"/></g><rect width="11.2" height="9.7" fill="#3c3b6e"/><rect width="28" height="18" fill="url(#flaggloss)"/></svg><span>USA</span><span id="headregion"></span><span id="headrules">BETTING RULES</span></div>
+<div class="head-flag" aria-label="United States"><svg viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg" role="img"><defs><linearGradient id="flaggloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".45" stop-color="#fff" stop-opacity=".08"/><stop offset="1" stop-color="#000" stop-opacity=".25"/></linearGradient></defs><rect width="28" height="18" fill="#b22234"/><g fill="#fff"><rect y="1.38" width="28" height="1.38"/><rect y="4.15" width="28" height="1.38"/><rect y="6.92" width="28" height="1.38"/><rect y="9.69" width="28" height="1.38"/><rect y="12.46" width="28" height="1.38"/><rect y="15.23" width="28" height="1.38"/></g><rect width="11.2" height="9.7" fill="#3c3b6e"/><rect width="28" height="18" fill="url(#flaggloss)"/></svg><span>USA</span><span id="headrules">BETTING RULES</span><span id="headregion"></span></div>
 <div class="head-icon right"><img src="gg-icon.png" alt="Gnarly Gorilla"></div>
 </header>
 <nav class="sitenav" id="sitenav">
@@ -5659,6 +5659,7 @@ function applyState(name){
   visitorState = name || "";
   const line = document.getElementById("headregion");
   if (line && name) line.textContent = String(name).toUpperCase();
+  if (name) { try { localStorage.setItem("gg-visitor-state", name); } catch (e) {} }
   const rule = stateRules[name];
   const note = document.getElementById("staterule");
   const books = document.getElementById("statebooks");
@@ -5692,7 +5693,11 @@ async function locateVisitor(){
   if (ip && (ip.country_code || ip.region)) return {country: String(ip.country_code || "").toUpperCase(), region: ip.region || ""};
   return null;
 }
-later(() => { if (!pageNeeds("about")) return; fetch(cardUrl("cards/state-rules.json")).then(r => r.ok ? r.json() : null).then(async data => {
+later(() => {
+  const saved = localStorage.getItem("gg-visitor-state") || "";
+  const line = document.getElementById("headregion");
+  if (line && saved) line.textContent = saved.toUpperCase();
+  fetch(cardUrl("cards/state-rules.json")).then(r => r.ok ? r.json() : null).then(async data => {
   stateRules = (data && data.states) || {};
   const place = await locateVisitor();
   const books = document.getElementById("statebooks");
