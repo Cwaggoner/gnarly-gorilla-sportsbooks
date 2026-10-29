@@ -1,1 +1,40 @@
-PLACEHOLDER_CONTENT
+{
+  "source": "ESPN DraftKings close",
+  "days": {
+    "2026-10-25": {
+      "NBA": [
+        {
+          "away": "Los Angeles Lakers",
+          "home": "Utah Jazz",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": -6.5,
+                  "price": -110
+                },
+                "home": {
+                  "point": 6.5,
+                  "price": -110
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -250
+                },
+                "home": {
+                  "price": 205
+                }
+              },
+              "total": {
+                "point": 237.5,
+                "over": -105,
+                "under": -115
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
