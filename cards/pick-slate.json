@@ -1,199 +1,177 @@
 {
-  "date": "2026-10-28",
-  "source": "ESPN scoreboard, no odds key",
-  "passedNote": "Games being played that did not make the picks.",
+  "date": "2026-10-29",
   "games": [
     {
+      "sport": "CFB",
+      "game": "Florida Atlantic Owls at North Texas Mean Green",
+      "start": "2026-10-29T23:30Z",
+      "location": "DATCU Stadium, Denton, TX",
+      "records": {
+        "away": "5-2",
+        "home": "5-2"
+      }
+    },
+    {
+      "sport": "CFB",
+      "game": "Troy Trojans at James Madison Dukes",
+      "start": "2026-10-29T23:30Z",
+      "location": "Bridgeforth Stadium, Harrisonburg, VA",
+      "records": {
+        "away": "3-4",
+        "home": "7-1"
+      }
+    },
+    {
       "sport": "NBA",
-      "game": "Hornets at Pistons",
-      "startTimeUTC": "2026-10-28T22:00:00Z",
-      "venue": "Little Caesars Arena",
-      "city": "Detroit",
-      "state": "Michigan",
-      "awayRecord": "3-1",
-      "homeRecord": "3-1"
+      "game": "Cleveland Cavaliers at Atlanta Hawks",
+      "start": "2026-10-30T00:00Z",
+      "location": "State Farm Arena, Atlanta, GA",
+      "records": {
+        "away": "3-1",
+        "home": "2-3"
+      }
+    },
+    {
+      "sport": "NBA",
+      "game": "Memphis Grizzlies at Portland Trail Blazers",
+      "start": "2026-10-30T02:00Z",
+      "location": "Moda Center, Portland, OR",
+      "records": {
+        "away": "4-0",
+        "home": "3-0"
+      }
+    },
+    {
+      "sport": "NBA",
+      "game": "Sacramento Kings at New Orleans Pelicans",
+      "start": "2026-10-30T00:00Z",
+      "location": "Smoothie King Center, New Orleans, LA",
+      "records": {
+        "away": "0-4",
+        "home": "0-4"
+      }
+    },
+    {
+      "sport": "NFL",
+      "game": "Carolina Panthers at Green Bay Packers",
+      "start": "2026-10-30T00:15Z",
+      "location": "Lambeau Field, Green Bay, WI",
+      "records": {
+        "away": "3-3",
+        "home": "4-3"
+      }
+    },
+    {
+      "sport": "NHL",
+      "game": "Boston Bruins at St. Louis Blues",
+      "start": "2026-10-30T00:00Z",
+      "location": "Enterprise Center, St. Louis, MO",
+      "records": {
+        "away": "9-3-1",
+        "home": "5-6-1"
+      }
+    },
+    {
+      "sport": "NHL",
+      "game": "Buffalo Sabres at Anaheim Ducks",
+      "start": "2026-10-30T02:00Z",
+      "location": "Honda Center, Anaheim, CA",
+      "records": {
+        "away": "5-4-3",
+        "home": "5-6-1"
+      }
+    },
+    {
+      "sport": "NHL",
+      "game": "Chicago Blackhawks at Detroit Red Wings",
+      "start": "2026-10-29T23:30Z",
+      "location": "Little Caesars Arena, Detroit, MI",
+      "records": {
+        "away": "4-8-0",
+        "home": "5-4-3"
+      }
+    },
+    {
+      "sport": "NHL",
+      "game": "Columbus Blue Jackets at Carolina Hurricanes",
+      "start": "2026-10-29T23:00Z",
+      "location": "Lenovo Center, Raleigh, NC",
+      "records": {
+        "away": "5-5-0",
+        "home": "10-2-2"
+      }
+    },
+    {
+      "sport": "NHL",
+      "game": "Montreal Canadiens at Dallas Stars",
+      "start": "2026-10-30T00:00Z",
+      "location": "American Airlines Center, Dallas, TX",
+      "records": {
+        "away": "7-3-2",
+        "home": "7-4-1"
+      }
+    },
+    {
+      "sport": "NHL",
+      "game": "New York Islanders at Minnesota Wild",
+      "start": "2026-10-30T00:00Z",
+      "location": "Grand Casino Arena, Saint Paul, MN",
+      "records": {
+        "away": "6-4-2",
+        "home": "9-3-2"
+      }
+    },
+    {
+      "sport": "NHL",
+      "game": "Ottawa Senators at Los Angeles Kings",
+      "start": "2026-10-30T02:00Z",
+      "location": "crypto.com Arena, Los Angeles, CA",
+      "records": {
+        "away": "8-5-0",
+        "home": "3-6-2"
+      }
+    },
+    {
+      "sport": "NHL",
+      "game": "Utah Mammoth at Pittsburgh Penguins",
+      "start": "2026-10-29T23:00Z",
+      "location": "PPG Paints Arena, Pittsburgh, PA",
+      "records": {
+        "away": "8-5-0",
+        "home": "5-6-1"
+      }
+    },
+    {
+      "sport": "NHL",
+      "game": "Vancouver Canucks at San Jose Sharks",
+      "start": "2026-10-30T02:00Z",
+      "location": "SAP Center at San Jose, San Jose, CA",
+      "records": {
+        "away": "3-10-1",
+        "home": "6-6-1"
+      }
+    },
+    {
+      "sport": "NHL",
+      "game": "Washington Capitals at Nashville Predators",
+      "start": "2026-10-30T00:00Z",
+      "location": "Bridgestone Arena, Nashville, TN",
+      "records": {
+        "away": "7-4-0",
+        "home": "4-3-5"
+      }
+    },
+    {
+      "sport": "NHL",
+      "game": "Winnipeg Jets at Tampa Bay Lightning",
+      "start": "2026-10-29T23:00Z",
+      "location": "Benchmark International Arena, Tampa, FL",
+      "records": {
+        "away": "4-5-3",
+        "home": "7-3-1"
+      }
     }
   ],
-  "passed": [
-    {
-      "sport": "CFB",
-      "game": "Jacksonville State at New Mexico State",
-      "startTimeUTC": "2026-10-29T00:00:00Z",
-      "venue": "Aggie Memorial Stadium",
-      "city": "Las Cruces",
-      "state": "New Mexico",
-      "awayRecord": "5-2",
-      "homeRecord": "3-4"
-    },
-    {
-      "sport": "CFB",
-      "game": "Kennesaw State at Middle Tennessee",
-      "startTimeUTC": "2026-10-28T23:00:00Z",
-      "venue": "Johnny \"Red\" Floyd Stadium",
-      "city": "Murfreesboro",
-      "state": "Tennessee",
-      "awayRecord": "1-6",
-      "homeRecord": "4-3"
-    },
-    {
-      "sport": "MLB",
-      "game": "Brewers at Rays",
-      "startTimeUTC": "2026-10-29T00:00:00Z",
-      "venue": "Tropicana Field",
-      "city": "St. Petersburg",
-      "state": "Florida",
-      "awayRecord": "103-59",
-      "homeRecord": "98-64"
-    },
-    {
-      "sport": "NBA",
-      "game": "76ers at Pacers",
-      "startTimeUTC": "2026-10-28T22:00:00Z",
-      "venue": "Gainbridge Fieldhouse",
-      "city": "Indianapolis",
-      "state": "Indiana",
-      "awayRecord": "3-1",
-      "homeRecord": "2-2"
-    },
-    {
-      "sport": "NBA",
-      "game": "Heat at Hawks",
-      "startTimeUTC": "2026-10-28T22:00:00Z",
-      "venue": "State Farm Arena",
-      "city": "Atlanta",
-      "state": "Georgia",
-      "awayRecord": "0-4",
-      "homeRecord": "2-2"
-    },
-    {
-      "sport": "NBA",
-      "game": "Knicks at Bulls",
-      "startTimeUTC": "2026-10-28T23:00:00Z",
-      "venue": "United Center",
-      "city": "Chicago",
-      "state": "Illinois",
-      "awayRecord": "1-3",
-      "homeRecord": "1-3"
-    },
-    {
-      "sport": "NBA",
-      "game": "Lakers at Clippers",
-      "startTimeUTC": "2026-10-29T01:30:00Z",
-      "venue": "Intuit Dome",
-      "city": "Inglewood",
-      "state": "California",
-      "awayRecord": "3-1",
-      "homeRecord": "1-2"
-    },
-    {
-      "sport": "NBA",
-      "game": "Magic at Raptors",
-      "startTimeUTC": "2026-10-28T22:30:00Z",
-      "venue": "Scotiabank Arena",
-      "city": "Toronto",
-      "state": "Ontario",
-      "awayRecord": "1-2",
-      "homeRecord": "2-1"
-    },
-    {
-      "sport": "NBA",
-      "game": "Nuggets at Pelicans",
-      "startTimeUTC": "2026-10-28T23:00:00Z",
-      "venue": "Smoothie King Center",
-      "city": "New Orleans",
-      "state": "Louisiana",
-      "awayRecord": "1-2",
-      "homeRecord": "0-3"
-    },
-    {
-      "sport": "NBA",
-      "game": "Rockets at Bucks",
-      "startTimeUTC": "2026-10-28T23:00:00Z",
-      "venue": "Fiserv Forum",
-      "city": "Milwaukee",
-      "state": "Wisconsin",
-      "awayRecord": "4-0",
-      "homeRecord": "1-3"
-    },
-    {
-      "sport": "NBA",
-      "game": "Spurs at Jazz",
-      "startTimeUTC": "2026-10-29T00:00:00Z",
-      "venue": "Delta Center",
-      "city": "Salt Lake City",
-      "state": "Utah",
-      "awayRecord": "2-2",
-      "homeRecord": "1-3"
-    },
-    {
-      "sport": "NBA",
-      "game": "Thunder at Mavericks",
-      "startTimeUTC": "2026-10-29T00:30:00Z",
-      "venue": "American Airlines Center",
-      "city": "Dallas",
-      "state": "Texas",
-      "awayRecord": "4-0",
-      "homeRecord": "2-2"
-    },
-    {
-      "sport": "NBA",
-      "game": "Warriors at Timberwolves",
-      "startTimeUTC": "2026-10-28T23:00:00Z",
-      "venue": "Target Center",
-      "city": "Minneapolis",
-      "state": "Minnesota",
-      "awayRecord": "1-3",
-      "homeRecord": "3-1"
-    },
-    {
-      "sport": "NBA",
-      "game": "Wizards at Cavaliers",
-      "startTimeUTC": "2026-10-28T22:00:00Z",
-      "venue": "Rocket Arena",
-      "city": "Cleveland",
-      "state": "Ohio",
-      "awayRecord": "2-2",
-      "homeRecord": "2-1"
-    },
-    {
-      "sport": "NHL",
-      "game": "Devils at Avalanche",
-      "startTimeUTC": "2026-10-29T01:00:00Z",
-      "venue": "Ball Arena",
-      "city": "Denver",
-      "state": "Colorado",
-      "awayRecord": "8-4-0",
-      "homeRecord": "6-5-1"
-    },
-    {
-      "sport": "NHL",
-      "game": "Flames at Oilers",
-      "startTimeUTC": "2026-10-29T00:30:00Z",
-      "venue": "Rogers Place",
-      "city": "Edmonton",
-      "state": "Alberta",
-      "awayRecord": "5-6-0",
-      "homeRecord": "8-2-2"
-    },
-    {
-      "sport": "NHL",
-      "game": "Flyers at Capitals",
-      "startTimeUTC": "2026-10-28T23:30:00Z",
-      "venue": "Capital One Arena",
-      "city": "Washington",
-      "state": "District of Columbia",
-      "awayRecord": "3-7-4",
-      "homeRecord": "6-4-0"
-    },
-    {
-      "sport": "NHL",
-      "game": "Maple Leafs at Kraken",
-      "startTimeUTC": "2026-10-29T02:00:00Z",
-      "venue": "Climate Pledge Arena",
-      "city": "Seattle",
-      "state": "Washington",
-      "awayRecord": "7-5-2",
-      "homeRecord": "7-4-1"
-    }
-  ]
+  "passed": [],
+  "source": "ESPN scoreboard at 4:00 AM. Picks post at 9:00 AM."
 }

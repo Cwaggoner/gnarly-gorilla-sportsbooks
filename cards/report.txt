@@ -1,11 +1,11 @@
-# GG report 2026-10-27
-# Yesterday 2026-10-27 graded. Record 1-0-0. Profit $9.09. CLV Matched Bet Price.
+# GG report 2026-10-28
+# Yesterday 2026-10-28 graded. Record 0-1-0. Profit $-10.00. CLV Matched Bet Price.
 
-Analysis: Tuesday cashed the Nets +11.5 spread against the Celtics. Edge on the back-to-back. Close matched the bet price.
+Analysis: Wednesday lost the Hornets +6.5 against the Wizards. Close matched the bet price.
 
-2026-10-27 | NBA | win | Nets +11.5 | EDGE
-2026-10-27 | CFB | No Picks
-2026-10-27 | MLB | No Picks
-2026-10-27 | NHL | No Picks
-2026-10-27 | NFL | No Picks
-2026-10-27 | CBB | No Picks
+2026-10-28 | NBA | loss | Hornets +6.5
+2026-10-28 | NHL | No Picks
+2026-10-28 | MLB | No Picks
+2026-10-28 | CFB | No Picks
+2026-10-28 | NFL | No Picks
+2026-10-28 | CBB | No Picks
