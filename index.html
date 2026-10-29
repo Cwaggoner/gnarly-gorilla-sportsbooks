@@ -121,8 +121,14 @@ form, .row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1f
 #betload button { width:100%; }
 #betload img { width:100%; max-width:160px; height:auto; flex:1 1 auto; object-fit:contain; border:1px solid var(--line); border-radius:8px; padding:8px; box-sizing:border-box; background:#0e0e0e; cursor:pointer; }
 #betnotes { display:flex; flex-direction:column; justify-content:center; gap:8px; min-height:120px; }
-#sgpbox { grid-column:1 / -1; display:flex; flex-direction:column; align-items:stretch; gap:8px; }
-#sgpbox h3 { margin:0; color:#39ff14; font-size:16px; text-align:left; }
+#sgpbox { position:fixed; right:12px; bottom:12px; display:flex; flex-direction:column; gap:8px; width:min(360px, calc(100vw - 24px)); max-height:min(68vh, 520px); overflow:auto; z-index:40; grid-column:auto; background:#141414; border:1px solid #39ff14; border-radius:10px; padding:10px; box-shadow:0 10px 28px rgba(0,0,0,.7); }
+#sgpbox h3 { display:flex; align-items:center; gap:8px; margin:0; color:#39ff14; font-size:16px; text-align:left; }
+#slipdock { margin-left:auto; height:28px; padding:2px 8px; }
+#sgpbox.slip-min { max-height:none; width:min(240px, calc(100vw - 24px)); overflow:hidden; }
+#sgpbox.slip-min > :not(h3) { display:none; }
+.board-price { display:block; width:100%; height:auto; margin:2px 0; padding:6px 4px; text-align:left; color:#d6ffd0; background:#0e0e0e; cursor:pointer; font-size:12px; line-height:1.2; white-space:normal; }
+.board-price.best-price { color:#ff00ff; border-color:#ff00ff; }
+.compare td.price-cell { min-width:10ch; vertical-align:top; }
 .card-prices { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
 .card-price { height:auto; text-align:left; color:#39ff14; cursor:pointer; }
 .slip-row { display:flex; justify-content:space-between; gap:8px; align-items:center; border:1px solid #243024; border-radius:8px; padding:6px 8px; color:#d6ffd0; text-align:left; }
@@ -377,7 +383,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </section>
 <section class="card" id="liveodds"><div class="section-head"><h2>Live Odds</h2><p class="warn slips-side">Moneyline, spread, and total across books. Refresh pulls the live price.</p></div><div class="odds-tools" id="compareday"><button type="button" id="day-yesterday">Yesterday</button><button type="button" id="day-today">Today</button><select id="comparesport"><option selected>All</option><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option></select><select id="comparemarket"><option value="h2h" selected>Moneyline</option><option value="spreads">Spread</option><option value="totals">Total</option></select><button type="button" id="refreshodds">Refresh</button></div><div id="oddscompare"></div></section>
 <section class="card" id="todaycard">
-<div class="section-head"><h2>Today's Card</h2><p class="warn slips-side">One play per line: Sport | Type | Pick | American odds | Confidence. Stake is $10. Book is the dropdown below. Pending until graded.</p></div>
+<div class="section-head"><h2>Today's Card</h2><p class="warn slips-side">Click a price to put it on the slip.</p></div>
 <div class="payout-box">
 <h3>$10 Win</h3>
 <p class="warn">What a $10 bet wins at the American odds used on these cards. Amber is -110, the usual number.</p>
@@ -397,17 +403,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </div>
 <div class="card-analysis" id="cardanalysis"><h3 class="split-title">Analysis</h3><div class="analysis-grid" id="analysisgrid"></div><div class="sharp-read"><b>Analysis:</b><p id="sharpread"></p></div><div id="cardgames"></div></div>
 <h2 class="split-title">Injury Reports</h2>
-<ul class="odds-notes">
-<li>Sport keeps one category.</li>
-<li>Posted hides teams with nothing filed, so the list stays short.</li>
-<li>Out is a player who will not play.</li>
-<li>May still play is questionable or day to day.</li>
-<li>Red means out.</li>
-<li>Amber means he may still play.</li>
-<li>The page pulls the public report when the card loads and again every few minutes.</li>
-<li>A filing pushed today is what everyone sees. Before that push, the page reads the public report.</li>
-<li>The times below are when a new filing is actually due, in Eastern time.</li>
-</ul>
+<p class="warn">Red is out. Amber may still play. Times are Eastern.</p>
 <p class="api-note injury-filters"><select id="injurysport"><option selected>All</option><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option></select> <select id="injuryshow"><option value="posted" selected>Posted</option><option value="all">All rows</option><option value="out">Out</option><option value="maybe">May still play</option></select></p>
 <table class="compare" id="injuryclock">
 <thead><tr><th>Sport</th><th>Week</th><th>Weekend</th><th>Tournament</th></tr></thead>
@@ -497,7 +493,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <label>Close Odds<input name="close" type="number" step="1" placeholder="-120"></label>
 <input type="hidden" name="editId">
 <label>Stake $<input name="stake" type="number" step="0.01" min="0" value="10" required></label>
-<p class="warn fine field-note">Load Picks uses the date, book, sport, and type to the left. The icon under Load Picks loads every open pick for every book. A refresh restores the last list with no new call.</p>
+<p class="warn fine field-note">Load Picks uses the boxes to the left. The icon loads every book.</p>
 </div>
 <label class="notes-field">Notes<textarea name="notes" placeholder="High 62%"></textarea></label>
 </div>
@@ -509,8 +505,8 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </div>
 </div>
 <div class="bet-box" id="sgpbox">
-<h3>Bet Slip</h3>
-<p class="warn">Click a price on Today's Card or Best Price. The legs stack here. Nothing is sent to a sportsbook.</p>
+<h3>Bet Slip <button type="button" id="slipdock">Hide</button></h3>
+<p class="warn">Click a price. Nothing is sent to a book.</p>
 <div class="sgp-legs" id="sgplegs"></div>
 <div class="sgp-partner">
 <label>Same-game second leg<input id="sgppartner" placeholder="Under in that game"></label>
@@ -534,7 +530,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <button type="button" class="odds-link" onclick="window.open('https://the-odds-api.com/','_blank','noopener,noreferrer')">Open The Odds API</button>
 <span id="keynote" class="warn"></span>
 </div>
-<p class="api-note">Paste a free or paid Odds API key here. Load Picks uses this key. Close needs a paid subscription so the other side of the market can be saved. CLV then removes that book's cut. A free key loads the board only. The Book selected above drives the list. Today's Card Book only stamps a card loaded there.</p>
+<p class="api-note">Paste the key and press Commit. A free key loads the board. Close needs the paid key.</p>
 </div>
 </section>
 <section class="card" id="slips">
@@ -2326,7 +2322,7 @@ function openGameBet(sport, game, date){
   document.getElementById("editnote").textContent = "";
   document.getElementById("addbet").scrollIntoView({behavior:"smooth", block:"start"});
 }
-function openBestBet(btn){
+function openBestBet(btn, scroll){
   const sport = decodeURIComponent(btn.dataset.sport || "");
   const game = decodeURIComponent(btn.dataset.game || "");
   const market = btn.dataset.market || "h2h";
@@ -2368,9 +2364,11 @@ function openBestBet(btn){
   document.getElementById("picknote").textContent = book + " " + price + " is on the bet slip and filled in above. Add writes the slip. Save Bet still saves this one leg by itself." + (split ? " The books do not share one number, so this is the BetMGM side." : "");
   document.getElementById("editnote").textContent = "";
   addSlipLeg({date: date, sport: sport, type: type, pick: pick, odds: Number(price), book: book, edge: false});
-  document.getElementById("addbet").scrollIntoView({behavior:"smooth", block:"start"});
+  if (scroll !== false) document.getElementById("addbet").scrollIntoView({behavior:"smooth", block:"start"});
 }
 document.body.addEventListener("click", e => {
+  const boardBtn = e.target.closest && e.target.closest(".board-price");
+  if (boardBtn) { openBestBet(boardBtn, false); return; }
   const priceBtn = e.target.closest && e.target.closest(".add-price");
   if (priceBtn) { openBestBet(priceBtn); return; }
   const cardBtn = e.target.closest && e.target.closest(".card-price");
@@ -3199,20 +3197,25 @@ function bestPriceHtml(rows, market, day){
     const gapHtml = matched ? "Matched" : "<span class='" + (gap > 0 ? "win" : "") + "'>" + gapCell + "</span>";
     return "<tr class='" + cls + "'><td>" + game + "</td><td>" + esc(side) + "</td><td>" + mgmCell + "</td><td>" + bestCell + "</td><td>" + gapHtml + "</td>" + shopAdd(row, market, day, index, winner.name, winner.side.price, winner.side.point, false) + "</tr>";
   }).join("")).join("");
-  const note = "Updated " + boardWhen() + ". Same market as the board above. The gap removes each book's cut, then compares BetMGM with the best same number. A matched price is zero. A minus gap means BetMGM is short. A different point is a number split, not a better price. A game that has started keeps the last price from before tip. Add fills that best price into Add A Bet. Save Bet puts it on the slip card.";
+  const note = "Updated " + boardWhen() + ". Add uses the best same number. A minus gap means BetMGM is short.";
   return "<h2 class='split-title'>Best Price</h2><p class='api-note'>" + note + "</p><table class='compare shop'><thead><tr><th>Game</th><th>Side</th><th>BetMGM</th><th>Best Same Number</th><th>No-Vig Gap</th><th class='add-col'>Add</th></tr></thead><tbody>" + (body || "<tr class='shop-row'><td colspan='6'>No posted prices for this market.</td></tr>") + "</tbody></table>";
 }
-function paintBookCell(cell, hot){
+function paintBookCell(cell, hot, row, market, day, book){
   const text = String(cell || "").trim();
   if (!text || text === "-") return "-";
-  const bits = text.split("/").map(s => s.trim());
-  if (bits.length < 2 || !hot) return esc(text);
-  return [0, 1].map(i => {
-    const raw = bits[i];
-    const shown = String(raw).match(/([+-]?\d+(?:\.\d+)?)\s*$/);
-    if (!hot[i] || !shown) return esc(raw);
-    return esc(raw.slice(0, shown.index)) + "<span class='best-price'>" + esc(shown[1]) + "</span>";
-  }).join(" / ");
+  const sides = shopSides(text);
+  if (!sides || !row) return esc(text);
+  const sharedPoint = sides[0] && sides[0].point;
+  return sides.map((side, index) => {
+    if (!side) return "-";
+    const point = side.point == null && market === "totals" ? sharedPoint : side.point;
+    const data = {sport: row.sport || "", game: row.label || "", market: market || "h2h", book: book || "", price: String(side.price), point: point == null ? "" : String(point), side: String(index), date: day || ""};
+    const attrs = Object.keys(data).map(key => " data-" + key + "='" + encodeURIComponent(String(data[key])) + "'").join("");
+    const cls = hot && hot[index] ? "board-price best-price" : "board-price";
+    const priceText = (side.price > 0 ? "+" : "") + side.price;
+    const label = market === "totals" && point != null ? ((index === 0 ? "Over " : "Under ") + point + " " + priceText) : side.text;
+    return "<button type='button' class='" + cls + "'" + attrs + ">" + esc(label) + "</button>";
+  }).join("");
 }
 function bestPriceFlags(booksMap, bookNames){
   const hot = {};
@@ -3255,11 +3258,10 @@ function oddsTableHtml(rows, day, market, lead){
   const head = "<th>Game</th><th class='timecol'>Time</th>" + books.map(b => "<th>" + b + "</th>").join("");
   const body = rows.map(r => {
     const flags = bestPriceFlags(r.books, books);
-    return "<tr><td>" + esc(r.sport + " " + r.label) + "</td><td class='gametime' data-start='" + esc(r.start || "") + "'>" + esc(r.start ? formatTime(r.start, false) : "") + "</td>" + books.map(b => "<td>" + paintBookCell(r.books && r.books[b], flags[b]) + "</td>").join("") + "</tr>";
+    return "<tr><td>" + esc(r.sport + " " + r.label) + "</td><td class='gametime' data-start='" + esc(r.start || "") + "'>" + esc(r.start ? formatTime(r.start, false) : "") + "</td>" + books.map(b => "<td class='price-cell'>" + paintBookCell(r.books && r.books[b], flags[b], r, market, day, b) + "</td>").join("") + "</tr>";
   }).join("");
-  const line = lead || ((day === easternDay() ? "Today" : "Yesterday") + ". " + label + ". Updated " + boardWhen() + ".");
-  const magenta = "<span class='best-price'>Magenta</span> text on this site means the best price: the highest number on that side among books that posted the same point. Books that share that best price are all marked. A price every book shares is not marked. A different point is not marked.";
-  return oddsBullets([line, magenta]) + "<h2 class='split-title'>Live Odds Comparison</h2><table class='compare'><thead><tr class='cols'>" + head + "</tr></thead><tbody>" + body + "</tbody></table>" + bestPriceHtml(rows, market, day);
+  const line = lead || ((day === easternDay() ? "Today" : "Yesterday") + ". " + label + ". Updated " + boardWhen() + ". Tap a price to add it. Magenta is the best number.");
+  return "<p class='warn'>" + line + "</p><h2 class='split-title'>Live Odds Comparison</h2><table class='compare'><thead><tr class='cols'>" + head + "</tr></thead><tbody>" + body + "</tbody></table>" + bestPriceHtml(rows, market, day);
 }
 function usableBoard(data){
   if (!data || !data.days || typeof data.days !== "object") return false;
@@ -4151,9 +4153,12 @@ function americanFromDec(dec){
 let betSlip = [];
 function addSlipLeg(leg){
   if (!leg || !leg.pick || !Number.isFinite(Number(leg.odds))) return;
+  const box = document.getElementById("sgpbox");
+  const dock = document.getElementById("slipdock");
+  if (box) box.classList.remove("slip-min");
+  if (dock) dock.textContent = "Hide";
   const key = [leg.sport, leg.pick, Number(leg.odds)].join("|");
-  if (betSlip.some(row => [row.sport, row.pick, row.odds].join("|") === key)) { paintSlip(); return; }
-  betSlip.push({date: leg.date || easternDay(), sport: leg.sport || "", type: leg.type || "Spread", pick: leg.pick, odds: Number(leg.odds), book: leg.book || "", edge: !!leg.edge, notes: leg.notes || ""});
+  if (!betSlip.some(row => [row.sport, row.pick, row.odds].join("|") === key)) betSlip.push({date: leg.date || easternDay(), sport: leg.sport || "", type: leg.type || "Spread", pick: leg.pick, odds: Number(leg.odds), book: leg.book || "", edge: !!leg.edge, notes: leg.notes || ""});
   paintSlip();
 }
 function sgpPartner(){
@@ -4172,14 +4177,7 @@ function drawSgp(){
   const ideas = document.getElementById("sgpideas");
   if (!ideas) return;
   const plays = sgpDayPlays();
-  const edges = plays.filter(p => p.edge);
-  const tips = (edges.length ? edges : plays).map(p => {
-    const dog = p.odds > 0 || /[+]/.test(p.pick);
-    return dog
-      ? p.sport + " " + p.pick + " with the under in that same game."
-      : p.sport + " " + p.pick + " stays a straight bet. Do not add a leg to a favorite.";
-  });
-  ideas.innerHTML = plays.length ? "<p class='warn'>Best build is two legs in one game. " + esc(tips.join(" ")) + " Do not cross two games. That is a parlay, and one miss loses both.</p>" : "";
+  ideas.innerHTML = plays.length ? "<p class='warn'>Best build is two legs in one game. A third leg cuts the hit rate.</p>" : "";
   ["sgppartner","sgppartnerodds"].forEach(id => {
     const el = document.getElementById(id);
     if (el && !el.dataset.bound) { el.dataset.bound = "1"; el.oninput = paintSlip; }
@@ -4355,6 +4353,11 @@ async function saveSlipImage(){
   if (note) note.textContent = "Image saved. Nothing was sent to a sportsbook.";
 }
 document.getElementById("slipimage").onclick = () => { saveSlipImage().catch(err => { const note = document.getElementById("sgpprice"); if (note) note.textContent = (err && err.message) || "Image failed."; }); };
+document.getElementById("slipdock").onclick = () => {
+  const box = document.getElementById("sgpbox");
+  const hidden = box.classList.toggle("slip-min");
+  document.getElementById("slipdock").textContent = hidden ? "Show" : "Hide";
+};
 paintSlip();
 document.getElementById("rows").onclick = e => {
   const t = e.target;
