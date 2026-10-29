@@ -213,7 +213,8 @@ tr.row-pending.edge td.result { color:var(--amber); }
 .jump { display:flex; gap:6px; margin:6px 0; justify-content:center; align-items:center; }
 .jump button { padding:4px 8px; font-size:12px; }
 .sitenav .clock { color:var(--title); white-space:nowrap; }
-.sitenav button, .sitenav select { height:26px; padding:2px 6px; font-size:12px; box-sizing:border-box; }
+.sitenav button, .sitenav select, .sitenav a { height:26px; padding:2px 6px; font-size:12px; box-sizing:border-box; }
+.sitenav a { display:inline-flex; align-items:center; text-decoration:none; color:var(--title); font-weight:700; background:#0e0e0e; border:1px solid var(--line); border-radius:8px; white-space:nowrap; }
 .sitenav .tz { display:flex; flex-direction:row; align-items:center; justify-content:center; gap:6px; color:var(--muted); font-size:12px; white-space:nowrap; flex-wrap:nowrap; }
 .sitenav .tz select { width:110px; min-width:110px; max-width:110px; height:26px; flex:0 0 110px; align-self:center; }
 .sitenav .tz button { min-width:14ch; white-space:nowrap; }
@@ -312,7 +313,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 .loss { color:var(--red) !important; }
 .view { display:none; }
 .view.on { display:block; }
-#sitenav button.on, .sport-bar button.on { color:#39ff14; outline:1px solid #39ff14; }
+#sitenav button.on, #sitenav a.on, .sport-bar button.on { color:#39ff14; outline:1px solid #39ff14; }
 .sport-bar { display:flex; flex-wrap:wrap; gap:6px; margin:8px 0; }
 .sport-bar button { height:38px; min-width:7ch; }
 .game-row { border:1px solid #39ff14; border-radius:10px; margin:8px 0; padding:10px; background:#101610; }
@@ -340,17 +341,17 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <nav class="sitenav" id="sitenav">
 <div class="nav-cell left"><span class="clock" id="zonedate"></span><span class="clock" id="zonetime"></span></div>
 <div class="nav-cell mid">
-<button type="button" data-jump="games" class="on">Games</button>
-<button type="button" data-jump="seasons">Seasons</button>
-<button type="button" data-jump="dashboard">Dashboard</button>
-<button type="button" data-jump="todaycard">Today</button><button type="button" data-jump="liveodds">Live Odds</button>
-<button type="button" data-jump="slips">Slips</button>
-<button type="button" data-jump="reportcard">Report Card</button>
-<button type="button" data-jump="charts">Charts</button>
-<button type="button" data-jump="breaks">Books</button>
-<button type="button" data-jump="addbet">Add Bet</button>
-<button type="button" data-jump="calendarcard">Calendar</button>
-<button type="button" data-jump="about">About</button>
+<a href="?page=games" data-jump="games" class="on">Games</a>
+<a href="?page=seasons" data-jump="seasons">Seasons</a>
+<a href="?page=dashboard" data-jump="dashboard">Dashboard</a>
+<a href="?page=today" data-jump="todaycard">Today</a><a href="?page=live" data-jump="liveodds">Live Odds</a>
+<a href="?page=slips" data-jump="slips">Slips</a>
+<a href="?page=report" data-jump="reportcard">Report Card</a>
+<a href="?page=charts" data-jump="charts">Charts</a>
+<a href="?page=books" data-jump="breaks">Books</a>
+<a href="?page=add" data-jump="addbet">Add Bet</a>
+<a href="?page=calendar" data-jump="calendarcard">Calendar</a>
+<a href="?page=about" data-jump="about">About</a>
 </div>
 <div class="nav-cell right">
 <label class="tz">Zone
@@ -616,7 +617,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 })();
 document.addEventListener("click", e => {
   const btn = e.target.closest("[data-jump]");
-  if (!btn) return;
+  if (!btn || btn.tagName === "A") return;
   e.preventDefault();
   jumpToCard(btn.getAttribute("data-jump"));
 });
@@ -4178,6 +4179,10 @@ function americanFromDec(dec){
   return profit >= 1 ? Math.round(profit * 100) : Math.round(-100 / profit);
 }
 let betSlip = [];
+function rememberSlip(){
+  try { sessionStorage.setItem("gg-bet-slip", JSON.stringify(betSlip)); } catch (e) {}
+}
+try { const savedSlip = JSON.parse(sessionStorage.getItem("gg-bet-slip") || "[]"); if (Array.isArray(savedSlip)) betSlip = savedSlip; } catch (e) {}
 function addSlipLeg(leg){
   if (!leg || !leg.pick || !Number.isFinite(Number(leg.odds))) return;
   const box = document.getElementById("sgpbox");
@@ -4186,6 +4191,7 @@ function addSlipLeg(leg){
   if (dock) dock.textContent = "Hide";
   const key = [leg.sport, leg.pick, Number(leg.odds)].join("|");
   if (!betSlip.some(row => [row.sport, row.pick, row.odds].join("|") === key)) betSlip.push({date: leg.date || easternDay(), sport: leg.sport || "", type: leg.type || "Spread", pick: leg.pick, odds: Number(leg.odds), book: leg.book || "", edge: !!leg.edge, notes: leg.notes || ""});
+  rememberSlip();
   paintSlip();
 }
 function sgpPartner(){
@@ -4297,6 +4303,7 @@ document.getElementById("slipclear").onclick = () => {
   const odds = document.getElementById("sgppartnerodds");
   if (partner) partner.value = "";
   if (odds) odds.value = "";
+  rememberSlip();
   paintSlip();
 };
 async function saveSlipImage(){
@@ -6387,6 +6394,8 @@ function showView(id){
 function jumpToCard(id){
   showView(id);
 }
+const PAGE_TO_SCREEN = {games:"games", seasons:"seasons", dashboard:"dashboard", today:"todaycard", live:"liveodds", slips:"slips", report:"reportcard", charts:"charts", books:"breaks", add:"addbet", calendar:"calendarcard", about:"about"};
+showView(PAGE_TO_SCREEN[new URLSearchParams(location.search).get("page")] || "games");
 pinOffset();
 const gamebook = document.getElementById("gamebook");
 if (gamebook) gamebook.onchange = () => {
