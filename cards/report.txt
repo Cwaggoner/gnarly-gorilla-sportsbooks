@@ -1,9 +1,9 @@
 # GG report 2026-10-28
-# Yesterday 2026-10-28 graded. Record 0-1-0. Profit $-10.00. CLV Matched Bet Price.
+# Yesterday 2026-10-28 graded. Record 0-1-0. Profit $-10.00. CLV +1.0 points.
 
-Analysis: Wednesday lost the Hornets +6.5 against the Wizards. Close matched the bet price.
+Analysis: The Hornets +6.5 lost 89-97 to the Pistons. The card noted Edge on the back-to-back. The line closed at Hornets +7.5 -105, giving +1 point of CLV and better juice.
 
-2026-10-28 | NBA | loss | Hornets +6.5
+2026-10-28 | NBA | loss | Hornets +6.5 EDGE
 2026-10-28 | NHL | No Picks
 2026-10-28 | MLB | No Picks
 2026-10-28 | CFB | No Picks
