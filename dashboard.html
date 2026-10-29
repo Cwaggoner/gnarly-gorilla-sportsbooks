@@ -624,6 +624,20 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <p id="sgprisk" class="warn sgp-risk"></p>
 <div class="slip-actions"><button type="button" id="sgpadd">Add</button><button type="button" id="slipimage">Save Image</button><button type="button" id="slipclear">Clear Slip</button></div>
 </div>
+<script>
+(function(){
+  var box = document.getElementById("sgpbox");
+  if (!box) return;
+  var saved = null;
+  try { saved = JSON.parse(localStorage.getItem("gg-slip-pos") || "null"); } catch (e) {}
+  if (!saved) return;
+  if (saved.pinX === "right") { box.style.left = "auto"; box.style.right = Math.max(8, saved.right) + "px"; }
+  else if (saved.pinX === "left") { box.style.right = "auto"; box.style.left = Math.max(8, saved.left) + "px"; }
+  else if (isFinite(saved.x)) { box.style.right = "auto"; box.style.bottom = "auto"; box.style.left = saved.x + "px"; box.style.top = saved.y + "px"; }
+  if (saved.pinY === "bottom") { box.style.top = "auto"; box.style.bottom = Math.max(8, saved.bottom) + "px"; }
+  else if (saved.pinY === "top") { box.style.bottom = "auto"; box.style.top = Math.max(8, saved.top) + "px"; }
+})();
+</script>
 <div id="below-about"></div>
 <div class="page-end"></div>
 </div>
@@ -4491,6 +4505,7 @@ document.getElementById("slipdock").onclick = () => {
   const box = document.getElementById("sgpbox");
   const hidden = box.classList.toggle("slip-min");
   document.getElementById("slipdock").textContent = hidden ? "Show" : "Hide";
+  if (window.ggHoldSlip) window.ggHoldSlip();
 };
 document.getElementById("slipclose").onclick = () => {
   const box = document.getElementById("sgpbox");
@@ -4505,37 +4520,65 @@ if (sessionStorage.getItem("gg-slip-closed") === "1") {
   const box = document.getElementById("sgpbox");
   const handle = box && box.querySelector("h3");
   if (!box || !handle) return;
-  const place = (x, y) => {
-    const maxX = Math.max(8, window.innerWidth - box.offsetWidth - 8);
-    const maxY = Math.max(8, window.innerHeight - box.offsetHeight - 8);
-    box.style.left = Math.min(maxX, Math.max(8, x)) + "px";
-    box.style.top = Math.min(maxY, Math.max(8, y)) + "px";
-    box.style.right = "auto";
-    box.style.bottom = "auto";
+  const read = () => {
+    try { return JSON.parse(localStorage.getItem("gg-slip-pos") || "null"); } catch (e) { return null; }
   };
-  try {
-    const saved = JSON.parse(localStorage.getItem("gg-slip-pos") || "null");
-    if (saved && Number.isFinite(saved.x) && Number.isFinite(saved.y)) place(saved.x, saved.y);
-  } catch (e) {}
+  const pinFrom = rect => {
+    const right = window.innerWidth - rect.right;
+    const bottom = window.innerHeight - rect.bottom;
+    return {
+      left: rect.left,
+      top: rect.top,
+      right: right,
+      bottom: bottom,
+      pinX: rect.left <= right ? "left" : "right",
+      pinY: rect.top <= bottom ? "top" : "bottom"
+    };
+  };
+  const apply = pos => {
+    if (!pos) return;
+    if (pos.pinX === "right") { box.style.left = "auto"; box.style.right = Math.max(8, pos.right) + "px"; }
+    else if (pos.pinX === "left" || Number.isFinite(pos.left) || Number.isFinite(pos.x)) { box.style.right = "auto"; box.style.left = Math.max(8, Number.isFinite(pos.left) ? pos.left : pos.x) + "px"; }
+    if (pos.pinY === "bottom") { box.style.top = "auto"; box.style.bottom = Math.max(8, pos.bottom) + "px"; }
+    else if (pos.pinY === "top" || Number.isFinite(pos.top) || Number.isFinite(pos.y)) { box.style.bottom = "auto"; box.style.top = Math.max(8, Number.isFinite(pos.top) ? pos.top : pos.y) + "px"; }
+  };
+  const remember = () => {
+    const rect = box.getBoundingClientRect();
+    if (rect.width < 20) return;
+    const pos = pinFrom(rect);
+    try { localStorage.setItem("gg-slip-pos", JSON.stringify(pos)); } catch (e) {}
+    apply(pos);
+  };
+  window.ggHoldSlip = () => apply(read());
+  const saved = read();
+  if (saved && !saved.pinX && Number.isFinite(saved.x)) {
+    apply(saved);
+    remember();
+  } else if (saved) apply(saved);
   let drag = null;
   handle.addEventListener("pointerdown", e => {
     if (e.target.closest("button")) return;
     const rect = box.getBoundingClientRect();
     drag = {dx: e.clientX - rect.left, dy: e.clientY - rect.top, id: e.pointerId};
     box.classList.add("dragging");
+    box.style.right = "auto";
+    box.style.bottom = "auto";
+    box.style.left = rect.left + "px";
+    box.style.top = rect.top + "px";
     handle.setPointerCapture(e.pointerId);
   });
   handle.addEventListener("pointermove", e => {
     if (!drag || e.pointerId !== drag.id) return;
-    place(e.clientX - drag.dx, e.clientY - drag.dy);
+    const maxX = Math.max(8, window.innerWidth - box.offsetWidth - 8);
+    const maxY = Math.max(8, window.innerHeight - box.offsetHeight - 8);
+    box.style.left = Math.min(maxX, Math.max(8, e.clientX - drag.dx)) + "px";
+    box.style.top = Math.min(maxY, Math.max(8, e.clientY - drag.dy)) + "px";
   });
   const end = e => {
     if (!drag || (e && e.pointerId !== drag.id)) return;
     drag = null;
     box.classList.remove("dragging");
-    const rect = box.getBoundingClientRect();
-    if (rect.width < 20) return;
-    try { localStorage.setItem("gg-slip-pos", JSON.stringify({x: rect.left, y: rect.top})); } catch (err) {}
+    remember();
   };
   handle.addEventListener("pointerup", end);
   handle.addEventListener("pointercancel", end);
