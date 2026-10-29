@@ -55,6 +55,9 @@ header img { width:72px; height:72px; border-radius:12px; display:block; }
 .head-flag svg { width:28px; height:18px; display:block; border-radius:2px; box-shadow:0 1px 2px rgba(0,0,0,.6); }
 header .head-text { display:flex; flex-direction:column; justify-content:center; }
 header h1 { margin:0; color:var(--title); font-size:22px; letter-spacing:.04em; }
+.spin { display:inline-block; width:14px; height:14px; margin-left:8px; border:2px solid #243024; border-top-color:#39ff14; border-radius:50%; vertical-align:-2px; animation:spin .7s linear infinite; }
+.spin[hidden] { display:none; }
+@keyframes spin { to { transform:rotate(360deg); } }
 header p { margin:4px 0 0; color:var(--muted); }
 .page { max-width:1100px; margin:0 auto; padding:16px; }
 main { margin:0; padding:0; }
@@ -353,7 +356,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <header>
 <div class="head-icon"><img src="gg-icon.png" alt="Gnarly Gorilla"></div>
 <div class="head-text">
-<h1><span class="gg-name">Gnarly Gorilla</span> Sportsbooks</h1>
+<h1><span class="gg-name">Gnarly Gorilla</span> Sportsbooks <span id="pagespin" class="spin" role="status" aria-label="Loading"></span></h1>
 <p>Free bet ledger for <span class="gg-name">Gnarly Gorilla</span> Sports Decks. Log CBB, CFB, MLB, NBA, NFL, and NHL slips, grade them the next day, and copy the report card.</p>
 <p id="liveline" class="warn" style="margin:6px 0 0;font-size:12px;">All picks live by 9:30 AM. Closed Value Lines update at 6:00 PM.</p>
 </div>
@@ -624,6 +627,11 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 (function(){
   const raw = window.fetch.bind(window);
   const bag = new Map();
+  let spinJobs = 0;
+  const markSpin = on => {
+    const el = document.getElementById("pagespin");
+    if (el) el.hidden = !on;
+  };
   window.fetch = function(url, opts){
     const href = typeof url === "string" ? url : "";
     const keep = href && (!opts || !opts.method || opts.method === "GET") && (href.indexOf("cards/") === 0 || href.indexOf("site.api.espn.com") !== -1);
@@ -635,8 +643,15 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
       hit = {at: Date.now(), promise: raw(href, fresh).then(async r => ({status: r.status, text: await r.text()})).catch(() => ({status: 0, text: ""}))};
       bag.set(key, hit);
     }
-    return hit.promise.then(pack => new Response(pack.text, {status: pack.status || 503}));
+    spinJobs += 1;
+    markSpin(true);
+    return hit.promise.then(pack => {
+      spinJobs = Math.max(0, spinJobs - 1);
+      if (!spinJobs) markSpin(false);
+      return new Response(pack.text, {status: pack.status || 503});
+    });
   };
+  setTimeout(() => { if (!spinJobs) markSpin(false); }, 0);
 })();
 document.addEventListener("click", e => {
   const btn = e.target.closest("[data-jump]");
