@@ -137,6 +137,8 @@ form, .row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1f
 #slipdock { margin-left:auto; height:28px; padding:2px 8px; }
 #sgpbox.slip-min { max-height:none; width:min(240px, calc(100vw - 24px)); overflow:hidden; }
 #sgpbox.slip-min > :not(h3) { display:none; }
+#sgpbox.slip-closed { display:none !important; }
+#slipclose { height:28px; padding:2px 8px; }
 .board-price { display:block; width:100%; height:auto; margin:2px 0; padding:6px 4px; text-align:left; color:#d6ffd0; background:#0e0e0e; cursor:pointer; font-size:12px; line-height:1.2; white-space:normal; }
 .board-price.best-price { color:#ff00ff; border-color:#ff00ff; }
 .compare td.price-cell { min-width:10ch; vertical-align:top; }
@@ -609,7 +611,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <p class="warn" id="statebooks">State rules load from the visitor location.</p>
 </footer>
 <div class="bet-box" id="sgpbox">
-<h3>Bet Slip <button type="button" id="slipdock">Hide</button></h3>
+<h3>Bet Slip <button type="button" id="slipdock">Hide</button><button type="button" id="slipclose">Close</button></h3>
 <p class="warn">Click a price. Nothing is sent to a book.</p>
 <div class="sgp-legs" id="sgplegs"></div>
 <div class="sgp-partner">
@@ -4241,8 +4243,9 @@ function addSlipLeg(leg){
   if (!leg || !leg.pick || !Number.isFinite(Number(leg.odds))) return;
   const box = document.getElementById("sgpbox");
   const dock = document.getElementById("slipdock");
-  if (box) box.classList.remove("slip-min");
+  if (box) box.classList.remove("slip-min", "slip-closed");
   if (dock) dock.textContent = "Hide";
+  try { sessionStorage.removeItem("gg-slip-closed"); } catch (e) {}
   const key = [leg.sport, leg.pick, Number(leg.odds)].join("|");
   if (!betSlip.some(row => [row.sport, row.pick, row.odds].join("|") === key)) betSlip.push({date: leg.date || easternDay(), sport: leg.sport || "", type: leg.type || "Spread", pick: leg.pick, odds: Number(leg.odds), book: leg.book || "", edge: !!leg.edge, notes: leg.notes || ""});
   rememberSlip();
@@ -4447,6 +4450,15 @@ document.getElementById("slipdock").onclick = () => {
   const hidden = box.classList.toggle("slip-min");
   document.getElementById("slipdock").textContent = hidden ? "Show" : "Hide";
 };
+document.getElementById("slipclose").onclick = () => {
+  const box = document.getElementById("sgpbox");
+  if (box) box.classList.add("slip-closed");
+  try { sessionStorage.setItem("gg-slip-closed", "1"); } catch (e) {}
+};
+if (sessionStorage.getItem("gg-slip-closed") === "1") {
+  const box = document.getElementById("sgpbox");
+  if (box) box.classList.add("slip-closed");
+}
 (function(){
   const box = document.getElementById("sgpbox");
   const handle = box && box.querySelector("h3");
