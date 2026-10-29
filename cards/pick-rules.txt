@@ -1,4 +1,4 @@
-# Pick rules updated 2026-10-27
+# Pick rules updated 2026-10-29
 # The cumulative chart is the record. Read cards/calendar.json before the card.
 # Through 2026-10-26 the running total is -$125.54. It has never crossed $0.
 # October 1 was 32 plays and -$122.20. That one night is almost the whole month.
@@ -9,8 +9,8 @@ Read cards/prices.txt before making a number. A bad night does not flip the next
 
 These four come before every other rule. Read them in this order.
 
-1. The book is the number. Win percentage can move it, but it cannot be the only reason the play exists. Still write the formula number before you open the book. A bet needs one of these written in the note: an injury the book has not fully priced, a back-to-back, a confirmed goalie or starter change, or a rest edge. If the note is only the record formula, delete the play.
-2. Move the tired team before you measure the gap. In the NBA, shift a back-to-back team by 2 points. In the NHL, shift it by 15 cents. Then apply the gap rule to that new number. A team on no rest does not get a normal number.
+1. The book is the number. Win percentage can move it, but it cannot be the only reason the play exists. Still write the formula number before you open the book. A bet needs one of these written in the note: an injury the book has not fully priced, a back-to-back, a confirmed goalie or starter change, or a rest edge. A back-to-back or a rest day is not enough by itself. Rule 19 still has to pass. If the note is only the record formula, delete the play.
+2. Move the tired team before you measure the gap. In the NBA, shift a back-to-back team by 2 points. In the NHL, shift it by 15 cents. Then apply rule 19. Then apply the gap rule to that new number. A team on no rest does not get a normal number.
 3. An unconfirmed NHL starter is a pass. If the goalie is not named by 9:00 AM, that game is not a bet.
 4. No total until that sport has 30 counted total rows. The formula makes a side. It does not make a total.
 
@@ -26,7 +26,7 @@ These four come before every other rule. Read them in this order.
 10. While the sum of cards/calendar.json is under $0, write at most one play for this sport. The 9:25 AM publish task keeps the three largest gaps across every sport and drops the rest. Two plays is a complete day. When the running total itself is above $0, the three-play cap comes off. One play per game stays. Do not add a bet to get the money back.
 11. No team is a must bet. Indiana, Army, Navy, Air Force, the Pacers, the Colts, Purdue, and Notre Dame are games. They are bets only when rule 1, rule 6, and rule 7 all pass. Read the injury report before the number. If the best player is out, make the number with him out. Do not move the number after seeing the book's side.
 12. Do not replay a ticket because it won last night. Do not bet the other side because it lost last night.
-13. Every play shows the made number, the book number, the gap, and the reason from rule 1. If any of those are missing, delete the play. Name the game on every line. Never write only "Under 5.5".
+13. Every play shows the made number, the book number, the gap, the reason from rule 1, the turnover line, and the bench line. If any of those are missing, delete the play. Name the game on every line. Never write only "Under 5.5".
 14. Stake stays $10 while the running total is under $0. Do not use the $15 raise until that total is above $0 and the market has 30 counted rows whose average close beat the bet.
 15. TRAINING. Append one row per graded bet to cards/prices.txt:
     date | sport | market | made | bet | close | clv
@@ -40,13 +40,23 @@ These four come before every other rule. Read them in this order.
     If the last three settled days sum to a win, use the gaps in rule 6. Do not make them smaller because the line rose.
     One green day does not lift the cap. The running total has to be above $0.
 
+19. TURNOVERS AND BENCH. Do this for every sport, after rule 2 and before the gap. Write two lines in the note. If either line is missing, delete the play.
+    Turnover line: which side gives it away, and by how much. Use the season rate once both teams have six games. Before that, use the last game.
+    Bench line: name the second scorer, the backup, or the unit that has to play if the starter sits. If you cannot name one, the bench is short.
+    A giveaway team does not get a rest dog. A short bench does not get a rest dog. Move the number against that side, then measure the gap. The Hornets +6.5 at the Pistons on 2026-10-28 is the example. Detroit's back-to-back made DET -1 against a book -6.5. Charlotte was without Kon Knueppel and Coby White, so there was no second ballhandler, and that side was the one that gives it away. The play should have been deleted.
+    NBA and CBB. If the side you would bet gives the ball away by 2 or more a game than it takes it, or its lead guard is out, move 2 points against that side. If there is no second scorer, or that second scorer is out, move 2 more points against that side. A back-to-back does not cancel either move. In CBB, more than 15 team turnovers in the last game counts as the giveaway flag until the season rate exists.
+    NFL. Turnover margin is interceptions plus fumbles lost, minus takeaways. If the side you would bet is minus, move 1.5 points against it. If the quarterback, the lead back, or two starting offensive linemen are out, make the number with the backup. Do not add a rest edge on top of that.
+    CFB. Same giveaways as the NFL. A minus turnover margin moves 2 points against that side. If the backup quarterback is the one who would play, make the number with him. A rest note does not override it.
+    NHL. The turnover line is giveaways against takeaways, season or last five. The bench line is the third pair and the fourth line, by name. If the side you would bet gives it away, pass. If that side's bottom six is the group on the second night, do not add the 15-cent rest shift. The rest is already those players.
+    MLB. The turnover line is errors and unearned runs. The bench is the bullpen, by name. If the side you would bet allows more unearned runs, pass the run line. If that pen threw four or more innings the day before, pass. A starter who is not named by 9:00 AM is still a pass under rule 1.
+
 INTERIM NUMBER. Use this until that sport and market has 30 counted rows. Then stop, and use rule 15.
 This is a record formula, not a trained price. It exists so a day with games can produce a side the log can grade.
 Do not mark any play High until those 30 counted rows exist. Edge still goes on every play that clears.
 The formula is a side number. Rule 4 forbids a total until 30 counted total rows exist.
 
 Until both teams have played six games, use the smaller multiplier. After both have six, use the full one.
-Apply rule 2 before you measure the gap. Apply rule 1 before you keep the play.
+Apply rule 2 before you measure the gap. Apply rule 19 after rule 2. Apply rule 1 before you keep the play.
 
 NFL. Full multiplier 14. Early multiplier 7. Home spread = (home win% - away win%) times the multiplier, plus 2.5. A neutral site uses 0 instead of 2.5. Win% is wins plus half a tie, divided by games played. Bet when the gap is at least 3 points and rule 1, rule 7, and rule 8 pass. Price -110 if the juice is not posted.
 NBA. Full multiplier 10. Early multiplier 5. Home spread = (home win% - away win%) times the multiplier, plus 3. Shift a back-to-back team by 2 points before the gap. Bet when the gap is at least 5 points and rule 1, rule 7, and rule 8 pass. A short early-season record does not lower the 5-point gap. Price -110 if the juice is not posted.

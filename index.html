@@ -1149,7 +1149,7 @@ function sharpRead(rows){
   const edges = rows.filter(r => /edge/i.test(r[5] || "") || /^high\b/i.test(r[5] || ""));
   const names = edges.map(r => r[1] + " " + r[3]);
   const best = names.slice(0, 4).join(", ");
-  return "Play the price, not the name. The card is built the sharp way: dogs, named totals, and no short favorite. Best use of the card: " + (best || "the posted edges") + ". Those are the only plays with a real number and a reason. Pass a medium dog under 5 points and pass an estimated same-game parlay unless the straight leg is already the play. Shop the -110. If the book is -115 or shorter, pass it. Two legs in the same game is the max. This is a read of the card, not a guarantee.";
+  return "Play the price, not the name. The card is built the sharp way: dogs, named totals, and no short favorite. A play also has to clear turnovers and the bench. A team that gives it away, or has no second scorer, does not get a rest dog. Best use of the card: " + (best || "the posted edges") + ". Those are the only plays with a real number and a reason. Pass a medium dog under 5 points and pass an estimated same-game parlay unless the straight leg is already the play. Shop the -110. If the book is -115 or shorter, pass it. Two legs in the same game is the max. This is a read of the card, not a guarantee.";
 }
 function chartSlips(){
   const all = load().concat(loadGrade()).concat(gradeFile);
