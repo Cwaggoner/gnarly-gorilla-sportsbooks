@@ -98,7 +98,16 @@ form, .row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1f
 .stack { display:flex; flex-direction:row; gap:8px; grid-column:1 / -1; align-items:flex-end; }
 #picknote, #loadnote, #editnote { display:flex; align-items:center; min-height:38px; margin:0; padding:8px 12px; border:1px solid var(--line); border-radius:8px; box-sizing:border-box; }
 .bet-top { grid-column:1 / -1; display:grid; grid-template-columns:minmax(0,1fr) 170px 210px; gap:10px; align-items:stretch; }
-.bet-box { border:1px solid #39ff14; border-radius:10px; padding:8px 6px; box-sizing:border-box; display:flex; flex-direction:column; justify-content:flex-start; }
+.payout-box { margin:10px 0; border:1px solid #39ff14; border-radius:10px; padding:10px; }
+.payout-box h3 { margin:0 0 8px; color:#39ff14; font-size:16px; }
+.payout-bars { display:flex; align-items:flex-end; gap:6px; height:148px; }
+.payout-col { flex:1 1 0; min-width:0; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; gap:4px; }
+.payout-bar { width:100%; background:#39ff14; border-radius:6px 6px 0 0; }
+.payout-col.usual .payout-bar { background:#f0e14a; }
+.payout-win, .payout-odds { font-size:11px; line-height:1.1; text-align:center; }
+.payout-win { color:#39ff14; }
+.payout-col.usual .payout-win, .payout-col.usual .payout-odds { color:#f0e14a; }
+.payout-odds { color:#d6ffd0; }
 #betfields { display:flex; flex-direction:column; justify-content:flex-start; gap:8px; align-items:stretch; }
 .field-grid { display:grid; grid-template-columns:16ch 12ch 8ch 11ch minmax(0,1fr) 11ch; gap:2px; align-content:start; justify-content:start; }
 .field-grid label { min-width:0; }
@@ -351,6 +360,23 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <section class="card" id="liveodds"><div class="section-head"><h2>Live Odds</h2><p class="warn slips-side">Moneyline, spread, and total across books. Refresh pulls the live price.</p></div><div class="odds-tools" id="compareday"><button type="button" id="day-yesterday">Yesterday</button><button type="button" id="day-today">Today</button><select id="comparesport"><option selected>All</option><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option></select><select id="comparemarket"><option value="h2h" selected>Moneyline</option><option value="spreads">Spread</option><option value="totals">Total</option></select><button type="button" id="refreshodds">Refresh</button></div><div id="oddscompare"></div></section>
 <section class="card" id="todaycard">
 <div class="section-head"><h2>Today's Card</h2><p class="warn slips-side">One play per line: Sport | Type | Pick | American odds | Confidence. Stake is $10. Book is the dropdown below. Pending until graded.</p></div>
+<div class="payout-box">
+<h3>$10 Win</h3>
+<p class="warn">What a $10 bet wins at the American odds used on these cards. Amber is -110, the usual number.</p>
+<div class="payout-bars">
+<div class="payout-col"><div class="payout-bar" style="height:33%"></div><span class="payout-win">$6.67</span><span class="payout-odds">-150</span></div>
+<div class="payout-col"><div class="payout-bar" style="height:38%"></div><span class="payout-win">$7.69</span><span class="payout-odds">-130</span></div>
+<div class="payout-col usual"><div class="payout-bar" style="height:45%"></div><span class="payout-win">$9.09</span><span class="payout-odds">-110</span></div>
+<div class="payout-col"><div class="payout-bar" style="height:48%"></div><span class="payout-win">$9.52</span><span class="payout-odds">-105</span></div>
+<div class="payout-col"><div class="payout-bar" style="height:50%"></div><span class="payout-win">$10</span><span class="payout-odds">+100</span></div>
+<div class="payout-col"><div class="payout-bar" style="height:55%"></div><span class="payout-win">$11</span><span class="payout-odds">+110</span></div>
+<div class="payout-col"><div class="payout-bar" style="height:60%"></div><span class="payout-win">$12</span><span class="payout-odds">+120</span></div>
+<div class="payout-col"><div class="payout-bar" style="height:65%"></div><span class="payout-win">$13</span><span class="payout-odds">+130</span></div>
+<div class="payout-col"><div class="payout-bar" style="height:75%"></div><span class="payout-win">$15</span><span class="payout-odds">+150</span></div>
+<div class="payout-col"><div class="payout-bar" style="height:88%"></div><span class="payout-win">$17.50</span><span class="payout-odds">+175</span></div>
+<div class="payout-col"><div class="payout-bar" style="height:100%"></div><span class="payout-win">$20</span><span class="payout-odds">+200</span></div>
+</div>
+</div>
 <div class="card-analysis" id="cardanalysis"><h3 class="split-title">Analysis</h3><div class="analysis-grid" id="analysisgrid"></div><div class="sharp-read"><b>Analysis:</b><p id="sharpread"></p></div><div id="cardgames"></div></div>
 <h2 class="split-title">Injury Reports</h2>
 <ul class="odds-notes">
