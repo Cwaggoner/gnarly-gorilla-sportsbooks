@@ -3,6 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>
+(function(){
+  var file = (location.pathname.split("/").pop() || "index.html").toLowerCase();
+  var q = new URLSearchParams(location.search).get("page") || "";
+  var map = {games:"games", seasons:"seasons", dashboard:"dashboard", today:"todaycard", live:"liveodds", slips:"slips", report:"reportcard", charts:"charts", books:"breaks", add:"addbet", calendar:"calendarcard", about:"about"};
+  var screen = file === "seasons.html" ? "seasons" : file === "dashboard.html" ? "dashboard" : (map[q] || "games");
+  document.documentElement.setAttribute("data-page", screen);
+})();
+</script>
 <title>Gnarly Gorilla Sportsbooks | Bet Ledger For CBB, CFB, MLB, NBA, NFL, NHL</title>
 <meta name="description" content="Gnarly Gorilla Sportsbooks is a free bet ledger for Chrome and Chromebook. Log BetMGM, Caesars, DraftKings, Fanatics, FanDuel, and HardRock slips for CBB, CFB, MLB, NBA, NFL, and NHL, then grade them into a report card.">
 <meta name="robots" content="index, follow, max-image-preview:large">
@@ -313,6 +322,20 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 .loss { color:var(--red) !important; }
 .view { display:none; }
 .view.on { display:block; }
+html[data-page] .view { display:none !important; }
+html[data-page="games"] #games,
+html[data-page="seasons"] #seasons,
+html[data-page="dashboard"] #dashboard,
+html[data-page="todaycard"] #todaycard,
+html[data-page="liveodds"] #liveodds,
+html[data-page="slips"] #slips,
+html[data-page="reportcard"] #reportcard,
+html[data-page="charts"] #charts,
+html[data-page="breaks"] #breaks,
+html[data-page="addbet"] #addbet,
+html[data-page="calendarcard"] #calendarcard,
+html[data-page="about"] #about { display:block !important; }
+html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-page="todaycard"]):not([data-page="addbet"]) #sgpbox { display:none !important; }
 #sitenav button.on, #sitenav a.on, .sport-bar button.on { color:#39ff14; outline:1px solid #39ff14; }
 .sport-bar { display:flex; flex-wrap:wrap; gap:6px; margin:8px 0; }
 .sport-bar button { height:38px; min-width:7ch; }
@@ -6424,6 +6447,7 @@ function showView(id){
   const parent = screens.indexOf(id) >= 0 ? null : box.closest(".view");
   const screen = screens.indexOf(id) >= 0 ? id : (parent && screens.indexOf(parent.id) >= 0 ? parent.id : "");
   if (!screen) return;
+  document.documentElement.dataset.page = screen;
   screens.forEach(key => {
     const el = document.getElementById(key);
     if (!el) return;
