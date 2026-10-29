@@ -123,6 +123,12 @@ form, .row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1f
 #betnotes { display:flex; flex-direction:column; justify-content:center; gap:8px; min-height:120px; }
 #sgpbox { grid-column:1 / -1; display:flex; flex-direction:column; align-items:stretch; gap:8px; }
 #sgpbox h3 { margin:0; color:#39ff14; font-size:16px; text-align:left; }
+.card-prices { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+.card-price { height:auto; text-align:left; color:#39ff14; cursor:pointer; }
+.slip-row { display:flex; justify-content:space-between; gap:8px; align-items:center; border:1px solid #243024; border-radius:8px; padding:6px 8px; color:#d6ffd0; text-align:left; }
+.slip-row.edge { color:#f0e14a; }
+.slip-row button { height:28px; padding:2px 8px; }
+.slip-actions { display:flex; gap:8px; flex-wrap:wrap; }
 .sgp-legs { display:flex; flex-direction:column; gap:4px; }
 .sgp-leg { display:flex; gap:8px; align-items:flex-start; color:#d6ffd0; font-size:13px; text-align:left; }
 .sgp-leg input { margin-top:2px; }
@@ -503,8 +509,8 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 </div>
 </div>
 <div class="bet-box" id="sgpbox">
-<h3>SGP</h3>
-<p class="warn">Built from today's card. Check the legs, then add the ticket to Slips.</p>
+<h3>Bet Slip</h3>
+<p class="warn">Click a price on Today's Card or Best Price. The legs stack here. Nothing is sent to a sportsbook.</p>
 <div class="sgp-legs" id="sgplegs"></div>
 <div class="sgp-partner">
 <label>Same-game second leg<input id="sgppartner" placeholder="Under in that game"></label>
@@ -513,7 +519,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <div class="sgp-ideas" id="sgpideas"></div>
 <p id="sgpprice" class="warn"></p>
 <p id="sgprisk" class="warn sgp-risk"></p>
-<button type="button" id="sgpadd">Add</button>
+<div class="slip-actions"><button type="button" id="sgpadd">Add</button><button type="button" id="slipimage">Save Image</button><button type="button" id="slipclear">Clear Slip</button></div>
 </div>
 <div class="stack">
 <button type="submit" id="savebtn">Save Bet</button>
@@ -1160,7 +1166,15 @@ function drawCardAnalysis(text){
     }
     const edges = plays.filter(r => /edge/i.test(r[5] || "") || /^high\b/i.test(r[5] || ""));
     const note = edges.length ? edges.map(r => r[3]).join("; ") : (plays[0][3] + " leads the card.");
-    return "<div class='analysis-cell'><b>" + sport + "</b><div class='meta'>" + plays.length + " plays" + (edges.length ? " · " + edges.length + " edge" + (edges.length === 1 ? "" : "s") : "") + "</div><p>" + sportLean(plays) + ". " + note + "</p></div>";
+    const buttons = plays.map(r => {
+      const price = Number(String(r[4] || "").replace(/[^\d.+-]/g, ""));
+      if (!Number.isFinite(price)) return "";
+      const data = {sport: r[1], type: r[2] || "Spread", pick: r[3], odds: String(price), date: r[0], edge: /edge/i.test(r[5] || "") ? "1" : "0"};
+      const attrs = Object.keys(data).map(key => " data-" + key + "='" + encodeURIComponent(data[key]) + "'").join("");
+      const shown = (price > 0 ? "+" : "") + price;
+      return "<button type='button' class='card-price'" + attrs + ">" + esc(r[3] + " " + shown) + "</button>";
+    }).join("");
+    return "<div class='analysis-cell'><b>" + sport + "</b><div class='meta'>" + plays.length + " plays" + (edges.length ? " · " + edges.length + " edge" + (edges.length === 1 ? "" : "s") : "") + "</div><p>" + sportLean(plays) + ". " + note + "</p><div class='card-prices'>" + buttons + "</div></div>";
   }).join("");
   if (title) title.textContent = "Analysis · " + day;
   if (read) read.textContent = sharpRead(rows);
@@ -2351,13 +2365,32 @@ function openBestBet(btn){
   opt.dataset.close = price;
   opt.selected = true;
   sel.appendChild(opt);
-  document.getElementById("picknote").textContent = book + " " + price + " is filled in for " + pick + ". Check it, then Save Bet." + (split ? " The books do not share one number, so this is the BetMGM side." : "");
+  document.getElementById("picknote").textContent = book + " " + price + " is on the bet slip and filled in above. Add writes the slip. Save Bet still saves this one leg by itself." + (split ? " The books do not share one number, so this is the BetMGM side." : "");
   document.getElementById("editnote").textContent = "";
+  addSlipLeg({date: date, sport: sport, type: type, pick: pick, odds: Number(price), book: book, edge: false});
   document.getElementById("addbet").scrollIntoView({behavior:"smooth", block:"start"});
 }
 document.body.addEventListener("click", e => {
   const priceBtn = e.target.closest && e.target.closest(".add-price");
   if (priceBtn) { openBestBet(priceBtn); return; }
+  const cardBtn = e.target.closest && e.target.closest(".card-price");
+  if (cardBtn) {
+    addSlipLeg({
+      date: decodeURIComponent(cardBtn.dataset.date || "") || easternDay(),
+      sport: decodeURIComponent(cardBtn.dataset.sport || ""),
+      type: decodeURIComponent(cardBtn.dataset.type || "Spread"),
+      pick: decodeURIComponent(cardBtn.dataset.pick || ""),
+      odds: Number(decodeURIComponent(cardBtn.dataset.odds || "")),
+      edge: cardBtn.dataset.edge === "1"
+    });
+    return;
+  }
+  const drop = e.target.closest && e.target.closest(".slip-x");
+  if (drop) {
+    betSlip.splice(Number(drop.dataset.i), 1);
+    paintSlip();
+    return;
+  }
   const btn = e.target.closest && e.target.closest(".add-game");
   if (!btn) return;
   openGameBet(decodeURIComponent(btn.dataset.sport || ""), decodeURIComponent(btn.dataset.game || ""), decodeURIComponent(btn.dataset.date || ""));
@@ -4115,46 +4148,30 @@ function americanFromDec(dec){
   const profit = dec - 1;
   return profit >= 1 ? Math.round(profit * 100) : Math.round(-100 / profit);
 }
-function sgpSelected(){
-  return [...document.querySelectorAll("#sgplegs input:checked")].map(box => {
-    const plays = sgpDayPlays();
-    return plays.find(p => p.sport + "|" + p.pick === box.value);
-  }).filter(Boolean);
+let betSlip = [];
+function addSlipLeg(leg){
+  if (!leg || !leg.pick || !Number.isFinite(Number(leg.odds))) return;
+  const key = [leg.sport, leg.pick, Number(leg.odds)].join("|");
+  if (betSlip.some(row => [row.sport, row.pick, row.odds].join("|") === key)) { paintSlip(); return; }
+  betSlip.push({date: leg.date || easternDay(), sport: leg.sport || "", type: leg.type || "Spread", pick: leg.pick, odds: Number(leg.odds), book: leg.book || "", edge: !!leg.edge, notes: leg.notes || ""});
+  paintSlip();
 }
 function sgpPartner(){
   const name = (document.getElementById("sgppartner") || {}).value || "";
   const odds = Number((document.getElementById("sgppartnerodds") || {}).value);
   const text = name.trim();
   if (!text || !Number.isFinite(odds) || odds === 0) return null;
-  const base = sgpSelected()[0];
+  const base = betSlip[0];
   return {date: base ? base.date : easternDay(), sport: base ? base.sport : "", type: "Total", pick: text, odds: odds, notes: "Suggested second leg", edge: false, partner: true};
 }
-function sgpTicket(){
-  const posted = sgpSelected();
+function slipTicket(){
   const partner = sgpPartner();
-  return partner ? posted.concat(partner) : posted;
+  return partner ? betSlip.concat(partner) : betSlip.slice();
 }
 function drawSgp(){
-  const legs = document.getElementById("sgplegs");
   const ideas = document.getElementById("sgpideas");
-  const price = document.getElementById("sgpprice");
-  const risk = document.getElementById("sgprisk");
-  const btn = document.getElementById("sgpadd");
-  if (!legs || !ideas) return;
+  if (!ideas) return;
   const plays = sgpDayPlays();
-  const kept = new Set([...document.querySelectorAll("#sgplegs input:checked")].map(box => box.value));
-  if (!plays.length) {
-    legs.innerHTML = "<p class='warn'>No sides on today's card yet.</p>";
-    ideas.innerHTML = "";
-    if (price) price.textContent = "";
-    if (risk) risk.textContent = "Two legs in one game is the bet. A third leg cuts the winners roughly in half and the bigger price does not pay for it.";
-    if (btn) btn.disabled = true;
-    return;
-  }
-  legs.innerHTML = plays.map(p => {
-    const id = p.sport + "|" + p.pick;
-    return "<label class='sgp-leg'><input type='checkbox' value='" + esc(id) + "'" + (kept.has(id) ? " checked" : "") + "> " + esc(p.sport + " " + p.pick + " " + (p.odds > 0 ? "+" + p.odds : p.odds) + (p.edge ? " · Edge" : "")) + "</label>";
-  }).join("");
   const edges = plays.filter(p => p.edge);
   const tips = (edges.length ? edges : plays).map(p => {
     const dog = p.odds > 0 || /[+]/.test(p.pick);
@@ -4162,60 +4179,84 @@ function drawSgp(){
       ? p.sport + " " + p.pick + " with the under in that same game."
       : p.sport + " " + p.pick + " stays a straight bet. Do not add a leg to a favorite.";
   });
-  ideas.innerHTML = "<p class='warn'>Best build is two legs in one game. " + esc(tips.join(" ")) + " Do not cross two games. That is a parlay, and one miss loses both.</p>";
-  legs.querySelectorAll("input").forEach(box => box.onchange = paintSgp);
+  ideas.innerHTML = plays.length ? "<p class='warn'>Best build is two legs in one game. " + esc(tips.join(" ")) + " Do not cross two games. That is a parlay, and one miss loses both.</p>" : "";
   ["sgppartner","sgppartnerodds"].forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.oninput = paintSgp;
+    if (el && !el.dataset.bound) { el.dataset.bound = "1"; el.oninput = paintSlip; }
   });
-  paintSgp();
+  paintSlip();
 }
 function sgpSame(picked){
   const posted = picked.filter(p => !p.partner);
   if (picked.some(p => p.partner)) return posted.length === 1;
-  return new Set(posted.map(p => sgpGame(p.pick))).size === 1;
+  return new Set(posted.map(p => sgpGame(p.pick))).size <= 1 && posted.length > 0;
 }
-function paintSgp(){
+function slipMath(picked){
+  const stake = Number(form.stake.value) || 10;
+  const dec = picked.reduce((prod, p) => prod * decFromAmerican(p.odds), 1);
+  const american = picked.length ? (picked.length === 1 ? picked[0].odds : americanFromDec(dec)) : NaN;
+  const win = Number.isFinite(american) ? (american > 0 ? stake * american / 100 : stake * 100 / Math.abs(american)) : NaN;
+  return {stake: stake, american: american, win: win, same: sgpSame(picked)};
+}
+function paintSlip(){
+  const legs = document.getElementById("sgplegs");
   const price = document.getElementById("sgpprice");
   const risk = document.getElementById("sgprisk");
   const btn = document.getElementById("sgpadd");
-  const picked = sgpTicket();
-  const same = sgpSame(picked);
-  const dec = picked.reduce((prod, p) => prod * decFromAmerican(p.odds), 1);
-  const american = picked.length ? americanFromDec(dec) : NaN;
-  const win = Number.isFinite(american) ? (american > 0 ? 10 * american / 100 : 10 * 100 / Math.abs(american)) : NaN;
+  const image = document.getElementById("slipimage");
+  const picked = slipTicket();
+  if (legs) {
+    legs.innerHTML = betSlip.length ? betSlip.map((p, i) => "<div class='slip-row" + (p.edge ? " edge" : "") + "'><span>" + esc((p.sport ? p.sport + " " : "") + p.pick + " " + (p.odds > 0 ? "+" : "") + p.odds) + "</span><button type='button' class='slip-x' data-i='" + i + "'>Remove</button></div>").join("") : "<p class='warn'>The slip is empty.</p>";
+  }
+  const math = slipMath(picked);
   if (price) {
-    if (picked.length < 2) price.textContent = "Check at least two legs.";
-    else price.textContent = (same ? "Same game." : "Different games. This is a parlay, not an SGP.") + " Price " + (american > 0 ? "+" : "") + american + ". A $10 win pays $" + win.toFixed(2) + ".";
+    if (!picked.length) price.textContent = "Click a price. A straight bet is one leg. Two legs in one game is the parlay.";
+    else if (picked.length === 1) price.textContent = "Straight bet. Price " + (math.american > 0 ? "+" : "") + math.american + ". A $" + math.stake.toFixed(0) + " win pays $" + math.win.toFixed(2) + ".";
+    else price.textContent = (math.same ? "Same game." : "Different games. This is a parlay, not an SGP.") + " Calculator price " + (math.american > 0 ? "+" : "") + math.american + ". A $" + math.stake.toFixed(0) + " win pays $" + math.win.toFixed(2) + ". This is not the book's same-game price.";
   }
   if (risk) {
     risk.textContent = picked.length >= 3
-      ? "Three legs is the cut. Two -110 legs pay about +264 and hit together about 22% of the time at a 47% clip. The third leg pays about +596 and leaves about 10%. You lose more tickets than the extra price gives back. Stop at two unless both of the first two win with the third."
-      : "Two legs is the bet. A third leg keeps only about half of the two-leg winners. At a 47% clip that is about 22% down to 10%, and the bigger number does not cover the tickets that die.";
+      ? "Three legs is the cut. Two -110 legs pay about +264 and hit together about 22% of the time at a 47% clip. The third leg pays about +596 and leaves about 10%. You lose more tickets than the extra price gives back."
+      : "Two legs is the bet. A third leg keeps only about half of the two-leg winners. At a 47% clip that is about 22% down to 10%.";
   }
-  if (btn) btn.disabled = picked.length < 2;
+  if (btn) btn.disabled = !picked.length;
+  if (image) image.disabled = !picked.length;
+}
+function slipRow(picked){
+  const math = slipMath(picked);
+  const sports = new Set(picked.map(p => p.sport).filter(Boolean));
+  const one = picked.length === 1;
+  return {
+    date: picked[0].date || easternDay(),
+    book: (picked.find(p => p.book) || {}).book || form.book.value || "BetMGM",
+    sport: sports.size === 1 ? [...sports][0] : (one ? picked[0].sport : "Multi"),
+    type: one ? (picked[0].type || "Spread") : (math.same ? "SGP" : "Parlay"),
+    pick: one ? picked[0].pick : ((math.same ? "SGP " : "Parlay ") + picked.map(p => (p.sport ? p.sport + " " : "") + p.pick).join(" and ")),
+    odds: math.american,
+    stake: math.stake,
+    same: math.same,
+    win: math.win,
+    legs: picked
+  };
 }
 document.getElementById("sgpadd").onclick = () => {
-  const picked = sgpTicket();
+  const picked = slipTicket();
   const note = document.getElementById("sgpprice");
-  if (picked.length < 2) return;
-  const games = new Set(picked.map(p => sgpGame(p.pick)));
-  const same = games.size === 1;
-  const sports = new Set(picked.map(p => p.sport));
-  const dec = picked.reduce((prod, p) => prod * decFromAmerican(p.odds), 1);
-  const american = americanFromDec(dec);
+  if (!picked.length) return;
+  const built = slipRow(picked);
   const row = stampPlaced(markEdge({
     id: Date.now(),
-    date: picked[0].date,
-    book: form.book.value || "BetMGM",
-    sport: sports.size === 1 ? picked[0].sport : "Multi",
-    type: same ? "SGP" : "Parlay",
-    pick: (same ? "SGP " : "Parlay ") + picked.map(p => p.sport + " " + p.pick).join(" and "),
-    odds: american,
-    stake: Number(form.stake.value) || 10,
+    date: built.date,
+    book: built.book,
+    sport: built.sport,
+    type: built.type,
+    pick: built.pick,
+    odds: built.odds,
+    stake: built.stake,
     result: "pending",
-    notes: (picked.length >= 3 ? "Third leg. The hit rate is cut again. " : "Two legs. ") + (same ? "Same game." : "Different games.") + " Built from the card.",
-    manual: true
+    notes: (picked.length >= 3 ? "Third leg. The hit rate is cut again. " : picked.length === 2 ? "Two legs. " : "Straight bet. ") + (picked.length < 2 ? "" : (built.same ? "Same game. " : "Different games. ")) + "Calculator price, not a book same-game price. Not a wager.",
+    manual: true,
+    edge: picked.some(p => p.edge)
   }));
   const bets = load();
   if (!placePending(bets, row)) {
@@ -4223,8 +4264,98 @@ document.getElementById("sgpadd").onclick = () => {
     return;
   }
   save(bets);
-  if (note) note.textContent = "Added to Slips. " + row.pick + " at " + (american > 0 ? "+" : "") + american + ".";
+  if (note) note.textContent = "Added to Slips. Nothing was sent to a sportsbook. " + row.pick + " at " + (built.odds > 0 ? "+" : "") + built.odds + ".";
 };
+document.getElementById("slipclear").onclick = () => {
+  betSlip = [];
+  const partner = document.getElementById("sgppartner");
+  const odds = document.getElementById("sgppartnerodds");
+  if (partner) partner.value = "";
+  if (odds) odds.value = "";
+  paintSlip();
+};
+async function saveSlipImage(){
+  const note = document.getElementById("sgpprice");
+  const picked = slipTicket();
+  if (!picked.length) { if (note) note.textContent = "Add a leg before saving an image."; return; }
+  const built = slipRow(picked);
+  const canvas = document.createElement("canvas");
+  canvas.width = 1080;
+  canvas.height = 1350;
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = "#0a0a0a";
+  ctx.fillRect(0, 0, 1080, 1350);
+  ctx.strokeStyle = "#39ff14";
+  ctx.lineWidth = 6;
+  roundRect(ctx, 36, 36, 1008, 1278, 28);
+  ctx.stroke();
+  const icon = new Image();
+  icon.src = "gg-icon.png";
+  await new Promise(res => { icon.onload = () => res(); icon.onerror = () => res(); });
+  if (icon.complete && icon.naturalWidth) {
+    ctx.save();
+    roundRect(ctx, 900, 64, 112, 112, 16);
+    ctx.stroke();
+    ctx.clip();
+    ctx.drawImage(icon, 906, 70, 100, 100);
+    ctx.restore();
+  }
+  ctx.fillStyle = "#39ff14";
+  ctx.font = "bold 54px sans-serif";
+  ctx.fillText("Gnarly Gorilla", 72, 130);
+  ctx.fillStyle = "#d6ffd0";
+  ctx.font = "28px sans-serif";
+  ctx.fillText((slateDateLabel(built.date) || built.date) + "  ·  " + built.book, 72, 180);
+  ctx.strokeStyle = "#39ff14";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(72, 214);
+  ctx.lineTo(1008, 214);
+  ctx.stroke();
+  const fit = text => {
+    let t = String(text || "");
+    while (t.length > 3 && ctx.measureText(t).width > 820) t = t.slice(0, -2);
+    return t.length < String(text || "").length ? t.slice(0, -1) + "..." : t;
+  };
+  let y = 280;
+  built.legs.slice(0, 8).forEach(leg => {
+    ctx.fillStyle = leg.edge ? "#f0e14a" : "#d6ffd0";
+    ctx.font = "32px sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText(fit((leg.sport ? leg.sport + "   " : "") + leg.pick), 72, y);
+    ctx.fillStyle = "#39ff14";
+    ctx.textAlign = "right";
+    ctx.fillText((leg.odds > 0 ? "+" : "") + leg.odds, 1008, y);
+    ctx.textAlign = "left";
+    y += 64;
+  });
+  if (built.legs.length >= 3) {
+    ctx.fillStyle = "#f0e14a";
+    ctx.font = "26px sans-serif";
+    ctx.fillText("Third leg cuts the ticket. Two legs is the bet.", 72, y + 10);
+    y += 56;
+  } else if (built.legs.length > 1) {
+    ctx.fillStyle = "#d6ffd0";
+    ctx.font = "26px sans-serif";
+    ctx.fillText(built.same ? "Same game." : "Different games. One miss loses the ticket.", 72, y + 10);
+    y += 56;
+  }
+  y += 36;
+  ctx.fillStyle = "#39ff14";
+  ctx.font = "bold 36px sans-serif";
+  ctx.fillText("Stake $" + built.stake.toFixed(2), 72, y);
+  ctx.fillText("Price " + (built.odds > 0 ? "+" : "") + built.odds, 72, y + 52);
+  ctx.fillText("To win $" + (Number.isFinite(built.win) ? built.win.toFixed(2) : "0.00"), 72, y + 104);
+  ctx.fillStyle = "#f0e14a";
+  ctx.font = "24px sans-serif";
+  ctx.fillText("Not a wager. A same-game price at the book can differ.", 72, Math.min(y + 170, 1260));
+  const blob = await new Promise(res => canvas.toBlob(res, "image/png"));
+  if (!blob) { if (note) note.textContent = "The image did not build."; return; }
+  download("gnarly-gorilla-bet-card.png", blob);
+  if (note) note.textContent = "Image saved. Nothing was sent to a sportsbook.";
+}
+document.getElementById("slipimage").onclick = () => { saveSlipImage().catch(err => { const note = document.getElementById("sgpprice"); if (note) note.textContent = (err && err.message) || "Image failed."; }); };
+paintSlip();
 document.getElementById("rows").onclick = e => {
   const t = e.target;
   if (t.dataset.edit) {
