@@ -1,6 +1,6 @@
 # file: grades
 2026-10-28 | RANGE | All Win 9.09 | All Lose -10.00
-2026-10-28 | NBA | Hornets +6.5 | close -110 | loss | 89-97 | -10.00
+2026-10-28 | NBA | Hornets +6.5 | close +105 | loss | 89-97 | -10.00
 2026-10-28 | NHL | No Picks
 2026-10-28 | MLB | No Picks
 2026-10-28 | CFB | No Picks
