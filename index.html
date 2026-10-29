@@ -312,7 +312,9 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 .loss { color:var(--red) !important; }
 .view { display:none; }
 .view.on { display:block; }
-#sitenav button.on { color:#39ff14; outline:1px solid #39ff14; }
+#sitenav button.on, .sport-bar button.on { color:#39ff14; outline:1px solid #39ff14; }
+.sport-bar { display:flex; flex-wrap:wrap; gap:6px; margin:8px 0; }
+.sport-bar button { height:38px; min-width:7ch; }
 .game-row { border:1px solid #39ff14; border-radius:10px; margin:8px 0; padding:10px; background:#101610; }
 .game-row h3 { margin:0 0 8px; color:#39ff14; font-size:15px; }
 .game-lines { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
@@ -374,7 +376,15 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <div class="section-head"><h2>Games</h2><p class="warn slips-side">Tap a price. Nothing is sent to a book.</p></div>
 <div class="odds-tools">
 <label>Book<select id="gamebook" class="book-select"><option>BetMGM</option><option>Caesars</option><option>DraftKings</option><option>Fanatics</option><option>FanDuel</option><option>HardRock</option></select></label>
-<label>Sport<select id="gamesport" class="sport-select"><option selected>All</option><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option></select></label>
+</div>
+<div class="sport-bar" id="sportbar">
+<button type="button" class="on" data-sport="All">All</button>
+<button type="button" data-sport="CBB">CBB</button>
+<button type="button" data-sport="CFB">CFB</button>
+<button type="button" data-sport="MLB">MLB</button>
+<button type="button" data-sport="NBA">NBA</button>
+<button type="button" data-sport="NFL">NFL</button>
+<button type="button" data-sport="NHL">NHL</button>
 </div>
 <div id="gameboard"><p class="warn">Loading the board.</p></div>
 </section>
@@ -6302,9 +6312,9 @@ function drawGameBoard(){
   const box = document.getElementById("gameboard");
   if (!box) return;
   const bookEl = document.getElementById("gamebook");
-  const sportEl = document.getElementById("gamesport");
+  const sportBtn = document.querySelector("#sportbar button.on");
   const book = bookEl ? bookEl.value : "BetMGM";
-  const sport = sportEl ? sportEl.value : "All";
+  const sport = sportBtn ? sportBtn.dataset.sport : "All";
   const day = easternDay();
   const block = window.__ggOddsBoard && window.__ggOddsBoard.days && window.__ggOddsBoard.days[day];
   if (!block) { box.innerHTML = "<p class='warn'>No board for today yet.</p>"; return; }
@@ -6354,14 +6364,18 @@ function jumpToCard(id){
   showView(id);
 }
 pinOffset();
-["gamebook","gamesport"].forEach(id => {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.onchange = () => {
-    if (id === "gamebook" && form && form.book && [...form.book.options].some(o => o.value === el.value)) form.book.value = el.value;
-    drawGameBoard();
-  };
-});
+const gamebook = document.getElementById("gamebook");
+if (gamebook) gamebook.onchange = () => {
+  if (form && form.book && [...form.book.options].some(o => o.value === gamebook.value)) form.book.value = gamebook.value;
+  drawGameBoard();
+};
+const sportbar = document.getElementById("sportbar");
+if (sportbar) sportbar.onclick = e => {
+  const btn = e.target.closest("button");
+  if (!btn) return;
+  sportbar.querySelectorAll("button").forEach(b => b.classList.toggle("on", b === btn));
+  drawGameBoard();
+};
 window.addEventListener("resize", pinOffset);
 function pinOffset(){
   const bar = document.querySelector(".topbar");
