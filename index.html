@@ -17,8 +17,6 @@
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="theme-color" content="#0a0a0a">
 <link rel="canonical" href="https://cwaggoner.github.io/gnarly-gorilla-sportsbooks/">
-<link rel="preload" href="cards/ledger.json?v=20261029b" as="fetch">
-<link rel="preload" href="cards/odds-board.json?v=20261029b" as="fetch">
 <link rel="icon" href="gg-icon.png" type="image/png">
 <link rel="apple-touch-icon" href="gg-icon.png">
 <meta property="og:type" content="website">
@@ -5541,7 +5539,23 @@ async function catchUp(){
   render();
   gradeOpenSlate().catch(() => {});
 }
-catchUp();
+function pageNeeds(kind){
+  const page = document.documentElement.dataset.page || "games";
+  const map = {
+    odds: ["games","liveodds"],
+    heavy: ["slips","breaks","dashboard","reportcard","charts","calendarcard","todaycard"],
+    seasons: ["seasons"],
+    slate: ["todaycard"],
+    calendar: ["calendarcard","dashboard","charts"],
+    report: ["reportcard"],
+    books: ["breaks","slips","reportcard"],
+    closes: ["slips","dashboard","reportcard"],
+    profit: ["charts"],
+    today: ["todaycard"]
+  };
+  return (map[kind] || []).indexOf(page) >= 0;
+}
+if (pageNeeds("heavy")) catchUp();
 let stateRules = {};
 let visitorState = "";
 function applyState(name){
@@ -6242,20 +6256,22 @@ document.getElementById("nextMonth").onclick = () => { monthCursor.setMonth(mont
   } catch (err) {}
 });
 try { render(); } catch (err) {}
-loadSeasons();
-loadPickSlate();
-setInterval(() => { loadPickSlate(); }, 300000);
-fetch("cards/calendar.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => { if (data && data.dates) publishedCalendar = data.dates; render(); }).catch(() => {});
-loadProfitFile();
-setInterval(() => {
-  fetch("cards/calendar.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => {
+if (pageNeeds("seasons")) loadSeasons();
+if (pageNeeds("slate")) {
+  loadPickSlate();
+  setInterval(() => { loadPickSlate(); }, 300000);
+}
+if (pageNeeds("calendar")) fetch("cards/calendar.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => { if (data && data.dates) publishedCalendar = data.dates; render(); }).catch(() => {});
+if (pageNeeds("profit")) loadProfitFile();
+if (pageNeeds("calendar") || pageNeeds("profit")) setInterval(() => {
+  if (pageNeeds("calendar")) fetch("cards/calendar.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => {
     if (!data || !data.dates) return;
     publishedCalendar = data.dates;
     drawCharts();
   }).catch(() => {});
-  loadProfitFile();
+  if (pageNeeds("profit")) loadProfitFile();
 }, 300000);
-fetch("cards/report.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
+if (pageNeeds("report")) fetch("cards/report.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
   let day = ((text.match(/Yesterday\s+(\d{4}-\d{2}-\d{2})/) || [])[1]) || "";
   text.split(/\n/).forEach(line => {
     if (!/\bEDGE\b/.test(line)) return;
@@ -6267,11 +6283,15 @@ fetch("cards/report.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(
   });
   if (edgePicks.size) loadCloses().then(() => { render(); showSeasons(); }).catch(() => { render(); showSeasons(); });
 }).catch(() => {});
-refreshTodayCard();
-setInterval(refreshTodayCard, 60000);
+if (pageNeeds("today")) {
+  refreshTodayCard();
+  setInterval(refreshTodayCard, 60000);
+}
 (async () => { const k = (document.getElementById("oddskey") || {}).value || ""; if (k.trim()) { paidKey = true; } })();
-loadDriveCardForCalendar();
-setInterval(loadDriveCardForCalendar, 60000);
+if (pageNeeds("calendar")) {
+  loadDriveCardForCalendar();
+  setInterval(loadDriveCardForCalendar, 60000);
+}
 function booksFromOddsBoard(board){
   const out = {};
   const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
@@ -6323,16 +6343,18 @@ function applyPublishedBooks(){
   publishedBooks = Object.assign({}, fileBooks, booksFromOddsBoard(window.__ggOddsBoard || {}));
   render();
 }
-fetch(cardUrl("cards/book-prices.json")).then(r => r.ok ? r.json() : null).then(data => { if (data) { fileBooks = data; applyPublishedBooks(); } }).catch(() => {});
-fetch(cardUrl("cards/book-closes.json")).then(r => r.ok ? r.json() : null).then(data => { if (data && data.days) { bookCloses = data; render(); } }).catch(() => {});
+if (pageNeeds("books")) {
+  fetch(cardUrl("cards/book-prices.json")).then(r => r.ok ? r.json() : null).then(data => { if (data) { fileBooks = data; applyPublishedBooks(); } }).catch(() => {});
+  fetch(cardUrl("cards/book-closes.json")).then(r => r.ok ? r.json() : null).then(data => { if (data && data.days) { bookCloses = data; render(); } }).catch(() => {});
+}
 function loadOddsBoard(data){
   if (!usableBoard(data)) data = savedBoard();
   if (!rememberBoard(data)) return;
   applyPublishedBooks();
   drawOddsCompare(false).catch(() => {});
 }
-fetch(cardUrl("cards/odds-board.json")).then(r => r.ok ? r.json() : null).then(loadOddsBoard).catch(() => loadOddsBoard(null));
-fetch("cards/closes.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
+if (pageNeeds("odds")) fetch(cardUrl("cards/odds-board.json")).then(r => r.ok ? r.json() : null).then(loadOddsBoard).catch(() => loadOddsBoard(null));
+if (pageNeeds("closes")) fetch("cards/closes.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
   const store = closeStore();
   text.split(/\n/).forEach(line => {
     line = line.trim();
@@ -6351,7 +6373,7 @@ fetch("cards/closes.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(
   if (applySavedCloses(bets)) save(bets);
   render();
 }).catch(() => {});
-fetch("cards/grades.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
+if (pageNeeds("heavy")) fetch("cards/grades.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
   gradeFile = text.split(/\n/).map(parseGradeLine).filter(Boolean);
   render();
 }).catch(() => {});
