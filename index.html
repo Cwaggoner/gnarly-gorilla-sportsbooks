@@ -5500,29 +5500,22 @@ document.getElementById("loaddrive").onclick = async () => {
   await loadDriveCard().catch(err => { note.textContent = err.message; });
 };
 async function catchUp(){
-  const ledgerP = localStorage.getItem("gg-hold-ledger") === "1" ? Promise.resolve(null) : fetch(cardUrl("cards/ledger.json")).then(r => r.ok ? r.json() : null).catch(() => null);
-  const cardP = cardBundle().catch(() => "");
+  const wantLedger = pageNeeds("ledger");
+  const wantGrades = pageNeeds("grades");
+  const wantDash = pageNeeds("dashfile");
+  if (!wantLedger && !wantGrades && !wantDash) return;
+  const ledgerP = wantLedger && localStorage.getItem("gg-hold-ledger") !== "1" ? fetch(cardUrl("cards/ledger.json")).then(r => r.ok ? r.json() : null).catch(() => null) : Promise.resolve(null);
   let gradesText = "";
   try {
-    const [cal, grades, dash] = await Promise.all([
-      fetch("cards/calendar.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).catch(() => null),
-      fetch("cards/grades.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").catch(() => ""),
-      fetch("cards/dashboard.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").catch(() => "")
+    const [grades, dash] = await Promise.all([
+      wantGrades ? fetch("cards/grades.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").catch(() => "") : Promise.resolve(""),
+      wantDash ? fetch("cards/dashboard.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").catch(() => "") : Promise.resolve("")
     ]);
     gradesText = grades || "";
-    if (cal && cal.dates) {
-      Object.keys(cal.dates).forEach(date => {
-        const prior = publishedCalendar[date] || {};
-        publishedCalendar[date] = Object.assign({}, prior, cal.dates[date]);
-        if (!Number.isFinite(Number(publishedCalendar[date].allWin)) && Number.isFinite(Number(prior.allWin))) publishedCalendar[date].allWin = prior.allWin;
-        if (!Number.isFinite(Number(publishedCalendar[date].allLose)) && Number.isFinite(Number(prior.allLose))) publishedCalendar[date].allLose = prior.allLose;
-      });
-      localStorage.setItem("gg-calendar-published", JSON.stringify(publishedCalendar));
-    }
     if (grades) gradeFile = grades.split(/\n/).map(parseGradeLine).filter(Boolean);
     if (dash) localStorage.setItem("gg-dashboard-published", dash);
   } catch (err) {}
-  if (localStorage.getItem("gg-hold-ledger") !== "1") {
+  if (wantLedger && localStorage.getItem("gg-hold-ledger") !== "1") {
     const kept = load().filter(b => b && b.manual && inSlipWindow(b.date));
     try {
       const data = await ledgerP;
@@ -5533,29 +5526,32 @@ async function catchUp(){
     } catch (err) {}
     localStorage.setItem(KEY, JSON.stringify(kept));
   }
-  await loadDriveCard(await cardP).catch(() => {});
-  await applyGrades(gradesText).catch(() => {});
+  if (wantGrades) await applyGrades(gradesText).catch(() => {});
   clearStalePending();
   render();
-  gradeOpenSlate().catch(() => {});
+  if (document.documentElement.dataset.page === "dashboard") { try { drawDashboard(); } catch (e) {} }
+  if (document.documentElement.dataset.page === "slips") gradeOpenSlate().catch(() => {});
 }
 function pageNeeds(kind){
   const page = document.documentElement.dataset.page || "games";
   const map = {
     odds: ["games","liveodds"],
-    heavy: ["slips","breaks","dashboard","reportcard","charts","calendarcard","todaycard"],
+    ledger: ["slips","breaks"],
     seasons: ["seasons"],
     slate: ["todaycard"],
     calendar: ["calendarcard","dashboard","charts"],
     report: ["reportcard"],
-    books: ["breaks","slips","reportcard"],
-    closes: ["slips","dashboard","reportcard"],
+    books: ["breaks"],
+    closes: ["slips","reportcard"],
     profit: ["charts"],
-    today: ["todaycard"]
+    today: ["todaycard"],
+    grades: ["slips","breaks","dashboard","reportcard"],
+    dashfile: ["dashboard"],
+    about: ["about"]
   };
   return (map[kind] || []).indexOf(page) >= 0;
 }
-if (pageNeeds("heavy")) catchUp();
+if (pageNeeds("ledger") || pageNeeds("grades") || pageNeeds("dashfile")) catchUp();
 let stateRules = {};
 let visitorState = "";
 function applyState(name){
@@ -5595,7 +5591,7 @@ async function locateVisitor(){
   if (ip && (ip.country_code || ip.region)) return {country: String(ip.country_code || "").toUpperCase(), region: ip.region || ""};
   return null;
 }
-later(() => { fetch(cardUrl("cards/state-rules.json")).then(r => r.ok ? r.json() : null).then(async data => {
+later(() => { if (!pageNeeds("about")) return; fetch(cardUrl("cards/state-rules.json")).then(r => r.ok ? r.json() : null).then(async data => {
   stateRules = (data && data.states) || {};
   const place = await locateVisitor();
   const books = document.getElementById("statebooks");
@@ -6288,10 +6284,6 @@ if (pageNeeds("today")) {
   setInterval(refreshTodayCard, 60000);
 }
 (async () => { const k = (document.getElementById("oddskey") || {}).value || ""; if (k.trim()) { paidKey = true; } })();
-if (pageNeeds("calendar")) {
-  loadDriveCardForCalendar();
-  setInterval(loadDriveCardForCalendar, 60000);
-}
 function booksFromOddsBoard(board){
   const out = {};
   const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
@@ -6371,10 +6363,6 @@ if (pageNeeds("closes")) fetch("cards/closes.txt?ts=" + Date.now()).then(r => r.
   saveCloseStore(store);
   const bets = load();
   if (applySavedCloses(bets)) save(bets);
-  render();
-}).catch(() => {});
-if (pageNeeds("heavy")) fetch("cards/grades.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
-  gradeFile = text.split(/\n/).map(parseGradeLine).filter(Boolean);
   render();
 }).catch(() => {});
 
