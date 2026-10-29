@@ -1,21 +1,13 @@
 {
   "date": "2026-10-29",
+  "source": "ESPN scoreboard, no odds key",
+  "passedNote": "Games being played that did not make the picks.",
   "games": [
-    {
-      "sport": "CFB",
-      "game": "Florida Atlantic Owls at North Texas Mean Green",
-      "start": "2026-10-29T23:30Z",
-      "location": "DATCU Stadium, Denton, TX",
-      "records": {
-        "away": "5-2",
-        "home": "5-2"
-      }
-    },
     {
       "sport": "CFB",
       "game": "Troy Trojans at James Madison Dukes",
       "start": "2026-10-29T23:30Z",
-      "location": "Bridgeforth Stadium, Harrisonburg, VA",
+      "location": "Bridgeforth Stadium, Harrisonburg, Virginia",
       "records": {
         "away": "3-4",
         "home": "7-1"
@@ -23,9 +15,31 @@
     },
     {
       "sport": "NBA",
+      "game": "Memphis Grizzlies at Portland Trail Blazers",
+      "start": "2026-10-30T02:00Z",
+      "location": "Moda Center, Portland, Oregon",
+      "records": {
+        "away": "4-0",
+        "home": "3-0"
+      }
+    }
+  ],
+  "passed": [
+    {
+      "sport": "CFB",
+      "game": "Florida Atlantic Owls at North Texas Mean Green",
+      "start": "2026-10-29T23:30Z",
+      "location": "DATCU Stadium, Denton, Texas",
+      "records": {
+        "away": "5-2",
+        "home": "5-2"
+      }
+    },
+    {
+      "sport": "NBA",
       "game": "Cleveland Cavaliers at Atlanta Hawks",
       "start": "2026-10-30T00:00Z",
-      "location": "State Farm Arena, Atlanta, GA",
+      "location": "State Farm Arena, Atlanta, Georgia",
       "records": {
         "away": "3-1",
         "home": "2-3"
@@ -33,19 +47,9 @@
     },
     {
       "sport": "NBA",
-      "game": "Memphis Grizzlies at Portland Trail Blazers",
-      "start": "2026-10-30T02:00Z",
-      "location": "Moda Center, Portland, OR",
-      "records": {
-        "away": "4-0",
-        "home": "3-0"
-      }
-    },
-    {
-      "sport": "NBA",
       "game": "Sacramento Kings at New Orleans Pelicans",
       "start": "2026-10-30T00:00Z",
-      "location": "Smoothie King Center, New Orleans, LA",
+      "location": "Smoothie King Center, New Orleans, Louisiana",
       "records": {
         "away": "0-4",
         "home": "0-4"
@@ -55,7 +59,7 @@
       "sport": "NFL",
       "game": "Carolina Panthers at Green Bay Packers",
       "start": "2026-10-30T00:15Z",
-      "location": "Lambeau Field, Green Bay, WI",
+      "location": "Lambeau Field, Green Bay, Wisconsin",
       "records": {
         "away": "3-3",
         "home": "4-3"
@@ -65,7 +69,7 @@
       "sport": "NHL",
       "game": "Boston Bruins at St. Louis Blues",
       "start": "2026-10-30T00:00Z",
-      "location": "Enterprise Center, St. Louis, MO",
+      "location": "Enterprise Center, St. Louis, Missouri",
       "records": {
         "away": "9-3-1",
         "home": "5-6-1"
@@ -75,7 +79,7 @@
       "sport": "NHL",
       "game": "Buffalo Sabres at Anaheim Ducks",
       "start": "2026-10-30T02:00Z",
-      "location": "Honda Center, Anaheim, CA",
+      "location": "Honda Center, Anaheim, California",
       "records": {
         "away": "5-4-3",
         "home": "5-6-1"
@@ -85,7 +89,7 @@
       "sport": "NHL",
       "game": "Chicago Blackhawks at Detroit Red Wings",
       "start": "2026-10-29T23:30Z",
-      "location": "Little Caesars Arena, Detroit, MI",
+      "location": "Little Caesars Arena, Detroit, Michigan",
       "records": {
         "away": "4-8-0",
         "home": "5-4-3"
@@ -95,7 +99,7 @@
       "sport": "NHL",
       "game": "Columbus Blue Jackets at Carolina Hurricanes",
       "start": "2026-10-29T23:00Z",
-      "location": "Lenovo Center, Raleigh, NC",
+      "location": "Lenovo Center, Raleigh, North Carolina",
       "records": {
         "away": "5-5-0",
         "home": "10-2-2"
@@ -105,7 +109,7 @@
       "sport": "NHL",
       "game": "Montreal Canadiens at Dallas Stars",
       "start": "2026-10-30T00:00Z",
-      "location": "American Airlines Center, Dallas, TX",
+      "location": "American Airlines Center, Dallas, Texas",
       "records": {
         "away": "7-3-2",
         "home": "7-4-1"
@@ -115,7 +119,7 @@
       "sport": "NHL",
       "game": "New York Islanders at Minnesota Wild",
       "start": "2026-10-30T00:00Z",
-      "location": "Grand Casino Arena, Saint Paul, MN",
+      "location": "Grand Casino Arena, Saint Paul, Minnesota",
       "records": {
         "away": "6-4-2",
         "home": "9-3-2"
@@ -125,7 +129,7 @@
       "sport": "NHL",
       "game": "Ottawa Senators at Los Angeles Kings",
       "start": "2026-10-30T02:00Z",
-      "location": "crypto.com Arena, Los Angeles, CA",
+      "location": "crypto.com Arena, Los Angeles, California",
       "records": {
         "away": "8-5-0",
         "home": "3-6-2"
@@ -135,7 +139,7 @@
       "sport": "NHL",
       "game": "Utah Mammoth at Pittsburgh Penguins",
       "start": "2026-10-29T23:00Z",
-      "location": "PPG Paints Arena, Pittsburgh, PA",
+      "location": "PPG Paints Arena, Pittsburgh, Pennsylvania",
       "records": {
         "away": "8-5-0",
         "home": "5-6-1"
@@ -145,7 +149,7 @@
       "sport": "NHL",
       "game": "Vancouver Canucks at San Jose Sharks",
       "start": "2026-10-30T02:00Z",
-      "location": "SAP Center at San Jose, San Jose, CA",
+      "location": "SAP Center at San Jose, San Jose, California",
       "records": {
         "away": "3-10-1",
         "home": "6-6-1"
@@ -155,7 +159,7 @@
       "sport": "NHL",
       "game": "Washington Capitals at Nashville Predators",
       "start": "2026-10-30T00:00Z",
-      "location": "Bridgestone Arena, Nashville, TN",
+      "location": "Bridgestone Arena, Nashville, Tennessee",
       "records": {
         "away": "7-4-0",
         "home": "4-3-5"
@@ -165,13 +169,11 @@
       "sport": "NHL",
       "game": "Winnipeg Jets at Tampa Bay Lightning",
       "start": "2026-10-29T23:00Z",
-      "location": "Benchmark International Arena, Tampa, FL",
+      "location": "Benchmark International Arena, Tampa, Florida",
       "records": {
         "away": "4-5-3",
         "home": "7-3-1"
       }
     }
-  ],
-  "passed": [],
-  "source": "ESPN scoreboard at 4:00 AM. Picks post at 9:00 AM."
+  ]
 }
