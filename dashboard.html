@@ -2899,6 +2899,22 @@ async function refreshSlateRecords(){
   return changed || dropped || graded;
 }
 function seasonEnded(sport){ const end = SEASON_END[String(sport || "").toUpperCase()]; return !!end && easternDay() > end; }
+function daySpan(from, to){
+  const ms = Date.parse(to + "T12:00:00Z") - Date.parse(from + "T12:00:00Z");
+  return Math.round(ms / 86400000);
+}
+function seasonPace(sport){
+  const start = SEASON_START[sport];
+  const end = SEASON_END[sport];
+  const today = easternDay();
+  if (!start || !end) return {day: "", left: "—"};
+  if (today < start) {
+    const n = daySpan(today, start);
+    return {day: "Starts in " + n + (n === 1 ? " day" : " days"), left: "—"};
+  }
+  if (today > end) return {day: "Ended", left: "0"};
+  return {day: "Day " + (daySpan(start, today) + 1) + " of " + (daySpan(start, end) + 1), left: String(daySpan(today, end))};
+}
 let seasonChecked = "";
 function showSeasons(checked){
   const box = document.getElementById("seasons");
@@ -2908,7 +2924,9 @@ function showSeasons(checked){
   const rows = ["CBB","CFB","MLB","NBA","NFL","NHL"].map(s => {
     const status = seasonStatus(s, pendingSlips());
     const color = /Pending/.test(status) ? "#f0e14a" : status === "Season Ended" ? "#8fb898" : "#39ff14";
-    return "<tr><td>" + names[s] + "</td><td>" + SEASON_START[s] + "</td><td>" + SEASON_END[s] + "</td><td style='color:" + color + "'>" + status + "</td></tr>";
+    const pace = seasonPace(s);
+    const leftColor = pace.left === "0" || pace.left === "—" ? "#8fb898" : Number(pace.left) <= 14 ? "#f0e14a" : "#39ff14";
+    return "<tr><td>" + names[s] + "</td><td>" + SEASON_START[s] + "</td><td>" + SEASON_END[s] + "</td><td style='color:" + color + "'>" + status + "</td><td>" + pace.day + "</td><td style='color:" + leftColor + "'>" + pace.left + "</td></tr>";
   }).join("");
   const open = ["CBB","CFB","MLB","NBA","NFL","NHL"].filter(s => !seasonEnded(s)).length;
   const pulse = open === 6 ? "6.6s" : open >= 4 ? "7.4s" : open >= 2 ? "9s" : open === 1 ? "13s" : "15s";
@@ -2921,7 +2939,8 @@ function showSeasons(checked){
   });
   wave += " H448";
   const ekg = "<span class='ekg' data-ms='" + (parseFloat(pulse) * 1000) + "'><svg viewBox='0 0 448 36' preserveAspectRatio='none' aria-label='Season pulse'><defs><clipPath id='ekgclip'><rect class='ekg-clip' x='0' y='0' width='0' height='36'></rect></clipPath></defs><path class='trace' clip-path='url(#ekgclip)' d='" + wave + "' style='stroke:" + color + "'></path></svg></span>";
-  box.innerHTML = "<div class='section-head'><h2>Season Dates</h2><p class='warn slips-side'>Checked " + (seasonChecked || "2026-10-19") + ". NFL May, NHL July, MLB July, NBA August, CFB August, CBB September. Postseason nights stay open until the last game ends or " + zoneTime(4, 0) + ". NBA and NHL through June 30, MLB through the World Series, NFL through the Super Bowl, CFB through the championship, March Madness March 13 through the title game.</p></div><table><thead><tr><th colspan='4' style='text-align:center'>" + ekg + "</th></tr><tr><th>Sport</th><th>Start</th><th>Last Card</th><th>Status</th></tr></thead><tbody>" + rows + "</tbody></table>";
+  const trivia = "<div class='card-rest' id='seasontrivia'><b style='color:#39ff14'>Daily Sports Trivia</b><p class='warn' style='margin:4px 0 8px'>A new question at midnight. The same question stays up all day.</p><p data-q>Loading today's question.</p><button type='button' id='triviareveal'>Show answer</button><p data-a class='warn' hidden></p></div>";
+  box.innerHTML = "<div class='section-head'><h2>Season Dates</h2><p class='warn slips-side'>Checked " + (seasonChecked || "2026-10-19") + ". NFL May, NHL July, MLB July, NBA August, CFB August, CBB September. Postseason nights stay open until the last game ends or " + zoneTime(4, 0) + ". NBA and NHL through June 30, MLB through the World Series, NFL through the Super Bowl, CFB through the championship, March Madness March 13 through the title game.</p></div><table><thead><tr><th colspan='6' style='text-align:center'>" + ekg + "</th></tr><tr><th>Sport</th><th>Start</th><th>Last Card</th><th>Status</th><th>Where</th><th>Days Left</th></tr></thead><tbody>" + rows + "</tbody></table>" + trivia;
   startPulse();
 }
 let pulseFrame = 0;
@@ -2949,15 +2968,37 @@ function startPulse(){
   };
   pulseFrame = requestAnimationFrame(tick);
 }
+async function loadTrivia(){
+  const box = document.getElementById("seasontrivia");
+  if (!box) return;
+  const q = box.querySelector("[data-q]");
+  const a = box.querySelector("[data-a]");
+  const btn = document.getElementById("triviareveal");
+  try {
+    const res = await fetch(cardUrl("cards/trivia.json"));
+    const data = res.ok ? await res.json() : null;
+    const list = (data && data.items) || [];
+    if (!list.length) { if (q) q.textContent = "No trivia is posted."; return; }
+    const n = Math.floor(Date.parse(easternDay() + "T12:00:00Z") / 86400000);
+    const item = list[((n % list.length) + list.length) % list.length];
+    if (q) q.textContent = item.q;
+    if (a) { a.textContent = item.a; a.hidden = true; }
+    if (btn) btn.onclick = () => { if (a) a.hidden = false; btn.hidden = true; };
+  } catch (err) {
+    if (q) q.textContent = "Trivia did not load.";
+  }
+}
 async function loadSeasons(){
   showSeasons();
   try {
     const res = await fetch("cards/seasons.json?ts=" + Date.now());
-    if (!res.ok) return;
-    const data = await res.json();
-    (data.sports || []).forEach(s => { SEASON_START[s.sport] = s.start; SEASON_END[s.sport] = s.end; });
-    showSeasons(data.checked);
+    if (res.ok) {
+      const data = await res.json();
+      (data.sports || []).forEach(s => { SEASON_START[s.sport] = s.start; SEASON_END[s.sport] = s.end; });
+      showSeasons(data.checked);
+    }
   } catch (err) { showSeasons(); }
+  loadTrivia();
 }
 function seasonText(sport){ return seasonEnded(sport) ? "Season Ended" : "No Picks"; }
 const TEAM_ALIAS = {njd:"devils", vgk:"knights", okc:"thunder", lad:"dodgers", bkn:"nets"};
