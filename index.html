@@ -121,6 +121,18 @@ form, .row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1f
 #betload button { width:100%; }
 #betload img { width:100%; max-width:160px; height:auto; flex:1 1 auto; object-fit:contain; border:1px solid var(--line); border-radius:8px; padding:8px; box-sizing:border-box; background:#0e0e0e; cursor:pointer; }
 #betnotes { display:flex; flex-direction:column; justify-content:center; gap:8px; min-height:120px; }
+#sgpbox { grid-column:1 / -1; display:flex; flex-direction:column; align-items:stretch; gap:8px; }
+#sgpbox h3 { margin:0; color:#39ff14; font-size:16px; text-align:left; }
+.sgp-legs { display:flex; flex-direction:column; gap:4px; }
+.sgp-leg { display:flex; gap:8px; align-items:flex-start; color:#d6ffd0; font-size:13px; text-align:left; }
+.sgp-leg input { margin-top:2px; }
+.sgp-ideas { display:flex; flex-wrap:wrap; gap:8px; }
+.sgp-partner { display:flex; gap:8px; align-items:flex-end; }
+.sgp-partner label { align-items:flex-start; text-align:left; }
+.sgp-partner input { width:100%; }
+.sgp-ideas button { height:auto; text-align:left; }
+#sgpbox .sgp-risk { color:#f0e14a; }
+#sgpadd { align-self:flex-start; }
 .notes-field { width:100%; margin:0; }
 .notes-field textarea { width:100%; min-height:64px; }
 .fine { font-size:12px; line-height:1.2; margin:0; margin-left:auto; text-align:right; }
@@ -489,6 +501,19 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 <span id="loadnote" class="warn"></span>
 <span id="editnote" class="warn"></span>
 </div>
+</div>
+<div class="bet-box" id="sgpbox">
+<h3>SGP</h3>
+<p class="warn">Built from today's card. Check the legs, then add the ticket to Slips.</p>
+<div class="sgp-legs" id="sgplegs"></div>
+<div class="sgp-partner">
+<label>Same-game second leg<input id="sgppartner" placeholder="Under in that game"></label>
+<label>Price<input id="sgppartnerodds" type="number" step="1" placeholder="-110"></label>
+</div>
+<div class="sgp-ideas" id="sgpideas"></div>
+<p id="sgpprice" class="warn"></p>
+<p id="sgprisk" class="warn sgp-risk"></p>
+<button type="button" id="sgpadd">Add To Slips</button>
 </div>
 <div class="stack">
 <button type="submit" id="savebtn">Save Bet</button>
@@ -1140,6 +1165,7 @@ function drawCardAnalysis(text){
   if (title) title.textContent = "Analysis · " + day;
   if (read) read.textContent = sharpRead(rows);
   paintSeasonStatus();
+  drawSgp();
 }
 function sharpRead(rows){
   const custom = String(postedCard || "").split(/\n/).map(l => l.trim()).find(l => l.startsWith("# sharp:"));
@@ -4066,6 +4092,138 @@ form.onsubmit = e => {
   form.pick.value = ""; form.notes.value = ""; form.close.value = ""; form.editId.value = "";
   document.getElementById("savebtn").textContent = "Save Bet";
   document.getElementById("editnote").textContent = "Saved in this browser. The posted card and the shared files were not changed.";
+};
+function sgpDayPlays(){
+  const day = easternDay();
+  return cardLines(postedCard).filter(r => r[0] === day && !isNoCard(r) && Number.isFinite(Number(String(r[4] || "").replace(/[^\d.+-]/g, "")))).map(r => ({
+    date: r[0], sport: r[1], type: r[2], pick: r[3], odds: Number(String(r[4]).replace(/[^\d.+-]/g, "")), notes: r[5] || "", edge: /edge/i.test(r[5] || "")
+  }));
+}
+function sgpGame(pick){
+  const parts = String(pick || "").split(/\s+(?:at|vs\.?)\s+/i);
+  if (parts.length < 2) return String(pick || "").toLowerCase();
+  const nick = bit => bit.replace(/\s*[+-]?\d+(?:\.\d+)?/g, " ").trim().split(/\s+/).filter(Boolean).pop().toLowerCase();
+  return [nick(parts[0]), nick(parts[1])].sort().join("|");
+}
+function decFromAmerican(price){
+  price = Number(price);
+  if (!Number.isFinite(price) || price === 0) return NaN;
+  return price > 0 ? 1 + price / 100 : 1 + 100 / Math.abs(price);
+}
+function americanFromDec(dec){
+  if (!Number.isFinite(dec) || dec <= 1) return NaN;
+  const profit = dec - 1;
+  return profit >= 1 ? Math.round(profit * 100) : Math.round(-100 / profit);
+}
+function sgpSelected(){
+  return [...document.querySelectorAll("#sgplegs input:checked")].map(box => {
+    const plays = sgpDayPlays();
+    return plays.find(p => p.sport + "|" + p.pick === box.value);
+  }).filter(Boolean);
+}
+function sgpPartner(){
+  const name = (document.getElementById("sgppartner") || {}).value || "";
+  const odds = Number((document.getElementById("sgppartnerodds") || {}).value);
+  const text = name.trim();
+  if (!text || !Number.isFinite(odds) || odds === 0) return null;
+  const base = sgpSelected()[0];
+  return {date: base ? base.date : easternDay(), sport: base ? base.sport : "", type: "Total", pick: text, odds: odds, notes: "Suggested second leg", edge: false, partner: true};
+}
+function sgpTicket(){
+  const posted = sgpSelected();
+  const partner = sgpPartner();
+  return partner ? posted.concat(partner) : posted;
+}
+function drawSgp(){
+  const legs = document.getElementById("sgplegs");
+  const ideas = document.getElementById("sgpideas");
+  const price = document.getElementById("sgpprice");
+  const risk = document.getElementById("sgprisk");
+  const btn = document.getElementById("sgpadd");
+  if (!legs || !ideas) return;
+  const plays = sgpDayPlays();
+  const kept = new Set([...document.querySelectorAll("#sgplegs input:checked")].map(box => box.value));
+  if (!plays.length) {
+    legs.innerHTML = "<p class='warn'>No sides on today's card yet.</p>";
+    ideas.innerHTML = "";
+    if (price) price.textContent = "";
+    if (risk) risk.textContent = "Two legs in one game is the bet. A third leg cuts the winners roughly in half and the bigger price does not pay for it.";
+    if (btn) btn.disabled = true;
+    return;
+  }
+  legs.innerHTML = plays.map(p => {
+    const id = p.sport + "|" + p.pick;
+    return "<label class='sgp-leg'><input type='checkbox' value='" + esc(id) + "'" + (kept.has(id) ? " checked" : "") + "> " + esc(p.sport + " " + p.pick + " " + (p.odds > 0 ? "+" + p.odds : p.odds) + (p.edge ? " · Edge" : "")) + "</label>";
+  }).join("");
+  const edges = plays.filter(p => p.edge);
+  const tips = (edges.length ? edges : plays).map(p => {
+    const dog = p.odds > 0 || /[+]/.test(p.pick);
+    return dog
+      ? p.sport + " " + p.pick + " with the under in that same game."
+      : p.sport + " " + p.pick + " stays a straight bet. Do not add a leg to a favorite.";
+  });
+  ideas.innerHTML = "<p class='warn'>Best build is two legs in one game. " + esc(tips.join(" ")) + " Do not cross two games. That is a parlay, and one miss loses both.</p>";
+  legs.querySelectorAll("input").forEach(box => box.onchange = paintSgp);
+  ["sgppartner","sgppartnerodds"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.oninput = paintSgp;
+  });
+  paintSgp();
+}
+function sgpSame(picked){
+  const posted = picked.filter(p => !p.partner);
+  if (picked.some(p => p.partner)) return posted.length === 1;
+  return new Set(posted.map(p => sgpGame(p.pick))).size === 1;
+}
+function paintSgp(){
+  const price = document.getElementById("sgpprice");
+  const risk = document.getElementById("sgprisk");
+  const btn = document.getElementById("sgpadd");
+  const picked = sgpTicket();
+  const same = sgpSame(picked);
+  const dec = picked.reduce((prod, p) => prod * decFromAmerican(p.odds), 1);
+  const american = picked.length ? americanFromDec(dec) : NaN;
+  const win = Number.isFinite(american) ? (american > 0 ? 10 * american / 100 : 10 * 100 / Math.abs(american)) : NaN;
+  if (price) {
+    if (picked.length < 2) price.textContent = "Check at least two legs.";
+    else price.textContent = (same ? "Same game." : "Different games. This is a parlay, not an SGP.") + " Price " + (american > 0 ? "+" : "") + american + ". A $10 win pays $" + win.toFixed(2) + ".";
+  }
+  if (risk) {
+    risk.textContent = picked.length >= 3
+      ? "Three legs is the cut. Two -110 legs pay about +264 and hit together about 22% of the time at a 47% clip. The third leg pays about +596 and leaves about 10%. You lose more tickets than the extra price gives back. Stop at two unless both of the first two win with the third."
+      : "Two legs is the bet. A third leg keeps only about half of the two-leg winners. At a 47% clip that is about 22% down to 10%, and the bigger number does not cover the tickets that die.";
+  }
+  if (btn) btn.disabled = picked.length < 2;
+}
+document.getElementById("sgpadd").onclick = () => {
+  const picked = sgpTicket();
+  const note = document.getElementById("sgpprice");
+  if (picked.length < 2) return;
+  const games = new Set(picked.map(p => sgpGame(p.pick)));
+  const same = games.size === 1;
+  const sports = new Set(picked.map(p => p.sport));
+  const dec = picked.reduce((prod, p) => prod * decFromAmerican(p.odds), 1);
+  const american = americanFromDec(dec);
+  const row = stampPlaced(markEdge({
+    id: Date.now(),
+    date: picked[0].date,
+    book: form.book.value || "BetMGM",
+    sport: sports.size === 1 ? picked[0].sport : "Multi",
+    type: same ? "SGP" : "Parlay",
+    pick: (same ? "SGP " : "Parlay ") + picked.map(p => p.sport + " " + p.pick).join(" and "),
+    odds: american,
+    stake: Number(form.stake.value) || 10,
+    result: "pending",
+    notes: (picked.length >= 3 ? "Third leg. The hit rate is cut again. " : "Two legs. ") + (same ? "Same game." : "Different games.") + " Built from the card.",
+    manual: true
+  }));
+  const bets = load();
+  if (!placePending(bets, row)) {
+    if (note) note.textContent = "That ticket is already on the slips.";
+    return;
+  }
+  save(bets);
+  if (note) note.textContent = "Added to Slips. " + row.pick + " at " + (american > 0 ? "+" : "") + american + ".";
 };
 document.getElementById("rows").onclick = e => {
   const t = e.target;
