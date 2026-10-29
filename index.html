@@ -3082,7 +3082,7 @@ function render(){
   document.getElementById("breaks").innerHTML = "<h2>Graded Results By Sport And Book</h2><p class='api-note warn'>Graded slate " + bookDate + ". A postseason game stays on the slate it started until that game ends or " + zoneTime(4, 0) + ".</p>" + group(bookDay, "sport") + bookFigures(bookDay) + "<h2 class='split-title'>Market Split</h2>" + group(bookDay, "type") + "<p class='api-note warn'>Graded slips only. A sport with no graded slips says No Picks. A book says No Price Saved until that one call stored its price.</p>";
   if (!document.getElementById("oddscompare")) {
     const card = document.createElement("section");
-    card.className = "card";
+    card.className = "card view";
     card.id = "liveodds";
     card.innerHTML = "<div class=\"section-head\"><h2>Live Odds</h2><p class=\"warn slips-side\">Moneyline, spread, and total across books. Refresh pulls the live price.</p><button type=\"button\" id=\"refreshodds\">Refresh</button></div>";
     const hold = document.createElement("div");
@@ -6347,18 +6347,23 @@ function drawGameBoard(){
 function showView(id){
   const box = document.getElementById(id);
   if (!box) return;
-  const view = box.classList.contains("view") ? box : box.closest(".view");
-  if (view) {
-    document.querySelectorAll(".view").forEach(el => el.classList.toggle("on", el === view));
-    document.querySelectorAll("#sitenav [data-jump]").forEach(btn => btn.classList.toggle("on", btn.getAttribute("data-jump") === view.id));
-    if (view.id === "games") drawGameBoard();
+  box.classList.add("view");
+  document.querySelectorAll(".view").forEach(el => {
+    const on = el.id === id;
+    el.classList.toggle("on", on);
+    el.hidden = !on;
+  });
+  document.querySelectorAll("#sitenav [data-jump]").forEach(btn => {
+    const on = btn.getAttribute("data-jump") === id;
+    btn.classList.toggle("on", on);
+    if (on) btn.scrollIntoView({inline:"center", block:"nearest"});
+  });
+  if (id === "games") drawGameBoard();
+  if (id === "liveodds") {
+    try { parkOddsTools(); } catch (e) {}
+    drawOddsCompare(false).catch(() => {});
   }
-  if (!view || box !== view) {
-    const bar = document.querySelector(".topbar");
-    const barH = bar ? bar.offsetHeight : 0;
-    const y = box.getBoundingClientRect().top + window.pageYOffset - barH - 8;
-    window.scrollTo({top: Math.max(0, y), behavior:"smooth"});
-  } else window.scrollTo({top: 0, behavior:"smooth"});
+  window.scrollTo({top: 0, behavior:"smooth"});
 }
 function jumpToCard(id){
   showView(id);
