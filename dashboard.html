@@ -4691,7 +4691,11 @@ async function fillPickBoard(useSaved, scope){
   const note = document.getElementById("picknote");
   const current = sel.value;
   sel.innerHTML = "<option value=''>Select a pick</option>";
-  if (!key) { note.textContent = "Add the Odds Key below. Then Load Picks follows the dropdowns."; return; }
+  if (!key) {
+    note.textContent = allBooks ? "No saved board for that day, and no Odds Key is stored." : "Add the Odds Key below. Then Load Picks follows the dropdowns.";
+    document.getElementById("loadnote").textContent = "No Key";
+    return;
+  }
   if (!allBooks && !bookKey) { note.textContent = book + " has no live board."; return; }
   const day = form.date.value;
   const today = easternDay();
@@ -4705,12 +4709,18 @@ async function fillPickBoard(useSaved, scope){
     document.getElementById("loadnote").textContent = "No board lines for " + type + ".";
     return;
   }
-  const sports = allBooks ? SPORTS.slice() : [sport];
+  const sports = (allBooks ? SPORTS.slice() : [sport]).filter(s => {
+    if (!allBooks) return true;
+    const start = SEASON_START[s];
+    if (start && easternDay() < start) return false;
+    return !seasonEnded(s);
+  });
   const books = allBooks ? Object.keys(BOOK_KEY) : [book];
   const markets = allBooks ? ["h2h","spreads","totals"] : [want];
   note.textContent = allBooks ? "Loading every book for " + day + "..." : "Loading " + book + " " + sport + " " + type + " for " + day + "...";
   let allGames = [];
   for (const one of sports) {
+    try {
     const sportKey = SPORT_KEY[one];
     if (!sportKey) continue;
     const dayKey = "gg-day-" + day + "-" + sportKey + "-" + (bookKey || Object.values(BOOK_KEY)[0]);
@@ -4734,6 +4744,9 @@ async function fillPickBoard(useSaved, scope){
       Object.entries(byDay).forEach(([d, list]) => localStorage.setItem("gg-day-" + d + "-" + sportKey + "-" + (bookKey || Object.values(BOOK_KEY)[0]), JSON.stringify(list)));
     }
     games.forEach(g => { g._sport = one; allGames.push(g); });
+    } catch (err) {
+      if (/401|403/.test(String(err && err.message || ""))) throw err;
+    }
   }
   window.__ggExtraStarts = allGames.filter(g => g.commence_time).map(g => ({sport: g._sport, start: g.commence_time}));
   let count = 0;
@@ -4796,9 +4809,82 @@ document.getElementById("pickselect").onchange = () => {
   form.odds.value = opt.dataset.price;
   form.close.value = opt.dataset.close;
 };
+function sidePrice(text){
+  const nums = String(text || "").match(/[+-]?\d+(?:\.\d+)?/g) || [];
+  if (!nums.length) return null;
+  const price = Number(nums[nums.length - 1]);
+  return Number.isFinite(price) && Math.abs(price) >= 100 ? price : null;
+}
+async function ensureOddsBoard(){
+  if (usableBoard(window.__ggOddsBoard)) return window.__ggOddsBoard;
+  const saved = savedBoard();
+  if (usableBoard(saved)) { rememberBoard(saved); return window.__ggOddsBoard; }
+  const res = await fetch(cardUrl("cards/odds-board.json"));
+  const data = res.ok ? await res.json() : null;
+  if (!usableBoard(data)) return null;
+  rememberBoard(data);
+  return data;
+}
+async function fillAllFromBoard(){
+  const sel = document.getElementById("pickselect");
+  const note = document.getElementById("picknote");
+  const day = (form.date && form.date.value) || easternDay();
+  const board = await ensureOddsBoard();
+  const block = board && board.days && (board.days[day] || board.days[easternDay()] || board.days[shiftDate(easternDay(), -1)]);
+  const used = board && board.days && board.days[day] ? day : (block === (board && board.days && board.days[easternDay()]) ? easternDay() : shiftDate(easternDay(), -1));
+  if (!block) return 0;
+  sel.innerHTML = "<option value=''>Select a pick</option>";
+  let count = 0;
+  const add = (book, sport, market, label, price) => {
+    if (price == null || !label) return;
+    const opt = document.createElement("option");
+    opt.value = book + " " + label;
+    opt.textContent = opt.value + " (" + price + ")";
+    opt.dataset.price = String(price);
+    opt.dataset.close = String(price);
+    opt.dataset.market = market;
+    opt.dataset.sport = sport || "";
+    opt.dataset.book = book;
+    sel.appendChild(opt);
+    count++;
+  };
+  ["h2h","spreads","totals"].forEach(market => {
+    (block[market] || []).forEach(row => {
+      const kick = row.start ? " " + formatTime(row.start) : "";
+      const teams = String(row.label || "").split(/\s+at\s+/i);
+      const away = (teams[0] || "").trim();
+      const home = (teams[1] || "").trim();
+      const nick = name => String(name || "").split(/\s+/).slice(-1)[0];
+      Object.keys(BOOK_KEY).forEach(book => {
+        const cell = (row.books || {})[book];
+        if (!cell || cell === "-") return;
+        const sides = String(cell).split("/").map(s => s.trim());
+        if (market === "h2h") {
+          add(book, row.sport, market, row.sport + " " + row.label + kick + " " + away + " ML", sidePrice(sides[0]));
+          add(book, row.sport, market, row.sport + " " + row.label + kick + " " + home + " ML", sidePrice(sides[1]));
+        } else if (market === "spreads") {
+          const point = text => (String(text || "").match(/([+-]?\d+(?:\.\d+)?)/) || [])[1] || "";
+          add(book, row.sport, market, row.sport + " " + row.label + kick + " " + nick(away) + " " + point(sides[0]), sidePrice(sides[0]));
+          add(book, row.sport, market, row.sport + " " + row.label + kick + " " + nick(home) + " " + point(sides[1]), sidePrice(sides[1]));
+        } else {
+          const total = (String(sides[0] || "").match(/(\d+(?:\.\d+)?)/) || [])[1] || "";
+          add(book, row.sport, market, row.sport + " " + away + " at " + home + " Over " + total, sidePrice(sides[0]));
+          add(book, row.sport, market, row.sport + " " + away + " at " + home + " Under " + total, sidePrice(sides[1]));
+        }
+      });
+    });
+  });
+  if (!count) return 0;
+  note.textContent = "Loaded " + count + " picks for every book on " + used + ". No API call.";
+  document.getElementById("loadnote").textContent = "Load successful.";
+  try {
+    localStorage.setItem("gg-pick-board", JSON.stringify({book:"All", sport:"All", day: used, value: sel.value, options: [...sel.options].map(o => ({value:o.value, text:o.textContent, price:o.dataset.price || "", close:o.dataset.close || "", market:o.dataset.market || "", sport:o.dataset.sport || "", book:o.dataset.book || ""}))}));
+  } catch (e) {}
+  return count;
+}
 document.getElementById("loadicon").onclick = () => {
   document.getElementById("loadnote").textContent = "Loading...";
-  fillPickBoard(false, "all").catch(err => {
+  fillAllFromBoard().then(n => n ? n : fillPickBoard(false, "all")).catch(err => {
     document.getElementById("picknote").textContent = err.message || "Feed error.";
     document.getElementById("loadnote").textContent = /key|401|403/i.test(err.message || "") ? "Bad Key" : "Feed Error";
   });
