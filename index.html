@@ -235,7 +235,11 @@ html[data-page="seasons"] main { min-width:0; }
 .shark-juice { color:#f0e14a; font-weight:700; }
 .shark-game, .shark-when { margin:0 0 2px; color:#d6ffd0; font-size:12px; font-weight:600; }
 .shark-pick p { margin:0 0 4px; overflow-wrap:anywhere; }
-.shark-add { margin-top:6px; }
+.shark-record { margin:0 0 8px; color:#f0e14a; font-weight:700; letter-spacing:.02em; }
+.shark-result { font-weight:700; letter-spacing:.04em; }
+.shark-result.win { color:#39ff14; }
+.shark-result.loss { color:#ff6b6b; }
+.shark-result.push, .shark-result.pending { color:#f0e14a; }
 .shark-fee { margin:8px 0 0; color:#f0e14a; font-weight:700; }
 @media (max-width:800px) { .shark { grid-template-columns:1fr; } .shark-picks { grid-template-columns:1fr; } }
 .feed-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:0 0 8px; }
@@ -550,7 +554,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </div>
 <div id="seasons" class="card view"><div class="section-head"><h2>Season Dates</h2><p class="warn slips-side">Checked in the month each league publishes its schedule.</p></div></div>
 <div id="scoreboard" class="card view"><div class="section-head"><h2>Full Scoreboard</h2><p class="warn slips-side" id="fullscorenote">Loading the board.</p></div><div class="full-board"><aside class="full-sports" id="fullsports"></aside><div class="full-main"><div class="full-dates"><button type="button" class="full-chev" id="fulldateprev" aria-label="Previous day">&#8249;</button><div class="full-date-row" id="fulldates"></div><button type="button" class="full-chev" id="fulldatenext" aria-label="Next day">&#8250;</button></div><div class="full-status" id="fullstatus"><button type="button" data-status="all" class="on">All</button><button type="button" data-status="live">Live</button><button type="button" data-status="pre">Upcoming</button><button type="button" data-status="final">Final</button></div><div id="fullholds"></div><div class="full-games" id="fullrows"></div></div></div></div>
-<section class="card view" id="sharks"><div class="section-head"><h2>Sports Sharps</h2><p class="warn slips-side">Every sport. No sharp writes another sharp's ticket. Add to Slip stays in this browser.</p></div><div class="shark-list" id="sharkboard"><p class="warn">Loading the sharps.</p></div></section>
+<section class="card view" id="sharks"><div class="section-head"><h2>Sports Sharps</h2><p class="warn slips-side" id="sharpnote">Four games each. Made at 9:30 AM Eastern and locked until the next morning.</p></div><div class="shark-list" id="sharkboard"><p class="warn">Loading the sharps.</p></div></section>
 <main>
 <section class="card view on" id="games">
 <div class="section-head"><h2>Games</h2><p class="warn slips-side">Tap a price. Nothing is sent to a book.</p></div>
@@ -7641,67 +7645,195 @@ function sharpPass(){
   if (Math.random() < 0.5) line += " Forgetta' bout' it.";
   return line;
 }
-function sharkTicket(kind, slate, claimed){
-  if (!slate.games.length) return {empty: slate.note};
-  const open = slate.games.filter(g => !claimed.has(g.id));
-  const side = sharkChoose(kind, open);
-  if (!side) {
-    const blocked = slate.games.some(g => claimed.has(g.id));
-    return {empty: blocked ? "The other sharp already has the only ticket. I will not copy it." : sharpPass()};
-  }
-  claimed.add(side.g.id);
+function sharkTicket(kind, side){
   const one = t => t.name + (t.rec ? " (" + t.rec + ")" : "");
   const sideText = side.name + " " + sharkNum(side.n, side.ml);
   const juice = side.ml ? "" : sharkNum(side.juice == null ? -110 : side.juice, true);
-  const when = side.g.start ? [prettyDay(slateDateOf(side.g.start)), formatTime(side.g.start, false)].filter(Boolean).join(" · ") : slate.note;
+  const when = side.g.start ? [prettyDay(slateDateOf(side.g.start)), formatTime(side.g.start, false)].filter(Boolean).join(" · ") : "";
   const opp = side.who === "home" ? side.g.away.name : side.g.home.name;
   const slip = side.ml
     ? side.name + " ML " + (side.who === "home" ? "vs " : "at ") + opp
     : side.name + " " + sharkNum(side.n, false) + (side.who === "home" ? " vs " : " at ") + opp;
   const odds = side.ml ? Math.round(Number(side.n)) : Math.round(Number(side.juice == null ? -110 : side.juice));
-  const date = side.g.start ? slateDateOf(side.g.start) : slate.date;
-  return {pick: sideText + "|" + side.g.id, market: side.ml ? "Moneyline" : "Spread", side: sideText, juice: juice, game: one(side.g.away) + " at " + one(side.g.home), when: when, why: sharkWhy(kind, side), slip: slip, odds: odds, date: date};
+  const date = side.g.start ? slateDateOf(side.g.start) : "";
+  return {
+    id: String(side.g.id || ""),
+    sport: side.g.sport,
+    market: side.ml ? "Moneyline" : "Spread",
+    side: sideText,
+    juice: juice,
+    game: one(side.g.away) + " at " + one(side.g.home),
+    when: when,
+    why: sharkWhy(kind, side),
+    slip: slip,
+    odds: odds,
+    date: date,
+    who: side.who,
+    n: side.n,
+    ml: !!side.ml,
+    away: side.g.away.name,
+    home: side.g.home.name,
+    result: "pending"
+  };
 }
-async function loadSharks(){
-  const board = document.getElementById("sharkboard");
-  if (!board || board.dataset.ready === "1") {
-    const jump = location.hash && document.querySelector(location.hash);
-    if (jump) jump.scrollIntoView({block:"start"});
-    return;
-  }
-  board.innerHTML = "<p class='warn'>Loading the sharps.</p>";
-  const sports = SHARP_SPORTS.slice();
-  const packs = {};
-  await Promise.all(sports.map(async sport => { packs[sport] = await sharkSlate(sport); }));
-  const claimed = new Set();
+function sharpWindowDate(){
+  const today = easternDay();
+  const clock = zoneClock();
+  const posted = clock.hour > 9 || (clock.hour === 9 && clock.minute >= 30);
+  return posted ? today : shiftDate(today, -1);
+}
+function sharpReadBook(){
+  try {
+    const book = JSON.parse(localStorage.getItem("gg-sharps-book-v1") || "null");
+    if (book && book.cards) return book;
+  } catch (e) {}
+  return {cards: {}};
+}
+function sharpWriteBook(book){
+  try { localStorage.setItem("gg-sharps-book-v1", JSON.stringify(book)); } catch (e) {}
+}
+function sharpLineup(){
+  return ["fade","soft","lay","hold","wire"].flatMap(kind => SHARKS.filter(s => s.kind === kind));
+}
+async function sharpGames(){
+  const today = easternDay();
+  const games = [];
   const seen = new Set();
-  const order = ["fade","soft","lay","hold","wire"];
-  const cards = {};
-  order.forEach(kind => {
-    SHARKS.filter(s => s.kind === kind).forEach(shark => {
-      cards[shark.id] = SHARP_SPORTS.map(sport => {
-        const ticket = sharkTicket(kind, packs[sport], claimed);
-        if (ticket.pick && seen.has(ticket.pick)) {
-          ticket.empty = "That ticket is already written. I will not copy it.";
-          ticket.pick = "";
-        }
-        if (ticket.pick) seen.add(ticket.pick);
-        return {sport: sport, ticket: ticket};
+  for (let i = 0; i <= 6; i++) {
+    const ymd = shiftDate(today, i);
+    const days = await Promise.all(SHARP_SPORTS.map(sport => sharkDay(sport, ymd)));
+    days.flat().forEach(g => {
+      if (!g || g.final || seen.has(g.id)) return;
+      seen.add(g.id);
+      games.push(g);
+    });
+  }
+  return games;
+}
+function sharpBuild(games){
+  const claimed = new Set();
+  const sharps = {};
+  SHARKS.forEach(s => { sharps[s.id] = []; });
+  for (let n = 0; n < 4; n++) {
+    sharpLineup().forEach(shark => {
+      const open = games.filter(g => !claimed.has(g.id));
+      const side = sharkChoose(shark.kind, open);
+      if (!side) {
+        sharps[shark.id].push({empty: sharpPass(), result: "pending"});
+        return;
+      }
+      claimed.add(side.g.id);
+      sharps[shark.id].push(sharkTicket(shark.kind, side));
+    });
+  }
+  return {date: sharpWindowDate(), post: "9:30 AM Eastern", sharps: sharps};
+}
+function sharpGradeOne(pick, game){
+  if (!pick || pick.empty || !game || !game.final) return pick && pick.result || "pending";
+  const away = Number(game.away && game.away.score);
+  const home = Number(game.home && game.home.score);
+  if (!Number.isFinite(away) || !Number.isFinite(home)) return "pending";
+  if (pick.ml) {
+    if (away === home) return "push";
+    return ((pick.who === "home") === (home > away)) ? "win" : "loss";
+  }
+  const picked = pick.who === "home" ? home : away;
+  const other = pick.who === "home" ? away : home;
+  const margin = picked + Number(pick.n) - other;
+  if (Math.abs(margin) < 0.01) return "push";
+  return margin > 0 ? "win" : "loss";
+}
+async function sharpGrade(card){
+  const need = [];
+  SHARKS.forEach(shark => {
+    (card.sharps[shark.id] || []).forEach(pick => {
+      if (!pick || pick.empty || !pick.sport || !pick.date) return;
+      if (pick.result === "win" || pick.result === "loss" || pick.result === "push") return;
+      const key = pick.sport + "|" + pick.date;
+      if (!need.some(row => row.key === key)) need.push({key: key, sport: pick.sport, date: pick.date});
+    });
+  });
+  const found = {};
+  await Promise.all(need.map(async row => { found[row.key] = await sharkDay(row.sport, row.date); }));
+  SHARKS.forEach(shark => {
+    (card.sharps[shark.id] || []).forEach(pick => {
+      if (!pick || pick.empty) return;
+      const games = found[pick.sport + "|" + pick.date] || [];
+      const game = games.find(g => String(g.id) === String(pick.id)) || games.find(g => g.away.name === pick.away && g.home.name === pick.home);
+      const next = sharpGradeOne(pick, game);
+      if (next === "win" || next === "loss" || next === "push") pick.result = next;
+    });
+  });
+  return card;
+}
+function sharpTally(book){
+  const tally = {};
+  SHARKS.forEach(s => { tally[s.id] = {w: 0, l: 0, p: 0}; });
+  Object.keys(book.cards || {}).forEach(date => {
+    const card = book.cards[date];
+    SHARKS.forEach(shark => {
+      (card.sharps && card.sharps[shark.id] || []).forEach(pick => {
+        if (pick.result === "win") tally[shark.id].w += 1;
+        else if (pick.result === "loss") tally[shark.id].l += 1;
+        else if (pick.result === "push") tally[shark.id].p += 1;
       });
     });
   });
-  board.dataset.ready = "1";
+  return tally;
+}
+function sharpKeepGrades(card, book){
+  const prior = book.cards[card.date];
+  if (!prior) return card;
+  SHARKS.forEach(shark => {
+    const old = prior.sharps && prior.sharps[shark.id] || [];
+    (card.sharps[shark.id] || []).forEach(pick => {
+      const was = old.find(row => row && row.id === pick.id && row.slip === pick.slip);
+      if (was && (was.result === "win" || was.result === "loss" || was.result === "push")) pick.result = was.result;
+    });
+  });
+  return card;
+}
+function sharpPaint(card, book){
+  const board = document.getElementById("sharkboard");
+  const note = document.getElementById("sharpnote");
+  if (note) note.textContent = "Four games each. Made at 9:30 AM Eastern. The " + prettyDay(card.date) + " card stays locked until 9:30 AM the next morning.";
+  const tally = sharpTally(book);
   board.innerHTML = SHARKS.map(shark => {
-    const picks = (cards[shark.id] || []).map(row => {
-      const t = row.ticket;
-      const add = t.slip && Number.isFinite(Number(t.odds)) ? "<button type='button' class='card-price shark-add' data-date='" + encodeURIComponent(t.date || "") + "' data-sport='" + encodeURIComponent(row.sport) + "' data-type='" + encodeURIComponent(t.market) + "' data-pick='" + encodeURIComponent(t.slip) + "' data-odds='" + encodeURIComponent(String(t.odds)) + "'>Add to Slip</button>" : "";
-      const body = t.pick
-        ? "<div class='shark-top'><b>" + esc(row.sport) + "</b><span>" + esc(t.market) + "</span></div><p class='shark-side'>" + esc(t.side) + (t.juice ? " <span class='shark-juice'>" + esc(t.juice) + "</span>" : "") + "</p><p class='shark-game'>" + esc(t.game) + "</p>" + (t.when ? "<p class='shark-when'>" + esc(t.when) + "</p>" : "") + "<p>" + esc(t.why) + "</p>" + add
-        : "<div class='shark-top'><b>" + esc(row.sport) + "</b></div><p class='warn'>" + esc(t.empty) + "</p>";
-      return "<div class='shark-pick'>" + body + "</div>";
+    const rec = tally[shark.id] || {w: 0, l: 0, p: 0};
+    const picks = (card.sharps[shark.id] || []).map(t => {
+      if (!t || t.empty || !t.slip) return "<div class='shark-pick'><p class='warn'>" + esc(t && t.empty || sharpPass()) + "</p></div>";
+      const result = t.result || "pending";
+      const label = result === "win" ? "Win" : result === "loss" ? "Loss" : result === "push" ? "Push" : "Pending";
+      const add = Number.isFinite(Number(t.odds)) ? "<button type='button' class='card-price shark-add' data-date='" + encodeURIComponent(t.date || "") + "' data-sport='" + encodeURIComponent(t.sport || "") + "' data-type='" + encodeURIComponent(t.market || "") + "' data-pick='" + encodeURIComponent(t.slip) + "' data-odds='" + encodeURIComponent(String(t.odds)) + "'>Add to Slip</button>" : "";
+      return "<div class='shark-pick'><div class='shark-top'><b>" + esc(t.sport) + "</b><span>" + esc(t.market) + "</span></div><p class='shark-side'>" + esc(t.side) + (t.juice ? " <span class='shark-juice'>" + esc(t.juice) + "</span>" : "") + "</p><p class='shark-game'>" + esc(t.game) + "</p>" + (t.when ? "<p class='shark-when'>" + esc(t.when) + "</p>" : "") + "<p>" + esc(t.why) + "</p><p class='shark-result " + result + "'>" + label + "</p>" + add + "</div>";
     }).join("");
-    return "<article class='shark' id='" + shark.id + "'><img src='" + shark.img + "' alt='" + esc(shark.alt) + "'><div><h3>" + esc(shark.name) + "</h3><p class='shark-rule'>" + esc(shark.rule) + "</p><div class='shark-picks'>" + picks + "</div><p class='shark-fee'>" + esc(shark.fee) + "</p></div></article>";
+    return "<article class='shark' id='" + shark.id + "'><img src='" + shark.img + "' alt='" + esc(shark.alt) + "'><div><h3>" + esc(shark.name) + "</h3><p class='shark-record'>Record " + rec.w + "-" + rec.l + (rec.p ? "-" + rec.p : "") + "</p><p class='shark-rule'>" + esc(shark.rule) + "</p><div class='shark-picks'>" + picks + "</div><p class='shark-fee'>" + esc(shark.fee) + "</p></div></article>";
   }).join("");
+}
+async function loadSharks(){
+  const board = document.getElementById("sharkboard");
+  if (!board || board.dataset.loading === "1") return;
+  board.dataset.loading = "1";
+  board.innerHTML = "<p class='warn'>Loading the sharps.</p>";
+  const day = sharpWindowDate();
+  let book = sharpReadBook();
+  let card = null;
+  try {
+    const res = await fetch("cards/sharps.json?ts=" + Date.now());
+    if (res.ok) {
+      const posted = await res.json();
+      if (posted && posted.date === day && posted.sharps) card = posted;
+    }
+  } catch (e) {}
+  if (!card && book.cards[day]) card = book.cards[day];
+  if (!card) card = sharpBuild(await sharpGames());
+  card = sharpKeepGrades(card, book);
+  card = await sharpGrade(card);
+  book.cards[card.date] = card;
+  sharpWriteBook(book);
+  window.__sharpCard = card;
+  sharpPaint(card, book);
+  board.dataset.loading = "";
   const jump = location.hash && document.querySelector(location.hash);
   if (jump) jump.scrollIntoView({block:"start"});
 }
