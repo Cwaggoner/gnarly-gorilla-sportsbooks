@@ -206,6 +206,9 @@ html[data-page="seasons"] main { min-width:0; }
 #about h2 { margin-bottom:0; }
 .about-split { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr); gap:12px; align-items:stretch; margin-top:12px; }
 .about-box { border:1px solid #39ff14; border-radius:10px; background:#0e0e0e; padding:12px 14px; min-width:0; }
+.about-copy { position:relative; }
+.about-mark { position:absolute; right:10px; bottom:10px; width:148px; height:148px; object-fit:cover; border-radius:12px; border:1px solid #39ff14; background:#0a0a0a; pointer-events:none; }
+.about-copy #staterule, .about-copy #statebooks { padding-right:164px; }
 .feed-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:0 0 8px; }
 .feed-head h2 { margin:0; }
 .feed-head p { margin:0; text-align:right; max-width:46%; }
@@ -723,10 +726,11 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <footer class="card view" id="about">
 <h2>About This Ledger</h2>
 <div class="about-split">
-<div class="about-box">
+<div class="about-box about-copy">
 <p><span class="gg-name">Gnarly Gorilla</span> Sportsbooks is a free browser bet ledger for the daily <span class="gg-name">Gnarly Gorilla</span> pick cards. It tracks American-odds slips for CBB, CFB, MLB, NBA, NFL, and NHL at BetMGM, Caesars, DraftKings, Fanatics, FanDuel, and HardRock. Bets stay in this browser. The page does not log into a sportsbook and does not place wagers.</p>
 <p class="warn" id="staterule">Bet Responsibly. Gambling involves risk. Wagers can lose the full stake. This ledger is a record of picks and results, not a sportsbook, not betting advice, and not an offer to place a wager. You must be 21 or older where sports betting is legal. If gambling is causing problems, call or text 1-800-GAMBLER.</p>
 <p class="warn" id="statebooks">State rules load from the visitor location.</p>
+<img class="about-mark" src="about-mark.jpg" alt="Gnarly Gorilla with football, basketball, baseball, and hockey gear">
 </div>
 <aside class="about-box live-feed">
 <div class="feed-head"><h2>Live Feed</h2><p class="warn" id="feednote">Loading the feed.</p></div>
