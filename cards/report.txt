@@ -1,11 +1,11 @@
-# GG report 2026-10-28
-# Yesterday 2026-10-28 graded. Record 0-1-0. Profit $-10.00. CLV +1.0 points.
+# GG report 2026-10-29
+# Yesterday 2026-10-29 graded. Record 2-0-0. Profit $18.18. CLV +7.45 points.
 
-Analysis: The Hornets +6.5 lost 89-97 to the Pistons. The card noted Edge on the back-to-back. The line closed at Hornets +7.5 -105, giving +1 point of CLV and better juice.
+Analysis: Troy +19 won 24-21. Grizzlies +7.5 won 106-89. Both slips noted Edge.
 
-2026-10-28 | NBA | loss | Hornets +6.5 EDGE
-2026-10-28 | NHL | No Picks
-2026-10-28 | MLB | No Picks
-2026-10-28 | CFB | No Picks
-2026-10-28 | NFL | No Picks
-2026-10-28 | CBB | No Picks
+2026-10-29 | CFB | win | Troy +19 EDGE
+2026-10-29 | NBA | win | Grizzlies +7.5 EDGE
+2026-10-29 | CBB | No Picks
+2026-10-29 | MLB | Season Ended
+2026-10-29 | NFL | No Picks
+2026-10-29 | NHL | No Picks
