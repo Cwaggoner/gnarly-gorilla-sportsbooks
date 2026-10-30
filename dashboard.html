@@ -17,7 +17,7 @@
   } catch (e) {}
   var file = (location.pathname.split("/").pop() || "index.html").toLowerCase();
   var q = new URLSearchParams(location.search).get("page") || "";
-  var map = {games:"games", seasons:"seasons", dashboard:"dashboard", today:"todaycard", live:"liveodds", slips:"slips", report:"reportcard", charts:"charts", books:"breaks", add:"addbet", calendar:"calendarcard", scoreboard:"scoreboard", about:"about"};
+  var map = {games:"games", seasons:"seasons", dashboard:"dashboard", today:"todaycard", live:"liveodds", slips:"slips", report:"reportcard", charts:"charts", books:"breaks", add:"addbet", calendar:"calendarcard", scoreboard:"scoreboard", about:"about", sharks:"sharks"};
   var screen = file === "seasons.html" ? "seasons" : file === "dashboard.html" ? "dashboard" : (map[q] || "games");
   document.documentElement.setAttribute("data-page", screen);
 })();
@@ -218,6 +218,19 @@ html[data-page="seasons"] main { min-width:0; }
 .crew-bio b { display:block; margin:0 0 4px; text-align:center; color:#39ff14; font-family:"Cinzel",serif; font-size:12px; font-weight:700; letter-spacing:.03em; line-height:1.2; }
 .crew-bio p { margin:0 0 6px; }
 .crew-fee { margin:auto 0 0; color:#f0e14a; font-weight:700; letter-spacing:.01em; }
+.crew-hit { display:block; line-height:0; border-radius:12px; }
+.crew-hit:focus-visible { outline:2px solid #39ff14; outline-offset:2px; }
+.shark-list { display:flex; flex-direction:column; gap:12px; }
+.shark { display:grid; grid-template-columns:120px minmax(0,1fr); gap:12px; align-items:start; border:1px solid #39ff14; border-radius:10px; background:#0e0e0e; padding:12px; }
+.shark img { width:120px; height:120px; object-fit:cover; border-radius:12px; border:1px solid #39ff14; background:#0a0a0a; }
+.shark h3 { margin:0 0 4px; color:#39ff14; font-family:"Cinzel",serif; font-size:22px; font-weight:700; letter-spacing:.03em; }
+.shark-rule { margin:0 0 8px; color:#d6ffd0; }
+.shark-picks { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.shark-pick { border:1px solid #39ff14; border-radius:10px; padding:8px 10px; min-width:0; }
+.shark-pick b { display:block; margin:0 0 4px; color:#39ff14; font-family:"Cinzel",serif; letter-spacing:.04em; }
+.shark-pick p { margin:0 0 4px; overflow-wrap:anywhere; }
+.shark-fee { margin:8px 0 0; color:#f0e14a; font-weight:700; }
+@media (max-width:800px) { .shark { grid-template-columns:1fr; } .shark-picks { grid-template-columns:1fr; } }
 .feed-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:0 0 8px; }
 .feed-head h2 { margin:0; }
 .feed-head p { margin:0; text-align:right; max-width:46%; }
@@ -429,6 +442,7 @@ html[data-page="breaks"] #breaks,
 html[data-page="addbet"] #addbet,
 html[data-page="calendarcard"] #calendarcard,
 html[data-page="scoreboard"] #scoreboard,
+html[data-page="sharks"] #sharks,
 html[data-page="about"] #about { display:block !important; }
 html[data-page="scoreboard"] main { min-width:0; }
 .full-board { display:grid; grid-template-columns:128px minmax(0,1fr); gap:12px; align-items:start; }
@@ -528,6 +542,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </div>
 <div id="seasons" class="card view"><div class="section-head"><h2>Season Dates</h2><p class="warn slips-side">Checked in the month each league publishes its schedule.</p></div></div>
 <div id="scoreboard" class="card view"><div class="section-head"><h2>Full Scoreboard</h2><p class="warn slips-side" id="fullscorenote">Loading the board.</p></div><div class="full-board"><aside class="full-sports" id="fullsports"></aside><div class="full-main"><div class="full-dates"><button type="button" class="full-chev" id="fulldateprev" aria-label="Previous day">&#8249;</button><div class="full-date-row" id="fulldates"></div><button type="button" class="full-chev" id="fulldatenext" aria-label="Next day">&#8250;</button></div><div class="full-status" id="fullstatus"><button type="button" data-status="all" class="on">All</button><button type="button" data-status="live">Live</button><button type="button" data-status="pre">Upcoming</button><button type="button" data-status="final">Final</button></div><div id="fullholds"></div><div class="full-games" id="fullrows"></div></div></div></div>
+<section class="card view" id="sharks"><div class="section-head"><h2>Sports Sharks</h2><p class="warn slips-side">Two sports each. No shark writes another shark's ticket.</p></div><div class="shark-list" id="sharkboard"><p class="warn">Loading the sharks.</p></div></section>
 <main>
 <section class="card view on" id="games">
 <div class="section-head"><h2>Games</h2><p class="warn slips-side">Tap a price. Nothing is sent to a book.</p></div>
@@ -741,11 +756,11 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <p class="warn" id="statebooks">State rules load from the visitor location.</p>
 <p class="crew-title">Gnarly Gorilla Sports Sharks</p>
 <div class="crew-row">
-<figure class="crew-card"><img class="about-mark" src="about-gorilla.jpg" alt="Gnarly Gorilla"><figcaption class="crew-bio"><b>Gnarly Gorilla</b><p>Boss. Years on the number. I read the card, kill a bad price, and tell you what to lay. I will make you a sharper bettor.</p><p class="crew-fee">I have a fee. The first $10 of the stake is mine.</p></figcaption></figure>
-<figure class="crew-card"><img class="about-mark" src="jungle-leopard.jpg" alt="Vito the Spot"><figcaption class="crew-bio"><b>Vito the Spot</b><p>I find the soft number and I am gone before it moves. Quiet work. Loud price. I will mark your card and make you a sharper bettor.</p><p class="crew-fee">I have a fee. One unit rides the side I name.</p></figcaption></figure>
-<figure class="crew-card"><img class="about-mark" src="jungle-rhino.jpg" alt="Rocco No Chase"><figcaption class="crew-bio"><b>Rocco No Chase</b><p>I do not chase and I do not blink. I hold the number when the crowd folds. I will steady your bankroll.</p><p class="crew-fee">I have a fee. A flat dime on every play.</p></figcaption></figure>
-<figure class="crew-card"><img class="about-mark" src="jungle-hyena.jpg" alt="Paulie the Fade"><figcaption class="crew-bio"><b>Paulie the Fade</b><p>The public piles one side. I take the other and I wait. I will show you the trap and make you a sharper bettor.</p><p class="crew-fee">I have a fee. Half a unit, win or lose.</p></figcaption></figure>
-<figure class="crew-card"><img class="about-mark" src="jungle-bird.jpg" alt="Gino the Wire"><figcaption class="crew-bio"><b>Gino the Wire</b><p>I watch the open from the wire. I see the move before it prints. I will call your spot early.</p><p class="crew-fee">I have a fee. The juice on the ticket is mine.</p></figcaption></figure>
+<figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-gorilla"><img class="about-mark" src="about-gorilla.jpg" alt="Gnarly Gorilla"></a><figcaption class="crew-bio"><b>Gnarly Gorilla</b><p>Boss. Years on the number. I read the card, kill a bad price, and tell you what to lay. I will make you a sharper bettor.</p><p class="crew-fee">I have a fee. The first $10 of the stake is mine.</p></figcaption></figure>
+<figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-vito"><img class="about-mark" src="jungle-leopard.jpg" alt="Vito the Spot"></a><figcaption class="crew-bio"><b>Vito the Spot</b><p>I find the soft number and I am gone before it moves. Quiet work. Loud price. I will mark your card and make you a sharper bettor.</p><p class="crew-fee">I have a fee. One unit rides the side I name.</p></figcaption></figure>
+<figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-rocco"><img class="about-mark" src="jungle-rhino.jpg" alt="Rocco No Chase"></a><figcaption class="crew-bio"><b>Rocco No Chase</b><p>I do not chase and I do not blink. I hold the number when the crowd folds. I will steady your bankroll.</p><p class="crew-fee">I have a fee. A flat dime on every play.</p></figcaption></figure>
+<figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-paulie"><img class="about-mark" src="jungle-hyena.jpg" alt="Paulie the Fade"></a><figcaption class="crew-bio"><b>Paulie the Fade</b><p>The public piles one side. I take the other and I wait. I will show you the trap and make you a sharper bettor.</p><p class="crew-fee">I have a fee. Half a unit, win or lose.</p></figcaption></figure>
+<figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-gino"><img class="about-mark" src="jungle-bird.jpg" alt="Gino the Wire"></a><figcaption class="crew-bio"><b>Gino the Wire</b><p>I watch the open from the wire. I see the move before it prints. I will call your spot early.</p><p class="crew-fee">I have a fee. The juice on the ticket is mine.</p></figcaption></figure>
 </div>
 </div>
 <aside class="about-box live-feed">
@@ -7450,8 +7465,192 @@ function drawGameBoard(){
     return "<article class='game-row'><h3>" + esc((g.sport ? g.sport + "  " : "") + (when ? when + "  " : "") + g.label) + "</h3><div class='game-lines'><div><h4>Spread</h4>" + cell("spreads") + "</div><div><h4>Moneyline</h4>" + cell("h2h") + "</div><div><h4>Total</h4>" + cell("totals") + "</div></div></article>";
   }).join("");
 }
+const SHARKS = [
+  {id:"shark-gorilla", name:"Gnarly Gorilla", img:"about-gorilla.jpg", alt:"Gnarly Gorilla", sports:["NFL","NBA"], rule:"Boss. He reads the card, kills a bad price, and tells you what to lay.", fee:"Fee: the first $10 of the stake.", kind:"lay"},
+  {id:"shark-vito", name:"Vito the Spot", img:"jungle-leopard.jpg", alt:"Vito the Spot", sports:["CFB","NHL"], rule:"He finds the soft number and he is gone before it moves.", fee:"Fee: one unit on the side he names.", kind:"soft"},
+  {id:"shark-rocco", name:"Rocco No Chase", img:"jungle-rhino.jpg", alt:"Rocco No Chase", sports:["NBA","MLB"], rule:"He holds the number. He does not chase when the crowd folds.", fee:"Fee: a flat dime on every play.", kind:"hold"},
+  {id:"shark-paulie", name:"Paulie the Fade", img:"jungle-hyena.jpg", alt:"Paulie the Fade", sports:["NFL","CFB"], rule:"The public piles one side. He takes the other and waits.", fee:"Fee: half a unit, win or lose.", kind:"fade"},
+  {id:"shark-gino", name:"Gino the Wire", img:"jungle-bird.jpg", alt:"Gino the Wire", sports:["NHL","CBB"], rule:"He calls the spot from the wire before the move prints.", fee:"Fee: the juice on the ticket.", kind:"wire"}
+];
+function sharkSpreadOf(g, odds){
+  let home = Number(odds && odds.spread);
+  const details = String((odds && odds.details) || g.odds || "");
+  if (!Number.isFinite(home)) {
+    const m = details.match(/\b([A-Za-z]{2,5})\s*([+-]\d+(?:\.\d+)?)/);
+    if (m) {
+      const n = Number(m[2]);
+      if (Math.abs(n) < 50) {
+        const tag = m[1].toUpperCase();
+        if (String(g.home.abbr || "").toUpperCase() === tag) home = n;
+        else if (String(g.away.abbr || "").toUpperCase() === tag) home = -n;
+      }
+    }
+  }
+  return Number.isFinite(home) ? home : null;
+}
+function sharkAmerican(node){
+  const text = node && ((node.close && node.close.odds) || (node.open && node.open.odds));
+  const m = String(text || "").match(/([+-]?\d+)/);
+  return m ? Number(m[1]) : null;
+}
+function sharkOpen(node){
+  const m = String(node && node.open && node.open.odds || "").match(/([+-]?\d+)/);
+  return m ? Number(m[1]) : null;
+}
+function sharkNum(n, ml){
+  if (ml) {
+    const v = Math.round(Number(n));
+    return (v > 0 ? "+" : "") + v;
+  }
+  const v = Math.round(Number(n) * 2) / 2;
+  return (v > 0 ? "+" : "") + (Number.isInteger(v) ? v.toFixed(1) : String(v));
+}
+function sharkSides(g, kind){
+  if (g.homeSpread != null && g.sport !== "NHL") {
+    return [
+      {g: g, who: "home", name: g.home.name, n: g.homeSpread, ml: false},
+      {g: g, who: "away", name: g.away.name, n: -g.homeSpread, ml: false}
+    ];
+  }
+  if (g.homeML != null && g.awayML != null) {
+    const open = kind === "wire";
+    return [
+      {g: g, who: "home", name: g.home.name, n: open && g.homeOpen != null ? g.homeOpen : g.homeML, ml: true},
+      {g: g, who: "away", name: g.away.name, n: open && g.awayOpen != null ? g.awayOpen : g.awayML, ml: true}
+    ];
+  }
+  if (g.homeSpread != null) {
+    return [
+      {g: g, who: "home", name: g.home.name, n: g.homeSpread, ml: false},
+      {g: g, who: "away", name: g.away.name, n: -g.homeSpread, ml: false}
+    ];
+  }
+  return [];
+}
+function sharkChoose(kind, games){
+  const sides = games.flatMap(g => sharkSides(g, kind));
+  if (!sides.length) return null;
+  if (kind === "fade" || kind === "soft") {
+    const dogs = sides.filter(s => s.n > 0).sort((a, b) => b.n - a.n);
+    return dogs[0] || null;
+  }
+  if (kind === "lay") {
+    const fair = sides.filter(s => !s.ml && s.n <= -3 && s.n >= -6.5).sort((a, b) => Math.abs(a.n + 4.5) - Math.abs(b.n + 4.5));
+    if (fair[0]) return Object.assign({note: "Bad prices are dead. This is the number to lay."}, fair[0]);
+    const small = sides.filter(s => !s.ml && s.n < 0 && s.n > -7).sort((a, b) => b.n - a.n);
+    if (small[0]) return Object.assign({note: "The short number is dead. Lay this one."}, small[0]);
+    const dog = sides.filter(s => s.n > 0).sort((a, b) => b.n - a.n)[0];
+    return dog ? Object.assign({note: "The favorite price is bad. I killed it. Lay the points."}, dog) : null;
+  }
+  if (kind === "hold") {
+    const held = sides.filter(s => !s.ml && s.n >= 4.5).sort((a, b) => Math.abs(a.n - 6) - Math.abs(b.n - 6));
+    if (held[0]) return held[0];
+    return sides.filter(s => s.n > 0).sort((a, b) => a.n - b.n)[0] || null;
+  }
+  const tight = sides.slice().sort((a, b) => Math.abs(a.n) - Math.abs(b.n) || b.n - a.n);
+  return tight[0] || null;
+}
+function sharkWhy(kind, side){
+  if (side && side.note) return side.note;
+  if (kind === "fade") return "The public is on the other side. I faded it.";
+  if (kind === "soft") return "Soft number. I am gone before it moves.";
+  if (kind === "hold") return "I am holding this number. I will not chase.";
+  if (kind === "wire") return "This is the wire. The move has not printed.";
+  return "This is the number to lay.";
+}
+async function sharkDay(sport, ymd){
+  const stamp = String(ymd).replace(/-/g, "");
+  let data = null;
+  try {
+    const res = await fetch("https://site.api.espn.com/apis/site/v2/sports/" + SCORE_FEED[sport] + "/scoreboard?dates=" + stamp + "&limit=400");
+    if (res.ok) data = await res.json();
+  } catch (e) {}
+  if (!data) return [];
+  return (data.events || []).map(ev => {
+    const g = liveGameFromEvent(sport, ev);
+    if (!g || (g.start && slateDateOf(g.start) !== ymd)) return null;
+    const comp = (ev.competitions || [])[0] || {};
+    const odds = (comp.odds || [])[0] || {};
+    const ml = odds.moneyline || {};
+    g.homeSpread = sharkSpreadOf(g, odds);
+    g.homeML = sharkAmerican(ml.home);
+    g.awayML = sharkAmerican(ml.away);
+    g.homeOpen = sharkOpen(ml.home);
+    g.awayOpen = sharkOpen(ml.away);
+    return g;
+  }).filter(Boolean);
+}
+async function sharkSlate(sport){
+  const today = easternDay();
+  for (let i = 0; i <= 6; i++) {
+    const ymd = shiftDate(today, i);
+    const games = await sharkDay(sport, ymd);
+    const open = games.filter(g => !g.final);
+    if (open.length) return {date: ymd, games: open, note: i ? "Next slate, " + prettyDay(ymd) + "." : prettyDay(ymd) + "."};
+  }
+  for (let i = 1; i <= 3; i++) {
+    const ymd = shiftDate(today, -i);
+    const games = await sharkDay(sport, ymd);
+    if (games.length) return {date: ymd, games: games, note: "Previous slate, " + prettyDay(ymd) + "."};
+  }
+  return {date: today, games: [], note: sport === "CBB" ? "CBB has not posted a slate." : "No games posted."};
+}
+function sharkTicket(kind, slate, claimed){
+  if (!slate.games.length) return {empty: slate.note};
+  const open = slate.games.filter(g => !claimed.has(g.id));
+  const side = sharkChoose(kind, open);
+  if (!side) {
+    const blocked = slate.games.some(g => claimed.has(g.id));
+    return {empty: blocked ? "The other shark already has the only ticket. I will not copy it." : "No number posted. I will not invent a ticket."};
+  }
+  claimed.add(side.g.id);
+  const pick = side.name + " " + sharkNum(side.n, side.ml) + " · " + side.g.away.name + " at " + side.g.home.name;
+  return {pick: pick, why: sharkWhy(kind, side), when: slate.note};
+}
+async function loadSharks(){
+  const board = document.getElementById("sharkboard");
+  if (!board || board.dataset.ready === "1") {
+    const jump = location.hash && document.querySelector(location.hash);
+    if (jump) jump.scrollIntoView({block:"start"});
+    return;
+  }
+  board.innerHTML = "<p class='warn'>Loading the sharks.</p>";
+  const sports = ["NFL","NBA","CFB","NHL","MLB","CBB"];
+  const packs = {};
+  await Promise.all(sports.map(async sport => { packs[sport] = await sharkSlate(sport); }));
+  const claimed = new Set();
+  const seen = new Set();
+  const order = ["fade","soft","lay","hold","wire"];
+  const cards = {};
+  order.forEach(kind => {
+    SHARKS.filter(s => s.kind === kind).forEach(shark => {
+      cards[shark.id] = shark.sports.map(sport => {
+        const ticket = sharkTicket(kind, packs[sport], claimed);
+        if (ticket.pick && seen.has(ticket.pick)) {
+          ticket.empty = "That ticket is already written. I will not copy it.";
+          ticket.pick = "";
+        }
+        if (ticket.pick) seen.add(ticket.pick);
+        return {sport: sport, ticket: ticket};
+      });
+    });
+  });
+  board.dataset.ready = "1";
+  board.innerHTML = SHARKS.map(shark => {
+    const picks = (cards[shark.id] || []).map(row => {
+      const t = row.ticket;
+      const body = t.pick
+        ? "<p><b class='gg-name'>" + esc(t.pick) + "</b></p><p>" + esc(t.why) + "</p><p class='warn'>" + esc(t.when) + "</p>"
+        : "<p class='warn'>" + esc(t.empty) + "</p>";
+      return "<div class='shark-pick'><b>" + esc(row.sport) + "</b>" + body + "</div>";
+    }).join("");
+    return "<article class='shark' id='" + shark.id + "'><img src='" + shark.img + "' alt='" + esc(shark.alt) + "'><div><h3>" + esc(shark.name) + "</h3><p class='shark-rule'>" + esc(shark.rule) + "</p><div class='shark-picks'>" + picks + "</div><p class='shark-fee'>" + esc(shark.fee) + "</p></div></article>";
+  }).join("");
+  const jump = location.hash && document.querySelector(location.hash);
+  if (jump) jump.scrollIntoView({block:"start"});
+}
 function pageFor(id){
-  return {games:"games", seasons:"seasons", dashboard:"dashboard", todaycard:"today", liveodds:"live", slips:"slips", reportcard:"report", charts:"charts", breaks:"books", addbet:"add", calendarcard:"calendar", scoreboard:"scoreboard", about:"about"}[id] || "";
+  return {games:"games", seasons:"seasons", dashboard:"dashboard", todaycard:"today", liveodds:"live", slips:"slips", reportcard:"report", charts:"charts", breaks:"books", addbet:"add", calendarcard:"calendar", scoreboard:"scoreboard", about:"about", sharks:"sharks"}[id] || "";
 }
 function pageUrl(id){
   if (id === "seasons") return "seasons.html";
@@ -7465,7 +7664,7 @@ function screenNow(){
   if (file === "seasons.html") return "seasons";
   if (file === "dashboard.html") return "dashboard";
   const page = new URLSearchParams(location.search).get("page") || "games";
-  return {games:"games", seasons:"seasons", dashboard:"dashboard", today:"todaycard", live:"liveodds", slips:"slips", report:"reportcard", charts:"charts", books:"breaks", add:"addbet", calendar:"calendarcard", scoreboard:"scoreboard", about:"about"}[page] || "games";
+  return {games:"games", seasons:"seasons", dashboard:"dashboard", today:"todaycard", live:"liveodds", slips:"slips", report:"reportcard", charts:"charts", books:"breaks", add:"addbet", calendar:"calendarcard", scoreboard:"scoreboard", about:"about", sharks:"sharks"}[page] || "games";
 }
 function goPage(id){
   if (screenNow() === id) { showView(id); return; }
@@ -7500,7 +7699,7 @@ function restoreForm(){
   if (note && data.picknote) note.textContent = data.picknote;
 }
 function showView(id){
-  const screens = ["games","seasons","dashboard","todaycard","liveodds","slips","reportcard","charts","breaks","addbet","calendarcard","scoreboard","about"];
+  const screens = ["games","seasons","dashboard","todaycard","liveodds","slips","reportcard","charts","breaks","addbet","calendarcard","scoreboard","sharks","about"];
   const box = document.getElementById(id);
   if (!box) return;
   const parent = screens.indexOf(id) >= 0 ? null : box.closest(".view");
@@ -7525,6 +7724,7 @@ function showView(id){
     scroller.scrollTo({left: Math.max(0, left), behavior:"smooth"});
   });
   if (screen === "scoreboard") loadLiveBoard();
+  if (screen === "sharks") loadSharks();
   if (screen === "dashboard") { try { drawDashboard(); } catch (e) {} }
   if (screen === "charts") { try { drawCharts(); } catch (e) {} }
   if (screen === "calendarcard") { try { drawCalendar(); } catch (e) {} }
@@ -7532,7 +7732,7 @@ function showView(id){
     try { parkOddsTools(); } catch (e) {}
     drawOddsCompare(false).catch(() => {});
   }
-  const titles = {games:"Games", seasons:"Season Dates", dashboard:"Dashboard", todaycard:"Today's Card", liveodds:"Live Odds", slips:"Slips", reportcard:"Report Card", charts:"Charts", breaks:"Books", addbet:"Add Bet", calendarcard:"Calendar", about:"About"};
+  const titles = {games:"Games", seasons:"Season Dates", dashboard:"Dashboard", todaycard:"Today's Card", liveodds:"Live Odds", slips:"Slips", reportcard:"Report Card", charts:"Charts", breaks:"Books", addbet:"Add Bet", calendarcard:"Calendar", scoreboard:"Scoreboard", sharks:"Sports Sharks", about:"About"};
   document.title = (titles[screen] || "Ledger") + " | Gnarly Gorilla Sportsbooks";
   const canon = document.querySelector('link[rel="canonical"]');
   if (canon) canon.href = new URL(pageUrl(screen), "https://cwaggoner.github.io/gnarly-gorilla-sportsbooks/").href;
