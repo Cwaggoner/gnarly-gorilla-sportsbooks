@@ -194,8 +194,13 @@ input, select, button, textarea { background:#0e0e0e; color:var(--text); border:
 .key-box { margin-top:10px; border:1px solid #39ff14; border-radius:10px; padding:10px; }
 .key-row { display:flex; align-items:flex-end; gap:12px; flex-wrap:wrap; }
 .key-box .api-note { margin-top:10px; color:var(--amber); }
-#seasons { margin-bottom:18px; }
-#seasons table { margin-bottom:28px; }
+#seasons { margin-bottom:18px; min-width:0; max-width:100%; }
+#seasons > table { margin-bottom:28px; }
+html[data-page="seasons"] main { min-width:0; }
+#seasonrecords { margin:8px 0 16px; }
+#seasonrecords .table-wrap { max-width:100%; overflow:auto; border:1px solid #39ff14; border-radius:10px; }
+#seasonrecords table { display:table; width:max-content; min-width:100%; margin:0; }
+#seasonrecords select { max-width:32ch; }
 .season-hold, .season-hold td { border:0; background:transparent; box-shadow:none; width:100%; }
 .season-hold td { height:18px; width:50%; }
 table.season-hold.filled { border:1px solid #39ff14; border-radius:10px; overflow:hidden; margin-top:8px; }
@@ -2977,9 +2982,11 @@ function showSeasons(checked){
   });
   wave += " H448";
   const ekg = "<span class='ekg' data-ms='" + (parseFloat(pulse) * 1000) + "'><svg viewBox='0 0 448 36' preserveAspectRatio='none' aria-label='Season pulse'><defs><clipPath id='ekgclip'><rect class='ekg-clip' x='0' y='0' width='0' height='36'></rect></clipPath></defs><path class='trace' clip-path='url(#ekgclip)' d='" + wave + "' style='stroke:" + color + "'></path></svg></span>";
+  const records = "<div class='card-rest' id='seasonrecords'><b style='color:#39ff14'>Win/Loss Records</b><p class='warn' id='recnote' style='margin:4px 0 8px'>Loading standings.</p><div class='tools'><label>Sport<select id='recsport'></select></label><label>Conference<select id='recconf'></select></label><label>Division<select id='recdiv'></select></label></div><div class='table-wrap'><table><thead><tr><th>Team</th><th>Sport</th><th>Conference</th><th>Division</th><th>W</th><th>L</th><th>T/OTL</th><th>PCT</th><th>GB</th><th>Streak</th></tr></thead><tbody id='recrows'></tbody></table></div></div>";
   const trivia = "<div class='card-rest' id='seasontrivia'><b style='color:#39ff14'>Daily Sports Trivia</b><p class='warn' style='margin:4px 0 8px'>A new question at midnight. The same question stays up all day.</p><p data-q>Loading today's question.</p><button type='button' id='triviareveal'>Show answer</button><p data-a class='warn' hidden></p></div>";
-  box.innerHTML = "<div class='section-head'><h2>Season Dates</h2><p class='warn slips-side'>Checked " + (seasonChecked || "2026-10-19") + ". NFL May, NHL July, MLB July, NBA August, CFB August, CBB September. Postseason nights stay open until the last game ends or " + zoneTime(4, 0) + ". NBA and NHL through June 30, MLB through the World Series, NFL through the Super Bowl, CFB through the championship, March Madness March 13 through the title game.</p></div><table><thead><tr><th colspan='6' style='text-align:center'>" + ekg + "</th></tr><tr><th>Sport</th><th>Start</th><th>Last Card</th><th>Status</th><th>Where</th><th>Days Left</th></tr></thead><tbody>" + rows + "</tbody></table>" + trivia;
+  box.innerHTML = "<div class='section-head'><h2>Season Dates</h2><p class='warn slips-side'>Checked " + (seasonChecked || "2026-10-19") + ". NFL May, NHL July, MLB July, NBA August, CFB August, CBB September. Postseason nights stay open until the last game ends or " + zoneTime(4, 0) + ". NBA and NHL through June 30, MLB through the World Series, NFL through the Super Bowl, CFB through the championship, March Madness March 13 through the title game.</p></div><table><thead><tr><th colspan='6' style='text-align:center'>" + ekg + "</th></tr><tr><th>Sport</th><th>Start</th><th>Last Card</th><th>Status</th><th>Where</th><th>Days Left</th></tr></thead><tbody>" + rows + "</tbody></table>" + records + trivia;
   startPulse();
+  if (pageNeeds("seasons")) loadRecords();
 }
 let pulseFrame = 0;
 function startPulse(){
@@ -3037,6 +3044,156 @@ async function loadSeasons(){
     }
   } catch (err) { showSeasons(); }
   loadTrivia();
+}
+const STAND_PATH = {NFL:"football/nfl", NBA:"basketball/nba", NHL:"hockey/nhl", MLB:"baseball/mlb", CFB:"football/college-football", CBB:"basketball/mens-college-basketball"};
+let recordRows = [];
+let recordMeta = {};
+let recordTimer = 0;
+let recordFlight = null;
+function recordsStamp(){
+  const clock = zoneClock(new Date());
+  if (clock.hour === 0 && clock.minute < 30) return shiftDate(clock.date, -1);
+  return clock.date;
+}
+function nextRecordAt(){
+  const clock = zoneClock(new Date());
+  const day = clock.hour === 0 && clock.minute < 30 ? clock.date : shiftDate(clock.date, 1);
+  return instantAt(day, 0, 30);
+}
+function readRecordCache(){
+  try {
+    const pack = JSON.parse(localStorage.getItem("gg-standings-v1") || "null");
+    if (pack && pack.stamp === recordsStamp() && Array.isArray(pack.rows) && pack.rows.length) return pack;
+  } catch (e) {}
+  return null;
+}
+function writeRecordCache(pack){
+  try { localStorage.setItem("gg-standings-v1", JSON.stringify(pack)); } catch (e) {}
+}
+function standLabel(node, short){
+  const abbr = String(node && node.abbreviation || "").trim();
+  const name = String(node && (node.name || node.shortName) || "").trim().replace(/\s+Division$/, "");
+  if (short && abbr && abbr.length <= 6) return abbr;
+  return name || abbr || "—";
+}
+function standBag(entry){
+  const bag = {};
+  (entry.stats || []).forEach(s => { if (s && s.name) bag[s.name] = s.displayValue; });
+  return bag;
+}
+function overallParts(text){
+  const m = String(text || "").match(/(\d+)\s*-\s*(\d+)(?:\s*-\s*(\d+))?/);
+  if (!m) return null;
+  return {w: Number(m[1]), l: Number(m[2]), t: m[3] ? Number(m[3]) : 0};
+}
+function standRows(sport, data){
+  const rows = [];
+  const take = (node, conference, division) => {
+    const kids = (node && node.children) || [];
+    if (kids.length) {
+      kids.forEach(k => take(k, conference || standLabel(node, true), standLabel(k, false)));
+      return;
+    }
+    ((((node || {}).standings || {}).entries) || []).forEach(entry => {
+      const bag = standBag(entry);
+      const parsed = overallParts(bag.overall);
+      const w = parsed ? parsed.w : Number(bag.wins) || 0;
+      const l = parsed ? parsed.l : Number(bag.losses) || 0;
+      const t = parsed ? parsed.t : (Number(bag.otLosses) || Number(bag.overtimeLosses) || Number(bag.ties) || 0);
+      const games = w + l + t;
+      const raw = parseFloat(bag.winPercent);
+      let pct = "—";
+      if (games) pct = (!Number.isFinite(raw) || (raw === 0 && w > 0)) ? (w / games).toFixed(3).replace(/^0/, "") : raw.toFixed(3).replace(/^0/, "");
+      const team = (entry.team && (entry.team.displayName || entry.team.shortDisplayName)) || "";
+      if (!team) return;
+      rows.push({sport: sport, conference: conference || "—", division: division || "—", team: team, w: w, l: l, t: t, pct: pct, gb: bag.gamesBehind || "—", streak: bag.streak || "—"});
+    });
+  };
+  ((data && data.children) || []).forEach(conf => take(conf, standLabel(conf, true), ""));
+  return rows;
+}
+async function fetchStandings(){
+  const sports = ["CBB","CFB","MLB","NBA","NFL","NHL"];
+  const packs = await Promise.all(sports.map(sport => fetch("https://site.api.espn.com/apis/v2/sports/" + STAND_PATH[sport] + "/standings?level=3").then(r => r.ok ? r.json() : null).catch(() => null)));
+  const rows = [];
+  const seasons = {};
+  sports.forEach((sport, i) => {
+    if (!packs[i]) return;
+    seasons[sport] = (packs[i].season && packs[i].season.displayName) || "";
+    standRows(sport, packs[i]).forEach(row => rows.push(row));
+  });
+  rows.sort((a, b) => sportRank(a.sport) - sportRank(b.sport) || a.conference.localeCompare(b.conference) || a.division.localeCompare(b.division) || (b.w - a.w) || (a.l - b.l) || a.team.localeCompare(b.team));
+  return {stamp: recordsStamp(), seasons: seasons, rows: rows};
+}
+function paintRecordFilters(){
+  const sportSel = document.getElementById("recsport");
+  const confSel = document.getElementById("recconf");
+  const divSel = document.getElementById("recdiv");
+  if (!sportSel || !confSel || !divSel) return;
+  const sports = ["CBB","CFB","MLB","NBA","NFL","NHL"].filter(s => recordRows.some(r => r.sport === s));
+  const sport = sports.indexOf(sportSel.value) >= 0 ? sportSel.value : "";
+  sportSel.innerHTML = "<option value=''>All</option>" + sports.map(s => "<option" + (s === sport ? " selected" : "") + ">" + s + "</option>").join("");
+  sportSel.value = sport;
+  const confs = [...new Set(recordRows.filter(r => !sport || r.sport === sport).map(r => r.conference))].sort();
+  const conf = confs.indexOf(confSel.value) >= 0 ? confSel.value : "";
+  confSel.innerHTML = "<option value=''>All</option>" + confs.map(c => "<option value='" + esc(c) + "'" + (c === conf ? " selected" : "") + ">" + esc(c) + "</option>").join("");
+  confSel.value = conf;
+  const divs = [...new Set(recordRows.filter(r => (!sport || r.sport === sport) && (!conf || r.conference === conf) && r.division && r.division !== "—").map(r => r.division))].sort();
+  const div = divs.indexOf(divSel.value) >= 0 ? divSel.value : "";
+  divSel.innerHTML = "<option value=''>All</option>" + divs.map(d => "<option value='" + esc(d) + "'" + (d === div ? " selected" : "") + ">" + esc(d) + "</option>").join("");
+  divSel.value = div;
+  if (!sportSel.dataset.bound) {
+    sportSel.dataset.bound = "1";
+    sportSel.onchange = () => { confSel.value = ""; divSel.value = ""; paintRecords(); };
+    confSel.onchange = () => { divSel.value = ""; paintRecords(); };
+    divSel.onchange = () => paintRecords();
+  }
+}
+function paintRecords(){
+  const body = document.getElementById("recrows");
+  const note = document.getElementById("recnote");
+  if (!body) return;
+  paintRecordFilters();
+  const sport = document.getElementById("recsport").value;
+  const conf = document.getElementById("recconf").value;
+  const div = document.getElementById("recdiv").value;
+  const list = recordRows.filter(r => (!sport || r.sport === sport) && (!conf || r.conference === conf) && (!div || r.division === div));
+  let last = "";
+  body.innerHTML = list.map(r => {
+    const key = r.sport + "|" + r.conference + "|" + r.division;
+    let head = "";
+    if (key !== last) {
+      last = key;
+      head = "<tr class='sport'><td colspan='10'>" + esc(r.sport + " · " + r.conference + (r.division && r.division !== "—" ? " · " + r.division : "")) + "</td></tr>";
+    }
+    return head + "<tr><td>" + esc(r.team) + "</td><td>" + esc(r.sport) + "</td><td>" + esc(r.conference) + "</td><td>" + esc(r.division) + "</td><td>" + r.w + "</td><td>" + r.l + "</td><td>" + r.t + "</td><td>" + esc(r.pct) + "</td><td>" + esc(r.gb) + "</td><td>" + esc(r.streak) + "</td></tr>";
+  }).join("") || "<tr><td colspan='10'>No teams for that filter.</td></tr>";
+  if (!note) return;
+  const quiet = ["CBB","CFB","MLB","NBA","NFL","NHL"].filter(s => SEASON_START[s] && easternDay() < SEASON_START[s] && recordRows.some(r => r.sport === s));
+  note.textContent = "Board for " + recordsStamp() + ". It updates at 12:30 AM Eastern and stays up until the next 12:30 AM (" + formatTime(nextRecordAt(), false) + ")." + (quiet.length ? " " + quiet.join(", ") + " has not started. This is the last board posted." : "");
+}
+function armRecordRefresh(){
+  clearTimeout(recordTimer);
+  const wait = Math.max(5000, nextRecordAt() - Date.now() + 1500);
+  recordTimer = setTimeout(() => loadRecords(true), Math.min(wait, 2147483647));
+}
+async function loadRecords(force){
+  if (!document.getElementById("seasonrecords")) return;
+  let pack = !force && readRecordCache();
+  if (!pack) {
+    const note = document.getElementById("recnote");
+    if (note && !recordRows.length) note.textContent = "Loading standings.";
+    if (!recordFlight || force) recordFlight = fetchStandings().finally(() => { recordFlight = null; });
+    try { pack = await recordFlight; } catch (e) { pack = null; }
+    if (pack && pack.rows && pack.rows.length) writeRecordCache(pack);
+  }
+  if (!document.getElementById("seasonrecords")) return;
+  recordRows = (pack && pack.rows) || [];
+  recordMeta = (pack && pack.seasons) || {};
+  paintRecords();
+  const note = document.getElementById("recnote");
+  if (!recordRows.length && note) note.textContent = "Standings did not load.";
+  armRecordRefresh();
 }
 function seasonText(sport){ return seasonEnded(sport) ? "Season Ended" : "No Picks"; }
 const TEAM_ALIAS = {njd:"devils", vgk:"knights", okc:"thunder", lad:"dodgers", bkn:"nets"};
