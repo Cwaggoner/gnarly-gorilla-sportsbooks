@@ -87,11 +87,12 @@ footer.card { width:100%; max-width:none; margin:14px 0 0; box-sizing:border-box
 .stat b .zero { color:#ffffff; font-style:italic; }
 .card { padding:14px; margin-top:14px; scroll-margin-top:var(--pin, 150px); }
 .section-head { display:flex; align-items:center; justify-content:space-between; gap:12px; }
-#slips .slip-actions { display:flex; flex-direction:row; flex-wrap:nowrap; align-items:center; gap:8px; margin:0; }
+#slips { min-width:0; max-width:100%; }
+#slips .slip-actions { display:flex; flex-direction:row; flex-wrap:wrap; align-items:center; gap:8px; margin:0; }
 #slips .result-files .slip-actions { align-self:flex-end; }
 #slips .slip-actions button { white-space:nowrap; flex:0 0 auto; }
-#slips .slip-filters { flex-wrap:nowrap; overflow-x:auto; }
-#slips .result-files { display:flex; align-items:flex-end; gap:8px; }
+#slips .slip-filters { flex-wrap:wrap; max-width:100%; min-width:0; padding-right:84px; box-sizing:border-box; }
+#slips .result-files { display:flex; align-items:flex-end; gap:8px; flex-wrap:wrap; min-width:0; max-width:100%; }
 #slips .result-files > :nth-child(2) { margin-left:2px; }
 .section-head h2 { margin:0; }
 .slips-side { margin:0; text-align:left; max-width:62%; font-size:12px; }
@@ -211,8 +212,8 @@ button.amber { color:var(--amber); }
 table { width:100%; border-collapse:separate; border-spacing:0; margin-top:8px; border:1px solid #39ff14; border-radius:10px; overflow:hidden; }
 .card, .page { max-width:100%; }
 .table-wrap { display:block; width:100%; overflow-x:auto; }
-#slips .table-wrap { overflow:auto; margin-top:calc(8px + 1lh); border:1px solid #39ff14; border-radius:10px; }
-#slips table { width:max-content; min-width:100%; margin-top:0; border:0; border-radius:0; background:transparent; }
+#slips .table-wrap { overflow:auto; max-width:100%; margin-top:calc(8px + 1lh); border:1px solid #39ff14; border-radius:10px; }
+#slips table { display:table; width:max-content; min-width:100%; margin-top:0; border:0; border-radius:0; background:transparent; }
 #slips tr:last-child td { border-bottom:0; }
 #slips .book-slot { position:relative; height:0; margin:0; border:0; overflow:visible; z-index:4; }
 #bookbadge { position:absolute; right:0; top:0; width:72px; height:72px; box-sizing:border-box; border:1px solid #39ff14; border-radius:12px; background:#0a0a0a; overflow:hidden; pointer-events:none; }
@@ -350,6 +351,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 .view { display:none; }
 .view.on { display:block; }
 html[data-page] .view { display:none !important; }
+html[data-page="slips"] main { min-width:0; }
 html[data-page="games"] #games,
 html[data-page="seasons"] #seasons,
 html[data-page="dashboard"] #dashboard,
