@@ -7622,13 +7622,26 @@ async function sharkSlate(sport){
   }
   return {date: today, games: [], note: sport === "CBB" ? "CBB has not posted a slate." : "No games posted."};
 }
+function sharpPass(){
+  const lines = [
+    "No number has been posted. A man of my standing does not invent a price.",
+    "The board is blank. I will not stoop to fabricating a ticket.",
+    "Nothing posted. Inventing a number would be vulgar.",
+    "The market has not spoken. I decline to improvise.",
+    "No figure on the board. I do not conjure tickets.",
+    "The line is unpublished. Forging one is beneath this house."
+  ];
+  let line = lines[Math.floor(Math.random() * lines.length)];
+  if (Math.random() < 0.5) line += " Forgetta' bout' it.";
+  return line;
+}
 function sharkTicket(kind, slate, claimed){
   if (!slate.games.length) return {empty: slate.note};
   const open = slate.games.filter(g => !claimed.has(g.id));
   const side = sharkChoose(kind, open);
   if (!side) {
     const blocked = slate.games.some(g => claimed.has(g.id));
-    return {empty: blocked ? "The other sharp already has the only ticket. I will not copy it." : "No number posted. I will not invent a ticket."};
+    return {empty: blocked ? "The other sharp already has the only ticket. I will not copy it." : sharpPass()};
   }
   claimed.add(side.g.id);
   const one = t => t.name + (t.rec ? " (" + t.rec + ")" : "");
