@@ -205,8 +205,15 @@ html[data-page="seasons"] main { min-width:0; }
 #seasonlive > .section-head { margin:0 0 12px; background:rgba(57,255,20,.12); border:1px solid #39ff14; border-radius:10px; padding:10px 14px; }
 .score-nav { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin:0 0 4px; }
 .score-nav b { color:#39ff14; min-width:14ch; text-align:center; }
-.score-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:8px; margin:0 0 12px; }
-.score-card { border:1px solid #243024; border-radius:10px; background:#0e0e0e; padding:8px 10px; }
+.score-strip { position:relative; margin:0 0 12px; min-width:0; }
+.score-row { display:flex; flex-wrap:nowrap; gap:8px; overflow-x:auto; overflow-y:hidden; scrollbar-width:none; width:100%; min-width:0; -webkit-overflow-scrolling:touch; }
+.score-row::-webkit-scrollbar { display:none; }
+.score-card { flex:0 0 272px; width:272px; box-sizing:border-box; border:1px solid #243024; border-radius:10px; background:#0e0e0e; padding:8px 10px; }
+.score-arrow { position:absolute; top:50%; transform:translateY(-50%); z-index:2; width:36px; height:56px; padding:0; display:flex; align-items:center; justify-content:center; border-radius:8px; background:rgba(10,10,10,.92); border:1px solid #39ff14; }
+.score-arrow[hidden] { display:none !important; }
+#seasonliveleft { left:0; }
+#seasonliveright { right:0; }
+.score-row .score-empty { flex:1 0 auto; margin:8px; }
 .score-card.live { border-color:#f0e14a; }
 .score-card.final { border-color:#39ff14; }
 .score-top { display:flex; justify-content:space-between; align-items:center; gap:8px; font-size:12px; color:#8fb898; margin-bottom:4px; }
@@ -3006,7 +3013,7 @@ function showSeasons(checked){
   });
   wave += " H448";
   const ekg = "<span class='ekg' data-ms='" + (parseFloat(pulse) * 1000) + "'><svg viewBox='0 0 448 36' preserveAspectRatio='none' aria-label='Season pulse'><defs><clipPath id='ekgclip'><rect class='ekg-clip' x='0' y='0' width='0' height='36'></rect></clipPath></defs><path class='trace' clip-path='url(#ekgclip)' d='" + wave + "' style='stroke:" + color + "'></path></svg></span>";
-  const live = "<div id='seasonlive'><div class='section-head'><h2>Live Scores</h2><p class='warn slips-side' id='seasonlivenote'>Loading the board.</p></div><div class='score-nav'><button type='button' id='seasonliveprev'>Prev</button><b id='seasonliveday'></b><button type='button' id='seasonlivenext'>Next</button><button type='button' id='seasonlivetoday'>Today</button></div><div class='sport-bar' id='seasonlivesports'><button type='button' data-sport='All' class='on'>All</button><button type='button' data-sport='CBB'>CBB</button><button type='button' data-sport='CFB'>CFB</button><button type='button' data-sport='MLB'>MLB</button><button type='button' data-sport='NBA'>NBA</button><button type='button' data-sport='NFL'>NFL</button><button type='button' data-sport='NHL'>NHL</button></div><div id='seasonlivegrid'></div></div>";
+  const live = "<div id='seasonlive'><div class='section-head'><h2>Live Scores</h2><p class='warn slips-side' id='seasonlivenote'>Loading the board.</p></div><div class='score-nav'><button type='button' id='seasonliveprev'>Prev</button><b id='seasonliveday'></b><button type='button' id='seasonlivenext'>Next</button><button type='button' id='seasonlivetoday'>Today</button></div><div class='sport-bar' id='seasonlivesports'><button type='button' data-sport='All' class='on'>All</button><button type='button' data-sport='CBB'>CBB</button><button type='button' data-sport='CFB'>CFB</button><button type='button' data-sport='MLB'>MLB</button><button type='button' data-sport='NBA'>NBA</button><button type='button' data-sport='NFL'>NFL</button><button type='button' data-sport='NHL'>NHL</button></div><div id='seasonlivenotes'></div><div class='score-strip'><button type='button' class='score-arrow' id='seasonliveleft' aria-label='Scroll scores left'><svg viewBox='0 0 24 24' width='22' height='22' aria-hidden='true'><path d='M15 5 L8 12 L15 19' fill='none' stroke='#39ff14' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/></svg></button><div class='score-row' id='seasonliverow'></div><button type='button' class='score-arrow' id='seasonliveright' aria-label='Scroll scores right'><svg viewBox='0 0 24 24' width='22' height='22' aria-hidden='true'><path d='M9 5 L16 12 L9 19' fill='none' stroke='#39ff14' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/></svg></button></div></div>";
   const records = "<div class='card-rest' id='seasonrecords'><b style='color:#39ff14'>Win/Loss Records</b><p class='warn' id='recnote' style='margin:4px 0 8px'>Loading standings.</p><div class='tools'><label>Sport<select id='recsport'></select></label><label>Conference<select id='recconf'></select></label><label>Division<select id='recdiv'></select></label></div><div class='table-wrap'><table><thead><tr><th>Team</th><th>Sport</th><th>Conference</th><th>Division</th><th>W</th><th>L</th><th>T/OTL</th><th>PCT</th><th>GB</th><th>Streak</th></tr></thead><tbody id='recrows'></tbody></table></div></div>";
   const trivia = "<div class='card-rest' id='seasontrivia'><b style='color:#39ff14'>Daily Sports Trivia</b><p class='warn' style='margin:4px 0 8px'>A new question at midnight. The same question stays up all day.</p><p data-q>Loading today's question.</p><button type='button' id='triviareveal'>Show answer</button><p data-a class='warn' hidden></p></div>";
   box.innerHTML = live + "<div class='section-head'><h2>Season Dates</h2><p class='warn slips-side'>Checked " + (seasonChecked || "2026-10-19") + ". NFL May, NHL July, MLB July, NBA August, CFB August, CBB September. Postseason nights stay open until the last game ends or " + zoneTime(4, 0) + ". NBA and NHL through June 30, MLB through the World Series, NFL through the Super Bowl, CFB through the championship, March Madness March 13 through the title game.</p></div><table><thead><tr><th colspan='6' style='text-align:center'>" + ekg + "</th></tr><tr><th>Sport</th><th>Start</th><th>Last Card</th><th>Status</th><th>Where</th><th>Days Left</th></tr></thead><tbody>" + rows + "</tbody></table>" + records + trivia;
@@ -3395,6 +3402,63 @@ function bindLiveBoard(){
   document.querySelectorAll("#seasonlivesports button").forEach(btn => {
     btn.onclick = () => { liveBoardSport = btn.dataset.sport || "All"; paintLiveBoard(); };
   });
+  bindScoreArrows();
+}
+let scoreScrollAnim = 0;
+let scoreHold = 0;
+function updateScoreArrows(){
+  const row = document.getElementById("seasonliverow");
+  const left = document.getElementById("seasonliveleft");
+  const right = document.getElementById("seasonliveright");
+  if (!row || !left || !right) return;
+  const max = Math.max(0, row.scrollWidth - row.clientWidth);
+  left.hidden = max < 4 || row.scrollLeft <= 1;
+  right.hidden = max < 4 || row.scrollLeft >= max - 1;
+}
+function scrollScores(dir){
+  const row = document.getElementById("seasonliverow");
+  if (!row) return;
+  const max = Math.max(0, row.scrollWidth - row.clientWidth);
+  const target = Math.max(0, Math.min(max, row.scrollLeft + dir * row.clientWidth));
+  const start = row.scrollLeft;
+  const dist = target - start;
+  if (Math.abs(dist) < 1) { scoreHold = 0; updateScoreArrows(); return; }
+  const duration = 500;
+  const t0 = performance.now();
+  cancelAnimationFrame(scoreScrollAnim);
+  const step = now => {
+    const t = Math.min(1, (now - t0) / duration);
+    const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    row.scrollLeft = start + dist * eased;
+    if (t < 1) scoreScrollAnim = requestAnimationFrame(step);
+    else {
+      updateScoreArrows();
+      if (scoreHold === dir) scrollScores(dir);
+    }
+  };
+  scoreScrollAnim = requestAnimationFrame(step);
+}
+function bindScoreArrows(){
+  const row = document.getElementById("seasonliverow");
+  if (row && !row.dataset.bound) {
+    row.dataset.bound = "1";
+    row.addEventListener("scroll", updateScoreArrows, {passive: true});
+    row.addEventListener("pointerdown", () => { scoreHold = 0; cancelAnimationFrame(scoreScrollAnim); });
+  }
+  [["seasonliveleft", -1], ["seasonliveright", 1]].forEach(([id, dir]) => {
+    const btn = document.getElementById(id);
+    if (!btn || btn.dataset.bound) return;
+    btn.dataset.bound = "1";
+    const stop = () => { if (scoreHold === dir) scoreHold = 0; };
+    btn.addEventListener("pointerdown", e => { e.preventDefault(); scoreHold = dir; scrollScores(dir); });
+    btn.addEventListener("pointerup", stop);
+    btn.addEventListener("pointerleave", stop);
+    btn.addEventListener("pointercancel", stop);
+  });
+  if (!bindScoreArrows.resize) {
+    bindScoreArrows.resize = true;
+    window.addEventListener("resize", updateScoreArrows);
+  }
 }
 function paintLiveChrome(){
   if (!liveBoardDate) liveBoardDate = easternDay();
@@ -3411,9 +3475,11 @@ function liveHoldCopy(why, shown){
   return "";
 }
 function paintLiveBoard(){
-  const grid = document.getElementById("seasonlivegrid");
-  if (!grid) return;
+  const row = document.getElementById("seasonliverow");
+  const notes = document.getElementById("seasonlivenotes");
+  if (!row) return;
   paintLiveChrome();
+  bindScoreArrows();
   const list = liveBoardGames.filter(g => liveBoardSport === "All" || g.sport === liveBoardSport);
   const teamRow = (t, opp, state) => {
     const logo = /^https:\/\/a\.espncdn\.com\//.test(t.logo) ? "<img src='" + esc(t.logo) + "' alt=''>" : "<span class='score-logo'></span>";
@@ -3431,22 +3497,19 @@ function paintLiveBoard(){
     const meta = metaBits.length ? "<p class='score-meta'>" + esc(metaBits.join(" · ")) + "</p>" : "";
     return "<article class='score-card " + cls + "'><div class='score-top'><span>" + esc(g.sport) + "</span><span class='score-state'>" + flag + esc(when) + "</span></div>" + teamRow(g.away, g.home, g.state) + teamRow(g.home, g.away, g.state) + sub + meta + "</article>";
   };
-  if (!list.length) { grid.innerHTML = "<p class='warn'>No games on this date.</p>"; return; }
-  const groups = [];
-  list.forEach(g => {
-    let bucket = groups.find(x => x.key === g.sport);
-    if (!bucket) {
-      bucket = {key: g.sport, why: g.why || "", shown: g.shown || liveBoardDate, games: []};
-      groups.push(bucket);
-    }
-    bucket.games.push(g);
-  });
-  grid.innerHTML = groups.map(group => {
-    const title = "<h3 class='split-title'>" + esc(group.key) + "</h3>";
-    const copy = liveHoldCopy(group.why, group.shown);
-    const note = copy ? "<p class='warn score-hold'>" + esc(copy) + "</p>" : "";
-    return title + note + "<div class='score-grid'>" + group.games.map(card).join("") + "</div>";
-  }).join("");
+  const keep = row.scrollLeft;
+  if (!list.length) {
+    if (notes) notes.innerHTML = "";
+    row.innerHTML = "<p class='warn score-empty'>No games on this date.</p>";
+    updateScoreArrows();
+    return;
+  }
+  const seen = [];
+  list.forEach(g => { if (g.why && !seen.some(s => s.sport === g.sport)) seen.push(g); });
+  if (notes) notes.innerHTML = seen.map(g => "<p class='warn score-hold'>" + esc(g.sport) + ": " + esc(liveHoldCopy(g.why, g.shown)) + "</p>").join("");
+  row.innerHTML = list.map(card).join("");
+  row.scrollLeft = keep;
+  requestAnimationFrame(updateScoreArrows);
 }
 async function loadLiveBoard(){
   if (!pageNeeds("seasons") || !document.getElementById("seasonlive")) return;
