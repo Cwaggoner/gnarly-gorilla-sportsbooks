@@ -203,6 +203,21 @@ html[data-page="seasons"] main { min-width:0; }
 #seasonrecords select { max-width:32ch; }
 #seasonlive { margin:0 0 16px; }
 #seasonlive > .section-head, #seasonrecords > .section-head { margin:0 0 12px; background:rgba(57,255,20,.12); border:1px solid #39ff14; border-radius:10px; padding:10px 14px; }
+#about h2 { margin-bottom:0; }
+.about-split { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr); gap:12px; align-items:stretch; margin-top:12px; }
+.about-box { border:1px solid #39ff14; border-radius:10px; background:#0e0e0e; padding:12px 14px; min-width:0; }
+.feed-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:0 0 8px; }
+.feed-head h2 { margin:0; }
+.feed-head p { margin:0; text-align:right; max-width:46%; }
+.live-feed table { width:100%; border-collapse:collapse; }
+.live-feed th, .live-feed td { border-bottom:1px solid #1f3a1f; padding:6px 8px; text-align:left; vertical-align:top; }
+.live-feed th { color:#39ff14; }
+.live-feed td:first-child { white-space:nowrap; color:#f0e14a; }
+.live-feed td:nth-child(2) { white-space:nowrap; color:#39ff14; font-weight:700; }
+.live-feed a { color:#d6ffd0; text-decoration:none; }
+.live-feed a:hover { color:#39ff14; }
+.live-feed .table-wrap { max-height:440px; overflow:auto; }
+@media (max-width:800px) { .about-split { grid-template-columns:1fr; } .feed-head { flex-wrap:wrap; } .feed-head p { max-width:none; text-align:left; } }
 .score-nav { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin:0 0 4px; }
 .score-nav b { color:#39ff14; min-width:14ch; text-align:center; }
 .score-strip { position:relative; display:flex; align-items:center; gap:8px; margin:0 0 12px; min-width:0; }
@@ -707,9 +722,17 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </main>
 <footer class="card view" id="about">
 <h2>About This Ledger</h2>
+<div class="about-split">
+<div class="about-box">
 <p><span class="gg-name">Gnarly Gorilla</span> Sportsbooks is a free browser bet ledger for the daily <span class="gg-name">Gnarly Gorilla</span> pick cards. It tracks American-odds slips for CBB, CFB, MLB, NBA, NFL, and NHL at BetMGM, Caesars, DraftKings, Fanatics, FanDuel, and HardRock. Bets stay in this browser. The page does not log into a sportsbook and does not place wagers.</p>
 <p class="warn" id="staterule">Bet Responsibly. Gambling involves risk. Wagers can lose the full stake. This ledger is a record of picks and results, not a sportsbook, not betting advice, and not an offer to place a wager. You must be 21 or older where sports betting is legal. If gambling is causing problems, call or text 1-800-GAMBLER.</p>
 <p class="warn" id="statebooks">State rules load from the visitor location.</p>
+</div>
+<aside class="about-box live-feed">
+<div class="feed-head"><h2>Live Feed</h2><p class="warn" id="feednote">Loading the feed.</p></div>
+<div class="table-wrap"><table><thead><tr><th>Time</th><th>Sport</th><th>Headline</th></tr></thead><tbody id="livefeed"></tbody></table></div>
+</aside>
+</div>
 </footer>
 <div class="bet-box slip-min" id="sgpbox">
 <h3>Bet Slip <button type="button" id="slipdock">Show</button><button type="button" id="slipclose">Close</button></h3>
@@ -7178,6 +7201,7 @@ setInterval(showClock, 1000);
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState !== "visible") return;
   if (scorePage()) loadLiveBoard();
+  if (pageNeeds("about")) loadLiveFeed();
   const first = firstGameStart(easternDay());
   if (!Number.isFinite(first) || Date.now() < first) return;
   const last = Number(localStorage.getItem("gg-score-check") || 0);
@@ -7194,12 +7218,67 @@ document.getElementById("nextMonth").onclick = () => { monthCursor.setMonth(mont
   } catch (err) {}
 });
 try { render(); } catch (err) {}
+const FEED_URLS = ["football","basketball","baseball","hockey"].map(sport => "https://now.core.api.espn.com/v1/sports/news?sport=" + sport + "&limit=15");
+function feedSportOf(h){
+  const bits = [h.section || ""].concat((h.categories || []).map(c => c && c.description || "")).join(" ").toLowerCase();
+  if (/college football|ncaa football|\bncf\b/.test(bits)) return "CFB";
+  if (/\bnfl\b/.test(bits)) return "NFL";
+  if (/men.s college|ncaa men/.test(bits)) return "CBB";
+  if (/\bnba\b/.test(bits)) return "NBA";
+  if (/\bmlb\b/.test(bits)) return "MLB";
+  if (/\bnhl\b/.test(bits)) return "NHL";
+  return "";
+}
+let feedSig = "";
+let feedTimer = 0;
+function armFeed(){
+  clearTimeout(feedTimer);
+  if (!pageNeeds("about")) return;
+  feedTimer = setTimeout(loadLiveFeed, 60000);
+}
+async function loadLiveFeed(){
+  if (!pageNeeds("about")) return;
+  const body = document.getElementById("livefeed");
+  if (!body) return;
+  let packs = [];
+  try { packs = await Promise.all(FEED_URLS.map(url => fetch(url).then(r => r.ok ? r.json() : null).catch(() => null))); } catch (e) { packs = []; }
+  const rows = [];
+  const seen = {};
+  packs.forEach(pack => ((pack && pack.headlines) || []).forEach(h => {
+    const sport = feedSportOf(h || {});
+    if (!sport || !h.headline || seen[h.id]) return;
+    seen[h.id] = 1;
+    const href = h.links && h.links.web && h.links.web.href || "";
+    rows.push({id: h.id, sport: sport, headline: h.headline, published: h.published || h.lastModified || "", href: /^https:\/\/([a-z0-9-]+\.)?espn\.com\//.test(href) ? href : ""});
+  }));
+  rows.sort((a, b) => String(b.published).localeCompare(String(a.published)));
+  const top = rows.slice(0, 12);
+  const note = document.getElementById("feednote");
+  if (!top.length) {
+    if (note) note.textContent = "Feed did not load. It will try again in a minute.";
+    if (!body.children.length) body.innerHTML = "<tr><td colspan='3'>No headlines yet.</td></tr>";
+    armFeed();
+    return;
+  }
+  const sig = top.map(r => r.id + "|" + r.headline).join("~");
+  if (sig !== feedSig) {
+    feedSig = sig;
+    body.innerHTML = top.map(r => {
+      const when = r.published ? formatTime(r.published, false) : "";
+      const title = r.href ? "<a href='" + esc(r.href) + "' target='_blank' rel='noopener noreferrer'>" + esc(r.headline) + "</a>" : esc(r.headline);
+      return "<tr><td>" + esc(when) + "</td><td>" + esc(r.sport) + "</td><td>" + title + "</td></tr>";
+    }).join("");
+  }
+  if (note) note.textContent = "Updated " + formatTime(new Date(), true) + ". Checks again in a minute.";
+  armFeed();
+}
 if (pageNeeds("seasons")) loadSeasons();
 if (document.documentElement.dataset.page === "scoreboard") {
   const sport = (new URLSearchParams(location.search).get("sport") || "").toUpperCase();
   if (["CBB","CFB","MLB","NBA","NFL","NHL"].indexOf(sport) >= 0) liveBoardSport = sport;
   loadLiveBoard();
 }
+if (pageNeeds("about")) loadLiveFeed();
 if (pageNeeds("slate")) {
   loadPickSlate();
   setInterval(() => { loadPickSlate(); }, 300000);
