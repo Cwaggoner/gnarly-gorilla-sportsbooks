@@ -235,6 +235,7 @@ html[data-page="seasons"] main { min-width:0; }
 .shark-juice { color:#f0e14a; font-weight:700; }
 .shark-game, .shark-when { margin:0 0 2px; color:#d6ffd0; font-size:12px; font-weight:600; }
 .shark-pick p { margin:0 0 4px; overflow-wrap:anywhere; }
+.shark-add { margin-top:6px; }
 .shark-fee { margin:8px 0 0; color:#f0e14a; font-weight:700; }
 @media (max-width:800px) { .shark { grid-template-columns:1fr; } .shark-picks { grid-template-columns:1fr; } }
 .feed-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:0 0 8px; }
@@ -485,7 +486,7 @@ html[data-page="scoreboard"] main { min-width:0; }
   .full-sports { position:static; flex-direction:row; flex-wrap:wrap; }
   .full-sports button { width:auto; }
 }
-html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-page="todaycard"]):not([data-page="addbet"]) #sgpbox { display:none !important; }
+html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-page="todaycard"]):not([data-page="addbet"]):not([data-page="sharks"]) #sgpbox { display:none !important; }
 #sitenav button.on, #sitenav a.on, .sport-bar button.on { color:#39ff14; outline:1px solid #39ff14; }
 .sport-bar { display:flex; flex-wrap:wrap; gap:6px; margin:8px 0; }
 .sport-bar .score-full { margin-left:4px; height:38px; display:inline-flex; align-items:center; box-sizing:border-box; padding:2px 10px; }
@@ -549,7 +550,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </div>
 <div id="seasons" class="card view"><div class="section-head"><h2>Season Dates</h2><p class="warn slips-side">Checked in the month each league publishes its schedule.</p></div></div>
 <div id="scoreboard" class="card view"><div class="section-head"><h2>Full Scoreboard</h2><p class="warn slips-side" id="fullscorenote">Loading the board.</p></div><div class="full-board"><aside class="full-sports" id="fullsports"></aside><div class="full-main"><div class="full-dates"><button type="button" class="full-chev" id="fulldateprev" aria-label="Previous day">&#8249;</button><div class="full-date-row" id="fulldates"></div><button type="button" class="full-chev" id="fulldatenext" aria-label="Next day">&#8250;</button></div><div class="full-status" id="fullstatus"><button type="button" data-status="all" class="on">All</button><button type="button" data-status="live">Live</button><button type="button" data-status="pre">Upcoming</button><button type="button" data-status="final">Final</button></div><div id="fullholds"></div><div class="full-games" id="fullrows"></div></div></div></div>
-<section class="card view" id="sharks"><div class="section-head"><h2>Sports Sharps</h2><p class="warn slips-side">Two sports each. No sharp writes another sharp's ticket.</p></div><div class="shark-list" id="sharkboard"><p class="warn">Loading the sharps.</p></div></section>
+<section class="card view" id="sharks"><div class="section-head"><h2>Sports Sharps</h2><p class="warn slips-side">Every sport. No sharp writes another sharp's ticket. Add to Slip stays in this browser.</p></div><div class="shark-list" id="sharkboard"><p class="warn">Loading the sharps.</p></div></section>
 <main>
 <section class="card view on" id="games">
 <div class="section-head"><h2>Games</h2><p class="warn slips-side">Tap a price. Nothing is sent to a book.</p></div>
@@ -7474,12 +7475,13 @@ function drawGameBoard(){
     return "<article class='game-row'><h3>" + esc((g.sport ? g.sport + "  " : "") + (when ? when + "  " : "") + g.label) + "</h3><div class='game-lines'><div><h4>Spread</h4>" + cell("spreads") + "</div><div><h4>Moneyline</h4>" + cell("h2h") + "</div><div><h4>Total</h4>" + cell("totals") + "</div></div></article>";
   }).join("");
 }
+const SHARP_SPORTS = ["NFL","NBA","CFB","NHL","MLB","CBB"];
 const SHARKS = [
-  {id:"shark-gorilla", name:"Gnarly Gorilla", img:"about-gorilla.jpg", alt:"Gnarly Gorilla", sports:["NFL","NBA"], rule:"Boss. He reads the card, kills a bad price, and tells you what to lay.", fee:"Fee: the first $10 of the stake.", kind:"lay"},
-  {id:"shark-vito", name:"Vito the Spot", img:"jungle-leopard.jpg", alt:"Vito the Spot", sports:["CFB","NHL"], rule:"He finds the soft number and he is gone before it moves.", fee:"Fee: one unit on the side he names.", kind:"soft"},
-  {id:"shark-rocco", name:"Rocco No Chase", img:"jungle-rhino.jpg", alt:"Rocco No Chase", sports:["NBA","MLB"], rule:"He holds the number. He does not chase when the crowd folds.", fee:"Fee: a flat dime on every play.", kind:"hold"},
-  {id:"shark-paulie", name:"Paulie the Fade", img:"jungle-hyena.jpg", alt:"Paulie the Fade", sports:["NFL","CFB"], rule:"The public piles one side. He takes the other and waits.", fee:"Fee: half a unit, win or lose.", kind:"fade"},
-  {id:"shark-gino", name:"Gino the Wire", img:"jungle-bird.jpg", alt:"Gino the Wire", sports:["NHL","CBB"], rule:"He calls the spot from the wire before the move prints.", fee:"Fee: the juice on the ticket.", kind:"wire"}
+  {id:"shark-gorilla", name:"Gnarly Gorilla", img:"about-gorilla.jpg", alt:"Gnarly Gorilla", rule:"Boss. He reads the card, kills a bad price, and tells you what to lay.", fee:"Fee: the first $10 of the stake.", kind:"lay"},
+  {id:"shark-vito", name:"Vito the Spot", img:"jungle-leopard.jpg", alt:"Vito the Spot", rule:"He finds the soft number and he is gone before it moves.", fee:"Fee: one unit on the side he names.", kind:"soft"},
+  {id:"shark-rocco", name:"Rocco No Chase", img:"jungle-rhino.jpg", alt:"Rocco No Chase", rule:"He holds the number. He does not chase when the crowd folds.", fee:"Fee: a flat dime on every play.", kind:"hold"},
+  {id:"shark-paulie", name:"Paulie the Fade", img:"jungle-hyena.jpg", alt:"Paulie the Fade", rule:"The public piles one side. He takes the other and waits.", fee:"Fee: half a unit, win or lose.", kind:"fade"},
+  {id:"shark-gino", name:"Gino the Wire", img:"jungle-bird.jpg", alt:"Gino the Wire", rule:"He calls the spot from the wire before the move prints.", fee:"Fee: the juice on the ticket.", kind:"wire"}
 ];
 function sharkSpreadOf(g, odds){
   let home = Number(odds && odds.spread);
@@ -7652,7 +7654,13 @@ function sharkTicket(kind, slate, claimed){
   const sideText = side.name + " " + sharkNum(side.n, side.ml);
   const juice = side.ml ? "" : sharkNum(side.juice == null ? -110 : side.juice, true);
   const when = side.g.start ? [prettyDay(slateDateOf(side.g.start)), formatTime(side.g.start, false)].filter(Boolean).join(" · ") : slate.note;
-  return {pick: sideText + "|" + side.g.id, market: side.ml ? "Moneyline" : "Spread", side: sideText, juice: juice, game: one(side.g.away) + " at " + one(side.g.home), when: when, why: sharkWhy(kind, side)};
+  const opp = side.who === "home" ? side.g.away.name : side.g.home.name;
+  const slip = side.ml
+    ? side.name + " ML " + (side.who === "home" ? "vs " : "at ") + opp
+    : side.name + " " + sharkNum(side.n, false) + (side.who === "home" ? " vs " : " at ") + opp;
+  const odds = side.ml ? Math.round(Number(side.n)) : Math.round(Number(side.juice == null ? -110 : side.juice));
+  const date = side.g.start ? slateDateOf(side.g.start) : slate.date;
+  return {pick: sideText + "|" + side.g.id, market: side.ml ? "Moneyline" : "Spread", side: sideText, juice: juice, game: one(side.g.away) + " at " + one(side.g.home), when: when, why: sharkWhy(kind, side), slip: slip, odds: odds, date: date};
 }
 async function loadSharks(){
   const board = document.getElementById("sharkboard");
@@ -7662,7 +7670,7 @@ async function loadSharks(){
     return;
   }
   board.innerHTML = "<p class='warn'>Loading the sharps.</p>";
-  const sports = ["NFL","NBA","CFB","NHL","MLB","CBB"];
+  const sports = SHARP_SPORTS.slice();
   const packs = {};
   await Promise.all(sports.map(async sport => { packs[sport] = await sharkSlate(sport); }));
   const claimed = new Set();
@@ -7671,7 +7679,7 @@ async function loadSharks(){
   const cards = {};
   order.forEach(kind => {
     SHARKS.filter(s => s.kind === kind).forEach(shark => {
-      cards[shark.id] = shark.sports.map(sport => {
+      cards[shark.id] = SHARP_SPORTS.map(sport => {
         const ticket = sharkTicket(kind, packs[sport], claimed);
         if (ticket.pick && seen.has(ticket.pick)) {
           ticket.empty = "That ticket is already written. I will not copy it.";
@@ -7686,8 +7694,9 @@ async function loadSharks(){
   board.innerHTML = SHARKS.map(shark => {
     const picks = (cards[shark.id] || []).map(row => {
       const t = row.ticket;
+      const add = t.slip && Number.isFinite(Number(t.odds)) ? "<button type='button' class='card-price shark-add' data-date='" + encodeURIComponent(t.date || "") + "' data-sport='" + encodeURIComponent(row.sport) + "' data-type='" + encodeURIComponent(t.market) + "' data-pick='" + encodeURIComponent(t.slip) + "' data-odds='" + encodeURIComponent(String(t.odds)) + "'>Add to Slip</button>" : "";
       const body = t.pick
-        ? "<div class='shark-top'><b>" + esc(row.sport) + "</b><span>" + esc(t.market) + "</span></div><p class='shark-side'>" + esc(t.side) + (t.juice ? " <span class='shark-juice'>" + esc(t.juice) + "</span>" : "") + "</p><p class='shark-game'>" + esc(t.game) + "</p>" + (t.when ? "<p class='shark-when'>" + esc(t.when) + "</p>" : "") + "<p>" + esc(t.why) + "</p>"
+        ? "<div class='shark-top'><b>" + esc(row.sport) + "</b><span>" + esc(t.market) + "</span></div><p class='shark-side'>" + esc(t.side) + (t.juice ? " <span class='shark-juice'>" + esc(t.juice) + "</span>" : "") + "</p><p class='shark-game'>" + esc(t.game) + "</p>" + (t.when ? "<p class='shark-when'>" + esc(t.when) + "</p>" : "") + "<p>" + esc(t.why) + "</p>" + add
         : "<div class='shark-top'><b>" + esc(row.sport) + "</b></div><p class='warn'>" + esc(t.empty) + "</p>";
       return "<div class='shark-pick'>" + body + "</div>";
     }).join("");
