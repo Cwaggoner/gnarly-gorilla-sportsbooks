@@ -11,7 +11,7 @@
     if (side > 800 && dpr > 1) side = side / dpr;
     if (side && side <= 520) {
       var meta = document.querySelector('meta[name="viewport"]');
-      if (meta) meta.setAttribute("content", "width=622");
+      if (meta) meta.setAttribute("content", "width=732");
     }
   } catch (e) {}
   var file = (location.pathname.split("/").pop() || "index.html").toLowerCase();
@@ -263,7 +263,7 @@ table.season-hold.filled td.note-col p { margin:0; display:-webkit-box; -webkit-
 .sharp-read b { color:#39ff14; font-size:12px; }
 .sharp-read p { margin:4px 0 0; color:#d6ffd0; font-size:12px; line-height:1.35; }
 .card-rest { margin-top:10px; border:1px solid #39ff14; border-radius:8px; padding:10px; }
-@media (max-width:700px) { .analysis-grid { grid-template-columns:1fr 1fr; } }
+@media (max-width:760px) { .analysis-grid { grid-template-columns:1fr 1fr; } }
 #dashboard.view.on { display:flex; flex-direction:column; }
 #dashboard.view:not(.on) { display:none !important; }
 #dashboard .dash-tools { margin-top:14px; }
@@ -307,10 +307,10 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 .sport-title h2 { margin:0; border:0; background:transparent; padding:0; }
 #sportbest, #monthbest { margin-left:10px; color:#39ff14; font-weight:700; }
 #sportday { text-align:center; margin:6px 0 0; color:#d6ffd0; }
-@media (max-width:700px) { .charts { grid-template-columns:1fr; } .bet-top { grid-template-columns:1fr; } .field-grid { grid-template-columns:1fr 1fr; } .field-note { grid-column:1 / -1; } #betload img { max-width:120px; } }
+@media (max-width:760px) { .charts { grid-template-columns:1fr; } .bet-top { grid-template-columns:1fr; } .field-grid { grid-template-columns:1fr 1fr; } .field-note { grid-column:1 / -1; } #betload img { max-width:120px; } }
 
-@media (max-width:700px) { table { display:block; overflow-x:auto; } }
-@media (max-width:640px) {
+@media (max-width:760px) { table { display:block; overflow-x:auto; } }
+@media (max-width:760px) {
   header { grid-template-columns:56px minmax(0,1fr) auto 56px; gap:6px; padding:4px 6px; }
   header img { width:44px; height:44px; border-radius:8px; }
   header h1 { font-size:16px; }
