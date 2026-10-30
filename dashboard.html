@@ -224,6 +224,7 @@ html[data-page="seasons"] main { min-width:0; }
 .score-team.lose .nm, .score-team.lose .sc { color:#8fb898; }
 .score-sub { margin:4px 0 0; color:#f0e14a; font-size:12px; line-height:1.3; }
 .score-meta { margin:2px 0 0; color:#8fb898; font-size:12px; line-height:1.3; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.score-hold { margin:0 0 8px; }
 .season-hold, .season-hold td { border:0; background:transparent; box-shadow:none; width:100%; }
 .season-hold td { height:18px; width:50%; }
 table.season-hold.filled { border:1px solid #39ff14; border-radius:10px; overflow:hidden; margin-top:8px; }
@@ -3223,6 +3224,7 @@ let liveBoardDate = "";
 let liveBoardSport = "All";
 let liveBoardGames = [];
 let liveBoardTimer = 0;
+const livePackCache = new Map();
 function liveSide(row){
   const team = (row && row.team) || {};
   const rec = ((row && row.records) || []).find(r => r.type === "total" || r.name === "overall");
@@ -3242,6 +3244,138 @@ function liveGameFromEvent(sport, ev){
   const network = Array.isArray(names) ? names.filter(Boolean).slice(0, 2).join(", ") : "";
   const odds = ((comp.odds || [])[0] || {}).details || "";
   return {sport: sport, id: ev.id, start: Date.parse(ev.date || comp.date || "") || 0, state: state, live: state === "in", final: state === "post" || type.completed === true, detail: type.shortDetail || type.detail || "", situation: sit.downDistanceText || sit.shortDownDistanceText || "", network: network, odds: odds, away: away, home: home};
+}
+function prettyDay(ymd){
+  return new Date(String(ymd).slice(0, 10) + "T12:00:00Z").toLocaleDateString("en-US", {timeZone:"America/New_York", weekday:"short", month:"short", day:"numeric"});
+}
+function scoreCacheFresh(pack){
+  if (!pack || !pack.ok) return false;
+  const age = Date.now() - pack.at;
+  if (pack.games.some(g => g.live)) return age < 14000;
+  if (!pack.games.length || pack.games.some(g => !g.final)) return age < 55000;
+  return true;
+}
+function calendarDays(cal, whitelist){
+  if (!whitelist || !Array.isArray(cal)) return [];
+  return cal.filter(x => typeof x === "string").map(x => String(x).slice(0, 10)).filter(Boolean);
+}
+async function fetchScoreDay(sport, ymd){
+  const key = sport + "|" + ymd;
+  const hit = livePackCache.get(key);
+  if (scoreCacheFresh(hit)) return hit;
+  const stamp = String(ymd).replace(/-/g, "");
+  let data = null;
+  try {
+    const res = await fetch("https://site.api.espn.com/apis/site/v2/sports/" + SCORE_FEED[sport] + "/scoreboard?dates=" + stamp + "&limit=400");
+    if (res.ok) data = await res.json();
+  } catch (e) {}
+  if (!data) return {games: [], days: [], ok: false, at: 0};
+  const events = (data.events || []).map(ev => liveGameFromEvent(sport, ev)).filter(g => g && (!g.start || slateDateOf(g.start) === ymd));
+  const league = (data.leagues || [])[0] || {};
+  const pack = {games: events, days: calendarDays(league.calendar, league.calendarIsWhitelist), ok: true, at: Date.now()};
+  livePackCache.set(key, pack);
+  return pack;
+}
+function readLiveHold(){
+  try { return JSON.parse(localStorage.getItem("gg-live-hold-v1") || "{}"); } catch (e) { return {}; }
+}
+function writeLiveHold(sport, row){
+  const all = readLiveHold();
+  all[sport] = row;
+  try { localStorage.setItem("gg-live-hold-v1", JSON.stringify(all)); } catch (e) {}
+}
+function tagGames(games, shown, why){
+  return games.map(g => Object.assign({}, g, {shown: shown, why: why}));
+}
+async function previousGameDay(sport, ymd){
+  const start = SEASON_START[sport];
+  const yesterday = shiftDate(ymd, -1);
+  if (!(start && yesterday < start)) {
+    const pack = await fetchScoreDay(sport, yesterday);
+    if (pack.games.length) return {games: tagGames(pack.games, yesterday, "previous"), shown: yesterday, why: "previous"};
+  }
+  for (let base = 2; base <= 14; base += 4) {
+    const days = [];
+    for (let i = base; i < base + 4 && i <= 14; i++) {
+      const prev = shiftDate(ymd, -i);
+      if (start && prev < start) break;
+      days.push(prev);
+    }
+    if (!days.length) break;
+    const packs = await Promise.all(days.map(d => fetchScoreDay(sport, d)));
+    const hit = packs.findIndex(p => p.games.length);
+    if (hit >= 0) return {games: tagGames(packs[hit].games, days[hit], "previous"), shown: days[hit], why: "previous"};
+  }
+  return null;
+}
+async function previousSeasonFinale(sport){
+  const start = SEASON_START[sport];
+  if (!start || easternDay() >= start) return null;
+  const cached = readLiveHold()[sport];
+  if (cached && cached.kind === "waiting" && cached.until === start && cached.games && cached.games.length) return {games: tagGames(cached.games, cached.date, "waiting"), shown: cached.date, why: "waiting"};
+  let cursor = shiftDate(start, -1);
+  for (let i = 0; i < 8 && cursor > "2000-01-01"; i++) {
+    const pack = await fetchScoreDay(sport, cursor);
+    const days = (pack.days || []).slice().sort();
+    const older = days.filter(d => d <= shiftDate(start, -30));
+    const last = older.length ? older[older.length - 1] : "";
+    if (last) {
+      const finale = last === cursor ? pack : await fetchScoreDay(sport, last);
+      if (finale.games.length) {
+        writeLiveHold(sport, {kind: "waiting", until: start, date: last, games: finale.games});
+        return {games: tagGames(finale.games, last, "waiting"), shown: last, why: "waiting"};
+      }
+    }
+    const first = days[0] || "";
+    let next = first ? shiftDate(first, -90) : shiftDate(cursor, -60);
+    if (next >= cursor) next = shiftDate(cursor, -90);
+    cursor = next;
+  }
+  return null;
+}
+async function endedSeasonFinale(sport){
+  const end = SEASON_END[sport];
+  const start = SEASON_START[sport];
+  if (!end || !seasonEnded(sport)) return null;
+  const cached = readLiveHold()[sport];
+  if (cached && cached.kind === "ended" && cached.end === end && cached.games && cached.games.length) return {games: tagGames(cached.games, cached.date, "ended"), shown: cached.date, why: "ended"};
+  for (let base = 0; base <= 45; base += 6) {
+    const days = [];
+    for (let i = base; i < base + 6 && i <= 45; i++) {
+      const ymd = shiftDate(end, -i);
+      if (start && ymd < start) break;
+      days.push(ymd);
+    }
+    if (!days.length) break;
+    const packs = await Promise.all(days.map(d => fetchScoreDay(sport, d)));
+    const hit = packs.findIndex(p => p.games.length);
+    if (hit >= 0) {
+      writeLiveHold(sport, {kind: "ended", end: end, date: days[hit], games: packs[hit].games});
+      return {games: tagGames(packs[hit].games, days[hit], "ended"), shown: days[hit], why: "ended"};
+    }
+  }
+  return null;
+}
+async function scoresForSport(sport, ymd){
+  const pack = await fetchScoreDay(sport, ymd);
+  if (pack.games.length) return {games: tagGames(pack.games, ymd, ""), shown: ymd, why: "", ok: true};
+  const today = easternDay();
+  const start = SEASON_START[sport];
+  const end = SEASON_END[sport];
+  const inSeason = !!(start && end && today >= start && today <= end && ymd >= start && ymd <= end);
+  if (inSeason) {
+    const prev = await previousGameDay(sport, ymd);
+    if (prev) return Object.assign({ok: true}, prev);
+  }
+  if (start && today < start) {
+    const held = await previousSeasonFinale(sport);
+    if (held) return Object.assign({ok: true}, held);
+  }
+  if (seasonEnded(sport)) {
+    const held = await endedSeasonFinale(sport);
+    if (held) return Object.assign({ok: true}, held);
+  }
+  return {games: [], shown: ymd, why: "empty", ok: pack.ok};
 }
 function armLiveBoard(ms){
   clearTimeout(liveBoardTimer);
@@ -3265,10 +3399,16 @@ function bindLiveBoard(){
 function paintLiveChrome(){
   if (!liveBoardDate) liveBoardDate = easternDay();
   const day = document.getElementById("seasonliveday");
-  if (day) day.textContent = new Date(liveBoardDate + "T12:00:00Z").toLocaleDateString("en-US", {timeZone:"America/New_York", weekday:"short", month:"short", day:"numeric"});
+  if (day) day.textContent = prettyDay(liveBoardDate);
   const today = document.getElementById("seasonlivetoday");
   if (today) today.hidden = liveBoardDate === easternDay();
   document.querySelectorAll("#seasonlivesports button").forEach(btn => btn.classList.toggle("on", (btn.dataset.sport || "All") === liveBoardSport));
+}
+function liveHoldCopy(why, shown){
+  if (why === "previous") return "No games on " + prettyDay(liveBoardDate) + ". Showing the previous day, " + prettyDay(shown) + ".";
+  if (why === "ended") return "Season ended. Last scores from " + prettyDay(shown) + " stay up until the next season.";
+  if (why === "waiting") return "Season has not started. Last scores from " + prettyDay(shown) + " stay up until the next season.";
+  return "";
 }
 function paintLiveBoard(){
   const grid = document.getElementById("seasonlivegrid");
@@ -3294,12 +3434,19 @@ function paintLiveBoard(){
   if (!list.length) { grid.innerHTML = "<p class='warn'>No games on this date.</p>"; return; }
   const groups = [];
   list.forEach(g => {
-    const key = liveBoardSport === "All" ? g.sport : "";
-    let bucket = groups.find(x => x.key === key);
-    if (!bucket) { bucket = {key: key, games: []}; groups.push(bucket); }
+    let bucket = groups.find(x => x.key === g.sport);
+    if (!bucket) {
+      bucket = {key: g.sport, why: g.why || "", shown: g.shown || liveBoardDate, games: []};
+      groups.push(bucket);
+    }
     bucket.games.push(g);
   });
-  grid.innerHTML = groups.map(group => (group.key ? "<h3 class='split-title'>" + esc(group.key) + "</h3>" : "") + "<div class='score-grid'>" + group.games.map(card).join("") + "</div>").join("");
+  grid.innerHTML = groups.map(group => {
+    const title = "<h3 class='split-title'>" + esc(group.key) + "</h3>";
+    const copy = liveHoldCopy(group.why, group.shown);
+    const note = copy ? "<p class='warn score-hold'>" + esc(copy) + "</p>" : "";
+    return title + note + "<div class='score-grid'>" + group.games.map(card).join("") + "</div>";
+  }).join("");
 }
 async function loadLiveBoard(){
   if (!pageNeeds("seasons") || !document.getElementById("seasonlive")) return;
@@ -3307,31 +3454,29 @@ async function loadLiveBoard(){
   bindLiveBoard();
   paintLiveChrome();
   const note = document.getElementById("seasonlivenote");
-  const stamp = String(liveBoardDate).replace(/-/g, "");
   const sports = ["CBB","CFB","MLB","NBA","NFL","NHL"];
   let packs = [];
   try {
-    packs = await Promise.all(sports.map(sport => fetch("https://site.api.espn.com/apis/site/v2/sports/" + SCORE_FEED[sport] + "/scoreboard?dates=" + stamp + "&limit=400").then(r => r.ok ? r.json() : null).catch(() => null)));
+    packs = await Promise.all(sports.map(sport => scoresForSport(sport, liveBoardDate)));
   } catch (e) { packs = []; }
   if (!document.getElementById("seasonlive")) return;
-  if (!packs.some(Boolean)) {
-    if (note) note.textContent = "Scoreboard did not load. It will try again in a minute.";
+  const games = [];
+  packs.forEach(p => (p && p.games || []).forEach(g => games.push(g)));
+  if (!games.length && !packs.some(p => p && p.ok)) {
+    if (note && !liveBoardGames.length) note.textContent = "Scoreboard did not load. It will try again in a minute.";
     armLiveBoard(60000);
     return;
   }
-  const games = [];
-  sports.forEach((sport, i) => {
-    ((packs[i] && packs[i].events) || []).forEach(ev => {
-      const game = liveGameFromEvent(sport, ev);
-      if (game) games.push(game);
-    });
-  });
   const rank = g => g.live ? 0 : g.final ? 2 : 1;
   games.sort((a, b) => sportRank(a.sport) - sportRank(b.sport) || rank(a) - rank(b) || a.start - b.start);
   liveBoardGames = games;
   paintLiveBoard();
-  const n = games.filter(g => g.live).length;
-  if (note) note.textContent = (n ? n + " live. " : "No games live. ") + "Updated " + formatTime(new Date(), true) + ". " + (n ? "Live games refresh every 15 seconds." : "The board checks again in a minute.");
+  const visible = liveBoardGames.filter(g => liveBoardSport === "All" || g.sport === liveBoardSport);
+  const holds = [];
+  visible.forEach(g => { if (g.why && !holds.some(h => h.sport === g.sport)) holds.push(g); });
+  const n = visible.filter(g => g.live).length;
+  const blurb = holds.map(g => g.sport + ": " + liveHoldCopy(g.why, g.shown)).join(" ");
+  if (note) note.textContent = (blurb ? blurb + " " : "") + (n ? n + " live. " : games.length ? "No games live. " : "") + "Updated " + formatTime(new Date(), true) + ". " + (n ? "Live games refresh every 15 seconds." : "The board checks again in a minute.");
   armLiveBoard(n ? 15000 : 60000);
 }
 function seasonText(sport){ return seasonEnded(sport) ? "Season Ended" : "No Picks"; }
