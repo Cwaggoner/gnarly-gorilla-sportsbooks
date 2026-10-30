@@ -104,7 +104,7 @@ footer.card { width:100%; max-width:none; margin:14px 0 0; box-sizing:border-box
 .card > h2, .card > .section-head { margin:0 0 12px; }
 h2.split-title, h3.split-title { margin:16px 0 12px; font-size:16px; color:var(--title); }
 .card-analysis { margin:0 0 10px; border:0; padding:0; background:transparent; }
-.analysis-body { border:1px solid #39ff14; border-radius:10px; padding:10px 12px; background:#0e0e0e; }
+.analysis-body, .injury-box { border:1px solid #39ff14; border-radius:10px; padding:10px 12px; background:#0e0e0e; }
 .card-analysis h3.split-title { margin:0 0 12px; }
 .charts h2.split-title, .charts .sport-title { margin:0 0 12px; }
 .api-note, .slips-side, .fine, .passed-note, .warn { color:var(--amber); font-size:12px; line-height:1.35; }
@@ -607,6 +607,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </div>
 <div class="card-analysis" id="cardanalysis"><h3 class="split-title">Analysis</h3><div class="analysis-body"><div class="analysis-grid" id="analysisgrid"></div><div class="sharp-read"><b>Analysis:</b><p id="sharpread"></p></div><div id="cardgames"></div></div></div>
 <h2 class="split-title">Injury Reports</h2>
+<div class="injury-box">
 <p class="warn">Red is out. Amber may still play. Times are Eastern.</p>
 <p class="api-note injury-filters"><select id="injurysport"><option selected>All</option><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option></select> <select id="injuryshow"><option value="posted" selected>Posted</option><option value="all">All rows</option><option value="out">Out</option><option value="maybe">May still play</option></select></p>
 <table class="compare" id="injuryclock">
@@ -620,6 +621,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <tr data-sport="NHL"><td>NHL</td><td>Morning skate is the report. 11:00 AM for the East, 2:00 PM for the Central, 5:00 PM for the Pacific.</td><td>Same skates. The starting goalie is often not final until an hour before puck drop.</td><td>A playoff series uses the same skates, then one more look 60 minutes before puck drop.</td></tr>
 </tbody>
 </table>
+</div>
 <div id="injuryreport"><p class="api-note">Loading today's reports.</p></div>
 <div class="card-rest">
 <div class="book-key">
