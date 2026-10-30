@@ -201,6 +201,29 @@ html[data-page="seasons"] main { min-width:0; }
 #seasonrecords .table-wrap { max-width:100%; overflow:auto; border:1px solid #39ff14; border-radius:10px; }
 #seasonrecords table { display:table; width:max-content; min-width:100%; margin:0; }
 #seasonrecords select { max-width:32ch; }
+#seasonlive { margin:0 0 16px; }
+#seasonlive > .section-head { margin:0 0 12px; background:rgba(57,255,20,.12); border:1px solid #39ff14; border-radius:10px; padding:10px 14px; }
+.score-nav { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin:0 0 4px; }
+.score-nav b { color:#39ff14; min-width:14ch; text-align:center; }
+.score-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:8px; margin:0 0 12px; }
+.score-card { border:1px solid #243024; border-radius:10px; background:#0e0e0e; padding:8px 10px; }
+.score-card.live { border-color:#f0e14a; }
+.score-card.final { border-color:#39ff14; }
+.score-top { display:flex; justify-content:space-between; align-items:center; gap:8px; font-size:12px; color:#8fb898; margin-bottom:4px; }
+.score-card.live .score-state { color:#f0e14a; font-weight:700; }
+.score-card.final .score-state { color:#39ff14; font-weight:700; }
+.score-card.pre .score-state { color:#d6ffd0; }
+.live-dot { display:inline-block; width:8px; height:8px; border-radius:50%; background:#f0e14a; margin-right:6px; vertical-align:0; animation:livedot 1.2s ease-in-out infinite; }
+@keyframes livedot { 50% { opacity:.25; } }
+.score-team { display:grid; grid-template-columns:28px minmax(0,1fr) auto; gap:8px; align-items:center; padding:3px 0; }
+.score-team img, .score-logo { width:28px; height:28px; object-fit:contain; display:block; }
+.score-team .nm { color:#d6ffd0; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.score-team .rec { color:#8fb898; font-weight:400; font-size:12px; margin-left:6px; }
+.score-team .sc { color:#d6ffd0; font-size:22px; font-weight:700; min-width:2ch; text-align:right; font-variant-numeric:tabular-nums; }
+.score-team.win .nm, .score-team.win .sc { color:#39ff14; }
+.score-team.lose .nm, .score-team.lose .sc { color:#8fb898; }
+.score-sub { margin:4px 0 0; color:#f0e14a; font-size:12px; line-height:1.3; }
+.score-meta { margin:2px 0 0; color:#8fb898; font-size:12px; line-height:1.3; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .season-hold, .season-hold td { border:0; background:transparent; box-shadow:none; width:100%; }
 .season-hold td { height:18px; width:50%; }
 table.season-hold.filled { border:1px solid #39ff14; border-radius:10px; overflow:hidden; margin-top:8px; }
@@ -2982,11 +3005,12 @@ function showSeasons(checked){
   });
   wave += " H448";
   const ekg = "<span class='ekg' data-ms='" + (parseFloat(pulse) * 1000) + "'><svg viewBox='0 0 448 36' preserveAspectRatio='none' aria-label='Season pulse'><defs><clipPath id='ekgclip'><rect class='ekg-clip' x='0' y='0' width='0' height='36'></rect></clipPath></defs><path class='trace' clip-path='url(#ekgclip)' d='" + wave + "' style='stroke:" + color + "'></path></svg></span>";
+  const live = "<div id='seasonlive'><div class='section-head'><h2>Live Scores</h2><p class='warn slips-side' id='seasonlivenote'>Loading the board.</p></div><div class='score-nav'><button type='button' id='seasonliveprev'>Prev</button><b id='seasonliveday'></b><button type='button' id='seasonlivenext'>Next</button><button type='button' id='seasonlivetoday'>Today</button></div><div class='sport-bar' id='seasonlivesports'><button type='button' data-sport='All' class='on'>All</button><button type='button' data-sport='CBB'>CBB</button><button type='button' data-sport='CFB'>CFB</button><button type='button' data-sport='MLB'>MLB</button><button type='button' data-sport='NBA'>NBA</button><button type='button' data-sport='NFL'>NFL</button><button type='button' data-sport='NHL'>NHL</button></div><div id='seasonlivegrid'></div></div>";
   const records = "<div class='card-rest' id='seasonrecords'><b style='color:#39ff14'>Win/Loss Records</b><p class='warn' id='recnote' style='margin:4px 0 8px'>Loading standings.</p><div class='tools'><label>Sport<select id='recsport'></select></label><label>Conference<select id='recconf'></select></label><label>Division<select id='recdiv'></select></label></div><div class='table-wrap'><table><thead><tr><th>Team</th><th>Sport</th><th>Conference</th><th>Division</th><th>W</th><th>L</th><th>T/OTL</th><th>PCT</th><th>GB</th><th>Streak</th></tr></thead><tbody id='recrows'></tbody></table></div></div>";
   const trivia = "<div class='card-rest' id='seasontrivia'><b style='color:#39ff14'>Daily Sports Trivia</b><p class='warn' style='margin:4px 0 8px'>A new question at midnight. The same question stays up all day.</p><p data-q>Loading today's question.</p><button type='button' id='triviareveal'>Show answer</button><p data-a class='warn' hidden></p></div>";
-  box.innerHTML = "<div class='section-head'><h2>Season Dates</h2><p class='warn slips-side'>Checked " + (seasonChecked || "2026-10-19") + ". NFL May, NHL July, MLB July, NBA August, CFB August, CBB September. Postseason nights stay open until the last game ends or " + zoneTime(4, 0) + ". NBA and NHL through June 30, MLB through the World Series, NFL through the Super Bowl, CFB through the championship, March Madness March 13 through the title game.</p></div><table><thead><tr><th colspan='6' style='text-align:center'>" + ekg + "</th></tr><tr><th>Sport</th><th>Start</th><th>Last Card</th><th>Status</th><th>Where</th><th>Days Left</th></tr></thead><tbody>" + rows + "</tbody></table>" + records + trivia;
+  box.innerHTML = live + "<div class='section-head'><h2>Season Dates</h2><p class='warn slips-side'>Checked " + (seasonChecked || "2026-10-19") + ". NFL May, NHL July, MLB July, NBA August, CFB August, CBB September. Postseason nights stay open until the last game ends or " + zoneTime(4, 0) + ". NBA and NHL through June 30, MLB through the World Series, NFL through the Super Bowl, CFB through the championship, March Madness March 13 through the title game.</p></div><table><thead><tr><th colspan='6' style='text-align:center'>" + ekg + "</th></tr><tr><th>Sport</th><th>Start</th><th>Last Card</th><th>Status</th><th>Where</th><th>Days Left</th></tr></thead><tbody>" + rows + "</tbody></table>" + records + trivia;
   startPulse();
-  if (pageNeeds("seasons")) loadRecords();
+  if (pageNeeds("seasons")) { loadRecords(); loadLiveBoard(); }
 }
 let pulseFrame = 0;
 function startPulse(){
@@ -3194,6 +3218,121 @@ async function loadRecords(force){
   const note = document.getElementById("recnote");
   if (!recordRows.length && note) note.textContent = "Standings did not load.";
   armRecordRefresh();
+}
+let liveBoardDate = "";
+let liveBoardSport = "All";
+let liveBoardGames = [];
+let liveBoardTimer = 0;
+function liveSide(row){
+  const team = (row && row.team) || {};
+  const rec = ((row && row.records) || []).find(r => r.type === "total" || r.name === "overall");
+  return {name: team.shortDisplayName || team.displayName || "", abbr: team.abbreviation || "", logo: team.logo || "", score: row && row.score != null && row.score !== "" ? String(row.score) : "", rec: rec && rec.summary || ""};
+}
+function liveGameFromEvent(sport, ev){
+  const comp = (ev.competitions || [])[0] || {};
+  const status = comp.status || ev.status || {};
+  const type = status.type || {};
+  const teams = comp.competitors || [];
+  const away = liveSide(teams.find(t => t.homeAway === "away"));
+  const home = liveSide(teams.find(t => t.homeAway === "home"));
+  if (!away.name && !home.name) return null;
+  const state = String(type.state || "pre");
+  const sit = comp.situation || {};
+  const names = ((comp.broadcasts || [])[0] || {}).names;
+  const network = Array.isArray(names) ? names.filter(Boolean).slice(0, 2).join(", ") : "";
+  const odds = ((comp.odds || [])[0] || {}).details || "";
+  return {sport: sport, id: ev.id, start: Date.parse(ev.date || comp.date || "") || 0, state: state, live: state === "in", final: state === "post" || type.completed === true, detail: type.shortDetail || type.detail || "", situation: sit.downDistanceText || sit.shortDownDistanceText || "", network: network, odds: odds, away: away, home: home};
+}
+function armLiveBoard(ms){
+  clearTimeout(liveBoardTimer);
+  liveBoardTimer = setTimeout(() => {
+    if (!pageNeeds("seasons")) return;
+    if (document.visibilityState === "hidden") { armLiveBoard(ms); return; }
+    loadLiveBoard();
+  }, ms);
+}
+function bindLiveBoard(){
+  const prev = document.getElementById("seasonliveprev");
+  const next = document.getElementById("seasonlivenext");
+  const today = document.getElementById("seasonlivetoday");
+  if (prev) prev.onclick = () => { liveBoardDate = shiftDate(liveBoardDate || easternDay(), -1); loadLiveBoard(); };
+  if (next) next.onclick = () => { liveBoardDate = shiftDate(liveBoardDate || easternDay(), 1); loadLiveBoard(); };
+  if (today) today.onclick = () => { liveBoardDate = easternDay(); loadLiveBoard(); };
+  document.querySelectorAll("#seasonlivesports button").forEach(btn => {
+    btn.onclick = () => { liveBoardSport = btn.dataset.sport || "All"; paintLiveBoard(); };
+  });
+}
+function paintLiveChrome(){
+  if (!liveBoardDate) liveBoardDate = easternDay();
+  const day = document.getElementById("seasonliveday");
+  if (day) day.textContent = new Date(liveBoardDate + "T12:00:00Z").toLocaleDateString("en-US", {timeZone:"America/New_York", weekday:"short", month:"short", day:"numeric"});
+  const today = document.getElementById("seasonlivetoday");
+  if (today) today.hidden = liveBoardDate === easternDay();
+  document.querySelectorAll("#seasonlivesports button").forEach(btn => btn.classList.toggle("on", (btn.dataset.sport || "All") === liveBoardSport));
+}
+function paintLiveBoard(){
+  const grid = document.getElementById("seasonlivegrid");
+  if (!grid) return;
+  paintLiveChrome();
+  const list = liveBoardGames.filter(g => liveBoardSport === "All" || g.sport === liveBoardSport);
+  const teamRow = (t, opp, state) => {
+    const logo = /^https:\/\/a\.espncdn\.com\//.test(t.logo) ? "<img src='" + esc(t.logo) + "' alt=''>" : "<span class='score-logo'></span>";
+    let cls = "";
+    if (state !== "pre" && t.score !== "" && opp.score !== "" && Number(t.score) !== Number(opp.score)) cls = Number(t.score) > Number(opp.score) ? " win" : " lose";
+    const score = state === "pre" ? "" : esc(t.score);
+    return "<div class='score-team" + cls + "'>" + logo + "<span class='nm'>" + esc(t.name || t.abbr) + (t.rec ? "<span class='rec'>" + esc(t.rec) + "</span>" : "") + "</span><span class='sc'>" + score + "</span></div>";
+  };
+  const card = g => {
+    const cls = g.live ? "live" : g.final ? "final" : "pre";
+    const when = g.state === "pre" && g.start ? formatTime(g.start, false) : (g.detail || (g.final ? "Final" : ""));
+    const flag = g.live ? "<span class='live-dot'></span>" : "";
+    const sub = g.situation ? "<p class='score-sub'>" + esc(g.situation) + "</p>" : "";
+    const metaBits = [g.network, g.odds].filter(Boolean);
+    const meta = metaBits.length ? "<p class='score-meta'>" + esc(metaBits.join(" · ")) + "</p>" : "";
+    return "<article class='score-card " + cls + "'><div class='score-top'><span>" + esc(g.sport) + "</span><span class='score-state'>" + flag + esc(when) + "</span></div>" + teamRow(g.away, g.home, g.state) + teamRow(g.home, g.away, g.state) + sub + meta + "</article>";
+  };
+  if (!list.length) { grid.innerHTML = "<p class='warn'>No games on this date.</p>"; return; }
+  const groups = [];
+  list.forEach(g => {
+    const key = liveBoardSport === "All" ? g.sport : "";
+    let bucket = groups.find(x => x.key === key);
+    if (!bucket) { bucket = {key: key, games: []}; groups.push(bucket); }
+    bucket.games.push(g);
+  });
+  grid.innerHTML = groups.map(group => (group.key ? "<h3 class='split-title'>" + esc(group.key) + "</h3>" : "") + "<div class='score-grid'>" + group.games.map(card).join("") + "</div>").join("");
+}
+async function loadLiveBoard(){
+  if (!pageNeeds("seasons") || !document.getElementById("seasonlive")) return;
+  if (!liveBoardDate) liveBoardDate = easternDay();
+  bindLiveBoard();
+  paintLiveChrome();
+  const note = document.getElementById("seasonlivenote");
+  const stamp = String(liveBoardDate).replace(/-/g, "");
+  const sports = ["CBB","CFB","MLB","NBA","NFL","NHL"];
+  let packs = [];
+  try {
+    packs = await Promise.all(sports.map(sport => fetch("https://site.api.espn.com/apis/site/v2/sports/" + SCORE_FEED[sport] + "/scoreboard?dates=" + stamp + "&limit=400").then(r => r.ok ? r.json() : null).catch(() => null)));
+  } catch (e) { packs = []; }
+  if (!document.getElementById("seasonlive")) return;
+  if (!packs.some(Boolean)) {
+    if (note) note.textContent = "Scoreboard did not load. It will try again in a minute.";
+    armLiveBoard(60000);
+    return;
+  }
+  const games = [];
+  sports.forEach((sport, i) => {
+    ((packs[i] && packs[i].events) || []).forEach(ev => {
+      const game = liveGameFromEvent(sport, ev);
+      if (game) games.push(game);
+    });
+  });
+  const rank = g => g.live ? 0 : g.final ? 2 : 1;
+  games.sort((a, b) => sportRank(a.sport) - sportRank(b.sport) || rank(a) - rank(b) || a.start - b.start);
+  liveBoardGames = games;
+  paintLiveBoard();
+  const n = games.filter(g => g.live).length;
+  if (note) note.textContent = (n ? n + " live. " : "No games live. ") + "Updated " + formatTime(new Date(), true) + ". " + (n ? "Live games refresh every 15 seconds." : "The board checks again in a minute.");
+  armLiveBoard(n ? 15000 : 60000);
 }
 function seasonText(sport){ return seasonEnded(sport) ? "Season Ended" : "No Picks"; }
 const TEAM_ALIAS = {njd:"devils", vgk:"knights", okc:"thunder", lad:"dodgers", bkn:"nets"};
@@ -6697,6 +6836,7 @@ showClock();
 setInterval(showClock, 1000);
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState !== "visible") return;
+  if (pageNeeds("seasons")) loadLiveBoard();
   const first = firstGameStart(easternDay());
   if (!Number.isFinite(first) || Date.now() < first) return;
   const last = Number(localStorage.getItem("gg-score-check") || 0);
