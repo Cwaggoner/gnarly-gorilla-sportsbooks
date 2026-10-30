@@ -11,7 +11,7 @@
     if (side > 800 && dpr > 1) side = side / dpr;
     if (side && side <= 520) {
       var meta = document.querySelector('meta[name="viewport"]');
-      if (meta) meta.setAttribute("content", "width=1464");
+      if (meta) meta.setAttribute("content", "width=" + Math.round(side / 0.75));
       document.documentElement.setAttribute("data-phone", "1");
     }
   } catch (e) {}
