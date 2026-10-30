@@ -282,5 +282,5 @@
 2026-10-26 | NHL | -140 | Rangers ML vs Kings | -130
 2026-10-27 | NBA | -110 | Nets +11.5 at Celtics | -110
 2026-10-28 | NBA | -110 | Hornets +6.5 at Pistons | +105
-2026-10-29 | CFB | -110 | Troy +19 | -110
-2026-10-29 | NBA | -110 | Grizzlies +7.5 at Trail Blazers | -110
+2026-10-29 | CFB | -110 | Troy +19 | +17.5
+2026-10-29 | NBA | -110 | Grizzlies +7.5 at Trail Blazers | +7.5
