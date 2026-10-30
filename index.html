@@ -7201,7 +7201,7 @@ setInterval(showClock, 1000);
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState !== "visible") return;
   if (scorePage()) loadLiveBoard();
-  if (pageNeeds("about")) loadLiveFeed();
+  if (pageNeeds("about") && Date.now() - feedAt >= 3600000) loadLiveFeed();
   const first = firstGameStart(easternDay());
   if (!Number.isFinite(first) || Date.now() < first) return;
   const last = Number(localStorage.getItem("gg-score-check") || 0);
@@ -7231,15 +7231,17 @@ function feedSportOf(h){
 }
 let feedSig = "";
 let feedTimer = 0;
+let feedAt = 0;
 function armFeed(){
   clearTimeout(feedTimer);
   if (!pageNeeds("about")) return;
-  feedTimer = setTimeout(loadLiveFeed, 60000);
+  feedTimer = setTimeout(loadLiveFeed, 3600000);
 }
 async function loadLiveFeed(){
   if (!pageNeeds("about")) return;
   const body = document.getElementById("livefeed");
   if (!body) return;
+  feedAt = Date.now();
   let packs = [];
   try { packs = await Promise.all(FEED_URLS.map(url => fetch(url).then(r => r.ok ? r.json() : null).catch(() => null))); } catch (e) { packs = []; }
   const rows = [];
@@ -7255,7 +7257,7 @@ async function loadLiveFeed(){
   const top = rows.slice(0, 12);
   const note = document.getElementById("feednote");
   if (!top.length) {
-    if (note) note.textContent = "Feed did not load. It will try again in a minute.";
+    if (note) note.textContent = "Feed did not load. It will try again in an hour.";
     if (!body.children.length) body.innerHTML = "<tr><td colspan='3'>No headlines yet.</td></tr>";
     armFeed();
     return;
@@ -7269,7 +7271,7 @@ async function loadLiveFeed(){
       return "<tr><td>" + esc(when) + "</td><td>" + esc(r.sport) + "</td><td>" + title + "</td></tr>";
     }).join("");
   }
-  if (note) note.textContent = "Updated " + formatTime(new Date(), true) + ". Checks again in a minute.";
+  if (note) note.textContent = "Updated " + formatTime(new Date(), true) + ". Checks again in an hour.";
   armFeed();
 }
 if (pageNeeds("seasons")) loadSeasons();
