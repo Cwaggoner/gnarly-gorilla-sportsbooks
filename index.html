@@ -235,6 +235,7 @@ html[data-page="seasons"] main { min-width:0; }
 .shark-juice { color:#f0e14a; font-weight:700; }
 .shark-game, .shark-when { margin:0 0 2px; color:#d6ffd0; font-size:12px; font-weight:600; }
 .shark-pick p { margin:0 0 4px; overflow-wrap:anywhere; }
+.shark-model { margin:0 0 6px; color:#39ff14; font-size:12px; font-weight:700; letter-spacing:.03em; }
 .shark-record { margin:0 0 8px; color:#f0e14a; font-weight:700; letter-spacing:.02em; }
 .shark-result { font-weight:700; letter-spacing:.04em; }
 .shark-result.win { color:#39ff14; }
@@ -774,11 +775,11 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <p class="warn" id="statebooks">State rules load from the visitor location.</p>
 <p class="crew-title">Gnarly Gorilla Sports Sharps</p>
 <div class="crew-row">
-<figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-gorilla"><img class="about-mark" src="about-gorilla.jpg" alt="Gnarly Gorilla"></a><figcaption class="crew-bio"><b>Gnarly Gorilla</b><p>Boss. Years on the number. I read the card, kill a bad price, and tell you what to lay. I will make you a sharper bettor.</p><p class="crew-fee">I have a fee. The first $10 of the stake is mine.</p></figcaption></figure>
-<figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-vito"><img class="about-mark" src="jungle-leopard.jpg" alt="Vito the Spot"></a><figcaption class="crew-bio"><b>Vito the Spot</b><p>I find the soft number and I am gone before it moves. Quiet work. Loud price. I will mark your card and make you a sharper bettor.</p><p class="crew-fee">I have a fee. One unit rides the side I name.</p></figcaption></figure>
-<figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-rocco"><img class="about-mark" src="jungle-rhino.jpg" alt="Rocco No Chase"></a><figcaption class="crew-bio"><b>Rocco No Chase</b><p>I do not chase and I do not blink. I hold the number when the crowd folds. I will steady your bankroll.</p><p class="crew-fee">I have a fee. A flat dime on every play.</p></figcaption></figure>
-<figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-paulie"><img class="about-mark" src="jungle-hyena.jpg" alt="Paulie the Fade"></a><figcaption class="crew-bio"><b>Paulie the Fade</b><p>The public piles one side. I take the other and I wait. I will show you the trap and make you a sharper bettor.</p><p class="crew-fee">I have a fee. Half a unit, win or lose.</p></figcaption></figure>
-<figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-gino"><img class="about-mark" src="jungle-bird.jpg" alt="Gino the Wire"></a><figcaption class="crew-bio"><b>Gino the Wire</b><p>I watch the open from the wire. I see the move before it prints. I will call your spot early.</p><p class="crew-fee">I have a fee. The juice on the ticket is mine.</p></figcaption></figure>
+<figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-gorilla"><img class="about-mark" src="about-gorilla.jpg" alt="Gnarly Gorilla"></a><figcaption class="crew-bio"><b>Gnarly Gorilla</b><p>I play it the Billy Walters way. The number, not the noise. A small edge is enough. I do not sell a sure thing.</p><p class="crew-fee">I have a fee. The first $10 of the stake is mine.</p></figcaption></figure>
+<figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-vito"><img class="about-mark" src="jungle-leopard.jpg" alt="Vito the Spot"></a><figcaption class="crew-bio"><b>Vito the Spot</b><p>I play it the Alan Boston way. College is the board. I think for myself, and I will not copy the next man.</p><p class="crew-fee">I have a fee. One unit rides the side I name.</p></figcaption></figure>
+<figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-rocco"><img class="about-mark" src="jungle-rhino.jpg" alt="Rocco No Chase"></a><figcaption class="crew-bio"><b>Rocco No Chase</b><p>I play it the Bill Krackomberger way. No team. The bankroll. I do not chase a number that already left.</p><p class="crew-fee">I have a fee. A flat dime on every play.</p></figcaption></figure>
+<figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-paulie"><img class="about-mark" src="jungle-hyena.jpg" alt="Paulie the Fade"></a><figcaption class="crew-bio"><b>Paulie the Fade</b><p>I play it the Steve Fezzik way. The public moves the line. I take the other side and I wait on the value.</p><p class="crew-fee">I have a fee. Half a unit, win or lose.</p></figcaption></figure>
+<figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-gino"><img class="about-mark" src="jungle-bird.jpg" alt="Gino the Wire"></a><figcaption class="crew-bio"><b>Gino the Wire</b><p>I play it the Spanky Kyrollos way. No eye test. The model, the injury, and the move.</p><p class="crew-fee">I have a fee. The juice on the ticket is mine.</p></figcaption></figure>
 </div>
 </div>
 <aside class="about-box live-feed">
@@ -7484,13 +7485,14 @@ function drawGameBoard(){
     return "<article class='game-row'><h3>" + esc((g.sport ? g.sport + "  " : "") + (when ? when + "  " : "") + g.label) + "</h3><div class='game-lines'><div><h4>Spread</h4>" + cell("spreads") + "</div><div><h4>Moneyline</h4>" + cell("h2h") + "</div><div><h4>Total</h4>" + cell("totals") + "</div></div></article>";
   }).join("");
 }
+const SHARP_STYLE = "us-five-v1";
 const SHARP_SPORTS = ["NFL","NBA","CFB","NHL","MLB","CBB"];
 const SHARKS = [
-  {id:"shark-gorilla", name:"Gnarly Gorilla", img:"about-gorilla.jpg", alt:"Gnarly Gorilla", rule:"Boss. He reads the card, kills a bad price, and tells you what to lay.", fee:"Fee: the first $10 of the stake.", kind:"lay"},
-  {id:"shark-vito", name:"Vito the Spot", img:"jungle-leopard.jpg", alt:"Vito the Spot", rule:"He finds the soft number and he is gone before it moves.", fee:"Fee: one unit on the side he names.", kind:"soft"},
-  {id:"shark-rocco", name:"Rocco No Chase", img:"jungle-rhino.jpg", alt:"Rocco No Chase", rule:"He holds the number. He does not chase when the crowd folds.", fee:"Fee: a flat dime on every play.", kind:"hold"},
-  {id:"shark-paulie", name:"Paulie the Fade", img:"jungle-hyena.jpg", alt:"Paulie the Fade", rule:"The public piles one side. He takes the other and waits.", fee:"Fee: half a unit, win or lose.", kind:"fade"},
-  {id:"shark-gino", name:"Gino the Wire", img:"jungle-bird.jpg", alt:"Gino the Wire", rule:"He calls the spot from the wire before the move prints.", fee:"Fee: the juice on the ticket.", kind:"wire"}
+  {id:"shark-gorilla", name:"Gnarly Gorilla", model:"Billy Walters", img:"about-gorilla.jpg", alt:"Gnarly Gorilla", sports:["NFL","NBA","CFB"], rule:"Locked style: Billy Walters. The number, not the noise. A small edge is enough. He does not sell a sure thing.", fee:"Fee: the first $10 of the stake.", kind:"lay"},
+  {id:"shark-vito", name:"Vito the Spot", model:"Alan Boston", img:"jungle-leopard.jpg", alt:"Vito the Spot", sports:["CBB","CFB"], rule:"Locked style: Alan Boston. College is the board. He thinks for himself and he will not copy the next ticket.", fee:"Fee: one unit on the side he names.", kind:"soft"},
+  {id:"shark-rocco", name:"Rocco No Chase", model:"Bill Krackomberger", img:"jungle-rhino.jpg", alt:"Rocco No Chase", sports:["NBA","NFL"], rule:"Locked style: Bill Krackomberger. No team. The bankroll. He does not chase a number that already left.", fee:"Fee: a flat dime on every play.", kind:"hold"},
+  {id:"shark-paulie", name:"Paulie the Fade", model:"Steve Fezzik", img:"jungle-hyena.jpg", alt:"Paulie the Fade", sports:["NFL","CFB"], rule:"Locked style: Steve Fezzik. The public moves the line. He takes the other side and waits on the value.", fee:"Fee: half a unit, win or lose.", kind:"fade"},
+  {id:"shark-gino", name:"Gino the Wire", model:"Spanky Kyrollos", img:"jungle-bird.jpg", alt:"Gino the Wire", sports:["NBA","NFL","NHL"], rule:"Locked style: Spanky Kyrollos. No eye test. The model, the injury, and the move.", fee:"Fee: the juice on the ticket.", kind:"wire"}
 ];
 function sharkSpreadOf(g, odds){
   let home = Number(odds && odds.spread);
@@ -7564,11 +7566,15 @@ function sharkChoose(kind, games){
     return dog ? Object.assign({bad: true}, dog) : null;
   }
   if (kind === "hold") {
-    const held = sides.filter(s => !s.ml && s.n >= 4.5).sort((a, b) => Math.abs(a.n - 6) - Math.abs(b.n - 6));
+    const priced = sides.filter(s => !s.ml && s.n >= 3 && (s.juice == null || s.juice > -118));
+    const pool = priced.length ? priced : sides.filter(s => !s.ml && s.n >= 4.5);
+    const held = pool.sort((a, b) => Math.abs(a.n - 6) - Math.abs(b.n - 6));
     if (held[0]) return held[0];
     return sides.filter(s => s.n > 0).sort((a, b) => a.n - b.n)[0] || null;
   }
-  const tight = sides.slice().sort((a, b) => Math.abs(a.n) - Math.abs(b.n) || b.n - a.n);
+  const moved = sides.filter(s => s.closeN != null && s.closeN !== s.n);
+  const pool = moved.length ? moved : sides;
+  const tight = pool.slice().sort((a, b) => Math.abs(a.n) - Math.abs(b.n) || b.n - a.n);
   return tight[0] || null;
 }
 function sharkOpp(side){
@@ -7580,13 +7586,13 @@ function sharkWhy(kind, side){
   const mine = side.name + " " + sharkNum(side.n, side.ml);
   const opp = sharkOpp(side);
   const price = side.ml ? "" : " (" + sharkNum(side.juice == null ? -110 : side.juice, true) + ")";
-  if (kind === "lay" && side.bad) return "Not laying " + opp + ". That price is bad. Taking " + mine + price + ".";
-  if (kind === "lay") return "Laying " + mine + price + ". Other side is " + opp + ".";
-  if (kind === "fade") return "Public is on " + opp + ". Fade is " + mine + price + ".";
-  if (kind === "soft") return mine + price + " is the soft side against " + opp + ". Taking it before it moves.";
-  if (kind === "hold") return "Holding " + mine + price + ". Not chasing " + opp + ".";
-  if (kind === "wire" && side.ml && side.closeN != null && side.closeN !== side.n) return "Open is " + mine + ". Board is now " + side.name + " " + sharkNum(side.closeN, true) + ".";
-  if (kind === "wire") return "Calling " + mine + price + " off the open, before " + opp + " gets bet.";
+  if (kind === "lay" && side.bad) return "Walters rule. The short price is a bad bet. Not laying " + opp + ". Taking " + mine + price + ".";
+  if (kind === "lay") return "Walters rule. Small edge. " + mine + price + ". The other side is " + opp + ".";
+  if (kind === "fade") return "Fezzik rule. The public pushed " + opp + ". Value is " + mine + price + ".";
+  if (kind === "soft") return "Boston rule. My own number. " + mine + price + " against " + opp + ".";
+  if (kind === "hold") return "Krack rule. No team and no chase. Holding " + mine + price + ".";
+  if (kind === "wire" && side.ml && side.closeN != null && side.closeN !== side.n) return "Spanky rule. The model had " + mine + ". The board is now " + side.name + " " + sharkNum(side.closeN, true) + ".";
+  if (kind === "wire") return "Spanky rule. No eye test. " + mine + price + " is the number.";
   return mine + price;
 }
 async function sharkDay(sport, ymd){
@@ -7770,7 +7776,8 @@ function sharpBuild(games){
   for (let n = 0; n < 4; n++) {
     sharpLineup().forEach(shark => {
       const open = games.filter(g => !claimed.has(g.id));
-      const side = sharkChoose(shark.kind, open);
+      const liked = shark.sports && shark.sports.length ? open.filter(g => shark.sports.includes(g.sport)) : open;
+      const side = sharkChoose(shark.kind, liked.length ? liked : open);
       if (!side) {
         sharps[shark.id].push({empty: sharpPass(), result: "pending"});
         return;
@@ -7779,7 +7786,7 @@ function sharpBuild(games){
       sharps[shark.id].push(sharkTicket(shark.kind, side));
     });
   }
-  return {date: sharpWindowDate(), post: "9:30 AM Eastern", sharps: sharps};
+  return {date: sharpWindowDate(), post: "9:30 AM Eastern", style: SHARP_STYLE, sharps: sharps};
 }
 function sharpGradeOne(pick, game){
   if (!pick || pick.empty || !game || !game.final) return pick && pick.result || "pending";
@@ -7849,7 +7856,7 @@ function sharpKeepGrades(card, book){
 function sharpPaint(card, book){
   const board = document.getElementById("sharkboard");
   const note = document.getElementById("sharpnote");
-  if (note) note.textContent = "Four games each. Made at 9:30 AM Eastern. The " + prettyDay(card.date) + " card stays locked until 9:30 AM the next morning.";
+  if (note) note.textContent = "Four games each. Made at 9:30 AM Eastern. The " + prettyDay(card.date) + " card stays locked until 9:30 AM the next morning. Styles are locked. These are not those men's picks.";
   const tally = sharpTally(book);
   board.innerHTML = SHARKS.map(shark => {
     const rec = tally[shark.id] || {w: 0, l: 0, p: 0};
@@ -7861,7 +7868,7 @@ function sharpPaint(card, book){
       const add = Number.isFinite(Number(t.odds)) ? "<button type='button' class='card-price shark-add' data-date='" + encodeURIComponent(t.date || "") + "' data-sport='" + encodeURIComponent(t.sport || "") + "' data-type='" + encodeURIComponent(t.market || "") + "' data-pick='" + encodeURIComponent(t.slip) + "' data-odds='" + encodeURIComponent(String(t.odds)) + "' data-notes='" + encodeURIComponent(conf) + "'>Add to Slip</button>" : "";
       return "<div class='shark-pick'><div class='shark-top'><b>" + esc(t.sport) + "</b><span>" + esc(t.market) + "</span></div><p class='shark-side'>" + esc(t.side) + (t.juice ? " <span class='shark-juice'>" + esc(t.juice) + "</span>" : "") + "</p><p class='shark-game'>" + esc(t.game) + "</p>" + (t.when ? "<p class='shark-when'>" + esc(t.when) + "</p>" : "") + "<p>" + esc(t.why) + "</p>" + (conf ? "<p class='shark-conf " + String(t.confidence).toLowerCase() + "'>" + esc(conf) + "</p>" : "") + "<p class='shark-result " + result + "'>" + label + "</p>" + add + "</div>";
     }).join("");
-    return "<article class='shark' id='" + shark.id + "'><img src='" + shark.img + "' alt='" + esc(shark.alt) + "'><div><h3>" + esc(shark.name) + "</h3><p class='shark-record'>Record " + rec.w + "-" + rec.l + (rec.p ? "-" + rec.p : "") + "</p><p class='shark-rule'>" + esc(shark.rule) + "</p><div class='shark-picks'>" + picks + "</div><p class='shark-fee'>" + esc(shark.fee) + "</p></div></article>";
+    return "<article class='shark' id='" + shark.id + "'><img src='" + shark.img + "' alt='" + esc(shark.alt) + "'><div><h3>" + esc(shark.name) + "</h3><p class='shark-model'>Locked style: " + esc(shark.model) + "</p><p class='shark-record'>Record " + rec.w + "-" + rec.l + (rec.p ? "-" + rec.p : "") + "</p><p class='shark-rule'>" + esc(shark.rule) + "</p><div class='shark-picks'>" + picks + "</div><p class='shark-fee'>" + esc(shark.fee) + "</p></div></article>";
   }).join("");
 }
 async function loadSharks(){
@@ -7876,10 +7883,10 @@ async function loadSharks(){
     const res = await fetch("cards/sharps.json?ts=" + Date.now());
     if (res.ok) {
       const posted = await res.json();
-      if (posted && posted.date === day && posted.sharps) card = posted;
+      if (posted && posted.date === day && posted.style === SHARP_STYLE && posted.sharps) card = posted;
     }
   } catch (e) {}
-  if (!card && book.cards[day]) card = book.cards[day];
+  if (!card && book.cards[day] && book.cards[day].style === SHARP_STYLE) card = book.cards[day];
   if (!card) card = sharpBuild(await sharpGames());
   card = sharpFillConfidence(card);
   card = sharpKeepGrades(card, book);
