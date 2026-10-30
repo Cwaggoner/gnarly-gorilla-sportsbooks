@@ -1,1 +1,542 @@
-PLACEHOLDER_FOR_CONTENT
+{
+  "source": "ESPN DraftKings close",
+  "days": {
+    "2026-10-29": {
+      "NBA": [
+        {
+          "away": "CLE",
+          "home": "ATL",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 1.5,
+                  "price": -115
+                },
+                "home": {
+                  "point": -1.5,
+                  "price": -105
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -102
+                },
+                "home": {
+                  "price": -118
+                }
+              },
+              "total": {
+                "point": 237.5,
+                "over": -112,
+                "under": -108
+              }
+            }
+          }
+        },
+        {
+          "away": "SAC",
+          "home": "NO",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 6.5,
+                  "price": -112
+                },
+                "home": {
+                  "point": -6.5,
+                  "price": -108
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 195
+                },
+                "home": {
+                  "price": -238
+                }
+              },
+              "total": {
+                "point": 234.5,
+                "over": -112,
+                "under": -108
+              }
+            }
+          }
+        },
+        {
+          "away": "MEM",
+          "home": "POR",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 7.5,
+                  "price": -110
+                },
+                "home": {
+                  "point": -7.5,
+                  "price": -110
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 230
+                },
+                "home": {
+                  "price": -285
+                }
+              },
+              "total": {
+                "point": 233.5,
+                "over": -108,
+                "under": -112
+              }
+            }
+          }
+        }
+      ],
+      "NHL": [
+        {
+          "away": "WPG",
+          "home": "TB",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 1.5,
+                  "price": -142
+                },
+                "home": {
+                  "point": -1.5,
+                  "price": 120
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 185
+                },
+                "home": {
+                  "price": -225
+                }
+              },
+              "total": {
+                "point": 5.5,
+                "over": -135,
+                "under": 114
+              }
+            }
+          }
+        },
+        {
+          "away": "UTA",
+          "home": "PIT",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": -1.5,
+                  "price": 170
+                },
+                "home": {
+                  "point": 1.5,
+                  "price": -205
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -130
+                },
+                "home": {
+                  "price": 110
+                }
+              },
+              "total": {
+                "point": 6.5,
+                "over": -135,
+                "under": 114
+              }
+            }
+          }
+        },
+        {
+          "away": "CBJ",
+          "home": "CAR",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 1.5,
+                  "price": -122
+                },
+                "home": {
+                  "point": -1.5,
+                  "price": 102
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 210
+                },
+                "home": {
+                  "price": -258
+                }
+              },
+              "total": {
+                "point": 6.5,
+                "over": 120,
+                "under": -142
+              }
+            }
+          }
+        },
+        {
+          "away": "CHI",
+          "home": "DET",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 1.5,
+                  "price": -192
+                },
+                "home": {
+                  "point": -1.5,
+                  "price": 160
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 136
+                },
+                "home": {
+                  "price": -162
+                }
+              },
+              "total": {
+                "point": 5.5,
+                "over": -120,
+                "under": 100
+              }
+            }
+          }
+        },
+        {
+          "away": "BOS",
+          "home": "STL",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 1.5,
+                  "price": -250
+                },
+                "home": {
+                  "point": -1.5,
+                  "price": 205
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -105
+                },
+                "home": {
+                  "price": -115
+                }
+              },
+              "total": {
+                "point": 5.5,
+                "over": -125,
+                "under": 105
+              }
+            }
+          }
+        },
+        {
+          "away": "WSH",
+          "home": "NSH",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": -1.5,
+                  "price": 220
+                },
+                "home": {
+                  "point": 1.5,
+                  "price": -270
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -115
+                },
+                "home": {
+                  "price": -105
+                }
+              },
+              "total": {
+                "point": 6.5,
+                "over": -105,
+                "under": -115
+              }
+            }
+          }
+        },
+        {
+          "away": "MTL",
+          "home": "DAL",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 1.5,
+                  "price": -175
+                },
+                "home": {
+                  "point": -1.5,
+                  "price": 145
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 145
+                },
+                "home": {
+                  "price": -175
+                }
+              },
+              "total": {
+                "point": 5.5,
+                "over": -135,
+                "under": 114
+              }
+            }
+          }
+        },
+        {
+          "away": "NYI",
+          "home": "MIN",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 1.5,
+                  "price": -148
+                },
+                "home": {
+                  "point": -1.5,
+                  "price": 124
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 180
+                },
+                "home": {
+                  "price": -218
+                }
+              },
+              "total": {
+                "point": 5.5,
+                "over": -125,
+                "under": 105
+              }
+            }
+          }
+        },
+        {
+          "away": "BUF",
+          "home": "ANA",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": -1.5,
+                  "price": 154
+                },
+                "home": {
+                  "point": 1.5,
+                  "price": -185
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -162
+                },
+                "home": {
+                  "price": 136
+                }
+              },
+              "total": {
+                "point": 6.5,
+                "over": -135,
+                "under": 114
+              }
+            }
+          }
+        },
+        {
+          "away": "OTT",
+          "home": "LA",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": -1.5,
+                  "price": 200
+                },
+                "home": {
+                  "point": 1.5,
+                  "price": -245
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -125
+                },
+                "home": {
+                  "price": 105
+                }
+              },
+              "total": {
+                "point": 5.5,
+                "over": -125,
+                "under": 105
+              }
+            }
+          }
+        },
+        {
+          "away": "VAN",
+          "home": "SJ",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 1.5,
+                  "price": -166
+                },
+                "home": {
+                  "point": -1.5,
+                  "price": 140
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 140
+                },
+                "home": {
+                  "price": -166
+                }
+              },
+              "total": {
+                "point": 6.5,
+                "over": -142,
+                "under": 120
+              }
+            }
+          }
+        }
+      ],
+      "NFL": [
+        {
+          "away": "CAR",
+          "home": "GB",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 3.5,
+                  "price": -110
+                },
+                "home": {
+                  "point": -3.5,
+                  "price": -110
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 154
+                },
+                "home": {
+                  "price": -185
+                }
+              },
+              "total": {
+                "point": 47.5,
+                "over": -112,
+                "under": -108
+              }
+            }
+          }
+        }
+      ],
+      "CFB": [
+        {
+          "away": "FAU",
+          "home": "UNT",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 15.5,
+                  "price": -112
+                },
+                "home": {
+                  "point": -15.5,
+                  "price": -108
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 455
+                },
+                "home": {
+                  "price": -625
+                }
+              },
+              "total": {
+                "point": 78.5,
+                "over": -108,
+                "under": -112
+              }
+            }
+          }
+        },
+        {
+          "away": "TROY",
+          "home": "JMU",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 17.5,
+                  "price": -110
+                },
+                "home": {
+                  "point": -17.5,
+                  "price": -110
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 675
+                },
+                "home": {
+                  "price": -1050
+                }
+              },
+              "total": {
+                "point": 52.5,
+                "over": -108,
+                "under": -112
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
