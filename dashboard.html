@@ -227,7 +227,12 @@ html[data-page="seasons"] main { min-width:0; }
 .shark-rule { margin:0 0 8px; color:#d6ffd0; }
 .shark-picks { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
 .shark-pick { border:1px solid #39ff14; border-radius:10px; padding:8px 10px; min-width:0; }
-.shark-pick b { display:block; margin:0 0 4px; color:#39ff14; font-family:"Cinzel",serif; letter-spacing:.04em; }
+.shark-top { display:flex; justify-content:space-between; align-items:baseline; gap:8px; margin:0 0 4px; }
+.shark-top b { margin:0; color:#39ff14; font-family:"Cinzel",serif; letter-spacing:.04em; }
+.shark-top span { color:#f0e14a; font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; }
+.shark-side { margin:0 0 2px; color:#d6ffd0; font-size:16px; font-weight:700; line-height:1.25; }
+.shark-juice { color:#f0e14a; font-weight:700; }
+.shark-game, .shark-when { margin:0 0 2px; color:#d6ffd0; font-size:12px; font-weight:600; }
 .shark-pick p { margin:0 0 4px; overflow-wrap:anywhere; }
 .shark-fee { margin:8px 0 0; color:#f0e14a; font-weight:700; }
 @media (max-width:800px) { .shark { grid-template-columns:1fr; } .shark-picks { grid-template-columns:1fr; } }
@@ -7498,31 +7503,32 @@ function sharkOpen(node){
   return m ? Number(m[1]) : null;
 }
 function sharkNum(n, ml){
-  if (ml) {
-    const v = Math.round(Number(n));
-    return (v > 0 ? "+" : "") + v;
-  }
-  const v = Math.round(Number(n) * 2) / 2;
-  return (v > 0 ? "+" : "") + (Number.isInteger(v) ? v.toFixed(1) : String(v));
+  const v = ml ? Math.round(Number(n)) : Math.round(Number(n) * 2) / 2;
+  const body = Math.abs(v % 1) < 0.01 ? String(Math.trunc(v)) : String(v);
+  return (v > 0 ? "+" : "") + body;
 }
 function sharkSides(g, kind){
+  const juiceOf = who => {
+    const j = who === "home" ? g.homeJuice : g.awayJuice;
+    return j == null ? -110 : j;
+  };
   if (g.homeSpread != null && g.sport !== "NHL") {
     return [
-      {g: g, who: "home", name: g.home.name, n: g.homeSpread, ml: false},
-      {g: g, who: "away", name: g.away.name, n: -g.homeSpread, ml: false}
+      {g: g, who: "home", name: g.home.name, n: g.homeSpread, juice: juiceOf("home"), ml: false},
+      {g: g, who: "away", name: g.away.name, n: -g.homeSpread, juice: juiceOf("away"), ml: false}
     ];
   }
   if (g.homeML != null && g.awayML != null) {
     const open = kind === "wire";
     return [
-      {g: g, who: "home", name: g.home.name, n: open && g.homeOpen != null ? g.homeOpen : g.homeML, ml: true},
-      {g: g, who: "away", name: g.away.name, n: open && g.awayOpen != null ? g.awayOpen : g.awayML, ml: true}
+      {g: g, who: "home", name: g.home.name, n: open && g.homeOpen != null ? g.homeOpen : g.homeML, closeN: g.homeML, oppN: open && g.awayOpen != null ? g.awayOpen : g.awayML, ml: true},
+      {g: g, who: "away", name: g.away.name, n: open && g.awayOpen != null ? g.awayOpen : g.awayML, closeN: g.awayML, oppN: open && g.homeOpen != null ? g.homeOpen : g.homeML, ml: true}
     ];
   }
   if (g.homeSpread != null) {
     return [
-      {g: g, who: "home", name: g.home.name, n: g.homeSpread, ml: false},
-      {g: g, who: "away", name: g.away.name, n: -g.homeSpread, ml: false}
+      {g: g, who: "home", name: g.home.name, n: g.homeSpread, juice: juiceOf("home"), ml: false},
+      {g: g, who: "away", name: g.away.name, n: -g.homeSpread, juice: juiceOf("away"), ml: false}
     ];
   }
   return [];
@@ -7536,11 +7542,11 @@ function sharkChoose(kind, games){
   }
   if (kind === "lay") {
     const fair = sides.filter(s => !s.ml && s.n <= -3 && s.n >= -6.5).sort((a, b) => Math.abs(a.n + 4.5) - Math.abs(b.n + 4.5));
-    if (fair[0]) return Object.assign({note: "Bad prices are dead. This is the number to lay."}, fair[0]);
+    if (fair[0]) return fair[0];
     const small = sides.filter(s => !s.ml && s.n < 0 && s.n > -7).sort((a, b) => b.n - a.n);
-    if (small[0]) return Object.assign({note: "The short number is dead. Lay this one."}, small[0]);
+    if (small[0]) return small[0];
     const dog = sides.filter(s => s.n > 0).sort((a, b) => b.n - a.n)[0];
-    return dog ? Object.assign({note: "The favorite price is bad. I killed it. Lay the points."}, dog) : null;
+    return dog ? Object.assign({bad: true}, dog) : null;
   }
   if (kind === "hold") {
     const held = sides.filter(s => !s.ml && s.n >= 4.5).sort((a, b) => Math.abs(a.n - 6) - Math.abs(b.n - 6));
@@ -7550,13 +7556,23 @@ function sharkChoose(kind, games){
   const tight = sides.slice().sort((a, b) => Math.abs(a.n) - Math.abs(b.n) || b.n - a.n);
   return tight[0] || null;
 }
+function sharkOpp(side){
+  const t = side.who === "home" ? side.g.away : side.g.home;
+  const n = side.oppN != null ? side.oppN : -side.n;
+  return t.name + " " + sharkNum(n, side.ml);
+}
 function sharkWhy(kind, side){
-  if (side && side.note) return side.note;
-  if (kind === "fade") return "The public is on the other side. I faded it.";
-  if (kind === "soft") return "Soft number. I am gone before it moves.";
-  if (kind === "hold") return "I am holding this number. I will not chase.";
-  if (kind === "wire") return "This is the wire. The move has not printed.";
-  return "This is the number to lay.";
+  const mine = side.name + " " + sharkNum(side.n, side.ml);
+  const opp = sharkOpp(side);
+  const price = side.ml ? "" : " (" + sharkNum(side.juice == null ? -110 : side.juice, true) + ")";
+  if (kind === "lay" && side.bad) return "Not laying " + opp + ". That price is bad. Taking " + mine + price + ".";
+  if (kind === "lay") return "Laying " + mine + price + ". Other side is " + opp + ".";
+  if (kind === "fade") return "Public is on " + opp + ". Fade is " + mine + price + ".";
+  if (kind === "soft") return mine + price + " is the soft side against " + opp + ". Taking it before it moves.";
+  if (kind === "hold") return "Holding " + mine + price + ". Not chasing " + opp + ".";
+  if (kind === "wire" && side.ml && side.closeN != null && side.closeN !== side.n) return "Open is " + mine + ". Board is now " + side.name + " " + sharkNum(side.closeN, true) + ".";
+  if (kind === "wire") return "Calling " + mine + price + " off the open, before " + opp + " gets bet.";
+  return mine + price;
 }
 async function sharkDay(sport, ymd){
   const stamp = String(ymd).replace(/-/g, "");
@@ -7572,7 +7588,18 @@ async function sharkDay(sport, ymd){
     const comp = (ev.competitions || [])[0] || {};
     const odds = (comp.odds || [])[0] || {};
     const ml = odds.moneyline || {};
+    const ps = odds.pointSpread || {};
+    const named = row => {
+      const team = (row && row.team) || {};
+      return team.shortDisplayName || team.displayName || "";
+    };
+    const homeRow = (comp.competitors || []).find(t => t.homeAway === "home");
+    const awayRow = (comp.competitors || []).find(t => t.homeAway === "away");
+    if (named(homeRow)) g.home.name = named(homeRow);
+    if (named(awayRow)) g.away.name = named(awayRow);
     g.homeSpread = sharkSpreadOf(g, odds);
+    g.homeJuice = sharkAmerican(ps.home);
+    g.awayJuice = sharkAmerican(ps.away);
     g.homeML = sharkAmerican(ml.home);
     g.awayML = sharkAmerican(ml.away);
     g.homeOpen = sharkOpen(ml.home);
@@ -7604,8 +7631,11 @@ function sharkTicket(kind, slate, claimed){
     return {empty: blocked ? "The other shark already has the only ticket. I will not copy it." : "No number posted. I will not invent a ticket."};
   }
   claimed.add(side.g.id);
-  const pick = side.name + " " + sharkNum(side.n, side.ml) + " · " + side.g.away.name + " at " + side.g.home.name;
-  return {pick: pick, why: sharkWhy(kind, side), when: slate.note};
+  const one = t => t.name + (t.rec ? " (" + t.rec + ")" : "");
+  const sideText = side.name + " " + sharkNum(side.n, side.ml);
+  const juice = side.ml ? "" : sharkNum(side.juice == null ? -110 : side.juice, true);
+  const when = side.g.start ? [prettyDay(slateDateOf(side.g.start)), formatTime(side.g.start, false)].filter(Boolean).join(" · ") : slate.note;
+  return {pick: sideText + "|" + side.g.id, market: side.ml ? "Moneyline" : "Spread", side: sideText, juice: juice, game: one(side.g.away) + " at " + one(side.g.home), when: when, why: sharkWhy(kind, side)};
 }
 async function loadSharks(){
   const board = document.getElementById("sharkboard");
@@ -7640,9 +7670,9 @@ async function loadSharks(){
     const picks = (cards[shark.id] || []).map(row => {
       const t = row.ticket;
       const body = t.pick
-        ? "<p><b class='gg-name'>" + esc(t.pick) + "</b></p><p>" + esc(t.why) + "</p><p class='warn'>" + esc(t.when) + "</p>"
-        : "<p class='warn'>" + esc(t.empty) + "</p>";
-      return "<div class='shark-pick'><b>" + esc(row.sport) + "</b>" + body + "</div>";
+        ? "<div class='shark-top'><b>" + esc(row.sport) + "</b><span>" + esc(t.market) + "</span></div><p class='shark-side'>" + esc(t.side) + (t.juice ? " <span class='shark-juice'>" + esc(t.juice) + "</span>" : "") + "</p><p class='shark-game'>" + esc(t.game) + "</p>" + (t.when ? "<p class='shark-when'>" + esc(t.when) + "</p>" : "") + "<p>" + esc(t.why) + "</p>"
+        : "<div class='shark-top'><b>" + esc(row.sport) + "</b></div><p class='warn'>" + esc(t.empty) + "</p>";
+      return "<div class='shark-pick'>" + body + "</div>";
     }).join("");
     return "<article class='shark' id='" + shark.id + "'><img src='" + shark.img + "' alt='" + esc(shark.alt) + "'><div><h3>" + esc(shark.name) + "</h3><p class='shark-rule'>" + esc(shark.rule) + "</p><div class='shark-picks'>" + picks + "</div><p class='shark-fee'>" + esc(shark.fee) + "</p></div></article>";
   }).join("");
