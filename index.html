@@ -547,7 +547,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </div>
 <div id="seasons" class="card view"><div class="section-head"><h2>Season Dates</h2><p class="warn slips-side">Checked in the month each league publishes its schedule.</p></div></div>
 <div id="scoreboard" class="card view"><div class="section-head"><h2>Full Scoreboard</h2><p class="warn slips-side" id="fullscorenote">Loading the board.</p></div><div class="full-board"><aside class="full-sports" id="fullsports"></aside><div class="full-main"><div class="full-dates"><button type="button" class="full-chev" id="fulldateprev" aria-label="Previous day">&#8249;</button><div class="full-date-row" id="fulldates"></div><button type="button" class="full-chev" id="fulldatenext" aria-label="Next day">&#8250;</button></div><div class="full-status" id="fullstatus"><button type="button" data-status="all" class="on">All</button><button type="button" data-status="live">Live</button><button type="button" data-status="pre">Upcoming</button><button type="button" data-status="final">Final</button></div><div id="fullholds"></div><div class="full-games" id="fullrows"></div></div></div></div>
-<section class="card view" id="sharks"><div class="section-head"><h2>Sports Sharks</h2><p class="warn slips-side">Two sports each. No shark writes another shark's ticket.</p></div><div class="shark-list" id="sharkboard"><p class="warn">Loading the sharks.</p></div></section>
+<section class="card view" id="sharks"><div class="section-head"><h2>Sports Sharps</h2><p class="warn slips-side">Two sports each. No sharp writes another sharp's ticket.</p></div><div class="shark-list" id="sharkboard"><p class="warn">Loading the sharps.</p></div></section>
 <main>
 <section class="card view on" id="games">
 <div class="section-head"><h2>Games</h2><p class="warn slips-side">Tap a price. Nothing is sent to a book.</p></div>
@@ -759,7 +759,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <p><span class="gg-name">Gnarly Gorilla</span> Sportsbooks is a free browser bet ledger for the daily <span class="gg-name">Gnarly Gorilla</span> pick cards. It tracks American-odds slips for CBB, CFB, MLB, NBA, NFL, and NHL at BetMGM, Caesars, DraftKings, Fanatics, FanDuel, and HardRock. Bets stay in this browser. The page does not log into a sportsbook and does not place wagers.</p>
 <p class="warn" id="staterule">Bet Responsibly. Gambling involves risk. Wagers can lose the full stake. This ledger is a record of picks and results, not a sportsbook, not betting advice, and not an offer to place a wager. You must be 21 or older where sports betting is legal. If gambling is causing problems, call or text 1-800-GAMBLER.</p>
 <p class="warn" id="statebooks">State rules load from the visitor location.</p>
-<p class="crew-title">Gnarly Gorilla Sports Sharks</p>
+<p class="crew-title">Gnarly Gorilla Sports Sharps</p>
 <div class="crew-row">
 <figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-gorilla"><img class="about-mark" src="about-gorilla.jpg" alt="Gnarly Gorilla"></a><figcaption class="crew-bio"><b>Gnarly Gorilla</b><p>Boss. Years on the number. I read the card, kill a bad price, and tell you what to lay. I will make you a sharper bettor.</p><p class="crew-fee">I have a fee. The first $10 of the stake is mine.</p></figcaption></figure>
 <figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-vito"><img class="about-mark" src="jungle-leopard.jpg" alt="Vito the Spot"></a><figcaption class="crew-bio"><b>Vito the Spot</b><p>I find the soft number and I am gone before it moves. Quiet work. Loud price. I will mark your card and make you a sharper bettor.</p><p class="crew-fee">I have a fee. One unit rides the side I name.</p></figcaption></figure>
@@ -7628,7 +7628,7 @@ function sharkTicket(kind, slate, claimed){
   const side = sharkChoose(kind, open);
   if (!side) {
     const blocked = slate.games.some(g => claimed.has(g.id));
-    return {empty: blocked ? "The other shark already has the only ticket. I will not copy it." : "No number posted. I will not invent a ticket."};
+    return {empty: blocked ? "The other sharp already has the only ticket. I will not copy it." : "No number posted. I will not invent a ticket."};
   }
   claimed.add(side.g.id);
   const one = t => t.name + (t.rec ? " (" + t.rec + ")" : "");
@@ -7644,7 +7644,7 @@ async function loadSharks(){
     if (jump) jump.scrollIntoView({block:"start"});
     return;
   }
-  board.innerHTML = "<p class='warn'>Loading the sharks.</p>";
+  board.innerHTML = "<p class='warn'>Loading the sharps.</p>";
   const sports = ["NFL","NBA","CFB","NHL","MLB","CBB"];
   const packs = {};
   await Promise.all(sports.map(async sport => { packs[sport] = await sharkSlate(sport); }));
@@ -7762,7 +7762,7 @@ function showView(id){
     try { parkOddsTools(); } catch (e) {}
     drawOddsCompare(false).catch(() => {});
   }
-  const titles = {games:"Games", seasons:"Season Dates", dashboard:"Dashboard", todaycard:"Today's Card", liveodds:"Live Odds", slips:"Slips", reportcard:"Report Card", charts:"Charts", breaks:"Books", addbet:"Add Bet", calendarcard:"Calendar", scoreboard:"Scoreboard", sharks:"Sports Sharks", about:"About"};
+  const titles = {games:"Games", seasons:"Season Dates", dashboard:"Dashboard", todaycard:"Today's Card", liveodds:"Live Odds", slips:"Slips", reportcard:"Report Card", charts:"Charts", breaks:"Books", addbet:"Add Bet", calendarcard:"Calendar", scoreboard:"Scoreboard", sharks:"Sports Sharps", about:"About"};
   document.title = (titles[screen] || "Ledger") + " | Gnarly Gorilla Sportsbooks";
   const canon = document.querySelector('link[rel="canonical"]');
   if (canon) canon.href = new URL(pageUrl(screen), "https://cwaggoner.github.io/gnarly-gorilla-sportsbooks/").href;
