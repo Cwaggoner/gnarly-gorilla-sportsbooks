@@ -3955,6 +3955,7 @@ function lineLabel(point, price){
 }
 const WINDOW_BOOK = {betmgm:"BetMGM", williamhill_us:"Caesars", draftkings:"DraftKings", fanatics:"Fanatics", fanduel:"FanDuel", hardrockbet:"HardRock", pinnacle:"Pinnacle"};
 function loadLineWindow(){
+  if (lineWindowMem) return lineWindowMem;
   try { return JSON.parse(localStorage.getItem("gg-line-window") || "null"); } catch (e) { return null; }
 }
 function trimLineWindow(pack){
@@ -4017,18 +4018,55 @@ function slipsOnWindow(){
   }
   return rows.filter(b => b && b.pick && !isNoPick(b) && inSlipWindow(b.date) && SPORT_KEY[String(b.sport || "").toUpperCase()]);
 }
-function snapCache(){
-  try { return JSON.parse(localStorage.getItem("gg-snap-cache") || "{}"); } catch (e) { return {}; }
-}
+function snapCache(){ return snapMem; }
 function saveSnapCache(cache){
+  snapMem = cache || snapMem;
   const cutoff = Date.now() - 3 * 86400000;
-  Object.keys(cache).forEach(id => {
+  Object.keys(snapMem).forEach(id => {
     const iso = id.slice(id.indexOf("|") + 1);
     const ms = Date.parse(iso);
-    if (Number.isFinite(ms) && ms < cutoff) delete cache[id];
+    if (Number.isFinite(ms) && ms < cutoff) delete snapMem[id];
   });
-  try { localStorage.setItem("gg-snap-cache", JSON.stringify(cache)); }
-  catch (e) { try { localStorage.removeItem("gg-snap-cache"); } catch (err) {} }
+  const ids = Object.keys(snapMem);
+  if (ids.length > 16) ids.slice(0, ids.length - 16).forEach(id => delete snapMem[id]);
+}
+let snapMem = {};
+let lineWindowMem = null;
+function storageKeys(){
+  const keys = [];
+  try { for (let i = 0; i < localStorage.length; i++) keys.push(localStorage.key(i)); } catch (e) {}
+  return keys.filter(Boolean);
+}
+function dropOddsCaches(hard){
+  storageKeys().forEach(k => {
+    if (k === "gg-snap-cache") { try { localStorage.removeItem(k); } catch (e) {} return; }
+    if (!hard) return;
+    if (k === "gg-odds-board-file" || k === "gg-book-prices" || k.indexOf("gg-hist-") === 0 || k.indexOf("gg-day-") === 0 || k.indexOf("gg-board-") === 0) {
+      try { localStorage.removeItem(k); } catch (e) {}
+    }
+  });
+}
+function slimWindowGames(pack){
+  Object.keys(pack.games || {}).forEach(day => {
+    Object.keys(pack.games[day] || {}).forEach(sport => {
+      const list = pack.games[day][sport];
+      if (!Array.isArray(list)) { delete pack.games[day][sport]; return; }
+      pack.games[day][sport] = list.filter(g => g && (g.away || g.away_team) && (g.home || g.home_team)).map(g => ({away: g.away || g.away_team, home: g.home || g.home_team, commence: g.commence || g.commence_time || ""}));
+    });
+  });
+}
+function saveLineWindow(pack){
+  pack = trimLineWindow(pack || {});
+  slimWindowGames(pack);
+  const keep = {closes: pack.closes, prices: pack.prices, done: pack.done, games: pack.games, saved: pack.saved || ""};
+  lineWindowMem = keep;
+  const text = JSON.stringify(keep);
+  const write = () => localStorage.setItem("gg-line-window", text);
+  try { dropOddsCaches(false); write(); return true; }
+  catch (e) {
+    dropOddsCaches(true);
+    try { write(); return true; } catch (err) { return false; }
+  }
 }
 function slimSnapGame(g){
   return {
@@ -4166,13 +4204,12 @@ async function pullSlipWindow(){
       }
     }
     pack.saved = new Date().toISOString();
-    trimLineWindow(pack);
-    localStorage.setItem("gg-line-window", JSON.stringify(pack));
+    const stored = saveLineWindow(pack);
     render();
     const left = remain.n ? " Credits left " + remain.n + "." : "";
     const wait = waiting.length ? " Not started yet: " + [...new Set(waiting)].join(", ") + "." : "";
     const saved = "Saved " + opened + " start prices and " + closed + " closes for " + days[0] + " and " + days[1] + ".";
-    note.textContent = (!opened && !closed && !waiting.length ? "Today and yesterday are already saved." : saved + wait) + left;
+    note.textContent = (!opened && !closed && !waiting.length ? "Today and yesterday are already saved." : saved + wait) + left + (stored ? "" : " Browser storage is full. The pull stays on this visit only.");
   } catch (err) {
     if (note) note.textContent = (err && err.message) || "Pull failed.";
   } finally {
