@@ -1,4 +1,11 @@
 # file: grades
+2026-10-29 | RANGE | All Win 18.18 | All Lose -20.00
+2026-10-29 | CFB | Troy +19 | close -110 | win | 24-21 | 9.09
+2026-10-29 | NBA | Grizzlies +7.5 | close -110 | win | 106-89 | 9.09
+2026-10-29 | CBB | No Picks
+2026-10-29 | MLB | Season Ended
+2026-10-29 | NFL | No Picks
+2026-10-29 | NHL | No Picks
 2026-10-28 | RANGE | All Win 9.09 | All Lose -10.00
 2026-10-28 | NBA | Hornets +6.5 | close +105 | loss | 89-97 | -10.00
 2026-10-28 | NHL | No Picks
