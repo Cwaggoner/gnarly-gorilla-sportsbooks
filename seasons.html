@@ -211,8 +211,13 @@ html[data-page="seasons"] main { min-width:0; }
 .about-box { border:1px solid #39ff14; border-radius:10px; background:#0e0e0e; padding:12px 14px; min-width:0; }
 .about-copy { position:relative; }
 .crew-title { margin:14px auto 8px; width:100%; text-align:center; color:#39ff14; font-family:"Cinzel",serif; font-weight:700; font-size:34px; letter-spacing:.03em; line-height:1.15; }
-.crew-row { display:flex; justify-content:center; align-items:flex-end; gap:8px; margin:0 auto; min-width:0; width:100%; }
-.about-mark { flex:0 1 148px; min-width:0; width:148px; max-width:148px; height:auto; aspect-ratio:1; object-fit:cover; border-radius:12px; border:1px solid #39ff14; background:#0a0a0a; }
+.crew-row { display:flex; justify-content:center; align-items:flex-start; gap:8px; margin:0 auto; min-width:0; width:100%; }
+.crew-card { display:flex; flex-direction:column; align-items:stretch; flex:0 1 148px; width:148px; max-width:148px; min-width:0; margin:0; }
+.about-mark { width:100%; max-width:100%; height:auto; aspect-ratio:1; object-fit:cover; border-radius:12px; border:1px solid #39ff14; background:#0a0a0a; }
+.crew-bio { margin-top:8px; box-sizing:border-box; width:100%; max-width:100%; border:1px solid #39ff14; border-radius:10px; padding:6px; background:#0e0e0e; color:#d6ffd0; font-family:system-ui,sans-serif; font-size:11px; font-weight:600; font-style:normal; line-height:1.35; letter-spacing:.01em; overflow-wrap:break-word; word-break:break-word; }
+.crew-bio b { display:block; margin:0 0 4px; text-align:center; color:#39ff14; font-family:"Cinzel",serif; font-size:12px; font-weight:700; letter-spacing:.03em; line-height:1.2; }
+.crew-bio p { margin:0 0 6px; }
+.crew-fee { margin:0; color:#f0e14a; font-weight:700; letter-spacing:.01em; }
 .feed-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:0 0 8px; }
 .feed-head h2 { margin:0; }
 .feed-head p { margin:0; text-align:right; max-width:46%; }
@@ -736,11 +741,11 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <p class="warn" id="statebooks">State rules load from the visitor location.</p>
 <p class="crew-title">Gnarly Gorilla Sports Sharks</p>
 <div class="crew-row">
-<img class="about-mark" src="about-gorilla.jpg" alt="Gnarly Gorilla">
-<img class="about-mark" src="jungle-leopard.jpg" alt="Leopard">
-<img class="about-mark" src="jungle-rhino.jpg" alt="Rhino">
-<img class="about-mark" src="jungle-hyena.jpg" alt="Hyena">
-<img class="about-mark" src="jungle-bird.jpg" alt="Jungle bird">
+<figure class="crew-card"><img class="about-mark" src="about-gorilla.jpg" alt="Gnarly Gorilla"><figcaption class="crew-bio"><b>Gnarly Gorilla</b><p>Boss. Years on the number. I read the card, kill a bad price, and tell you what to lay. I will make you a sharper bettor.</p><p class="crew-fee">I have a fee. The first $10 of the stake is mine.</p></figcaption></figure>
+<figure class="crew-card"><img class="about-mark" src="jungle-leopard.jpg" alt="Leopard"><figcaption class="crew-bio"><b>Leopard</b><p>I find the soft number and I am gone before it moves. Quiet work. Loud price. I will mark your card and make you a sharper bettor.</p><p class="crew-fee">I have a fee. One unit rides the side I name.</p></figcaption></figure>
+<figure class="crew-card"><img class="about-mark" src="jungle-rhino.jpg" alt="Rhino"><figcaption class="crew-bio"><b>Rhino</b><p>I do not chase and I do not blink. I hold the number when the crowd folds. I will steady your bankroll.</p><p class="crew-fee">I have a fee. A flat dime on every play.</p></figcaption></figure>
+<figure class="crew-card"><img class="about-mark" src="jungle-hyena.jpg" alt="Hyena"><figcaption class="crew-bio"><b>Hyena</b><p>The public piles one side. I take the other and I wait. I will show you the trap and make you a sharper bettor.</p><p class="crew-fee">I have a fee. Half a unit, win or lose.</p></figcaption></figure>
+<figure class="crew-card"><img class="about-mark" src="jungle-bird.jpg" alt="Jungle bird"><figcaption class="crew-bio"><b>Razor</b><p>I watch the open from the wire. I see the move before it prints. I will call your spot early.</p><p class="crew-fee">I have a fee. The juice on the ticket is mine.</p></figcaption></figure>
 </div>
 </div>
 <aside class="about-box live-feed">
