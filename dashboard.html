@@ -11,7 +11,8 @@
     if (side > 800 && dpr > 1) side = side / dpr;
     if (side && side <= 520) {
       var meta = document.querySelector('meta[name="viewport"]');
-      if (meta) meta.setAttribute("content", "width=732");
+      if (meta) meta.setAttribute("content", "width=1464");
+      document.documentElement.setAttribute("data-phone", "1");
     }
   } catch (e) {}
   var file = (location.pathname.split("/").pop() || "index.html").toLowerCase();
@@ -69,6 +70,7 @@ header h1 { margin:0; color:var(--title); font-size:22px; letter-spacing:.04em; 
 @keyframes spin { to { transform:rotate(360deg); } }
 header p { margin:4px 0 0; color:var(--muted); }
 .page { max-width:1100px; margin:0 auto; padding:16px; }
+html[data-phone] .page { max-width:none; }
 main { margin:0; padding:0; }
 footer.card { width:100%; max-width:none; margin:14px 0 0; box-sizing:border-box; }
 .page { display:flex; flex-direction:column; } .page-end { order:9999; height:100vh; } #below-about:empty { display:none; }
