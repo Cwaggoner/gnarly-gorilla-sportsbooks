@@ -240,6 +240,10 @@ html[data-page="seasons"] main { min-width:0; }
 .shark-result.win { color:#39ff14; }
 .shark-result.loss { color:#ff6b6b; }
 .shark-result.push, .shark-result.pending { color:#f0e14a; }
+.shark-conf { margin:0 0 4px; font-weight:700; letter-spacing:.03em; }
+.shark-conf.high { color:#f0e14a; }
+.shark-conf.medium { color:#d6ffd0; }
+.shark-conf.low { color:#8fb898; }
 .shark-fee { margin:8px 0 0; color:#f0e14a; font-weight:700; }
 @media (max-width:800px) { .shark { grid-template-columns:1fr; } .shark-picks { grid-template-columns:1fr; } }
 .feed-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:0 0 8px; }
@@ -2646,7 +2650,8 @@ document.body.addEventListener("click", e => {
       type: decodeURIComponent(cardBtn.dataset.type || "Spread"),
       pick: decodeURIComponent(cardBtn.dataset.pick || ""),
       odds: Number(decodeURIComponent(cardBtn.dataset.odds || "")),
-      edge: cardBtn.dataset.edge === "1"
+      notes: decodeURIComponent(cardBtn.dataset.notes || ""),
+      edge: cardBtn.dataset.edge === "1" || /^high\b/i.test(decodeURIComponent(cardBtn.dataset.notes || ""))
     });
     return;
   }
@@ -7645,6 +7650,51 @@ function sharpPass(){
   if (Math.random() < 0.5) line += " Forgetta' bout' it.";
   return line;
 }
+function sharpConfidence(kind, side){
+  const n = Number(side && side.n);
+  const ml = !!(side && side.ml);
+  let pct = 55;
+  if (!Number.isFinite(n)) return {band: "Low", pct: 51, text: "Low 51%"};
+  if (kind === "lay") {
+    if (side.bad) pct = 51;
+    else {
+      const dist = Math.abs(n + 4.5);
+      pct = dist <= 0.25 ? 64 : dist <= 1 ? 61 : dist <= 2 ? 57 : 53;
+    }
+  } else if (kind === "soft") {
+    pct = ml ? (n >= 100 && n <= 130 ? 62 : n <= 180 ? 57 : 52) : (n >= 10 ? 63 : n >= 7 ? 60 : n >= 4.5 ? 56 : 52);
+  } else if (kind === "hold") {
+    const dist = Math.abs(n - 6);
+    pct = ml ? 52 : (dist <= 0.5 ? 64 : dist <= 1.5 ? 60 : dist <= 3 ? 56 : 52);
+  } else if (kind === "fade") {
+    pct = ml ? (n >= 180 ? 63 : n >= 140 ? 59 : n >= 110 ? 55 : 51) : (n >= 12 ? 65 : n >= 8 ? 62 : n >= 5.5 ? 58 : n >= 3 ? 55 : 51);
+  } else {
+    const dist = ml ? Math.abs(Math.abs(n) - 100) : Math.abs(n);
+    pct = (ml ? dist <= 8 : dist <= 1) ? 64 : (ml ? dist <= 20 : dist <= 2.5) ? 59 : 53;
+  }
+  if (!ml && side.juice != null && side.juice !== "") {
+    const j = Number(side.juice);
+    if (Number.isFinite(j)) {
+      if (j <= -115) pct -= 3;
+      else if (j >= -105 && j < 0) pct += 1;
+    }
+  }
+  pct = Math.max(50, Math.min(68, Math.round(pct)));
+  const band = pct >= 60 ? "High" : pct >= 55 ? "Medium" : "Low";
+  return {band: band, pct: pct, text: band + " " + pct + "%"};
+}
+function sharpFillConfidence(card){
+  SHARKS.forEach(shark => {
+    (card.sharps[shark.id] || []).forEach(pick => {
+      if (!pick || pick.empty || !pick.slip || (pick.confidence && pick.confidencePct)) return;
+      const juice = pick.ml ? null : Number(String(pick.juice || "").replace(/[^\d.+-]/g, ""));
+      const made = sharpConfidence(shark.kind, {n: pick.n, ml: !!pick.ml, juice: juice});
+      pick.confidence = made.band;
+      pick.confidencePct = made.pct;
+    });
+  });
+  return card;
+}
 function sharkTicket(kind, side){
   const one = t => t.name + (t.rec ? " (" + t.rec + ")" : "");
   const sideText = side.name + " " + sharkNum(side.n, side.ml);
@@ -7656,6 +7706,7 @@ function sharkTicket(kind, side){
     : side.name + " " + sharkNum(side.n, false) + (side.who === "home" ? " vs " : " at ") + opp;
   const odds = side.ml ? Math.round(Number(side.n)) : Math.round(Number(side.juice == null ? -110 : side.juice));
   const date = side.g.start ? slateDateOf(side.g.start) : "";
+  const conf = sharpConfidence(kind, side);
   return {
     id: String(side.g.id || ""),
     sport: side.g.sport,
@@ -7673,6 +7724,8 @@ function sharkTicket(kind, side){
     ml: !!side.ml,
     away: side.g.away.name,
     home: side.g.home.name,
+    confidence: conf.band,
+    confidencePct: conf.pct,
     result: "pending"
   };
 }
@@ -7804,8 +7857,9 @@ function sharpPaint(card, book){
       if (!t || t.empty || !t.slip) return "<div class='shark-pick'><p class='warn'>" + esc(t && t.empty || sharpPass()) + "</p></div>";
       const result = t.result || "pending";
       const label = result === "win" ? "Win" : result === "loss" ? "Loss" : result === "push" ? "Push" : "Pending";
-      const add = Number.isFinite(Number(t.odds)) ? "<button type='button' class='card-price shark-add' data-date='" + encodeURIComponent(t.date || "") + "' data-sport='" + encodeURIComponent(t.sport || "") + "' data-type='" + encodeURIComponent(t.market || "") + "' data-pick='" + encodeURIComponent(t.slip) + "' data-odds='" + encodeURIComponent(String(t.odds)) + "'>Add to Slip</button>" : "";
-      return "<div class='shark-pick'><div class='shark-top'><b>" + esc(t.sport) + "</b><span>" + esc(t.market) + "</span></div><p class='shark-side'>" + esc(t.side) + (t.juice ? " <span class='shark-juice'>" + esc(t.juice) + "</span>" : "") + "</p><p class='shark-game'>" + esc(t.game) + "</p>" + (t.when ? "<p class='shark-when'>" + esc(t.when) + "</p>" : "") + "<p>" + esc(t.why) + "</p><p class='shark-result " + result + "'>" + label + "</p>" + add + "</div>";
+      const conf = (t.confidence && t.confidencePct) ? t.confidence + " " + t.confidencePct + "%" : "";
+      const add = Number.isFinite(Number(t.odds)) ? "<button type='button' class='card-price shark-add' data-date='" + encodeURIComponent(t.date || "") + "' data-sport='" + encodeURIComponent(t.sport || "") + "' data-type='" + encodeURIComponent(t.market || "") + "' data-pick='" + encodeURIComponent(t.slip) + "' data-odds='" + encodeURIComponent(String(t.odds)) + "' data-notes='" + encodeURIComponent(conf) + "'>Add to Slip</button>" : "";
+      return "<div class='shark-pick'><div class='shark-top'><b>" + esc(t.sport) + "</b><span>" + esc(t.market) + "</span></div><p class='shark-side'>" + esc(t.side) + (t.juice ? " <span class='shark-juice'>" + esc(t.juice) + "</span>" : "") + "</p><p class='shark-game'>" + esc(t.game) + "</p>" + (t.when ? "<p class='shark-when'>" + esc(t.when) + "</p>" : "") + "<p>" + esc(t.why) + "</p>" + (conf ? "<p class='shark-conf " + String(t.confidence).toLowerCase() + "'>" + esc(conf) + "</p>" : "") + "<p class='shark-result " + result + "'>" + label + "</p>" + add + "</div>";
     }).join("");
     return "<article class='shark' id='" + shark.id + "'><img src='" + shark.img + "' alt='" + esc(shark.alt) + "'><div><h3>" + esc(shark.name) + "</h3><p class='shark-record'>Record " + rec.w + "-" + rec.l + (rec.p ? "-" + rec.p : "") + "</p><p class='shark-rule'>" + esc(shark.rule) + "</p><div class='shark-picks'>" + picks + "</div><p class='shark-fee'>" + esc(shark.fee) + "</p></div></article>";
   }).join("");
@@ -7827,6 +7881,7 @@ async function loadSharks(){
   } catch (e) {}
   if (!card && book.cards[day]) card = book.cards[day];
   if (!card) card = sharpBuild(await sharpGames());
+  card = sharpFillConfidence(card);
   card = sharpKeepGrades(card, book);
   card = await sharpGrade(card);
   book.cards[card.date] = card;

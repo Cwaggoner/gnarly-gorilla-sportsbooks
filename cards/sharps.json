@@ -20,7 +20,9 @@
         "ml": false,
         "away": "Nuggets",
         "home": "Suns",
-        "result": "pending"
+        "result": "pending",
+        "confidence": "High",
+        "confidencePct": 65
       },
       {
         "id": "401862815",
@@ -39,7 +41,9 @@
         "ml": false,
         "away": "Temple",
         "home": "East Carolina",
-        "result": "pending"
+        "result": "pending",
+        "confidence": "High",
+        "confidencePct": 64
       },
       {
         "id": "401906769",
@@ -58,7 +62,9 @@
         "ml": false,
         "away": "Miami",
         "home": "Florida",
-        "result": "pending"
+        "result": "pending",
+        "confidence": "High",
+        "confidencePct": 64
       },
       {
         "id": "401909738",
@@ -77,7 +83,9 @@
         "ml": false,
         "away": "Arizona",
         "home": "UCLA",
-        "result": "pending"
+        "result": "pending",
+        "confidence": "High",
+        "confidencePct": 64
       }
     ],
     "shark-vito": [
@@ -98,7 +106,9 @@
         "ml": true,
         "away": "Blackhawks",
         "home": "Bruins",
-        "result": "pending"
+        "result": "pending",
+        "confidence": "Low",
+        "confidencePct": 52
       },
       {
         "id": "401892616",
@@ -117,7 +127,9 @@
         "ml": true,
         "away": "Lightning",
         "home": "Predators",
-        "result": "pending"
+        "result": "pending",
+        "confidence": "Medium",
+        "confidencePct": 57
       },
       {
         "id": "401892620",
@@ -136,7 +148,9 @@
         "ml": true,
         "away": "Penguins",
         "home": "Canadiens",
-        "result": "pending"
+        "result": "pending",
+        "confidence": "High",
+        "confidencePct": 62
       },
       {
         "id": "401892619",
@@ -155,7 +169,9 @@
         "ml": true,
         "away": "Senators",
         "home": "Sharks",
-        "result": "pending"
+        "result": "pending",
+        "confidence": "High",
+        "confidencePct": 62
       }
     ],
     "shark-rocco": [
@@ -176,7 +192,9 @@
         "ml": false,
         "away": "Louisiana Tech",
         "home": "South Alabama",
-        "result": "pending"
+        "result": "pending",
+        "confidence": "High",
+        "confidencePct": 64
       },
       {
         "id": "401858280",
@@ -195,7 +213,9 @@
         "ml": false,
         "away": "Clemson",
         "home": "Florida St",
-        "result": "pending"
+        "result": "pending",
+        "confidence": "High",
+        "confidencePct": 64
       },
       {
         "id": "401862814",
@@ -214,7 +234,9 @@
         "ml": false,
         "away": "Army",
         "home": "Memphis",
-        "result": "pending"
+        "result": "pending",
+        "confidence": "High",
+        "confidencePct": 64
       },
       {
         "id": "401860924",
@@ -233,7 +255,9 @@
         "ml": false,
         "away": "Oregon St",
         "home": "Fresno St",
-        "result": "pending"
+        "result": "pending",
+        "confidence": "High",
+        "confidencePct": 64
       }
     ],
     "shark-paulie": [
@@ -254,7 +278,9 @@
         "ml": true,
         "away": "Flames",
         "home": "Avalanche",
-        "result": "pending"
+        "result": "pending",
+        "confidence": "High",
+        "confidencePct": 63
       },
       {
         "id": "401892622",
@@ -273,7 +299,9 @@
         "ml": true,
         "away": "Blue Jackets",
         "home": "Stars",
-        "result": "pending"
+        "result": "pending",
+        "confidence": "Medium",
+        "confidencePct": 59
       },
       {
         "id": "401892621",
@@ -292,7 +320,9 @@
         "ml": true,
         "away": "Maple Leafs",
         "home": "Canucks",
-        "result": "pending"
+        "result": "pending",
+        "confidence": "Medium",
+        "confidencePct": 55
       },
       {
         "id": "401892617",
@@ -311,7 +341,9 @@
         "ml": true,
         "away": "Oilers",
         "home": "Islanders",
-        "result": "pending"
+        "result": "pending",
+        "confidence": "Medium",
+        "confidencePct": 55
       }
     ],
     "shark-gino": [
@@ -332,7 +364,9 @@
         "ml": false,
         "away": "UConn",
         "home": "Air Force",
-        "result": "pending"
+        "result": "pending",
+        "confidence": "Medium",
+        "confidencePct": 56
       },
       {
         "id": "401873029",
@@ -351,7 +385,9 @@
         "ml": false,
         "away": "Raiders",
         "home": "Jets",
-        "result": "pending"
+        "result": "pending",
+        "confidence": "Medium",
+        "confidencePct": 59
       },
       {
         "id": "401873033",
@@ -370,7 +406,9 @@
         "ml": false,
         "away": "Chiefs",
         "home": "Broncos",
-        "result": "pending"
+        "result": "pending",
+        "confidence": "Medium",
+        "confidencePct": 56
       },
       {
         "id": "401858502",
@@ -389,7 +427,9 @@
         "ml": false,
         "away": "Wisconsin",
         "home": "Iowa",
-        "result": "pending"
+        "result": "pending",
+        "confidence": "High",
+        "confidencePct": 60
       }
     ]
   }
