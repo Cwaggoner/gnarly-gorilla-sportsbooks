@@ -17,7 +17,7 @@
   } catch (e) {}
   var file = (location.pathname.split("/").pop() || "index.html").toLowerCase();
   var q = new URLSearchParams(location.search).get("page") || "";
-  var map = {games:"games", seasons:"seasons", dashboard:"dashboard", today:"todaycard", live:"liveodds", slips:"slips", report:"reportcard", charts:"charts", books:"breaks", add:"addbet", calendar:"calendarcard", about:"about"};
+  var map = {games:"games", seasons:"seasons", dashboard:"dashboard", today:"todaycard", live:"liveodds", slips:"slips", report:"reportcard", charts:"charts", books:"breaks", add:"addbet", calendar:"calendarcard", scoreboard:"scoreboard", about:"about"};
   var screen = file === "seasons.html" ? "seasons" : file === "dashboard.html" ? "dashboard" : (map[q] || "games");
   document.documentElement.setAttribute("data-page", screen);
 })();
@@ -205,8 +205,9 @@ html[data-page="seasons"] main { min-width:0; }
 #seasonlive > .section-head { margin:0 0 12px; background:rgba(57,255,20,.12); border:1px solid #39ff14; border-radius:10px; padding:10px 14px; }
 .score-nav { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin:0 0 4px; }
 .score-nav b { color:#39ff14; min-width:14ch; text-align:center; }
-.score-strip { position:relative; margin:0 0 12px; min-width:0; }
-.score-row { display:flex; flex-wrap:nowrap; gap:8px; overflow-x:auto; overflow-y:hidden; scrollbar-width:none; width:100%; min-width:0; -webkit-overflow-scrolling:touch; }
+.score-strip { position:relative; display:flex; align-items:center; gap:8px; margin:0 0 12px; min-width:0; }
+.score-row { display:flex; flex-wrap:nowrap; gap:8px; overflow-x:auto; overflow-y:hidden; scrollbar-width:none; flex:1 1 auto; width:auto; min-width:0; -webkit-overflow-scrolling:touch; }
+.score-full { flex:0 0 auto; align-self:center; color:#39ff14; font-weight:700; font-size:13px; line-height:1.2; text-decoration:none; text-align:center; border:1px solid #39ff14; border-radius:8px; padding:8px 10px; background:#0e0e0e; white-space:nowrap; }
 .score-row::-webkit-scrollbar { display:none; }
 .score-card { flex:0 0 272px; width:272px; box-sizing:border-box; border:1px solid #243024; border-radius:10px; background:#0e0e0e; padding:8px 10px; }
 .score-arrow { position:absolute; top:50%; transform:translateY(-50%); z-index:2; width:36px; height:56px; padding:0; display:flex; align-items:center; justify-content:center; border-radius:8px; background:rgba(10,10,10,.92); border:1px solid #39ff14; }
@@ -399,7 +400,42 @@ html[data-page="charts"] #charts,
 html[data-page="breaks"] #breaks,
 html[data-page="addbet"] #addbet,
 html[data-page="calendarcard"] #calendarcard,
+html[data-page="scoreboard"] #scoreboard,
 html[data-page="about"] #about { display:block !important; }
+html[data-page="scoreboard"] main { min-width:0; }
+.full-board { display:grid; grid-template-columns:128px minmax(0,1fr); gap:12px; align-items:start; }
+.full-sports { display:flex; flex-direction:column; gap:6px; position:sticky; top:118px; }
+.full-sports button { width:100%; text-align:left; border-left:3px solid transparent; }
+.full-sports button.on { color:#39ff14; border-left-color:#39ff14; background:#102010; }
+.full-dates { display:flex; align-items:center; gap:6px; margin-bottom:8px; }
+.full-chev { width:36px; height:52px; padding:0; flex:0 0 36px; color:#39ff14; font-size:22px; line-height:1; }
+.full-date-row { display:flex; gap:6px; flex:1; min-width:0; }
+.full-date-row button { flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; gap:2px; padding:6px 2px; background:#0e0e0e; }
+.full-date-row button .wk { color:#8fb898; font-size:11px; font-weight:700; }
+.full-date-row button .num { color:#d6ffd0; font-size:16px; font-weight:700; }
+.full-date-row button.on { background:#102010; box-shadow:inset 0 -3px 0 #39ff14; }
+.full-date-row button.on .wk, .full-date-row button.on .num { color:#39ff14; }
+.full-status { display:flex; flex-wrap:wrap; gap:6px; margin:0 0 8px; }
+.full-status button.on { color:#39ff14; outline:1px solid #39ff14; }
+.full-games { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:8px; }
+.full-card { border:1px solid #243024; border-radius:10px; background:#0e0e0e; padding:10px 12px; min-width:0; }
+.full-card.live { border-color:#f0e14a; }
+.full-card.final { border-color:#39ff14; }
+.full-card.live .score-state { color:#f0e14a; font-weight:700; }
+.full-card.final .score-state { color:#39ff14; font-weight:700; }
+.full-side { display:grid; grid-template-columns:32px minmax(0,1fr) auto auto; gap:8px; align-items:center; padding:4px 0; }
+.full-side img, .full-side .score-logo { width:32px; height:32px; object-fit:contain; display:block; }
+.full-side .nm { color:#d6ffd0; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.full-side .rec { color:#8fb898; font-weight:400; font-size:12px; margin-left:6px; }
+.full-side .lines { color:#8fb898; font-size:12px; font-variant-numeric:tabular-nums; letter-spacing:.03em; white-space:nowrap; }
+.full-side .sc { color:#d6ffd0; font-size:26px; font-weight:700; min-width:2ch; text-align:right; font-variant-numeric:tabular-nums; }
+.full-side.win .nm, .full-side.win .sc { color:#39ff14; }
+.full-side.lose .nm, .full-side.lose .sc { color:#8fb898; }
+@media (max-width:760px) {
+  .full-board { grid-template-columns:1fr; }
+  .full-sports { position:static; flex-direction:row; flex-wrap:wrap; }
+  .full-sports button { width:auto; }
+}
 html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-page="todaycard"]):not([data-page="addbet"]) #sgpbox { display:none !important; }
 #sitenav button.on, #sitenav a.on, .sport-bar button.on { color:#39ff14; outline:1px solid #39ff14; }
 .sport-bar { display:flex; flex-wrap:wrap; gap:6px; margin:8px 0; }
@@ -440,6 +476,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <a href="index.html?page=books" data-jump="breaks">Books</a>
 <a href="index.html?page=calendar" data-jump="calendarcard">Calendar</a>
 <a href="seasons.html" data-jump="seasons">Seasons</a>
+<a href="index.html?page=scoreboard" data-jump="scoreboard">Scoreboard</a>
 <a href="index.html?page=about" data-jump="about">About</a>
 </div>
 <div class="nav-cell right">
@@ -461,6 +498,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </nav>
 </div>
 <div id="seasons" class="card view"><div class="section-head"><h2>Season Dates</h2><p class="warn slips-side">Checked in the month each league publishes its schedule.</p></div></div>
+<div id="scoreboard" class="card view"><div class="section-head"><h2>Full Scoreboard</h2><p class="warn slips-side" id="fullscorenote">Loading the board.</p></div><div class="full-board"><aside class="full-sports" id="fullsports"></aside><div class="full-main"><div class="full-dates"><button type="button" class="full-chev" id="fulldateprev" aria-label="Previous day">&#8249;</button><div class="full-date-row" id="fulldates"></div><button type="button" class="full-chev" id="fulldatenext" aria-label="Next day">&#8250;</button></div><div class="full-status" id="fullstatus"><button type="button" data-status="all" class="on">All</button><button type="button" data-status="live">Live</button><button type="button" data-status="pre">Upcoming</button><button type="button" data-status="final">Final</button></div><div id="fullholds"></div><div class="full-games" id="fullrows"></div></div></div></div>
 <main>
 <section class="card view on" id="games">
 <div class="section-head"><h2>Games</h2><p class="warn slips-side">Tap a price. Nothing is sent to a book.</p></div>
@@ -3013,7 +3051,7 @@ function showSeasons(checked){
   });
   wave += " H448";
   const ekg = "<span class='ekg' data-ms='" + (parseFloat(pulse) * 1000) + "'><svg viewBox='0 0 448 36' preserveAspectRatio='none' aria-label='Season pulse'><defs><clipPath id='ekgclip'><rect class='ekg-clip' x='0' y='0' width='0' height='36'></rect></clipPath></defs><path class='trace' clip-path='url(#ekgclip)' d='" + wave + "' style='stroke:" + color + "'></path></svg></span>";
-  const live = "<div id='seasonlive'><div class='section-head'><h2>Live Scores</h2><p class='warn slips-side' id='seasonlivenote'>Loading the board.</p></div><div class='score-nav'><button type='button' id='seasonliveprev'>Prev</button><b id='seasonliveday'></b><button type='button' id='seasonlivenext'>Next</button><button type='button' id='seasonlivetoday'>Today</button></div><div class='sport-bar' id='seasonlivesports'><button type='button' data-sport='All' class='on'>All</button><button type='button' data-sport='CBB'>CBB</button><button type='button' data-sport='CFB'>CFB</button><button type='button' data-sport='MLB'>MLB</button><button type='button' data-sport='NBA'>NBA</button><button type='button' data-sport='NFL'>NFL</button><button type='button' data-sport='NHL'>NHL</button></div><div id='seasonlivenotes'></div><div class='score-strip'><button type='button' class='score-arrow' id='seasonliveleft' aria-label='Scroll scores left'><svg viewBox='0 0 24 24' width='22' height='22' aria-hidden='true'><path d='M15 5 L8 12 L15 19' fill='none' stroke='#39ff14' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/></svg></button><div class='score-row' id='seasonliverow'></div><button type='button' class='score-arrow' id='seasonliveright' aria-label='Scroll scores right'><svg viewBox='0 0 24 24' width='22' height='22' aria-hidden='true'><path d='M9 5 L16 12 L9 19' fill='none' stroke='#39ff14' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/></svg></button></div></div>";
+  const live = "<div id='seasonlive'><div class='section-head'><h2>Live Scores</h2><p class='warn slips-side' id='seasonlivenote'>Loading the board.</p></div><div class='score-nav'><button type='button' id='seasonliveprev'>Prev</button><b id='seasonliveday'></b><button type='button' id='seasonlivenext'>Next</button><button type='button' id='seasonlivetoday'>Today</button></div><div class='sport-bar' id='seasonlivesports'><button type='button' data-sport='All' class='on'>All</button><button type='button' data-sport='CBB'>CBB</button><button type='button' data-sport='CFB'>CFB</button><button type='button' data-sport='MLB'>MLB</button><button type='button' data-sport='NBA'>NBA</button><button type='button' data-sport='NFL'>NFL</button><button type='button' data-sport='NHL'>NHL</button></div><div id='seasonlivenotes'></div><div class='score-strip'><button type='button' class='score-arrow' id='seasonliveleft' aria-label='Scroll scores left'><svg viewBox='0 0 24 24' width='22' height='22' aria-hidden='true'><path d='M15 5 L8 12 L15 19' fill='none' stroke='#39ff14' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/></svg></button><div class='score-row' id='seasonliverow'></div><button type='button' class='score-arrow' id='seasonliveright' aria-label='Scroll scores right'><svg viewBox='0 0 24 24' width='22' height='22' aria-hidden='true'><path d='M9 5 L16 12 L9 19' fill='none' stroke='#39ff14' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/></svg></button><a class='score-full' id='scorefull' href='index.html?page=scoreboard'>Full Scoreboard</a></div></div>";
   const records = "<div class='card-rest' id='seasonrecords'><b style='color:#39ff14'>Win/Loss Records</b><p class='warn' id='recnote' style='margin:4px 0 8px'>Loading standings.</p><div class='tools'><label>Sport<select id='recsport'></select></label><label>Conference<select id='recconf'></select></label><label>Division<select id='recdiv'></select></label></div><div class='table-wrap'><table><thead><tr><th>Team</th><th>Sport</th><th>Conference</th><th>Division</th><th>W</th><th>L</th><th>T/OTL</th><th>PCT</th><th>GB</th><th>Streak</th></tr></thead><tbody id='recrows'></tbody></table></div></div>";
   const trivia = "<div class='card-rest' id='seasontrivia'><b style='color:#39ff14'>Daily Sports Trivia</b><p class='warn' style='margin:4px 0 8px'>A new question at midnight. The same question stays up all day.</p><p data-q>Loading today's question.</p><button type='button' id='triviareveal'>Show answer</button><p data-a class='warn' hidden></p></div>";
   box.innerHTML = live + "<div class='section-head'><h2>Season Dates</h2><p class='warn slips-side'>Checked " + (seasonChecked || "2026-10-19") + ". NFL May, NHL July, MLB July, NBA August, CFB August, CBB September. Postseason nights stay open until the last game ends or " + zoneTime(4, 0) + ". NBA and NHL through June 30, MLB through the World Series, NFL through the Super Bowl, CFB through the championship, March Madness March 13 through the title game.</p></div><table><thead><tr><th colspan='6' style='text-align:center'>" + ekg + "</th></tr><tr><th>Sport</th><th>Start</th><th>Last Card</th><th>Status</th><th>Where</th><th>Days Left</th></tr></thead><tbody>" + rows + "</tbody></table>" + records + trivia;
@@ -3232,10 +3270,18 @@ let liveBoardSport = "All";
 let liveBoardGames = [];
 let liveBoardTimer = 0;
 const livePackCache = new Map();
+function lineNums(row){
+  return ((row && row.linescores) || []).map(s => {
+    if (!s) return "";
+    if (s.displayValue != null && s.displayValue !== "") return String(s.displayValue);
+    if (s.value != null && s.value !== "") return String(s.value);
+    return "";
+  }).filter(Boolean);
+}
 function liveSide(row){
   const team = (row && row.team) || {};
   const rec = ((row && row.records) || []).find(r => r.type === "total" || r.name === "overall");
-  return {name: team.shortDisplayName || team.displayName || "", abbr: team.abbreviation || "", logo: team.logo || "", score: row && row.score != null && row.score !== "" ? String(row.score) : "", rec: rec && rec.summary || ""};
+  return {name: team.shortDisplayName || team.displayName || "", abbr: team.abbreviation || "", logo: team.logo || "", score: row && row.score != null && row.score !== "" ? String(row.score) : "", rec: rec && rec.summary || "", lines: lineNums(row)};
 }
 function liveGameFromEvent(sport, ev){
   const comp = (ev.competitions || [])[0] || {};
@@ -3254,6 +3300,80 @@ function liveGameFromEvent(sport, ev){
 }
 function prettyDay(ymd){
   return new Date(String(ymd).slice(0, 10) + "T12:00:00Z").toLocaleDateString("en-US", {timeZone:"America/New_York", weekday:"short", month:"short", day:"numeric"});
+}
+function scorePage(){
+  const page = document.documentElement.dataset.page || "";
+  return page === "seasons" || page === "scoreboard";
+}
+let fullScoreStatus = "all";
+function dayBits(ymd){
+  const dt = new Date(String(ymd).slice(0, 10) + "T12:00:00Z");
+  return {
+    wk: ymd === easternDay() ? "TODAY" : dt.toLocaleDateString("en-US", {timeZone:"America/New_York", weekday:"short"}).toUpperCase(),
+    num: dt.toLocaleDateString("en-US", {timeZone:"America/New_York", day:"numeric"})
+  };
+}
+function paintFullBoard(){
+  const sports = document.getElementById("fullsports");
+  const dates = document.getElementById("fulldates");
+  const rows = document.getElementById("fullrows");
+  if (!sports || !dates || !rows) return;
+  if (!liveBoardDate) liveBoardDate = easternDay();
+  const names = ["All","CBB","CFB","MLB","NBA","NFL","NHL"];
+  sports.innerHTML = names.map(s => "<button type='button' data-sport='" + s + "'" + (s === liveBoardSport ? " class='on'" : "") + ">" + s + "</button>").join("");
+  sports.querySelectorAll("button").forEach(btn => {
+    btn.onclick = () => { liveBoardSport = btn.dataset.sport || "All"; paintLiveBoard(); };
+  });
+  const days = [];
+  for (let i = -3; i <= 3; i++) days.push(shiftDate(liveBoardDate, i));
+  dates.innerHTML = days.map(ymd => {
+    const bits = dayBits(ymd);
+    return "<button type='button' data-date='" + ymd + "'" + (ymd === liveBoardDate ? " class='on'" : "") + "><span class='wk'>" + bits.wk + "</span><span class='num'>" + bits.num + "</span></button>";
+  }).join("");
+  dates.querySelectorAll("button").forEach(btn => {
+    btn.onclick = () => { liveBoardDate = btn.dataset.date; loadLiveBoard(); };
+  });
+  const prev = document.getElementById("fulldateprev");
+  const next = document.getElementById("fulldatenext");
+  if (prev) prev.onclick = () => { liveBoardDate = shiftDate(liveBoardDate || easternDay(), -1); loadLiveBoard(); };
+  if (next) next.onclick = () => { liveBoardDate = shiftDate(liveBoardDate || easternDay(), 1); loadLiveBoard(); };
+  document.querySelectorAll("#fullstatus button").forEach(btn => {
+    btn.classList.toggle("on", (btn.dataset.status || "all") === fullScoreStatus);
+    if (!btn.dataset.bound) {
+      btn.dataset.bound = "1";
+      btn.onclick = () => { fullScoreStatus = btn.dataset.status || "all"; paintFullBoard(); };
+    }
+  });
+  const list = liveBoardGames.filter(g => liveBoardSport === "All" || g.sport === liveBoardSport).filter(g => {
+    if (fullScoreStatus === "live") return g.live;
+    if (fullScoreStatus === "pre") return !g.live && !g.final;
+    if (fullScoreStatus === "final") return g.final;
+    return true;
+  });
+  const holds = document.getElementById("fullholds");
+  const seen = [];
+  list.forEach(g => { if (g.why && !seen.some(s => s.sport === g.sport)) seen.push(g); });
+  if (holds) holds.innerHTML = seen.map(g => "<p class='warn score-hold'>" + esc(g.sport) + ": " + esc(liveHoldCopy(g.why, g.shown)) + "</p>").join("");
+  const side = (t, opp, state) => {
+    const logo = /^https:\/\/a\.espncdn\.com\//.test(t.logo) ? "<img src='" + esc(t.logo) + "' alt=''>" : "<span class='score-logo'></span>";
+    let cls = "";
+    if (state !== "pre" && t.score !== "" && opp.score !== "" && Number(t.score) !== Number(opp.score)) cls = Number(t.score) > Number(opp.score) ? " win" : " lose";
+    const score = state === "pre" ? "" : esc(t.score);
+    const lines = "<span class='lines'>" + (t.lines || []).map(esc).join(" ") + "</span>";
+    return "<div class='full-side" + cls + "'>" + logo + "<span class='nm'>" + esc(t.name || t.abbr) + (t.rec ? "<span class='rec'>" + esc(t.rec) + "</span>" : "") + "</span>" + lines + "<span class='sc'>" + score + "</span></div>";
+  };
+  if (!list.length) {
+    rows.innerHTML = "<p class='warn'>No games on this date.</p>";
+    return;
+  }
+  rows.innerHTML = list.map(g => {
+    const cls = g.live ? "live" : g.final ? "final" : "pre";
+    const when = g.state === "pre" && g.start ? formatTime(g.start, false) : (g.detail || (g.final ? "Final" : ""));
+    const flag = g.live ? "<span class='live-dot'></span>" : "";
+    const bits = [g.situation, g.network, g.odds].filter(Boolean);
+    const meta = bits.length ? "<p class='score-meta'>" + esc(bits.join(" · ")) + "</p>" : "";
+    return "<article class='full-card " + cls + "'><div class='score-top'><span>" + esc(g.sport) + "</span><span class='score-state'>" + flag + esc(when) + "</span></div>" + side(g.away, g.home, g.state) + side(g.home, g.away, g.state) + meta + "</article>";
+  }).join("");
 }
 function scoreCacheFresh(pack){
   if (!pack || !pack.ok) return false;
@@ -3387,7 +3507,7 @@ async function scoresForSport(sport, ymd){
 function armLiveBoard(ms){
   clearTimeout(liveBoardTimer);
   liveBoardTimer = setTimeout(() => {
-    if (!pageNeeds("seasons")) return;
+    if (!pageNeeds("seasons") && !scorePage()) return;
     if (document.visibilityState === "hidden") { armLiveBoard(ms); return; }
     loadLiveBoard();
   }, ms);
@@ -3467,6 +3587,8 @@ function paintLiveChrome(){
   const today = document.getElementById("seasonlivetoday");
   if (today) today.hidden = liveBoardDate === easternDay();
   document.querySelectorAll("#seasonlivesports button").forEach(btn => btn.classList.toggle("on", (btn.dataset.sport || "All") === liveBoardSport));
+  const full = document.getElementById("scorefull");
+  if (full) full.href = "index.html?page=scoreboard" + (liveBoardSport && liveBoardSport !== "All" ? "&sport=" + encodeURIComponent(liveBoardSport) : "");
 }
 function liveHoldCopy(why, shown){
   if (why === "previous") return "No games on " + prettyDay(liveBoardDate) + ". Showing the previous day, " + prettyDay(shown) + ".";
@@ -3477,7 +3599,7 @@ function liveHoldCopy(why, shown){
 function paintLiveBoard(){
   const row = document.getElementById("seasonliverow");
   const notes = document.getElementById("seasonlivenotes");
-  if (!row) return;
+  if (!row) { paintFullBoard(); return; }
   paintLiveChrome();
   bindScoreArrows();
   const list = liveBoardGames.filter(g => liveBoardSport === "All" || g.sport === liveBoardSport);
@@ -3502,6 +3624,7 @@ function paintLiveBoard(){
     if (notes) notes.innerHTML = "";
     row.innerHTML = "<p class='warn score-empty'>No games on this date.</p>";
     updateScoreArrows();
+    paintFullBoard();
     return;
   }
   const seen = [];
@@ -3510,23 +3633,29 @@ function paintLiveBoard(){
   row.innerHTML = list.map(card).join("");
   row.scrollLeft = keep;
   requestAnimationFrame(updateScoreArrows);
+  paintFullBoard();
 }
 async function loadLiveBoard(){
-  if (!pageNeeds("seasons") || !document.getElementById("seasonlive")) return;
+  if (!scorePage()) return;
   if (!liveBoardDate) liveBoardDate = easternDay();
   bindLiveBoard();
   paintLiveChrome();
   const note = document.getElementById("seasonlivenote");
+  const fullNote = document.getElementById("fullscorenote");
   const sports = ["CBB","CFB","MLB","NBA","NFL","NHL"];
   let packs = [];
   try {
     packs = await Promise.all(sports.map(sport => scoresForSport(sport, liveBoardDate)));
   } catch (e) { packs = []; }
-  if (!document.getElementById("seasonlive")) return;
+  if (!document.getElementById("seasonlive") && !document.getElementById("fullrows")) return;
   const games = [];
   packs.forEach(p => (p && p.games || []).forEach(g => games.push(g)));
   if (!games.length && !packs.some(p => p && p.ok)) {
-    if (note && !liveBoardGames.length) note.textContent = "Scoreboard did not load. It will try again in a minute.";
+    if (!liveBoardGames.length) {
+      const missed = "Scoreboard did not load. It will try again in a minute.";
+      if (note) note.textContent = missed;
+      if (fullNote) fullNote.textContent = missed;
+    }
     armLiveBoard(60000);
     return;
   }
@@ -3539,7 +3668,9 @@ async function loadLiveBoard(){
   visible.forEach(g => { if (g.why && !holds.some(h => h.sport === g.sport)) holds.push(g); });
   const n = visible.filter(g => g.live).length;
   const blurb = holds.map(g => g.sport + ": " + liveHoldCopy(g.why, g.shown)).join(" ");
-  if (note) note.textContent = (blurb ? blurb + " " : "") + (n ? n + " live. " : games.length ? "No games live. " : "") + "Updated " + formatTime(new Date(), true) + ". " + (n ? "Live games refresh every 15 seconds." : "The board checks again in a minute.");
+  const blurbText = (blurb ? blurb + " " : "") + (n ? n + " live. " : games.length ? "No games live. " : "") + "Updated " + formatTime(new Date(), true) + ". " + (n ? "Live games refresh every 15 seconds." : "The board checks again in a minute.");
+  if (note) note.textContent = blurbText;
+  if (fullNote) fullNote.textContent = blurbText;
   armLiveBoard(n ? 15000 : 60000);
 }
 function seasonText(sport){ return seasonEnded(sport) ? "Season Ended" : "No Picks"; }
@@ -7044,7 +7175,7 @@ showClock();
 setInterval(showClock, 1000);
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState !== "visible") return;
-  if (pageNeeds("seasons")) loadLiveBoard();
+  if (scorePage()) loadLiveBoard();
   const first = firstGameStart(easternDay());
   if (!Number.isFinite(first) || Date.now() < first) return;
   const last = Number(localStorage.getItem("gg-score-check") || 0);
@@ -7062,6 +7193,11 @@ document.getElementById("nextMonth").onclick = () => { monthCursor.setMonth(mont
 });
 try { render(); } catch (err) {}
 if (pageNeeds("seasons")) loadSeasons();
+if (document.documentElement.dataset.page === "scoreboard") {
+  const sport = (new URLSearchParams(location.search).get("sport") || "").toUpperCase();
+  if (["CBB","CFB","MLB","NBA","NFL","NHL"].indexOf(sport) >= 0) liveBoardSport = sport;
+  loadLiveBoard();
+}
 if (pageNeeds("slate")) {
   loadPickSlate();
   setInterval(() => { loadPickSlate(); }, 300000);
@@ -7212,7 +7348,7 @@ function drawGameBoard(){
   }).join("");
 }
 function pageFor(id){
-  return {games:"games", seasons:"seasons", dashboard:"dashboard", todaycard:"today", liveodds:"live", slips:"slips", reportcard:"report", charts:"charts", breaks:"books", addbet:"add", calendarcard:"calendar", about:"about"}[id] || "";
+  return {games:"games", seasons:"seasons", dashboard:"dashboard", todaycard:"today", liveodds:"live", slips:"slips", reportcard:"report", charts:"charts", breaks:"books", addbet:"add", calendarcard:"calendar", scoreboard:"scoreboard", about:"about"}[id] || "";
 }
 function pageUrl(id){
   if (id === "seasons") return "seasons.html";
@@ -7226,7 +7362,7 @@ function screenNow(){
   if (file === "seasons.html") return "seasons";
   if (file === "dashboard.html") return "dashboard";
   const page = new URLSearchParams(location.search).get("page") || "games";
-  return {games:"games", seasons:"seasons", dashboard:"dashboard", today:"todaycard", live:"liveodds", slips:"slips", report:"reportcard", charts:"charts", books:"breaks", add:"addbet", calendar:"calendarcard", about:"about"}[page] || "games";
+  return {games:"games", seasons:"seasons", dashboard:"dashboard", today:"todaycard", live:"liveodds", slips:"slips", report:"reportcard", charts:"charts", books:"breaks", add:"addbet", calendar:"calendarcard", scoreboard:"scoreboard", about:"about"}[page] || "games";
 }
 function goPage(id){
   if (screenNow() === id) { showView(id); return; }
@@ -7261,7 +7397,7 @@ function restoreForm(){
   if (note && data.picknote) note.textContent = data.picknote;
 }
 function showView(id){
-  const screens = ["games","seasons","dashboard","todaycard","liveodds","slips","reportcard","charts","breaks","addbet","calendarcard","about"];
+  const screens = ["games","seasons","dashboard","todaycard","liveodds","slips","reportcard","charts","breaks","addbet","calendarcard","scoreboard","about"];
   const box = document.getElementById(id);
   if (!box) return;
   const parent = screens.indexOf(id) >= 0 ? null : box.closest(".view");
@@ -7285,7 +7421,7 @@ function showView(id){
     const left = btn.offsetLeft - (scroller.clientWidth - btn.offsetWidth) / 2;
     scroller.scrollTo({left: Math.max(0, left), behavior:"smooth"});
   });
-  if (screen === "games") drawGameBoard();
+  if (screen === "scoreboard") loadLiveBoard();
   if (screen === "dashboard") { try { drawDashboard(); } catch (e) {} }
   if (screen === "charts") { try { drawCharts(); } catch (e) {} }
   if (screen === "calendarcard") { try { drawCalendar(); } catch (e) {} }
