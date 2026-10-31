@@ -125,7 +125,7 @@ form, .row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1f
 .break { grid-column:1 / -1; height:0; }
 .stack { display:flex; flex-direction:row; gap:8px; grid-column:1 / -1; align-items:flex-end; }
 #picknote, #loadnote, #editnote { display:flex; align-items:center; min-height:38px; margin:0; padding:8px 12px; border:1px solid var(--line); border-radius:8px; box-sizing:border-box; }
-.bet-top { grid-column:1 / -1; display:grid; grid-template-columns:minmax(0,1fr) 170px 210px; gap:10px; align-items:stretch; }
+.bet-fields-box { grid-column:1 / -1; border:1px solid #39ff14; border-radius:10px; padding:10px 12px; background:#0e0e0e; }
 .payout-box { margin:10px 0; border:1px solid #39ff14; border-radius:10px; padding:10px; }
 .payout-box h3 { margin:0 0 8px; color:#39ff14; font-size:16px; }
 .payout-bars { display:flex; align-items:flex-end; gap:6px; height:148px; }
@@ -136,6 +136,7 @@ form, .row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1f
 .payout-win { color:#39ff14; }
 .payout-col.usual .payout-win, .payout-col.usual .payout-odds { color:#f0e14a; }
 .payout-odds { color:#d6ffd0; }
+.bet-top { display:grid; grid-template-columns:minmax(0,1fr) 170px 210px; gap:10px; align-items:stretch; }
 #betfields { display:flex; flex-direction:column; justify-content:flex-start; gap:8px; align-items:stretch; }
 .field-grid { display:grid; grid-template-columns:16ch 12ch 8ch 11ch minmax(0,1fr) 11ch; gap:2px; align-content:start; justify-content:start; }
 .field-grid label { min-width:0; }
@@ -690,6 +691,12 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <section class="card view" id="addbet">
 <h2>Add A Bet</h2>
 <form id="form">
+<div class="stack">
+<button type="submit" id="savebtn">Save Bet</button>
+<button type="button" id="clearbet">Clear</button>
+<button type="button" id="canceledit">Cancel Edit</button>
+</div>
+<div class="bet-fields-box">
 <div class="bet-top">
 <div class="bet-box" id="betfields">
 <div class="field-grid">
@@ -728,10 +735,6 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <span id="editnote" class="warn"></span>
 </div>
 </div>
-<div class="stack">
-<button type="submit" id="savebtn">Save Bet</button>
-<button type="button" id="clearbet">Clear</button>
-<button type="button" id="canceledit">Cancel Edit</button>
 </div>
 </form>
 <div class="key-box">
