@@ -238,6 +238,7 @@ html[data-page="seasons"] main { min-width:0; }
 .shark-type span { color:var(--amber); font:700 12px/1.4 system-ui,sans-serif; letter-spacing:.06em; text-transform:uppercase; }
 .shark-add { margin:0; flex:0 0 auto; white-space:nowrap; align-self:center; }
 .shark-pick .shark-win { margin:0; width:100%; color:#00ffff; text-align:center; font:700 15px/1.4 system-ui,sans-serif; }
+.shark-type .shark-liveconf { margin:0; width:100%; text-align:center; }
 .shark-pick .shark-syn { margin:0 0 4px; color:var(--text); font:15px/1.4 system-ui,sans-serif; text-align:left; }
 .shark-top { display:flex; justify-content:space-between; align-items:baseline; gap:8px; margin:0 0 4px; }
 .shark-top b { margin:0; color:var(--title); font:700 15px/1.4 system-ui,sans-serif; letter-spacing:.04em; }
@@ -7909,7 +7910,57 @@ function sharpStampGame(pick, game){
   pick.glive = !!game.live;
   pick.gfinal = !!game.final;
   pick.gdetail = game.detail || "";
+  pick.gaway = game.away && game.away.score != null ? game.away.score : "";
+  pick.ghome = game.home && game.home.score != null ? game.home.score : "";
   if (game.start) pick.gstart = game.start;
+}
+function sharpGone(t){
+  if (t.gfinal || t.result === "win" || t.result === "loss" || t.result === "push") return 1;
+  if (!t.glive) return 0;
+  const detail = String(t.gdetail || "");
+  const clock = detail.match(/(\d+):(\d+)/);
+  const left = clock ? Number(clock[1]) + Number(clock[2]) / 60 : null;
+  const ord = detail.match(/(\d+)\s*(?:st|nd|rd|th)/i);
+  const n = ord ? Number(ord[1]) : 0;
+  if (t.sport === "MLB") return Math.max(0.05, Math.min(0.95, ((n || 1) - 0.5) / 9));
+  if (/halftime/i.test(detail)) return 0.5;
+  const spec = {NBA:[4,12], CBB:[2,20], NFL:[4,15], CFB:[4,15], NHL:[3,20]}[t.sport] || [4,12];
+  if (!n) return 0.35;
+  const total = spec[0] * spec[1];
+  const used = (n - 1) * spec[1] + (left == null ? spec[1] / 2 : Math.max(0, spec[1] - left));
+  return Math.max(0.05, Math.min(0.98, used / total));
+}
+function sharpCoverMargin(t){
+  const away = Number(t.gaway);
+  const home = Number(t.ghome);
+  if (!Number.isFinite(away) || !Number.isFinite(home)) return null;
+  const picked = t.who === "home" ? home : away;
+  const other = t.who === "home" ? away : home;
+  if (t.ml) return picked - other;
+  const n = Number(t.n);
+  return picked + (Number.isFinite(n) ? n : 0) - other;
+}
+function sharpLiveConfidence(t){
+  const phase = (t.gfinal || t.result === "win" || t.result === "loss" || t.result === "push") ? "final" : t.glive ? "live" : "pre";
+  const now = Date.now();
+  if (t.liveConfText && t.liveConfPhase === phase && now - (t.liveConfAt || 0) < 300000) return {band: t.liveConfBand, text: t.liveConfText};
+  const base = Number(t.confidencePct) || 55;
+  let pct = base;
+  if (phase === "final") pct = t.result === "loss" ? 8 : t.result === "push" ? 50 : t.result === "win" ? 96 : ((sharpCoverMargin(t) || 0) > 0 ? 90 : 12);
+  else if (phase === "live") {
+    const cover = sharpCoverMargin(t);
+    const unit = {NBA:2.2, CBB:2.4, NFL:7, CFB:7, NHL:11, MLB:9}[t.sport] || 4;
+    if (cover != null) pct = base + cover * unit * (0.25 + sharpGone(t));
+  }
+  pct = Math.max(8, Math.min(96, Math.round(pct)));
+  const band = pct >= 60 ? "High" : pct >= 55 ? "Medium" : "Low";
+  const text = "Confidence: " + band + " " + pct + "%";
+  t.liveConfAt = now;
+  t.liveConfPhase = phase;
+  t.liveConfBand = band;
+  t.liveConfPct = pct;
+  t.liveConfText = text;
+  return {band: band, text: text};
 }
 function sharpLiveBits(t){
   const live = !!t.glive;
@@ -8029,7 +8080,8 @@ function sharpPaint(card, book){
       const conf = (t.confidence && t.confidencePct) ? t.confidence + " " + t.confidencePct + "%" : "";
       const add = Number.isFinite(Number(t.odds)) ? "<button type='button' class='card-price shark-add' data-date='" + encodeURIComponent(t.date || "") + "' data-sport='" + encodeURIComponent(t.sport || "") + "' data-type='" + encodeURIComponent(t.market || "") + "' data-pick='" + encodeURIComponent(t.slip) + "' data-odds='" + encodeURIComponent(String(t.odds)) + "' data-notes='" + encodeURIComponent(conf) + "'>Add to Slip</button>" : "";
       const ten = sharpTenWin(t.odds);
-      const win = ten ? "<p class='shark-win'>" + ten + "</p>" : "";
+      const liveConf = sharpLiveConfidence(t);
+      const win = (ten ? "<p class='shark-win'>" + ten + "</p>" : "") + "<p class='shark-liveconf shark-conf " + liveConf.band.toLowerCase() + "' data-id='" + esc(t.id || "") + "'>" + esc(liveConf.text) + "</p>";
       const priceHtml = t.ml
         ? (function(){ const m = String(t.side || "").match(/^(.*)\s([+-]?\d+)$/); return m ? esc(m[1]) + " <span class='best-price'>" + esc(m[2]) + "</span>" : esc(t.side); })()
         : esc(t.side) + (t.juice ? " <span class='shark-juice best-price'>" + esc(t.juice) + "</span>" : "");
@@ -8071,6 +8123,14 @@ async function refreshSharpGrades(){
       if (!live) return;
       live.className = "shark-live score-state " + bits.cls;
       live.innerHTML = bits.html;
+    });
+    (card.sharps[shark.id] || []).forEach(t => {
+      if (!t || t.empty || t.id == null) return;
+      const made = sharpLiveConfidence(t);
+      const conf = article.querySelector(".shark-liveconf[data-id='" + String(t.id).replace(/'/g, "") + "']");
+      if (!conf) return;
+      conf.className = "shark-liveconf shark-conf " + String(made.band || "").toLowerCase();
+      conf.textContent = made.text;
     });
   });
 }
