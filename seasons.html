@@ -232,7 +232,9 @@ html[data-page="seasons"] main { min-width:0; }
 .shark-picks { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
 .shark-pick { display:flex; flex-direction:column; align-items:stretch; gap:8px; border:1px solid #39ff14; border-radius:10px; padding:8px 10px; min-width:0; }
 .shark-copy { min-width:0; }
-.shark-add { margin:0 0 0 auto; flex:0 0 auto; white-space:nowrap; align-self:flex-end; }
+.shark-add { margin:0; flex:0 0 auto; white-space:nowrap; align-self:flex-end; }
+.shark-foot { display:flex; align-items:flex-end; justify-content:space-between; gap:12px; }
+.shark-pick .shark-syn { margin:0; flex:1 1 auto; min-width:0; color:#d6ffd0; font-size:12px; line-height:1.4; text-align:left; }
 .shark-top { display:flex; justify-content:space-between; align-items:baseline; gap:8px; margin:0 0 4px; }
 .shark-top b { margin:0; color:#39ff14; font-family:"Cinzel",serif; letter-spacing:.04em; }
 .shark-top span { color:#f0e14a; font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; }
@@ -7882,6 +7884,23 @@ function sharpKeepGrades(card, book){
   });
   return card;
 }
+function sharpSynopsis(shark, t){
+  const price = t.ml ? ((Number(t.odds) > 0 ? "+" : "") + t.odds) : (t.juice || "-110");
+  const when = t.when || "Time not posted";
+  const conf = (t.confidence && t.confidencePct) ? " Confidence " + t.confidence + " " + t.confidencePct + "%." : "";
+  const game = t.game || [t.away, t.home].filter(Boolean).join(" at ");
+  const other = t.who === "home" ? t.away : t.home;
+  const mine = t.side || "the side";
+  const market = (t.sport ? t.sport + " " : "") + String(t.market || "side").toLowerCase();
+  const grade = t.result === "win" ? " The ticket won." : t.result === "loss" ? " The ticket lost." : t.result === "push" ? " The ticket pushed." : " It is still pending.";
+  let read = "";
+  if (shark.kind === "lay") read = "I am laying " + mine + " at " + price + ". The number is the bet, not the name. A small edge is enough, and I will not turn it into a sure thing. " + (other || "The other side") + " is the side I passed.";
+  else if (shark.kind === "soft") read = "My own number is " + mine + " at " + price + ". The board has not caught this one, and I will not copy the next ticket. " + (other || "The other side") + " is the side the crowd is staring at.";
+  else if (shark.kind === "hold") read = "I am holding " + mine + " at " + price + ". No team. The bankroll. This number has not left, so I am not chasing " + (other || "the other side") + ".";
+  else if (shark.kind === "fade") read = "The public is piled on " + (other || "the other side") + ". I want " + mine + " at " + price + " and I will wait. The value is the other side of the crowd.";
+  else read = "No eye test. " + (t.why || ("The number is " + mine + " at " + price + ".")) + " I want the model and the move before the book finishes catching up.";
+  return game + ". " + when + ". " + market + ". " + read + conf + grade;
+}
 function sharpPaint(card, book){
   const board = document.getElementById("sharkboard");
   const note = document.getElementById("sharpnote");
@@ -7898,7 +7917,8 @@ function sharpPaint(card, book){
       const priceHtml = t.ml
         ? (function(){ const m = String(t.side || "").match(/^(.*)\s([+-]?\d+)$/); return m ? esc(m[1]) + " <span class='best-price'>" + esc(m[2]) + "</span>" : esc(t.side); })()
         : esc(t.side) + (t.juice ? " <span class='shark-juice best-price'>" + esc(t.juice) + "</span>" : "");
-      return "<div class='shark-pick'><div class='shark-copy'><div class='shark-top'><b>" + esc(t.sport) + "</b><span>" + esc(t.market) + "</span></div><p class='shark-side'>" + priceHtml + "</p><p class='shark-game'>" + esc(t.game) + "</p>" + (t.when ? "<p class='shark-when'>" + esc(t.when) + "</p>" : "") + "<p>" + esc(t.why) + "</p>" + (conf ? "<p class='shark-conf " + String(t.confidence).toLowerCase() + "'>" + esc(conf) + "</p>" : "") + "<p class='shark-result " + result + "'>" + label + "</p></div>" + add + "</div>";
+      const syn = "<p class='shark-syn'>" + esc(sharpSynopsis(shark, t)) + "</p>";
+      return "<div class='shark-pick'><div class='shark-copy'><div class='shark-top'><b>" + esc(t.sport) + "</b><span>" + esc(t.market) + "</span></div><p class='shark-side'>" + priceHtml + "</p><p class='shark-game'>" + esc(t.game) + "</p>" + (t.when ? "<p class='shark-when'>" + esc(t.when) + "</p>" : "") + "<p>" + esc(t.why) + "</p>" + (conf ? "<p class='shark-conf " + String(t.confidence).toLowerCase() + "'>" + esc(conf) + "</p>" : "") + "<p class='shark-result " + result + "'>" + label + "</p></div><div class='shark-foot'>" + syn + add + "</div></div>";
     }).join("");
     return "<article class='shark' id='" + shark.id + "'><img src='" + shark.img + "' alt='" + esc(shark.alt) + "'><div><h3>" + esc(shark.name) + "</h3><p class='shark-record'>Record " + rec.w + "-" + rec.l + (rec.p ? "-" + rec.p : "") + "</p><p class='shark-rule'>" + esc(shark.rule) + "</p><div class='shark-picks'>" + picks + "</div><p class='shark-fee'>" + esc(shark.fee) + "</p></div></article>";
   }).join("");
