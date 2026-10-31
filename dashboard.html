@@ -4287,18 +4287,15 @@ function mergeBoardRows(day, market, rows){
   board.days = board.days || {};
   const block = board.days[day] || (board.days[day] = {});
   const old = Array.isArray(block[market]) ? block[market] : [];
-  const keyOf = row => String(row && row.label || "").toLowerCase();
-  const index = {};
-  old.forEach(row => { index[keyOf(row)] = row; });
   rows.forEach(row => {
-    const prev = index[keyOf(row)];
-    if (!prev) { old.push(row); index[keyOf(row)] = row; return; }
+    const prev = old.find(r => String(r && r.sport || "").toUpperCase() === String(row.sport || "").toUpperCase() && (String(r.label || "").toLowerCase() === String(row.label || "").toLowerCase() || sameClub(r.label, row.label)));
+    if (!prev) { old.push(row); return; }
     prev.books = prev.books || {};
     Object.keys(row.books || {}).forEach(book => {
       const val = row.books[book];
       if (val && val !== "-") prev.books[book] = val;
     });
-    if (row.start) prev.start = row.start;
+    if (row.start && !prev.start) prev.start = row.start;
   });
   block[market] = old;
   rememberBoard(board);
@@ -7600,11 +7597,12 @@ function loadOddsBoard(data){
   else data = keepPulledDays(data, saved);
   if (!rememberBoard(data)) {
     const box = document.getElementById("gameboard");
-    if (box && !usableBoard(window.__ggOddsBoard)) box.innerHTML = "<p class='warn'>The board did not load.</p>";
-    return;
+    if (box && !usableBoard(window.__ggOddsBoard)) box.innerHTML = "<p class='warn'>Loading today's games.</p>";
+  } else {
+    applyPublishedBooks();
+    drawOddsCompare(false).catch(() => {});
   }
-  applyPublishedBooks();
-  drawOddsCompare(false).catch(() => {});
+  if ((document.documentElement.dataset.page || "games") === "games" && !dayHasLines(easternDay())) ensureGameDay();
 }
 if (pageNeeds("odds")) fetch(cardUrl("cards/odds-board.json")).then(r => r.ok ? r.json() : null).then(loadOddsBoard).catch(() => loadOddsBoard(null));
 if (pageNeeds("closes")) fetch("cards/closes.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
@@ -7790,35 +7788,6 @@ function patchBookLine(day, sport, label, market, book, text){
   if (!cur || cur === "-") row.books[book] = text;
   window.__ggOddsBoard = board;
 }
-async function fillMissingBookOdds(games, day){
-  const board = window.__ggOddsBoard && window.__ggOddsBoard.days && window.__ggOddsBoard.days[day];
-  if (!board) return;
-  const labels = [];
-  ["h2h","spreads","totals"].forEach(market => (board[market] || []).forEach(row => {
-    if (!row || !row.label) return;
-    if (!labels.some(item => item.label === row.label && item.sport === row.sport)) labels.push({sport: row.sport, label: row.label});
-  }));
-  await Promise.all(labels.map(async row => {
-    const hit = findFinalGame((games || []).filter(g => g.sport === row.sport), row.label);
-    if (hit && hit.lines) {
-      ["h2h","spreads","totals"].forEach(market => patchBookLine(day, row.sport, row.label, market, hit.lineBook || "DraftKings", hit.lines[market]));
-      return;
-    }
-    const path = SCORE_FEED[row.sport];
-    if (!hit || !hit.id || !path) return;
-    const bits = path.split("/");
-    let data = null;
-    try {
-      const res = await fetch("https://sports.core.api.espn.com/v2/sports/" + bits[0] + "/leagues/" + bits[1] + "/events/" + hit.id + "/competitions/" + hit.id + "/odds");
-      if (res.ok) data = await res.json();
-    } catch (e) {}
-    const odd = data && (data.items || [])[0];
-    if (!odd) return;
-    const book = (odd.provider && odd.provider.name) || "DraftKings";
-    const lines = espnLines(odd);
-    ["h2h","spreads","totals"].forEach(market => patchBookLine(day, row.sport, row.label, market, book, lines[market]));
-  }));
-}
 function boardScoreLine(g){
   const list = (window.__gameScores || []).filter(x => !g.sport || x.sport === String(g.sport || "").toUpperCase());
   const hit = findFinalGame(list, g.label);
@@ -7859,15 +7828,7 @@ function refreshGameScores(games){
     window.__gameScoresAt = Date.now();
     const kept = (window.__slipGames || []).filter(g => String(g.date || "").slice(0, 10) !== day);
     window.__slipGames = kept.concat(window.__gameScores);
-    const key = ((document.getElementById("oddskey") || {}).value || "").trim();
-    if (key && !window.__gameOddsPulled) {
-      try {
-        const live = await pullLiveBoard(key);
-        window.__gameOddsPulled = true;
-        ["h2h","spreads","totals"].forEach(market => mergeBoardRows(day, market, rowsFromLive(live, day, market)));
-      } catch (e) {}
-    }
-    await fillMissingBookOdds(window.__gameScores, day);
+    await seedBoardFromScores(window.__gameScores, day);
     if ((document.documentElement.dataset.page || "games") === "games") drawGameBoard();
   }).catch(() => {}).finally(() => { gameScoreFlight = null; });
 }
@@ -7882,38 +7843,47 @@ function emptyBoardNote(day){
   return "<p class='warn'>" + why + "</p><button type='button' id='pulltoday'>Pull " + prettyDay(day) + "</button>";
 }
 async function seedBoardFromScores(games, day){
-  await Promise.all((games || []).filter(g => g && SCORE_FEED[g.sport]).map(async g => {
+  (games || []).forEach(g => {
+    if (!g || !g.lines || !SCORE_FEED[g.sport]) return;
     const away = (g.away && (g.away.shortDisplayName || g.away.displayName || g.away.name)) || "";
     const home = (g.home && (g.home.shortDisplayName || g.home.displayName || g.home.name)) || "";
     if (!away || !home) return;
     const label = away + " at " + home;
-    const write = (book, lines) => {
-      if (!book || !lines) return;
-      ["h2h","spreads","totals"].forEach(market => patchBookLine(day, g.sport, label, market, book, lines[market]));
-    };
-    if (g.lines) write(g.lineBook || "DraftKings", g.lines);
-    else if (g.id) {
-      const bits = SCORE_FEED[g.sport].split("/");
-      let data = null;
-      try {
-        const res = await fetch("https://sports.core.api.espn.com/v2/sports/" + bits[0] + "/leagues/" + bits[1] + "/events/" + g.id + "/competitions/" + g.id + "/odds");
-        if (res.ok) data = await res.json();
-      } catch (e) {}
-      const odd = data && (data.items || [])[0];
-      if (odd) {
-        const book = (odd.provider && odd.provider.name) || "DraftKings";
-        write(book, espnLines(odd));
-      }
-    }
+    const book = g.lineBook || "DraftKings";
+    ["h2h","spreads","totals"].forEach(market => patchBookLine(day, g.sport, label, market, book, g.lines[market]));
     const block = window.__ggOddsBoard && window.__ggOddsBoard.days && window.__ggOddsBoard.days[day];
-    if (block && g.start) {
-      const start = new Date(g.start).toISOString();
-      ["h2h","spreads","totals"].forEach(market => {
-        const row = (block[market] || []).find(r => String(r.label || "").toLowerCase() === label.toLowerCase());
-        if (row && !row.start) row.start = start;
-      });
+    if (!block || !g.start) return;
+    const start = new Date(g.start).toISOString();
+    ["h2h","spreads","totals"].forEach(market => {
+      const row = (block[market] || []).find(r => String(r.sport || "").toUpperCase() === g.sport && sameClub(r.label, label));
+      if (row && !row.start) row.start = start;
+    });
+  });
+}
+let gameDayFlight = null;
+async function loadGameDay(day, books){
+  const sports = Object.keys(SCORE_FEED);
+  const packs = await Promise.all(sports.map(sport => scoreboard(sport, day).catch(() => [])));
+  window.__gameScores = packs.flat();
+  window.__gameScoresAt = Date.now();
+  seedBoardFromScores(window.__gameScores, day);
+  if (books) {
+    const key = ((document.getElementById("oddskey") || {}).value || "").trim();
+    if (key) {
+      const live = await pullLiveBoard(key);
+      ["h2h","spreads","totals"].forEach(market => mergeBoardRows(day, market, rowsFromLive(live, day, market)));
     }
-  }));
+  }
+  if (usableBoard(window.__ggOddsBoard)) {
+    try { localStorage.setItem("gg-odds-board-file", JSON.stringify({at: Date.now(), data: window.__ggOddsBoard})); } catch (e) {}
+  }
+  drawGameBoard();
+}
+function ensureGameDay(){
+  if (gameDayFlight || dayHasLines(easternDay())) return gameDayFlight;
+  const day = easternDay();
+  gameDayFlight = loadGameDay(day, false).finally(() => { gameDayFlight = null; });
+  return gameDayFlight;
 }
 async function pullTodayBoard(){
   const btn = document.getElementById("gamerefresh");
@@ -7926,29 +7896,15 @@ async function pullTodayBoard(){
     const res = await fetch("cards/odds-board.json?ts=" + Date.now());
     const data = res.ok ? await res.json() : null;
     const saved = savedBoard();
-    if (usableBoard(data)) rememberBoard(keepPulledDays(data, saved));
-    const key = ((document.getElementById("oddskey") || {}).value || "").trim();
-    if (key) {
-      try {
-        const live = await pullLiveBoard(key);
-        ["h2h","spreads","totals"].forEach(market => mergeBoardRows(day, market, rowsFromLive(live, day, market)));
-      } catch (err) {
-        if (box) box.insertAdjacentHTML("afterbegin", "<p class='warn'>Book pull failed. " + esc(err && err.message || "The feed did not answer.") + "</p>");
-      }
+    if (usableBoard(data)) {
+      const merged = keepPulledDays(data, saved);
+      if (!window.__ggOddsBoard) window.__ggOddsBoard = merged;
+      else window.__ggOddsBoard = keepPulledDays(merged, window.__ggOddsBoard);
     }
-    const sports = Object.keys(SCORE_FEED);
-    const packs = await Promise.all(sports.map(sport => scoreboard(sport, day).catch(() => [])));
-    window.__gameScores = packs.flat();
-    window.__gameScoresAt = Date.now();
-    await seedBoardFromScores(window.__gameScores, day);
-    if (usableBoard(window.__ggOddsBoard)) {
-      try { localStorage.setItem("gg-odds-board-file", JSON.stringify({at: Date.now(), data: window.__ggOddsBoard})); } catch (e) {}
-    }
-    drawGameBoard();
-    if (!dayHasLines(day) && box) box.insertAdjacentHTML("afterbegin", "<p class='warn'>No lines came back for " + prettyDay(day) + ".</p>");
+    await loadGameDay(day, true);
   } catch (err) {
     drawGameBoard();
-    if (box) box.insertAdjacentHTML("afterbegin", "<p class='warn'>Pull failed. " + esc(err && err.message || "The feed did not answer.") + "</p>");
+    if (box && !dayHasLines(day)) box.insertAdjacentHTML("afterbegin", "<p class='warn'>The board did not load. " + esc(err && err.message || "Try again.") + "</p>");
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = "Refresh"; }
   }
