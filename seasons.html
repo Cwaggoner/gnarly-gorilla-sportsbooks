@@ -3114,6 +3114,29 @@ function injuryKind(status){
   if (/out|reserve|\bil\b|suspend/i.test(status)) return "out";
   return "maybe";
 }
+function usableInjuryFeed(feed){
+  return !!(feed && Array.isArray(feed.injuries) && feed.injuries.length);
+}
+function injuryFeedFresh(sport){
+  const feed = (window.__injuryFeeds || {})[sport];
+  return usableInjuryFeed(feed) && Date.now() - (feed.fetchedAt || 0) < 15 * 60 * 1000;
+}
+function injuryMissFresh(sport){
+  return Date.now() - ((window.__injuryMiss || {})[sport] || 0) < 15 * 60 * 1000;
+}
+function keepInjuryFeed(sport, feed){
+  if (!usableInjuryFeed(feed)) {
+    window.__injuryMiss = window.__injuryMiss || {};
+    window.__injuryMiss[sport] = Date.now();
+    if (window.__injuryFeeds) delete window.__injuryFeeds[sport];
+    return false;
+  }
+  feed.fetchedAt = Date.now();
+  window.__injuryFeeds = window.__injuryFeeds || {};
+  window.__injuryFeeds[sport] = feed;
+  if (window.__injuryMiss) delete window.__injuryMiss[sport];
+  return true;
+}
 function filterInjury(){
   const sport = (document.getElementById("injurysport") || {}).value || "All";
   const show = (document.getElementById("injuryshow") || {}).value || "posted";
@@ -3170,22 +3193,21 @@ async function drawInjuryReport(){
   wanted.sort((a, b) => Number(b.card) - Number(a.card) || sportRank(a.sport) - sportRank(b.sport) || String(a.game).localeCompare(String(b.game)) || String(a.name).localeCompare(String(b.name)));
   const need = [...new Set(wanted.map(row => row.sport))].sort((a, b) => sportRank(a) - sportRank(b));
   const bySport = {};
-  const packs = await Promise.all(need.map(sport => fetch("https://site.api.espn.com/apis/site/v2/sports/" + SCORE_FEED[sport] + "/injuries").then(r => r.ok ? r.json() : null).catch(() => null)));
-  need.forEach((sport, i) => {
-    const feed = packs[i];
-    if (feed && Array.isArray(feed.injuries) && feed.injuries.length) bySport[sport] = feed;
-  });
+  need.forEach(sport => { if (injuryFeedFresh(sport)) bySport[sport] = window.__injuryFeeds[sport]; });
+  const pull = need.filter(sport => !bySport[sport] && !injuryMissFresh(sport));
+  if (pull.length) {
+    const packs = await Promise.all(pull.map(sport => fetch("https://site.api.espn.com/apis/site/v2/sports/" + SCORE_FEED[sport] + "/injuries").then(r => r.ok ? r.json() : null).catch(() => null)));
+    pull.forEach((sport, i) => { if (keepInjuryFeed(sport, packs[i])) bySport[sport] = window.__injuryFeeds[sport]; });
+  }
   const missing = need.filter(sport => !bySport[sport]);
   if (missing.length) {
-    const published = await readJson("cards/injuries.json");
+    const published = await fetch("cards/injuries.json?d=" + easternDay()).then(r => r.ok ? r.json() : null).catch(() => null);
     if (published && published.date === easternDay() && published.sports) {
       missing.forEach(sport => {
-        const feed = published.sports[sport];
-        if (feed && Array.isArray(feed.injuries) && feed.injuries.length) bySport[sport] = feed;
+        if (keepInjuryFeed(sport, published.sports[sport])) bySport[sport] = window.__injuryFeeds[sport];
       });
     }
   }
-  window.__injuryFeeds = Object.assign({}, window.__injuryFeeds || {}, bySport);
   const rows = [];
   wanted.forEach(team => {
     const feed = bySport[team.sport];
@@ -8734,7 +8756,7 @@ function armLiveExtras(games){
   armGameScores(games);
   const sports = [...new Set(games.map(g => String(g.sport || "").toUpperCase()))].filter(s => SCORE_FEED[s]);
   const needScores = Date.now() - (window.__gameScoresAt || 0) > 20000;
-  const needInj = sports.filter(s => !(window.__injuryFeeds && window.__injuryFeeds[s]));
+  const needInj = sports.filter(s => !injuryFeedFresh(s) && !injuryMissFresh(s));
   if ((!needScores && !needInj.length) || liveExtraFlight) return;
   later(() => {
     if (liveExtraFlight || (document.documentElement.dataset.page || "") !== "liveodds") return;
@@ -8746,11 +8768,9 @@ function armLiveExtras(games){
         window.__gameScores = packs.flat();
         window.__gameScoresAt = Date.now();
       }
-      if (inj) {
-        window.__injuryFeeds = window.__injuryFeeds || {};
-        needInj.forEach((sport, i) => { window.__injuryFeeds[sport] = inj[i] || {injuries: []}; });
-      }
-      if ((document.documentElement.dataset.page || "") === "liveodds" && (packs || inj)) drawOddsCompare(false).catch(() => {});
+      let keptInj = false;
+      if (inj) needInj.forEach((sport, i) => { if (keepInjuryFeed(sport, inj[i])) keptInj = true; });
+      if ((document.documentElement.dataset.page || "") === "liveodds" && (packs || keptInj)) drawOddsCompare(false).catch(() => {});
     }).finally(() => { liveExtraFlight = null; });
   });
 }
