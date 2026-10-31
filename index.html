@@ -392,7 +392,7 @@ table.season-hold.filled td.note-col p { margin:0; display:-webkit-box; -webkit-
 .cal .loss { color:#ff6b6b; }
 .cal .slash { color:#39ff14; }
 .cal .wait { color:#f0e14a; font-size:11px; line-height:1.15; display:block; }
-.cal .dow { height:auto; }
+.cal .dow { height:auto; min-height:0; color:var(--title); background:transparent; border:0; }
 .cal div.today { border:1px solid #39ff14; box-shadow:0 0 0 1px #39ff14 inset; }
 .cal .daycell { cursor:pointer; }
 .cal .daycell:hover { border-color:#39ff14; }
@@ -409,7 +409,8 @@ table.season-hold.filled td.note-col p { margin:0; display:-webkit-box; -webkit-
 .wx.poor { color:#ff6b6b; border-color:#ff6b6b; }
 .daytags { color:var(--text); font-size:13px; white-space:nowrap; }
 .slash { color:#39ff14; }
-.cal .dow { min-height:0; color:var(--title); background:transparent; border:0; }
+.cal-crew { display:flex; align-items:center; justify-content:flex-start; gap:8px; margin:0 0 12px; padding-left:14px; }
+.cal-crew img { width:72px; height:72px; object-fit:cover; border-radius:12px; border:1px solid #39ff14; background:#0a0a0a; display:block; }
 canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--line); border-radius:8px; display:block; }
 .charts canvas { width:100%; height:192px; }
 .sport-nav { display:flex; justify-content:center; gap:8px; margin-top:8px; }
@@ -422,7 +423,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 @media (max-width:760px) { table { display:block; overflow-x:auto; } }
 @media (max-width:760px) {
   header { grid-template-columns:56px minmax(0,1fr) auto 56px; gap:6px; padding:4px 6px; }
-  header img { width:44px; height:44px; border-radius:8px; }
+  header img, .cal-crew img { width:44px; height:44px; border-radius:8px; }
   header h1 { font-size:16px; }
   header p { font-size:11px; }
   .page { padding:8px; }
@@ -777,6 +778,13 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </section>
 <section class="card view" id="calendarcard">
 <div class="section-head"><h2>Calendar</h2><span id="monthpl" style="margin-left:10ch;color:#d6ffd0"></span><p class="warn slips-side">Everyone sees the shared $10 calendar until they upload a file. An uploaded file stays in this browser only.<br>Other users do not see it. Use Shared Calendar to go back.</p></div>
+<div class="cal-crew">
+<img src="about-gorilla.jpg" alt="Gnarly Gorilla" width="72" height="72" loading="lazy" decoding="async">
+<img src="jungle-leopard.jpg" alt="Vito the Spot" width="72" height="72" loading="lazy" decoding="async">
+<img src="jungle-rhino.jpg" alt="Rocco No Chase" width="72" height="72" loading="lazy" decoding="async">
+<img src="jungle-hyena.jpg" alt="Paulie the Fade" width="72" height="72" loading="lazy" decoding="async">
+<img src="jungle-bird.jpg" alt="Gino the Wire" width="72" height="72" loading="lazy" decoding="async">
+</div>
 <div class="tools"><div class="btn-pair"><span>Navigation</span><div><button type="button" id="prevMonth">Prev</button><button type="button" id="nextMonth">Next</button></div></div><label>Load My Calendar<input type="file" id="loadcal" accept=".json,application/json"><span class="file-face">No File Chosen</span></label><div class="btn-pair"><span class="pair-title"><span id="calnote" class="warn"></span></span><div><button type="button" id="resetcal">Use Shared Calendar</button></div></div></div>
 <div class="cal" id="calendar"></div>
 </section>
