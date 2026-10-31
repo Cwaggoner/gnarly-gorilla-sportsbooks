@@ -618,12 +618,13 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .mgm-mid { min-width:0; display:flex; flex-direction:column; align-items:flex-start; gap:8px; }
 .mgm-form { margin:0 0 4px 36px; color:#8fb898; font-size:11px; line-height:1.35; }
 .mgm-form .loss, .mgm-form .warn { font-weight:700; }
-.market-board { border:1px solid #243024; border-radius:8px; background:#101610; padding:8px; overflow-x:auto; min-width:0; max-width:100%; box-sizing:border-box; }
-.market-board table { width:max-content; min-width:100%; margin:0; border:0; border-radius:0; background:transparent; overflow:visible; border-collapse:collapse; font-size:11px; }
+.market-board { border:1px solid #243024; border-radius:8px; background:#101610; padding:8px; overflow-x:auto; min-width:0; max-width:100%; box-sizing:border-box; display:flex; flex-direction:column; align-items:center; }
+.market-board table { width:max-content; min-width:0; margin:0; border:0; border-radius:0; background:transparent; overflow:visible; border-collapse:collapse; font-size:11px; }
+.market-stack { width:max-content; margin:0 auto; }
 .market-board th, .market-board td { padding:3px 5px; text-align:left; color:#d6ffd0; border-bottom:1px solid #1f3a1f; background:transparent; white-space:nowrap; font-size:11px; }
 .market-board th { color:#8fb898; font-weight:700; }
-.market-board .market-note { margin:6px 0 0; color:#d6ffd0; font-size:12px; line-height:1.4; white-space:normal; }
-.team-read { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:8px; border:1px solid #39ff14; border-radius:10px; padding:8px 10px; background:rgba(57,255,20,.06); }
+.market-board .market-note { align-self:stretch; margin:6px 0 0; color:#d6ffd0; font-size:12px; line-height:1.4; white-space:normal; text-align:left; }
+.team-read { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; box-sizing:border-box; margin:8px auto 0; border:1px solid #39ff14; border-radius:10px; padding:8px 10px; background:rgba(57,255,20,.06); }
 .team-read h4 { margin:0 0 4px; color:#39ff14; font-size:12px; }
 .team-read p { margin:0 0 4px; color:#d6ffd0; font-size:12px; line-height:1.35; white-space:normal; }
 .team-read .vol { color:#00e5ff; margin:0; }
@@ -4790,6 +4791,20 @@ function fitMarketBoards(){
     board.style.boxSizing = "border-box";
     board.style.width = width + "px";
     board.style.maxWidth = "100%";
+    const table = board.querySelector("table");
+    const read = board.querySelector(".team-read");
+    const stack = table && table.parentElement;
+    if (table && read && stack) {
+      const span = Math.ceil(table.getBoundingClientRect().width);
+      if (span > 0) {
+        stack.style.width = span + "px";
+        read.style.boxSizing = "border-box";
+        read.style.width = span + "px";
+        read.style.maxWidth = "none";
+        read.style.marginLeft = "auto";
+        read.style.marginRight = "auto";
+      }
+    }
   });
 }
 function absorbLiveBoard(live){
@@ -8850,7 +8865,7 @@ function marketBoardHtml(g, day){
   const notes = [splitLines.join(" "), middle, steam, implied].filter(Boolean).map(text => "<p class='market-note'>" + esc(text) + "</p>").join("");
   const scored = findFinalGame((window.__gameScores || []).filter(x => x.sport === String(g.sport || "").toUpperCase()), g.label);
   const read = "<div class='team-read'>" + teamReadCard(g.sport, scored && scored.away, away) + teamReadCard(g.sport, scored && scored.home, home) + "</div>";
-  return "<div class='market-board'><table><thead><tr><th>Market</th><th>Open</th><th>Now</th><th>Move</th><th>Best</th><th>Worst</th><th>Cents</th><th>Fair</th><th>$10</th></tr></thead><tbody>" + rows + "</tbody></table>" + notes + read + "</div>";
+  return "<div class='market-board'><div class='market-stack'><table><thead><tr><th>Market</th><th>Open</th><th>Now</th><th>Move</th><th>Best</th><th>Worst</th><th>Cents</th><th>Fair</th><th>$10</th></tr></thead><tbody>" + rows + "</tbody></table>" + read + "</div>" + notes + "</div>";
 }
 function injuryBlurb(sport, team){
   const feed = (window.__injuryFeeds || {})[String(sport || "").toUpperCase()];
