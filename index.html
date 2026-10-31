@@ -7187,9 +7187,12 @@ function showBookIcon(name){
   const img = document.getElementById("bookbadgeimg");
   if (!img) return;
   const book = BOOK_ICON[name] || "";
+  const next = book || "gg-icon.png";
+  const alt = book ? name : "Gnarly Gorilla";
   img.hidden = false;
-  img.src = book || "gg-icon.png";
-  img.alt = book ? name : "Gnarly Gorilla";
+  if (img.getAttribute("src") === next && img.alt === alt) return;
+  img.src = next;
+  img.alt = alt;
 }
 showBookIcon((document.getElementById("fBook") || {}).value || "");
 ["reportDay","reportShow"].forEach(id => document.getElementById(id).onchange = render);
@@ -8002,9 +8005,10 @@ function sharpPaint(card, book){
 async function loadSharks(){
   const board = document.getElementById("sharkboard");
   if (!board || board.dataset.loading === "1") return;
+  const day = sharpWindowDate();
+  if (board.dataset.day === day && board.querySelector(".shark img")) return;
   board.dataset.loading = "1";
   board.innerHTML = "<p class='warn'>Loading the sharps.</p>";
-  const day = sharpWindowDate();
   let book = sharpReadBook();
   let card = null;
   try {
@@ -8023,6 +8027,7 @@ async function loadSharks(){
   sharpWriteBook(book);
   window.__sharpCard = card;
   sharpPaint(card, book);
+  board.dataset.day = card.date || day;
   board.dataset.loading = "";
   window.scrollTo(0, 0);
 }
