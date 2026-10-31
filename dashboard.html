@@ -51,7 +51,7 @@
 :root { --bg:#0a0a0a; --card:#141414; --line:#243024; --title:#39ff14; --text:#d6ffd0; --muted:#8fb898; --amber:#f0e14a; --red:#ff6b6b; }
 * { box-sizing:border-box; }
 body { margin:0; background:var(--bg); color:var(--text); font:15px/1.4 system-ui, sans-serif; }
-header { display:grid; grid-template-columns:96px 1fr auto 96px; align-items:stretch; gap:12px; width:100%; box-sizing:border-box; margin:0; padding:6px 10px; border:1px solid #39ff14; border-radius:10px; background:#0a0a0a; }
+header { position:relative; display:grid; grid-template-columns:96px 1fr auto 96px; align-items:stretch; gap:12px; width:100%; box-sizing:border-box; margin:0; padding:6px 10px; border:1px solid #39ff14; border-radius:10px; background:#0a0a0a; }
 .topbar { position:sticky; top:0; z-index:30; align-self:flex-start; width:100%; background:#0a0a0a; }
 .sitenav { position:relative; z-index:5; display:grid; grid-template-columns:max-content minmax(0,1fr) max-content; align-items:center; gap:0; background:#0a0a0a; border:1px solid #39ff14; border-radius:8px; padding:3px 8px; margin:8px 0 0; overflow:hidden; }
 .nav-cell { display:flex; align-items:center; justify-content:center; min-width:0; gap:6px; flex-wrap:nowrap; }
@@ -68,9 +68,9 @@ header img { width:72px; height:72px; border-radius:12px; display:block; }
 .head-flag svg { width:28px; height:18px; display:block; border-radius:2px; box-shadow:0 1px 2px rgba(0,0,0,.6); }
 header .head-text { display:flex; flex-direction:column; justify-content:center; }
 header h1 { margin:0; color:var(--title); font-size:22px; letter-spacing:.04em; display:flex; align-items:center; flex-wrap:wrap; gap:8px; }
-.spin { display:block; width:14px; height:14px; margin:0; border:2px solid #243024; border-top-color:#39ff14; border-radius:50%; flex:0 0 auto; animation:spin .7s linear infinite; }
+.spin { position:absolute; left:50%; top:50%; z-index:3; display:block; width:16px; height:16px; margin:0; border:2px solid #243024; border-top-color:#39ff14; border-radius:50%; background:#0a0a0a; box-shadow:0 0 0 6px #0a0a0a; animation:spin .7s linear infinite; }
 .spin[hidden] { display:none; }
-@keyframes spin { to { transform:rotate(360deg); } }
+@keyframes spin { from { transform:translate(-50%, -50%) rotate(0deg); } to { transform:translate(-50%, -50%) rotate(360deg); } }
 header p { margin:4px 0 0; color:var(--muted); }
 .page { max-width:1100px; margin:0 auto; padding:16px; }
 html[data-phone] { zoom:0.5; }
@@ -515,12 +515,13 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <header>
 <div class="head-icon"><img src="gg-icon.png" alt="Gnarly Gorilla"></div>
 <div class="head-text">
-<h1><span class="gg-name">Gnarly Gorilla</span> Sportsbooks <span id="pagespin" class="spin" role="status" aria-label="Loading"></span></h1>
+<h1><span class="gg-name">Gnarly Gorilla</span> Sportsbooks</h1>
 <p>Free bet ledger for <span class="gg-name">Gnarly Gorilla</span> Sports Decks. Log CBB, CFB, MLB, NBA, NFL, and NHL slips, grade them the next day, and copy the report card.</p>
 <p id="liveline" class="warn" style="margin:6px 0 0;font-size:12px;">All picks live by 9:30 AM. Closed Value Lines update at 6:00 PM.</p>
 </div>
 <div class="head-flag" aria-label="United States"><svg viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg" role="img"><defs><linearGradient id="flaggloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".45" stop-color="#fff" stop-opacity=".08"/><stop offset="1" stop-color="#000" stop-opacity=".25"/></linearGradient></defs><rect width="28" height="18" fill="#b22234"/><g fill="#fff"><rect y="1.38" width="28" height="1.38"/><rect y="4.15" width="28" height="1.38"/><rect y="6.92" width="28" height="1.38"/><rect y="9.69" width="28" height="1.38"/><rect y="12.46" width="28" height="1.38"/><rect y="15.23" width="28" height="1.38"/></g><rect width="11.2" height="9.7" fill="#3c3b6e"/><rect width="28" height="18" fill="url(#flaggloss)"/></svg><span>USA</span><span id="headrules">BETTING RULES</span><span id="headregion"></span></div>
 <div class="head-icon right"><img src="gg-icon.png" alt="Gnarly Gorilla"></div>
+<span id="pagespin" class="spin" role="status" aria-label="Loading"></span>
 </header>
 <nav class="sitenav" id="sitenav">
 <div class="nav-cell left"><span class="clock" id="zonedate"></span><span class="clock" id="zonetime"></span></div>
