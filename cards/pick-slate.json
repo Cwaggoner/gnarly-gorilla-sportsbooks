@@ -1,1 +1,16 @@
-PLACEHOLDER_FOR_FULL_JSON
+{
+  "date": "2026-10-31",
+  "source": "ESPN scoreboard, no odds key",
+  "passedNote": "Games being played that did not make the picks.",
+  "games": [
+    {
+      "sport": "CFB",
+      "game": "Ohio State at USC",
+      "start": "2026-10-31T23:30:00Z",
+      "location": "Los Angeles Memorial Coliseum, Los Angeles, California",
+      "awayRecord": "6-1",
+      "homeRecord": "6-2"
+    }
+  ],
+  "passed": []
+}
