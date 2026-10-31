@@ -4477,10 +4477,12 @@ function rememberBoard(data){
   window.__ggOddsBoard = data;
   storeOddsBoard(data);
   try { snapshotOpensFromBoard(data); } catch (e) {}
-  try { drawGameBoard(); } catch (e) {}
+  if ((document.documentElement.dataset.page || "games") === "games") {
+    try { drawGameBoard(); } catch (e) {}
+  }
   return true;
 }
-function mergeBoardRows(day, market, rows){
+function mergeBoardRows(day, market, rows, quiet){
   if (!day || !rows || !rows.length) return;
   const board = window.__ggOddsBoard && window.__ggOddsBoard.days ? window.__ggOddsBoard : {days: {}};
   board.days = board.days || {};
@@ -4497,7 +4499,8 @@ function mergeBoardRows(day, market, rows){
     if (row.start && !prev.start) prev.start = row.start;
   });
   block[market] = old;
-  rememberBoard(board);
+  window.__ggOddsBoard = board;
+  if (!quiet) rememberBoard(board);
 }
 function indexedGames(rowsByMarket){
   const index = {};
@@ -4616,31 +4619,18 @@ async function drawOddsCompare(force){
   }
 }
 async function renderOddsCompare(force){
-  const key = oddskey.value.trim();
+  const key = ((document.getElementById("oddskey") || {}).value || "").trim();
   const box = document.getElementById("oddscompare");
   if (!box) return;
-  if (!(window.__ggLiveBoard && window.__ggLiveBoard.games)) {
-    savedLiveBoard();
-    if (!(window.__ggLiveBoard && window.__ggLiveBoard.games)) {
-      const pack = await idbGet("live");
-      if (pack && Array.isArray(pack.games)) window.__ggLiveBoard = pack;
-    }
-  }
+  savedLiveBoard();
   parkOddsTools();
-  if (!key) { /* show the board anyway */ }
   if (slateSettled(yesterday()) && localStorage.getItem("gg-compare-locked") !== easternDay()) {
     localStorage.setItem("gg-compare-day", "today");
     localStorage.setItem("gg-compare-locked", easternDay());
   }
   const day = localStorage.getItem("gg-compare-day") === "yesterday" ? yesterday() : easternDay();
-  const marketSel = document.getElementById("comparemarket");
-  const savedMarket = localStorage.getItem("gg-compare-market");
-  if (marketSel && savedMarket && [...marketSel.options].some(o => o.value === savedMarket)) marketSel.value = savedMarket;
-  const market = (marketSel || {}).value || savedMarket || "h2h";
-  localStorage.setItem("gg-compare-market", market);
   const btn = document.getElementById("refreshodds");
   if (force) {
-    const key = (oddskey.value || "").trim();
     if (!key) {
       window.__ggLiveBoard = null;
       box.innerHTML = oddsBullets(["Refresh needs the Odds Key. Paste it on Add A Bet and press Commit, then press Refresh."]) + "<h2 class='split-title'>Live Odds Comparison</h2>";
@@ -4653,6 +4643,7 @@ async function renderOddsCompare(force){
     try {
       const games = await pullLiveBoard(key);
       storeLiveBoard({at: Date.now(), games: games.map(g => ({_sport: g._sport, away_team: g.away_team, home_team: g.home_team, commence_time: g.commence_time, bookmakers: g.bookmakers || []}))});
+      absorbLiveBoard(window.__ggLiveBoard);
     } catch (err) {
       parkOddsTools();
       const posted = publishedOddsHtml(day, "Live pull failed. " + (err && err.message || err) + ". The posted board is still below.");
@@ -4663,6 +4654,12 @@ async function renderOddsCompare(force){
     } finally {
       if (btn) { btn.disabled = false; btn.textContent = "Refresh"; }
     }
+  }
+  if (!(window.__ggLiveBoard && window.__ggLiveBoard.games)) {
+    const postedNow = publishedOddsHtml(day, "");
+    if (postedNow) { box.innerHTML = postedNow; wireCompare(); armStartingIn(); }
+    const pack = await idbGet("live");
+    if (pack && Array.isArray(pack.games)) window.__ggLiveBoard = pack;
   }
   parkOddsTools();
   const live = window.__ggLiveBoard && window.__ggLiveBoard.games ? window.__ggLiveBoard : savedLiveBoard();
@@ -4678,15 +4675,13 @@ async function renderOddsCompare(force){
       }
     }
     if (games.length) {
-      const days = new Set((live.games || []).map(g => g && g.commence_time && slateDateOf(g.commence_time)).filter(Boolean));
-      days.forEach(d => ["h2h","spreads","totals"].forEach(m => mergeBoardRows(d, m, rowsFromLive(live.games, d, m))));
       const when = formatTime(live.at) || "just now";
       const which = shownDay === day ? "" : "Yesterday has started, so this is today. ";
       box.innerHTML = liveOddsCards(games, shownDay, "Live as of " + when + ". " + which + "Spread, total, and moneyline. Tap a price. Magenta is the best price on that number.");
       wireCompare();
       armStartingIn();
-      armGameScores(games);
-      armInjuryFeeds(games.map(g => String(g.sport || "").toUpperCase()));
+      armLiveExtras(games);
+      later(() => absorbLiveBoard(live));
       return "Live as of " + when + ".";
     }
     if (force) {
@@ -4697,18 +4692,26 @@ async function renderOddsCompare(force){
       return "No open prices for " + day + ".";
     }
   }
-  const published = publishedOddsHtml(day, "");
-  if (published) {
-    box.innerHTML = published;
+  if (!box.querySelector(".mgm-card")) {
+    const published = publishedOddsHtml(day, "");
+    if (published) {
+      box.innerHTML = published;
+      wireCompare();
+      armStartingIn();
+      const block = window.__ggOddsBoard && window.__ggOddsBoard.days && window.__ggOddsBoard.days[day];
+      if (block) armLiveExtras(indexedGames({h2h: block.h2h, spreads: block.spreads, totals: block.totals}));
+      return;
+    }
+    box.innerHTML = oddsBullets([(day === easternDay() ? "Today" : "Yesterday") + ". No posted board for " + esc(day) + "."]) + "<h2 class='split-title'>Live Odds Comparison</h2>";
     wireCompare();
-    armStartingIn();
-    const block = window.__ggOddsBoard && window.__ggOddsBoard.days && window.__ggOddsBoard.days[day];
-    if (block) armGameScores(indexedGames({h2h: block.h2h, spreads: block.spreads, totals: block.totals}));
-    if (block) armInjuryFeeds(Object.keys(SCORE_FEED));
-    return;
   }
-  box.innerHTML = oddsBullets([(day === easternDay() ? "Today" : "Yesterday") + ". No posted board for " + esc(day) + "."]) + "<h2 class='split-title'>Live Odds Comparison</h2>";
-  wireCompare();
+}
+function absorbLiveBoard(live){
+  if (!live || !live.games || window.__ggLiveMergedAt === live.at) return;
+  const days = new Set((live.games || []).map(g => g && g.commence_time && slateDateOf(g.commence_time)).filter(Boolean));
+  days.forEach(d => ["h2h","spreads","totals"].forEach(m => mergeBoardRows(d, m, rowsFromLive(live.games, d, m), true)));
+  window.__ggLiveMergedAt = live.at;
+  if (window.__ggOddsBoard) rememberBoard(window.__ggOddsBoard);
 }
 const ODDS_START = {
   "CFB Tulane at Memphis": "2026-10-16T23:30:00Z",
@@ -8503,16 +8506,18 @@ function snapshotOpens(games, day){
   if (!day || !games) return;
   const all = openBag();
   const bag = all[day] || (all[day] = {});
+  let dirty = false;
   games.forEach(g => {
     const slot = bag[lineKey(g)] || (bag[lineKey(g)] = {});
     ["spreads","totals","h2h"].forEach(market => {
       const books = (g.markets && g.markets[market] && g.markets[market].books) || {};
       const dest = slot[market] || (slot[market] = {});
       Object.keys(books).forEach(book => {
-        if (books[book] && books[book] !== "-" && !dest[book]) dest[book] = books[book];
+        if (books[book] && books[book] !== "-" && !dest[book]) { dest[book] = books[book]; dirty = true; }
       });
     });
   });
+  if (!dirty) return;
   const keep = {};
   [easternDay(), shiftDate(easternDay(), -1)].forEach(d => { if (all[d]) keep[d] = all[d]; });
   try { localStorage.setItem("gg-open-lines", JSON.stringify(keep)); } catch (e) {}
@@ -8679,15 +8684,34 @@ function sideForm(sport, team){
   if (!bits.length && !inj) return "";
   return "<p class='mgm-form'>" + esc(bits.join(" · ")) + (inj ? " " + inj : "") + "</p>";
 }
+let liveExtraFlight = null;
+function armLiveExtras(games){
+  if (!games || !games.length || (document.documentElement.dataset.page || "") !== "liveodds") return;
+  armGameScores(games);
+  const sports = [...new Set(games.map(g => String(g.sport || "").toUpperCase()))].filter(s => SCORE_FEED[s]);
+  const needScores = Date.now() - (window.__gameScoresAt || 0) > 20000;
+  const needInj = sports.filter(s => !(window.__injuryFeeds && window.__injuryFeeds[s]));
+  if ((!needScores && !needInj.length) || liveExtraFlight) return;
+  later(() => {
+    if (liveExtraFlight || (document.documentElement.dataset.page || "") !== "liveodds") return;
+    liveExtraFlight = Promise.all([
+      needScores ? Promise.all(sports.map(sport => scoreboard(sport, easternDay()).catch(() => []))) : Promise.resolve(null),
+      needInj.length ? Promise.all(needInj.map(sport => fetch("https://site.api.espn.com/apis/site/v2/sports/" + SCORE_FEED[sport] + "/injuries").then(r => r.ok ? r.json() : null).catch(() => null))) : Promise.resolve(null)
+    ]).then(([packs, inj]) => {
+      if (packs) {
+        window.__gameScores = packs.flat();
+        window.__gameScoresAt = Date.now();
+      }
+      if (inj) {
+        window.__injuryFeeds = window.__injuryFeeds || {};
+        needInj.forEach((sport, i) => { window.__injuryFeeds[sport] = inj[i] || {injuries: []}; });
+      }
+      if ((document.documentElement.dataset.page || "") === "liveodds" && (packs || inj)) drawOddsCompare(false).catch(() => {});
+    }).finally(() => { liveExtraFlight = null; });
+  });
+}
 function armInjuryFeeds(sports){
-  const need = [...new Set(sports || [])].filter(s => SCORE_FEED[s] && !(window.__injuryFeeds && window.__injuryFeeds[s]));
-  if (!need.length || window.__injuryPull) return;
-  window.__injuryPull = true;
-  Promise.all(need.map(sport => fetch("https://site.api.espn.com/apis/site/v2/sports/" + SCORE_FEED[sport] + "/injuries").then(r => r.ok ? r.json() : null).catch(() => null))).then(packs => {
-    window.__injuryFeeds = window.__injuryFeeds || {};
-    need.forEach((sport, i) => { window.__injuryFeeds[sport] = packs[i] || {injuries: []}; });
-    if ((document.documentElement.dataset.page || "") === "liveodds") drawOddsCompare(false).catch(() => {});
-  }).finally(() => { window.__injuryPull = false; });
+  armLiveExtras((sports || []).map(sport => ({sport: sport, label: ""})));
 }
 function mgmGameCard(g, day, book, withClose){
   const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
@@ -8832,7 +8856,7 @@ function armGameScores(games){
   });
   const wait = !scores.length || live ? 15000 : open ? 30000 : 120000;
   gameScoreTimer = setTimeout(() => { refreshGameScores(games); }, wait);
-  if (Date.now() - (window.__gameScoresAt || 0) > 12000) refreshGameScores(games);
+  if ((document.documentElement.dataset.page || "") !== "liveodds" && Date.now() - (window.__gameScoresAt || 0) > 12000) refreshGameScores(games);
 }
 function refreshGameScores(games){
   if (gameScoreFlight) return;
@@ -8844,9 +8868,11 @@ function refreshGameScores(games){
     window.__gameScoresAt = Date.now();
     const kept = (window.__slipGames || []).filter(g => String(g.date || "").slice(0, 10) !== day);
     window.__slipGames = kept.concat(window.__gameScores);
-    await seedBoardFromScores(window.__gameScores, day);
-    if ((document.documentElement.dataset.page || "games") === "games") drawGameBoard();
-    else if ((document.documentElement.dataset.page || "") === "liveodds") drawOddsCompare(false).catch(() => {});
+    const page = document.documentElement.dataset.page || "games";
+    if (page === "games") {
+      await seedBoardFromScores(window.__gameScores, day);
+      drawGameBoard();
+    } else if (page === "liveodds") drawOddsCompare(false).catch(() => {});
   }).catch(() => {}).finally(() => { gameScoreFlight = null; });
 }
 function dayHasLines(day){
