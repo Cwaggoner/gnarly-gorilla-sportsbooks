@@ -534,6 +534,9 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .game-row h3 { margin:0 0 4px; color:#39ff14; font-size:15px; }
 .game-who { margin:0 0 8px; color:#d6ffd0; font-size:13px; }
 .game-src { margin:0 0 4px; color:#f0e14a; font-size:12px; }
+.game-score { margin:0 0 8px; color:#39ff14; font:700 15px/1.4 system-ui,sans-serif; }
+.game-score.live { color:#f0e14a; }
+.game-final-tag { margin-right:6px; }
 .game-lines { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
 .game-lines h4 { margin:0 0 4px; color:#8fb898; font-size:12px; font-weight:600; }
 @media (max-width:800px) { .game-lines { grid-template-columns:1fr; } }
@@ -617,7 +620,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <section class="card view" id="sharks"><div class="section-head"><h2>Sports Sharps</h2><p class="warn slips-side" id="sharpnote">Four games each. Made at 9:30 AM Eastern and locked until the next morning.</p></div><div class="shark-list" id="sharkboard"><p class="warn">Loading the sharps.</p></div></section>
 <main>
 <section class="card view on" id="games">
-<div class="section-head"><h2>Games</h2><p class="warn slips-side">Tap a price. Nothing is sent to a book.</p></div>
+<div class="section-head"><h2>Games</h2><p class="warn slips-side">Tap a price. Nothing is sent to a book. Final scores post when the game ends.</p></div>
 <div class="odds-tools">
 <label>Book<select id="gamebook" class="book-select"><option>BetMGM</option><option>Caesars</option><option>DraftKings</option><option>Fanatics</option><option>FanDuel</option><option>HardRock</option></select></label>
 <button type="button" id="gamerefresh">Refresh</button>
@@ -7633,8 +7636,53 @@ function drawGameBoard(){
     const away = (teams[0] || "").trim();
     const home = (teams[1] || "").trim();
     const title = (g.sport ? g.sport + "  " : "") + (when ? when + "  " : "") + (away && home ? away + " at " + home : g.label);
-    return "<article class='game-row'><h3>" + esc(title) + "</h3><p class='game-who'>Away " + esc(away) + " · Home " + esc(home) + "</p><div class='game-lines'><div><h4>Spread</h4>" + cell("spreads") + "</div><div><h4>Moneyline</h4>" + cell("h2h") + "</div><div><h4>Total</h4>" + cell("totals") + "</div></div></article>";
+    const score = boardScoreLine(g);
+    return "<article class='game-row'><h3>" + esc(title) + "</h3><p class='game-who'>Away " + esc(away) + " · Home " + esc(home) + "</p>" + score + "<div class='game-lines'><div><h4>Spread</h4>" + cell("spreads") + "</div><div><h4>Moneyline</h4>" + cell("h2h") + "</div><div><h4>Total</h4>" + cell("totals") + "</div></div></article>";
   }).join("");
+  armGameScores(games);
+}
+function boardScoreLine(g){
+  const list = (window.__gameScores || []).filter(x => !g.sport || x.sport === String(g.sport || "").toUpperCase());
+  const hit = findFinalGame(list, g.label);
+  if (!hit || (!hit.live && !hit.final)) return "";
+  const html = slipScoreHtml(hit);
+  if (!html) return "";
+  const live = hit.live && !hit.final;
+  const ot = /ot/i.test(hit.detail || "");
+  const tag = live ? "" : "<span class='game-final-tag'>Final" + (ot ? "/OT" : "") + "</span>";
+  return "<p class='game-score" + (live ? " live" : "") + "'>" + tag + html + "</p>";
+}
+let gameScoreTimer = 0;
+let gameScoreFlight = null;
+function armGameScores(games){
+  clearTimeout(gameScoreTimer);
+  const onGames = (document.documentElement.dataset.page || "games") === "games";
+  if (!onGames || !games || !games.length) return;
+  const scores = window.__gameScores || [];
+  const open = games.some(g => {
+    const hit = findFinalGame(scores.filter(x => x.sport === String(g.sport || "").toUpperCase()), g.label);
+    return !hit || !hit.final;
+  });
+  const live = games.some(g => {
+    const hit = findFinalGame(scores.filter(x => x.sport === String(g.sport || "").toUpperCase()), g.label);
+    return hit && hit.live && !hit.final;
+  });
+  const wait = !scores.length || live ? 15000 : open ? 30000 : 120000;
+  gameScoreTimer = setTimeout(() => { refreshGameScores(games); }, wait);
+  if (Date.now() - (window.__gameScoresAt || 0) > 12000) refreshGameScores(games);
+}
+function refreshGameScores(games){
+  if (gameScoreFlight) return;
+  const sports = [...new Set((games || []).map(g => String(g.sport || "").toUpperCase()))].filter(s => SCORE_FEED[s]);
+  const day = easternDay();
+  if (!sports.length) return;
+  gameScoreFlight = Promise.all(sports.map(sport => scoreboard(sport, day).catch(() => []))).then(packs => {
+    window.__gameScores = packs.flat();
+    window.__gameScoresAt = Date.now();
+    const kept = (window.__slipGames || []).filter(g => String(g.date || "").slice(0, 10) !== day);
+    window.__slipGames = kept.concat(window.__gameScores);
+    if ((document.documentElement.dataset.page || "games") === "games") drawGameBoard();
+  }).catch(() => {}).finally(() => { gameScoreFlight = null; });
 }
 async function refreshGameBoard(){
   const btn = document.getElementById("gamerefresh");
