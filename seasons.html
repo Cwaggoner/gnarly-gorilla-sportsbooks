@@ -591,16 +591,16 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .game-final-tag { margin-right:6px; }
 .game-lines { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
 .game-lines h4 { margin:0 0 4px; color:#8fb898; font-size:12px; font-weight:600; }
-.mgm-card { display:flex; align-items:center; gap:12px; border:1px solid #243024; border-radius:8px; background:#0e0e0e; margin:6px 0; padding:8px 10px; }
-.mgm-side { flex:0 0 230px; min-width:180px; }
+.mgm-card { display:grid; grid-template-columns:230px minmax(0,1fr) max-content; align-items:center; column-gap:12px; width:100%; box-sizing:border-box; border:1px solid #243024; border-radius:8px; background:#0e0e0e; margin:6px 0; padding:8px 10px; }
+.mgm-side { min-width:0; }
+.mgm-books { display:flex; gap:12px; min-width:0; align-items:end; flex-wrap:nowrap; overflow-x:auto; }
+.mgm-set { display:grid; grid-template-columns:repeat(3,64px); gap:4px; flex:0 0 auto; }
+.mgm-set.mgm-close { justify-self:end; }
 .mgm-when { margin:0 0 4px; color:#8fb898; font:700 12px/1.2 system-ui,sans-serif; }
 .mgm-team { display:flex; align-items:center; gap:8px; min-height:46px; color:#d6ffd0; font:700 14px/1.2 system-ui,sans-serif; }
 .mgm-team i { margin-left:6px; color:#8fb898; font-style:normal; font-weight:500; font-size:12px; }
 .mgm-score { margin-left:auto; color:#39ff14; font-size:16px; min-width:2ch; text-align:right; }
 .mgm-team img, .mgm-logo { width:28px; height:28px; object-fit:contain; flex:0 0 28px; border-radius:4px; background:#102010; }
-.mgm-books { display:flex; gap:12px; flex:1 1 auto; min-width:0; align-items:end; flex-wrap:nowrap; overflow-x:auto; }
-.mgm-set { display:grid; grid-template-columns:repeat(3,64px); gap:4px; flex:0 0 auto; }
-.mgm-set.mgm-close { margin-left:auto; }
 .mgm-h, .mgm-group { color:#8fb898; font:700 11px/1 system-ui,sans-serif; letter-spacing:.04em; text-transform:uppercase; text-align:center; }
 .mgm-group { grid-column:1 / -1; text-align:left; }
 .mgm-close .mgm-group { color:#f0e14a; }
@@ -616,7 +616,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .mgm-card .board-price span, .mgm-card .mgm-odd span { font:700 11px/1 system-ui,sans-serif; color:inherit; }
 .mgm-card .board-price.best-price { color:#ff00ff; border-color:#ff00ff; }
 .mgm-odd.empty { color:#5a6a5a; }
-@media (max-width:800px) { .game-lines { grid-template-columns:1fr; } .mgm-card { flex-wrap:wrap; } }
+@media (max-width:800px) { .game-lines { grid-template-columns:1fr; } .mgm-card { grid-template-columns:1fr; } .mgm-set.mgm-close { justify-self:end; } }
 </style>
 </head>
 <body>
