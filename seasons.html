@@ -351,6 +351,8 @@ tr.row-pending.edge td.result { color:var(--amber); }
 #rows td.slip-conf.high { color:#f0e14a; }
 #rows td.slip-conf.medium { color:#d6ffd0; }
 #rows td.slip-conf.low { color:#8fb898; }
+#rows td.slip-score { white-space:nowrap; font-variant-numeric:tabular-nums; }
+#rows td.slip-score .wmark { color:#39ff14; font-weight:700; margin-left:4px; }
 .tools { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; align-items:flex-end; }
 .jump { display:flex; gap:6px; margin:6px 0; justify-content:center; align-items:center; }
 .jump button { padding:4px 8px; font-size:12px; }
@@ -807,7 +809,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </div>
 </div>
 <div class="table-wrap"><table>
-<thead><tr><th>Date</th><th>Book</th><th>Sport</th><th>Type</th><th>Pick</th><th>Odds</th><th class="col-close">Close</th><th>No-Vig CLV</th><th>Sharp CLV</th><th>Stake</th><th>Result</th><th>Confidence</th><th>P/L</th><th>Grade</th></tr></thead>
+<thead><tr><th>Date</th><th>Book</th><th>Sport</th><th>Type</th><th>Pick</th><th>Score</th><th>Odds</th><th class="col-close">Close</th><th>No-Vig CLV</th><th>Sharp CLV</th><th>Stake</th><th>Result</th><th>Confidence</th><th>P/L</th><th>Grade</th></tr></thead>
 <tbody id="rows"></tbody>
 </table></div>
 <p class="api-note warn">Live prices need the Odds API key on Add A Bet. Close needs a paid subscription. CLV is no-vig: the book's cut is removed, and a moved spread or total is counted. A matched -110 close is about -4.5%, not zero. When the other side was not saved, it is estimated at a -110 hold until Plot stores the real pair. A free key loads the board only. A saved list returns on refresh with no new call.<br><button type="button" class="odds-link" onclick="window.open('https://the-odds-api.com/','_blank','noopener,noreferrer')">Open The Odds API</button></p>
@@ -3985,20 +3987,20 @@ function render(){
     const sharpCv = sharpClv(b);
     const sharpCls = sharpCv === "differs" ? "warn" : (typeof sharpCv === "number" ? (sharpCv > 0.05 ? "win" : (sharpCv < -0.05 ? "loss" : "")) : "");
     let head = "";
-    if (b.sport !== lastSport) { lastSport = b.sport; lastType = ""; head += "<tr class='sport'><td colspan='14'>" + esc(b.sport || "Other") + (seasonEnded(b.sport) ? " Season Ended" : "") + "</td></tr>"; }
+    if (b.sport !== lastSport) { lastSport = b.sport; lastType = ""; head += "<tr class='sport'><td colspan='15'>" + esc(b.sport || "Other") + (seasonEnded(b.sport) ? " Season Ended" : "") + "</td></tr>"; }
     if (b.type !== lastType) {
       lastType = b.type;
       const same = grouped.filter(x => x.sport === b.sport && x.type === b.type);
       const n = k => same.filter(x => x.result === k).length;
       const count = "(" + n("win") + " win · " + n("loss") + " loss · " + n("push") + " push · " + n("pending") + " pending · " + same.length + " total)";
-      head += "<tr class='type'><td colspan='14'><div class='type-row'><span>" + esc(b.type || "Other") + "</span><span class='type-count'>" + count + "</span></div></td></tr>";
+      head += "<tr class='type'><td colspan='15'><div class='type-row'><span>" + esc(b.type || "Other") + "</span><span class='type-count'>" + count + "</span></div></td></tr>";
     }
     const edge = markEdge(b).edge;
     const rowCls = b.result === "win" ? "row-win" : b.result === "loss" ? "row-loss" : b.result === "pending" ? (edge ? "row-pending edge" : "row-pending") : (b.manual ? "manual" : b.fromCard ? "fromcard" : "");
     const liveCell = b.result === "pending" ? slipLiveCell(b) : {text: "—", band: ""};
-    return head + "<tr" + (rowCls ? " class='" + rowCls + "'" : "") + "><td>" + b.date + placedText(b) + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td>" + esc(b.pick) + "</td><td>" + (b.priceText ? esc(b.priceText) : (usableClose(b.odds) ? b.odds : dash)) + "</td><td class='col-close'>" + (b.closeText ? esc(b.closeText) : (usableClose(b.close) ? b.close : dash)) + "</td><td class='" + (cv > 0 ? "win" : cv < 0 ? "loss" : "") + "'>" + clvText(b) + "</td><td class='" + sharpCls + "'>" + esc(sharpLabel(sharpCv, b)) + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='result " + cls + "'>" + b.result + "</td><td class='slip-conf " + String(liveCell.band || "").toLowerCase() + "'>" + esc(liveCell.text) + "</td><td class='" + cls + "'>" + moneyHtml(p) + "</td><td>" + grade + "</td></tr>";
+    return head + "<tr" + (rowCls ? " class='" + rowCls + "'" : "") + "><td>" + b.date + placedText(b) + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td>" + esc(b.pick) + "</td><td class='slip-score'>" + slipScoreCell(b) + "</td><td>" + (b.priceText ? esc(b.priceText) : (usableClose(b.odds) ? b.odds : dash)) + "</td><td class='col-close'>" + (b.closeText ? esc(b.closeText) : (usableClose(b.close) ? b.close : dash)) + "</td><td class='" + (cv > 0 ? "win" : cv < 0 ? "loss" : "") + "'>" + clvText(b) + "</td><td class='" + sharpCls + "'>" + esc(sharpLabel(sharpCv, b)) + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='result " + cls + "'>" + b.result + "</td><td class='slip-conf " + String(liveCell.band || "").toLowerCase() + "'>" + esc(liveCell.text) + "</td><td class='" + cls + "'>" + moneyHtml(p) + "</td><td>" + grade + "</td></tr>";
     } catch (err) { return ""; }
-  }).join("") || "<tr><td colspan='14'>" + ((document.getElementById("fBook") || {}).value ? "No slips for " + esc(document.getElementById("fBook").value) + "." : "No bets yet.") + "</td></tr>";
+  }).join("") || "<tr><td colspan='15'>" + ((document.getElementById("fBook") || {}).value ? "No slips for " + esc(document.getElementById("fBook").value) + "." : "No bets yet.") + "</td></tr>";
   try { drawCharts(); } catch (err) { document.getElementById("plotnote").textContent = "Chart failed. The rest of the page is still live."; }
   document.getElementById("plotnote").textContent = settled.length + " settled slips plotted. " + slipsLeftToSettle(bets) + " slips left to settle.";
   drawCalendar();
@@ -4070,6 +4072,7 @@ function render(){
   } finally {
     rendering = false;
   }
+  ensureSlipScores();
 }
 
 function shopChunk(chunk){
@@ -8041,6 +8044,56 @@ function slipLiveCell(b){
   if (!views.length) return {text: "—", band: ""};
   views.sort((a, c) => a.pct - c.pct);
   return views[0];
+}
+function slipTeamTag(team){
+  return (team && (team.abbreviation || team.shortDisplayName || team.name)) || "";
+}
+function slipScoreHtml(game){
+  if (!game || (!game.live && !game.final)) return "";
+  const away = Number(game.awayScore), home = Number(game.homeScore);
+  if (!Number.isFinite(away) || !Number.isFinite(home)) return "";
+  const aW = game.final && away > home ? "<b class='wmark'>W</b>" : "";
+  const hW = game.final && home > away ? "<b class='wmark'>W</b>" : "";
+  const line = esc(slipTeamTag(game.away)) + " " + away + aW + " — " + esc(slipTeamTag(game.home)) + " " + home + hW;
+  return game.live && !game.final ? "<span class='live-dot'></span>" + line : line;
+}
+function slipScoreCell(b){
+  if (!b || betType(b) === "Prop") return "—";
+  const games = (window.__slipGames || []).filter(g => !b.sport || g.sport === String(b.sport || "").toUpperCase());
+  const type = betType(b);
+  const legs = (type === "SGP" || type === "Parlay") ? String(b.pick || "").split(/\s+and\s+/i) : [String(b.pick || "")];
+  const seen = [];
+  const bits = [];
+  legs.forEach(leg => {
+    const game = findFinalGame(games, leg);
+    if (!game || seen.indexOf(game) >= 0) return;
+    seen.push(game);
+    const html = slipScoreHtml(game);
+    if (html) bits.push(html);
+  });
+  return bits.length ? bits.join("<br>") : "—";
+}
+let slipScoreFlight = null;
+function ensureSlipScores(){
+  if ((document.documentElement.dataset.page || "games") !== "slips") return;
+  const slips = load().filter(b => b && inSlipWindow(b.date) && betType(b) !== "Prop");
+  const sports = [...new Set(slips.map(b => String(b.sport || "").toUpperCase()))].filter(s => SCORE_FEED[s]);
+  const dates = [...new Set(slips.map(b => String(b.date || "").slice(0, 10)))].filter(Boolean);
+  if (!sports.length || !dates.length) return;
+  const have = window.__slipGames || [];
+  const live = have.some(g => g && g.live);
+  const stale = Date.now() - (window.__slipGamesAt || 0) >= (live ? 15000 : 60000);
+  const missing = sports.some(sport => dates.some(date => !have.some(g => g && g.sport === sport && String(g.date || "").slice(0, 10) === date)));
+  if (!missing && !stale) return;
+  if (slipScoreFlight) return;
+  slipScoreFlight = Promise.all(sports.flatMap(sport => dates.map(date => scoreboard(sport, date).catch(() => [])))).then(packs => {
+    const games = packs.flat();
+    if (games.length) {
+      window.__slipGames = games;
+      window.__slipGamesAt = Date.now();
+      if (!rendering) render();
+    }
+  }).catch(() => {}).finally(() => { slipScoreFlight = null; });
 }
 function sharpLiveBits(t){
   const live = !!t.glive;
