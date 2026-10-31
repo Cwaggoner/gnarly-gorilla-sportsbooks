@@ -4304,11 +4304,48 @@ function slimBoard(data){
   });
   return {updated: (data && data.updated) || "", days: keep};
 }
+function boardDb(){
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open("gg-board", 1);
+    req.onupgradeneeded = () => { if (!req.result.objectStoreNames.contains("boards")) req.result.createObjectStore("boards"); };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+function idbPut(key, value){
+  return boardDb().then(db => new Promise((resolve, reject) => {
+    const tx = db.transaction("boards", "readwrite");
+    tx.objectStore("boards").put(value, key);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  })).catch(() => {});
+}
+function idbGet(key){
+  return boardDb().then(db => new Promise(resolve => {
+    const req = db.transaction("boards", "readonly").objectStore("boards").get(key);
+    req.onsuccess = () => resolve(req.result || null);
+    req.onerror = () => resolve(null);
+  })).catch(() => null);
+}
 function storeOddsBoard(data){
   if (!usableBoard(data)) return;
   const slim = slimBoard(data);
   if (!usableBoard(slim)) return;
-  try { localStorage.setItem("gg-odds-board-file", JSON.stringify({at: Date.now(), data: slim})); } catch (e) {}
+  const pack = {at: Date.now(), data: slim};
+  const text = JSON.stringify(pack);
+  const write = () => localStorage.setItem("gg-odds-board-file", text);
+  try { write(); }
+  catch (e) {
+    try { dropOddsCaches(true); write(); } catch (err) {}
+  }
+  idbPut("odds", pack);
+}
+async function savedBoardAny(){
+  const local = savedBoard();
+  const pack = await idbGet("odds");
+  const kept = pack && usableBoard(pack.data) && dataIsCurrent(Object.keys(pack.data.days || {})) ? pack.data : null;
+  if (local && kept) return keepPulledDays(local, kept);
+  return local || kept;
 }
 function keepPulledDays(posted, saved){
   if (!saved || !saved.days) return posted;
@@ -4416,10 +4453,22 @@ function savedLiveBoard(){
   } catch (e) {}
   return null;
 }
+function storeLiveBoard(pack){
+  window.__ggLiveBoard = pack;
+  try { sessionStorage.setItem("gg-live-board", JSON.stringify(pack)); } catch (e) {}
+  idbPut("live", pack);
+}
 async function drawOddsCompare(force){
   const key = oddskey.value.trim();
   const box = document.getElementById("oddscompare");
   if (!box) return;
+  if (!(window.__ggLiveBoard && window.__ggLiveBoard.games)) {
+    savedLiveBoard();
+    if (!(window.__ggLiveBoard && window.__ggLiveBoard.games)) {
+      const pack = await idbGet("live");
+      if (pack && Array.isArray(pack.games)) window.__ggLiveBoard = pack;
+    }
+  }
   parkOddsTools();
   if (!key) { /* show the board anyway */ }
   if (slateSettled(yesterday()) && localStorage.getItem("gg-compare-locked") !== easternDay()) {
@@ -4446,8 +4495,7 @@ async function drawOddsCompare(force){
     wireCompare();
     try {
       const games = await pullLiveBoard(key);
-      window.__ggLiveBoard = {at: Date.now(), games: games.map(g => ({_sport: g._sport, away_team: g.away_team, home_team: g.home_team, commence_time: g.commence_time, bookmakers: g.bookmakers || []}))};
-      try { sessionStorage.setItem("gg-live-board", JSON.stringify(window.__ggLiveBoard)); } catch (e) {}
+      storeLiveBoard({at: Date.now(), games: games.map(g => ({_sport: g._sport, away_team: g.away_team, home_team: g.home_team, commence_time: g.commence_time, bookmakers: g.bookmakers || []}))});
     } catch (err) {
       parkOddsTools();
       const posted = publishedOddsHtml(day, market);
@@ -7643,8 +7691,8 @@ if (pageNeeds("books")) {
   fetch(cardUrl("cards/book-prices.json")).then(r => r.ok ? r.json() : null).then(data => { if (data) { fileBooks = data; applyPublishedBooks(); } }).catch(() => {});
   fetch(cardUrl("cards/book-closes.json")).then(r => r.ok ? r.json() : null).then(data => { if (data && data.days) { bookCloses = data; render(); } }).catch(() => {});
 }
-function loadOddsBoard(data){
-  const saved = savedBoard();
+async function loadOddsBoard(data, saved){
+  saved = saved || await savedBoardAny();
   if (!usableBoard(data)) data = saved;
   else data = keepPulledDays(data, saved);
   if (!rememberBoard(data)) {
@@ -7656,7 +7704,10 @@ function loadOddsBoard(data){
   }
   if ((document.documentElement.dataset.page || "games") === "games" && !dayHasLines(easternDay())) ensureGameDay();
 }
-if (pageNeeds("odds")) fetch(cardUrl("cards/odds-board.json")).then(r => r.ok ? r.json() : null).then(loadOddsBoard).catch(() => loadOddsBoard(null));
+if (pageNeeds("odds")) Promise.all([
+  fetch(cardUrl("cards/odds-board.json")).then(r => r.ok ? r.json() : null).catch(() => null),
+  savedBoardAny()
+]).then(([data, saved]) => loadOddsBoard(data, saved));
 if (pageNeeds("closes")) fetch("cards/closes.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
   const store = closeStore();
   text.split(/\n/).forEach(line => {
