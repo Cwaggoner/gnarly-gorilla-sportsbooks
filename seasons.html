@@ -112,6 +112,16 @@ h2.split-title, h3.split-title { margin:16px 0 12px; font-size:16px; color:var(-
 .card-analysis h3.split-title { margin:0 0 12px; }
 .charts h2.split-title, .charts .sport-title { margin:0 0 12px; }
 .api-note, .slips-side, .fine, .passed-note, .warn { color:var(--amber); font-size:12px; line-height:1.35; }
+.api-note:not(:empty)::before,
+.passed-note:not(:empty)::before,
+.fine:not(:empty)::before,
+p.warn:not(:empty)::before,
+div.warn:not(:empty)::before,
+span.warn:not(:empty)::before,
+li.warn:not(:empty)::before { content:"•"; color:#ff00ff; font-weight:700; margin-right:6px; }
+.section-head :is(.warn, .api-note, .slips-side, .fine, .passed-note)::before,
+h2 :is(.warn, .api-note, .slips-side)::before,
+.split-title :is(.warn, .api-note)::before { content:none; margin-right:0; }
 .api-note { margin-top:18px; }
 .api-note button, .api-note select { font-size:13px; color:var(--text); }
 .api-note button { color:var(--title); }
