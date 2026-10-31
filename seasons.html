@@ -8916,7 +8916,7 @@ function armSharpStatus(){
   window.__sharpGradeTimer = setTimeout(() => {
     if (document.documentElement.dataset.page !== "sharks") { armSharpStatus(); return; }
     refreshSharpGrades().finally(armSharpStatus);
-  }, live ? 15000 : 60000);
+  }, live ? 15000 : 60 * 60 * 1000);
 }
 function pageFor(id){
   return {games:"games", seasons:"seasons", dashboard:"dashboard", todaycard:"today", liveodds:"live", slips:"slips", reportcard:"report", charts:"charts", breaks:"books", addbet:"add", calendarcard:"calendar", scoreboard:"scoreboard", about:"about", sharks:"sharks"}[id] || "";
