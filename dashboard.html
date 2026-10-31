@@ -103,6 +103,8 @@ html, body, .page, .page * { overflow-anchor:none; }
 #slips .result-files > :nth-child(2) { margin-left:2px; }
 .section-head h2 { margin:0; }
 .slips-side { margin:0; text-align:left; max-width:62%; font-size:12px; }
+#games .head-notes { display:flex; flex-direction:column; align-items:flex-start; gap:2px; max-width:62%; }
+#games .head-notes .slips-side { max-width:none; }
 .card-analysis h3 { margin:0 0 8px; color:var(--title); font-size:16px; }
 .card > h2, .card > .section-head, h2.split-title, h3.split-title, .sport-title { background:rgba(57,255,20,.12); border:1px solid #39ff14; border-radius:10px; padding:10px 14px; }
 .card > h2, .card > .section-head { margin:0 0 12px; }
@@ -687,8 +689,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <section class="card view" id="sharks"><div class="section-head"><h2>Sports Sharps</h2><p class="warn slips-side" id="sharpnote">Four games each. Made at 9:30 AM Eastern and locked until the next morning.</p></div><div class="shark-list" id="sharkboard"><p class="warn">Loading the sharps.</p></div></section>
 <main>
 <section class="card view on" id="games">
-<div class="section-head"><h2>Games</h2><p class="warn slips-side">Tap a price. Nothing is sent to a book. Final scores post when the game ends.</p></div>
-<p class="warn" style="margin:0 0 8px"><span class="best-price">Magenta</span> is the best price on that same number. It shows only when another book is worse.</p>
+<div class="section-head"><h2>Games</h2><div class="head-notes"><p class="warn slips-side">Tap a price. Nothing is sent to a book. Final scores post when the game ends.</p><p class="warn slips-side"><span class="best-price">Magenta</span> is the best price on that same number. It shows only when another book is worse.</p></div></div>
 <div class="odds-tools">
 <label>Book<select id="gamebook" class="book-select"><option>BetMGM</option><option>Caesars</option><option>DraftKings</option><option>Fanatics</option><option>FanDuel</option><option>HardRock</option></select></label>
 <div class="sport-bar" id="sportbar">
