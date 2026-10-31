@@ -583,7 +583,24 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .game-final-tag { margin-right:6px; }
 .game-lines { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
 .game-lines h4 { margin:0 0 4px; color:#8fb898; font-size:12px; font-weight:600; }
-@media (max-width:800px) { .game-lines { grid-template-columns:1fr; } }
+.mgm-card { display:flex; align-items:center; gap:12px; border:1px solid #243024; border-radius:8px; background:#0e0e0e; margin:6px 0; padding:8px 10px; }
+.mgm-side { flex:1 1 200px; min-width:180px; }
+.mgm-when { margin:0 0 4px; color:#8fb898; font:700 12px/1.2 system-ui,sans-serif; }
+.mgm-team { display:flex; align-items:center; gap:8px; min-height:46px; color:#d6ffd0; font:700 14px/1.2 system-ui,sans-serif; }
+.mgm-team i { margin-left:6px; color:#8fb898; font-style:normal; font-weight:500; font-size:12px; }
+.mgm-score { margin-left:auto; color:#39ff14; font-size:16px; min-width:2ch; text-align:right; }
+.mgm-team img, .mgm-logo { width:28px; height:28px; object-fit:contain; flex:0 0 28px; border-radius:4px; background:#102010; }
+.mgm-books { display:flex; gap:16px; flex:0 0 auto; align-items:end; }
+.mgm-set { display:grid; grid-template-columns:repeat(3,68px); gap:4px; }
+.mgm-h, .mgm-group { color:#8fb898; font:700 11px/1 system-ui,sans-serif; letter-spacing:.04em; text-transform:uppercase; text-align:center; }
+.mgm-group { grid-column:1 / -1; color:#f0e14a; text-align:left; }
+.mgm-card .mgm-odd, .mgm-card .board-price { width:68px; height:46px; margin:0; padding:3px 2px; box-sizing:border-box; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; background:#141414; color:#d6ffd0; border:1px solid #2a2a2a; border-radius:4px; font:700 12px/1.05 system-ui,sans-serif; text-align:center; white-space:nowrap; cursor:default; }
+.mgm-card .board-price { cursor:pointer; }
+.mgm-card .board-price b, .mgm-card .mgm-odd b { font:700 12px/1.05 system-ui,sans-serif; color:inherit; }
+.mgm-card .board-price span, .mgm-card .mgm-odd span { font:700 11px/1 system-ui,sans-serif; color:inherit; }
+.mgm-card .board-price.best-price { color:#ff00ff; border-color:#ff00ff; }
+.mgm-odd.empty { color:#5a6a5a; }
+@media (max-width:800px) { .game-lines { grid-template-columns:1fr; } .mgm-card { flex-wrap:wrap; } }
 </style>
 </head>
 <body>
@@ -7931,6 +7948,7 @@ if (pageNeeds("odds")) Promise.all([
   fetch(cardUrl("cards/odds-board.json")).then(r => r.ok ? r.json() : null).catch(() => null),
   savedBoardAny()
 ]).then(([data, saved]) => loadOddsBoard(data, saved));
+if ((document.documentElement.dataset.page || "games") === "games") fetch(cardUrl("cards/book-closes.json")).then(r => r.ok ? r.json() : null).then(data => { if (data && data.days) { bookCloses = data; render(); } }).catch(() => {});
 if (pageNeeds("closes")) fetch("cards/closes.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
   const store = closeStore();
   text.split(/\n/).forEach(line => {
@@ -7951,6 +7969,72 @@ if (pageNeeds("closes")) fetch("cards/closes.txt?ts=" + Date.now()).then(r => r.
   render();
 }).catch(() => {});
 
+function mgmBlank(){
+  return "<span class='mgm-odd empty'><b>—</b><span></span></span>";
+}
+function mgmMoney(n){
+  const v = Number(n);
+  if (!Number.isFinite(v)) return "";
+  return (v > 0 ? "+" : "") + v;
+}
+function mgmFace(top, price){
+  if (!mgmMoney(price)) return mgmBlank();
+  return "<span class='mgm-odd'><b>" + esc(top) + "</b><span>" + esc(mgmMoney(price)) + "</span></span>";
+}
+function mgmButton(top, price, hot, data){
+  if (!mgmMoney(price)) return mgmBlank();
+  const attrs = Object.keys(data || {}).map(key => " data-" + key + "='" + encodeURIComponent(String(data[key])) + "'").join("");
+  return "<button type='button' class='mgm-odd board-price" + (hot ? " best-price" : "") + "'" + attrs + "><b>" + esc(top) + "</b><span>" + esc(mgmMoney(price)) + "</span></button>";
+}
+function mgmOpen(g, market, day, book, names){
+  const row = g.markets[market];
+  const posted = (row && row.books) || {};
+  let used = book;
+  let text = posted[book];
+  if (!text || text === "-") used = names.find(name => posted[name] && posted[name] !== "-") || "";
+  text = used ? posted[used] : "";
+  const sides = shopSides(text);
+  const flags = used ? ((bestPriceFlags(posted, names)[used]) || [false, false]) : [false, false];
+  if (!sides) return [mgmBlank(), mgmBlank()];
+  return [0, 1].map(index => {
+    const side = sides[index];
+    if (!side) return mgmBlank();
+    const point = side.point;
+    let top = "ML";
+    if (market === "totals") top = (index === 0 ? "O " : "U ") + (point == null ? "" : point);
+    else if (market === "spreads") top = point == null ? "—" : ((point > 0 ? "+" : "") + point);
+    return mgmButton(top, side.price, flags[index], {sport: g.sport || "", game: g.label || "", market: market, book: used || "", price: String(side.price), point: point == null ? "" : String(point), side: String(index), date: day || ""});
+  });
+}
+function gameClosePack(g, day, book){
+  const sport = String(g.sport || "").toUpperCase();
+  const scored = findFinalGame((window.__gameScores || []).filter(x => x.sport === sport), g.label);
+  const games = (((bookCloses.days || {})[day] || {})[sport]) || [];
+  const awayAbbr = scored && scored.away && scored.away.abbr;
+  const homeAbbr = scored && scored.home && scored.home.abbr;
+  let hit = awayAbbr && homeAbbr ? games.find(row => String(row.away || "").toUpperCase() === String(awayAbbr).toUpperCase() && String(row.home || "").toUpperCase() === String(homeAbbr).toUpperCase()) : null;
+  if (!hit) hit = games.find(row => sideHit(g.label, row.away) && sideHit(g.label, row.home));
+  if (!hit || !hit.books) return null;
+  return hit.books[book] || hit.books.DraftKings || null;
+}
+function mgmClose(pack, market){
+  if (!pack) return [mgmBlank(), mgmBlank()];
+  if (market === "h2h") {
+    const away = pack.h2h && pack.h2h.away, home = pack.h2h && pack.h2h.home;
+    return [mgmFace("ML", away && away.price), mgmFace("ML", home && home.price)];
+  }
+  if (market === "spreads") {
+    const away = pack.spread && pack.spread.away, home = pack.spread && pack.spread.home;
+    const top = point => point == null || point === "" ? "" : ((Number(point) > 0 ? "+" : "") + point);
+    return [mgmFace(top(away && away.point), away && away.price), mgmFace(top(home && home.point), home && home.price)];
+  }
+  const total = pack.total;
+  if (!total) return [mgmBlank(), mgmBlank()];
+  return [mgmFace("O " + total.point, total.over), mgmFace("U " + total.point, total.under)];
+}
+function mgmSet(group, heads, cols){
+  return "<div class='mgm-set" + (group ? " mgm-close" : "") + "'>" + (group ? "<span class='mgm-group'>" + group + "</span>" : "") + heads.map(h => "<span class='mgm-h'>" + h + "</span>").join("") + cols.map(col => col[0]).join("") + cols.map(col => col[1]).join("") + "</div>";
+}
 function foldBoardGames(games){
   const out = [];
   (games || []).forEach(g => {
@@ -8005,24 +8089,23 @@ function drawGameBoard(){
     return;
   }
   box.innerHTML = games.map(g => {
-    const cell = market => {
-      const row = g.markets[market];
-      const posted = (row && row.books) || {};
-      let used = book;
-      let text = posted[book];
-      if (!text || text === "-") used = names.find(name => posted[name] && posted[name] !== "-") || "";
-      text = used ? posted[used] : "";
-      if (!text || text === "-") return "<p class='warn'>No book has posted this.</p>";
-      const flags = (bestPriceFlags(posted, names)[used]) || [false, false];
-      return paintBookCell(text, flags, row, market, day, used);
-    };
+    const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
     const when = g.start ? formatTime(g.start, false) : "";
     const teams = String(g.label || "").split(/\s+at\s+/i);
-    const away = (teams[0] || "").trim();
-    const home = (teams[1] || "").trim();
-    const title = (g.sport ? g.sport + "  " : "") + (when ? when + "  " : "") + (away && home ? away + " at " + home : g.label);
-    const score = boardScoreLine(g);
-    return "<article class='game-row'><h3>" + esc(title) + "</h3><p class='game-who'>Away " + esc(away) + " · Home " + esc(home) + "</p>" + score + "<div class='game-lines'><div><h4>Spread</h4>" + cell("spreads") + "</div><div><h4>Moneyline</h4>" + cell("h2h") + "</div><div><h4>Total</h4>" + cell("totals") + "</div></div></article>";
+    const awayName = (teams[0] || "").trim();
+    const homeName = (teams[1] || "").trim();
+    const scored = findFinalGame((window.__gameScores || []).filter(x => x.sport === String(g.sport || "").toUpperCase()), g.label);
+    const face = team => {
+      const logo = team && /^https:\/\/a\.espncdn\.com\//.test(team.logo || "") ? "<img src='" + esc(team.logo) + "' alt=''>" : "<span class='mgm-logo'></span>";
+      const rec = team && team.rec ? "<i>" + esc(team.rec) + "</i>" : "";
+      const score = team && team.score ? "<b class='mgm-score'>" + esc(team.score) + "</b>" : "";
+      return "<div class='mgm-team'>" + logo + "<span>" + esc((team && (team.name || team.abbr)) || "") + rec + "</span>" + score + "</div>";
+    };
+    const open = [mgmOpen(g, "spreads", day, book, names), mgmOpen(g, "totals", day, book, names), mgmOpen(g, "h2h", day, book, names)];
+    const close = gameClosePack(g, day, book);
+    const closed = [mgmClose(close, "spreads"), mgmClose(close, "totals"), mgmClose(close, "h2h")];
+    const tag = scored && scored.live && !scored.final ? (scored.detail || "Live") : (scored && scored.final ? "Final" : "");
+    return "<article class='mgm-card'><div class='mgm-side'><p class='mgm-when'>" + esc((g.sport ? g.sport + "  " : "") + when + (tag ? "  " + tag : "")) + "</p>" + face(scored && scored.away || {name: awayName}) + face(scored && scored.home || {name: homeName}) + "</div><div class='mgm-books'>" + mgmSet("", ["Spread", "Total", "Money"], open) + mgmSet("Close", ["Spread", "Total", "Money"], closed) + "</div></article>";
   }).join("");
   armGameScores(games);
 }
@@ -9106,7 +9189,10 @@ function restoreForm(){
   if (note && data.picknote) note.textContent = data.picknote;
 }
 function armScreen(){
-  if (pageNeeds("odds")) onceKind("odds", () => fetch(cardUrl("cards/odds-board.json")).then(r => r.ok ? r.json() : null).then(loadOddsBoard).catch(() => loadOddsBoard(null)));
+  if (pageNeeds("odds")) onceKind("odds", () => {
+    fetch(cardUrl("cards/odds-board.json")).then(r => r.ok ? r.json() : null).then(loadOddsBoard).catch(() => loadOddsBoard(null));
+    if ((document.documentElement.dataset.page || "games") === "games") fetch(cardUrl("cards/book-closes.json")).then(r => r.ok ? r.json() : null).then(data => { if (data && data.days) { bookCloses = data; if ((document.documentElement.dataset.page || "games") === "games") drawGameBoard(); } }).catch(() => {});
+  });
   if (pageNeeds("seasons")) onceKind("seasons", () => loadSeasons());
   if (pageNeeds("about")) onceKind("about", () => loadLiveFeed());
   if (pageNeeds("slate")) onceKind("slate", () => { loadPickSlate(); setInterval(() => { loadPickSlate(); }, 300000); });
