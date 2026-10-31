@@ -231,6 +231,7 @@ html[data-page="seasons"] main { min-width:0; }
 .crew-team-kicker { margin:0; color:#39ff14; font-family:"Cinzel",serif; font-size:12px; font-weight:700; letter-spacing:.03em; line-height:1.2; }
 .crew-team-rec { margin:0; color:#d6ffd0; font:700 16px/1.2 system-ui,sans-serif; }
 .crew-team-split { margin:0; color:#f0e14a; font:700 10px/1.2 system-ui,sans-serif; letter-spacing:.08em; }
+.crew-team-win { margin:auto 0 0; width:100%; text-align:center; font:700 16px/1.2 system-ui,sans-serif; }
 .crew-card { display:flex; flex-direction:column; align-items:stretch; flex:0 1 148px; width:148px; max-width:148px; min-width:0; margin:0; }
 .about-mark { width:100%; max-width:100%; height:auto; aspect-ratio:1; object-fit:cover; border-radius:12px; border:1px solid #39ff14; background:#0a0a0a; flex:0 0 auto; }
 .crew-bio { display:flex; flex-direction:column; flex:1 1 auto; margin-top:8px; box-sizing:border-box; width:100%; max-width:100%; border:1px solid #39ff14; border-radius:10px; padding:6px; background:#0e0e0e; color:#d6ffd0; font-family:system-ui,sans-serif; font-size:11px; font-weight:600; font-style:normal; line-height:1.35; letter-spacing:.01em; overflow-wrap:break-word; word-break:break-word; }
@@ -863,7 +864,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-rocco"><img loading="lazy" decoding="async" class="about-mark" src="jungle-rhino.jpg" alt="Rocco No Chase"></a><figcaption class="crew-bio"><b>Rocco No Chase</b><p>No team. The bankroll. I do not chase a number that already left.</p><p class="crew-fee">I have a fee. A flat dime on every play.</p></figcaption></figure>
 <figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-paulie"><img loading="lazy" decoding="async" class="about-mark" src="jungle-hyena.jpg" alt="Paulie the Fade"></a><figcaption class="crew-bio"><b>Paulie the Fade</b><p>The public moves the line. I take the other side and I wait on the value.</p><p class="crew-fee">I have a fee. Half a unit, win or lose.</p></figcaption></figure>
 <figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-gino"><img loading="lazy" decoding="async" class="about-mark" src="jungle-bird.jpg" alt="Gino the Wire"></a><figcaption class="crew-bio"><b>Gino the Wire</b><p>No eye test. The model, the injury, and the move.</p><p class="crew-fee">I have a fee. The juice on the ticket is mine.</p></figcaption></figure>
-<aside class="crew-stack" aria-label="Sharp records"><aside class="crew-team" id="sharpteam" aria-label="Sharps team record"><p class="crew-team-kicker">Sharps</p><p class="crew-team-rec" id="sharpteamrec">0-0-0</p><p class="crew-team-split">W-L-P</p></aside><aside class="crew-each" id="sharpeachbox" aria-label="Each sharp record"><ul id="sharpeach"><li><b>Gnarly Gorilla</b><span>0-0-0</span></li><li><b>Vito the Spot</b><span>0-0-0</span></li><li><b>Rocco No Chase</b><span>0-0-0</span></li><li><b>Paulie the Fade</b><span>0-0-0</span></li><li><b>Gino the Wire</b><span>0-0-0</span></li></ul></aside></aside>
+<aside class="crew-stack" aria-label="Sharp records"><aside class="crew-team" id="sharpteam" aria-label="Sharps team record"><p class="crew-team-kicker">Sharps</p><p class="crew-team-rec" id="sharpteamrec">0-0-0</p><p class="crew-team-split">W-L-P</p><p class="crew-team-win" id="sharpteamwin">$0.00</p></aside><aside class="crew-each" id="sharpeachbox" aria-label="Each sharp record"><ul id="sharpeach"><li><b>Gnarly Gorilla</b><span>0-0-0</span></li><li><b>Vito the Spot</b><span>0-0-0</span></li><li><b>Rocco No Chase</b><span>0-0-0</span></li><li><b>Paulie the Fade</b><span>0-0-0</span></li><li><b>Gino the Wire</b><span>0-0-0</span></li></ul></aside></aside>
 </div>
 </div>
 <aside class="about-box live-feed">
@@ -8448,6 +8449,20 @@ function sharpTally(book){
   });
   return tally;
 }
+function sharpTeamCash(book){
+  let net = 0;
+  Object.keys((book && book.cards) || {}).forEach(date => {
+    const card = book.cards[date];
+    SHARKS.forEach(shark => {
+      (card.sharps && card.sharps[shark.id] || []).forEach(pick => {
+        if (!pick || pick.empty) return;
+        if (pick.result !== "win" && pick.result !== "loss" && pick.result !== "push") return;
+        net += profit({result: pick.result, odds: pick.odds, stake: 10});
+      });
+    });
+  });
+  return net;
+}
 async function paintSharpTeam(){
   const el = document.getElementById("sharpteamrec");
   const team = document.getElementById("sharpteam");
@@ -8466,6 +8481,8 @@ async function paintSharpTeam(){
   let w = 0, l = 0, p = 0;
   Object.keys(tally).forEach(id => { w += tally[id].w || 0; l += tally[id].l || 0; p += tally[id].p || 0; });
   el.textContent = w + "-" + l + "-" + p;
+  const cash = document.getElementById("sharpteamwin");
+  if (cash) cash.innerHTML = moneyHtml(sharpTeamCash(book));
   const list = document.getElementById("sharpeach");
   if (list) list.innerHTML = SHARKS.map(shark => {
     const rec = tally[shark.id] || {w: 0, l: 0, p: 0};
