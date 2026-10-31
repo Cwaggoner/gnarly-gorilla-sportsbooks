@@ -7956,6 +7956,10 @@ function sharpKeepGrades(card, book){
   });
   return card;
 }
+function sharpStatusLabel(result){
+  const word = result === "win" ? "Win" : result === "loss" ? "Loss" : result === "push" ? "Push" : "Pending";
+  return "Status: " + word;
+}
 function sharpTenWin(odds){
   const n = Number(odds);
   if (!Number.isFinite(n) || !n) return "";
@@ -7965,7 +7969,7 @@ function sharpTenWin(odds){
 function sharpSynopsis(shark, t){
   const price = t.ml ? ((Number(t.odds) > 0 ? "+" : "") + t.odds) : (t.juice || "-110");
   const when = t.when || "Time not posted";
-  const conf = (t.confidence && t.confidencePct) ? " Confidence " + t.confidence + " " + t.confidencePct + "%." : "";
+  const conf = (t.confidence && t.confidencePct) ? " Confidence: " + t.confidence + " " + t.confidencePct + "%." : "";
   const game = t.game || [t.away, t.home].filter(Boolean).join(" at ");
   const other = t.who === "home" ? t.away : t.home;
   const mine = t.side || "the side";
@@ -7989,7 +7993,7 @@ function sharpPaint(card, book){
     const picks = (card.sharps[shark.id] || []).map(t => {
       if (!t || t.empty || !t.slip) return "<div class='shark-pick'><div class='shark-copy'><p class='warn'>" + esc(t && t.empty || sharpPass()) + "</p></div></div>";
       const result = t.result || "pending";
-      const label = result === "win" ? "Win" : result === "loss" ? "Loss" : result === "push" ? "Push" : "Pending";
+      const label = sharpStatusLabel(result);
       const conf = (t.confidence && t.confidencePct) ? t.confidence + " " + t.confidencePct + "%" : "";
       const add = Number.isFinite(Number(t.odds)) ? "<button type='button' class='card-price shark-add' data-date='" + encodeURIComponent(t.date || "") + "' data-sport='" + encodeURIComponent(t.sport || "") + "' data-type='" + encodeURIComponent(t.market || "") + "' data-pick='" + encodeURIComponent(t.slip) + "' data-odds='" + encodeURIComponent(String(t.odds)) + "' data-notes='" + encodeURIComponent(conf) + "'>Add to Slip</button>" : "";
       const ten = sharpTenWin(t.odds);
@@ -7998,16 +8002,42 @@ function sharpPaint(card, book){
         ? (function(){ const m = String(t.side || "").match(/^(.*)\s([+-]?\d+)$/); return m ? esc(m[1]) + " <span class='best-price'>" + esc(m[2]) + "</span>" : esc(t.side); })()
         : esc(t.side) + (t.juice ? " <span class='shark-juice best-price'>" + esc(t.juice) + "</span>" : "");
       const syn = "<p class='shark-syn'>" + esc(sharpSynopsis(shark, t)) + "</p>";
-      return "<div class='shark-pick'><div class='shark-copy'><div class='shark-top'><b>" + esc(t.sport) + "</b><span>" + esc(t.market) + "</span></div><p class='shark-side'>" + priceHtml + "</p><p class='shark-game'>" + esc(t.game) + "</p>" + (t.when ? "<p class='shark-when'>" + esc(t.when) + "</p>" : "") + "<p>" + esc(t.why) + "</p>" + (conf ? "<p class='shark-conf " + String(t.confidence).toLowerCase() + "'>Confidence " + esc(conf) + "</p>" : "") + "<p class='shark-result " + result + "'>" + label + "</p>" + syn + "</div><div class='shark-type'>" + add + win + "</div></div>";
+      return "<div class='shark-pick'><div class='shark-copy'><div class='shark-top'><b>" + esc(t.sport) + "</b><span>" + esc(t.market) + "</span></div><p class='shark-side'>" + priceHtml + "</p><p class='shark-game'>" + esc(t.game) + "</p>" + (t.when ? "<p class='shark-when'>" + esc(t.when) + "</p>" : "") + "<p>" + esc(t.why) + "</p>" + (conf ? "<p class='shark-conf " + String(t.confidence).toLowerCase() + "'>Confidence: " + esc(conf) + "</p>" : "") + "<p class='shark-result " + result + "' data-id='" + esc(t.id || "") + "'>" + esc(label) + "</p>" + syn + "</div><div class='shark-type'>" + add + win + "</div></div>";
     }).join("");
     return "<article class='shark' id='" + shark.id + "'><img src='" + shark.img + "' alt='" + esc(shark.alt) + "'><div><h3>" + esc(shark.name) + "</h3><p class='shark-record'>Record " + rec.w + "-" + rec.l + (rec.p ? "-" + rec.p : "") + "</p><p class='shark-rule'>" + esc(shark.rule) + "</p><div class='shark-picks'>" + picks + "</div><p class='shark-fee'>" + esc(shark.fee) + "</p></div></article>";
   }).join("");
+}
+async function refreshSharpGrades(){
+  const board = document.getElementById("sharkboard");
+  const card = window.__sharpCard;
+  if (!board || !card || board.dataset.loading === "1") return;
+  if (board.dataset.day !== sharpWindowDate()) return;
+  const book = sharpReadBook();
+  await sharpGrade(card);
+  book.cards[card.date] = card;
+  sharpWriteBook(book);
+  const tally = sharpTally(book);
+  SHARKS.forEach(shark => {
+    const article = document.getElementById(shark.id);
+    if (!article) return;
+    const rec = tally[shark.id] || {w: 0, l: 0, p: 0};
+    const line = article.querySelector(".shark-record");
+    if (line) line.textContent = "Record " + rec.w + "-" + rec.l + (rec.p ? "-" + rec.p : "");
+    (card.sharps[shark.id] || []).forEach(t => {
+      if (!t || t.empty || t.id == null) return;
+      const result = t.result || "pending";
+      const el = article.querySelector(".shark-result[data-id='" + String(t.id).replace(/'/g, "") + "']");
+      if (!el || el.classList.contains(result)) return;
+      el.className = "shark-result " + result;
+      el.textContent = sharpStatusLabel(result);
+    });
+  });
 }
 async function loadSharks(){
   const board = document.getElementById("sharkboard");
   if (!board || board.dataset.loading === "1") return;
   const day = sharpWindowDate();
-  if (board.dataset.day === day && board.querySelector(".shark img")) return;
+  if (board.dataset.day === day && board.querySelector(".shark img")) { refreshSharpGrades(); return; }
   board.dataset.loading = "1";
   board.innerHTML = "<p class='warn'>Loading the sharps.</p>";
   let book = sharpReadBook();
@@ -8031,6 +8061,9 @@ async function loadSharks(){
   board.dataset.day = card.date || day;
   board.dataset.loading = "";
   window.scrollTo(0, 0);
+  if (!window.__sharpGradeTimer) window.__sharpGradeTimer = setInterval(() => {
+    if (document.documentElement.dataset.page === "sharks") refreshSharpGrades();
+  }, 60000);
 }
 function pageFor(id){
   return {games:"games", seasons:"seasons", dashboard:"dashboard", todaycard:"today", liveodds:"live", slips:"slips", reportcard:"report", charts:"charts", breaks:"books", addbet:"add", calendarcard:"calendar", scoreboard:"scoreboard", about:"about", sharks:"sharks"}[id] || "";
