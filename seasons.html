@@ -628,7 +628,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .market-notes .market-note:last-child { margin-bottom:0; }
 .team-read { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; box-sizing:border-box; margin:8px 0 0; border:1px solid #39ff14; border-radius:10px; padding:8px 10px; background:rgba(57,255,20,.06); }
 .team-read h4 { margin:0 0 4px; color:#39ff14; font-size:12px; }
-.team-read p { margin:0 0 4px; color:#d6ffd0; font-size:12px; line-height:1.35; white-space:normal; }
+.team-read p { margin:0; color:#d6ffd0; font-size:13px; line-height:1.45; white-space:normal; }
 .team-read .vol { color:#00e5ff; margin:0; }
 .mgm-form .inj-out { color:var(--red); font-weight:700; }
 .mgm-form .inj-maybe { color:var(--amber); font-weight:700; }
@@ -8687,7 +8687,7 @@ function teamLogKey(sport, id){
 }
 function teamLogFresh(sport, id){
   const row = (window.__teamLogs || {})[teamLogKey(sport, id)];
-  return !!(row && row.form && Date.now() - row.at < 60 * 60 * 1000);
+  return !!(row && row.form && row.form.v === 2 && Date.now() - row.at < 60 * 60 * 1000);
 }
 function teamLogMissFresh(sport, id){
   return Date.now() - ((window.__teamLogMiss || {})[teamLogKey(sport, id)] || 0) < 15 * 60 * 1000;
@@ -8711,13 +8711,29 @@ function readTeamLog(id, data){
     const us = scoreNum(mine && mine.score);
     const them = scoreNum(opp && opp.score);
     if (!mine || !Number.isFinite(us) || !Number.isFinite(them)) return;
-    rows.push({us: us, them: them, margin: us - them});
+    const oppTeam = (opp && opp.team) || {};
+    rows.push({us: us, them: them, margin: us - them, home: mine.homeAway === "home", opp: oppTeam.shortDisplayName || oppTeam.displayName || oppTeam.abbreviation || ""});
   });
   if (!rows.length) return null;
   const avg = key => rows.reduce((sum, row) => sum + row[key], 0) / rows.length;
   const margin = avg("margin");
   const spread = rows.reduce((sum, row) => sum + Math.pow(row.margin - margin, 2), 0) / (rows.length > 1 ? rows.length - 1 : 1);
-  return {n: rows.length, wins: rows.filter(row => row.margin > 0).length, losses: rows.filter(row => row.margin < 0).length, pf: avg("us"), pa: avg("them"), margin: margin, swing: Math.sqrt(spread)};
+  const best = rows.slice().sort((a, b) => b.margin - a.margin)[0];
+  const worst = rows.slice().sort((a, b) => a.margin - b.margin)[0];
+  const home = rows.filter(row => row.home);
+  const road = rows.filter(row => !row.home);
+  const tally = list => list.filter(row => row.margin > 0).length + "-" + list.filter(row => row.margin < 0).length;
+  let streak = "";
+  if (rows[rows.length - 1].margin !== 0) {
+    const won = rows[rows.length - 1].margin > 0;
+    let n = 0;
+    for (let i = rows.length - 1; i >= 0; i--) {
+      if ((rows[i].margin > 0) === won && rows[i].margin !== 0) n += 1;
+      else break;
+    }
+    if (n) streak = (won ? "Won" : "Lost") + " the last " + n + ".";
+  }
+  return {v: 2, n: rows.length, wins: rows.filter(row => row.margin > 0).length, losses: rows.filter(row => row.margin < 0).length, ties: rows.filter(row => row.margin === 0).length, pf: avg("us"), pa: avg("them"), margin: margin, swing: Math.sqrt(spread), margins: rows.map(row => row.margin), best: {margin: best.margin, opp: best.opp}, worst: {margin: worst.margin, opp: worst.opp}, homeLine: home.length ? tally(home) : "", roadLine: road.length ? tally(road) : "", streak: streak, hi: Math.max.apply(null, rows.map(row => row.us)), lo: Math.min.apply(null, rows.map(row => row.us))};
 }
 function keepTeamLog(sport, id, data){
   const form = readTeamLog(id, data);
@@ -8732,19 +8748,64 @@ function keepTeamLog(sport, id, data){
   if (window.__teamLogMiss) delete window.__teamLogMiss[key];
   return true;
 }
+function injurySentence(sport, team){
+  const feed = (window.__injuryFeeds || {})[String(sport || "").toUpperCase()];
+  if (!feed || !team) return "";
+  const label = team.displayName || team.name || team.shortDisplayName || "";
+  const club = ((feed.injuries) || []).find(item => sameClub(item.displayName || (item.team && item.team.displayName), label));
+  const list = ((club && club.injuries) || []).filter(item => injuryWorth(item.status)).sort((a, b) => injuryRank(a.status) - injuryRank(b.status)).slice(0, 4);
+  if (!list.length) return "";
+  const bits = list.map(item => ((item.athlete || {}).displayName || "A player") + " (" + (item.status || "listed") + ")");
+  return "The injury report lists " + bits.join(", ") + ".";
+}
+function closeCut(sport){
+  const code = String(sport || "").toUpperCase();
+  if (code === "NHL" || code === "MLB") return 1;
+  if (code === "NFL" || code === "CFB") return 8;
+  return 6;
+}
 function teamReadCard(sport, team, fallback){
   const name = (team && (team.displayName || team.name || team.shortDisplayName)) || fallback || "Team";
-  const season = [team && team.record && ("Season " + team.record), team && team.homeRec && ("Home " + team.homeRec), team && team.roadRec && ("Road " + team.roadRec)].filter(Boolean).join(". ");
-  const saved = team && team.id ? (window.__teamLogs || {})[teamLogKey(sport, team.id)] : null;
-  const form = saved && saved.form;
-  let overview = season || "Season record is not on the scoreboard yet.";
-  let vol = "Volatility waits on the last 10.";
-  if (form) {
+  const code = String(sport || "").toUpperCase();
+  const unit = code === "NHL" ? "goals" : code === "MLB" ? "runs" : "points";
+  const one = unit.replace(/s$/, "");
+  const saved = team && team.id ? (window.__teamLogs || {})[teamLogKey(code, team.id)] : null;
+  const form = saved && saved.form && saved.form.v === 2 ? saved.form : null;
+  const sentences = [];
+  if (team && team.record) {
+    const splits = [team.homeRec && (team.homeRec + " at home"), team.roadRec && (team.roadRec + " on the road")].filter(Boolean);
+    sentences.push(name + " are " + team.record + " this season" + (splits.length ? ", " + splits.join(" and ") : "") + ".");
+  } else sentences.push(name + " does not have a season record on the scoreboard yet.");
+  if (team && team.ppg) sentences.push("The scoreboard lists " + team.ppg + " " + unit + " a game for the season.");
+  if (!form) {
+    sentences.push("The last-10 read, including the margin swing, loads from the schedule and has not posted for this team yet.");
+  } else {
     const sign = form.margin >= 0 ? "+" : "";
-    overview = "Last " + form.n + ": " + form.wins + "-" + form.losses + ". Scores " + form.pf.toFixed(1) + ", allows " + form.pa.toFixed(1) + ", margin " + sign + form.margin.toFixed(1) + "." + (season ? " " + season + "." : "");
-    vol = "Volatility " + swingWord(sport, form.swing) + ". Margin swing ±" + form.swing.toFixed(1) + " over the last " + form.n + ".";
-  } else if (team && team.ppg) overview += " Scores " + team.ppg + " a game.";
-  return "<div><h4>" + esc(name) + "</h4><p>" + esc(overview) + "</p><p class='vol'>" + esc(vol) + "</p></div>";
+    const rec = form.wins + "-" + form.losses + (form.ties ? "-" + form.ties : "");
+    sentences.push("Over the last " + form.n + " finished games they are " + rec + ". They scored " + form.pf.toFixed(1) + " " + unit + " and allowed " + form.pa.toFixed(1) + ", an average margin of " + sign + form.margin.toFixed(1) + ".");
+    const places = [form.homeLine && (form.homeLine + " at home"), form.roadLine && (form.roadLine + " on the road")].filter(Boolean);
+    if (places.length) sentences.push("That stretch was " + places.join(" and ") + ".");
+    if (form.best && form.worst && form.best.margin !== form.worst.margin) {
+      const describe = row => {
+        const n = Math.abs(row.margin).toFixed(0);
+        if (row.margin > 0) return "a " + n + "-" + one + " win" + (row.opp ? " over " + row.opp : "");
+        if (row.margin < 0) return "a " + n + "-" + one + " loss" + (row.opp ? " to " + row.opp : "");
+        return "a tie" + (row.opp ? " with " + row.opp : "");
+      };
+      sentences.push("The best margin was " + describe(form.best) + ". The worst margin was " + describe(form.worst) + ".");
+    }
+    if (form.hi != null && form.lo != null) sentences.push("Scoring in those games ran from " + form.lo.toFixed(0) + " to " + form.hi.toFixed(0) + ".");
+    if (form.streak) sentences.push(form.streak);
+    const cut = closeCut(code);
+    const closeN = (form.margins || []).filter(m => m !== 0 && Math.abs(m) <= cut).length;
+    if (closeN) sentences.push(closeN + " of the " + form.n + " were within " + cut + " " + (cut === 1 ? one : unit) + ", close enough that one score decided them.");
+    const word = swingWord(code, form.swing);
+    const read = word === "Steady" ? "The results sit close together, so a normal number is less likely to be ambushed by a random blowout." : word === "Normal" ? "The ups and downs are ordinary for this sport. A short number can still lose on a night that was not a collapse." : "The results are scattered. This sample has both a comfortable win and a bad loss, so the record alone does not tell you how noisy the next game is.";
+    sentences.push("Volatility is " + word.toLowerCase() + ". The margin moves ±" + form.swing.toFixed(1) + " " + unit + " around the average over these " + form.n + " games. That figure is the spread of the actual margins, not a model. " + read);
+  }
+  const inj = injurySentence(code, team);
+  if (inj) sentences.push(inj);
+  return "<div><h4>" + esc(name) + "</h4><p>" + esc(sentences.join(" ")) + "</p></div>";
 }
 function teamsOnBoard(games){
   const scores = window.__gameScores || [];
