@@ -264,11 +264,11 @@ html[data-page="seasons"] main { min-width:0; }
 .shark-picks { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
 .shark-pick { display:flex; flex-direction:row; align-items:stretch; gap:0; border:1px solid #39ff14; border-radius:10px; padding:0; min-width:0; overflow:hidden; }
 .shark-copy { min-width:0; flex:1 1 auto; padding:8px 10px; }
-.shark-type { flex:0 0 auto; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:6px; margin:0; padding:8px 10px; align-self:stretch; background:rgba(57,255,20,.12); border:0; border-left:1px solid #39ff14; border-radius:0; }
+.shark-type { flex:0 0 240px; width:240px; min-width:240px; max-width:240px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:6px; margin:0; padding:8px 10px; align-self:stretch; box-sizing:border-box; background:rgba(57,255,20,.12); border:0; border-left:1px solid #39ff14; border-radius:0; }
 .shark-type span { color:var(--amber); font:700 12px/1.4 system-ui,sans-serif; letter-spacing:.06em; text-transform:uppercase; }
 .shark-add { margin:0; flex:0 0 auto; white-space:nowrap; align-self:center; }
-.shark-pick .shark-win { margin:0; width:100%; color:#00ffff; text-align:center; font:700 15px/1.4 system-ui,sans-serif; }
-.shark-type .shark-liveconf { margin:0; width:100%; text-align:center; }
+.shark-pick .shark-win { margin:0; width:100%; color:#00ffff; text-align:center; font:700 15px/1.4 system-ui,sans-serif; white-space:nowrap; }
+.shark-type .shark-liveconf { margin:0; width:100%; text-align:center; white-space:nowrap; }
 .shark-pick .shark-syn { margin:0 0 4px; color:var(--text); font:15px/1.4 system-ui,sans-serif; text-align:left; }
 .shark-top { display:flex; justify-content:space-between; align-items:baseline; gap:8px; margin:0 0 4px; }
 .shark-top b { margin:0; color:var(--title); font:700 15px/1.4 system-ui,sans-serif; letter-spacing:.04em; }
