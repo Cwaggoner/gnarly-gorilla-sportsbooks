@@ -78,7 +78,8 @@ html[data-phone] body { width:200%; }
 html[data-phone] .page { max-width:none; }
 main { margin:0; padding:0; }
 footer.card { width:100%; max-width:none; margin:14px 0 0; box-sizing:border-box; }
-.page { display:flex; flex-direction:column; } .page-end { order:9999; height:100vh; } #below-about:empty { display:none; }
+.page { display:flex; flex-direction:column; } .page-end { order:9999; height:100vh; overflow-anchor:none; } #below-about:empty { display:none; }
+#sharkboard { overflow-anchor:none; }
 .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; margin:12px 0 16px; }
 .stat, .card, table { background:var(--card); border:1px solid #39ff14; border-radius:10px; }
 .stat { padding:12px; display:flex; flex-direction:column; justify-content:center; }
@@ -7949,8 +7950,7 @@ async function loadSharks(){
   window.__sharpCard = card;
   sharpPaint(card, book);
   board.dataset.loading = "";
-  const jump = location.hash && document.querySelector(location.hash);
-  if (jump) jump.scrollIntoView({block:"start"});
+  window.scrollTo(0, 0);
 }
 function pageFor(id){
   return {games:"games", seasons:"seasons", dashboard:"dashboard", todaycard:"today", liveodds:"live", slips:"slips", reportcard:"report", charts:"charts", breaks:"books", addbet:"add", calendarcard:"calendar", scoreboard:"scoreboard", about:"about", sharks:"sharks"}[id] || "";
@@ -8039,7 +8039,8 @@ function showView(id){
   document.title = (titles[screen] || "Ledger") + " | Gnarly Gorilla Sportsbooks";
   const canon = document.querySelector('link[rel="canonical"]');
   if (canon) canon.href = new URL(pageUrl(screen), "https://cwaggoner.github.io/gnarly-gorilla-sportsbooks/").href;
-  window.scrollTo({top: 0, behavior:"smooth"});
+  if (screen === "sharks") window.scrollTo(0, 0);
+  else window.scrollTo({top: 0, behavior:"smooth"});
   if (id !== screen) {
     const bar = document.querySelector(".topbar");
     const barH = bar ? bar.offsetHeight : 0;
