@@ -531,7 +531,8 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .sport-bar .score-full { margin-left:4px; height:38px; display:inline-flex; align-items:center; box-sizing:border-box; padding:2px 10px; }
 .sport-bar button { height:38px; min-width:7ch; }
 .game-row { border:1px solid #39ff14; border-radius:10px; margin:8px 0; padding:10px; background:#101610; }
-.game-row h3 { margin:0 0 8px; color:#39ff14; font-size:15px; }
+.game-row h3 { margin:0 0 4px; color:#39ff14; font-size:15px; }
+.game-who { margin:0 0 8px; color:#d6ffd0; font-size:13px; }
 .game-lines { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
 .game-lines h4 { margin:0 0 4px; color:#8fb898; font-size:12px; font-weight:600; }
 @media (max-width:800px) { .game-lines { grid-template-columns:1fr; } }
@@ -4160,6 +4161,10 @@ function paintBookCell(cell, hot, row, market, day, book){
   if (!text || text === "-") return "-";
   const sides = shopSides(text);
   if (!sides || !row) return esc(text);
+  const parts = String(row.label || "").split(/\s+at\s+/i);
+  const nick = s => String(s || "").trim().split(/\s+/).slice(-1)[0] || "";
+  const away = nick(parts[0]);
+  const home = nick(parts[1]);
   const sharedPoint = sides[0] && sides[0].point;
   return sides.map((side, index) => {
     if (!side) return "-";
@@ -4168,7 +4173,11 @@ function paintBookCell(cell, hot, row, market, day, book){
     const attrs = Object.keys(data).map(key => " data-" + key + "='" + encodeURIComponent(String(data[key])) + "'").join("");
     const cls = hot && hot[index] ? "board-price best-price" : "board-price";
     const priceText = (side.price > 0 ? "+" : "") + side.price;
-    const label = market === "totals" && point != null ? ((index === 0 ? "Over " : "Under ") + point + " " + priceText) : side.text;
+    const who = index === 1 ? home : away;
+    let label = side.text;
+    if (market === "totals" && point != null) label = (index === 0 ? "Over " : "Under ") + point + " " + priceText;
+    else if (market === "spreads" && point != null) label = (who ? who + " " : "") + (point > 0 ? "+" : "") + point + " " + priceText;
+    else if (who) label = who + " " + priceText;
     return "<button type='button' class='" + cls + "'" + attrs + ">" + esc(label) + "</button>";
   }).join("");
 }
@@ -7545,7 +7554,11 @@ if (pageNeeds("books")) {
 }
 function loadOddsBoard(data){
   if (!usableBoard(data)) data = savedBoard();
-  if (!rememberBoard(data)) return;
+  if (!rememberBoard(data)) {
+    const box = document.getElementById("gameboard");
+    if (box && !usableBoard(window.__ggOddsBoard)) box.innerHTML = "<p class='warn'>The board did not load.</p>";
+    return;
+  }
   applyPublishedBooks();
   drawOddsCompare(false).catch(() => {});
 }
@@ -7578,8 +7591,13 @@ function drawGameBoard(){
   const book = bookEl ? bookEl.value : "BetMGM";
   const sport = sportBtn ? sportBtn.dataset.sport : "All";
   const day = easternDay();
-  const block = window.__ggOddsBoard && window.__ggOddsBoard.days && window.__ggOddsBoard.days[day];
-  if (!block) { box.innerHTML = "<p class='warn'>No board for today yet.</p>"; return; }
+  const days = window.__ggOddsBoard && window.__ggOddsBoard.days;
+  const block = days && days[day];
+  if (!block) {
+    const last = Object.keys(days || {}).sort().pop();
+    box.innerHTML = "<p class='warn'>" + (last ? "No board for " + prettyDay(day) + ". The last posted board is " + prettyDay(last) + "." : "The board did not load.") + "</p>";
+    return;
+  }
   const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
   const index = {};
   ["h2h","spreads","totals"].forEach(market => {
@@ -7603,7 +7621,11 @@ function drawGameBoard(){
       return paintBookCell(row.books[book], flags, row, market, day, book);
     };
     const when = g.start ? formatTime(g.start, false) : "";
-    return "<article class='game-row'><h3>" + esc((g.sport ? g.sport + "  " : "") + (when ? when + "  " : "") + g.label) + "</h3><div class='game-lines'><div><h4>Spread</h4>" + cell("spreads") + "</div><div><h4>Moneyline</h4>" + cell("h2h") + "</div><div><h4>Total</h4>" + cell("totals") + "</div></div></article>";
+    const teams = String(g.label || "").split(/\s+at\s+/i);
+    const away = (teams[0] || "").trim();
+    const home = (teams[1] || "").trim();
+    const title = (g.sport ? g.sport + "  " : "") + (when ? when + "  " : "") + (away && home ? away + " at " + home : g.label);
+    return "<article class='game-row'><h3>" + esc(title) + "</h3><p class='game-who'>Away " + esc(away) + " · Home " + esc(home) + "</p><div class='game-lines'><div><h4>Spread</h4>" + cell("spreads") + "</div><div><h4>Moneyline</h4>" + cell("h2h") + "</div><div><h4>Total</h4>" + cell("totals") + "</div></div></article>";
   }).join("");
 }
 const SHARP_STYLE = "us-five-v1";
