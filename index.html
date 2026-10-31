@@ -221,6 +221,10 @@ html[data-page="seasons"] main { min-width:0; }
 .about-copy { position:relative; }
 .crew-title { margin:14px auto 8px; width:100%; text-align:center; color:#39ff14; font-family:"Cinzel",serif; font-weight:700; font-size:34px; letter-spacing:.03em; line-height:1.15; }
 .crew-row { display:flex; justify-content:center; align-items:stretch; gap:8px; margin:0 auto; min-width:0; width:100%; }
+.crew-team { flex:0 0 auto; align-self:flex-end; display:flex; flex-direction:column; justify-content:center; gap:2px; margin:0; box-sizing:border-box; border:1px solid #39ff14; border-radius:10px; padding:8px 10px; background:#0e0e0e; text-align:center; }
+.crew-team-kicker { margin:0; color:#39ff14; font-family:"Cinzel",serif; font-size:12px; font-weight:700; letter-spacing:.03em; line-height:1.2; }
+.crew-team-rec { margin:0; color:#d6ffd0; font:700 16px/1.2 system-ui,sans-serif; }
+.crew-team-split { margin:0; color:#f0e14a; font:700 10px/1.2 system-ui,sans-serif; letter-spacing:.08em; }
 .crew-card { display:flex; flex-direction:column; align-items:stretch; flex:0 1 148px; width:148px; max-width:148px; min-width:0; margin:0; }
 .about-mark { width:100%; max-width:100%; height:auto; aspect-ratio:1; object-fit:cover; border-radius:12px; border:1px solid #39ff14; background:#0a0a0a; flex:0 0 auto; }
 .crew-bio { display:flex; flex-direction:column; flex:1 1 auto; margin-top:8px; box-sizing:border-box; width:100%; max-width:100%; border:1px solid #39ff14; border-radius:10px; padding:6px; background:#0e0e0e; color:#d6ffd0; font-family:system-ui,sans-serif; font-size:11px; font-weight:600; font-style:normal; line-height:1.35; letter-spacing:.01em; overflow-wrap:break-word; word-break:break-word; }
@@ -848,6 +852,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <p class="warn" id="statebooks">State rules load from the visitor location.</p>
 <p class="crew-title">Gnarly Gorilla Sports Sharps</p>
 <div class="crew-row">
+<aside class="crew-team" id="sharpteam" aria-label="Sharps team record"><p class="crew-team-kicker">Sharps</p><p class="crew-team-rec" id="sharpteamrec">0-0-0</p><p class="crew-team-split">W-L-P</p></aside>
 <figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-gorilla"><img loading="lazy" decoding="async" class="about-mark" src="about-gorilla.jpg" alt="Gnarly Gorilla"></a><figcaption class="crew-bio"><b>Gnarly Gorilla</b><p>The number, not the noise. A small edge is enough. I do not sell a sure thing.</p><p class="crew-fee">I have a fee. The first $10 of the stake is mine.</p></figcaption></figure>
 <figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-vito"><img loading="lazy" decoding="async" class="about-mark" src="jungle-leopard.jpg" alt="Vito the Spot"></a><figcaption class="crew-bio"><b>Vito the Spot</b><p>College is the board. I think for myself, and I will not copy the next man.</p><p class="crew-fee">I have a fee. One unit rides the side I name.</p></figcaption></figure>
 <figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-rocco"><img loading="lazy" decoding="async" class="about-mark" src="jungle-rhino.jpg" alt="Rocco No Chase"></a><figcaption class="crew-bio"><b>Rocco No Chase</b><p>No team. The bankroll. I do not chase a number that already left.</p><p class="crew-fee">I have a fee. A flat dime on every play.</p></figcaption></figure>
@@ -8437,6 +8442,24 @@ function sharpTally(book){
   });
   return tally;
 }
+async function paintSharpTeam(){
+  const el = document.getElementById("sharpteamrec");
+  if (!el) return;
+  const book = sharpReadBook();
+  try {
+    const res = await fetch("cards/sharps.json?ts=" + Date.now());
+    if (res.ok) {
+      const posted = await res.json();
+      if (posted && posted.date && posted.sharps && !(book.cards && book.cards[posted.date])) {
+        book.cards = Object.assign({}, book.cards, {[posted.date]: posted});
+      }
+    }
+  } catch (e) {}
+  const tally = sharpTally(book);
+  let w = 0, l = 0, p = 0;
+  Object.keys(tally).forEach(id => { w += tally[id].w || 0; l += tally[id].l || 0; p += tally[id].p || 0; });
+  el.textContent = w + "-" + l + "-" + p;
+}
 function sharpKeepGrades(card, book){
   const prior = book.cards[card.date];
   if (!prior) return card;
@@ -8717,6 +8740,7 @@ function showView(id){
   });
   if (screen === "scoreboard") loadLiveBoard();
   if (screen === "sharks") loadSharks();
+  if (screen === "about") paintSharpTeam();
   if (screen === "dashboard") { try { drawDashboard(); } catch (e) {} }
   if (screen === "charts") { try { drawCharts(); } catch (e) {} }
   if (screen === "calendarcard") { try { drawCalendar(); } catch (e) {} }
