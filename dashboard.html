@@ -553,6 +553,11 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
     var time = document.getElementById("zonetime");
     if (date && date.textContent !== dateText) date.textContent = dateText;
     if (time && time.textContent !== timeText) time.textContent = timeText;
+    var region = document.getElementById("headregion");
+    try {
+      var savedState = localStorage.getItem("gg-visitor-state") || "";
+      if (region && savedState && !region.textContent) region.textContent = savedState.toUpperCase();
+    } catch (e) {}
   }
   tick();
   setInterval(tick, 1000);
@@ -6711,6 +6716,7 @@ later(() => {
   if (line && saved) line.textContent = saved.toUpperCase();
   fetch(cardUrl("cards/state-rules.json")).then(r => r.ok ? r.json() : null).then(async data => {
   stateRules = (data && data.states) || {};
+  if (saved && stateRules[saved]) { applyState(saved); return; }
   const place = await locateVisitor();
   const books = document.getElementById("statebooks");
   if (!place) {
@@ -7325,30 +7331,24 @@ document.getElementById("resetcal").onclick = () => {
   drawCalendar();
   document.getElementById("calnote").textContent = "Showing The Default Calendar ($10.00 Bets)";
 };
+function refreshTimes(){
+  showClock();
+  document.querySelectorAll("[data-start]").forEach(el => {
+    if (el.dataset.start) el.textContent = formatTime(el.dataset.start, false);
+  });
+  try { paintOddsTimes(); } catch (e) {}
+}
 const tzSelect = document.getElementById("timezone");
 tzSelect.value = siteZone();
 tzSelect.onchange = () => {
   localStorage.setItem("gg-timezone", tzSelect.value);
-  followMonth();
-  armMidnight();
-  showClock();
-  drawPickSlate();
-  paintOddsTimes();
-  render();
-  if (openDate) openDay(openDate);
-  showSeasons();
-  armHourlyScores();
+  refreshTimes();
 };
 const hourBtn = document.getElementById("hourmode");
 hourBtn.textContent = "12hr/24hr Toggle";
 hourBtn.onclick = () => {
   localStorage.setItem("gg-hour", hour12() ? "24" : "12");
-  showClock();
-  drawPickSlate();
-  paintOddsTimes();
-  render();
-  if (openDate) openDay(openDate);
-  showSeasons();
+  refreshTimes();
 };
 showClock();
 setInterval(showClock, 1000);
