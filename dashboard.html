@@ -353,6 +353,7 @@ tr.row-pending.edge td.result { color:var(--amber); }
 #rows td.slip-conf.low { color:#8fb898; }
 #rows td.slip-score { white-space:nowrap; font-variant-numeric:tabular-nums; }
 #rows td.slip-score .wmark { color:#39ff14; font-weight:700; margin-left:4px; }
+#rows td.slip-score .slip-q { color:#f0e14a; font-weight:700; margin-left:6px; }
 .tools { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; align-items:flex-end; }
 .jump { display:flex; gap:6px; margin:6px 0; justify-content:center; align-items:center; }
 .jump button { padding:4px 8px; font-size:12px; }
@@ -8055,7 +8056,8 @@ function slipScoreHtml(game){
   const aW = game.final && away > home ? "<b class='wmark'>W</b>" : "";
   const hW = game.final && home > away ? "<b class='wmark'>W</b>" : "";
   const line = esc(slipTeamTag(game.away)) + " " + away + aW + " — " + esc(slipTeamTag(game.home)) + " " + home + hW;
-  return game.live && !game.final ? "<span class='live-dot'></span>" + line : line;
+  const when = game.live && !game.final && game.detail ? "<span class='slip-q'>" + esc(game.detail) + "</span>" : "";
+  return game.live && !game.final ? "<span class='live-dot'></span>" + line + when : line;
 }
 function slipScoreCell(b){
   if (!b || betType(b) === "Prop") return "—";
