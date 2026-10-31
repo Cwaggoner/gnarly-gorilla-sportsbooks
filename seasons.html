@@ -480,10 +480,12 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
   .card { padding:10px; }
   .sitenav a, .sitenav button, .sitenav select { font-size:11px; height:24px; }
 }
-.ekg{display:block;width:100%;height:36px;margin:0 auto}
-.ekg svg{width:100%;height:36px}
-.ekg .base{fill:none;stroke:#163016;stroke-width:1.5;vector-effect:non-scaling-stroke}
-.ekg .trace{fill:none;stroke:#39ff14;stroke-width:1.5;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.ekg{position:relative;display:block;width:100%;height:36px;margin:0 auto;overflow:hidden;contain:paint;transform:translateZ(0)}
+.ekg svg{display:block;width:100%;height:36px;animation:ekg-fade var(--draw,7.4s) linear infinite}
+.ekg .trace{fill:none;stroke:#39ff14;stroke-width:2;stroke-linecap:round}
+.ekg-cover{position:absolute;inset:0;background:#102010;transform:translate3d(0,0,0);animation:ekg-draw var(--draw,7.4s) linear infinite;will-change:transform;pointer-events:none}
+@keyframes ekg-draw{0%{transform:translate3d(0,0,0)}85%{transform:translate3d(100%,0,0)}100%{transform:translate3d(100%,0,0)}}
+@keyframes ekg-fade{0%{opacity:.4}85%{opacity:1}100%{opacity:0}}
 .compare { width:100%; border-collapse:collapse; font-size:12px; }
 .compare th, .compare td { border-bottom:1px solid #1f3a1f; padding:4px 6px; text-align:left; }
 .compare th { color:#39ff14; }
@@ -3257,38 +3259,12 @@ function showSeasons(checked){
     else wave += " H" + x + " L" + (x + 2) + " 18 L" + (x + 3) + " 14 L" + (x + 4) + " 22 L" + (x + 5) + " 18";
   });
   wave += " H448";
-  const ekg = "<span class='ekg' data-ms='" + (parseFloat(pulse) * 1000) + "'><svg viewBox='0 0 448 36' preserveAspectRatio='none' aria-label='Season pulse'><defs><clipPath id='ekgclip'><rect class='ekg-clip' x='0' y='0' width='0' height='36'></rect></clipPath></defs><path class='trace' clip-path='url(#ekgclip)' d='" + wave + "' style='stroke:" + color + "'></path></svg></span>";
+  const ekg = "<span class='ekg' style='--draw:" + pulse + "'><svg viewBox='0 0 448 36' preserveAspectRatio='none' aria-label='Season pulse'><path class='trace' d='" + wave + "' style='stroke:" + color + "'></path></svg><span class='ekg-cover'></span></span>";
   const live = "<div id='seasonlive'><div class='section-head'><h2>Live Scores</h2><p class='warn slips-side' id='seasonlivenote'>Loading the board.</p></div><div class='score-strip'><button type='button' class='score-arrow' id='seasonliveleft' aria-label='Scroll scores left'><svg viewBox='0 0 24 24' width='22' height='22' aria-hidden='true'><path d='M15 5 L8 12 L15 19' fill='none' stroke='#39ff14' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/></svg></button><div class='score-row' id='seasonliverow'></div><button type='button' class='score-arrow' id='seasonliveright' aria-label='Scroll scores right'><svg viewBox='0 0 24 24' width='22' height='22' aria-hidden='true'><path d='M9 5 L16 12 L9 19' fill='none' stroke='#39ff14' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/></svg></button></div><div class='sport-bar' id='seasonlivesports'><button type='button' data-sport='All' class='on'>All</button><button type='button' data-sport='CBB'>CBB</button><button type='button' data-sport='CFB'>CFB</button><button type='button' data-sport='MLB'>MLB</button><button type='button' data-sport='NBA'>NBA</button><button type='button' data-sport='NFL'>NFL</button><button type='button' data-sport='NHL'>NHL</button><a class='score-full' id='scorefull' href='index.html?page=scoreboard'>Full Scoreboard</a><span class='score-day'><button type='button' id='seasonliveprev'>Prev</button><b id='seasonliveday'></b><button type='button' id='seasonlivenext'>Next</button><button type='button' id='seasonlivetoday'>Today</button></span></div><div id='seasonlivenotes'></div></div>";
   const records = "<div class='card-rest' id='seasonrecords'><div class='section-head'><h2>Win/Loss Records</h2><p class='warn slips-side' id='recnote'>Loading standings.</p></div><div class='tools'><label>Sport<select id='recsport'></select></label><label>Conference<select id='recconf'></select></label><label>Division<select id='recdiv'></select></label></div><div class='table-wrap'><table><thead><tr><th>Team</th><th>Sport</th><th>Conference</th><th>Division</th><th>W</th><th>L</th><th>T/OTL</th><th>PCT</th><th>GB</th><th>Streak</th></tr></thead><tbody id='recrows'></tbody></table></div></div>";
   const trivia = "<div class='card-rest' id='seasontrivia'><b style='color:#39ff14'>Daily Sports Trivia</b><p class='warn' style='margin:4px 0 8px'>A new question at midnight. The same question stays up all day.</p><p data-q>Loading today's question.</p><button type='button' id='triviareveal'>Show answer</button><p data-a class='warn' hidden></p></div>";
   box.innerHTML = live + "<div class='section-head'><h2>Season Dates</h2><p class='warn slips-side'>Checked " + (seasonChecked || "2026-10-19") + ". NFL May, NHL July, MLB July, NBA August, CFB August, CBB September. Postseason nights stay open until the last game ends or " + zoneTime(4, 0) + ". NBA and NHL through June 30, MLB through the World Series, NFL through the Super Bowl, CFB through the championship, March Madness March 13 through the title game.</p></div><table><thead><tr><th colspan='6' style='text-align:center'>" + ekg + "</th></tr><tr><th>Sport</th><th>Start</th><th>Last Card</th><th>Status</th><th>Where</th><th>Days Left</th></tr></thead><tbody>" + rows + "</tbody></table>" + records + trivia;
-  startPulse();
   if (pageNeeds("seasons")) { loadRecords(); loadLiveBoard(); }
-}
-let pulseFrame = 0;
-function startPulse(){
-  cancelAnimationFrame(pulseFrame);
-  const root = document.querySelector("#seasons .ekg");
-  const trace = root && root.querySelector(".trace");
-  const clip = root && root.querySelector(".ekg-clip");
-  if (!trace || !clip) return;
-  const ms = Number(root.dataset.ms) || 1600;
-  const began = performance.now();
-  const fade = 1200;
-  const tick = now => {
-    const cycle = (now - began) % (ms + fade);
-    if (cycle <= ms) {
-      const progress = cycle / ms;
-      clip.setAttribute("width", String(Math.max(0.5, progress * 448)));
-      trace.style.opacity = String(0.35 + progress * 0.65);
-    } else {
-      clip.setAttribute("width", "448");
-      const fadeOut = 1 - (cycle - ms) / fade;
-      trace.style.opacity = String(Math.max(0, fadeOut));
-    }
-    pulseFrame = requestAnimationFrame(tick);
-  };
-  pulseFrame = requestAnimationFrame(tick);
 }
 async function loadTrivia(){
   const box = document.getElementById("seasontrivia");
