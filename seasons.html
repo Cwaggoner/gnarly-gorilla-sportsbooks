@@ -541,6 +541,23 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </header>
 <nav class="sitenav" id="sitenav">
 <div class="nav-cell left"><span class="clock" id="zonedate"></span><span class="clock" id="zonetime"></span></div>
+<script>
+(function(){
+  function tick(){
+    var zone = "America/New_York", hour12 = true;
+    try { zone = localStorage.getItem("gg-timezone") || zone; hour12 = localStorage.getItem("gg-hour") !== "24"; } catch (e) {}
+    var now = new Date();
+    var dateText = now.toLocaleDateString("en-US", {timeZone:zone, weekday:"long", month:"long", day:"numeric", year:"numeric"});
+    var timeText = now.toLocaleTimeString("en-US", {timeZone:zone, hour:"numeric", minute:"2-digit", second:"2-digit", hour12:hour12});
+    var date = document.getElementById("zonedate");
+    var time = document.getElementById("zonetime");
+    if (date && date.textContent !== dateText) date.textContent = dateText;
+    if (time && time.textContent !== timeText) time.textContent = timeText;
+  }
+  tick();
+  setInterval(tick, 1000);
+})();
+</script>
 <div class="nav-cell mid">
 <a href="index.html" data-jump="games" class="on">Games</a>
 <a href="index.html?page=live" data-jump="liveodds">Live Odds</a>
@@ -941,10 +958,14 @@ function showClock(){
   const now = new Date();
   const date = document.getElementById("zonedate");
   const time = document.getElementById("zonetime");
-  if (date) date.textContent = now.toLocaleDateString("en-US", {timeZone: siteZone(), weekday:"long", month:"long", day:"numeric", year:"numeric"});
-  if (time) time.textContent = formatTime(now, true);
+  const dateText = now.toLocaleDateString("en-US", {timeZone: siteZone(), weekday:"long", month:"long", day:"numeric", year:"numeric"});
+  const timeText = formatTime(now, true);
+  if (date && date.textContent !== dateText) date.textContent = dateText;
+  if (time && time.textContent !== timeText) time.textContent = timeText;
   const live = document.getElementById("liveline");
-  if (live) live.textContent = liveByText();
+  if (!live) return;
+  const liveText = liveByText();
+  if (live.textContent !== liveText) live.textContent = liveText;
 }
 function yesterday(){ return shiftDate(easternDay(), -1); }
 function shiftDate(iso, days){
