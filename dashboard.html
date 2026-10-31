@@ -409,8 +409,10 @@ table.season-hold.filled td.note-col p { margin:0; display:-webkit-box; -webkit-
 .wx.poor { color:#ff6b6b; border-color:#ff6b6b; }
 .daytags { color:var(--text); font-size:13px; white-space:nowrap; }
 .slash { color:#39ff14; }
-.cal-bar { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin:0 0 12px; }
-.cal-bar .tools { margin-top:0; align-items:flex-start; flex:1 1 auto; }
+table.cal-line { width:100%; margin:0 0 12px; border:0; border-radius:0; background:transparent; overflow:visible; }
+table.cal-line td { border:0; background:transparent; vertical-align:top; padding:0; box-shadow:none; }
+table.cal-line td.cal-icons { text-align:right; width:1%; white-space:nowrap; }
+table.cal-line .tools { margin:0; align-items:flex-start; }
 .cal-crew { display:flex; align-items:flex-start; justify-content:flex-end; gap:8px; margin:0; padding:0; flex:0 0 auto; }
 .cal-crew img { width:72px; height:72px; object-fit:cover; border-radius:12px; border:1px solid #39ff14; background:#0a0a0a; display:block; }
 canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--line); border-radius:8px; display:block; }
@@ -422,7 +424,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 #sportday { text-align:center; margin:6px 0 0; color:#d6ffd0; }
 @media (max-width:760px) { .charts { grid-template-columns:1fr; } .bet-top { grid-template-columns:1fr; } .field-grid { grid-template-columns:1fr 1fr; } .field-note { grid-column:1 / -1; } #betload img { max-width:120px; } }
 
-@media (max-width:760px) { table { display:block; overflow-x:auto; } }
+@media (max-width:760px) { table { display:block; overflow-x:auto; } table.cal-line { display:table; overflow:visible; } }
 @media (max-width:760px) {
   header { grid-template-columns:56px minmax(0,1fr) auto 56px; gap:6px; padding:4px 6px; }
   header img, .cal-crew img { width:44px; height:44px; border-radius:8px; }
@@ -780,16 +782,16 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </section>
 <section class="card view" id="calendarcard">
 <div class="section-head"><h2>Calendar</h2><span id="monthpl" style="margin-left:10ch;color:#d6ffd0"></span><p class="warn slips-side">Everyone sees the shared $10 calendar until they upload a file. An uploaded file stays in this browser only.<br>Other users do not see it. Use Shared Calendar to go back.</p></div>
-<div class="cal-bar">
-<div class="tools"><div class="btn-pair"><span>Navigation</span><div><button type="button" id="prevMonth">Prev</button><button type="button" id="nextMonth">Next</button></div></div><label>Load My Calendar<input type="file" id="loadcal" accept=".json,application/json"><span class="file-face">No File Chosen</span></label><div class="btn-pair"><span class="pair-title"><span id="calnote" class="warn"></span></span><div><button type="button" id="resetcal">Use Shared Calendar</button></div></div></div>
-<div class="cal-crew">
+<table class="cal-line"><tbody><tr>
+<td><div class="tools"><div class="btn-pair"><span>Navigation</span><div><button type="button" id="prevMonth">Prev</button><button type="button" id="nextMonth">Next</button></div></div><label>Load My Calendar<input type="file" id="loadcal" accept=".json,application/json"><span class="file-face">No File Chosen</span></label><div class="btn-pair"><span class="pair-title"><span id="calnote" class="warn"></span></span><div><button type="button" id="resetcal">Use Shared Calendar</button></div></div></div></td>
+<td class="cal-icons"><div class="cal-crew">
 <img src="about-gorilla.jpg" alt="Gnarly Gorilla" width="72" height="72" loading="lazy" decoding="async">
 <img src="jungle-leopard.jpg" alt="Vito the Spot" width="72" height="72" loading="lazy" decoding="async">
 <img src="jungle-rhino.jpg" alt="Rocco No Chase" width="72" height="72" loading="lazy" decoding="async">
 <img src="jungle-hyena.jpg" alt="Paulie the Fade" width="72" height="72" loading="lazy" decoding="async">
 <img src="jungle-bird.jpg" alt="Gino the Wire" width="72" height="72" loading="lazy" decoding="async">
-</div>
-</div>
+</div></td>
+</tr></tbody></table>
 <div class="cal" id="calendar"></div>
 </section>
 </main>
