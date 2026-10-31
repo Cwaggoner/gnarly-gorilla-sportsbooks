@@ -249,6 +249,10 @@ html[data-page="seasons"] main { min-width:0; }
 .shark-model { margin:0 0 6px; color:var(--title); font:700 15px/1.4 system-ui,sans-serif; letter-spacing:.03em; }
 .shark-record { margin:0 0 8px; color:var(--amber); font:700 15px/1.4 system-ui,sans-serif; letter-spacing:.02em; }
 .shark-result { font:700 15px/1.4 system-ui,sans-serif; letter-spacing:.04em; }
+.shark-pick .score-state { display:block; margin:0 0 4px; text-align:right; font-size:12px; font-weight:700; }
+.shark-pick .score-state.live { color:#f0e14a; }
+.shark-pick .score-state.final { color:#39ff14; }
+.shark-pick .score-state.pre { color:#d6ffd0; font-weight:400; }
 .shark-result.win { color:var(--title); }
 .shark-result.loss { color:var(--red); }
 .shark-result.push, .shark-result.pending { color:var(--amber); }
@@ -7891,6 +7895,30 @@ function sharpBuild(games){
   }
   return {date: sharpWindowDate(), post: "9:30 AM Eastern", style: SHARP_STYLE, sharps: sharps};
 }
+function sharpStampGame(pick, game){
+  if (!pick) return;
+  if (!game) {
+    if (pick.result === "win" || pick.result === "loss" || pick.result === "push") {
+      pick.gfinal = true;
+      pick.glive = false;
+      if (!pick.gdetail) pick.gdetail = "Final";
+    }
+    return;
+  }
+  pick.gstate = game.state || "";
+  pick.glive = !!game.live;
+  pick.gfinal = !!game.final;
+  pick.gdetail = game.detail || "";
+  if (game.start) pick.gstart = game.start;
+}
+function sharpLiveBits(t){
+  const live = !!t.glive;
+  const final = !!t.gfinal || t.result === "win" || t.result === "loss" || t.result === "push";
+  const when = live ? (t.gdetail || "Live") : final ? (t.gdetail || "Final") : (t.gstart ? formatTime(t.gstart, false) : (t.when || "Time not posted"));
+  const cls = live ? "live" : final ? "final" : "pre";
+  const flag = live ? "<span class='live-dot'></span>" : "";
+  return {cls: cls, html: flag + esc(when)};
+}
 function sharpGradeOne(pick, game){
   if (!pick || pick.empty || !game || !game.final) return pick && pick.result || "pending";
   const away = Number(game.away && game.away.score);
@@ -7911,7 +7939,10 @@ async function sharpGrade(card){
   SHARKS.forEach(shark => {
     (card.sharps[shark.id] || []).forEach(pick => {
       if (!pick || pick.empty || !pick.sport || !pick.date) return;
-      if (pick.result === "win" || pick.result === "loss" || pick.result === "push") return;
+      if (pick.result === "win" || pick.result === "loss" || pick.result === "push") {
+        sharpStampGame(pick, null);
+        return;
+      }
       const key = pick.sport + "|" + pick.date;
       if (!need.some(row => row.key === key)) need.push({key: key, sport: pick.sport, date: pick.date});
     });
@@ -7923,6 +7954,7 @@ async function sharpGrade(card){
       if (!pick || pick.empty) return;
       const games = found[pick.sport + "|" + pick.date] || [];
       const game = games.find(g => String(g.id) === String(pick.id)) || games.find(g => g.away.name === pick.away && g.home.name === pick.home);
+      sharpStampGame(pick, game);
       const next = sharpGradeOne(pick, game);
       if (next === "win" || next === "loss" || next === "push") pick.result = next;
     });
@@ -8001,8 +8033,9 @@ function sharpPaint(card, book){
       const priceHtml = t.ml
         ? (function(){ const m = String(t.side || "").match(/^(.*)\s([+-]?\d+)$/); return m ? esc(m[1]) + " <span class='best-price'>" + esc(m[2]) + "</span>" : esc(t.side); })()
         : esc(t.side) + (t.juice ? " <span class='shark-juice best-price'>" + esc(t.juice) + "</span>" : "");
+      const liveBits = sharpLiveBits(t);
       const syn = "<p class='shark-syn'>" + esc(sharpSynopsis(shark, t)) + "</p>";
-      return "<div class='shark-pick'><div class='shark-copy'><div class='shark-top'><b>" + esc(t.sport) + "</b><span>" + esc(t.market) + "</span></div><p class='shark-side'>" + priceHtml + "</p><p class='shark-game'>" + esc(t.game) + "</p>" + (t.when ? "<p class='shark-when'>" + esc(t.when) + "</p>" : "") + "<p>" + esc(t.why) + "</p>" + (conf ? "<p class='shark-conf " + String(t.confidence).toLowerCase() + "'>Confidence: " + esc(conf) + "</p>" : "") + "<p class='shark-result " + result + "' data-id='" + esc(t.id || "") + "'>" + esc(label) + "</p>" + syn + "</div><div class='shark-type'>" + add + win + "</div></div>";
+      return "<div class='shark-pick'><div class='shark-copy'><div class='shark-top'><b>" + esc(t.sport) + "</b><span>" + esc(t.market) + "</span></div><p class='shark-live score-state " + liveBits.cls + "' data-id='" + esc(t.id || "") + "'>" + liveBits.html + "</p><p class='shark-side'>" + priceHtml + "</p><p class='shark-game'>" + esc(t.game) + "</p>" + (t.when ? "<p class='shark-when'>" + esc(t.when) + "</p>" : "") + "<p>" + esc(t.why) + "</p>" + (conf ? "<p class='shark-conf " + String(t.confidence).toLowerCase() + "'>Confidence: " + esc(conf) + "</p>" : "") + "<p class='shark-result " + result + "' data-id='" + esc(t.id || "") + "'>" + esc(label) + "</p>" + syn + "</div><div class='shark-type'>" + add + win + "</div></div>";
     }).join("");
     return "<article class='shark' id='" + shark.id + "'><img src='" + shark.img + "' alt='" + esc(shark.alt) + "'><div><h3>" + esc(shark.name) + "</h3><p class='shark-record'>Record " + rec.w + "-" + rec.l + (rec.p ? "-" + rec.p : "") + "</p><p class='shark-rule'>" + esc(shark.rule) + "</p><div class='shark-picks'>" + picks + "</div><p class='shark-fee'>" + esc(shark.fee) + "</p></div></article>";
   }).join("");
@@ -8031,13 +8064,21 @@ async function refreshSharpGrades(){
       el.className = "shark-result " + result;
       el.textContent = sharpStatusLabel(result);
     });
+    (card.sharps[shark.id] || []).forEach(t => {
+      if (!t || t.empty || t.id == null) return;
+      const bits = sharpLiveBits(t);
+      const live = article.querySelector(".shark-live[data-id='" + String(t.id).replace(/'/g, "") + "']");
+      if (!live) return;
+      live.className = "shark-live score-state " + bits.cls;
+      live.innerHTML = bits.html;
+    });
   });
 }
 async function loadSharks(){
   const board = document.getElementById("sharkboard");
   if (!board || board.dataset.loading === "1") return;
   const day = sharpWindowDate();
-  if (board.dataset.day === day && board.querySelector(".shark img")) { refreshSharpGrades(); return; }
+  if (board.dataset.day === day && board.querySelector(".shark img")) { refreshSharpGrades(); armSharpStatus(); return; }
   board.dataset.loading = "1";
   board.innerHTML = "<p class='warn'>Loading the sharps.</p>";
   let book = sharpReadBook();
@@ -8061,9 +8102,17 @@ async function loadSharks(){
   board.dataset.day = card.date || day;
   board.dataset.loading = "";
   window.scrollTo(0, 0);
-  if (!window.__sharpGradeTimer) window.__sharpGradeTimer = setInterval(() => {
-    if (document.documentElement.dataset.page === "sharks") refreshSharpGrades();
-  }, 60000);
+  armSharpStatus();
+}
+function armSharpStatus(){
+  clearTimeout(window.__sharpGradeTimer);
+  const card = window.__sharpCard;
+  let live = false;
+  if (card) SHARKS.forEach(shark => (card.sharps[shark.id] || []).forEach(t => { if (t && t.glive) live = true; }));
+  window.__sharpGradeTimer = setTimeout(() => {
+    if (document.documentElement.dataset.page !== "sharks") { armSharpStatus(); return; }
+    refreshSharpGrades().finally(armSharpStatus);
+  }, live ? 15000 : 60000);
 }
 function pageFor(id){
   return {games:"games", seasons:"seasons", dashboard:"dashboard", todaycard:"today", liveodds:"live", slips:"slips", reportcard:"report", charts:"charts", breaks:"books", addbet:"add", calendarcard:"calendar", scoreboard:"scoreboard", about:"about", sharks:"sharks"}[id] || "";
