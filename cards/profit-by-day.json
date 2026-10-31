@@ -1,8 +1,8 @@
 {
   "file": "GG-PROFIT-BY-DAY",
-  "saved": "2026-10-31T12:32:06.227Z",
+  "saved": "2026-10-31T21:46:55.438Z",
   "unit": 10,
-  "through": "2026-10-30",
+  "through": "2026-10-31",
   "source": "Graded $10 slips for October 1 through October 25. Each day matches the cumulative Profit By Day line. This file is the season log. It is not on the website.",
   "reading": "Through October 30 the month is $-118.27. Best sport is CFB at $5.96 (82-86-0). Worst sport is NHL at $-55.35 (81-100-2).",
   "days": [
@@ -2069,6 +2069,65 @@
           "losses": 1,
           "pushes": 0,
           "record": "0-1-0"
+        },
+        "NFL": {
+          "profit": 0,
+          "n": 0,
+          "wins": 0,
+          "losses": 0,
+          "pushes": 0,
+          "record": "0-0-0"
+        },
+        "NHL": {
+          "profit": 0,
+          "n": 0,
+          "wins": 0,
+          "losses": 0,
+          "pushes": 0,
+          "record": "0-0-0"
+        }
+      }
+    },
+    {
+      "date": "2026-10-31",
+      "profit": -1.07,
+      "n": 2,
+      "wins": 1,
+      "losses": 1,
+      "pushes": 0,
+      "record": "1-1-0",
+      "sports": {
+        "CBB": {
+          "profit": 0,
+          "n": 0,
+          "wins": 0,
+          "losses": 0,
+          "pushes": 0,
+          "record": "0-0-0"
+        },
+        "CFB": {
+          "profit": -1.07,
+          "n": 2,
+          "wins": 1,
+          "losses": 1,
+          "pushes": 0,
+          "record": "1-1-0"
+        },
+        "MLB": {
+          "profit": 0,
+          "n": 0,
+          "wins": 0,
+          "losses": 0,
+          "pushes": 0,
+          "record": "0-0-0"
+        },
+        "NBA": {
+          "profit": 0,
+          "n": 0,
+          "wins": 0,
+          "losses": 0,
+          "pushes": 0,
+          "record": "0-0-0"
         },
         "NFL": {
           "profit": 0,
