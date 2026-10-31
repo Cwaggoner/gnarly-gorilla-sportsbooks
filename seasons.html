@@ -599,6 +599,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .game-lines { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
 .game-lines h4 { margin:0 0 4px; color:#8fb898; font-size:12px; font-weight:600; }
 .mgm-card { display:grid; grid-template-columns:minmax(230px, max-content) minmax(0,1fr) max-content; align-items:center; column-gap:12px; width:100%; box-sizing:border-box; border:1px solid #243024; border-radius:8px; background:#0e0e0e; margin:6px 0; padding:8px 10px; }
+.mgm-card.no-close { grid-template-columns:minmax(230px, max-content) minmax(0,1fr); }
 .mgm-side { min-width:0; }
 .mgm-books { display:flex; gap:12px; min-width:0; align-items:end; flex-wrap:nowrap; overflow-x:auto; }
 .mgm-set { display:grid; grid-template-columns:repeat(3,64px); gap:4px; flex:0 0 auto; }
@@ -754,7 +755,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </ul>
 <ul class="odds-notes" id="sharpcheck"></ul>
 </section>
-<section class="card view" id="liveodds"><div class="section-head"><h2>Live Odds</h2><p class="warn slips-side">Moneyline, spread, and total across books. Refresh pulls the live price.</p></div><div class="odds-tools" id="compareday"><button type="button" id="day-yesterday">Yesterday</button><button type="button" id="day-today">Today</button><select id="comparesport"><option selected>All</option><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option></select><select id="comparemarket"><option value="h2h" selected>Moneyline</option><option value="spreads">Spread</option><option value="totals">Total</option></select><button type="button" id="refreshodds">Refresh</button></div><div id="oddscompare"></div></section>
+<section class="card view" id="liveodds"><div class="section-head"><h2>Live Odds</h2><p class="warn slips-side">Moneyline, spread, and total across books. Refresh pulls the live price.</p></div><div class="odds-tools" id="compareday"><button type="button" id="day-yesterday">Yesterday</button><button type="button" id="day-today">Today</button><select id="comparesport"><option selected>All</option><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option></select><button type="button" id="refreshodds">Refresh</button></div><div id="oddscompare"></div></section>
 <section class="card view" id="todaycard">
 <div class="section-head"><h2>Today's Card</h2><p class="warn slips-side">Click a price to put it on the slip.</p></div>
 <div class="payout-box">
@@ -4465,10 +4466,35 @@ function mergeBoardRows(day, market, rows){
   block[market] = old;
   rememberBoard(board);
 }
-function publishedOddsHtml(day, market){
-  const board = window.__ggOddsBoard;
-  const rows = board && board.days && board.days[day] && board.days[day][market];
-  return oddsTableHtml(rows, day, market, "");
+function indexedGames(rowsByMarket){
+  const index = {};
+  ["h2h","spreads","totals"].forEach(market => {
+    (rowsByMarket[market] || []).forEach(row => {
+      if (!row || !row.label) return;
+      const key = (row.sport || "") + "|" + row.label;
+      const hit = index[key] || (index[key] = {sport: row.sport || "", label: row.label, start: row.start || "", markets: {}});
+      hit.markets[market] = row;
+      if (!hit.start && row.start) hit.start = row.start;
+    });
+  });
+  return foldBoardGames(Object.values(index)).sort((a, b) => sportRank(a.sport) - sportRank(b.sport) || String(a.start || "").localeCompare(String(b.start || "")) || a.label.localeCompare(b.label));
+}
+function compareSportList(games){
+  const sport = (document.getElementById("comparesport") || {}).value || localStorage.getItem("gg-compare-sport") || "All";
+  if (!sport || sport === "All") return games;
+  return games.filter(g => String(g.sport || "").toUpperCase() === String(sport).toUpperCase());
+}
+function liveOddsCards(games, day, lead){
+  const list = compareSportList(games);
+  if (!games.length) return "";
+  const note = lead ? "<p class='warn'>" + lead + "</p>" : "";
+  if (!list.length) return note + "<p class='warn'>No games in that sport.</p>";
+  return note + list.map(g => mgmGameCard(g, day, "", false)).join("");
+}
+function publishedOddsHtml(day, lead){
+  const block = window.__ggOddsBoard && window.__ggOddsBoard.days && window.__ggOddsBoard.days[day];
+  if (!block) return "";
+  return liveOddsCards(indexedGames({h2h: block.h2h, spreads: block.spreads, totals: block.totals}), day, lead || "Posted board. Tap a price. Magenta is the best price on that number.");
 }
 function signedQuote(n){
   const v = Number(n);
@@ -4583,9 +4609,10 @@ async function drawOddsCompare(force){
       storeLiveBoard({at: Date.now(), games: games.map(g => ({_sport: g._sport, away_team: g.away_team, home_team: g.home_team, commence_time: g.commence_time, bookmakers: g.bookmakers || []}))});
     } catch (err) {
       parkOddsTools();
-      const posted = publishedOddsHtml(day, market);
-      box.innerHTML = oddsBullets(["Live pull failed. " + (err && err.message || err) + ". The posted board is still below."]) + (posted || "<h2 class='split-title'>Live Odds Comparison</h2>");
+      const posted = publishedOddsHtml(day, "Live pull failed. " + (err && err.message || err) + ". The posted board is still below.");
+      box.innerHTML = posted || (oddsBullets(["Live pull failed. " + (err && err.message || err) + "."]) + "<h2 class='split-title'>Live Odds Comparison</h2>");
       wireCompare();
+      armStartingIn();
       return "Live pull failed.";
     } finally {
       if (btn) { btn.disabled = false; btn.textContent = "Refresh"; }
@@ -4595,36 +4622,38 @@ async function drawOddsCompare(force){
   const live = window.__ggLiveBoard && window.__ggLiveBoard.games ? window.__ggLiveBoard : savedLiveBoard();
   if (live && live.games) {
     let shownDay = day;
-    let rows = rowsFromLive(live.games, shownDay, market);
-    if (!rows.length && shownDay !== easternDay()) {
-      const todayRows = rowsFromLive(live.games, easternDay(), market);
-      if (todayRows.length) {
+    let games = indexedGames({h2h: rowsFromLive(live.games, shownDay, "h2h"), spreads: rowsFromLive(live.games, shownDay, "spreads"), totals: rowsFromLive(live.games, shownDay, "totals")});
+    if (!games.length && shownDay !== easternDay()) {
+      const todayGames = indexedGames({h2h: rowsFromLive(live.games, easternDay(), "h2h"), spreads: rowsFromLive(live.games, easternDay(), "spreads"), totals: rowsFromLive(live.games, easternDay(), "totals")});
+      if (todayGames.length) {
         shownDay = easternDay();
-        rows = todayRows;
+        games = todayGames;
         localStorage.setItem("gg-compare-day", "today");
       }
     }
-    const label = market === "spreads" ? "Spread, away / home" : market === "totals" ? "Total, over point and price / under price" : "Moneyline, away / home";
-    if (rows.length) {
+    if (games.length) {
       const days = new Set((live.games || []).map(g => g && g.commence_time && slateDateOf(g.commence_time)).filter(Boolean));
       days.forEach(d => ["h2h","spreads","totals"].forEach(m => mergeBoardRows(d, m, rowsFromLive(live.games, d, m))));
       const when = formatTime(live.at) || "just now";
       const which = shownDay === day ? "" : "Yesterday has started, so this is today. ";
-      box.innerHTML = oddsTableHtml(rows, shownDay, market, "Live as of " + when + ". " + which + label + ". Press Refresh for the next pull. A dash means that book has no number up.");
+      box.innerHTML = liveOddsCards(games, shownDay, "Live as of " + when + ". " + which + "Spread, total, and moneyline. Tap a price. Magenta is the best price on that number.");
       wireCompare();
+      armStartingIn();
       return "Live as of " + when + ".";
     }
     if (force) {
-      const posted = publishedOddsHtml(day, market);
-      box.innerHTML = oddsBullets(["No open prices for " + day + ". The live feed drops a game after it starts. The posted board is below."]) + (posted || "<h2 class='split-title'>Live Odds Comparison</h2>");
+      const posted = publishedOddsHtml(day, "No open prices for " + day + ". The live feed drops a game after it starts. The posted board is below.");
+      box.innerHTML = posted || (oddsBullets(["No open prices for " + day + ". The live feed drops a game after it starts."]) + "<h2 class='split-title'>Live Odds Comparison</h2>");
       wireCompare();
+      armStartingIn();
       return "No open prices for " + day + ".";
     }
   }
-  const published = publishedOddsHtml(day, market);
+  const published = publishedOddsHtml(day, "");
   if (published) {
     box.innerHTML = published;
     wireCompare();
+    armStartingIn();
     return;
   }
   box.innerHTML = oddsBullets([(day === easternDay() ? "Today" : "Yesterday") + ". No posted board for " + esc(day) + "."]) + "<h2 class='split-title'>Live Odds Comparison</h2>";
@@ -4809,13 +4838,8 @@ function wireCompare(){
   if (sport && !sport.dataset.wired) {
     sport.dataset.wired = "1";
     sport.value = localStorage.getItem("gg-compare-sport") || "All";
-    sport.onchange = () => { localStorage.setItem("gg-compare-sport", sport.value); filterCompare(); };
+    sport.onchange = () => { localStorage.setItem("gg-compare-sport", sport.value); drawOddsCompare(false).catch(() => {}); };
   }
-  filterCompare();
-  ensureOddsTimeColumn();
-  applyGameStarts();
-  sortOddsRows();
-  requestAnimationFrame(placeOddsTools);
 }
 function priceProfit(result, price, stake){
   stake = Number(stake) || 10;
@@ -8134,7 +8158,7 @@ function startingInText(start){
 }
 let startClock = 0;
 function tickStartingIn(){
-  document.querySelectorAll("#gameboard .mgm-start").forEach(el => {
+  document.querySelectorAll(".mgm-start").forEach(el => {
     const text = startingInText(el.getAttribute("data-start"));
     if (!text) { el.hidden = true; el.textContent = ""; return; }
     el.hidden = false;
@@ -8143,10 +8167,11 @@ function tickStartingIn(){
 }
 function armStartingIn(){
   clearInterval(startClock);
-  if (!document.querySelector("#gameboard .mgm-start")) return;
+  if (!document.querySelector(".mgm-start")) return;
   tickStartingIn();
   startClock = setInterval(() => {
-    if ((document.documentElement.dataset.page || "games") !== "games") { clearInterval(startClock); return; }
+    const page = document.documentElement.dataset.page || "games";
+    if (page !== "games" && page !== "liveodds") { clearInterval(startClock); return; }
     tickStartingIn();
   }, 15000);
 }
@@ -8416,6 +8441,33 @@ function foldBoardGames(games){
   });
   return out;
 }
+function mgmGameCard(g, day, book, withClose){
+  const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
+  const when = g.start ? formatTime(g.start, false) : "";
+  const teams = String(g.label || "").split(/\s+at\s+/i);
+  const awayName = (teams[0] || "").trim();
+  const homeName = (teams[1] || "").trim();
+  const scored = findFinalGame((window.__gameScores || []).filter(x => x.sport === String(g.sport || "").toUpperCase()), g.label);
+  const face = team => {
+    const logo = team && /^https:\/\/a\.espncdn\.com\//.test(team.logo || "") ? "<img src='" + esc(team.logo) + "' alt=''>" : "<span class='mgm-logo'></span>";
+    const rec = team && team.rec ? "<i>" + esc(team.rec) + "</i>" : "";
+    const score = team && team.score ? "<b class='mgm-score'>" + esc(team.score) + "</b>" : "";
+    return "<div class='mgm-team'>" + logo + "<span>" + esc((team && (team.name || team.abbr)) || "") + rec + "</span>" + score + "</div>";
+  };
+  const postedBooks = names.filter(name => ["spreads","totals","h2h"].some(market => {
+    const text = g.markets[market] && g.markets[market].books && g.markets[market].books[name];
+    return text && text !== "-";
+  }));
+  const ordered = postedBooks.filter(name => name === book).concat(postedBooks.filter(name => name !== book));
+  const sets = ordered.map(name => mgmSet(name, ["Spread", "Total", "Money"], [mgmOpen(g, "spreads", day, name, names), mgmOpen(g, "totals", day, name, names), mgmOpen(g, "h2h", day, name, names)], "book")).join("");
+  const close = withClose ? mgmSet("Close", ["Spread", "Total", "Money"], [mgmClose(gameClosePack(g, day, book), "spreads"), mgmClose(gameClosePack(g, day, book), "totals"), mgmClose(gameClosePack(g, day, book), "h2h")], "close") : "";
+  const tag = scored && scored.live && !scored.final ? (scored.detail || "Live") : (scored && scored.final ? "Final" : "");
+  const startMs = Date.parse(g.start || "");
+  const startIso = Number.isFinite(startMs) ? new Date(startMs).toISOString() : "";
+  const soon = !tag && startingInText(g.start);
+  const soonHtml = startIso && !tag ? "<span class='mgm-start' data-start='" + esc(startIso) + "'" + (soon ? "" : " hidden") + ">" + esc(soon) + "</span>" : "";
+  return "<article class='mgm-card" + (withClose ? "" : " no-close") + "'><div class='mgm-side'><p class='mgm-when'>" + esc((g.sport ? g.sport + "  " : "") + when) + soonHtml + (tag ? "  " + esc(tag) : "") + "</p>" + face(scored && scored.away || {name: awayName}) + face(scored && scored.home || {name: homeName}) + "</div><div class='mgm-books'>" + sets + "</div>" + close + "</article>";
+}
 function drawGameBoard(){
   const box = document.getElementById("gameboard");
   if (!box) return;
@@ -8457,34 +8509,7 @@ function drawGameBoard(){
     if (pull) pull.onclick = () => pullTodayBoard();
     return;
   }
-  box.innerHTML = games.map(g => {
-    const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
-    const when = g.start ? formatTime(g.start, false) : "";
-    const teams = String(g.label || "").split(/\s+at\s+/i);
-    const awayName = (teams[0] || "").trim();
-    const homeName = (teams[1] || "").trim();
-    const scored = findFinalGame((window.__gameScores || []).filter(x => x.sport === String(g.sport || "").toUpperCase()), g.label);
-    const face = team => {
-      const logo = team && /^https:\/\/a\.espncdn\.com\//.test(team.logo || "") ? "<img src='" + esc(team.logo) + "' alt=''>" : "<span class='mgm-logo'></span>";
-      const rec = team && team.rec ? "<i>" + esc(team.rec) + "</i>" : "";
-      const score = team && team.score ? "<b class='mgm-score'>" + esc(team.score) + "</b>" : "";
-      return "<div class='mgm-team'>" + logo + "<span>" + esc((team && (team.name || team.abbr)) || "") + rec + "</span>" + score + "</div>";
-    };
-    const postedBooks = names.filter(name => ["spreads","totals","h2h"].some(market => {
-      const text = g.markets[market] && g.markets[market].books && g.markets[market].books[name];
-      return text && text !== "-";
-    }));
-    const ordered = postedBooks.filter(name => name === book).concat(postedBooks.filter(name => name !== book));
-    const sets = ordered.map(name => mgmSet(name, ["Spread", "Total", "Money"], [mgmOpen(g, "spreads", day, name, names), mgmOpen(g, "totals", day, name, names), mgmOpen(g, "h2h", day, name, names)], "book")).join("");
-    const close = gameClosePack(g, day, book);
-    const closed = [mgmClose(close, "spreads"), mgmClose(close, "totals"), mgmClose(close, "h2h")];
-    const tag = scored && scored.live && !scored.final ? (scored.detail || "Live") : (scored && scored.final ? "Final" : "");
-    const startMs = Date.parse(g.start || "");
-    const startIso = Number.isFinite(startMs) ? new Date(startMs).toISOString() : "";
-    const soon = !tag && startingInText(g.start);
-    const soonHtml = startIso && !tag ? "<span class='mgm-start' data-start='" + esc(startIso) + "'" + (soon ? "" : " hidden") + ">" + esc(soon) + "</span>" : "";
-    return "<article class='mgm-card'><div class='mgm-side'><p class='mgm-when'>" + esc((g.sport ? g.sport + "  " : "") + when) + soonHtml + (tag ? "  " + esc(tag) : "") + "</p>" + face(scored && scored.away || {name: awayName}) + face(scored && scored.home || {name: homeName}) + "</div><div class='mgm-books'>" + sets + "</div>" + mgmSet("Close", ["Spread", "Total", "Money"], closed, "close") + "</article>";
-  }).join("");
+  box.innerHTML = games.map(g => mgmGameCard(g, day, book, true)).join("");
   armGameScores(games);
   armStartingIn();
 }
