@@ -5289,7 +5289,7 @@ function bookMonitorHtml(){
     const link = "<a href='" + sites[name] + "' target='_blank' rel='noopener noreferrer'>" + esc(name) + "</a>";
     return "<tr><td>" + link + "</td><td>" + (day ? posted || "—" : "—") + "</td><td>" + (t.holdN ? hold : "—") + "</td><td>" + (day && posted ? t.best : "—") + "</td><td>" + (day && posted ? t.short : "—") + "</td></tr>";
   }).join("");
-  return "<h2 class='split-title'>Book Monitor</h2><p class='api-note warn'>" + esc(when) + ". These are the prices that book is posting. The book sites do not publish a public stats page, and this page does not log in. Posted is how many games that book has a number on. Hold is the juice in that book's own price. Best is how often its price is the highest on the same number. Short is how often it is the worst. A dash means that book has no number on the saved board.</p><div class='table-wrap'><table><thead><tr><th>Book</th><th>Posted</th><th>Hold</th><th>Best</th><th>Short</th></tr></thead><tbody>" + rows + "</tbody></table></div>";
+  return "<h2 class='split-title'>Book Monitor</h2><p class='api-note warn'>" + esc(when) + ". These are the prices that book is posting. The book sites do not publish a public stats page, and this page does not log in. Posted is how many games that book has a number on. Hold is the juice in that book's own price. Best is how often its price is the highest on the same number. Short is how often it is the worst.</p><p class='api-note warn' style='margin-top:0'>A dash means that book has no number on the saved board.</p><div class='table-wrap'><table><thead><tr><th>Book</th><th>Posted</th><th>Hold</th><th>Best</th><th>Short</th></tr></thead><tbody>" + rows + "</tbody></table></div>";
 }
 function group(bets, key){
   const map = {};
