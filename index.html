@@ -482,7 +482,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 }
 .ekg{position:relative;display:block;width:100%;height:36px;margin:0 auto;overflow:hidden;contain:paint;transform:translateZ(0)}
 .ekg svg{display:block;width:100%;height:36px;animation:ekg-fade var(--draw,7.4s) linear infinite}
-.ekg .trace{fill:none;stroke:#39ff14;stroke-width:2;stroke-linecap:round}
+.ekg .trace{fill:none;stroke:#39ff14;stroke-width:1.5;stroke-linecap:round;vector-effect:non-scaling-stroke}
 .ekg-cover{position:absolute;inset:0;background:#102010;transform:translate3d(0,0,0);animation:ekg-draw var(--draw,7.4s) linear infinite;will-change:transform;pointer-events:none}
 @keyframes ekg-draw{0%{transform:translate3d(0,0,0)}85%{transform:translate3d(100%,0,0)}100%{transform:translate3d(100%,0,0)}}
 @keyframes ekg-fade{0%{opacity:.4}85%{opacity:1}100%{opacity:0}}
