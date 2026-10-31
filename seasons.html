@@ -2996,6 +2996,7 @@ function pendingSlips(){
 function seasonStatus(sport, pending){
   const code = String(sport || "").toUpperCase();
   if (seasonEnded(code)) return "Closed";
+  if (seasonNotStarted(code)) return "Not started";
   const n = (pending || []).filter(b => String(b.sport || "").toUpperCase() === code).length;
   if (n) return n + " Pending";
   return "Open";
@@ -3017,7 +3018,7 @@ function paintSeasonStatus(){
     if (!cell || !order[i]) return;
     const text = seasonStatus(order[i], pending);
     cell.textContent = text;
-    cell.style.color = /Pending/.test(text) ? "#f0e14a" : text === "Closed" ? "#8fb898" : "#39ff14";
+    cell.style.color = /Pending/.test(text) ? "#f0e14a" : (text === "Closed" || text === "Not started") ? "#8fb898" : "#39ff14";
   });
   const hold = box.querySelector("table.season-hold, .board-rest");
   if (hold) (hold.closest(".board-rest") || hold.closest(".table-wrap") || hold).remove();
@@ -3252,6 +3253,10 @@ async function refreshSlateRecords(){
   if (changed && !dropped && !graded) drawPickSlate();
   return changed || dropped || graded;
 }
+function seasonNotStarted(sport){
+  const start = SEASON_START[String(sport || "").toUpperCase()];
+  return !!(start && easternDay() < start);
+}
 function seasonEnded(sport){
   const end = SEASON_END[String(sport || "").toUpperCase()];
   if (!end) return false;
@@ -3285,12 +3290,12 @@ function showSeasons(checked){
   const names = {CBB:"CBB - College Basketball", CFB:"CFB - College Football", MLB:"MLB - Major League Baseball", NBA:"NBA - National Basketball Association", NFL:"NFL - National Football League", NHL:"NHL - National Hockey League"};
   const rows = ["CBB","CFB","MLB","NBA","NFL","NHL"].map(s => {
     const status = seasonStatus(s, pendingSlips());
-    const color = /Pending/.test(status) ? "#f0e14a" : status === "Closed" ? "#8fb898" : "#39ff14";
+    const color = /Pending/.test(status) ? "#f0e14a" : (status === "Closed" || status === "Not started") ? "#8fb898" : "#39ff14";
     const pace = seasonPace(s);
     const leftColor = pace.left === "0" || pace.left === "—" ? "#8fb898" : Number(pace.left) <= 14 ? "#f0e14a" : "#39ff14";
     return "<tr><td>" + names[s] + "</td><td>" + SEASON_START[s] + "</td><td>" + SEASON_END[s] + "</td><td style='color:" + color + "'>" + status + "</td><td>" + pace.day + "</td><td style='color:" + leftColor + "'>" + pace.left + "</td></tr>";
   }).join("");
-  const open = ["CBB","CFB","MLB","NBA","NFL","NHL"].filter(s => !seasonEnded(s)).length;
+  const open = ["CBB","CFB","MLB","NBA","NFL","NHL"].filter(s => !seasonEnded(s) && !seasonNotStarted(s)).length;
   const pulse = open === 6 ? "6.6s" : open >= 4 ? "7.4s" : open >= 2 ? "9s" : open === 1 ? "13s" : "15s";
   const color = open === 6 ? "#39ff14" : open >= 3 ? "#f0e14a" : "#ff6b6b";
   let wave = "M0 18";
@@ -3304,7 +3309,8 @@ function showSeasons(checked){
   const live = "<div id='seasonlive'><div class='section-head'><h2>Live Scores</h2><p class='warn slips-side' id='seasonlivenote'>Loading the board.</p></div><div class='score-strip'><button type='button' class='score-arrow' id='seasonliveleft' aria-label='Scroll scores left'><svg viewBox='0 0 24 24' width='22' height='22' aria-hidden='true'><path d='M15 5 L8 12 L15 19' fill='none' stroke='#39ff14' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/></svg></button><div class='score-row' id='seasonliverow'></div><button type='button' class='score-arrow' id='seasonliveright' aria-label='Scroll scores right'><svg viewBox='0 0 24 24' width='22' height='22' aria-hidden='true'><path d='M9 5 L16 12 L9 19' fill='none' stroke='#39ff14' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/></svg></button></div><div class='sport-bar' id='seasonlivesports'><button type='button' data-sport='All' class='on'>All</button>" + ["CBB","CFB","MLB","NBA","NFL","NHL"].map(code => leagueBtn(code)).join("") + "<a class='score-full' id='scorefull' href='index.html?page=scoreboard'>Full Scoreboard</a><span class='score-day'><button type='button' id='seasonliveprev'>Prev</button><b id='seasonliveday'></b><button type='button' id='seasonlivenext'>Next</button><button type='button' id='seasonlivetoday'>Today</button></span></div><div id='seasonlivenotes'></div></div>";
   const records = "<div class='card-rest' id='seasonrecords'><div class='section-head'><h2>Win/Loss Records</h2><p class='warn slips-side' id='recnote'>Loading standings.</p></div><div class='tools'><label>Sport<select id='recsport'></select></label><label>Conference<select id='recconf'></select></label><label>Division<select id='recdiv'></select></label></div><div class='table-wrap'><table><thead><tr><th>Team</th><th>Sport</th><th>Conference</th><th>Division</th><th>W</th><th>L</th><th>T/OTL</th><th>PCT</th><th>GB</th><th>Streak</th></tr></thead><tbody id='recrows'></tbody></table></div></div>";
   const trivia = "<div class='card-rest' id='seasontrivia'><b style='color:#39ff14'>Daily Sports Trivia</b><p class='warn' style='margin:4px 0 8px'>A new question at midnight. The same question stays up all day.</p><p data-q>Loading today's question.</p><button type='button' id='triviareveal'>Show answer</button><p data-a class='warn' hidden></p></div>";
-  box.innerHTML = live + "<div class='section-head'><h2>Season Dates</h2><p class='warn slips-side'>Checked " + (seasonChecked || "2026-10-19") + ". NFL May, NHL July, MLB July, NBA August, CFB August, CBB September. Postseason nights stay open until the last game ends or " + zoneTime(4, 0) + ". NBA and NHL through June 30, MLB through the World Series, NFL through the Super Bowl, CFB through the championship, March Madness March 13 through the title game.</p></div><table><thead><tr><th colspan='6' style='text-align:center'>" + ekg + "</th></tr><tr><th>Sport</th><th>Start</th><th>Last Card</th><th>Status</th><th>Where</th><th>Days Left</th></tr></thead><tbody>" + rows + "</tbody></table>" + records + trivia;
+  const checkedBit = seasonChecked ? "Checked " + esc(seasonChecked) + ". " : "";
+  box.innerHTML = live + "<div class='section-head'><h2>Season Dates</h2><p class='warn slips-side'>" + checkedBit + "NFL May, NHL July, MLB July, NBA August, CFB August, CBB September. Postseason nights stay open until the last game ends or " + zoneTime(4, 0) + ". NBA and NHL through June 30, MLB through the World Series, NFL through the Super Bowl, CFB through the championship, March Madness March 13 through the title game.</p></div><table><thead><tr><th colspan='6' style='text-align:center'>" + ekg + "</th></tr><tr><th>Sport</th><th>Start</th><th>Last Card</th><th>Status</th><th>Where</th><th>Days Left</th></tr></thead><tbody>" + rows + "</tbody></table>" + records + trivia;
   if (pageNeeds("seasons")) { loadRecords(); loadLiveBoard(); }
 }
 async function loadTrivia(){
@@ -9509,7 +9515,7 @@ function showView(id){
     const scroller = btn.parentElement;
     if (!scroller) return;
     const left = btn.offsetLeft - (scroller.clientWidth - btn.offsetWidth) / 2;
-    scroller.scrollTo({left: Math.max(0, left), behavior:"smooth"});
+    try { scroller.scrollTo({left: Math.max(0, left), behavior:"smooth"}); } catch (e) {}
   });
   if (screen === "scoreboard") loadLiveBoard();
   if (screen === "sharks") loadSharks();
