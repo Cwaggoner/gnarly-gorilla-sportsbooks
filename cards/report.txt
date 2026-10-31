@@ -1,11 +1,11 @@
-# GG report 2026-10-30
-# Yesterday 2026-10-29 graded. Record 2-0-0. Profit $18.18. CLV +0.75 points.
+# GG report 2026-10-31
+# Yesterday 2026-10-30 graded. Record 0-1-0. Profit $-10.00. CLV +6.5 points.
 
-Analysis: Troy +19 won 24-21 OT (close +17.5). Grizzlies +7.5 won 124-103 (close +7.5 matched). Both slips noted Edge.
+Analysis: Pacers +8.5 lost 125-145 (close +8.5 matched). Slip noted Edge.
 
-2026-10-29 | CFB | win | Troy +19 EDGE
-2026-10-29 | NBA | win | Grizzlies +7.5 EDGE
-2026-10-29 | CBB | No Picks
-2026-10-29 | MLB | Season Ended
-2026-10-29 | NFL | No Picks
-2026-10-29 | NHL | No Picks
+2026-10-30 | NBA | loss | Pacers +8.5 EDGE
+2026-10-30 | NHL | No Picks
+2026-10-30 | CFB | No Picks
+2026-10-30 | MLB | Season Ended
+2026-10-30 | NFL | No Picks
+2026-10-30 | CBB | No Picks
