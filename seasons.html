@@ -180,6 +180,9 @@ form, .row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1f
 .sgp-partner input { width:100%; }
 .sgp-ideas button { height:auto; text-align:left; }
 #sgpbox .sgp-risk { color:#f0e14a; }
+#sgpbox .slip-actions { flex-wrap:nowrap; align-items:center; }
+#sgpbox .slip-actions button { padding:4px 8px; }
+#sgpbox .slip-win { margin-left:auto; color:#00e5ff; font:700 14px/1 system-ui,sans-serif; white-space:nowrap; text-align:right; }
 #sgpadd { align-self:flex-start; }
 .notes-field { width:100%; margin:0; }
 .notes-field textarea { width:100%; min-height:64px; }
@@ -869,7 +872,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <div class="sgp-ideas" id="sgpideas"></div>
 <p id="sgpprice" class="warn"></p>
 <p id="sgprisk" class="warn sgp-risk"></p>
-<div class="slip-actions"><button type="button" id="sgpadd">Add</button><button type="button" id="slipimage">Save Image</button><button type="button" id="slipclear">Clear Slip</button></div>
+<div class="slip-actions"><button type="button" id="sgpadd">Add</button><button type="button" id="slipimage">Save Image</button><button type="button" id="slipclear">Clear Slip</button><span id="slipwin" class="slip-win"></span></div>
 </div>
 <button type="button" id="slipopen" hidden>Bet Slip</button>
 <script>
@@ -5231,6 +5234,7 @@ function paintSlip(){
   const risk = document.getElementById("sgprisk");
   const btn = document.getElementById("sgpadd");
   const image = document.getElementById("slipimage");
+  const winEl = document.getElementById("slipwin");
   const picked = slipTicket();
   if (legs) {
     legs.innerHTML = betSlip.length ? betSlip.map((p, i) => "<div class='slip-row" + (p.edge ? " edge" : "") + "'><span>" + esc((p.sport ? p.sport + " " : "") + p.pick + " " + (p.odds > 0 ? "+" : "") + p.odds) + "</span><button type='button' class='slip-x' data-i='" + i + "'>Remove</button></div>").join("") : "<p class='warn'>The slip is empty.</p>";
@@ -5248,6 +5252,7 @@ function paintSlip(){
   }
   if (btn) btn.disabled = !picked.length;
   if (image) image.disabled = !picked.length;
+  if (winEl) winEl.textContent = picked.length && Number.isFinite(math.win) ? "Wins $" + math.win.toFixed(2) : "";
 }
 function slipRow(picked){
   const math = slipMath(picked);
