@@ -880,7 +880,15 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 })();
 document.addEventListener("click", e => {
   const btn = e.target.closest("[data-jump]");
-  if (!btn || btn.tagName === "A") return;
+  if (!btn) return;
+  if (btn.tagName === "A") {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button) return;
+    const jump = btn.getAttribute("data-jump");
+    if (!jump) return;
+    e.preventDefault();
+    goPage(jump);
+    return;
+  }
   e.preventDefault();
   jumpToCard(btn.getAttribute("data-jump"));
 });
@@ -6621,6 +6629,20 @@ function pageNeeds(kind){
   };
   return (map[kind] || []).indexOf(page) >= 0;
 }
+const armedKind = new Set();
+function onceKind(kind, fn){
+  if (armedKind.has(kind)) return;
+  armedKind.add(kind);
+  fn();
+}
+function catchKey(){
+  return "catch:" + ["ledger","grades","dashfile"].filter(kind => pageNeeds(kind)).join(",");
+}
+function rememberBoot(){
+  ["odds","seasons","about","slate","calendar","profit","report","today","books","closes"].forEach(kind => { if (pageNeeds(kind)) armedKind.add(kind); });
+  if (pageNeeds("calendar") || pageNeeds("profit")) armedKind.add("caltick");
+  if (pageNeeds("ledger") || pageNeeds("grades") || pageNeeds("dashfile")) armedKind.add(catchKey());
+}
 if (pageNeeds("ledger") || pageNeeds("grades") || pageNeeds("dashfile")) catchUp();
 let stateRules = {};
 let visitorState = "";
@@ -8001,8 +8023,11 @@ function screenNow(){
   return {games:"games", seasons:"seasons", dashboard:"dashboard", today:"todaycard", live:"liveodds", slips:"slips", report:"reportcard", charts:"charts", books:"breaks", add:"addbet", calendar:"calendarcard", scoreboard:"scoreboard", about:"about", sharks:"sharks"}[page] || "games";
 }
 function goPage(id){
-  if (screenNow() === id) { showView(id); return; }
-  location.assign(pageUrl(id));
+  if (!document.getElementById(id)) { location.assign(pageUrl(id)); return; }
+  const next = pageUrl(id);
+  const here = (location.pathname.split("/").pop() || "index.html") + location.search;
+  if (here !== next) history.pushState({page: id}, "", next);
+  showView(id);
 }
 function stashForm(){
   if (!form) return;
@@ -8032,6 +8057,59 @@ function restoreForm(){
   const note = document.getElementById("picknote");
   if (note && data.picknote) note.textContent = data.picknote;
 }
+function armScreen(){
+  if (pageNeeds("odds")) onceKind("odds", () => fetch(cardUrl("cards/odds-board.json")).then(r => r.ok ? r.json() : null).then(loadOddsBoard).catch(() => loadOddsBoard(null)));
+  if (pageNeeds("seasons")) onceKind("seasons", () => loadSeasons());
+  if (pageNeeds("about")) onceKind("about", () => loadLiveFeed());
+  if (pageNeeds("slate")) onceKind("slate", () => { loadPickSlate(); setInterval(() => { loadPickSlate(); }, 300000); });
+  if (pageNeeds("calendar")) onceKind("calendar", () => fetch("cards/calendar.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => { if (data && data.dates) publishedCalendar = data.dates; render(); }).catch(() => {}));
+  if (pageNeeds("profit")) onceKind("profit", () => loadProfitFile());
+  if (pageNeeds("calendar") || pageNeeds("profit")) onceKind("caltick", () => setInterval(() => {
+    if (pageNeeds("calendar")) fetch("cards/calendar.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => {
+      if (!data || !data.dates) return;
+      publishedCalendar = data.dates;
+      drawCharts();
+    }).catch(() => {});
+    if (pageNeeds("profit")) loadProfitFile();
+  }, 300000));
+  if (pageNeeds("report")) onceKind("report", () => fetch("cards/report.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
+    let day = ((text.match(/Yesterday\s+(\d{4}-\d{2}-\d{2})/) || [])[1]) || "";
+    text.split(/\n/).forEach(line => {
+      if (!/\bEDGE\b/.test(line)) return;
+      const parts = line.split("|").map(s => s.trim());
+      if (parts.length < 3) return;
+      let edgeDay = day, sport = parts[0], pick = parts[2];
+      if (/^\d{4}-\d{2}-\d{2}$/.test(parts[0])) { edgeDay = parts[0]; sport = parts[1]; pick = parts[3]; }
+      if (edgeDay && sport && pick) edgePicks.add([edgeDay, sport, pick].join("|").toLowerCase());
+    });
+    if (edgePicks.size) loadCloses().then(() => { render(); showSeasons(); }).catch(() => { render(); showSeasons(); });
+  }).catch(() => {}));
+  if (pageNeeds("today")) onceKind("today", () => { refreshTodayCard(); setInterval(refreshTodayCard, 60000); });
+  if (pageNeeds("books")) onceKind("books", () => {
+    fetch(cardUrl("cards/book-prices.json")).then(r => r.ok ? r.json() : null).then(data => { if (data) { fileBooks = data; applyPublishedBooks(); } }).catch(() => {});
+    fetch(cardUrl("cards/book-closes.json")).then(r => r.ok ? r.json() : null).then(data => { if (data && data.days) { bookCloses = data; render(); } }).catch(() => {});
+  });
+  if (pageNeeds("closes")) onceKind("closes", () => fetch("cards/closes.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
+    const store = closeStore();
+    text.split(/\n/).forEach(line => {
+      line = line.trim();
+      if (!line || line.startsWith("#") || /no close saved|matched bet price|bet price/i.test(line)) return;
+      const parts = line.split("|").map(s => s.trim());
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(parts[0]) || parts.length < 5) return;
+      noteClose(parts[0], parts[1], parts[3], parts[4], parts[2]);
+      if (parts[2]) betMap[parts[0] + "|" + parts[3]] = parts[2];
+      const close = priceNumber(parts[4]);
+      if (!usableClose(close)) return;
+      const key = [parts[0], parts[1], parts[3]].join("|");
+      store[key] = {date: parts[0], sport: parts[1], pick: parts[3], odds: parts[2], close: close, at: Date.now(), realClose: true, fromFile: true};
+    });
+    saveCloseStore(store);
+    const bets = load();
+    if (applySavedCloses(bets)) save(bets);
+    render();
+  }).catch(() => {}));
+  if (pageNeeds("ledger") || pageNeeds("grades") || pageNeeds("dashfile")) onceKind(catchKey(), () => catchUp());
+}
 function showView(id){
   const screens = ["games","seasons","dashboard","todaycard","liveodds","slips","reportcard","charts","breaks","addbet","calendarcard","scoreboard","sharks","about"];
   const box = document.getElementById(id);
@@ -8040,6 +8118,7 @@ function showView(id){
   const screen = screens.indexOf(id) >= 0 ? id : (parent && screens.indexOf(parent.id) >= 0 ? parent.id : "");
   if (!screen) return;
   document.documentElement.dataset.page = screen;
+  armScreen();
   screens.forEach(key => {
     const el = document.getElementById(key);
     if (!el) return;
@@ -8079,9 +8158,10 @@ function showView(id){
   }
 }
 function jumpToCard(id){
-  if (pageFor(id) && screenNow() !== id) { location.assign(pageUrl(id)); return; }
-  showView(id);
+  goPage(id);
 }
+window.addEventListener("popstate", () => showView(screenNow()));
+rememberBoot();
 showView(screenNow());
 restoreForm();
 pinOffset();
