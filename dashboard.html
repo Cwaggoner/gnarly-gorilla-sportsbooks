@@ -2930,11 +2930,10 @@ function pendingSlips(){
 }
 function seasonStatus(sport, pending){
   const code = String(sport || "").toUpperCase();
-  const listed = pickSlate && Array.isArray(pickSlate.games) ? pickSlate.games.filter(g => String(g.sport || "").toUpperCase() === code) : null;
-  if (listed && !listed.length) return seasonEnded(code) ? "Season Ended" : "Open";
+  if (seasonEnded(code)) return "Closed";
   const n = (pending || []).filter(b => String(b.sport || "").toUpperCase() === code).length;
   if (n) return n + " Pending";
-  return seasonEnded(code) ? "Season Ended" : "Open";
+  return "Open";
 }
 function gameMatchesSlip(game, slip){
   if (!game || !slip || String(slip.sport || "").toUpperCase() !== game.sport) return false;
@@ -2953,7 +2952,7 @@ function paintSeasonStatus(){
     if (!cell || !order[i]) return;
     const text = seasonStatus(order[i], pending);
     cell.textContent = text;
-    cell.style.color = /Pending/.test(text) ? "#f0e14a" : text === "Season Ended" ? "#8fb898" : "#39ff14";
+    cell.style.color = /Pending/.test(text) ? "#f0e14a" : text === "Closed" ? "#8fb898" : "#39ff14";
   });
   const hold = box.querySelector("table.season-hold, .board-rest");
   if (hold) (hold.closest(".board-rest") || hold.closest(".table-wrap") || hold).remove();
@@ -3188,7 +3187,15 @@ async function refreshSlateRecords(){
   if (changed && !dropped && !graded) drawPickSlate();
   return changed || dropped || graded;
 }
-function seasonEnded(sport){ const end = SEASON_END[String(sport || "").toUpperCase()]; return !!end && easternDay() > end; }
+function seasonEnded(sport){
+  const end = SEASON_END[String(sport || "").toUpperCase()];
+  if (!end) return false;
+  const today = easternDay();
+  if (today > end) return true;
+  if (today < end) return false;
+  const clock = zoneClock();
+  return clock.hour >= 4;
+}
 function daySpan(from, to){
   const ms = Date.parse(to + "T12:00:00Z") - Date.parse(from + "T12:00:00Z");
   return Math.round(ms / 86400000);
@@ -3202,7 +3209,7 @@ function seasonPace(sport){
     const n = daySpan(today, start);
     return {day: "Starts in " + n + (n === 1 ? " day" : " days"), left: "—"};
   }
-  if (today > end) return {day: "Ended", left: "0"};
+  if (today > end || seasonEnded(sport)) return {day: "Ended", left: "0"};
   return {day: "Day " + (daySpan(start, today) + 1) + " of " + (daySpan(start, end) + 1), left: String(daySpan(today, end))};
 }
 let seasonChecked = "";
@@ -3213,7 +3220,7 @@ function showSeasons(checked){
   const names = {CBB:"CBB - College Basketball", CFB:"CFB - College Football", MLB:"MLB - Major League Baseball", NBA:"NBA - National Basketball Association", NFL:"NFL - National Football League", NHL:"NHL - National Hockey League"};
   const rows = ["CBB","CFB","MLB","NBA","NFL","NHL"].map(s => {
     const status = seasonStatus(s, pendingSlips());
-    const color = /Pending/.test(status) ? "#f0e14a" : status === "Season Ended" ? "#8fb898" : "#39ff14";
+    const color = /Pending/.test(status) ? "#f0e14a" : status === "Closed" ? "#8fb898" : "#39ff14";
     const pace = seasonPace(s);
     const leftColor = pace.left === "0" || pace.left === "—" ? "#8fb898" : Number(pace.left) <= 14 ? "#f0e14a" : "#39ff14";
     return "<tr><td>" + names[s] + "</td><td>" + SEASON_START[s] + "</td><td>" + SEASON_END[s] + "</td><td style='color:" + color + "'>" + status + "</td><td>" + pace.day + "</td><td style='color:" + leftColor + "'>" + pace.left + "</td></tr>";
