@@ -619,6 +619,8 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .mgm-card .board-price span, .mgm-card .mgm-odd span { font:700 11px/1 system-ui,sans-serif; color:inherit; }
 .mgm-card .board-price.best-price { color:#ff00ff; border-color:#ff00ff; }
 .mgm-odd.empty { color:#5a6a5a; }
+.mgm-odd.locked { color:var(--muted); }
+.mgm-odd.locked svg { width:16px; height:16px; display:block; }
 @media (max-width:800px) { .game-lines { grid-template-columns:1fr; } .mgm-card { grid-template-columns:1fr; } .mgm-set.mgm-close { justify-self:end; } }
 </style>
 </head>
@@ -8008,13 +8010,16 @@ if (pageNeeds("closes")) fetch("cards/closes.txt?ts=" + Date.now()).then(r => r.
 function mgmBlank(){
   return "<span class='mgm-odd empty'><b>—</b><span></span></span>";
 }
+function mgmLock(){
+  return "<span class='mgm-odd locked' title='Close not posted'><svg viewBox='0 0 24 24' aria-hidden='true'><path d='M8 11V8a4 4 0 0 1 8 0v3' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round'/><rect x='6' y='11' width='12' height='9' rx='1.6' fill='currentColor'/></svg></span>";
+}
 function mgmMoney(n){
   const v = Number(n);
   if (!Number.isFinite(v)) return "";
   return (v > 0 ? "+" : "") + v;
 }
-function mgmFace(top, price){
-  if (!mgmMoney(price)) return mgmBlank();
+function mgmFace(top, price, locked){
+  if (!mgmMoney(price)) return locked ? mgmLock() : mgmBlank();
   return "<span class='mgm-odd'><b>" + esc(top) + "</b><span>" + esc(mgmMoney(price)) + "</span></span>";
 }
 function mgmButton(top, price, hot, data){
@@ -8051,19 +8056,19 @@ function gameClosePack(g, day, book){
   return hit.books[book] || hit.books.DraftKings || null;
 }
 function mgmClose(pack, market){
-  if (!pack) return [mgmBlank(), mgmBlank()];
+  if (!pack) return [mgmLock(), mgmLock()];
   if (market === "h2h") {
     const away = pack.h2h && pack.h2h.away, home = pack.h2h && pack.h2h.home;
-    return [mgmFace("ML", away && away.price), mgmFace("ML", home && home.price)];
+    return [mgmFace("ML", away && away.price, true), mgmFace("ML", home && home.price, true)];
   }
   if (market === "spreads") {
     const away = pack.spread && pack.spread.away, home = pack.spread && pack.spread.home;
     const top = point => point == null || point === "" ? "" : ((Number(point) > 0 ? "+" : "") + point);
-    return [mgmFace(top(away && away.point), away && away.price), mgmFace(top(home && home.point), home && home.price)];
+    return [mgmFace(top(away && away.point), away && away.price, true), mgmFace(top(home && home.point), home && home.price, true)];
   }
   const total = pack.total;
-  if (!total) return [mgmBlank(), mgmBlank()];
-  return [mgmFace("O " + total.point, total.over), mgmFace("U " + total.point, total.under)];
+  if (!total) return [mgmLock(), mgmLock()];
+  return [mgmFace("O " + total.point, total.over, true), mgmFace("U " + total.point, total.under, true)];
 }
 function mgmSet(group, heads, cols, kind){
   const cls = kind === "close" ? " mgm-close" : (kind === "book" ? " mgm-book" : "");
