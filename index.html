@@ -221,7 +221,11 @@ html[data-page="seasons"] main { min-width:0; }
 .about-copy { position:relative; }
 .crew-title { margin:14px auto 8px; width:100%; text-align:center; color:#39ff14; font-family:"Cinzel",serif; font-weight:700; font-size:34px; letter-spacing:.03em; line-height:1.15; }
 .crew-row { display:flex; justify-content:center; align-items:stretch; gap:8px; margin:0 auto; min-width:0; width:100%; }
-.crew-team { flex:0 0 auto; align-self:flex-end; display:flex; flex-direction:column; justify-content:center; gap:2px; margin:0; box-sizing:border-box; border:1px solid #39ff14; border-radius:10px; padding:8px 10px; background:#0e0e0e; text-align:center; }
+.crew-team, .crew-each { flex:0 0 auto; align-self:flex-end; display:flex; flex-direction:column; justify-content:center; gap:2px; margin:0; box-sizing:border-box; border:1px solid #39ff14; border-radius:10px; padding:8px 10px; background:#0e0e0e; text-align:center; }
+.crew-each { justify-content:stretch; text-align:left; min-width:9.5rem; }
+.crew-each ul { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; justify-content:space-between; height:100%; gap:4px; }
+.crew-each li { display:flex; justify-content:space-between; align-items:baseline; gap:8px; color:#d6ffd0; font:600 11px/1.2 system-ui,sans-serif; }
+.crew-each b { color:#39ff14; font-weight:700; }
 .crew-team-kicker { margin:0; color:#39ff14; font-family:"Cinzel",serif; font-size:12px; font-weight:700; letter-spacing:.03em; line-height:1.2; }
 .crew-team-rec { margin:0; color:#d6ffd0; font:700 16px/1.2 system-ui,sans-serif; }
 .crew-team-split { margin:0; color:#f0e14a; font:700 10px/1.2 system-ui,sans-serif; letter-spacing:.08em; }
@@ -858,6 +862,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-rocco"><img loading="lazy" decoding="async" class="about-mark" src="jungle-rhino.jpg" alt="Rocco No Chase"></a><figcaption class="crew-bio"><b>Rocco No Chase</b><p>No team. The bankroll. I do not chase a number that already left.</p><p class="crew-fee">I have a fee. A flat dime on every play.</p></figcaption></figure>
 <figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-paulie"><img loading="lazy" decoding="async" class="about-mark" src="jungle-hyena.jpg" alt="Paulie the Fade"></a><figcaption class="crew-bio"><b>Paulie the Fade</b><p>The public moves the line. I take the other side and I wait on the value.</p><p class="crew-fee">I have a fee. Half a unit, win or lose.</p></figcaption></figure>
 <figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-gino"><img loading="lazy" decoding="async" class="about-mark" src="jungle-bird.jpg" alt="Gino the Wire"></a><figcaption class="crew-bio"><b>Gino the Wire</b><p>No eye test. The model, the injury, and the move.</p><p class="crew-fee">I have a fee. The juice on the ticket is mine.</p></figcaption></figure>
+<aside class="crew-each" id="sharpeachbox" aria-label="Each sharp record"><ul id="sharpeach"><li><b>Gnarly Gorilla</b><span>0-0-0</span></li><li><b>Vito the Spot</b><span>0-0-0</span></li><li><b>Rocco No Chase</b><span>0-0-0</span></li><li><b>Paulie the Fade</b><span>0-0-0</span></li><li><b>Gino the Wire</b><span>0-0-0</span></li></ul></aside>
 </div>
 </div>
 <aside class="about-box live-feed">
@@ -8460,16 +8465,21 @@ async function paintSharpTeam(){
   let w = 0, l = 0, p = 0;
   Object.keys(tally).forEach(id => { w += tally[id].w || 0; l += tally[id].l || 0; p += tally[id].p || 0; });
   el.textContent = w + "-" + l + "-" + p;
+  const list = document.getElementById("sharpeach");
+  if (list) list.innerHTML = SHARKS.map(shark => {
+    const rec = tally[shark.id] || {w: 0, l: 0, p: 0};
+    return "<li><b>" + esc(shark.name) + "</b><span>" + (rec.w || 0) + "-" + (rec.l || 0) + "-" + (rec.p || 0) + "</span></li>";
+  }).join("");
   sizeSharpTeam();
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(sizeSharpTeam);
 }
 function sizeSharpTeam(){
-  const team = document.getElementById("sharpteam");
-  if (!team || team.hidden) return;
+  const boxes = [document.getElementById("sharpteam"), document.getElementById("sharpeachbox")].filter(Boolean);
+  if (!boxes.length) return;
   const bios = document.querySelectorAll("#about .crew-bio");
   if (!bios.length) return;
   const h = Math.max.apply(null, [...bios].map(bio => bio.offsetHeight));
-  if (h > 0) team.style.height = h + "px";
+  if (h > 0) boxes.forEach(box => { box.style.height = h + "px"; });
 }
 function sharpKeepGrades(card, book){
   const prior = book.cards[card.date];
