@@ -545,6 +545,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .sport-bar { display:flex; flex-wrap:wrap; gap:6px; margin:8px 0; }
 .sport-bar .score-full { margin-left:4px; height:38px; display:inline-flex; align-items:center; box-sizing:border-box; padding:2px 10px; }
 .sport-bar button { height:38px; min-width:7ch; }
+#sportbar #gamerefresh { margin-left:19px; }
 .game-row { border:1px solid #39ff14; border-radius:10px; margin:8px 0; padding:10px; background:#101610; }
 .game-row h3 { margin:0 0 4px; color:#39ff14; font-size:15px; }
 .game-who { margin:0 0 8px; color:#d6ffd0; font-size:13px; }
@@ -638,7 +639,6 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <div class="section-head"><h2>Games</h2><p class="warn slips-side">Tap a price. Nothing is sent to a book. Final scores post when the game ends.</p></div>
 <div class="odds-tools">
 <label>Book<select id="gamebook" class="book-select"><option>BetMGM</option><option>Caesars</option><option>DraftKings</option><option>Fanatics</option><option>FanDuel</option><option>HardRock</option></select></label>
-<button type="button" id="gamerefresh">Refresh</button>
 </div>
 <div class="sport-bar" id="sportbar">
 <button type="button" class="on" data-sport="All">All</button>
@@ -648,6 +648,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <button type="button" data-sport="NBA">NBA</button>
 <button type="button" data-sport="NFL">NFL</button>
 <button type="button" data-sport="NHL">NHL</button>
+<button type="button" id="gamerefresh">Refresh</button>
 </div>
 <div id="gameboard"><p class="warn">Loading the board.</p></div>
 </section>
@@ -8849,7 +8850,7 @@ if (gameRefresh) gameRefresh.onclick = () => refreshGameBoard();
 const sportbar = document.getElementById("sportbar");
 if (sportbar) sportbar.onclick = e => {
   const btn = e.target.closest("button");
-  if (!btn) return;
+  if (!btn || btn.id === "gamerefresh") return;
   sportbar.querySelectorAll("button").forEach(b => b.classList.toggle("on", b === btn));
   drawGameBoard();
 };
