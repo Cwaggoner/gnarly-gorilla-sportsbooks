@@ -8103,7 +8103,11 @@ function fillMissingCloses(extra){
         let hit = list.find(row => closeRowMatch(row, {sport: sport, label: label}));
         if (!hit) { hit = {away: g.away, home: g.home, books: {}}; list.push(hit); }
         hit.books = hit.books || {};
-        Object.keys(g.books).forEach(book => { if (!hit.books[book]) hit.books[book] = g.books[book]; });
+        Object.keys(g.books).forEach(book => {
+          const src = g.books[book];
+          if (!src) return;
+          if (!hit.books[book] || (src.source === "odds-api" && hit.books[book].source !== "odds-api")) hit.books[book] = src;
+        });
       });
     });
   });
@@ -8138,6 +8142,7 @@ function freezeStartedCloses(games, day){
       const row = closeSlot(day, g);
       row.books = row.books || {};
       if (row.books[book]) return;
+      pack.source = "board";
       row.books[book] = pack;
       wrote = true;
     });
@@ -8163,6 +8168,103 @@ function catchEspnDraftKings(g, day){
   saveBookClosesLocal();
 }
 let closeClock = 0;
+let closePullFlight = "";
+function closeBucketId(sport, start){
+  const ms = Date.parse(start || "");
+  if (!Number.isFinite(ms)) return "";
+  return String(sport || "") + "|" + new Date(Math.floor(ms / 60000) * 60000).toISOString();
+}
+function pulledCloseBuckets(){
+  try { return JSON.parse(localStorage.getItem("gg-close-pulls") || "{}"); } catch (e) { return {}; }
+}
+function bucketDone(info){
+  if (!info) return false;
+  if (info.retry && info.retry > Date.now()) return true;
+  return !!(info.at && !info.retry);
+}
+function markCloseBucket(id, info){
+  const all = pulledCloseBuckets();
+  all[id] = info || {at: Date.now()};
+  const keys = Object.keys(all);
+  if (keys.length > 400) keys.slice(0, keys.length - 400).forEach(k => delete all[k]);
+  try { localStorage.setItem("gg-close-pulls", JSON.stringify(all)); } catch (e) {}
+}
+function applyApiCloses(list, due){
+  let wrote = false;
+  (list || []).forEach(g => {
+    const commence = Date.parse(g.commence_time || "");
+    if (!Number.isFinite(commence) || Math.abs(commence - due.ms) > 90000) return;
+    const day = slateDateOf(g.commence_time);
+    const fake = {sport: due.sport, label: g.away_team + " at " + g.home_team, start: g.commence_time, markets: {}};
+    ["h2h","spreads","totals"].forEach(market => {
+      const books = {};
+      Object.keys(BOOK_KEY).forEach(name => {
+        const bk = (g.bookmakers || []).find(b => b.key === BOOK_KEY[name]);
+        books[name] = liveBookCell(market, g, bk);
+      });
+      fake.markets[market] = {books: books};
+    });
+    const row = closeSlot(day, fake);
+    row.books = row.books || {};
+    Object.keys(BOOK_KEY).forEach(book => {
+      const pack = postedToClose(fake, book);
+      if (!pack) return;
+      if (row.books[book] && row.books[book].source === "odds-api") return;
+      pack.source = "odds-api";
+      row.books[book] = pack;
+      wrote = true;
+    });
+  });
+  if (wrote) saveBookClosesLocal();
+  return wrote;
+}
+async function pullDueCloses(games){
+  if (closePullFlight) return;
+  const key = localStorage.getItem("gg-odds-key") || "";
+  if (!key || !games || !games.length) return;
+  const pulled = pulledCloseBuckets();
+  const now = Date.now();
+  const buckets = [];
+  games.forEach(g => {
+    const ms = Date.parse(g.start || "");
+    if (!Number.isFinite(ms) || ms > now + 20000) return;
+    const id = closeBucketId(g.sport, g.start);
+    if (!id || bucketDone(pulled[id])) return;
+    let hit = buckets.find(b => b.id === id);
+    if (!hit) { hit = {id: id, sport: g.sport, ms: Math.floor(ms / 60000) * 60000}; buckets.push(hit); }
+  });
+  if (!buckets.length) return;
+  buckets.sort((a, b) => a.ms - b.ms);
+  const due = buckets[0];
+  const sportKey = SPORT_KEY[due.sport];
+  if (!sportKey) { markCloseBucket(due.id, {at: Date.now(), skip: true}); return; }
+  const missed = now - due.ms > 2 * 60 * 1000;
+  const ids = Object.values(BOOK_KEY).join(",");
+  const from = new Date(due.ms - 60000).toISOString();
+  const to = new Date(due.ms + 90000).toISOString();
+  const url = missed
+    ? "https://api.the-odds-api.com/v4/historical/sports/" + sportKey + "/odds?apiKey=" + encodeURIComponent(key) + "&regions=us,us2&markets=h2h,spreads,totals&oddsFormat=american&bookmakers=" + ids + "&date=" + encodeURIComponent(new Date(due.ms).toISOString())
+    : "https://api.the-odds-api.com/v4/sports/" + sportKey + "/odds?apiKey=" + encodeURIComponent(key) + "&regions=us,us2&markets=h2h,spreads,totals&oddsFormat=american&bookmakers=" + ids + "&commenceTimeFrom=" + encodeURIComponent(from) + "&commenceTimeTo=" + encodeURIComponent(to);
+  closePullFlight = due.id;
+  try {
+    const res = await fetch(url);
+    const remain = res.headers.get("x-requests-remaining");
+    if (!res.ok) {
+      markCloseBucket(due.id, {retry: Date.now() + (res.status === 401 ? 60 : 5) * 60 * 1000, fail: res.status});
+      return;
+    }
+    const body = await res.json();
+    const list = Array.isArray(body) ? body : (body.data || []);
+    applyApiCloses(list, due);
+    markCloseBucket(due.id, {at: Date.now(), cost: res.headers.get("x-requests-last") || (missed ? "60" : "6"), remain: remain || "", missed: missed});
+    const more = buckets.length > 1 && (!remain || Number(remain) >= 100);
+    if ((document.documentElement.dataset.page || "games") === "games") setTimeout(() => drawGameBoard(), more ? 1200 : 0);
+  } catch (e) {
+    markCloseBucket(due.id, {retry: Date.now() + 5 * 60 * 1000});
+  } finally {
+    closePullFlight = "";
+  }
+}
 function armCloseClock(games){
   clearTimeout(closeClock);
   const next = (games || []).map(g => Date.parse(g.start || "")).filter(ms => Number.isFinite(ms) && ms > Date.now()).sort((a, b) => a - b)[0];
@@ -8262,6 +8364,7 @@ function drawGameBoard(){
   let games = Object.values(index);
   freezeStartedCloses(games, day);
   armCloseClock(games);
+  pullDueCloses(games);
   if (sport !== "All") games = games.filter(g => g.sport === sport);
   games = foldBoardGames(games);
   games.sort((a, b) => sportRank(a.sport) - sportRank(b.sport) || String(a.start || "").localeCompare(String(b.start || "")) || a.label.localeCompare(b.label));
