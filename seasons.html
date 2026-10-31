@@ -7407,11 +7407,145 @@ document.getElementById("syncledger").onclick = async () => {
     note.textContent = "Sync failed. Ledger is not on the site yet.";
   }
 };
-document.getElementById("saveledger").onclick = () => {
+function sportBucket(list){
+  const sports = ["CBB","CFB","MLB","NBA","NFL","NHL"];
+  const out = {};
+  sports.forEach(sport => {
+    const rows = (list || []).filter(b => String(b.sport || "").toUpperCase() === sport);
+    const wins = rows.filter(b => b.result === "win").length;
+    const losses = rows.filter(b => b.result === "loss").length;
+    const pushes = rows.filter(b => b.result === "push").length;
+    out[sport] = {profit: Math.round(rows.reduce((s, b) => s + (slipMoney(b) || 0), 0) * 100) / 100, n: rows.length, wins: wins, losses: losses, pushes: pushes, record: wins + "-" + losses + "-" + pushes};
+  });
+  return out;
+}
+function snapshotCalendar(){
+  const dates = {};
+  Object.keys(publishedCalendar || {}).forEach(date => { if (publishedCalendar[date]) dates[date] = publishedCalendar[date]; });
+  const days = new Set(Object.keys(dates));
+  gradedPool().forEach(b => {
+    const date = String(b.date || "").slice(0, 10);
+    if (/^\d{4}-\d{2}-\d{2}$/.test(date)) days.add(date);
+  });
+  days.forEach(date => {
+    const slips = slipsForDay(date);
+    if (!slips.length) return;
+    const prior = dates[date] || {};
+    const wins = slips.filter(b => b.result === "win").length;
+    const losses = slips.filter(b => b.result === "loss").length;
+    const pushes = slips.filter(b => b.result === "push").length;
+    const winPay = b => {
+      const odds = Number(b.odds), stake = Number(b.stake) || 10;
+      if (!Number.isFinite(odds) || !odds) return 0;
+      return odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds);
+    };
+    dates[date] = {
+      pl: Math.round(slips.reduce((s, b) => s + slipMoney(b), 0) * 100) / 100,
+      n: slips.length,
+      wins: wins,
+      losses: losses,
+      pushes: pushes,
+      allWin: Math.round(slips.reduce((s, b) => s + winPay(b), 0) * 100) / 100,
+      allLose: -slips.reduce((s, b) => s + (Number(b.stake) || 10), 0),
+      clv: prior.clv != null ? prior.clv : null,
+      sports: sportBucket(slips)
+    };
+  });
+  return {dates: dates};
+}
+function snapshotDashboard(){
+  const lines = ["# GG dashboard " + easternDay(), "Date | Record | Profit | ROI | Units | Pending | Avg CLV"];
+  publishedDashboard().map(ruleRow).forEach(row => {
+    const n = Number(row.profit);
+    const profit = !Number.isFinite(n) ? "" : (n < 0 ? "-$" : "$") + Math.abs(n).toFixed(2);
+    lines.push([row.date, row.record, profit, row.roi, row.units, row.pending, row.clv].join(" | "));
+  });
+  return lines.join("\n") + "\n";
+}
+function snapshotGrades(){
+  const lines = ["# file: grades"];
+  const days = {};
+  gradedPool().forEach(b => {
+    if (!b || (b.result !== "win" && b.result !== "loss" && b.result !== "push")) return;
+    const date = String(b.date || "").slice(0, 10);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return;
+    if (!days[date]) days[date] = [];
+    days[date].push(b);
+  });
+  Object.keys(days).sort().reverse().forEach(date => {
+    const slips = days[date];
+    const winAll = slips.reduce((s, b) => {
+      const odds = Number(b.odds), stake = Number(b.stake) || 10;
+      if (!Number.isFinite(odds) || !odds) return s;
+      return s + (odds > 0 ? stake * odds / 100 : stake * 100 / Math.abs(odds));
+    }, 0);
+    const loseAll = slips.reduce((s, b) => s + (Number(b.stake) || 10), 0);
+    lines.push(date + " | RANGE | All Win " + winAll.toFixed(2) + " | All Lose -" + loseAll.toFixed(2));
+    slips.forEach(b => {
+      const close = usableClose(b.close) ? "close " + b.close : "close";
+      lines.push([date, b.sport || "", b.pick || "", close, b.result, "", (Number(slipMoney(b)) || 0).toFixed(2)].join(" | "));
+    });
+  });
+  return lines.join("\n") + "\n";
+}
+function snapshotProfit(){
+  const base = profitFile && Array.isArray(profitFile.days) ? JSON.parse(JSON.stringify(profitFile)) : {file: "GG-PROFIT-BY-DAY", unit: 10, days: []};
+  const byDate = {};
+  (base.days || []).forEach(row => { if (row && row.date) byDate[row.date] = row; });
+  const seen = new Set();
+  gradedPool().forEach(b => {
+    const date = String(b.date || "").slice(0, 10);
+    if (/^\d{4}-\d{2}-\d{2}$/.test(date)) seen.add(date);
+  });
+  seen.forEach(date => {
+    const slips = slipsForDay(date);
+    if (!slips.length) return;
+    const wins = slips.filter(b => b.result === "win").length;
+    const losses = slips.filter(b => b.result === "loss").length;
+    const pushes = slips.filter(b => b.result === "push").length;
+    byDate[date] = {
+      date: date,
+      profit: Math.round(slips.reduce((s, b) => s + slipMoney(b), 0) * 100) / 100,
+      n: slips.length,
+      wins: wins,
+      losses: losses,
+      pushes: pushes,
+      record: wins + "-" + losses + "-" + pushes,
+      sports: sportBucket(slips)
+    };
+  });
+  const days = Object.keys(byDate).sort().map(date => byDate[date]);
+  base.days = days;
+  base.saved = new Date().toISOString();
+  base.unit = 10;
+  base.through = days.length ? days[days.length - 1].date : (base.through || "");
+  base.source = "Saved with the ledger from this browser. Older days stay. Days with graded slips are updated.";
+  return base;
+}
+document.getElementById("saveledger").onclick = async () => {
+  const note = document.getElementById("ledgernote");
+  note.textContent = "Saving slips, charts, and dashboard...";
+  try {
+    await Promise.all([
+      loadCalendarFile().catch(() => {}),
+      loadProfitFile().catch(() => {}),
+      fetch("cards/grades.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
+        if (!text) return;
+        const rows = text.split(/\n/).map(parseGradeLine).filter(Boolean);
+        if (rows.length) gradeFile = rows;
+      }).catch(() => {})
+    ]);
+  } catch (e) {}
   const bets = load();
-  const blob = new Blob([JSON.stringify({saved: new Date().toISOString(), bets}, null, 2)], {type:"application/json"});
+  const files = {
+    "cards/calendar.json": snapshotCalendar(),
+    "cards/dashboard.txt": snapshotDashboard(),
+    "cards/grades.txt": snapshotGrades(),
+    "cards/profit-by-day.json": snapshotProfit()
+  };
+  const blob = new Blob([JSON.stringify({saved: new Date().toISOString(), bets: bets, files: files}, null, 2)], {type:"application/json"});
   download("GG-LEDGER-" + ymd(new Date()) + ".json", blob);
-  document.getElementById("ledgernote").textContent = bets.length + " slips saved.";
+  note.textContent = bets.length + " slips saved. Charts and Dashboard are in the file.";
 };
 document.getElementById("exportpdf").onclick = () => download("gnarly-gorilla-sportsbooks.pdf", buildPdf(load()));
 document.getElementById("export").onclick = () => download("gnarly-gorilla-sportsbooks.xlsx", buildSheet(load()));
