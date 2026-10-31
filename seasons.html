@@ -596,12 +596,13 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .game-final-tag { margin-right:6px; }
 .game-lines { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
 .game-lines h4 { margin:0 0 4px; color:#8fb898; font-size:12px; font-weight:600; }
-.mgm-card { display:grid; grid-template-columns:230px minmax(0,1fr) max-content; align-items:center; column-gap:12px; width:100%; box-sizing:border-box; border:1px solid #243024; border-radius:8px; background:#0e0e0e; margin:6px 0; padding:8px 10px; }
+.mgm-card { display:grid; grid-template-columns:minmax(230px, max-content) minmax(0,1fr) max-content; align-items:center; column-gap:12px; width:100%; box-sizing:border-box; border:1px solid #243024; border-radius:8px; background:#0e0e0e; margin:6px 0; padding:8px 10px; }
 .mgm-side { min-width:0; }
 .mgm-books { display:flex; gap:12px; min-width:0; align-items:end; flex-wrap:nowrap; overflow-x:auto; }
 .mgm-set { display:grid; grid-template-columns:repeat(3,64px); gap:4px; flex:0 0 auto; }
 .mgm-set.mgm-close { justify-self:end; }
-.mgm-when { margin:0 0 4px; color:#8fb898; font:700 12px/1.2 system-ui,sans-serif; }
+.mgm-when { margin:0 0 4px; color:#8fb898; font:700 12px/1.2 system-ui,sans-serif; white-space:nowrap; }
+.mgm-start { margin-left:8px; color:#39ff14; }
 .mgm-team { display:flex; align-items:center; gap:8px; min-height:46px; color:#d6ffd0; font:700 14px/1.2 system-ui,sans-serif; }
 .mgm-team i { margin-left:6px; color:#8fb898; font-style:normal; font-weight:500; font-size:12px; }
 .mgm-score { margin-left:auto; color:#39ff14; font-size:16px; min-width:2ch; text-align:right; }
@@ -8114,6 +8115,31 @@ function closeRowMatch(row, g){
   if (sideHit(g.label, row.away) && sideHit(g.label, row.home)) return true;
   return sameMatchup({sport: g.sport, label: g.label}, {sport: g.sport, label: (row.away || "") + " at " + (row.home || "")});
 }
+function startingInText(start){
+  const ms = Date.parse(start || "");
+  if (!Number.isFinite(ms)) return "";
+  const left = ms - Date.now();
+  if (left <= 0 || left > 60 * 60 * 1000) return "";
+  return "Starting In " + Math.max(1, Math.ceil(left / 60000)) + "m";
+}
+let startClock = 0;
+function tickStartingIn(){
+  document.querySelectorAll("#gameboard .mgm-start").forEach(el => {
+    const text = startingInText(el.getAttribute("data-start"));
+    if (!text) { el.hidden = true; el.textContent = ""; return; }
+    el.hidden = false;
+    if (el.textContent !== text) el.textContent = text;
+  });
+}
+function armStartingIn(){
+  clearInterval(startClock);
+  if (!document.querySelector("#gameboard .mgm-start")) return;
+  tickStartingIn();
+  startClock = setInterval(() => {
+    if ((document.documentElement.dataset.page || "games") !== "games") { clearInterval(startClock); return; }
+    tickStartingIn();
+  }, 15000);
+}
 function gameHasStarted(g){
   if (!g) return false;
   const sport = String(g.sport || "").toUpperCase();
@@ -8389,6 +8415,7 @@ function drawGameBoard(){
   const sport = sportBtn ? sportBtn.dataset.sport : "All";
   const day = easternDay();
   if (!dayHasLines(day)) {
+    clearInterval(startClock);
     box.innerHTML = emptyBoardNote(day);
     const pull = document.getElementById("pulltoday");
     if (pull) pull.onclick = () => pullTodayBoard();
@@ -8414,6 +8441,7 @@ function drawGameBoard(){
   games = foldBoardGames(games);
   games.sort((a, b) => sportRank(a.sport) - sportRank(b.sport) || String(a.start || "").localeCompare(String(b.start || "")) || a.label.localeCompare(b.label));
   if (!games.length) {
+    clearInterval(startClock);
     box.innerHTML = emptyBoardNote(day);
     const pull = document.getElementById("pulltoday");
     if (pull) pull.onclick = () => pullTodayBoard();
@@ -8441,9 +8469,14 @@ function drawGameBoard(){
     const close = gameClosePack(g, day, book);
     const closed = [mgmClose(close, "spreads"), mgmClose(close, "totals"), mgmClose(close, "h2h")];
     const tag = scored && scored.live && !scored.final ? (scored.detail || "Live") : (scored && scored.final ? "Final" : "");
-    return "<article class='mgm-card'><div class='mgm-side'><p class='mgm-when'>" + esc((g.sport ? g.sport + "  " : "") + when + (tag ? "  " + tag : "")) + "</p>" + face(scored && scored.away || {name: awayName}) + face(scored && scored.home || {name: homeName}) + "</div><div class='mgm-books'>" + sets + "</div>" + mgmSet("Close", ["Spread", "Total", "Money"], closed, "close") + "</article>";
+    const startMs = Date.parse(g.start || "");
+    const startIso = Number.isFinite(startMs) ? new Date(startMs).toISOString() : "";
+    const soon = !tag && startingInText(g.start);
+    const soonHtml = startIso && !tag ? "<span class='mgm-start' data-start='" + esc(startIso) + "'" + (soon ? "" : " hidden") + ">" + esc(soon) + "</span>" : "";
+    return "<article class='mgm-card'><div class='mgm-side'><p class='mgm-when'>" + esc((g.sport ? g.sport + "  " : "") + when) + soonHtml + (tag ? "  " + esc(tag) : "") + "</p>" + face(scored && scored.away || {name: awayName}) + face(scored && scored.home || {name: homeName}) + "</div><div class='mgm-books'>" + sets + "</div>" + mgmSet("Close", ["Spread", "Total", "Money"], closed, "close") + "</article>";
   }).join("");
   armGameScores(games);
+  armStartingIn();
 }
 function espnQuote(n){
   if (n == null || !Number.isFinite(Number(n))) return "";
