@@ -4247,6 +4247,18 @@ function savedBoard(){
     return pack.data;
   } catch (e) { return null; }
 }
+function blockHasLines(block){
+  if (!block) return false;
+  return ["h2h","spreads","totals"].some(market => (block[market] || []).some(row => row && row.label && Object.keys(row.books || {}).some(book => row.books[book] && row.books[book] !== "-")));
+}
+function keepPulledDays(posted, saved){
+  if (!saved || !saved.days) return posted;
+  const out = Object.assign({}, posted || {}, {days: Object.assign({}, (posted && posted.days) || {})});
+  Object.keys(saved.days).forEach(day => {
+    if (!blockHasLines(out.days[day]) && blockHasLines(saved.days[day])) out.days[day] = saved.days[day];
+  });
+  return out;
+}
 function rememberBoard(data){
   if (!usableBoard(data)) return false;
   window.__ggOddsBoard = data;
@@ -7558,7 +7570,9 @@ if (pageNeeds("books")) {
   fetch(cardUrl("cards/book-closes.json")).then(r => r.ok ? r.json() : null).then(data => { if (data && data.days) { bookCloses = data; render(); } }).catch(() => {});
 }
 function loadOddsBoard(data){
-  if (!usableBoard(data)) data = savedBoard();
+  const saved = savedBoard();
+  if (!usableBoard(data)) data = saved;
+  else data = keepPulledDays(data, saved);
   if (!rememberBoard(data)) {
     const box = document.getElementById("gameboard");
     if (box && !usableBoard(window.__ggOddsBoard)) box.innerHTML = "<p class='warn'>The board did not load.</p>";
@@ -7786,8 +7800,7 @@ function refreshGameScores(games){
 }
 function dayHasLines(day){
   const block = window.__ggOddsBoard && window.__ggOddsBoard.days && window.__ggOddsBoard.days[day];
-  if (!block) return false;
-  return ["h2h","spreads","totals"].some(market => (block[market] || []).some(row => row && row.label && Object.keys(row.books || {}).some(book => row.books[book] && row.books[book] !== "-")));
+  return blockHasLines(block);
 }
 function emptyBoardNote(day){
   const days = (window.__ggOddsBoard && window.__ggOddsBoard.days) || {};
@@ -7832,7 +7845,8 @@ async function pullTodayBoard(){
   try {
     const res = await fetch("cards/odds-board.json?ts=" + Date.now());
     const data = res.ok ? await res.json() : null;
-    if (usableBoard(data)) rememberBoard(data);
+    const saved = savedBoard();
+    if (usableBoard(data)) rememberBoard(keepPulledDays(data, saved));
     const key = ((document.getElementById("oddskey") || {}).value || "").trim();
     if (key) {
       try {
