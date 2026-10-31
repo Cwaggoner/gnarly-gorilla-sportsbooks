@@ -30,7 +30,8 @@
 <link rel="icon" href="gg-icon.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet"></noscript>
 <link rel="apple-touch-icon" href="gg-icon.png">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Gnarly Gorilla Sportsbooks">
@@ -516,21 +517,20 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .game-lines h4 { margin:0 0 4px; color:#8fb898; font-size:12px; font-weight:600; }
 @media (max-width:800px) { .game-lines { grid-template-columns:1fr; } }
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
 <body>
 
 <div class="page">
 <div class="topbar">
 <header>
-<div class="head-icon"><img src="gg-icon.png" alt="Gnarly Gorilla"></div>
+<div class="head-icon"><img src="gg-icon.png" alt="Gnarly Gorilla" width="72" height="72" fetchpriority="high"></div>
 <div class="head-text">
 <h1><span class="gg-name">Gnarly Gorilla</span> Sportsbooks</h1>
 <p>Free bet ledger for <span class="gg-name">Gnarly Gorilla</span> Sports Decks. Log CBB, CFB, MLB, NBA, NFL, and NHL slips, grade them the next day, and copy the report card.</p>
 <p id="liveline" class="warn" style="margin:6px 0 0;font-size:12px;">All picks live by 9:30 AM. Closed Value Lines update at 6:00 PM.</p>
 </div>
 <div class="head-flag" aria-label="United States"><svg viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg" role="img"><defs><linearGradient id="flaggloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".45" stop-color="#fff" stop-opacity=".08"/><stop offset="1" stop-color="#000" stop-opacity=".25"/></linearGradient></defs><rect width="28" height="18" fill="#b22234"/><g fill="#fff"><rect y="1.38" width="28" height="1.38"/><rect y="4.15" width="28" height="1.38"/><rect y="6.92" width="28" height="1.38"/><rect y="9.69" width="28" height="1.38"/><rect y="12.46" width="28" height="1.38"/><rect y="15.23" width="28" height="1.38"/></g><rect width="11.2" height="9.7" fill="#3c3b6e"/><rect width="28" height="18" fill="url(#flaggloss)"/></svg><span>USA</span><span id="headrules">BETTING RULES</span><span id="headregion"></span></div>
-<div class="head-icon right"><img src="gg-icon.png" alt="Gnarly Gorilla"></div>
+<div class="head-icon right"><img src="gg-icon.png" alt="Gnarly Gorilla" width="72" height="72" decoding="async"></div>
 <span id="pagespin" class="spin" role="status" aria-label="Loading"></span>
 </header>
 <nav class="sitenav" id="sitenav">
@@ -732,7 +732,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </div>
 <label class="notes-field">Notes<textarea name="notes" placeholder="High 62%"></textarea></label>
 </div>
-<div class="bet-box" id="betload"><button type="button" id="loadpicks">Load Picks</button><img id="loadicon" src="gg-icon.png" alt="Gnarly Gorilla"></div>
+<div class="bet-box" id="betload"><button type="button" id="loadpicks">Load Picks</button><img id="loadicon" src="gg-icon.png" alt="Gnarly Gorilla" width="160" height="160" loading="lazy" decoding="async"></div>
 <div class="bet-box" id="betnotes">
 <p id="picknote" class="warn"></p>
 <span id="loadnote" class="warn"></span>
@@ -754,7 +754,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <section class="card view" id="slips">
 <div class="section-head"><h2>Slips</h2><p class="warn slips-side">Today and yesterday only. Pull Odds & Close uses the Odds API key and stores the Pinnacle close with the other books. Odds is the price at the start of the game. Close is the next price after it starts. Sharp CLV is that price against Pinnacle with the juice removed. The time under the date is when the slip was written. A game that has not started stays open.</p></div>
 <p id="pullnote" class="warn"></p>
-<div class="book-slot"><div id="bookbadge"><img id="bookbadgeimg" src="gg-icon.png" alt="Gnarly Gorilla"></div></div>
+<div class="book-slot"><div id="bookbadge"><img id="bookbadgeimg" src="gg-icon.png" alt="Gnarly Gorilla" width="72" height="72" loading="lazy" decoding="async"></div></div>
 <p id="scorenote" class="warn"></p>
 <div class="tools slip-filters">
 <label>Sport<select id="fSport" class="sport-select"><option value="">All</option><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option></select></label>
@@ -789,11 +789,11 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <p class="warn" id="statebooks">State rules load from the visitor location.</p>
 <p class="crew-title">Gnarly Gorilla Sports Sharps</p>
 <div class="crew-row">
-<figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-gorilla"><img class="about-mark" src="about-gorilla.jpg" alt="Gnarly Gorilla"></a><figcaption class="crew-bio"><b>Gnarly Gorilla</b><p>The number, not the noise. A small edge is enough. I do not sell a sure thing.</p><p class="crew-fee">I have a fee. The first $10 of the stake is mine.</p></figcaption></figure>
-<figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-vito"><img class="about-mark" src="jungle-leopard.jpg" alt="Vito the Spot"></a><figcaption class="crew-bio"><b>Vito the Spot</b><p>College is the board. I think for myself, and I will not copy the next man.</p><p class="crew-fee">I have a fee. One unit rides the side I name.</p></figcaption></figure>
-<figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-rocco"><img class="about-mark" src="jungle-rhino.jpg" alt="Rocco No Chase"></a><figcaption class="crew-bio"><b>Rocco No Chase</b><p>No team. The bankroll. I do not chase a number that already left.</p><p class="crew-fee">I have a fee. A flat dime on every play.</p></figcaption></figure>
-<figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-paulie"><img class="about-mark" src="jungle-hyena.jpg" alt="Paulie the Fade"></a><figcaption class="crew-bio"><b>Paulie the Fade</b><p>The public moves the line. I take the other side and I wait on the value.</p><p class="crew-fee">I have a fee. Half a unit, win or lose.</p></figcaption></figure>
-<figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-gino"><img class="about-mark" src="jungle-bird.jpg" alt="Gino the Wire"></a><figcaption class="crew-bio"><b>Gino the Wire</b><p>No eye test. The model, the injury, and the move.</p><p class="crew-fee">I have a fee. The juice on the ticket is mine.</p></figcaption></figure>
+<figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-gorilla"><img loading="lazy" decoding="async" class="about-mark" src="about-gorilla.jpg" alt="Gnarly Gorilla"></a><figcaption class="crew-bio"><b>Gnarly Gorilla</b><p>The number, not the noise. A small edge is enough. I do not sell a sure thing.</p><p class="crew-fee">I have a fee. The first $10 of the stake is mine.</p></figcaption></figure>
+<figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-vito"><img loading="lazy" decoding="async" class="about-mark" src="jungle-leopard.jpg" alt="Vito the Spot"></a><figcaption class="crew-bio"><b>Vito the Spot</b><p>College is the board. I think for myself, and I will not copy the next man.</p><p class="crew-fee">I have a fee. One unit rides the side I name.</p></figcaption></figure>
+<figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-rocco"><img loading="lazy" decoding="async" class="about-mark" src="jungle-rhino.jpg" alt="Rocco No Chase"></a><figcaption class="crew-bio"><b>Rocco No Chase</b><p>No team. The bankroll. I do not chase a number that already left.</p><p class="crew-fee">I have a fee. A flat dime on every play.</p></figcaption></figure>
+<figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-paulie"><img loading="lazy" decoding="async" class="about-mark" src="jungle-hyena.jpg" alt="Paulie the Fade"></a><figcaption class="crew-bio"><b>Paulie the Fade</b><p>The public moves the line. I take the other side and I wait on the value.</p><p class="crew-fee">I have a fee. Half a unit, win or lose.</p></figcaption></figure>
+<figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-gino"><img loading="lazy" decoding="async" class="about-mark" src="jungle-bird.jpg" alt="Gino the Wire"></a><figcaption class="crew-bio"><b>Gino the Wire</b><p>No eye test. The model, the injury, and the move.</p><p class="crew-fee">I have a fee. The juice on the ticket is mine.</p></figcaption></figure>
 </div>
 </div>
 <aside class="about-box live-feed">
@@ -2486,7 +2486,6 @@ function msUntilMidnightEt(){
 let midnightTimer;
 function armMidnight(){ clearTimeout(midnightTimer); midnightTimer = setTimeout(() => { nightlyUpdate().finally(() => armMidnight()); }, msUntilMidnightEt()); }
 armMidnight();
-loadCalendarFile();
 async function nightlyUpdate(){
   followMonth();
   await loadCalendarFile();
@@ -5467,6 +5466,15 @@ document.getElementById("cardpdf").onchange = async e => {
   if (!file) return;
   note.textContent = "Reading card...";
   try {
+    if (!window.pdfjsLib) {
+      await new Promise((resolve, reject) => {
+        const s = document.createElement("script");
+        s.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+        s.onload = () => resolve();
+        s.onerror = () => reject(new Error("PDF reader did not load"));
+        document.head.appendChild(s);
+      });
+    }
     if (!window.pdfjsLib) throw new Error("PDF reader did not load");
     pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
     const doc = await pdfjsLib.getDocument({data: await file.arrayBuffer()}).promise;
