@@ -4317,7 +4317,7 @@ function liveBookCell(market, game, bookmaker){
   if (!bookmaker) return "-";
   const mk = (bookmaker.markets || []).find(m => m.key === market);
   const outs = (mk && mk.outcomes) || [];
-  const named = name => outs.find(o => o && o.name === name);
+  const named = name => outs.find(o => o && o.name === name) || outs.find(o => o && sameClub(o.name, name));
   if (market === "h2h") {
     const away = named(game.away_team), home = named(game.home_team);
     if (!away && !home) return "-";
@@ -7627,6 +7627,23 @@ if (pageNeeds("closes")) fetch("cards/closes.txt?ts=" + Date.now()).then(r => r.
   render();
 }).catch(() => {});
 
+function foldBoardGames(games){
+  const out = [];
+  (games || []).forEach(g => {
+    const hit = out.find(row => row.sport === g.sport && sameClub(row.label, g.label));
+    if (!hit) { out.push(g); return; }
+    ["h2h","spreads","totals"].forEach(market => {
+      const src = g.markets[market];
+      if (!src || !src.books) return;
+      const dst = hit.markets[market] || (hit.markets[market] = {sport: hit.sport, label: hit.label, start: hit.start || src.start || "", books: {}});
+      Object.keys(src.books).forEach(book => {
+        const val = src.books[book];
+        if (val && val !== "-" && (!dst.books[book] || dst.books[book] === "-")) dst.books[book] = val;
+      });
+    });
+  });
+  return out;
+}
 function drawGameBoard(){
   const box = document.getElementById("gameboard");
   if (!box) return;
@@ -7655,6 +7672,7 @@ function drawGameBoard(){
   });
   let games = Object.values(index);
   if (sport !== "All") games = games.filter(g => g.sport === sport);
+  games = foldBoardGames(games);
   games.sort((a, b) => sportRank(a.sport) - sportRank(b.sport) || String(a.start || "").localeCompare(String(b.start || "")) || a.label.localeCompare(b.label));
   if (!games.length) {
     box.innerHTML = emptyBoardNote(day);
@@ -7672,8 +7690,7 @@ function drawGameBoard(){
       text = used ? posted[used] : "";
       if (!text || text === "-") return "<p class='warn'>No book has posted this.</p>";
       const flags = (bestPriceFlags(posted, names)[used]) || [false, false];
-      const src = used !== book ? "<p class='game-src'>" + esc(used) + ", " + esc(book) + " has no number</p>" : "";
-      return src + paintBookCell(text, flags, row, market, day, used);
+      return paintBookCell(text, flags, row, market, day, used);
     };
     const when = g.start ? formatTime(g.start, false) : "";
     const teams = String(g.label || "").split(/\s+at\s+/i);
@@ -7765,7 +7782,8 @@ function patchBookLine(day, sport, label, market, book, text){
   board.days = board.days || {};
   const block = board.days[day] || (board.days[day] = {});
   const rows = Array.isArray(block[market]) ? block[market] : (block[market] = []);
-  let row = rows.find(r => String(r && r.label || "").toLowerCase() === String(label || "").toLowerCase());
+  const wanted = String(label || "").toLowerCase();
+  let row = rows.find(r => String(r && r.sport || "").toUpperCase() === String(sport || "").toUpperCase() && (String(r.label || "").toLowerCase() === wanted || sameClub(r.label, label)));
   if (!row) { row = {sport: sport, label: label, start: "", books: {}}; rows.push(row); }
   row.books = row.books || {};
   const cur = row.books[book];
@@ -7782,6 +7800,10 @@ async function fillMissingBookOdds(games, day){
   }));
   await Promise.all(labels.map(async row => {
     const hit = findFinalGame((games || []).filter(g => g.sport === row.sport), row.label);
+    if (hit && hit.lines) {
+      ["h2h","spreads","totals"].forEach(market => patchBookLine(day, row.sport, row.label, market, hit.lineBook || "DraftKings", hit.lines[market]));
+      return;
+    }
     const path = SCORE_FEED[row.sport];
     if (!hit || !hit.id || !path) return;
     const bits = path.split("/");
