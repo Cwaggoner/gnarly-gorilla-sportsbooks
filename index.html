@@ -347,6 +347,10 @@ tr.row-loss td { color:#ff6b6b; }
 tr.row-pending td { color:var(--amber); }
 tr.row-pending.edge td { color:var(--amber); }
 tr.row-pending.edge td.result { color:var(--amber); }
+#rows td.slip-conf { white-space:nowrap; font-weight:700; }
+#rows td.slip-conf.high { color:#f0e14a; }
+#rows td.slip-conf.medium { color:#d6ffd0; }
+#rows td.slip-conf.low { color:#8fb898; }
 .tools { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; align-items:flex-end; }
 .jump { display:flex; gap:6px; margin:6px 0; justify-content:center; align-items:center; }
 .jump button { padding:4px 8px; font-size:12px; }
@@ -803,7 +807,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </div>
 </div>
 <div class="table-wrap"><table>
-<thead><tr><th>Date</th><th>Book</th><th>Sport</th><th>Type</th><th>Pick</th><th>Odds</th><th class="col-close">Close</th><th>No-Vig CLV</th><th>Sharp CLV</th><th>Stake</th><th>Result</th><th>P/L</th><th>Grade</th></tr></thead>
+<thead><tr><th>Date</th><th>Book</th><th>Sport</th><th>Type</th><th>Pick</th><th>Odds</th><th class="col-close">Close</th><th>No-Vig CLV</th><th>Sharp CLV</th><th>Stake</th><th>Result</th><th>Confidence</th><th>P/L</th><th>Grade</th></tr></thead>
 <tbody id="rows"></tbody>
 </table></div>
 <p class="api-note warn">Live prices need the Odds API key on Add A Bet. Close needs a paid subscription. CLV is no-vig: the book's cut is removed, and a moved spread or total is counted. A matched -110 close is about -4.5%, not zero. When the other side was not saved, it is estimated at a -110 hold until Plot stores the real pair. A free key loads the board only. A saved list returns on refresh with no new call.<br><button type="button" class="odds-link" onclick="window.open('https://the-odds-api.com/','_blank','noopener,noreferrer')">Open The Odds API</button></p>
@@ -1052,6 +1056,7 @@ function archiveSlips(bets){
   return prior.length;
 }
 let rendering = false;
+let slipConfHold = new Map();
 function save(bets){
   localStorage.setItem(KEY, JSON.stringify(bets));
   if (!rendering) render();
@@ -3980,19 +3985,20 @@ function render(){
     const sharpCv = sharpClv(b);
     const sharpCls = sharpCv === "differs" ? "warn" : (typeof sharpCv === "number" ? (sharpCv > 0.05 ? "win" : (sharpCv < -0.05 ? "loss" : "")) : "");
     let head = "";
-    if (b.sport !== lastSport) { lastSport = b.sport; lastType = ""; head += "<tr class='sport'><td colspan='13'>" + esc(b.sport || "Other") + (seasonEnded(b.sport) ? " Season Ended" : "") + "</td></tr>"; }
+    if (b.sport !== lastSport) { lastSport = b.sport; lastType = ""; head += "<tr class='sport'><td colspan='14'>" + esc(b.sport || "Other") + (seasonEnded(b.sport) ? " Season Ended" : "") + "</td></tr>"; }
     if (b.type !== lastType) {
       lastType = b.type;
       const same = grouped.filter(x => x.sport === b.sport && x.type === b.type);
       const n = k => same.filter(x => x.result === k).length;
       const count = "(" + n("win") + " win · " + n("loss") + " loss · " + n("push") + " push · " + n("pending") + " pending · " + same.length + " total)";
-      head += "<tr class='type'><td colspan='13'><div class='type-row'><span>" + esc(b.type || "Other") + "</span><span class='type-count'>" + count + "</span></div></td></tr>";
+      head += "<tr class='type'><td colspan='14'><div class='type-row'><span>" + esc(b.type || "Other") + "</span><span class='type-count'>" + count + "</span></div></td></tr>";
     }
     const edge = markEdge(b).edge;
     const rowCls = b.result === "win" ? "row-win" : b.result === "loss" ? "row-loss" : b.result === "pending" ? (edge ? "row-pending edge" : "row-pending") : (b.manual ? "manual" : b.fromCard ? "fromcard" : "");
-    return head + "<tr" + (rowCls ? " class='" + rowCls + "'" : "") + "><td>" + b.date + placedText(b) + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td>" + esc(b.pick) + "</td><td>" + (b.priceText ? esc(b.priceText) : (usableClose(b.odds) ? b.odds : dash)) + "</td><td class='col-close'>" + (b.closeText ? esc(b.closeText) : (usableClose(b.close) ? b.close : dash)) + "</td><td class='" + (cv > 0 ? "win" : cv < 0 ? "loss" : "") + "'>" + clvText(b) + "</td><td class='" + sharpCls + "'>" + esc(sharpLabel(sharpCv, b)) + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='result " + cls + "'>" + b.result + "</td><td class='" + cls + "'>" + moneyHtml(p) + "</td><td>" + grade + "</td></tr>";
+    const liveCell = b.result === "pending" ? slipLiveCell(b) : {text: "—", band: ""};
+    return head + "<tr" + (rowCls ? " class='" + rowCls + "'" : "") + "><td>" + b.date + placedText(b) + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td>" + esc(b.pick) + "</td><td>" + (b.priceText ? esc(b.priceText) : (usableClose(b.odds) ? b.odds : dash)) + "</td><td class='col-close'>" + (b.closeText ? esc(b.closeText) : (usableClose(b.close) ? b.close : dash)) + "</td><td class='" + (cv > 0 ? "win" : cv < 0 ? "loss" : "") + "'>" + clvText(b) + "</td><td class='" + sharpCls + "'>" + esc(sharpLabel(sharpCv, b)) + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='result " + cls + "'>" + b.result + "</td><td class='slip-conf " + String(liveCell.band || "").toLowerCase() + "'>" + esc(liveCell.text) + "</td><td class='" + cls + "'>" + moneyHtml(p) + "</td><td>" + grade + "</td></tr>";
     } catch (err) { return ""; }
-  }).join("") || "<tr><td colspan='13'>" + ((document.getElementById("fBook") || {}).value ? "No slips for " + esc(document.getElementById("fBook").value) + "." : "No bets yet.") + "</td></tr>";
+  }).join("") || "<tr><td colspan='14'>" + ((document.getElementById("fBook") || {}).value ? "No slips for " + esc(document.getElementById("fBook").value) + "." : "No bets yet.") + "</td></tr>";
   try { drawCharts(); } catch (err) { document.getElementById("plotnote").textContent = "Chart failed. The rest of the page is still live."; }
   document.getElementById("plotnote").textContent = settled.length + " settled slips plotted. " + slipsLeftToSettle(bets) + " slips left to settle.";
   drawCalendar();
@@ -6385,7 +6391,7 @@ async function scoreboard(sport, date){
     const home = teamSide(homeSide);
     const away = teamSide(awaySide);
     const status = (comp.status && comp.status.type) || {};
-    return {sport, date, final: status.completed === true || /final/i.test(status.name || status.description || ""), postponed: /postpon|cancel|delay/i.test(status.name || ""), home: home, away: away, homeScore: Number(homeSide.score), awayScore: Number(awaySide.score), start: Date.parse(ev.date || "")};
+    return {sport, date, final: status.completed === true || /final/i.test(status.name || status.description || ""), postponed: /postpon|cancel|delay/i.test(status.name || ""), live: status.state === "in", detail: status.shortDetail || status.detail || "", home: home, away: away, homeScore: Number(homeSide.score), awayScore: Number(awaySide.score), start: Date.parse(ev.date || "")};
   }).filter(g => g.home.displayName && g.away.displayName);
 }
 let scoreTimer = 0;
@@ -6459,6 +6465,7 @@ async function gradeFinishedSlips(quiet){
     const sports = [...new Set(pending.map(b => String(b.sport || "").toUpperCase()))].filter(s => SCORE_FEED[s]);
     const dates = [...new Set(pending.map(b => String(b.date || "").slice(0, 10)))];
     const games = (await Promise.all(sports.flatMap(sport => dates.map(date => scoreboard(sport, date).catch(() => []))))).flat();
+    window.__slipGames = games;
     if (!games.length) {
       if (note && !quiet) note.textContent = "Score feed did not answer. No slips were changed.";
       return {graded: 0, live: 0, left: 0};
@@ -6468,6 +6475,7 @@ async function gradeFinishedSlips(quiet){
     const live = Math.max(0, pending.length - graded - left);
     if (note && (!quiet || graded)) note.textContent = graded + " slips graded from final scores." + (live ? " " + live + " still in progress." : "") + (left ? " " + left + " left pending." : "") + (graded ? " Report Card updated." : "");
     dropFinishedFromSlate(games);
+    render();
     return {graded, live, left};
   } catch (err) {
     if (note && !quiet) note.textContent = "Score check failed. No slips were changed.";
@@ -6538,6 +6546,7 @@ async function gradeOpenSlate(){
   scoreBusy = true;
   try {
     const games = (await Promise.all(sports.flatMap(sport => openDates.map(date => scoreboard(sport, date).catch(() => []))))).flat();
+    window.__slipGames = games;
     if (games.length) applyFinalGrades(games);
     let stillLive = false;
     let nextStart = 0;
@@ -7931,6 +7940,7 @@ function sharpGone(t){
   return Math.max(0.05, Math.min(0.98, used / total));
 }
 function sharpCoverMargin(t){
+  if (t && t.cover != null && Number.isFinite(Number(t.cover))) return Number(t.cover);
   const away = Number(t.gaway);
   const home = Number(t.ghome);
   if (!Number.isFinite(away) || !Number.isFinite(home)) return null;
@@ -7961,6 +7971,76 @@ function sharpLiveConfidence(t){
   t.liveConfPct = pct;
   t.liveConfText = text;
   return {band: band, text: text};
+}
+function legSide(pick, game){
+  const text = " " + expandTeams(pick) + " ";
+  const spanOf = team => {
+    let at = -1, end = -1;
+    teamWords(team).forEach(bit => {
+      const found = text.toLowerCase().lastIndexOf(String(bit).toLowerCase());
+      if (found > at) { at = found; end = found + String(bit).length; }
+    });
+    return {at: at, end: end};
+  };
+  const homeSpan = spanOf(game.home);
+  const awaySpan = spanOf(game.away);
+  if (homeSpan.at < 0 && awaySpan.at < 0) return "";
+  const gap = (span, marker) => {
+    if (span.at < 0) return Infinity;
+    if (marker >= span.at && marker <= span.end) return 0;
+    return Math.min(Math.abs(marker - span.at), Math.abs(marker - span.end));
+  };
+  const priced = (text.match(/[+-]\s?[0-9]+(?:\.[0-9]+)?/g) || []).map(s => Number(String(s).replace(/\s/g, ""))).filter(n => n && Math.abs(n) < 50);
+  const spread = priced.length ? priced[0] : null;
+  if (spread != null && homeSpan.at >= 0 && awaySpan.at >= 0) {
+    const token = (spread > 0 ? "+" : "") + spread;
+    const at = text.indexOf(token) >= 0 ? text.indexOf(token) : text.indexOf(String(Math.abs(spread)));
+    if (at >= 0) return gap(homeSpan, at) <= gap(awaySpan, at) ? "home" : "away";
+  }
+  return homeSpan.at >= awaySpan.at ? "home" : "away";
+}
+function slipLegConfidence(b, leg, game){
+  const key = [b.id || b.pick, normPick(leg)].join("|");
+  const prior = slipConfHold.get(key) || {};
+  const point = pickPoint({pick: leg, type: betType(b)});
+  const found = confidenceOf(b);
+  const ticket = Object.assign({sport: String(b.sport || "").toUpperCase(), confidencePct: (found && found.pct) || 55, result: "pending", ml: !point, n: point ? point.point : 0, who: "away"}, prior);
+  if (game && Number.isFinite(Number(game.homeScore)) && Number.isFinite(Number(game.awayScore))) {
+    const home = Number(game.homeScore), away = Number(game.awayScore);
+    ticket.glive = !!game.live && !game.final;
+    ticket.gfinal = !!game.final;
+    ticket.gdetail = game.detail || (game.final ? "Final" : "");
+    ticket.gaway = away;
+    ticket.ghome = home;
+    if (point && point.kind === "total") ticket.cover = point.side === "over" ? (home + away) - point.point : point.point - (home + away);
+    else {
+      const side = legSide(leg, game) || "away";
+      const spread = point && point.kind === "spread" ? point.point : 0;
+      const mine = side === "home" ? home : away;
+      const opp = side === "home" ? away : home;
+      ticket.who = side;
+      ticket.n = spread;
+      ticket.ml = !(point && point.kind === "spread");
+      ticket.cover = ticket.ml ? mine - opp : mine + spread - opp;
+    }
+  } else {
+    ticket.glive = false;
+    ticket.gfinal = false;
+    ticket.cover = null;
+  }
+  const made = sharpLiveConfidence(ticket);
+  slipConfHold.set(key, {liveConfAt: ticket.liveConfAt, liveConfPhase: ticket.liveConfPhase, liveConfBand: ticket.liveConfBand, liveConfPct: ticket.liveConfPct, liveConfText: ticket.liveConfText});
+  return {text: made.text, band: made.band, pct: ticket.liveConfPct};
+}
+function slipLiveCell(b){
+  if (!b || b.result !== "pending" || betType(b) === "Prop") return {text: "—", band: ""};
+  const games = (window.__slipGames || []).filter(g => !b.sport || g.sport === String(b.sport || "").toUpperCase());
+  const type = betType(b);
+  const legs = (type === "SGP" || type === "Parlay") ? String(b.pick || "").split(/\s+and\s+/i) : [String(b.pick || "")];
+  const views = legs.map(leg => slipLegConfidence(b, leg, findFinalGame(games, leg))).filter(Boolean);
+  if (!views.length) return {text: "—", band: ""};
+  views.sort((a, c) => a.pct - c.pct);
+  return views[0];
 }
 function sharpLiveBits(t){
   const live = !!t.glive;
