@@ -285,3 +285,4 @@
 2026-10-29 | CFB | -110 | Troy +19 | +17.5
 2026-10-29 | NBA | -110 | Grizzlies +7.5 at Trail Blazers | +7.5
 2026-10-30 | NBA | -110 | Pacers +8.5 at Heat | -110
+2026-10-31 | CFB | -110 | USC +6.5 | -110
