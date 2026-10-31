@@ -4048,7 +4048,7 @@ function render(){
   const bookDate = slateSettled(yesterday()) ? yesterday() : shiftDate(yesterday(), -1);
   const bookDay = chartSlips().filter(b => b.date === bookDate);
   const rest = group(bookDay, "sport") + bookFigures(bookDay);
-  const split = "<h2 class='split-title'>Market Split</h2>" + group(bookDay, "type") + "<p class='api-note warn'>Graded slips only. A sport with no graded slips says No Picks. A book says No Price Saved until that one call stored its price.</p>";
+  const split = "<h2 class='split-title'>Market Split</h2>" + group(bookDay, "type") + "<p class='api-note warn'>Graded slips only. A sport with no graded slips says No Picks. A book says No Price Saved until that one call stored its price.</p>" + bookMonitorHtml();
   const crew = "<table class='cal-line book-crew'><tbody><tr><td><p class='api-note warn'>Graded slate " + bookDate + ". A postseason game stays on the slate it started until that game ends or " + zoneTime(4, 0) + ".</p></td><td class='cal-icons' rowspan='2'><div class='cal-crew'><img src='about-gorilla.jpg' alt='Gnarly Gorilla' width='72' height='72' loading='lazy' decoding='async'><img src='jungle-leopard.jpg' alt='Vito the Spot' width='72' height='72' loading='lazy' decoding='async'><img src='jungle-rhino.jpg' alt='Rocco No Chase' width='72' height='72' loading='lazy' decoding='async'><img src='jungle-hyena.jpg' alt='Paulie the Fade' width='72' height='72' loading='lazy' decoding='async'><img src='jungle-bird.jpg' alt='Gino the Wire' width='72' height='72' loading='lazy' decoding='async'></div></td></tr><tr><td class='book-rest'>" + rest + "</td></tr></tbody></table>";
   document.getElementById("breaks").innerHTML = "<h2>Graded Results By Sport And Book</h2>" + crew + split;
   if (!document.getElementById("oddscompare")) {
@@ -5232,6 +5232,65 @@ function bookFigures(slips){
     const v = map[k];
     return esc(k) + ": " + (v.n ? moneyHtml(v.pl) + " (" + v.n + ")" : (slips.length ? "No Price Saved" : "No Slips"));
   }).join(" | ") + "</p>";
+}
+function bookMonitorHtml(){
+  const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
+  const tally = {};
+  names.forEach(name => tally[name] = {best:0, short:0, hold:0, holdN:0, n:0, beat:0, scored:0, clv:0});
+  const board = window.__ggOddsBoard;
+  const today = easternDay();
+  const day = board && board.days && board.days[today] ? today : (board && board.days && board.days[shiftDate(today, -1)] ? shiftDate(today, -1) : "");
+  const block = day && board.days[day];
+  if (block) ["h2h","spreads","totals"].forEach(market => {
+    (block[market] || []).forEach(row => {
+      const parsed = names.map(name => ({name: name, sides: shopSides(row.books && row.books[name])})).filter(item => item.sides);
+      parsed.forEach(item => {
+        const a = item.sides[0], b = item.sides[1];
+        const pa = impliedProb(a.price), pb = impliedProb(b.price);
+        if (pa && pb) { tally[item.name].hold += (pa + pb - 1) * 100; tally[item.name].holdN += 1; }
+      });
+      [0, 1].forEach(index => {
+        const groups = {};
+        parsed.forEach(item => {
+          const key = item.sides[index].point == null ? "" : String(item.sides[index].point);
+          (groups[key] || (groups[key] = [])).push(item);
+        });
+        Object.keys(groups).forEach(key => {
+          const group = groups[key];
+          if (group.length < 2) return;
+          const prices = group.map(item => item.sides[index].price);
+          const max = Math.max.apply(null, prices);
+          const min = Math.min.apply(null, prices);
+          if (max === min) return;
+          group.forEach(item => {
+            if (item.sides[index].price === max) tally[item.name].best += 1;
+            if (item.sides[index].price === min) tally[item.name].short += 1;
+          });
+        });
+      });
+    });
+  });
+  ownSlips(chartSlips()).forEach(b => {
+    if (!b || (b.result !== "win" && b.result !== "loss" && b.result !== "push")) return;
+    if (!tally[b.book]) return;
+    tally[b.book].n += 1;
+    const cv = clv(b);
+    if (cv == null) return;
+    tally[b.book].scored += 1;
+    tally[b.book].clv += cv;
+    if (cv > 0.05) tally[b.book].beat += 1;
+  });
+  const when = day ? (day === today ? "Today" : "Yesterday") + ", " + day : "No posted board";
+  const rows = names.map(name => {
+    const t = tally[name];
+    const hold = t.holdN ? (t.hold / t.holdN).toFixed(1) + "%" : "—";
+    const beat = t.scored ? t.beat + " of " + t.scored : "—";
+    const avgN = t.scored ? t.clv / t.scored : null;
+    const avg = avgN == null ? "—" : (avgN > 0 ? "+" : "") + avgN.toFixed(1) + "%";
+    const avgCls = avgN == null ? "" : avgN > 0.05 ? "win" : avgN < -0.05 ? "loss" : "";
+    return "<tr><td>" + esc(name) + "</td><td>" + (day ? t.best : "—") + "</td><td>" + (day ? t.short : "—") + "</td><td>" + (day ? hold : "—") + "</td><td>" + (t.n || "—") + "</td><td>" + beat + "</td><td class='" + avgCls + "'>" + avg + "</td></tr>";
+  }).join("");
+  return "<h2 class='split-title'>Book Monitor</h2><p class='api-note warn'>" + esc(when) + ". Best is how often that book has the highest price on the same number. Short is how often it is the worst. Hold is the average juice. Beat Close and Avg CLV use graded slips logged at that book. Shop the book that is Best. A higher hold costs more.</p><div class='table-wrap'><table><thead><tr><th>Book</th><th>Best</th><th>Short</th><th>Hold</th><th>Graded</th><th>Beat Close</th><th>Avg CLV</th></tr></thead><tbody>" + rows + "</tbody></table></div>";
 }
 function group(bets, key){
   const map = {};
