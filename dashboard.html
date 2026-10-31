@@ -3519,10 +3519,15 @@ function lineNums(row){
     return "";
   }).filter(Boolean);
 }
+function teamLogo(url){
+  const raw = String(url || "");
+  if (!/^https:\/\/a\.espncdn\.com\//.test(raw)) return "";
+  return raw.replace("/scoreboard/", "/");
+}
 function liveSide(row){
   const team = (row && row.team) || {};
   const rec = ((row && row.records) || []).find(r => r.type === "total" || r.name === "overall");
-  return {name: team.shortDisplayName || team.displayName || "", abbr: team.abbreviation || "", logo: team.logo || "", score: row && row.score != null && row.score !== "" ? String(row.score) : "", rec: rec && rec.summary || "", lines: lineNums(row)};
+  return {name: team.shortDisplayName || team.displayName || "", abbr: team.abbreviation || "", logo: teamLogo(team.logo), score: row && row.score != null && row.score !== "" ? String(row.score) : "", rec: rec && rec.summary || "", lines: lineNums(row)};
 }
 function liveGameFromEvent(sport, ev){
   const comp = (ev.competitions || [])[0] || {};
@@ -3611,7 +3616,7 @@ function paintFullBoard(){
   list.forEach(g => { if (g.why && !seen.some(s => s.sport === g.sport)) seen.push(g); });
   if (holds) holds.innerHTML = seen.map(g => "<p class='warn score-hold'>" + esc(g.sport) + ": " + esc(liveHoldCopy(g.why, g.shown)) + "</p>").join("");
   const side = (t, opp, state) => {
-    const logo = /^https:\/\/a\.espncdn\.com\//.test(t.logo) ? "<img src='" + esc(t.logo) + "' alt=''>" : "<span class='score-logo'></span>";
+    const logo = teamLogo(t.logo) ? "<img src='" + esc(teamLogo(t.logo)) + "' alt='' decoding='async'>" : "<span class='score-logo'></span>";
     let cls = "";
     if (state !== "pre" && t.score !== "" && opp.score !== "" && Number(t.score) !== Number(opp.score)) cls = Number(t.score) > Number(opp.score) ? " win" : " lose";
     const score = state === "pre" ? "" : esc(t.score);
@@ -3879,7 +3884,7 @@ function paintLiveBoard(){
   bindScoreArrows();
   const list = liveBoardGames.filter(g => liveBoardSport === "All" || g.sport === liveBoardSport);
   const teamRow = (t, opp, state) => {
-    const logo = /^https:\/\/a\.espncdn\.com\//.test(t.logo) ? "<img src='" + esc(t.logo) + "' alt=''>" : "<span class='score-logo'></span>";
+    const logo = teamLogo(t.logo) ? "<img src='" + esc(teamLogo(t.logo)) + "' alt='' decoding='async'>" : "<span class='score-logo'></span>";
     let cls = "";
     if (state !== "pre" && t.score !== "" && opp.score !== "" && Number(t.score) !== Number(opp.score)) cls = Number(t.score) > Number(opp.score) ? " win" : " lose";
     const score = state === "pre" ? "" : esc(t.score);
@@ -4639,6 +4644,7 @@ async function drawOddsCompare(force){
       box.innerHTML = liveOddsCards(games, shownDay, "Live as of " + when + ". " + which + "Spread, total, and moneyline. Tap a price. Magenta is the best price on that number.");
       wireCompare();
       armStartingIn();
+      armGameScores(games);
       return "Live as of " + when + ".";
     }
     if (force) {
@@ -4654,6 +4660,8 @@ async function drawOddsCompare(force){
     box.innerHTML = published;
     wireCompare();
     armStartingIn();
+    const block = window.__ggOddsBoard && window.__ggOddsBoard.days && window.__ggOddsBoard.days[day];
+    if (block) armGameScores(indexedGames({h2h: block.h2h, spreads: block.spreads, totals: block.totals}));
     return;
   }
   box.innerHTML = oddsBullets([(day === easternDay() ? "Today" : "Yesterday") + ". No posted board for " + esc(day) + "."]) + "<h2 class='split-title'>Live Odds Comparison</h2>";
@@ -8449,7 +8457,7 @@ function mgmGameCard(g, day, book, withClose){
   const homeName = (teams[1] || "").trim();
   const scored = findFinalGame((window.__gameScores || []).filter(x => x.sport === String(g.sport || "").toUpperCase()), g.label);
   const face = team => {
-    const logo = team && /^https:\/\/a\.espncdn\.com\//.test(team.logo || "") ? "<img src='" + esc(team.logo) + "' alt=''>" : "<span class='mgm-logo'></span>";
+    const logo = team && teamLogo(team.logo) ? "<img src='" + esc(teamLogo(team.logo)) + "' alt='' width='28' height='28' decoding='async'>" : "<span class='mgm-logo'></span>";
     const rec = team && team.rec ? "<i>" + esc(team.rec) + "</i>" : "";
     const score = team && team.score ? "<b class='mgm-score'>" + esc(team.score) + "</b>" : "";
     return "<div class='mgm-team'>" + logo + "<span>" + esc((team && (team.name || team.abbr)) || "") + rec + "</span>" + score + "</div>";
@@ -8562,8 +8570,9 @@ let gameScoreTimer = 0;
 let gameScoreFlight = null;
 function armGameScores(games){
   clearTimeout(gameScoreTimer);
-  const onGames = (document.documentElement.dataset.page || "games") === "games";
-  if (!onGames || !games || !games.length) return;
+  const page = document.documentElement.dataset.page || "games";
+  const onBoard = page === "games" || page === "liveodds";
+  if (!onBoard || !games || !games.length) return;
   const scores = window.__gameScores || [];
   const open = games.some(g => {
     const hit = findFinalGame(scores.filter(x => x.sport === String(g.sport || "").toUpperCase()), g.label);
@@ -8589,6 +8598,7 @@ function refreshGameScores(games){
     window.__slipGames = kept.concat(window.__gameScores);
     await seedBoardFromScores(window.__gameScores, day);
     if ((document.documentElement.dataset.page || "games") === "games") drawGameBoard();
+    else if ((document.documentElement.dataset.page || "") === "liveodds") drawOddsCompare(false).catch(() => {});
   }).catch(() => {}).finally(() => { gameScoreFlight = null; });
 }
 function dayHasLines(day){
