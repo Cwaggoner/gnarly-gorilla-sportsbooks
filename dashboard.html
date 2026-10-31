@@ -234,9 +234,10 @@ html[data-page="seasons"] main { min-width:0; }
 .shark-picks { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
 .shark-pick { display:flex; flex-direction:row; align-items:stretch; gap:0; border:1px solid #39ff14; border-radius:10px; padding:0; min-width:0; overflow:hidden; }
 .shark-copy { min-width:0; flex:1 1 auto; padding:8px 10px; }
-.shark-type { flex:0 0 auto; display:flex; flex-direction:column; align-items:flex-end; justify-content:flex-start; gap:6px; margin:0; padding:8px 10px; align-self:stretch; background:rgba(57,255,20,.12); border:0; border-left:1px solid #39ff14; border-radius:0; }
+.shark-type { flex:0 0 auto; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:6px; margin:0; padding:8px 10px; align-self:stretch; background:rgba(57,255,20,.12); border:0; border-left:1px solid #39ff14; border-radius:0; }
 .shark-type span { color:var(--amber); font:700 12px/1.4 system-ui,sans-serif; letter-spacing:.06em; text-transform:uppercase; }
-.shark-add { margin:0; flex:0 0 auto; white-space:nowrap; align-self:flex-end; }
+.shark-add { margin:0; flex:0 0 auto; white-space:nowrap; align-self:center; }
+.shark-win { margin:0; width:100%; color:#00ffff; text-align:center; font:700 15px/1.4 system-ui,sans-serif; }
 .shark-pick .shark-syn { margin:0 0 4px; color:var(--text); font:15px/1.4 system-ui,sans-serif; text-align:left; }
 .shark-top { display:flex; justify-content:space-between; align-items:baseline; gap:8px; margin:0 0 4px; }
 .shark-top b { margin:0; color:var(--title); font:700 15px/1.4 system-ui,sans-serif; letter-spacing:.04em; }
@@ -7894,6 +7895,12 @@ function sharpKeepGrades(card, book){
   });
   return card;
 }
+function sharpTenWin(odds){
+  const n = Number(odds);
+  if (!Number.isFinite(n) || !n) return "";
+  const win = n > 0 ? 10 * (n / 100) : 10 * (100 / Math.abs(n));
+  return "$" + win.toFixed(2);
+}
 function sharpSynopsis(shark, t){
   const price = t.ml ? ((Number(t.odds) > 0 ? "+" : "") + t.odds) : (t.juice || "-110");
   const when = t.when || "Time not posted";
@@ -7924,11 +7931,13 @@ function sharpPaint(card, book){
       const label = result === "win" ? "Win" : result === "loss" ? "Loss" : result === "push" ? "Push" : "Pending";
       const conf = (t.confidence && t.confidencePct) ? t.confidence + " " + t.confidencePct + "%" : "";
       const add = Number.isFinite(Number(t.odds)) ? "<button type='button' class='card-price shark-add' data-date='" + encodeURIComponent(t.date || "") + "' data-sport='" + encodeURIComponent(t.sport || "") + "' data-type='" + encodeURIComponent(t.market || "") + "' data-pick='" + encodeURIComponent(t.slip) + "' data-odds='" + encodeURIComponent(String(t.odds)) + "' data-notes='" + encodeURIComponent(conf) + "'>Add to Slip</button>" : "";
+      const ten = sharpTenWin(t.odds);
+      const win = ten ? "<p class='shark-win'>" + ten + "</p>" : "";
       const priceHtml = t.ml
         ? (function(){ const m = String(t.side || "").match(/^(.*)\s([+-]?\d+)$/); return m ? esc(m[1]) + " <span class='best-price'>" + esc(m[2]) + "</span>" : esc(t.side); })()
         : esc(t.side) + (t.juice ? " <span class='shark-juice best-price'>" + esc(t.juice) + "</span>" : "");
       const syn = "<p class='shark-syn'>" + esc(sharpSynopsis(shark, t)) + "</p>";
-      return "<div class='shark-pick'><div class='shark-copy'><div class='shark-top'><b>" + esc(t.sport) + "</b><span>" + esc(t.market) + "</span></div><p class='shark-side'>" + priceHtml + "</p><p class='shark-game'>" + esc(t.game) + "</p>" + (t.when ? "<p class='shark-when'>" + esc(t.when) + "</p>" : "") + "<p>" + esc(t.why) + "</p>" + (conf ? "<p class='shark-conf " + String(t.confidence).toLowerCase() + "'>" + esc(conf) + "</p>" : "") + "<p class='shark-result " + result + "'>" + label + "</p>" + syn + "</div><div class='shark-type'>" + add + "</div></div>";
+      return "<div class='shark-pick'><div class='shark-copy'><div class='shark-top'><b>" + esc(t.sport) + "</b><span>" + esc(t.market) + "</span></div><p class='shark-side'>" + priceHtml + "</p><p class='shark-game'>" + esc(t.game) + "</p>" + (t.when ? "<p class='shark-when'>" + esc(t.when) + "</p>" : "") + "<p>" + esc(t.why) + "</p>" + (conf ? "<p class='shark-conf " + String(t.confidence).toLowerCase() + "'>" + esc(conf) + "</p>" : "") + "<p class='shark-result " + result + "'>" + label + "</p>" + syn + "</div><div class='shark-type'>" + add + win + "</div></div>";
     }).join("");
     return "<article class='shark' id='" + shark.id + "'><img src='" + shark.img + "' alt='" + esc(shark.alt) + "'><div><h3>" + esc(shark.name) + "</h3><p class='shark-record'>Record " + rec.w + "-" + rec.l + (rec.p ? "-" + rec.p : "") + "</p><p class='shark-rule'>" + esc(shark.rule) + "</p><div class='shark-picks'>" + picks + "</div><p class='shark-fee'>" + esc(shark.fee) + "</p></div></article>";
   }).join("");
