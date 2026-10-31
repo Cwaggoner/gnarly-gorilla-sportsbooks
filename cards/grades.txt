@@ -1,0 +1,8 @@
+# file: grades
+2026-10-30 | RANGE | All Win 9.09 | All Lose -10.00
+2026-10-30 | NBA | Pacers +8.5 | close +8.5 | loss | 125-145 | -10.00
+2026-10-30 | NHL | No Picks
+2026-10-30 | CFB | No Picks
+2026-10-30 | MLB | Season Ended
+2026-10-30 | NFL | No Picks
+2026-10-30 | CBB | No Picks
