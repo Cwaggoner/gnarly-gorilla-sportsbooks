@@ -504,8 +504,12 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 .compare th { color:#39ff14; }
 #liveodds > .section-head { margin-bottom:4px; }
 .odds-tools { display:flex; flex-direction:row; align-items:center; justify-content:flex-start; gap:8px; margin:0 0 6px; flex-wrap:nowrap; width:max-content; max-width:100%; }
-#games > .odds-tools { gap:0; align-items:flex-end; flex-wrap:nowrap; overflow-x:auto; }
-#games #sportbar { margin:0 0 0 50px; flex-wrap:nowrap; }
+#games > .odds-tools { gap:0; align-items:flex-end; flex-wrap:nowrap; overflow:visible; }
+#games #sportbar { margin:0; flex-wrap:nowrap; align-items:flex-end; }
+#games .sport-align { display:flex; align-items:flex-end; justify-content:space-between; flex:0 0 auto; gap:6px; box-sizing:border-box; }
+#games #sportbar .book-links { display:contents; }
+#games .sport-align button,
+#games .sport-align a { flex:1 1 auto; justify-content:center; box-sizing:border-box; min-width:max-content; }
 .book-links { display:inline-flex; align-items:center; gap:6px; margin-left:19px; flex:0 0 auto; }
 .book-links a { height:38px; display:inline-flex; align-items:center; gap:6px; padding:2px 10px; box-sizing:border-box; color:#39ff14; font-weight:700; font-size:13px; line-height:1; text-decoration:none; background:#0e0e0e; border:1px solid var(--line); border-radius:8px; white-space:nowrap; }
 .book-links img { width:16px; height:16px; display:block; }
@@ -739,6 +743,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <label>Book<select id="gamebook" class="book-select"><option>BetMGM</option><option>Caesars</option><option>DraftKings</option><option>Fanatics</option><option>FanDuel</option><option>HardRock</option></select></label>
 <div class="sport-bar" id="sportbar">
 <button type="button" class="on" data-sport="All">All</button>
+<div class="sport-align" id="sportalign">
 <button type="button" class="league" data-sport="CBB" title="NCAA Basketball"><img src="leagues/cbb.png" alt="" width="20" height="20" decoding="async">College Basketball</button>
 <button type="button" class="league" data-sport="CFB" title="NCAA Football"><img src="leagues/cfb.png" alt="" width="20" height="20" decoding="async">College Football</button>
 <button type="button" class="league" data-sport="MLB" title="Major League Baseball"><img src="leagues/mlb.png" alt="" width="20" height="20" decoding="async">MLB</button>
@@ -753,6 +758,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <a href="https://sportsbook.fanduel.com/" target="_blank" rel="noopener noreferrer"><img src="books/fanduel.png" alt="" width="16" height="16" decoding="async">FanDuel</a>
 <a href="https://www.hardrock.bet/" target="_blank" rel="noopener noreferrer"><img src="books/hardrock.png" alt="" width="16" height="16" decoding="async">HardRock</a>
 </span>
+</div>
 <button type="button" id="gamerefresh">Refresh</button>
 </div>
 </div>
@@ -8861,6 +8867,40 @@ function drawGameBoard(){
   box.innerHTML = games.map(g => mgmGameCard(g, day, book, true)).join("");
   armGameScores(games);
   armStartingIn();
+  alignSportBrackets();
+  requestAnimationFrame(alignSportBrackets);
+}
+function alignSportBrackets(){
+  const group = document.getElementById("sportalign");
+  if (!group) return;
+  if ((document.documentElement.dataset.page || "games") !== "games") return;
+  const spans = [...document.querySelectorAll("#gameboard .mgm-card")].map(card => {
+    const books = [...card.querySelectorAll(".mgm-set.mgm-book")];
+    if (!books.length) return null;
+    const left = books[0].getBoundingClientRect().left;
+    const right = books[books.length - 1].getBoundingClientRect().right;
+    return {left: left, right: right, n: books.length};
+  }).filter(Boolean);
+  if (!spans.length) { group.style.width = ""; group.style.flexBasis = ""; group.style.marginLeft = ""; return; }
+  const best = spans.slice().sort((a, b) => (b.right - b.left) - (a.right - a.left) || b.n - a.n)[0];
+  const width = Math.max(0, Math.round(best.right - best.left));
+  group.style.minWidth = "0px";
+  group.style.width = width + "px";
+  group.style.flexBasis = width + "px";
+  const items = [...group.querySelectorAll("button, a")];
+  items.forEach(el => { el.style.paddingLeft = ""; el.style.paddingRight = ""; });
+  let guard = 0;
+  while (group.scrollWidth > width + 1 && guard < 6) {
+    guard += 1;
+    items.forEach(el => {
+      const pad = Math.max(4, (parseFloat(getComputedStyle(el).paddingLeft) || 10) - 2);
+      el.style.paddingLeft = pad + "px";
+      el.style.paddingRight = pad + "px";
+    });
+  }
+  group.style.marginLeft = "0px";
+  const shift = Math.round(best.left - group.getBoundingClientRect().left);
+  group.style.marginLeft = shift + "px";
 }
 function espnQuote(n){
   if (n == null || !Number.isFinite(Number(n))) return "";
@@ -10112,6 +10152,7 @@ if (sportbar) sportbar.onclick = e => {
   drawGameBoard();
 };
 window.addEventListener("resize", pinOffset);
+window.addEventListener("resize", () => requestAnimationFrame(alignSportBrackets));
 window.addEventListener("resize", sizeSharpTeam);
 window.addEventListener("resize", () => setGameNote((document.getElementById("gamenote") || {}).textContent || ""));
 const gameTools = document.querySelector("#games > .odds-tools");
