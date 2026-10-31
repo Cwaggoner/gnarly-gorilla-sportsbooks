@@ -7363,13 +7363,21 @@ document.getElementById("syncledger").onclick = async () => {
   const note = document.getElementById("ledgernote");
   note.textContent = "Syncing ledger and graded slips...";
   try {
-    const res = await fetch(cardUrl("cards/ledger.json"));
+    const saved = load().filter(b => b && !isNoPick(b));
+    const res = await fetch(cardUrl("cards/ledger.json") + "&ts=" + Date.now());
     if (!res.ok) throw new Error("missing");
     const data = await res.json();
     const bets = Array.isArray(data) ? data : data.bets;
     if (!Array.isArray(bets) || !bets.length) throw new Error("empty");
-    bets.forEach(b => { keepClose(b); markEdge(b); });
-    save(bets);
+    const merged = bets.slice();
+    let added = 0;
+    saved.forEach(b => {
+      if (merged.some(x => sameSlip(x, b))) return;
+      merged.push(b);
+      added += 1;
+    });
+    merged.forEach(b => { keepClose(b); markEdge(b); });
+    save(merged);
     localStorage.setItem("gg-hold-ledger", "1");
     const grades = await fetch("cards/grades.txt?ts=" + Date.now());
     if (grades.ok) {
@@ -7386,7 +7394,7 @@ document.getElementById("syncledger").onclick = async () => {
     filled.forEach(keepClose);
     save(filled);
     const graded = filled.concat(loadGrade()).concat(gradeFile).filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
-    note.textContent = "Synced ledger. " + bets.length + " slips loaded. " + graded.length + " graded slips are in the Slips card.";
+    note.textContent = "Synced ledger. " + bets.length + " slips loaded. " + graded.length + " graded slips are in the Slips card." + (added ? " " + added + " saved slips were not on the site. They stayed on this Chromebook. The public file was not changed." : " The saved slips are already on the site.");
     goPage("slips");
   } catch (err) {
     note.textContent = "Sync failed. Ledger is not on the site yet.";
