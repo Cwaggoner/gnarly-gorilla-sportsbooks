@@ -333,7 +333,8 @@ html[data-page="seasons"] main { min-width:0; }
 .score-card.final .score-state { color:#39ff14; font-weight:700; }
 .score-card.pre .score-state { color:#d6ffd0; }
 .live-dot { display:inline-block; width:8px; height:8px; border-radius:50%; background:#f0e14a; margin-right:6px; vertical-align:0; animation:livedot 1.2s ease-in-out infinite; }
-.status-dot { display:inline-block; width:8px; height:8px; border-radius:50%; background:#f0e14a; margin-right:6px; vertical-align:-1px; }
+.status-dot { display:inline-block; width:8px; height:8px; border-radius:50%; background:#00e5ff; margin-right:6px; vertical-align:-1px; }
+.status-dot.final { background:#39ff14; }
 .mgm-when .live-dot { vertical-align:-1px; }
 @keyframes livedot { 50% { opacity:.25; } }
 .score-team { display:grid; grid-template-columns:28px minmax(0,1fr) auto; gap:8px; align-items:center; padding:3px 0; }
@@ -8802,7 +8803,7 @@ function mgmGameCard(g, day, book, withClose){
   const sets = ordered.map(name => mgmSet(name, ["Spread", "Total", "Money"], [mgmOpen(g, "spreads", day, name, names), mgmOpen(g, "totals", day, name, names), mgmOpen(g, "h2h", day, name, names)], "book")).join("");
   const close = withClose ? mgmSet("Close", ["Spread", "Total", "Money"], [mgmClose(gameClosePack(g, day, book), "spreads"), mgmClose(gameClosePack(g, day, book), "totals"), mgmClose(gameClosePack(g, day, book), "h2h")], "close") : "";
   const tag = scored && scored.live && !scored.final ? (scored.detail || "Live") : (scored && scored.final ? "Final" : "");
-  const dot = "<span class='" + (scored && scored.live && !scored.final ? "live-dot" : "status-dot") + "'></span>";
+  const dot = "<span class='" + (scored && scored.live && !scored.final ? "live-dot" : "status-dot" + (scored && scored.final ? " final" : "")) + "'></span>";
   const startMs = Date.parse(g.start || "");
   const startIso = Number.isFinite(startMs) ? new Date(startMs).toISOString() : "";
   const soon = !tag && startingInText(g.start);
