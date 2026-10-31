@@ -2113,9 +2113,7 @@ function clv(b){
   fair = Math.min(0.97, Math.max(0.03, fair + lineEdge(b)));
   return (got * fair - 1) * 100;
 }
-let paidKey = true;
 function clvText(b){
-  if (!paidKey) return "-";
   if (!b || b.result === "pending" || b.result === "void") return "-";
   if (!usableClose(b.close)) return "No Close Saved";
   if (!usableClose(b.odds)) return "No Bet Price";
@@ -2378,19 +2376,6 @@ async function loadCalendarFile(){
   } catch (err) {}
 }
 let driveCard = {date: "", lines: [], loaded: false};
-async function loadDriveCardForCalendar(){
-  try {
-    const text = await cardBundle();
-    const today = easternDay();
-    const lines = text.split(/\n/).map(l => l.trim()).filter(l => l && !l.startsWith("#")).map(l => {
-      const parts = l.split("|").map(s => s.trim());
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(parts[0])) return null;
-      return {date: parts[0], sport: parts[1], type: parts[2], pick: parts[3], odds: Number(String(parts[4] || "").replace(/\u2212/g, "-")), stake: 10};
-    }).filter(row => row && row.date === today && row.pick && Number.isFinite(row.odds) && !/no picks|season ended/i.test(row.pick));
-    driveCard = {date: today, lines: lines, loaded: true};
-    drawCalendar();
-  } catch (err) {}
-}
 function gradedPool(){
   return collapseSlips(load().concat(loadGrade()).concat(gradeFile).filter(b => b && b.pick && !isNoPick(b)));
 }
@@ -4043,65 +4028,12 @@ function render(){
   const page = document.documentElement.dataset.page || "games";
   try {
   applyLineWindowCloses();
-  if (page === "liveodds") { drawOddsCompare(false).catch(() => {}); return; }
-  if (["slips","breaks","charts","dashboard","calendarcard","reportcard","about","seasons"].indexOf(page) < 0) return;
-  const all = load().concat(loadGrade()).concat(gradeFile).filter(b => b && b.pick && !isNoPick(b) && !/^RANGE$/i.test(b.pick) && !/^all win/i.test(b.result || ""));
-  all.forEach(stampFileClose);
-  let unique = collapseSlips(all);
-  unique.forEach(b => {
-    if (!b.id) b.id = [b.date, b.sport, b.pick].join("|");
-    if (!b.book) b.book = "BetMGM";
-    b.type = betType(b);
-    if (!b.stake) b.stake = 10;
-    const ticket = ticketOdds(b);
-    if (ticket != null) b.odds = ticket;
-  });
-  unique = dropMatchedPending(unique);
-  const windowed = unique.filter(b => inSlipWindow(b.date));
-  const bets = filtered(windowed.sort((a,b) => String(b.date).localeCompare(String(a.date))));
-  const totals = bets;
-  const pl = totals.reduce((s, b) => s + profit(b), 0);
-  const settled = totals.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
-  try { if (page === "dashboard" || page === "about") drawDashboard(); } catch (err) {}
-  if (page === "slips") {
-  const typeRank = t => t === "SGP" ? 99 : ["Moneyline","Parlay","Prop","Spread","Total"].indexOf(t) + 1 || 50;
-  const grouped = filtered(slipsForBooks(windowed)).sort((a,b) => sportRank(a.sport) - sportRank(b.sport) || typeRank(a.type) - typeRank(b.type) || b.date.localeCompare(a.date) || String(a.book).localeCompare(String(b.book)));
-  let lastSport = "", lastType = "";
-  document.getElementById("rows").innerHTML = grouped.map(b => {
-    try {
-    const p = rowPl(b);
-    const cls = b.result === "win" ? "win" : b.result === "loss" ? "loss" : "push";
-    const finished = slateSettled(b.date);
-    const note = gradeNote(b);
-    const grade = b.viewOnly
-      ? (b.noPrice ? "No Price Saved" : b.lineDiffers ? "Line differs" : (note ? "<span class='" + cls + "'>" + esc(note) + "</span>" : dash))
-      : note
-      ? "<span class='" + cls + "'>" + esc(note) + "</span>"
-      : !finished ? "Game not finished"
-      : "<button data-set='win' data-id='" + b.id + "'>Win</button> <button class='danger' data-set='loss' data-id='" + b.id + "'>Loss</button> <button class='amber' data-set='push' data-id='" + b.id + "'>Push</button>";
-    const cv = clv(b);
-    const sharpCv = sharpClv(b);
-    const sharpCls = sharpCv === "differs" ? "warn" : (typeof sharpCv === "number" ? (sharpCv > 0.05 ? "win" : (sharpCv < -0.05 ? "loss" : "")) : "");
-    let head = "";
-    if (b.sport !== lastSport) { lastSport = b.sport; lastType = ""; head += "<tr class='sport'><td colspan='15'>" + esc(b.sport || "Other") + (seasonEnded(b.sport) ? " Season Ended" : "") + "</td></tr>"; }
-    if (b.type !== lastType) {
-      lastType = b.type;
-      const same = grouped.filter(x => x.sport === b.sport && x.type === b.type);
-      const n = k => same.filter(x => x.result === k).length;
-      const count = "(" + n("win") + " win · " + n("loss") + " loss · " + n("push") + " push · " + n("pending") + " pending · " + same.length + " total)";
-      head += "<tr class='type'><td colspan='15'><div class='type-row'><span>" + esc(b.type || "Other") + "</span><span class='type-count'>" + count + "</span></div></td></tr>";
-    }
-    const edge = markEdge(b).edge;
-    const rowCls = b.result === "win" ? "row-win" : b.result === "loss" ? "row-loss" : b.result === "pending" ? (edge ? "row-pending edge" : "row-pending") : (b.manual ? "manual" : b.fromCard ? "fromcard" : "");
-    const liveCell = b.result === "pending" ? slipLiveCell(b) : {text: "—", band: ""};
-    const confText = String(liveCell.text || "").replace(/^Confidence:\s*/i, "");
-    return head + "<tr" + (rowCls ? " class='" + rowCls + "'" : "") + "><td>" + b.date + placedText(b) + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td>" + esc(b.pick) + "</td><td class='slip-score'>" + slipScoreCell(b) + "</td><td>" + (b.priceText ? esc(b.priceText) : (usableClose(b.odds) ? b.odds : dash)) + "</td><td class='col-close'>" + (b.closeText ? esc(b.closeText) : (usableClose(b.close) ? b.close : dash)) + "</td><td class='" + (cv > 0 ? "win" : cv < 0 ? "loss" : "") + "'>" + clvText(b) + "</td><td class='" + sharpCls + "'>" + esc(sharpLabel(sharpCv, b)) + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='result " + cls + "'>" + b.result + "</td><td class='slip-conf " + String(liveCell.band || "").toLowerCase() + "'>" + esc(confText) + "</td><td class='" + cls + "'>" + moneyHtml(p) + "</td><td>" + grade + "</td></tr>";
-    } catch (err) { return ""; }
-  }).join("") || "<tr><td colspan='15'>" + ((document.getElementById("fBook") || {}).value ? "No slips for " + esc(document.getElementById("fBook").value) + "." : "No bets yet.") + "</td></tr>";
-  }
+  if (page !== "slips") {
+  if (page === "dashboard" || page === "about") { try { drawDashboard(); } catch (err) {} }
   if (page === "charts") {
   try { drawCharts(); } catch (err) { document.getElementById("plotnote").textContent = "Chart failed. The rest of the page is still live."; }
-  document.getElementById("plotnote").textContent = settled.length + " settled slips plotted. " + slipsLeftToSettle(bets) + " slips left to settle.";
+  const plotted = chartSlips();
+  document.getElementById("plotnote").textContent = plotted.filter(b => b.result === "win" || b.result === "loss" || b.result === "push").length + " settled slips plotted. " + slipsLeftToSettle(plotted) + " slips left to settle.";
   }
   if (page === "calendarcard") drawCalendar();
   if (page === "breaks") {
@@ -4165,6 +4097,57 @@ function render(){
   }
   if (page === "seasons") { try { paintSeasonStatus(); } catch (err) {} }
   if (page === "about") { try { paintSharpCheck(); } catch (err) {} }
+  if (page === "liveodds") drawOddsCompare(false).catch(() => {});
+  return;
+  }
+  const all = load().concat(loadGrade()).concat(gradeFile).filter(b => b && b.pick && !isNoPick(b) && !/^RANGE$/i.test(b.pick) && !/^all win/i.test(b.result || ""));
+  all.forEach(stampFileClose);
+  let unique = collapseSlips(all);
+  unique.forEach(b => {
+    if (!b.id) b.id = [b.date, b.sport, b.pick].join("|");
+    if (!b.book) b.book = "BetMGM";
+    b.type = betType(b);
+    if (!b.stake) b.stake = 10;
+    const ticket = ticketOdds(b);
+    if (ticket != null) b.odds = ticket;
+  });
+  unique = dropMatchedPending(unique);
+  const windowed = unique.filter(b => inSlipWindow(b.date));
+  windowed.sort((a,b) => String(b.date).localeCompare(String(a.date)));
+  const typeRank = t => t === "SGP" ? 99 : ["Moneyline","Parlay","Prop","Spread","Total"].indexOf(t) + 1 || 50;
+  const grouped = filtered(slipsForBooks(windowed)).sort((a,b) => sportRank(a.sport) - sportRank(b.sport) || typeRank(a.type) - typeRank(b.type) || b.date.localeCompare(a.date) || String(a.book).localeCompare(String(b.book)));
+  let lastSport = "", lastType = "";
+  document.getElementById("rows").innerHTML = grouped.map(b => {
+    try {
+    const p = rowPl(b);
+    const cls = b.result === "win" ? "win" : b.result === "loss" ? "loss" : "push";
+    const finished = slateSettled(b.date);
+    const note = gradeNote(b);
+    const grade = b.viewOnly
+      ? (b.noPrice ? "No Price Saved" : b.lineDiffers ? "Line differs" : (note ? "<span class='" + cls + "'>" + esc(note) + "</span>" : dash))
+      : note
+      ? "<span class='" + cls + "'>" + esc(note) + "</span>"
+      : !finished ? "Game not finished"
+      : "<button data-set='win' data-id='" + b.id + "'>Win</button> <button class='danger' data-set='loss' data-id='" + b.id + "'>Loss</button> <button class='amber' data-set='push' data-id='" + b.id + "'>Push</button>";
+    const cv = clv(b);
+    const sharpCv = sharpClv(b);
+    const sharpCls = sharpCv === "differs" ? "warn" : (typeof sharpCv === "number" ? (sharpCv > 0.05 ? "win" : (sharpCv < -0.05 ? "loss" : "")) : "");
+    let head = "";
+    if (b.sport !== lastSport) { lastSport = b.sport; lastType = ""; head += "<tr class='sport'><td colspan='15'>" + esc(b.sport || "Other") + (seasonEnded(b.sport) ? " Season Ended" : "") + "</td></tr>"; }
+    if (b.type !== lastType) {
+      lastType = b.type;
+      const same = grouped.filter(x => x.sport === b.sport && x.type === b.type);
+      const n = k => same.filter(x => x.result === k).length;
+      const count = "(" + n("win") + " win · " + n("loss") + " loss · " + n("push") + " push · " + n("pending") + " pending · " + same.length + " total)";
+      head += "<tr class='type'><td colspan='15'><div class='type-row'><span>" + esc(b.type || "Other") + "</span><span class='type-count'>" + count + "</span></div></td></tr>";
+    }
+    const edge = markEdge(b).edge;
+    const rowCls = b.result === "win" ? "row-win" : b.result === "loss" ? "row-loss" : b.result === "pending" ? (edge ? "row-pending edge" : "row-pending") : (b.manual ? "manual" : b.fromCard ? "fromcard" : "");
+    const liveCell = b.result === "pending" ? slipLiveCell(b) : {text: "—", band: ""};
+    const confText = String(liveCell.text || "").replace(/^Confidence:\s*/i, "");
+    return head + "<tr" + (rowCls ? " class='" + rowCls + "'" : "") + "><td>" + b.date + placedText(b) + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td>" + esc(b.pick) + "</td><td class='slip-score'>" + slipScoreCell(b) + "</td><td>" + (b.priceText ? esc(b.priceText) : (usableClose(b.odds) ? b.odds : dash)) + "</td><td class='col-close'>" + (b.closeText ? esc(b.closeText) : (usableClose(b.close) ? b.close : dash)) + "</td><td class='" + (cv > 0 ? "win" : cv < 0 ? "loss" : "") + "'>" + clvText(b) + "</td><td class='" + sharpCls + "'>" + esc(sharpLabel(sharpCv, b)) + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='result " + cls + "'>" + b.result + "</td><td class='slip-conf " + String(liveCell.band || "").toLowerCase() + "'>" + esc(confText) + "</td><td class='" + cls + "'>" + moneyHtml(p) + "</td><td>" + grade + "</td></tr>";
+    } catch (err) { return ""; }
+  }).join("") || "<tr><td colspan='15'>" + ((document.getElementById("fBook") || {}).value ? "No slips for " + esc(document.getElementById("fBook").value) + "." : "No bets yet.") + "</td></tr>";
   } finally {
     rendering = false;
   }
@@ -7669,29 +7652,6 @@ function showBookIcon(name){
 }
 showBookIcon((document.getElementById("fBook") || {}).value || "");
 ["reportDay","reportShow"].forEach(id => document.getElementById(id).onchange = render);
-async function keyIsPaid(key){
-  if (!key) { paidKey = false; return false; }
-  paidKey = true;
-  return true;
-}
-async function paidHistoricalGames(sport, bookKey, date, key){
-  const sportKey = SPORT_KEY[sport];
-  if (!sportKey) return null;
-  const cacheKey = "gg-hist-" + sportKey + "-" + bookKey + "-" + date;
-  try {
-    const cached = JSON.parse(localStorage.getItem(cacheKey) || "null");
-    if (cached && cached.games) return cached.games;
-  } catch (e) {}
-  const url = "https://api.the-odds-api.com/v4/historical/sports/" + sportKey + "/odds?apiKey=" + encodeURIComponent(key) + "&regions=us,us2&markets=spreads,totals,h2h&oddsFormat=american&bookmakers=" + bookKey + "&date=" + date + "T23:00:00Z";
-  let res;
-  try { res = await fetch(url); }
-  catch (e) { return null; }
-  if (!res.ok) return null;
-  const body = await res.json();
-  const games = body && body.data ? body.data : body;
-  if (games && games.length) localStorage.setItem(cacheKey, JSON.stringify({at: Date.now(), games}));
-  return games || null;
-}
 function applyFrozenSlipCloses(bets){
   let filled = 0;
   (bets || []).forEach(b => {
@@ -7970,7 +7930,6 @@ if (pageNeeds("today")) {
   refreshTodayCard();
   setInterval(refreshTodayCard, 60000);
 }
-(async () => { const k = (document.getElementById("oddskey") || {}).value || ""; if (k.trim()) { paidKey = true; } })();
 function booksFromOddsBoard(board){
   const out = {};
   const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
@@ -8456,29 +8415,6 @@ function drawGameBoard(){
   }).join("");
   armGameScores(games);
 }
-function espnAmerican(node){
-  if (node == null || node === "") return null;
-  if (typeof node === "number") return Number.isFinite(node) ? node : null;
-  const text = node.american != null ? node.american : node.alternateDisplayValue;
-  if (text == null || text === "") return null;
-  const n = Number(String(text).replace(/[^\d.+-]/g, ""));
-  return Number.isFinite(n) ? n : null;
-}
-function espnSidePrice(side, key){
-  const current = espnAmerican(((side || {}).current || {})[key]);
-  if (current != null) return current;
-  const close = espnAmerican(((side || {}).close || {})[key]);
-  if (close != null) return close;
-  if (key === "moneyLine") {
-    const n = Number(side && side.moneyLine);
-    return Number.isFinite(n) ? n : null;
-  }
-  if (key === "spread") {
-    const n = Number(side && side.spreadOdds);
-    return Number.isFinite(n) ? n : null;
-  }
-  return null;
-}
 function espnQuote(n){
   if (n == null || !Number.isFinite(Number(n))) return "";
   const v = Number(n);
@@ -8511,25 +8447,6 @@ function espnBoardLines(odd){
   if (!Object.keys(lines).length) return null;
   return {book: (odd.provider && odd.provider.name) || "DraftKings", lines: lines};
 }
-function espnLines(row){
-  const away = row.awayTeamOdds || {};
-  const home = row.homeTeamOdds || {};
-  const pack = row.close || row.current || {};
-  const aMl = espnSidePrice(away, "moneyLine");
-  const hMl = espnSidePrice(home, "moneyLine");
-  const aPt = espnSidePrice(away, "pointSpread");
-  const hPt = espnSidePrice(home, "pointSpread");
-  const aJ = espnSidePrice(away, "spread");
-  const hJ = espnSidePrice(home, "spread");
-  const total = espnAmerican(pack.total) != null ? espnAmerican(pack.total) : (Number.isFinite(Number(row.overUnder)) ? Number(row.overUnder) : null);
-  const over = espnAmerican(pack.over) != null ? espnAmerican(pack.over) : (Number.isFinite(Number(row.overOdds)) ? Number(row.overOdds) : null);
-  const under = espnAmerican(pack.under) != null ? espnAmerican(pack.under) : (Number.isFinite(Number(row.underOdds)) ? Number(row.underOdds) : null);
-  const out = {};
-  if (aMl != null && hMl != null) out.h2h = espnQuote(aMl) + " / " + espnQuote(hMl);
-  if (aPt != null && hPt != null && aJ != null && hJ != null) out.spreads = espnQuote(aPt) + " " + espnQuote(aJ) + " / " + espnQuote(hPt) + " " + espnQuote(hJ);
-  if (total != null && over != null && under != null) out.totals = total + " " + espnQuote(over) + " / " + total + " " + espnQuote(under);
-  return out;
-}
 function patchBookLine(day, sport, label, market, book, text){
   if (!text) return;
   const board = window.__ggOddsBoard && window.__ggOddsBoard.days ? window.__ggOddsBoard : {days: {}};
@@ -8542,17 +8459,6 @@ function patchBookLine(day, sport, label, market, book, text){
   const cur = row.books[book];
   if (!cur || cur === "-") row.books[book] = text;
   window.__ggOddsBoard = board;
-}
-function boardScoreLine(g){
-  const list = (window.__gameScores || []).filter(x => !g.sport || x.sport === String(g.sport || "").toUpperCase());
-  const hit = findFinalGame(list, g.label);
-  if (!hit || (!hit.live && !hit.final)) return "";
-  const html = slipScoreHtml(hit);
-  if (!html) return "";
-  const live = hit.live && !hit.final;
-  const ot = /ot/i.test(hit.detail || "");
-  const tag = live ? "" : "<span class='game-final-tag'>Final" + (ot ? "/OT" : "") + "</span>";
-  return "<p class='game-score" + (live ? " live" : "") + "'>" + tag + html + "</p>";
 }
 let gameScoreTimer = 0;
 let gameScoreFlight = null;
@@ -8808,21 +8714,6 @@ async function sharkDay(sport, ymd){
     g.awayOpen = sharkOpen(ml.away);
     return g;
   }).filter(Boolean);
-}
-async function sharkSlate(sport){
-  const today = easternDay();
-  for (let i = 0; i <= 6; i++) {
-    const ymd = shiftDate(today, i);
-    const games = await sharkDay(sport, ymd);
-    const open = games.filter(g => !g.final);
-    if (open.length) return {date: ymd, games: open, note: i ? "Next slate, " + prettyDay(ymd) + "." : prettyDay(ymd) + "."};
-  }
-  for (let i = 1; i <= 3; i++) {
-    const ymd = shiftDate(today, -i);
-    const games = await sharkDay(sport, ymd);
-    if (games.length) return {date: ymd, games: games, note: "Previous slate, " + prettyDay(ymd) + "."};
-  }
-  return {date: today, games: [], note: sport === "CBB" ? "CBB has not posted a slate." : "No games posted."};
 }
 function sharpPass(){
   const lines = [
