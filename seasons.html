@@ -6409,7 +6409,7 @@ async function scoreboard(sport, date){
     const home = teamSide(homeSide);
     const away = teamSide(awaySide);
     const status = (comp.status && comp.status.type) || {};
-    return {sport, date, final: status.completed === true || /final/i.test(status.name || status.description || ""), postponed: /postpon|cancel|delay/i.test(status.name || ""), live: status.state === "in", detail: status.shortDetail || status.detail || "", home: home, away: away, homeScore: Number(homeSide.score), awayScore: Number(awaySide.score), start: Date.parse(ev.date || "")};
+    return {sport, date, id: ev.id, final: status.completed === true || /final/i.test(status.name || status.description || ""), postponed: /postpon|cancel|delay/i.test(status.name || ""), live: status.state === "in", detail: status.shortDetail || status.detail || "", home: home, away: away, homeScore: Number(homeSide.score), awayScore: Number(awaySide.score), start: Date.parse(ev.date || "")};
   }).filter(g => g.home.displayName && g.away.displayName);
 }
 let scoreTimer = 0;
@@ -7641,6 +7641,92 @@ function drawGameBoard(){
   }).join("");
   armGameScores(games);
 }
+function espnAmerican(node){
+  if (node == null || node === "") return null;
+  if (typeof node === "number") return Number.isFinite(node) ? node : null;
+  const text = node.american != null ? node.american : node.alternateDisplayValue;
+  if (text == null || text === "") return null;
+  const n = Number(String(text).replace(/[^\d.+-]/g, ""));
+  return Number.isFinite(n) ? n : null;
+}
+function espnSidePrice(side, key){
+  const current = espnAmerican(((side || {}).current || {})[key]);
+  if (current != null) return current;
+  const close = espnAmerican(((side || {}).close || {})[key]);
+  if (close != null) return close;
+  if (key === "moneyLine") {
+    const n = Number(side && side.moneyLine);
+    return Number.isFinite(n) ? n : null;
+  }
+  if (key === "spread") {
+    const n = Number(side && side.spreadOdds);
+    return Number.isFinite(n) ? n : null;
+  }
+  return null;
+}
+function espnQuote(n){
+  if (n == null || !Number.isFinite(Number(n))) return "";
+  const v = Number(n);
+  const shown = Math.abs(v) >= 100 ? Math.round(v) : v;
+  return (shown > 0 ? "+" : "") + shown;
+}
+function espnLines(row){
+  const away = row.awayTeamOdds || {};
+  const home = row.homeTeamOdds || {};
+  const pack = row.close || row.current || {};
+  const aMl = espnSidePrice(away, "moneyLine");
+  const hMl = espnSidePrice(home, "moneyLine");
+  const aPt = espnSidePrice(away, "pointSpread");
+  const hPt = espnSidePrice(home, "pointSpread");
+  const aJ = espnSidePrice(away, "spread");
+  const hJ = espnSidePrice(home, "spread");
+  const total = espnAmerican(pack.total) != null ? espnAmerican(pack.total) : (Number.isFinite(Number(row.overUnder)) ? Number(row.overUnder) : null);
+  const over = espnAmerican(pack.over) != null ? espnAmerican(pack.over) : (Number.isFinite(Number(row.overOdds)) ? Number(row.overOdds) : null);
+  const under = espnAmerican(pack.under) != null ? espnAmerican(pack.under) : (Number.isFinite(Number(row.underOdds)) ? Number(row.underOdds) : null);
+  const out = {};
+  if (aMl != null && hMl != null) out.h2h = espnQuote(aMl) + " / " + espnQuote(hMl);
+  if (aPt != null && hPt != null && aJ != null && hJ != null) out.spreads = espnQuote(aPt) + " " + espnQuote(aJ) + " / " + espnQuote(hPt) + " " + espnQuote(hJ);
+  if (total != null && over != null && under != null) out.totals = total + " " + espnQuote(over) + " / " + total + " " + espnQuote(under);
+  return out;
+}
+function patchBookLine(day, sport, label, market, book, text){
+  if (!text) return;
+  const board = window.__ggOddsBoard && window.__ggOddsBoard.days ? window.__ggOddsBoard : {days: {}};
+  board.days = board.days || {};
+  const block = board.days[day] || (board.days[day] = {});
+  const rows = Array.isArray(block[market]) ? block[market] : (block[market] = []);
+  let row = rows.find(r => String(r && r.label || "").toLowerCase() === String(label || "").toLowerCase());
+  if (!row) { row = {sport: sport, label: label, start: "", books: {}}; rows.push(row); }
+  row.books = row.books || {};
+  const cur = row.books[book];
+  if (!cur || cur === "-") row.books[book] = text;
+  window.__ggOddsBoard = board;
+}
+async function fillMissingBookOdds(games, day){
+  const board = window.__ggOddsBoard && window.__ggOddsBoard.days && window.__ggOddsBoard.days[day];
+  if (!board) return;
+  const labels = [];
+  ["h2h","spreads","totals"].forEach(market => (board[market] || []).forEach(row => {
+    if (!row || !row.label) return;
+    if (!labels.some(item => item.label === row.label && item.sport === row.sport)) labels.push({sport: row.sport, label: row.label});
+  }));
+  await Promise.all(labels.map(async row => {
+    const hit = findFinalGame((games || []).filter(g => g.sport === row.sport), row.label);
+    const path = SCORE_FEED[row.sport];
+    if (!hit || !hit.id || !path) return;
+    const bits = path.split("/");
+    let data = null;
+    try {
+      const res = await fetch("https://sports.core.api.espn.com/v2/sports/" + bits[0] + "/leagues/" + bits[1] + "/events/" + hit.id + "/competitions/" + hit.id + "/odds");
+      if (res.ok) data = await res.json();
+    } catch (e) {}
+    const odd = data && (data.items || [])[0];
+    if (!odd) return;
+    const book = (odd.provider && odd.provider.name) || "DraftKings";
+    const lines = espnLines(odd);
+    ["h2h","spreads","totals"].forEach(market => patchBookLine(day, row.sport, row.label, market, book, lines[market]));
+  }));
+}
 function boardScoreLine(g){
   const list = (window.__gameScores || []).filter(x => !g.sport || x.sport === String(g.sport || "").toUpperCase());
   const hit = findFinalGame(list, g.label);
@@ -7676,11 +7762,20 @@ function refreshGameScores(games){
   const sports = [...new Set((games || []).map(g => String(g.sport || "").toUpperCase()))].filter(s => SCORE_FEED[s]);
   const day = easternDay();
   if (!sports.length) return;
-  gameScoreFlight = Promise.all(sports.map(sport => scoreboard(sport, day).catch(() => []))).then(packs => {
+  gameScoreFlight = Promise.all(sports.map(sport => scoreboard(sport, day).catch(() => []))).then(async packs => {
     window.__gameScores = packs.flat();
     window.__gameScoresAt = Date.now();
     const kept = (window.__slipGames || []).filter(g => String(g.date || "").slice(0, 10) !== day);
     window.__slipGames = kept.concat(window.__gameScores);
+    const key = ((document.getElementById("oddskey") || {}).value || "").trim();
+    if (key && !window.__gameOddsPulled) {
+      try {
+        const live = await pullLiveBoard(key);
+        window.__gameOddsPulled = true;
+        ["h2h","spreads","totals"].forEach(market => mergeBoardRows(day, market, rowsFromLive(live, day, market)));
+      } catch (e) {}
+    }
+    await fillMissingBookOdds(window.__gameScores, day);
     if ((document.documentElement.dataset.page || "games") === "games") drawGameBoard();
   }).catch(() => {}).finally(() => { gameScoreFlight = null; });
 }
