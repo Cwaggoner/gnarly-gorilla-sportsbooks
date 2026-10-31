@@ -8444,7 +8444,8 @@ function sharpTally(book){
 }
 async function paintSharpTeam(){
   const el = document.getElementById("sharpteamrec");
-  if (!el) return;
+  const team = document.getElementById("sharpteam");
+  if (!el || !team) return;
   const book = sharpReadBook();
   try {
     const res = await fetch("cards/sharps.json?ts=" + Date.now());
@@ -8459,6 +8460,16 @@ async function paintSharpTeam(){
   let w = 0, l = 0, p = 0;
   Object.keys(tally).forEach(id => { w += tally[id].w || 0; l += tally[id].l || 0; p += tally[id].p || 0; });
   el.textContent = w + "-" + l + "-" + p;
+  sizeSharpTeam();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(sizeSharpTeam);
+}
+function sizeSharpTeam(){
+  const team = document.getElementById("sharpteam");
+  if (!team || team.hidden) return;
+  const bios = document.querySelectorAll("#about .crew-bio");
+  if (!bios.length) return;
+  const h = Math.max.apply(null, [...bios].map(bio => bio.offsetHeight));
+  if (h > 0) team.style.height = h + "px";
 }
 function sharpKeepGrades(card, book){
   const prior = book.cards[card.date];
@@ -8740,7 +8751,7 @@ function showView(id){
   });
   if (screen === "scoreboard") loadLiveBoard();
   if (screen === "sharks") loadSharks();
-  if (screen === "about") paintSharpTeam();
+  if (screen === "about") { paintSharpTeam(); requestAnimationFrame(sizeSharpTeam); }
   if (screen === "dashboard") { try { drawDashboard(); } catch (e) {} }
   if (screen === "charts") { try { drawCharts(); } catch (e) {} }
   if (screen === "calendarcard") { try { drawCalendar(); } catch (e) {} }
@@ -8783,6 +8794,7 @@ if (sportbar) sportbar.onclick = e => {
   drawGameBoard();
 };
 window.addEventListener("resize", pinOffset);
+window.addEventListener("resize", sizeSharpTeam);
 function pinOffset(){
   const bar = document.querySelector(".topbar");
   if (bar) document.documentElement.style.setProperty("--pin", (bar.offsetHeight + 8) + "px");
