@@ -221,9 +221,10 @@ html[data-page="seasons"] main { min-width:0; }
 .about-copy { position:relative; }
 .crew-title { margin:14px auto 8px; width:100%; text-align:center; color:#39ff14; font-family:"Cinzel",serif; font-weight:700; font-size:34px; letter-spacing:.03em; line-height:1.15; }
 .crew-row { display:flex; justify-content:center; align-items:stretch; gap:8px; margin:0 auto; min-width:0; width:100%; }
-.crew-team, .crew-each { flex:0 0 auto; align-self:flex-end; display:flex; flex-direction:column; justify-content:center; gap:2px; margin:0; box-sizing:border-box; border:1px solid #39ff14; border-radius:10px; padding:8px 10px; background:#0e0e0e; text-align:center; }
-.crew-team { justify-content:flex-start; }
-.crew-each { justify-content:stretch; text-align:left; min-width:9.5rem; }
+.crew-stack { flex:0 0 auto; align-self:stretch; display:flex; flex-direction:column; gap:8px; min-width:9.5rem; }
+.crew-team, .crew-each { width:100%; align-self:stretch; display:flex; flex-direction:column; margin:0; box-sizing:border-box; border:1px solid #39ff14; border-radius:10px; padding:8px 10px; background:#0e0e0e; }
+.crew-team { flex:0 0 auto; justify-content:flex-start; gap:2px; text-align:center; }
+.crew-each { flex:0 0 auto; justify-content:stretch; text-align:left; }
 .crew-each ul { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; justify-content:space-between; height:100%; gap:4px; }
 .crew-each li { display:flex; justify-content:space-between; align-items:baseline; gap:8px; color:#d6ffd0; font:600 11px/1.2 system-ui,sans-serif; }
 .crew-each b { color:#39ff14; font-weight:700; }
@@ -857,13 +858,12 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <p class="warn" id="statebooks">State rules load from the visitor location.</p>
 <p class="crew-title">Gnarly Gorilla Sports Sharps</p>
 <div class="crew-row">
-<aside class="crew-team" id="sharpteam" aria-label="Sharps team record"><p class="crew-team-kicker">Sharps</p><p class="crew-team-rec" id="sharpteamrec">0-0-0</p><p class="crew-team-split">W-L-P</p></aside>
 <figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-gorilla"><img loading="lazy" decoding="async" class="about-mark" src="about-gorilla.jpg" alt="Gnarly Gorilla"></a><figcaption class="crew-bio"><b>Gnarly Gorilla</b><p>The number, not the noise. A small edge is enough. I do not sell a sure thing.</p><p class="crew-fee">I have a fee. The first $10 of the stake is mine.</p></figcaption></figure>
 <figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-vito"><img loading="lazy" decoding="async" class="about-mark" src="jungle-leopard.jpg" alt="Vito the Spot"></a><figcaption class="crew-bio"><b>Vito the Spot</b><p>College is the board. I think for myself, and I will not copy the next man.</p><p class="crew-fee">I have a fee. One unit rides the side I name.</p></figcaption></figure>
 <figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-rocco"><img loading="lazy" decoding="async" class="about-mark" src="jungle-rhino.jpg" alt="Rocco No Chase"></a><figcaption class="crew-bio"><b>Rocco No Chase</b><p>No team. The bankroll. I do not chase a number that already left.</p><p class="crew-fee">I have a fee. A flat dime on every play.</p></figcaption></figure>
 <figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-paulie"><img loading="lazy" decoding="async" class="about-mark" src="jungle-hyena.jpg" alt="Paulie the Fade"></a><figcaption class="crew-bio"><b>Paulie the Fade</b><p>The public moves the line. I take the other side and I wait on the value.</p><p class="crew-fee">I have a fee. Half a unit, win or lose.</p></figcaption></figure>
 <figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-gino"><img loading="lazy" decoding="async" class="about-mark" src="jungle-bird.jpg" alt="Gino the Wire"></a><figcaption class="crew-bio"><b>Gino the Wire</b><p>No eye test. The model, the injury, and the move.</p><p class="crew-fee">I have a fee. The juice on the ticket is mine.</p></figcaption></figure>
-<aside class="crew-each" id="sharpeachbox" aria-label="Each sharp record"><ul id="sharpeach"><li><b>Gnarly Gorilla</b><span>0-0-0</span></li><li><b>Vito the Spot</b><span>0-0-0</span></li><li><b>Rocco No Chase</b><span>0-0-0</span></li><li><b>Paulie the Fade</b><span>0-0-0</span></li><li><b>Gino the Wire</b><span>0-0-0</span></li></ul></aside>
+<aside class="crew-stack" aria-label="Sharp records"><aside class="crew-team" id="sharpteam" aria-label="Sharps team record"><p class="crew-team-kicker">Sharps</p><p class="crew-team-rec" id="sharpteamrec">0-0-0</p><p class="crew-team-split">W-L-P</p></aside><aside class="crew-each" id="sharpeachbox" aria-label="Each sharp record"><ul id="sharpeach"><li><b>Gnarly Gorilla</b><span>0-0-0</span></li><li><b>Vito the Spot</b><span>0-0-0</span></li><li><b>Rocco No Chase</b><span>0-0-0</span></li><li><b>Paulie the Fade</b><span>0-0-0</span></li><li><b>Gino the Wire</b><span>0-0-0</span></li></ul></aside></aside>
 </div>
 </div>
 <aside class="about-box live-feed">
@@ -8475,12 +8475,17 @@ async function paintSharpTeam(){
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(sizeSharpTeam);
 }
 function sizeSharpTeam(){
-  const boxes = [document.getElementById("sharpteam"), document.getElementById("sharpeachbox")].filter(Boolean);
-  if (!boxes.length) return;
-  const bios = document.querySelectorAll("#about .crew-bio");
-  if (!bios.length) return;
-  const h = Math.max.apply(null, [...bios].map(bio => bio.offsetHeight));
-  if (h > 0) boxes.forEach(box => { box.style.height = h + "px"; });
+  const team = document.getElementById("sharpteam");
+  const each = document.getElementById("sharpeachbox");
+  const img = document.querySelector("#about .about-mark");
+  const bio = document.querySelector("#about .crew-bio");
+  if (team && img && img.offsetHeight > 0) team.style.height = img.offsetHeight + "px";
+  if (each && bio && bio.offsetHeight > 0) each.style.height = bio.offsetHeight + "px";
+  document.querySelectorAll("#about .about-mark").forEach(mark => {
+    if (mark.dataset.sized) return;
+    mark.dataset.sized = "1";
+    mark.addEventListener("load", sizeSharpTeam);
+  });
 }
 function sharpKeepGrades(card, book){
   const prior = book.cards[card.date];
