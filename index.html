@@ -269,6 +269,7 @@ html[data-page="seasons"] main { min-width:0; }
 .shark-add { margin:0; flex:0 0 auto; white-space:nowrap; align-self:center; }
 .shark-pick .shark-win { margin:0; width:100%; color:#00ffff; text-align:center; font:700 15px/1.4 system-ui,sans-serif; white-space:nowrap; }
 .shark-type .shark-liveconf { margin:0; width:100%; text-align:center; white-space:nowrap; }
+.shark-type .shark-allwin, .shark-type .shark-actwin { margin:0; width:100%; color:#00ffff; text-align:center; font:700 13px/1.3 system-ui,sans-serif; white-space:nowrap; }
 .shark-pick .shark-syn { margin:0 0 4px; color:var(--text); font:15px/1.4 system-ui,sans-serif; text-align:left; }
 .shark-top { display:flex; justify-content:space-between; align-items:baseline; gap:8px; margin:0 0 4px; }
 .shark-top b { margin:0; color:var(--title); font:700 15px/1.4 system-ui,sans-serif; letter-spacing:.04em; }
@@ -8731,6 +8732,17 @@ function sharpTenWin(odds){
   const win = n > 0 ? 10 * (n / 100) : 10 * (100 / Math.abs(n));
   return "Wins $" + win.toFixed(2);
 }
+function sharpWinAmt(odds){
+  const n = Number(odds);
+  if (!Number.isFinite(n) || !n) return 0;
+  return n > 0 ? 10 * (n / 100) : 10 * (100 / Math.abs(n));
+}
+function sharpFourCash(picks){
+  const real = (picks || []).filter(t => t && !t.empty && t.slip && Number.isFinite(Number(t.odds)) && Number(t.odds));
+  const all = real.reduce((sum, t) => sum + sharpWinAmt(t.odds), 0);
+  const actual = real.reduce((sum, t) => sum + profit({result: t.result || "pending", odds: t.odds, stake: 10}), 0);
+  return {all: all, actual: actual};
+}
 function sharpSynopsis(shark, t){
   const price = t.ml ? ((Number(t.odds) > 0 ? "+" : "") + t.odds) : (t.juice || "-110");
   const when = t.when || "Time not posted";
@@ -8806,7 +8818,8 @@ function sharpPaint(card, book){
       const add = Number.isFinite(Number(t.odds)) ? "<button type='button' class='card-price shark-add' data-date='" + encodeURIComponent(t.date || "") + "' data-sport='" + encodeURIComponent(t.sport || "") + "' data-type='" + encodeURIComponent(t.market || "") + "' data-pick='" + encodeURIComponent(t.slip) + "' data-odds='" + encodeURIComponent(String(t.odds)) + "' data-notes='" + encodeURIComponent(conf) + "'>Add to Slip</button>" : "";
       const ten = sharpTenWin(t.odds);
       const liveConf = sharpLiveConfidence(t);
-      const win = (ten ? "<p class='shark-win'>" + ten + "</p>" : "") + "<p class='shark-liveconf shark-conf " + liveConf.band.toLowerCase() + "' data-id='" + esc(t.id || "") + "'>" + esc(liveConf.text) + "</p>";
+      const four = sharpFourCash(card.sharps[shark.id]);
+      const win = (ten ? "<p class='shark-win'>" + ten + "</p>" : "") + "<p class='shark-liveconf shark-conf " + liveConf.band.toLowerCase() + "' data-id='" + esc(t.id || "") + "'>" + esc(liveConf.text) + "</p><p class='shark-allwin'>All Wins: " + money(four.all) + "</p><p class='shark-actwin'>Actual Wins: " + money(four.actual) + "</p>";
       const priceHtml = t.ml
         ? (function(){ const m = String(t.side || "").match(/^(.*)\s([+-]?\d+)$/); return m ? esc(m[1]) + " <span class='best-price'>" + esc(m[2]) + "</span>" : esc(t.side); })()
         : esc(t.side) + (t.juice ? " <span class='shark-juice best-price'>" + esc(t.juice) + "</span>" : "");
@@ -8857,6 +8870,8 @@ async function refreshSharpGrades(){
       conf.className = "shark-liveconf shark-conf " + String(made.band || "").toLowerCase();
       conf.textContent = made.text;
     });
+    const four = sharpFourCash(card.sharps[shark.id]);
+    article.querySelectorAll(".shark-actwin").forEach(el => { el.textContent = "Actual Wins: " + money(four.actual); });
   });
 }
 async function loadSharks(){
