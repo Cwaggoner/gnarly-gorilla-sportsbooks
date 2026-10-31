@@ -1,3 +1,4 @@
-# file: GG-CARD-2026-10-30
-2026-10-30 | NBA | Spread | Pacers +8.5 at Heat | -110 | made MIA -2, book MIA -8.5, gap 6.5, reason Haliburton out. Turnover: Pacers slight giveaway 15.4 vs 14.8. Bench: Haliburton out, short bench (Zubac, McConnell, Sheppard out). Edge.
-2026-10-30 | NHL | No Picks
+# file: GG-CARD-2026-10-31
+2026-10-31 | CFB | side | USC +6.5 | -110 | made -1.2, book -6.5, gap 5.3, reason confirmed starter change Julian Sayin out Luke Fahey starting not fully priced, turnover USC negative by 2 bench Fahey backup, Edge
+2026-10-31 | NBA | No Picks
+2026-10-31 | NHL | No Picks
