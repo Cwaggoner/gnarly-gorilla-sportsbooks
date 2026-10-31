@@ -1,5 +1,5 @@
 {
-  "saved": "2026-10-30T02:46:06.690Z",
+  "saved": "2026-10-31T09:25:57.792Z",
   "graded_through": "2026-10-22",
   "clv_note": "Closes are the kickoff price on the same number. Giants +1.5, Cowboys +1.5, the October 18 parlay, and Commanders +7.5 still have no close. The bet price was not copied.",
   "bets": [
@@ -6621,6 +6621,24 @@
       "profit": -10,
       "close": "",
       "realClose": false
+    },
+    {
+      "id": 1793386995782.2668,
+      "date": "2026-10-30",
+      "book": "BetMGM",
+      "sport": "NBA",
+      "type": "Spread",
+      "pick": "Pacers +8.5 at Heat",
+      "odds": -110,
+      "stake": 10,
+      "result": "loss",
+      "notes": "made MIA -2, book MIA -8.5, gap 6.5, reason Haliburton out. Turnover: Pacers slight giveaway 15.4 vs 14.8. Bench: Haliburton out, short bench (Zubac, McConnell, Sheppard out). Edge.",
+      "fromCard": true,
+      "edge": true,
+      "placed": "2026-10-30T19:03:15.783Z",
+      "profit": -10,
+      "close": -110,
+      "realClose": true
     }
   ],
   "pending_date": "2026-10-29"
