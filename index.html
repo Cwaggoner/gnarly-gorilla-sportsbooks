@@ -105,6 +105,9 @@ html, body, .page, .page * { overflow-anchor:none; }
 .slips-side { margin:0; text-align:left; max-width:62%; font-size:12px; }
 #games .head-notes { display:flex; flex-direction:column; align-items:flex-start; gap:2px; max-width:62%; }
 #games .head-notes .slips-side { max-width:none; }
+.score-notes { display:flex; flex-direction:column; align-items:flex-start; gap:2px; max-width:62%; }
+.score-notes .score-line { margin:0; max-width:none; }
+.section-head .score-notes .score-line::before { content:"•"; color:#ff00ff; font-weight:700; margin-right:6px; }
 .card-analysis h3 { margin:0 0 8px; color:var(--title); font-size:16px; }
 .card > h2, .card > .section-head, h2.split-title, h3.split-title, .sport-title { background:rgba(57,255,20,.12); border:1px solid #39ff14; border-radius:10px; padding:10px 14px; }
 .card > h2, .card > .section-head { margin:0 0 12px; }
@@ -698,7 +701,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </nav>
 </div>
 <div id="seasons" class="card view"><div class="section-head"><h2>Season Dates</h2><p class="warn slips-side">Checked in the month each league publishes its schedule.</p></div></div>
-<div id="scoreboard" class="card view"><div class="section-head"><h2>Full Scoreboard</h2><p class="warn slips-side" id="fullscorenote">Loading the board.</p></div><div class="full-board"><aside class="full-sports" id="fullsports"></aside><div class="full-main"><div class="full-dates"><button type="button" class="full-chev" id="fulldateprev" aria-label="Previous day">&#8249;</button><div class="full-date-row" id="fulldates"></div><button type="button" class="full-chev" id="fulldatenext" aria-label="Next day">&#8250;</button></div><div class="full-status" id="fullstatus"><button type="button" data-status="all" class="on">All</button><button type="button" data-status="live">Live</button><button type="button" data-status="pre">Upcoming</button><button type="button" data-status="final">Final</button></div><div id="fullholds"></div><div class="full-games" id="fullrows"></div></div></div></div>
+<div id="scoreboard" class="card view"><div class="section-head"><h2>Full Scoreboard</h2><div class="score-notes" id="fullscorenote"><p class="warn score-line">Loading the board.</p></div></div><div class="full-board"><aside class="full-sports" id="fullsports"></aside><div class="full-main"><div class="full-dates"><button type="button" class="full-chev" id="fulldateprev" aria-label="Previous day">&#8249;</button><div class="full-date-row" id="fulldates"></div><button type="button" class="full-chev" id="fulldatenext" aria-label="Next day">&#8250;</button></div><div class="full-status" id="fullstatus"><button type="button" data-status="all" class="on">All</button><button type="button" data-status="live">Live</button><button type="button" data-status="pre">Upcoming</button><button type="button" data-status="final">Final</button></div><div id="fullholds"></div><div class="full-games" id="fullrows"></div></div></div></div>
 <section class="card view" id="sharks"><div class="section-head"><h2>Sports Sharps</h2><p class="warn slips-side" id="sharpnote">Four games each. Made at 9:30 AM Eastern and locked until the next morning.</p></div><div class="shark-list" id="sharkboard"><p class="warn">Loading the sharps.</p></div></section>
 <main>
 <section class="card view on" id="games">
@@ -3306,7 +3309,7 @@ function showSeasons(checked){
   });
   wave += " H448";
   const ekg = "<span class='ekg' style='--draw:" + pulse + "'><svg viewBox='0 0 448 36' preserveAspectRatio='none' aria-label='Season pulse'><path class='trace' d='" + wave + "' style='stroke:" + color + "'></path></svg><span class='ekg-cover'></span></span>";
-  const live = "<div id='seasonlive'><div class='section-head'><h2>Live Scores</h2><p class='warn slips-side' id='seasonlivenote'>Loading the board.</p></div><div class='score-strip'><button type='button' class='score-arrow' id='seasonliveleft' aria-label='Scroll scores left'><svg viewBox='0 0 24 24' width='22' height='22' aria-hidden='true'><path d='M15 5 L8 12 L15 19' fill='none' stroke='#39ff14' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/></svg></button><div class='score-row' id='seasonliverow'></div><button type='button' class='score-arrow' id='seasonliveright' aria-label='Scroll scores right'><svg viewBox='0 0 24 24' width='22' height='22' aria-hidden='true'><path d='M9 5 L16 12 L9 19' fill='none' stroke='#39ff14' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/></svg></button></div><div class='sport-bar' id='seasonlivesports'><button type='button' data-sport='All' class='on'>All</button>" + ["CBB","CFB","MLB","NBA","NFL","NHL"].map(code => leagueBtn(code)).join("") + "<a class='score-full' id='scorefull' href='index.html?page=scoreboard'>Full Scoreboard</a><span class='score-day'><button type='button' id='seasonliveprev'>Prev</button><b id='seasonliveday'></b><button type='button' id='seasonlivenext'>Next</button><button type='button' id='seasonlivetoday'>Today</button></span></div><div id='seasonlivenotes'></div></div>";
+  const live = "<div id='seasonlive'><div class='section-head'><h2>Live Scores</h2><div class='score-notes' id='seasonlivenote'><p class='warn score-line'>Loading the board.</p></div></div><div class='score-strip'><button type='button' class='score-arrow' id='seasonliveleft' aria-label='Scroll scores left'><svg viewBox='0 0 24 24' width='22' height='22' aria-hidden='true'><path d='M15 5 L8 12 L15 19' fill='none' stroke='#39ff14' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/></svg></button><div class='score-row' id='seasonliverow'></div><button type='button' class='score-arrow' id='seasonliveright' aria-label='Scroll scores right'><svg viewBox='0 0 24 24' width='22' height='22' aria-hidden='true'><path d='M9 5 L16 12 L9 19' fill='none' stroke='#39ff14' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/></svg></button></div><div class='sport-bar' id='seasonlivesports'><button type='button' data-sport='All' class='on'>All</button>" + ["CBB","CFB","MLB","NBA","NFL","NHL"].map(code => leagueBtn(code)).join("") + "<a class='score-full' id='scorefull' href='index.html?page=scoreboard'>Full Scoreboard</a><span class='score-day'><button type='button' id='seasonliveprev'>Prev</button><b id='seasonliveday'></b><button type='button' id='seasonlivenext'>Next</button><button type='button' id='seasonlivetoday'>Today</button></span></div><div id='seasonlivenotes'></div></div>";
   const records = "<div class='card-rest' id='seasonrecords'><div class='section-head'><h2>Win/Loss Records</h2><p class='warn slips-side' id='recnote'>Loading standings.</p></div><div class='tools'><label>Sport<select id='recsport'></select></label><label>Conference<select id='recconf'></select></label><label>Division<select id='recdiv'></select></label></div><div class='table-wrap'><table><thead><tr><th>Team</th><th>Sport</th><th>Conference</th><th>Division</th><th>W</th><th>L</th><th>T/OTL</th><th>PCT</th><th>GB</th><th>Streak</th></tr></thead><tbody id='recrows'></tbody></table></div></div>";
   const trivia = "<div class='card-rest' id='seasontrivia'><b style='color:#39ff14'>Daily Sports Trivia</b><p class='warn' style='margin:4px 0 8px'>A new question at midnight. The same question stays up all day.</p><p data-q>Loading today's question.</p><button type='button' id='triviareveal'>Show answer</button><p data-a class='warn' hidden></p></div>";
   const checkedBit = seasonChecked ? "Checked " + esc(seasonChecked) + ". " : "";
@@ -3829,6 +3832,25 @@ function paintLiveChrome(){
   const full = document.getElementById("scorefull");
   if (full) full.href = "index.html?page=scoreboard" + (liveBoardSport && liveBoardSport !== "All" ? "&sport=" + encodeURIComponent(liveBoardSport) : "");
 }
+function setScoreNote(el, lines){
+  if (!el) return;
+  const rows = (lines || []).map(s => String(s || "").trim()).filter(Boolean);
+  el.innerHTML = rows.map(s => "<p class='warn score-line'>" + esc(s) + "</p>").join("");
+}
+function scoreNoteLines(holds, liveCount, gameCount){
+  const status = (liveCount ? liveCount + " live. " : gameCount ? "No games live. " : "") + "Updated " + formatTime(new Date(), true) + ". " + (liveCount ? "Live games refresh every 15 seconds." : "The board checks again in a minute.");
+  const heads = [];
+  const shown = [];
+  (holds || []).forEach(g => {
+    if (g.why === "previous") {
+      heads.push(g.sport + ": No games on " + prettyDay(liveBoardDate) + ".");
+      const day = prettyDay(g.shown);
+      if (shown.indexOf(day) < 0) shown.push(day);
+    } else if (g.why) heads.push(g.sport + ": " + liveHoldCopy(g.why, g.shown));
+  });
+  const second = (shown.length ? "Showing the previous day, " + shown.join(", ") + ". " : "") + status;
+  return heads.length ? [heads.join(" "), second] : [second];
+}
 function liveHoldCopy(why, shown){
   if (why === "previous") return "No games on " + prettyDay(liveBoardDate) + ". Showing the previous day, " + prettyDay(shown) + ".";
   if (why === "ended") return "Season ended. Last scores from " + prettyDay(shown) + " stay up until the next season.";
@@ -3892,8 +3914,8 @@ async function loadLiveBoard(){
   if (!games.length && !packs.some(p => p && p.ok)) {
     if (!liveBoardGames.length) {
       const missed = "Scoreboard did not load. It will try again in a minute.";
-      if (note) note.textContent = missed;
-      if (fullNote) fullNote.textContent = missed;
+      setScoreNote(note, [missed]);
+      setScoreNote(fullNote, [missed]);
     }
     armLiveBoard(60000);
     return;
@@ -3906,10 +3928,9 @@ async function loadLiveBoard(){
   const holds = [];
   visible.forEach(g => { if (g.why && !holds.some(h => h.sport === g.sport)) holds.push(g); });
   const n = visible.filter(g => g.live).length;
-  const blurb = holds.map(g => g.sport + ": " + liveHoldCopy(g.why, g.shown)).join(" ");
-  const blurbText = (blurb ? blurb + " " : "") + (n ? n + " live. " : games.length ? "No games live. " : "") + "Updated " + formatTime(new Date(), true) + ". " + (n ? "Live games refresh every 15 seconds." : "The board checks again in a minute.");
-  if (note) note.textContent = blurbText;
-  if (fullNote) fullNote.textContent = blurbText;
+  const lines = scoreNoteLines(holds, n, games.length);
+  setScoreNote(note, lines);
+  setScoreNote(fullNote, lines);
   armLiveBoard(n ? 15000 : 60000);
 }
 function seasonText(sport){ return seasonEnded(sport) ? "Season Ended" : "No Picks"; }
