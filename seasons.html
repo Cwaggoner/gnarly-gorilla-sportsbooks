@@ -608,6 +608,14 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .sharp-tip b { color:#39ff14; font-size:12px; }
 .sharp-tip p { margin:0; color:#d6ffd0; font-size:12px; line-height:1.3; }
 .sharp-shop .sharp-add { width:auto; height:22px; margin-top:2px; padding:0 8px; display:inline-flex; align-items:center; border-radius:6px; font-size:11px; }
+.mgm-mid { min-width:0; display:flex; flex-direction:column; gap:8px; }
+.mgm-form { margin:0 0 4px 36px; color:#8fb898; font-size:11px; line-height:1.35; }
+.mgm-form .loss, .mgm-form .warn { font-weight:700; }
+.market-board { border:1px solid #243024; border-radius:8px; background:#101610; padding:8px; overflow-x:auto; }
+.market-board table { width:100%; border-collapse:collapse; font-size:11px; }
+.market-board th, .market-board td { padding:3px 5px; text-align:left; color:#d6ffd0; border-bottom:1px solid #1f3a1f; white-space:nowrap; }
+.market-board th { color:#8fb898; font-weight:700; }
+.market-board .market-note { margin:6px 0 0; color:#d6ffd0; font-size:12px; line-height:1.4; }
 .mgm-side { min-width:0; }
 .mgm-books { display:flex; gap:12px; min-width:0; align-items:end; flex-wrap:nowrap; overflow-x:auto; }
 .mgm-set { display:grid; grid-template-columns:repeat(3,64px); gap:4px; flex:0 0 auto; }
@@ -3201,8 +3209,17 @@ async function loadPickSlate(){
 function teamSide(c){
   const team = Object.assign({}, (c && c.team) || {});
   const recs = (c && c.records) || [];
-  const overall = recs.find(r => /overall|total/i.test(String(r.name || r.type || ""))) || recs[0];
-  if (overall && overall.summary) team.record = overall.summary;
+  const pick = re => {
+    const hit = recs.find(r => re.test(String(r.type || "") + " " + String(r.name || "")));
+    return hit && hit.summary || "";
+  };
+  const overall = pick(/overall|total/i) || (recs[0] && recs[0].summary) || "";
+  if (overall) team.record = overall;
+  team.homeRec = pick(/\bhome\b/i);
+  team.roadRec = pick(/\broad\b|\baway\b/i);
+  team.last10 = pick(/last/i);
+  team.lines = lineNums(c);
+  if (!team.name) team.name = team.shortDisplayName || team.displayName || "";
   return team;
 }
 function sameClub(a, b){
@@ -4457,6 +4474,7 @@ function rememberBoard(data){
   if (!usableBoard(data)) return false;
   window.__ggOddsBoard = data;
   storeOddsBoard(data);
+  try { snapshotOpensFromBoard(data); } catch (e) {}
   try { drawGameBoard(); } catch (e) {}
   return true;
 }
@@ -4498,11 +4516,14 @@ function compareSportList(games){
   return games.filter(g => String(g.sport || "").toUpperCase() === String(sport).toUpperCase());
 }
 function liveOddsCards(games, day, lead){
+  snapshotOpens(games, day);
   const list = compareSportList(games);
   if (!games.length) return "";
   const note = lead ? "<p class='warn'>" + lead + "</p>" : "";
   if (!list.length) return note + "<p class='warn'>No games in that sport.</p>";
-  return note + list.map(g => mgmGameCard(g, day, "", false)).join("");
+  const html = note + list.map(g => mgmGameCard(g, day, "", false)).join("");
+  savePrevLines(games, day);
+  return html;
 }
 function publishedOddsHtml(day, lead){
   const block = window.__ggOddsBoard && window.__ggOddsBoard.days && window.__ggOddsBoard.days[day];
@@ -4653,6 +4674,7 @@ async function drawOddsCompare(force){
       wireCompare();
       armStartingIn();
       armGameScores(games);
+      armInjuryFeeds(games.map(g => String(g.sport || "").toUpperCase()));
       return "Live as of " + when + ".";
     }
     if (force) {
@@ -4670,6 +4692,7 @@ async function drawOddsCompare(force){
     armStartingIn();
     const block = window.__ggOddsBoard && window.__ggOddsBoard.days && window.__ggOddsBoard.days[day];
     if (block) armGameScores(indexedGames({h2h: block.h2h, spreads: block.spreads, totals: block.totals}));
+    if (block) armInjuryFeeds(Object.keys(SCORE_FEED));
     return;
   }
   box.innerHTML = oddsBullets([(day === easternDay() ? "Today" : "Yesterday") + ". No posted board for " + esc(day) + "."]) + "<h2 class='split-title'>Live Odds Comparison</h2>";
@@ -6770,7 +6793,8 @@ async function scoreboard(sport, date){
     const away = teamSide(awaySide);
     const status = (comp.status && comp.status.type) || {};
     const posted = espnBoardLines((comp.odds || [])[0]);
-    return {sport, date, id: ev.id, final: status.completed === true || /final/i.test(status.name || status.description || ""), postponed: /postpon|cancel|delay/i.test(status.name || ""), live: status.state === "in", detail: status.shortDetail || status.detail || "", home: home, away: away, homeScore: Number(homeSide.score), awayScore: Number(awaySide.score), start: Date.parse(ev.date || ""), lineBook: posted && posted.book, lines: posted && posted.lines};
+    const venue = comp.venue || {};
+    return {sport, date, id: ev.id, final: status.completed === true || /final/i.test(status.name || status.description || ""), postponed: /postpon|cancel|delay/i.test(status.name || ""), live: status.state === "in", detail: status.shortDetail || status.detail || "", home: home, away: away, homeScore: Number(homeSide.score), awayScore: Number(awaySide.score), start: Date.parse(ev.date || ""), lineBook: posted && posted.book, lines: posted && posted.lines, venue: venue.fullName || "", indoor: venue.indoor === true};
   }).filter(g => g.home.displayName && g.away.displayName);
 }
 let scoreTimer = 0;
@@ -8457,6 +8481,193 @@ function foldBoardGames(games){
   });
   return out;
 }
+function openBag(){
+  try { return JSON.parse(localStorage.getItem("gg-open-lines") || "{}"); } catch (e) { return {}; }
+}
+function lineKey(g){
+  return String(g.sport || "").toUpperCase() + "|" + String(g.label || "").toLowerCase();
+}
+function snapshotOpens(games, day){
+  if (!day || !games) return;
+  const all = openBag();
+  const bag = all[day] || (all[day] = {});
+  games.forEach(g => {
+    const slot = bag[lineKey(g)] || (bag[lineKey(g)] = {});
+    ["spreads","totals","h2h"].forEach(market => {
+      const books = (g.markets && g.markets[market] && g.markets[market].books) || {};
+      const dest = slot[market] || (slot[market] = {});
+      Object.keys(books).forEach(book => {
+        if (books[book] && books[book] !== "-" && !dest[book]) dest[book] = books[book];
+      });
+    });
+  });
+  const keep = {};
+  [easternDay(), shiftDate(easternDay(), -1)].forEach(d => { if (all[d]) keep[d] = all[d]; });
+  try { localStorage.setItem("gg-open-lines", JSON.stringify(keep)); } catch (e) {}
+}
+function snapshotOpensFromBoard(data){
+  Object.keys((data && data.days) || {}).forEach(day => snapshotOpens(indexedGames(data.days[day] || {}), day));
+}
+function prevLines(){
+  try { return JSON.parse(sessionStorage.getItem("gg-last-lines") || "{}"); } catch (e) { return {}; }
+}
+function savePrevLines(games, day){
+  const last = prevLines();
+  const bag = last.day === day ? Object.assign({}, last.games || {}) : {};
+  (games || []).forEach(g => {
+    const slot = {};
+    ["spreads","totals","h2h"].forEach(market => {
+      const books = (g.markets && g.markets[market] && g.markets[market].books) || {};
+      slot[market] = Object.assign({}, books);
+    });
+    bag[lineKey(g)] = slot;
+  });
+  try { sessionStorage.setItem("gg-last-lines", JSON.stringify({day: day, games: bag})); } catch (e) {}
+}
+function bookQuotes(books, index){
+  return ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"].map(book => {
+    const sides = shopSides(books && books[book]);
+    if (!sides || !sides[index] || !Number.isFinite(sides[index].price)) return null;
+    return {book: book, point: sides[index].point, price: sides[index].price, opp: sides[1 - index] && sides[1 - index].price};
+  }).filter(Boolean);
+}
+function samePointGroup(list){
+  const counts = {};
+  list.forEach(item => {
+    const key = item.point == null ? "" : String(item.point);
+    (counts[key] || (counts[key] = [])).push(item);
+  });
+  const groups = Object.keys(counts).map(key => counts[key]);
+  groups.sort((a, b) => b.length - a.length || String(a[0].point).localeCompare(String(b[0].point)));
+  return groups[0] || [];
+}
+function fairPriceText(price, opp){
+  const n = americanFromProb(fairProb(price, opp));
+  return n == null ? "-" : sharpMoney(n);
+}
+function win10(price){
+  const v = priceProfit("win", price, 10);
+  return v == null ? "-" : "$" + Math.round(v);
+}
+function pointText(market, point){
+  if (point == null || point === "") return "-";
+  if (market === "totals") return String(point);
+  return (Number(point) > 0 ? "+" : "") + point;
+}
+function marketBoardHtml(g, day){
+  const markets = g.markets || {};
+  const opened = ((openBag()[day] || {})[lineKey(g)]) || {};
+  const last = prevLines();
+  const prev = last.day === day ? (last.games || {})[lineKey(g)] || {} : {};
+  const parts = String(g.label || "").split(/\s+at\s+/i);
+  const away = ((parts[0] || "").trim().split(/\s+/).slice(-1)[0]) || "Away";
+  const home = ((parts[1] || "").trim().split(/\s+/).slice(-1)[0]) || "Home";
+  const rows = ["spreads","totals","h2h"].map(market => {
+    const index = market === "h2h" ? 1 : market === "totals" ? 0 : 1;
+    const nowAll = bookQuotes((markets[market] && markets[market].books) || {}, index);
+    const now = samePointGroup(nowAll);
+    if (!now.length) return "<tr><td>" + (market === "h2h" ? "Money" : market === "totals" ? "Total" : "Spread") + "</td><td colspan='8'>No posted number</td></tr>";
+    const best = now.slice().sort((a, b) => b.price - a.price)[0];
+    const worst = now.slice().sort((a, b) => a.price - b.price)[0];
+    const openAll = bookQuotes(opened[market] || {}, index);
+    const open = samePointGroup(openAll);
+    const openPoint = open.length ? open[0].point : null;
+    const nowPoint = now[0].point;
+    let move = "0";
+    if (open.length && openPoint !== nowPoint) move = pointText(market, openPoint) + " to " + pointText(market, nowPoint);
+    else if (open.length) {
+      const openBest = open.slice().sort((a, b) => b.price - a.price)[0];
+      if (openBest.price !== best.price) move = sharpMoney(openBest.price) + " to " + sharpMoney(best.price);
+    } else move = "This pull";
+    const both = now.find(item => Number.isFinite(item.opp)) || best;
+    const fair = Number.isFinite(both.opp) ? fairPriceText(both.price, both.opp) : "-";
+    const label = market === "h2h" ? "Money" : market === "totals" ? "Total" : "Spread";
+    const nowLabel = pointText(market, nowPoint) + " " + sharpMoney(best.price);
+    return "<tr><td>" + label + "</td><td>" + (open.length ? pointText(market, openPoint) : "This pull") + "</td><td>" + esc(nowLabel) + "</td><td>" + esc(move) + "</td><td class='best-price'>" + esc(best.book + " " + sharpMoney(best.price)) + "</td><td>" + esc(worst.book + " " + sharpMoney(worst.price)) + "</td><td>" + (best.book === worst.book ? "0" : String(Math.round(best.price - worst.price))) + "</td><td>" + esc(fair) + "</td><td>" + esc(win10(best.price) + " / " + win10(worst.price)) + "</td></tr>";
+  }).join("");
+  const splitLines = ["spreads","totals"].map(market => {
+    const index = market === "totals" ? 0 : 1;
+    const list = bookQuotes((markets[market] && markets[market].books) || {}, index);
+    const groups = {};
+    list.forEach(item => {
+      const key = pointText(market, item.point);
+      (groups[key] || (groups[key] = [])).push(item.book);
+    });
+    const keys = Object.keys(groups);
+    if (keys.length < 2) return "";
+    return (market === "totals" ? "Total split" : "Spread split") + ": " + keys.map(key => key + " at " + groups[key].join(", ")).join(". ") + ".";
+  }).filter(Boolean);
+  const spreadNow = bookQuotes((markets.spreads && markets.spreads.books) || {}, 1).map(item => Number(item.point)).filter(n => Number.isFinite(n));
+  let middle = "";
+  if (spreadNow.length > 1) {
+    const lo = Math.min.apply(null, spreadNow), hi = Math.max.apply(null, spreadNow);
+    if (hi - lo >= 1) {
+      const sport = String(g.sport || "").toUpperCase();
+      const keys = (sport === "NFL" || sport === "CFB") ? [3, 7].filter(k => (lo < 0 && hi < 0 ? (Math.abs(hi) < k && k < Math.abs(lo)) : (lo < k && k < hi))) : [];
+      middle = "Middle window " + pointText("spreads", lo) + " to " + pointText("spreads", hi) + "." + (keys.length ? " Covers " + keys.join(" and ") + "." : "");
+    }
+  }
+  const prevSpread = bookQuotes((prev.spreads) || {}, 1);
+  const nowSpread = bookQuotes((markets.spreads && markets.spreads.books) || {}, 1);
+  let steam = prevSpread.length ? "" : "No earlier look yet. The next refresh can mark a move.";
+  if (prevSpread.length && nowSpread.length) {
+    let towardHome = 0, towardAway = 0;
+    nowSpread.forEach(item => {
+      const old = prevSpread.find(row => row.book === item.book);
+      if (!old || old.point === item.point) return;
+      if (item.point < old.point) towardHome += 1;
+      if (item.point > old.point) towardAway += 1;
+    });
+    if (towardHome >= 3) steam = "Steam toward " + home + " at " + towardHome + " books.";
+    else if (towardAway >= 3) steam = "Steam toward " + away + " at " + towardAway + " books.";
+    else steam = "No steam. Fewer than 3 books moved the spread the same way.";
+    const openSpread = bookQuotes((opened.spreads) || {}, 1);
+    const openPoint = openSpread.length ? openSpread[0].point : null;
+    const nowPoint = nowSpread[0].point;
+    if (openPoint != null && nowPoint != null && nowPoint > openPoint && nowPoint < 0) steam += " Reverse: the number moved toward the dog. This is our board, not a ticket count.";
+  }
+  const totalPts = bookQuotes((markets.totals && markets.totals.books) || {}, 0).map(item => Number(item.point)).filter(n => Number.isFinite(n));
+  let implied = "";
+  if (spreadNow.length && totalPts.length) {
+    const spread = spreadNow.slice().sort((a, b) => a - b)[Math.floor(spreadNow.length / 2)];
+    const total = totalPts.slice().sort((a, b) => a - b)[Math.floor(totalPts.length / 2)];
+    const homeScore = (total - spread) / 2;
+    const awayScore = (total + spread) / 2;
+    implied = "Market score " + away + " " + awayScore.toFixed(1) + ", " + home + " " + homeScore.toFixed(1) + ". That is the no-vig spread and total, not a picked score.";
+  }
+  const notes = [splitLines.join(" "), middle, steam, implied].filter(Boolean).map(text => "<p class='market-note'>" + esc(text) + "</p>").join("");
+  return "<div class='market-board'><table><thead><tr><th>Market</th><th>Open</th><th>Now</th><th>Move</th><th>Best</th><th>Worst</th><th>Cents</th><th>Fair</th><th>$10</th></tr></thead><tbody>" + rows + "</tbody></table>" + notes + "</div>";
+}
+function injuryBlurb(sport, team){
+  const feed = (window.__injuryFeeds || {})[String(sport || "").toUpperCase()];
+  if (!feed || !team) return "";
+  const label = team.displayName || team.name || team.shortDisplayName || "";
+  const club = ((feed.injuries) || []).find(item => sameClub(item.displayName || (item.team && item.team.displayName), label));
+  const list = ((club && club.injuries) || []).filter(item => injuryWorth(item.status)).sort((a, b) => injuryRank(a.status) - injuryRank(b.status)).slice(0, 3);
+  if (!list.length) return "";
+  return list.map(item => {
+    const name = ((item.athlete || {}).displayName || "Player").split(" ").slice(-1)[0];
+    const cls = injuryStatusClass(item.status) || "warn";
+    return "<span class='" + cls + "'>" + esc(name + " " + (item.status || "")) + "</span>";
+  }).join(" ");
+}
+function sideForm(sport, team){
+  if (!team) return "";
+  const bits = [team.record, team.homeRec && ("H " + team.homeRec), team.roadRec && ("R " + team.roadRec), team.last10 && ("L10 " + team.last10), (team.lines || []).length ? team.lines.join("-") : ""].filter(Boolean);
+  const inj = injuryBlurb(sport, team);
+  if (!bits.length && !inj) return "";
+  return "<p class='mgm-form'>" + esc(bits.join(" · ")) + (inj ? " " + inj : "") + "</p>";
+}
+function armInjuryFeeds(sports){
+  const need = [...new Set(sports || [])].filter(s => SCORE_FEED[s] && !(window.__injuryFeeds && window.__injuryFeeds[s]));
+  if (!need.length || window.__injuryPull) return;
+  window.__injuryPull = true;
+  Promise.all(need.map(sport => fetch("https://site.api.espn.com/apis/site/v2/sports/" + SCORE_FEED[sport] + "/injuries").then(r => r.ok ? r.json() : null).catch(() => null))).then(packs => {
+    window.__injuryFeeds = window.__injuryFeeds || {};
+    need.forEach((sport, i) => { window.__injuryFeeds[sport] = packs[i] || {injuries: []}; });
+    if ((document.documentElement.dataset.page || "") === "liveodds") drawOddsCompare(false).catch(() => {});
+  }).finally(() => { window.__injuryPull = false; });
+}
 function mgmGameCard(g, day, book, withClose){
   const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
   const when = g.start ? formatTime(g.start, false) : "";
@@ -8476,13 +8687,20 @@ function mgmGameCard(g, day, book, withClose){
   }));
   const ordered = postedBooks.filter(name => name === book).concat(postedBooks.filter(name => name !== book));
   const sets = ordered.map(name => mgmSet(name, ["Spread", "Total", "Money"], [mgmOpen(g, "spreads", day, name, names), mgmOpen(g, "totals", day, name, names), mgmOpen(g, "h2h", day, name, names)], "book")).join("");
-  const close = withClose ? mgmSet("Close", ["Spread", "Total", "Money"], [mgmClose(gameClosePack(g, day, book), "spreads"), mgmClose(gameClosePack(g, day, book), "totals"), mgmClose(gameClosePack(g, day, book), "h2h")], "close") : sharpShopHtml(g, day);
+  const close = withClose ? mgmSet("Close", ["Spread", "Total", "Money"], [mgmClose(gameClosePack(g, day, book), "spreads"), mgmClose(gameClosePack(g, day, book), "totals"), mgmClose(gameClosePack(g, day, book), "h2h")], "close") : "";
   const tag = scored && scored.live && !scored.final ? (scored.detail || "Live") : (scored && scored.final ? "Final" : "");
   const startMs = Date.parse(g.start || "");
   const startIso = Number.isFinite(startMs) ? new Date(startMs).toISOString() : "";
   const soon = !tag && startingInText(g.start);
   const soonHtml = startIso && !tag ? "<span class='mgm-start' data-start='" + esc(startIso) + "'" + (soon ? "" : " hidden") + ">" + esc(soon) + "</span>" : "";
-  return "<article class='mgm-card" + (withClose ? "" : " no-close") + "'><div class='mgm-side'><p class='mgm-when'>" + esc((g.sport ? g.sport + "  " : "") + when) + soonHtml + (tag ? "  " + esc(tag) : "") + "</p>" + face(scored && scored.away || {name: awayName}) + face(scored && scored.home || {name: homeName}) + "</div><div class='mgm-books'>" + sets + "</div>" + close + "</article>";
+  const awayFace = face(scored && scored.away || {name: awayName});
+  const homeFace = face(scored && scored.home || {name: homeName});
+  const awayForm = withClose ? "" : sideForm(g.sport, scored && scored.away);
+  const homeForm = withClose ? "" : sideForm(g.sport, scored && scored.home);
+  const venue = !withClose && scored && scored.venue ? "<p class='mgm-form'>" + esc(scored.venue + (scored.indoor ? " · indoor" : "")) + "</p>" : "";
+  const mid = "<div class='mgm-mid'><div class='mgm-books'>" + sets + "</div>" + (withClose ? "" : marketBoardHtml(g, day)) + "</div>";
+  const tail = withClose ? close : sharpShopHtml(g, day);
+  return "<article class='mgm-card" + (withClose ? "" : " no-close") + "'><div class='mgm-side'><p class='mgm-when'>" + esc((g.sport ? g.sport + "  " : "") + when) + soonHtml + (tag ? "  " + esc(tag) : "") + "</p>" + awayFace + awayForm + homeFace + homeForm + venue + "</div>" + mid + tail + "</article>";
 }
 function drawGameBoard(){
   const box = document.getElementById("gameboard");
