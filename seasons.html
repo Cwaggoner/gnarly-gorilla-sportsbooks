@@ -7899,7 +7899,7 @@ function sharpTenWin(odds){
   const n = Number(odds);
   if (!Number.isFinite(n) || !n) return "";
   const win = n > 0 ? 10 * (n / 100) : 10 * (100 / Math.abs(n));
-  return "$" + win.toFixed(2);
+  return "Wins $" + win.toFixed(2);
 }
 function sharpSynopsis(shark, t){
   const price = t.ml ? ((Number(t.odds) > 0 ? "+" : "") + t.odds) : (t.juice || "-110");
