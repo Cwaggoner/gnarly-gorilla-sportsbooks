@@ -8053,8 +8053,8 @@ function slipScoreHtml(game){
   if (!game || (!game.live && !game.final)) return "";
   const away = Number(game.awayScore), home = Number(game.homeScore);
   if (!Number.isFinite(away) || !Number.isFinite(home)) return "";
-  const aW = game.final && away > home ? "<b class='wmark'>W</b>" : "";
-  const hW = game.final && home > away ? "<b class='wmark'>W</b>" : "";
+  const aW = game.final && away > home ? "<b class='wmark'>(W)</b>" : "";
+  const hW = game.final && home > away ? "<b class='wmark'>(W)</b>" : "";
   const line = esc(slipTeamTag(game.away)) + " " + away + aW + " — " + esc(slipTeamTag(game.home)) + " " + home + hW;
   const when = game.live && !game.final && game.detail ? "<span class='slip-q'>" + esc(game.detail) + "</span>" : "";
   return game.live && !game.final ? "<span class='live-dot'></span>" + line + when : line;
