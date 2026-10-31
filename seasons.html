@@ -599,7 +599,15 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .game-lines { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
 .game-lines h4 { margin:0 0 4px; color:#8fb898; font-size:12px; font-weight:600; }
 .mgm-card { display:grid; grid-template-columns:minmax(230px, max-content) minmax(0,1fr) max-content; align-items:center; column-gap:12px; width:100%; box-sizing:border-box; border:1px solid #243024; border-radius:8px; background:#0e0e0e; margin:6px 0; padding:8px 10px; }
-.mgm-card.no-close { grid-template-columns:minmax(230px, max-content) minmax(0,1fr); }
+.mgm-card.no-close { grid-template-columns:minmax(210px, max-content) minmax(0,1fr) minmax(250px, 300px); align-items:start; }
+.sharp-shop { border:1px solid #39ff14; border-radius:8px; background:rgba(57,255,20,.08); padding:8px 10px; min-width:0; }
+.sharp-shop h3 { margin:0 0 6px; color:#39ff14; font-size:13px; }
+.sharp-tip { display:grid; grid-template-columns:28px minmax(0,1fr); gap:4px 8px; margin:0 0 8px; }
+.sharp-tip:last-child { margin-bottom:0; }
+.sharp-tip img { width:28px; height:28px; border-radius:6px; border:1px solid #39ff14; object-fit:cover; grid-row:1 / span 3; }
+.sharp-tip b { color:#39ff14; font-size:12px; }
+.sharp-tip p { margin:0; color:#d6ffd0; font-size:12px; line-height:1.3; }
+.sharp-shop .sharp-add { width:auto; height:22px; margin-top:2px; padding:0 8px; display:inline-flex; align-items:center; border-radius:6px; font-size:11px; }
 .mgm-side { min-width:0; }
 .mgm-books { display:flex; gap:12px; min-width:0; align-items:end; flex-wrap:nowrap; overflow-x:auto; }
 .mgm-set { display:grid; grid-template-columns:repeat(3,64px); gap:4px; flex:0 0 auto; }
@@ -8468,7 +8476,7 @@ function mgmGameCard(g, day, book, withClose){
   }));
   const ordered = postedBooks.filter(name => name === book).concat(postedBooks.filter(name => name !== book));
   const sets = ordered.map(name => mgmSet(name, ["Spread", "Total", "Money"], [mgmOpen(g, "spreads", day, name, names), mgmOpen(g, "totals", day, name, names), mgmOpen(g, "h2h", day, name, names)], "book")).join("");
-  const close = withClose ? mgmSet("Close", ["Spread", "Total", "Money"], [mgmClose(gameClosePack(g, day, book), "spreads"), mgmClose(gameClosePack(g, day, book), "totals"), mgmClose(gameClosePack(g, day, book), "h2h")], "close") : "";
+  const close = withClose ? mgmSet("Close", ["Spread", "Total", "Money"], [mgmClose(gameClosePack(g, day, book), "spreads"), mgmClose(gameClosePack(g, day, book), "totals"), mgmClose(gameClosePack(g, day, book), "h2h")], "close") : sharpShopHtml(g, day);
   const tag = scored && scored.live && !scored.final ? (scored.detail || "Live") : (scored && scored.final ? "Final" : "");
   const startMs = Date.parse(g.start || "");
   const startIso = Number.isFinite(startMs) ? new Date(startMs).toISOString() : "";
@@ -8703,6 +8711,97 @@ const SHARKS = [
   {id:"shark-paulie", name:"Paulie the Fade", model:"Steve Fezzik", img:"jungle-hyena.jpg", alt:"Paulie the Fade", sports:["NFL","CFB"], rule:"The public moves the line. He takes the other side and waits on the value.", fee:"Fee: half a unit, win or lose.", kind:"fade"},
   {id:"shark-gino", name:"Gino the Wire", model:"Spanky Kyrollos", img:"jungle-bird.jpg", alt:"Gino the Wire", sports:["NBA","NFL","NHL"], rule:"No eye test. The model, the injury, and the move.", fee:"Fee: the juice on the ticket.", kind:"wire"}
 ];
+function sharpMoney(n){
+  const v = Number(n);
+  if (!Number.isFinite(v)) return "";
+  return (v > 0 ? "+" : "") + v;
+}
+function sharpOffers(g){
+  const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
+  const parts = String(g.label || "").split(/\s+at\s+/i);
+  const away = (parts[0] || "").trim();
+  const home = (parts[1] || "").trim();
+  const nick = s => String(s || "").trim().split(/\s+/).slice(-1)[0] || "";
+  const offers = [];
+  ["spreads","totals","h2h"].forEach(market => {
+    const posted = (g.markets && g.markets[market] && g.markets[market].books) || {};
+    [0, 1].forEach(index => {
+      const group = [];
+      names.forEach(book => {
+        const sides = shopSides(posted[book]);
+        if (!sides || !sides[index] || !Number.isFinite(sides[index].price)) return;
+        group.push({book: book, price: sides[index].price, point: sides[index].point});
+      });
+      const byPoint = {};
+      group.forEach(item => {
+        const key = item.point == null ? "" : String(item.point);
+        (byPoint[key] || (byPoint[key] = [])).push(item);
+      });
+      Object.keys(byPoint).forEach(key => {
+        const list = byPoint[key].slice().sort((a, b) => b.price - a.price || names.indexOf(a.book) - names.indexOf(b.book));
+        const best = list[0];
+        const worst = list[list.length - 1];
+        const point = best.point;
+        let pick = "";
+        if (market === "totals") pick = (index === 0 ? "Over " : "Under ") + (point == null ? "" : point);
+        else if (market === "spreads") pick = nick(index === 0 ? away : home) + " " + (point > 0 ? "+" : "") + point;
+        else pick = nick(index === 0 ? away : home) + " ML";
+        offers.push({market: market, index: index, point: point, pick: pick, book: best.book, price: best.price, worstBook: worst.book, worstPrice: worst.price, gap: list.length > 1 ? best.price - worst.price : 0, books: list.length, dog: market === "spreads" && point > 0, dogMl: market === "h2h" && best.price > 0});
+      });
+    });
+  });
+  return offers;
+}
+function sharpChooseOffer(kind, offers, used){
+  const open = offers.filter(o => !used.has(o.market + "|" + o.index + "|" + (o.point == null ? "" : o.point)));
+  const pool = open.length ? open : offers;
+  if (!pool.length) return null;
+  const sort = (list, fn) => list.slice().sort(fn);
+  if (kind === "lay") {
+    const lay = pool.filter(o => o.market === "spreads" && o.point <= -3 && o.point >= -6.5);
+    if (lay.length) return sort(lay, (a, b) => Math.abs(a.point + 4.5) - Math.abs(b.point + 4.5) || b.price - a.price)[0];
+    const dog = pool.filter(o => o.dog || o.dogMl);
+    return sort(dog.length ? dog : pool, (a, b) => b.price - a.price)[0];
+  }
+  if (kind === "soft") {
+    const own = pool.filter(o => o.dog || o.market === "totals");
+    return sort(own.length ? own : pool, (a, b) => b.gap - a.gap || b.price - a.price)[0];
+  }
+  if (kind === "hold") {
+    const held = pool.filter(o => o.market === "spreads" && o.point >= 3 && o.price > -118);
+    if (held.length) return sort(held, (a, b) => Math.abs(a.point - 6) - Math.abs(b.point - 6) || b.price - a.price)[0];
+    const dog = pool.filter(o => o.dog);
+    return sort(dog.length ? dog : pool, (a, b) => b.price - a.price)[0];
+  }
+  if (kind === "fade") {
+    const dogs = pool.filter(o => o.dog || o.dogMl);
+    return sort(dogs.length ? dogs : pool, (a, b) => (b.point || 0) - (a.point || 0) || b.price - a.price)[0];
+  }
+  return sort(pool, (a, b) => b.gap - a.gap || b.price - a.price)[0];
+}
+function sharpShopLine(shark, o){
+  const price = sharpMoney(o.price);
+  const alt = o.books > 1 && o.worstBook !== o.book ? " Next book is " + o.worstBook + " " + sharpMoney(o.worstPrice) + "." : " Only one book has this number.";
+  if (shark.kind === "lay") return "Small edge. Shop " + o.book + " " + price + " on " + o.pick + "." + alt;
+  if (shark.kind === "soft") return "My number, not a copy. " + o.pick + " at " + o.book + " " + price + "." + alt;
+  if (shark.kind === "hold") return "No chase. " + o.pick + " at " + o.book + " " + price + "." + alt;
+  if (shark.kind === "fade") return "Fade the public. " + o.pick + " at " + o.book + " " + price + "." + alt;
+  return "The model shops " + o.book + ". " + o.pick + " " + price + "." + alt;
+}
+function sharpShopHtml(g, day){
+  const offers = sharpOffers(g);
+  if (!offers.length) return "<aside class='sharp-shop'><h3>Sharp shop</h3><p class='warn'>No posted number. Nobody is inventing a ticket.</p></aside>";
+  const used = new Set();
+  const tips = SHARKS.map(shark => {
+    const o = sharpChooseOffer(shark.kind, offers, used);
+    if (!o) return "";
+    used.add(o.market + "|" + o.index + "|" + (o.point == null ? "" : o.point));
+    const data = {sport: g.sport || "", game: g.label || "", market: o.market, book: o.book, price: String(o.price), point: o.point == null ? "" : String(o.point), side: String(o.index), date: day || ""};
+    const attrs = Object.keys(data).map(key => " data-" + key + "='" + encodeURIComponent(String(data[key])) + "'").join("");
+    return "<div class='sharp-tip'><img src='" + esc(shark.img) + "' alt='" + esc(shark.alt) + "' width='28' height='28' decoding='async'><b>" + esc(shark.name) + "</b><p>" + esc(sharpShopLine(shark, o)).replace(esc(o.book), "<span class='best-price'>" + esc(o.book) + "</span>") + "</p><button type='button' class='board-price sharp-add'" + attrs + ">Add " + esc(o.book) + "</button></div>";
+  }).join("");
+  return "<aside class='sharp-shop'><h3>Sharp shop</h3>" + tips + "</aside>";
+}
 function sharkSpreadOf(g, odds){
   let home = Number(odds && odds.spread);
   const details = String((odds && odds.details) || g.odds || "");
