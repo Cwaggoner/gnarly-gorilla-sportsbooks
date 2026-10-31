@@ -3124,7 +3124,7 @@ function filterInjury(){
   document.querySelectorAll("#injuryreport tbody tr[data-sport]").forEach(tr => {
     const kind = tr.getAttribute("data-kind") || "";
     let hide = sport !== "All" && tr.getAttribute("data-sport") !== sport;
-    if (show === "posted" && kind === "none") hide = true;
+    if (show === "posted" && kind === "none" && tr.getAttribute("data-card") !== "1") hide = true;
     if (show === "out" && kind !== "out") hide = true;
     if (show === "maybe" && kind !== "maybe") hide = true;
     tr.hidden = hide;
@@ -3136,49 +3136,77 @@ function filterInjury(){
 async function drawInjuryReport(){
   const box = document.getElementById("injuryreport");
   if (!box) return;
-  const games = ((pickSlate && pickSlate.games) || []).concat((pickSlate && pickSlate.passed) || []);
+  const sports = Object.keys(SCORE_FEED).filter(s => !seasonEnded(s) && !seasonNotStarted(s));
+  let boards = [];
+  try { boards = (await Promise.all(sports.map(sport => scoreboard(sport, easternDay()).catch(() => [])))).flat(); }
+  catch (e) { boards = []; }
   const wanted = [];
-  games.forEach(game => {
+  const addTeam = (sport, name, game, card) => {
+    sport = String(sport || "").toUpperCase();
+    name = String(name || "").trim();
+    if (!name || !SCORE_FEED[sport]) return;
+    const hit = wanted.find(row => row.sport === sport && sameClub(row.name, name));
+    if (hit) { if (card) hit.card = true; return; }
+    wanted.push({sport: sport, name: name, game: game, card: !!card});
+  };
+  boards.forEach(g => {
+    const away = (g.away && (g.away.displayName || g.away.name)) || "";
+    const home = (g.home && (g.home.displayName || g.home.name)) || "";
+    const game = (g.sport ? g.sport + " " : "") + [away, home].filter(Boolean).join(" at ");
+    addTeam(g.sport, away, game, false);
+    addTeam(g.sport, home, game, false);
+  });
+  (((pickSlate && pickSlate.games) || []).concat((pickSlate && pickSlate.passed) || [])).forEach(game => {
     const sides = slateSides(game);
     const sport = String(game.sport || "").toUpperCase();
-    if (!SCORE_FEED[sport]) return;
-    [sides.away.name, sides.home.name].forEach(name => {
-      if (!name || wanted.some(row => row.sport === sport && sameClub(row.name, name))) return;
-      wanted.push({sport: sport, name: name, game: (game.sport ? game.sport + " " : "") + (game.game || [sides.away.name, sides.home.name].filter(Boolean).join(" at "))});
-    });
+    const label = (sport ? sport + " " : "") + (game.game || [sides.away.name, sides.home.name].filter(Boolean).join(" at "));
+    addTeam(sport, sides.away.name, label, true);
+    addTeam(sport, sides.home.name, label, true);
   });
   if (!wanted.length) {
-    box.innerHTML = "<p class='api-note'>No card games to match yet.</p>";
+    box.innerHTML = "<p class='api-note'>No games posted for today yet.</p>";
     return;
   }
-  wanted.sort((a, b) => sportRank(a.sport) - sportRank(b.sport) || String(a.game).localeCompare(String(b.game)) || String(a.name).localeCompare(String(b.name)));
-  const sports = [...new Set(wanted.map(row => row.sport))].sort((a, b) => sportRank(a) - sportRank(b));
-  const published = await readJson("cards/injuries.json");
+  wanted.sort((a, b) => Number(b.card) - Number(a.card) || sportRank(a.sport) - sportRank(b.sport) || String(a.game).localeCompare(String(b.game)) || String(a.name).localeCompare(String(b.name)));
+  const need = [...new Set(wanted.map(row => row.sport))].sort((a, b) => sportRank(a) - sportRank(b));
   const bySport = {};
-  if (published && published.date === easternDay() && published.sports) {
-    sports.forEach(sport => { if (published.sports[sport]) bySport[sport] = published.sports[sport]; });
-  }
-  const missing = sports.filter(sport => !bySport[sport]);
+  const packs = await Promise.all(need.map(sport => fetch("https://site.api.espn.com/apis/site/v2/sports/" + SCORE_FEED[sport] + "/injuries").then(r => r.ok ? r.json() : null).catch(() => null)));
+  need.forEach((sport, i) => {
+    const feed = packs[i];
+    if (feed && Array.isArray(feed.injuries) && feed.injuries.length) bySport[sport] = feed;
+  });
+  const missing = need.filter(sport => !bySport[sport]);
   if (missing.length) {
-    const packs = await Promise.all(missing.map(sport => fetch("https://site.api.espn.com/apis/site/v2/sports/" + SCORE_FEED[sport] + "/injuries").then(r => r.ok ? r.json() : null).catch(() => null)));
-    missing.forEach((sport, i) => { bySport[sport] = packs[i]; });
+    const published = await readJson("cards/injuries.json");
+    if (published && published.date === easternDay() && published.sports) {
+      missing.forEach(sport => {
+        const feed = published.sports[sport];
+        if (feed && Array.isArray(feed.injuries) && feed.injuries.length) bySport[sport] = feed;
+      });
+    }
   }
+  window.__injuryFeeds = Object.assign({}, window.__injuryFeeds || {}, bySport);
   const rows = [];
   wanted.forEach(team => {
     const feed = bySport[team.sport];
     const club = ((feed && feed.injuries) || []).find(item => sameClub(item.displayName || (item.team && item.team.displayName), team.name));
-    const list = ((club && club.injuries) || []).filter(item => injuryWorth(item.status)).sort((a, b) => injuryRank(a.status) - injuryRank(b.status)).slice(0, 6);
+    const list = ((club && club.injuries) || []).filter(item => injuryWorth(item.status)).sort((a, b) => injuryRank(a.status) - injuryRank(b.status));
     if (!list.length) {
-      rows.push("<tr data-sport='" + esc(team.sport) + "' data-kind='none'><td class='game-col'>" + esc(team.game) + "</td><td class='team-col'>" + esc(team.name) + "</td><td class='player-col'>-</td><td class='pos-col'>-</td><td class='status-col'>-</td><td>No report posted</td></tr>");
+      if (!team.card) return;
+      rows.push("<tr data-sport='" + esc(team.sport) + "' data-kind='none' data-card='1'><td class='game-col'>" + esc(team.game) + "</td><td class='team-col'>" + esc(team.name) + "</td><td class='player-col'>-</td><td class='pos-col'>-</td><td class='status-col'>-</td><td>No report posted</td></tr>");
       return;
     }
     list.forEach(item => {
       const athlete = item.athlete || {};
       const pos = (athlete.position && (athlete.position.abbreviation || athlete.position.displayName)) || "-";
       const detail = item.shortComment || (item.details && (item.details.detail || item.details.type)) || (item.type && (item.type.description || item.type.name)) || "";
-      rows.push("<tr data-sport='" + esc(team.sport) + "' data-kind='" + injuryKind(item.status) + "'><td class='game-col'>" + esc(team.game) + "</td><td class='team-col'>" + esc(team.name) + "</td><td class='player-col'>" + esc(athlete.displayName || "Player") + "</td><td class='pos-col'>" + esc(pos) + "</td><td class='status-col " + injuryStatusClass(item.status) + "'>" + esc(item.status || "-") + "</td><td>" + esc(String(detail).replace(/\s+/g, " ").slice(0, 160)) + "</td></tr>");
+      rows.push("<tr data-sport='" + esc(team.sport) + "' data-kind='" + injuryKind(item.status) + "'" + (team.card ? " data-card='1'" : "") + "><td class='game-col'>" + esc(team.game) + "</td><td class='team-col'>" + esc(team.name) + "</td><td class='player-col'>" + esc(athlete.displayName || "Player") + "</td><td class='pos-col'>" + esc(pos) + "</td><td class='status-col " + injuryStatusClass(item.status) + "'>" + esc(item.status || "-") + "</td><td>" + esc(String(detail).replace(/\s+/g, " ").slice(0, 160)) + "</td></tr>");
     });
   });
+  if (!rows.length) {
+    box.innerHTML = "<p class='api-note'>No injury report posted for today's games.</p>";
+    return;
+  }
   box.innerHTML = "<table class='compare'><thead><tr><th class='game-col'>Game</th><th class='team-col'>Team</th><th class='player-col'>Player</th><th class='pos-col'>Position</th><th class='status-col'>Status</th><th>Report</th></tr></thead><tbody>" + rows.join("") + "<tr id='injuryempty' hidden><td colspan='6'>No rows for that filter.</td></tr></tbody></table>";
   filterInjury();
 }
