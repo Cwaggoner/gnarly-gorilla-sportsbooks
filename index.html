@@ -473,6 +473,9 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 .compare th { color:#39ff14; }
 #liveodds > .section-head { margin-bottom:4px; }
 .odds-tools { display:flex; flex-direction:row; align-items:center; justify-content:flex-start; gap:8px; margin:0 0 6px; flex-wrap:nowrap; width:max-content; max-width:100%; }
+#games > .odds-tools { gap:0; align-items:flex-end; }
+#games #sportbar { margin:0 0 0 50px; }
+#games #sportbar { margin:0 0 0 50px; }
 .odds-tools button, .odds-tools select { height:32px; padding:4px 10px; box-sizing:border-box; }
 .odds-notes { list-style:none; margin:0 0 8px; padding:0; }
 #dashboard .odds-notes { margin:12px 0 0; }
@@ -641,7 +644,6 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <div class="section-head"><h2>Games</h2><p class="warn slips-side">Tap a price. Nothing is sent to a book. Final scores post when the game ends.</p></div>
 <div class="odds-tools">
 <label>Book<select id="gamebook" class="book-select"><option>BetMGM</option><option>Caesars</option><option>DraftKings</option><option>Fanatics</option><option>FanDuel</option><option>HardRock</option></select></label>
-</div>
 <div class="sport-bar" id="sportbar">
 <button type="button" class="on" data-sport="All">All</button>
 <button type="button" data-sport="CBB">CBB</button>
@@ -651,6 +653,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <button type="button" data-sport="NFL">NFL</button>
 <button type="button" data-sport="NHL">NHL</button>
 <button type="button" id="gamerefresh">Refresh</button>
+</div>
 </div>
 <div id="gameboard"><p class="warn">Loading the board.</p></div>
 </section>
