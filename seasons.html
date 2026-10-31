@@ -601,13 +601,13 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .mgm-card { display:grid; grid-template-columns:minmax(230px, max-content) minmax(0,1fr) max-content; align-items:center; column-gap:12px; width:100%; box-sizing:border-box; border:1px solid #243024; border-radius:8px; background:#0e0e0e; margin:6px 0; padding:8px 10px; }
 .mgm-card.no-close { grid-template-columns:minmax(210px, max-content) minmax(0,1fr) minmax(250px, 300px); align-items:start; }
 .sharp-shop { border:1px solid #39ff14; border-radius:8px; background:rgba(57,255,20,.08); padding:8px 10px; min-width:0; }
-.sharp-shop h3 { margin:0 0 6px; color:#39ff14; font-size:13px; }
+.sharp-shop h3 { margin:0 0 6px; color:#39ff14; font-size:13px; letter-spacing:.04em; }
 .sharp-tip { display:grid; grid-template-columns:28px minmax(0,1fr); gap:4px 8px; margin:0 0 8px; }
 .sharp-tip:last-child { margin-bottom:0; }
 .sharp-tip img { width:28px; height:28px; border-radius:6px; border:1px solid #39ff14; object-fit:cover; grid-row:1 / span 3; }
 .sharp-tip b { color:#39ff14; font-size:12px; }
 .sharp-tip p { margin:0; color:#d6ffd0; font-size:12px; line-height:1.3; }
-.sharp-shop .sharp-add { width:auto; height:22px; margin-top:2px; padding:0 8px; display:inline-flex; align-items:center; border-radius:6px; font-size:11px; }
+.sharp-shop .sharp-add { width:136px; min-width:136px; height:22px; margin-top:2px; padding:0 8px; box-sizing:border-box; display:inline-flex; align-items:center; justify-content:center; border-radius:6px; font:700 11px/1 system-ui,sans-serif; white-space:nowrap; text-align:center; }
 .mgm-mid { min-width:0; display:flex; flex-direction:column; align-items:flex-start; gap:8px; }
 .mgm-form { margin:0 0 4px 36px; color:#8fb898; font-size:11px; line-height:1.35; }
 .mgm-form .loss, .mgm-form .warn { font-weight:700; }
@@ -645,6 +645,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .mgm-card .board-price b, .mgm-card .mgm-odd b { font:700 12px/1.05 system-ui,sans-serif; color:inherit; }
 .mgm-card .board-price span, .mgm-card .mgm-odd span { font:700 11px/1 system-ui,sans-serif; color:inherit; }
 .mgm-card .board-price.best-price { color:#ff00ff; border-color:#ff00ff; }
+.mgm-card .sharp-shop .sharp-add { width:136px; min-width:136px; height:22px; margin-top:2px; padding:0 8px; box-sizing:border-box; display:inline-flex; flex-direction:row; align-items:center; justify-content:center; gap:0; border-radius:6px; font:700 11px/1 system-ui,sans-serif; white-space:nowrap; text-align:center; }
 .mgm-odd.empty { color:#5a6a5a; }
 .mgm-odd.locked { color:var(--muted); }
 .mgm-odd.locked svg { width:16px; height:16px; display:block; }
@@ -9120,7 +9121,7 @@ function sharpShopLine(shark, o){
 }
 function sharpShopHtml(g, day){
   const offers = sharpOffers(g);
-  if (!offers.length) return "<aside class='sharp-shop'><h3>Sharp shop</h3><p class='warn'>No posted number. Nobody is inventing a ticket.</p></aside>";
+  if (!offers.length) return "<aside class='sharp-shop'><h3>SHARP SHOP</h3><p class='warn'>No posted number. Nobody is inventing a ticket.</p></aside>";
   const used = new Set();
   const tips = SHARKS.map(shark => {
     const o = sharpChooseOffer(shark.kind, offers, used);
@@ -9130,7 +9131,7 @@ function sharpShopHtml(g, day){
     const attrs = Object.keys(data).map(key => " data-" + key + "='" + encodeURIComponent(String(data[key])) + "'").join("");
     return "<div class='sharp-tip'><img src='" + esc(shark.img) + "' alt='" + esc(shark.alt) + "' width='28' height='28' decoding='async'><b>" + esc(shark.name) + "</b><p>" + esc(sharpShopLine(shark, o)).replace(esc(o.book), "<span class='best-price'>" + esc(o.book) + "</span>") + "</p><button type='button' class='board-price sharp-add'" + attrs + ">Add " + esc(o.book) + "</button></div>";
   }).join("");
-  return "<aside class='sharp-shop'><h3>Sharp shop</h3>" + tips + "</aside>";
+  return "<aside class='sharp-shop'><h3>SHARP SHOP</h3>" + tips + "</aside>";
 }
 function sharkSpreadOf(g, odds){
   let home = Number(odds && odds.spread);
