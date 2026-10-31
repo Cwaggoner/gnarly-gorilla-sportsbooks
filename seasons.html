@@ -585,9 +585,9 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .sport-bar button { height:38px; min-width:7ch; }
 #sportbar #gamerefresh { margin-left:69px; }
 #games { position:relative; }
-#games .section-head h2 { display:flex; align-items:center; gap:10px; }
-#games .league-marks { display:inline-flex; align-items:center; gap:6px; }
-#games .league-marks img, button.league img { width:20px; height:20px; flex:0 0 20px; display:block; object-fit:contain; }
+.section-head > h2, .card > h2 { display:flex; align-items:center; gap:10px; }
+.league-marks { display:inline-flex; align-items:center; gap:6px; flex:0 0 auto; }
+.league-marks img, button.league img { width:20px; height:20px; flex:0 0 20px; display:block; object-fit:contain; }
 #gamenote { position:absolute; margin:0; white-space:nowrap; line-height:1; z-index:5; pointer-events:none; transform:translate(-50%, -100%); }
 .game-row { border:1px solid #39ff14; border-radius:10px; margin:8px 0; padding:10px; background:#101610; }
 .game-row h3 { margin:0 0 4px; color:#39ff14; font-size:15px; }
@@ -3320,6 +3320,7 @@ function showSeasons(checked){
   const trivia = "<div class='card-rest' id='seasontrivia'><b style='color:#39ff14'>Daily Sports Trivia</b><p class='warn' style='margin:4px 0 8px'>A new question at midnight. The same question stays up all day.</p><p data-q>Loading today's question.</p><button type='button' id='triviareveal'>Show answer</button><p data-a class='warn' hidden></p></div>";
   const checkedBit = seasonChecked ? "Checked " + esc(seasonChecked) + ". " : "";
   box.innerHTML = live + "<div class='section-head'><h2>Season Dates</h2><p class='warn slips-side'>" + checkedBit + "NFL May, NHL July, MLB July, NBA August, CFB August, CBB September. Postseason nights stay open until the last game ends or " + zoneTime(4, 0) + ". NBA and NHL through June 30, MLB through the World Series, NFL through the Super Bowl, CFB through the championship, March Madness March 13 through the title game.</p></div><table><thead><tr><th colspan='6' style='text-align:center'>" + ekg + "</th></tr><tr><th>Sport</th><th>Start</th><th>Last Card</th><th>Status</th><th>Where</th><th>Days Left</th></tr></thead><tbody>" + rows + "</tbody></table>" + records + trivia;
+  paintLeagueMarks(box);
   if (pageNeeds("seasons")) { loadRecords(); loadLiveBoard(); }
 }
 async function loadTrivia(){
@@ -3544,6 +3545,16 @@ function leagueBtn(code, on){
   const face = {CBB:["College Basketball","NCAA Basketball","leagues/cbb.png"], CFB:["College Football","NCAA Football","leagues/cfb.png"], MLB:["MLB","Major League Baseball","leagues/mlb.png"], NBA:["NBA","National Basketball Association","leagues/nba.png"], NFL:["NFL","National Football League","leagues/nfl.png"], NHL:["NHL","National Hockey League","leagues/nhl.png"]}[code];
   if (!face) return "<button type='button' data-sport='" + code + "'" + (on ? " class='on'" : "") + ">" + code + "</button>";
   return "<button type='button' class='league" + (on ? " on" : "") + "' data-sport='" + code + "' title='" + face[1] + "'><img src='" + face[2] + "' alt='' width='20' height='20' decoding='async'>" + face[0] + "</button>";
+}
+function leagueMarksHtml(){
+  const row = [["cbb","College Basketball","NCAA Basketball"],["cfb","College Football","NCAA Football"],["mlb","MLB","Major League Baseball"],["nba","NBA","National Basketball Association"],["nfl","NFL","National Football League"],["nhl","NHL","National Hockey League"]];
+  return "<span class='league-marks'>" + row.map(item => "<img src='leagues/" + item[0] + ".png' alt='" + item[1] + "' title='" + item[2] + "' width='20' height='20' decoding='async'>").join("") + "</span>";
+}
+function paintLeagueMarks(root){
+  (root || document).querySelectorAll(".section-head > h2, .card > h2").forEach(h2 => {
+    if (h2.querySelector(".league-marks")) return;
+    h2.insertAdjacentHTML("beforeend", leagueMarksHtml());
+  });
 }
 function scorePage(){
   const page = document.documentElement.dataset.page || "";
@@ -4072,6 +4083,7 @@ function render(){
   const split = "<h2 class='split-title'>Market Split</h2>" + group(bookDay, "type") + "<p class='api-note warn'>Graded slips only. A sport with no graded slips says No Picks. A book says No Price Saved until that one call stored its price.</p>" + bookMonitorHtml();
   const crew = "<table class='cal-line book-crew'><tbody><tr><td><p class='api-note warn'>Graded slate " + bookDate + ". A postseason game stays on the slate it started until that game ends or " + zoneTime(4, 0) + ".</p></td><td class='cal-icons' rowspan='2'><div class='cal-crew'><img src='about-gorilla.jpg' alt='Gnarly Gorilla' width='72' height='72' loading='lazy' decoding='async'><img src='jungle-leopard.jpg' alt='Vito the Spot' width='72' height='72' loading='lazy' decoding='async'><img src='jungle-rhino.jpg' alt='Rocco No Chase' width='72' height='72' loading='lazy' decoding='async'><img src='jungle-hyena.jpg' alt='Paulie the Fade' width='72' height='72' loading='lazy' decoding='async'><img src='jungle-bird.jpg' alt='Gino the Wire' width='72' height='72' loading='lazy' decoding='async'></div></td></tr><tr><td class='book-rest'>" + rest + "</td></tr></tbody></table>";
   document.getElementById("breaks").innerHTML = "<h2>Graded Results By Sport And Book</h2>" + crew + split;
+  paintLeagueMarks(document.getElementById("breaks"));
   }
   if (page === "reportcard") {
   const y = yesterday();
@@ -9639,6 +9651,7 @@ function pinOffset(){
   const bar = document.querySelector(".topbar");
   if (bar) document.documentElement.style.setProperty("--pin", (bar.offsetHeight + 8) + "px");
 }
+paintLeagueMarks();
 </script>
 </body>
 </html>
