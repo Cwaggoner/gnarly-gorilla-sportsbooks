@@ -714,12 +714,12 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <button type="button" class="league" data-sport="NFL" title="National Football League"><svg viewBox="0 0 16 16" aria-hidden="true"><ellipse cx="8" cy="8" rx="6.2" ry="3.5" transform="rotate(-32 8 8)" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M6.3 6.4l3.4 3.2M5.8 8.1l1.5-1.4M8.7 9.3l1.5-1.4" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>NFL</button>
 <button type="button" class="league" data-sport="NHL" title="National Hockey League"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 12.2h6.2L13.2 3.8" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="13.2" cy="3.6" r="1.35" fill="currentColor"/></svg>NHL</button>
 <span class="book-links">
-<a href="https://sports.betmgm.com/" target="_blank" rel="noopener noreferrer"><img src="https://www.google.com/s2/favicons?domain=sports.betmgm.com&sz=64" alt="" width="16" height="16">BetMGM</a>
-<a href="https://sportsbook.caesars.com/" target="_blank" rel="noopener noreferrer"><img src="https://www.google.com/s2/favicons?domain=sportsbook.caesars.com&sz=64" alt="" width="16" height="16">Caesars</a>
-<a href="https://sportsbook.draftkings.com/" target="_blank" rel="noopener noreferrer"><img src="https://www.google.com/s2/favicons?domain=sportsbook.draftkings.com&sz=64" alt="" width="16" height="16">DraftKings</a>
-<a href="https://sportsbook.fanatics.com/" target="_blank" rel="noopener noreferrer"><img src="https://www.google.com/s2/favicons?domain=www.fanatics.com&sz=64" alt="" width="16" height="16">Fanatics</a>
-<a href="https://sportsbook.fanduel.com/" target="_blank" rel="noopener noreferrer"><img src="https://www.google.com/s2/favicons?domain=sportsbook.fanduel.com&sz=64" alt="" width="16" height="16">FanDuel</a>
-<a href="https://www.hardrock.bet/" target="_blank" rel="noopener noreferrer"><img src="https://www.google.com/s2/favicons?domain=www.hardrock.bet&sz=64" alt="" width="16" height="16">HardRock</a>
+<a href="https://sports.betmgm.com/" target="_blank" rel="noopener noreferrer"><img src="books/betmgm.png" alt="" width="16" height="16" decoding="async">BetMGM</a>
+<a href="https://sportsbook.caesars.com/" target="_blank" rel="noopener noreferrer"><img src="books/caesars.png" alt="" width="16" height="16" decoding="async">Caesars</a>
+<a href="https://sportsbook.draftkings.com/" target="_blank" rel="noopener noreferrer"><img src="books/draftkings.png" alt="" width="16" height="16" decoding="async">DraftKings</a>
+<a href="https://sportsbook.fanatics.com/" target="_blank" rel="noopener noreferrer"><img src="books/fanatics.png" alt="" width="16" height="16" decoding="async">Fanatics</a>
+<a href="https://sportsbook.fanduel.com/" target="_blank" rel="noopener noreferrer"><img src="books/fanduel.png" alt="" width="16" height="16" decoding="async">FanDuel</a>
+<a href="https://www.hardrock.bet/" target="_blank" rel="noopener noreferrer"><img src="books/hardrock.png" alt="" width="16" height="16" decoding="async">HardRock</a>
 </span>
 <button type="button" id="gamerefresh">Refresh</button>
 </div>
@@ -1028,7 +1028,10 @@ const GRADE_KEY = "gnarly-gorilla-grading-v1";
 const UNIT = 10;
 const ASSET = "20261029b";
 function cardUrl(path){ return path + "?v=" + ASSET; }
-function later(fn){ setTimeout(fn, 0); }
+function later(fn){
+  if (window.requestIdleCallback) requestIdleCallback(function(){ fn(); }, {timeout: 1200});
+  else setTimeout(fn, 400);
+}
 const SPORTS = ["CBB","CFB","MLB","NBA","NFL","NHL"];
 function sportRank(name){
   const code = String(name || "").toUpperCase().split(/\s+/)[0];
@@ -4037,8 +4040,11 @@ function render(){
   if (rendering) return;
   rendering = true;
   const dash = "—";
+  const page = document.documentElement.dataset.page || "games";
   try {
   applyLineWindowCloses();
+  if (page === "liveodds") { drawOddsCompare(false).catch(() => {}); return; }
+  if (["slips","breaks","charts","dashboard","calendarcard","reportcard","about","seasons"].indexOf(page) < 0) return;
   const all = load().concat(loadGrade()).concat(gradeFile).filter(b => b && b.pick && !isNoPick(b) && !/^RANGE$/i.test(b.pick) && !/^all win/i.test(b.result || ""));
   all.forEach(stampFileClose);
   let unique = collapseSlips(all);
@@ -4056,7 +4062,8 @@ function render(){
   const totals = bets;
   const pl = totals.reduce((s, b) => s + profit(b), 0);
   const settled = totals.filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
-  try { drawDashboard(); } catch (err) {}
+  try { if (page === "dashboard" || page === "about") drawDashboard(); } catch (err) {}
+  if (page === "slips") {
   const typeRank = t => t === "SGP" ? 99 : ["Moneyline","Parlay","Prop","Spread","Total"].indexOf(t) + 1 || 50;
   const grouped = filtered(slipsForBooks(windowed)).sort((a,b) => sportRank(a.sport) - sportRank(b.sport) || typeRank(a.type) - typeRank(b.type) || b.date.localeCompare(a.date) || String(a.book).localeCompare(String(b.book)));
   let lastSport = "", lastType = "";
@@ -4091,26 +4098,21 @@ function render(){
     return head + "<tr" + (rowCls ? " class='" + rowCls + "'" : "") + "><td>" + b.date + placedText(b) + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td>" + esc(b.pick) + "</td><td class='slip-score'>" + slipScoreCell(b) + "</td><td>" + (b.priceText ? esc(b.priceText) : (usableClose(b.odds) ? b.odds : dash)) + "</td><td class='col-close'>" + (b.closeText ? esc(b.closeText) : (usableClose(b.close) ? b.close : dash)) + "</td><td class='" + (cv > 0 ? "win" : cv < 0 ? "loss" : "") + "'>" + clvText(b) + "</td><td class='" + sharpCls + "'>" + esc(sharpLabel(sharpCv, b)) + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='result " + cls + "'>" + b.result + "</td><td class='slip-conf " + String(liveCell.band || "").toLowerCase() + "'>" + esc(confText) + "</td><td class='" + cls + "'>" + moneyHtml(p) + "</td><td>" + grade + "</td></tr>";
     } catch (err) { return ""; }
   }).join("") || "<tr><td colspan='15'>" + ((document.getElementById("fBook") || {}).value ? "No slips for " + esc(document.getElementById("fBook").value) + "." : "No bets yet.") + "</td></tr>";
+  }
+  if (page === "charts") {
   try { drawCharts(); } catch (err) { document.getElementById("plotnote").textContent = "Chart failed. The rest of the page is still live."; }
   document.getElementById("plotnote").textContent = settled.length + " settled slips plotted. " + slipsLeftToSettle(bets) + " slips left to settle.";
-  drawCalendar();
+  }
+  if (page === "calendarcard") drawCalendar();
+  if (page === "breaks") {
   const bookDate = slateSettled(yesterday()) ? yesterday() : shiftDate(yesterday(), -1);
   const bookDay = chartSlips().filter(b => b.date === bookDate);
   const rest = group(bookDay, "sport") + bookFigures(bookDay);
   const split = "<h2 class='split-title'>Market Split</h2>" + group(bookDay, "type") + "<p class='api-note warn'>Graded slips only. A sport with no graded slips says No Picks. A book says No Price Saved until that one call stored its price.</p>" + bookMonitorHtml();
   const crew = "<table class='cal-line book-crew'><tbody><tr><td><p class='api-note warn'>Graded slate " + bookDate + ". A postseason game stays on the slate it started until that game ends or " + zoneTime(4, 0) + ".</p></td><td class='cal-icons' rowspan='2'><div class='cal-crew'><img src='about-gorilla.jpg' alt='Gnarly Gorilla' width='72' height='72' loading='lazy' decoding='async'><img src='jungle-leopard.jpg' alt='Vito the Spot' width='72' height='72' loading='lazy' decoding='async'><img src='jungle-rhino.jpg' alt='Rocco No Chase' width='72' height='72' loading='lazy' decoding='async'><img src='jungle-hyena.jpg' alt='Paulie the Fade' width='72' height='72' loading='lazy' decoding='async'><img src='jungle-bird.jpg' alt='Gino the Wire' width='72' height='72' loading='lazy' decoding='async'></div></td></tr><tr><td class='book-rest'>" + rest + "</td></tr></tbody></table>";
   document.getElementById("breaks").innerHTML = "<h2>Graded Results By Sport And Book</h2>" + crew + split;
-  if (!document.getElementById("oddscompare")) {
-    const card = document.createElement("section");
-    card.className = "card view";
-    card.id = "liveodds";
-    card.innerHTML = "<div class=\"section-head\"><h2>Live Odds</h2><p class=\"warn slips-side\">Moneyline, spread, and total across books. Refresh pulls the live price.</p><button type=\"button\" id=\"refreshodds\">Refresh</button></div>";
-    const hold = document.createElement("div");
-    hold.id = "oddscompare";
-    card.appendChild(hold);
-    document.getElementById("breaks").after(card);
   }
-  drawOddsCompare().catch(() => {});
+  if (page === "reportcard") {
   const y = yesterday();
   const picked = document.getElementById("reportDay").value;
   const show = document.getElementById("reportShow").value || "both";
@@ -4160,8 +4162,9 @@ function render(){
   const report = document.getElementById("report");
   report.dataset.copy = copy.join("\n");
   report.innerHTML = "<p>Date " + (picked || easternDay()) + ". Graded " + gradeLabel + "</p><p>W/L Record " + rec(gradedDay) + "   P/L " + money(dayPl) + "   Hit rate " + hit + "   Row sum " + money(dayPl) + "</p>" + body + "<p>W/L Record " + rec(gradedDay) + "   " + money(dayPl) + "   " + (dayPl / UNIT).toFixed(2) + "u</p>";
-  try { paintSeasonStatus(); } catch (err) {}
-  try { paintSharpCheck(); } catch (err) {}
+  }
+  if (page === "seasons") { try { paintSeasonStatus(); } catch (err) {} }
+  if (page === "about") { try { paintSharpCheck(); } catch (err) {} }
   } finally {
     rendering = false;
   }
@@ -8032,7 +8035,7 @@ async function loadOddsBoard(data, saved){
     if (box && !usableBoard(window.__ggOddsBoard)) box.innerHTML = "<p class='warn'>Loading today's games.</p>";
   } else {
     applyPublishedBooks();
-    drawOddsCompare(false).catch(() => {});
+    if ((document.documentElement.dataset.page || "") === "liveodds") drawOddsCompare(false).catch(() => {});
   }
   if ((document.documentElement.dataset.page || "games") === "games" && !dayHasLines(easternDay())) ensureGameDay();
 }
@@ -9599,6 +9602,7 @@ function showView(id){
   if (!screen) return;
   document.documentElement.dataset.page = screen;
   armScreen();
+  render();
   screens.forEach(key => {
     const el = document.getElementById(key);
     if (!el) return;
