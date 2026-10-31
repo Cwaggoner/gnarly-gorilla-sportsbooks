@@ -3663,7 +3663,7 @@ function bindLiveBoard(){
   if (prev) prev.onclick = () => { liveBoardDate = shiftDate(liveBoardDate || easternDay(), -1); loadLiveBoard(); };
   if (next) next.onclick = () => { liveBoardDate = shiftDate(liveBoardDate || easternDay(), 1); loadLiveBoard(); };
   if (today) today.onclick = () => { liveBoardDate = easternDay(); loadLiveBoard(); };
-  document.querySelectorAll("#seasonlivesports button").forEach(btn => {
+  document.querySelectorAll("#seasonlivesports button[data-sport]").forEach(btn => {
     btn.onclick = () => { liveBoardSport = btn.dataset.sport || "All"; paintLiveBoard(); };
   });
   bindScoreArrows();
@@ -3730,7 +3730,7 @@ function paintLiveChrome(){
   if (day) day.textContent = prettyDay(liveBoardDate);
   const today = document.getElementById("seasonlivetoday");
   if (today) today.hidden = liveBoardDate === easternDay();
-  document.querySelectorAll("#seasonlivesports button").forEach(btn => btn.classList.toggle("on", (btn.dataset.sport || "All") === liveBoardSport));
+  document.querySelectorAll("#seasonlivesports button[data-sport]").forEach(btn => btn.classList.toggle("on", (btn.dataset.sport || "All") === liveBoardSport));
   const full = document.getElementById("scorefull");
   if (full) full.href = "index.html?page=scoreboard" + (liveBoardSport && liveBoardSport !== "All" ? "&sport=" + encodeURIComponent(liveBoardSport) : "");
 }
