@@ -1,0 +1,46 @@
+name: uniform shark column
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set one width
+        run: |
+          python3 << 'PY'
+          from pathlib import Path
+          old = ".shark-type { flex:0 0 auto; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:6px; margin:0; padding:8px 10px; align-self:stretch; background:rgba(57,255,20,.12); border:0; border-left:1px solid #39ff14; border-radius:0; }\n.shark-type span { color:var(--amber); font:700 12px/1.4 system-ui,sans-serif; letter-spacing:.06em; text-transform:uppercase; }\n.shark-add { margin:0; flex:0 0 auto; white-space:nowrap; align-self:center; }\n.shark-pick .shark-win { margin:0; width:100%; color:#00ffff; text-align:center; font:700 15px/1.4 system-ui,sans-serif; }\n.shark-type .shark-liveconf { margin:0; width:100%; text-align:center; }"
+          new = ".shark-type { flex:0 0 240px; width:240px; min-width:240px; max-width:240px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:6px; margin:0; padding:8px 10px; align-self:stretch; box-sizing:border-box; background:rgba(57,255,20,.12); border:0; border-left:1px solid #39ff14; border-radius:0; }\n.shark-type span { color:var(--amber); font:700 12px/1.4 system-ui,sans-serif; letter-spacing:.06em; text-transform:uppercase; }\n.shark-add { margin:0; flex:0 0 auto; white-space:nowrap; align-self:center; }\n.shark-pick .shark-win { margin:0; width:100%; color:#00ffff; text-align:center; font:700 15px/1.4 system-ui,sans-serif; white-space:nowrap; }\n.shark-type .shark-liveconf { margin:0; width:100%; text-align:center; white-space:nowrap; }"
+          changed = False
+          for name in ("index.html", "seasons.html", "dashboard.html"):
+              path = Path(name)
+              text = path.read_text()
+              if old not in text:
+                  if "flex:0 0 240px" in text:
+                      continue
+                  raise SystemExit("pattern missing in " + name)
+              path.write_text(text.replace(old, new, 1))
+              changed = True
+          wf = Path(".github/workflows/uniform-shark-column.yml")
+          if wf.exists():
+              wf.unlink()
+              changed = True
+          raise SystemExit(0 if changed else 2)
+          PY
+      - name: Publish
+        run: |
+          if git diff --quiet && git ls-files --deleted -- .github/workflows/uniform-shark-column.yml | grep -q .; then
+            true
+          fi
+          git add -A index.html seasons.html dashboard.html .github/workflows/uniform-shark-column.yml
+          if git diff --cached --quiet; then
+            echo "nothing to commit"
+            exit 0
+          fi
+          git config user.name "Chris Waggoner"
+          git config user.email "5667266+Cwaggoner@users.noreply.github.com"
+          git commit -m "Give every Sharp add column the same width."
+          git push
