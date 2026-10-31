@@ -256,7 +256,9 @@ html[data-page="seasons"] main { min-width:0; }
 .crew-hit:focus-visible { outline:2px solid #39ff14; outline-offset:2px; }
 .shark-list { display:flex; flex-direction:column; gap:12px; }
 .shark { display:grid; grid-template-columns:120px minmax(0,1fr); gap:12px; align-items:start; border:1px solid #39ff14; border-radius:10px; background:#0e0e0e; padding:12px; }
+.shark-face { display:flex; flex-direction:column; align-items:stretch; gap:8px; width:120px; }
 .shark img { width:120px; height:120px; object-fit:cover; border-radius:12px; border:1px solid #39ff14; background:#0a0a0a; }
+.shark-add-all { width:100%; margin:0; padding:6px 4px; white-space:nowrap; }
 .shark h3 { margin:0 0 4px; color:var(--title); font:700 16px/1.4 system-ui,sans-serif; letter-spacing:.04em; }
 .shark-rule { margin:0 0 8px; color:var(--text); font:15px/1.4 system-ui,sans-serif; }
 .shark-picks { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
@@ -2761,6 +2763,8 @@ function openBestBet(btn, scroll){
   if (scroll !== false) { stashForm(); goPage("addbet"); }
 }
 document.body.addEventListener("click", e => {
+  const addAll = e.target.closest && e.target.closest(".shark-add-all");
+  if (addAll) { sharpAddOpen(addAll.dataset.shark || ""); return; }
   const boardBtn = e.target.closest && e.target.closest(".board-price");
   if (boardBtn) { openBestBet(boardBtn, false); return; }
   const priceBtn = e.target.closest && e.target.closest(".add-price");
@@ -8744,6 +8748,49 @@ function sharpSynopsis(shark, t){
   else read = "No eye test. " + (t.why || ("The number is " + mine + " at " + price + ".")) + " I want the model and the move before the book finishes catching up.";
   return game + ". " + when + ". " + market + ". " + read + conf + grade;
 }
+function sharpStillOpen(t){
+  if (!t || t.empty || !t.slip || !Number.isFinite(Number(t.odds))) return false;
+  if (t.gfinal || t.glive) return false;
+  if (t.result === "win" || t.result === "loss" || t.result === "push") return false;
+  if (t.gstart && Number(t.gstart) <= Date.now()) return false;
+  return true;
+}
+function sharpAddOpen(sharkId){
+  const card = window.__sharpCard;
+  const shark = SHARKS.find(s => s.id === sharkId);
+  const note = document.getElementById("sharpnote");
+  if (!card || !shark) return;
+  const open = (card.sharps[sharkId] || []).filter(sharpStillOpen);
+  if (!open.length) {
+    if (note) note.textContent = shark.name + " has no games left that have not started.";
+    return;
+  }
+  const bets = load();
+  const book = (document.querySelector("#addbet [name=book]") || {}).value || "BetMGM";
+  let added = 0, already = 0;
+  open.forEach(t => {
+    const row = stampPlaced(markEdge({
+      id: Date.now() + Math.random(),
+      date: t.date || card.date || easternDay(),
+      book: book,
+      sport: t.sport || "",
+      type: t.market || "Spread",
+      pick: t.slip,
+      odds: Number(t.odds),
+      stake: 10,
+      result: "pending",
+      notes: shark.name + "." + (t.confidence ? " Confidence: " + t.confidence + (t.confidencePct ? " " + t.confidencePct + "%" : "") + "." : ""),
+      manual: true,
+      edge: /^high\b/i.test(String(t.confidence || ""))
+    }));
+    if (!placePending(bets, row)) { already += 1; return; }
+    added += 1;
+  });
+  if (added) save(bets);
+  if (note) note.textContent = added
+    ? "Added " + added + " of " + shark.name + "'s games to Slips. Started and final games were left off." + (already ? " " + already + " were already there." : "")
+    : shark.name + "'s remaining games are already on Slips.";
+}
 function sharpPaint(card, book){
   const board = document.getElementById("sharkboard");
   const note = document.getElementById("sharpnote");
@@ -8767,7 +8814,7 @@ function sharpPaint(card, book){
       const syn = "<p class='shark-syn'>" + esc(sharpSynopsis(shark, t)) + "</p>";
       return "<div class='shark-pick'><div class='shark-copy'><div class='shark-top'><b>" + esc(t.sport) + "</b><span>" + esc(t.market) + "</span></div><p class='shark-live score-state " + liveBits.cls + "' data-id='" + esc(t.id || "") + "'>" + liveBits.html + "</p><p class='shark-side'>" + priceHtml + "</p><p class='shark-game'>" + esc(t.game) + "</p>" + (t.when ? "<p class='shark-when'>" + esc(t.when) + "</p>" : "") + "<p>" + esc(t.why) + "</p>" + (conf ? "<p class='shark-conf " + String(t.confidence).toLowerCase() + "'>Confidence: " + esc(conf) + "</p>" : "") + "<p class='shark-result " + result + "' data-id='" + esc(t.id || "") + "'>" + esc(label) + "</p>" + syn + "</div><div class='shark-type'>" + add + win + "</div></div>";
     }).join("");
-    return "<article class='shark' id='" + shark.id + "'><img src='" + shark.img + "' alt='" + esc(shark.alt) + "'><div><h3>" + esc(shark.name) + "</h3><p class='shark-record'>Record " + rec.w + "-" + rec.l + (rec.p ? "-" + rec.p : "") + "</p><p class='shark-rule'>" + esc(shark.rule) + "</p><div class='shark-picks'>" + picks + "</div><p class='shark-fee'>" + esc(shark.fee) + "</p></div></article>";
+    return "<article class='shark' id='" + shark.id + "'><div class='shark-face'><img src='" + shark.img + "' alt='" + esc(shark.alt) + "'><button type='button' class='shark-add-all' data-shark='" + shark.id + "'>Add All</button></div><div><h3>" + esc(shark.name) + "</h3><p class='shark-record'>Record " + rec.w + "-" + rec.l + (rec.p ? "-" + rec.p : "") + "</p><p class='shark-rule'>" + esc(shark.rule) + "</p><div class='shark-picks'>" + picks + "</div><p class='shark-fee'>" + esc(shark.fee) + "</p></div></article>";
   }).join("");
 }
 async function refreshSharpGrades(){
