@@ -442,8 +442,9 @@ table.season-hold.filled td.note-col p { margin:0; display:-webkit-box; -webkit-
 .slash { color:#39ff14; }
 #breaks > h2 { margin-bottom:4px; }
 #breaks .book-crew { margin:0 0 8px; }
-#breaks .book-crew td:first-child { vertical-align:middle; }
+#breaks .book-crew td { vertical-align:top; }
 #breaks .book-crew .api-note { margin:0; }
+#breaks .book-crew td.book-rest { padding-top:4px; }
 table.cal-line { width:100%; margin:0 0 12px; border:0; border-radius:0; background:transparent; overflow:visible; }
 table.cal-line td { border:0; background:transparent; vertical-align:top; padding:0; box-shadow:none; }
 table.cal-line td.cal-icons { text-align:right; width:1%; white-space:nowrap; }
@@ -4046,8 +4047,9 @@ function render(){
   drawCalendar();
   const bookDate = slateSettled(yesterday()) ? yesterday() : shiftDate(yesterday(), -1);
   const bookDay = chartSlips().filter(b => b.date === bookDate);
-  const crew = "<table class='cal-line book-crew'><tbody><tr><td><p class='api-note warn'>Graded slate " + bookDate + ". A postseason game stays on the slate it started until that game ends or " + zoneTime(4, 0) + ".</p></td><td class='cal-icons'><div class='cal-crew'><img src='about-gorilla.jpg' alt='Gnarly Gorilla' width='72' height='72' loading='lazy' decoding='async'><img src='jungle-leopard.jpg' alt='Vito the Spot' width='72' height='72' loading='lazy' decoding='async'><img src='jungle-rhino.jpg' alt='Rocco No Chase' width='72' height='72' loading='lazy' decoding='async'><img src='jungle-hyena.jpg' alt='Paulie the Fade' width='72' height='72' loading='lazy' decoding='async'><img src='jungle-bird.jpg' alt='Gino the Wire' width='72' height='72' loading='lazy' decoding='async'></div></td></tr></tbody></table>";
-  document.getElementById("breaks").innerHTML = "<h2>Graded Results By Sport And Book</h2>" + crew + group(bookDay, "sport") + bookFigures(bookDay) + "<h2 class='split-title'>Market Split</h2>" + group(bookDay, "type") + "<p class='api-note warn'>Graded slips only. A sport with no graded slips says No Picks. A book says No Price Saved until that one call stored its price.</p>";
+  const rest = group(bookDay, "sport") + bookFigures(bookDay) + "<h2 class='split-title'>Market Split</h2>" + group(bookDay, "type") + "<p class='api-note warn'>Graded slips only. A sport with no graded slips says No Picks. A book says No Price Saved until that one call stored its price.</p>";
+  const crew = "<table class='cal-line book-crew'><tbody><tr><td><p class='api-note warn'>Graded slate " + bookDate + ". A postseason game stays on the slate it started until that game ends or " + zoneTime(4, 0) + ".</p></td><td class='cal-icons' rowspan='2'><div class='cal-crew'><img src='about-gorilla.jpg' alt='Gnarly Gorilla' width='72' height='72' loading='lazy' decoding='async'><img src='jungle-leopard.jpg' alt='Vito the Spot' width='72' height='72' loading='lazy' decoding='async'><img src='jungle-rhino.jpg' alt='Rocco No Chase' width='72' height='72' loading='lazy' decoding='async'><img src='jungle-hyena.jpg' alt='Paulie the Fade' width='72' height='72' loading='lazy' decoding='async'><img src='jungle-bird.jpg' alt='Gino the Wire' width='72' height='72' loading='lazy' decoding='async'></div></td></tr><tr><td class='book-rest'>" + rest + "</td></tr></tbody></table>";
+  document.getElementById("breaks").innerHTML = "<h2>Graded Results By Sport And Book</h2>" + crew;
   if (!document.getElementById("oddscompare")) {
     const card = document.createElement("section");
     card.className = "card view";
