@@ -611,11 +611,13 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .mgm-mid { min-width:0; display:flex; flex-direction:column; gap:8px; }
 .mgm-form { margin:0 0 4px 36px; color:#8fb898; font-size:11px; line-height:1.35; }
 .mgm-form .loss, .mgm-form .warn { font-weight:700; }
-.market-board { border:1px solid #243024; border-radius:8px; background:#101610; padding:8px; overflow-x:auto; }
-.market-board table { width:100%; border-collapse:collapse; font-size:11px; }
-.market-board th, .market-board td { padding:3px 5px; text-align:left; color:#d6ffd0; border-bottom:1px solid #1f3a1f; white-space:nowrap; }
+.market-board { border:1px solid #243024; border-radius:8px; background:#101610; padding:8px; overflow-x:auto; min-width:0; }
+.market-board table { width:max-content; min-width:100%; margin:0; border:0; border-radius:0; background:transparent; overflow:visible; border-collapse:collapse; font-size:11px; }
+.market-board th, .market-board td { padding:3px 5px; text-align:left; color:#d6ffd0; border-bottom:1px solid #1f3a1f; background:transparent; white-space:nowrap; font-size:11px; }
 .market-board th { color:#8fb898; font-weight:700; }
-.market-board .market-note { margin:6px 0 0; color:#d6ffd0; font-size:12px; line-height:1.4; }
+.market-board .market-note { margin:6px 0 0; color:#d6ffd0; font-size:12px; line-height:1.4; white-space:normal; }
+.mgm-form .inj-out { color:var(--red); font-weight:700; }
+.mgm-form .inj-maybe { color:var(--amber); font-weight:700; }
 .mgm-side { min-width:0; }
 .mgm-books { display:flex; gap:12px; min-width:0; align-items:end; flex-wrap:nowrap; overflow-x:auto; }
 .mgm-set { display:grid; grid-template-columns:repeat(3,64px); gap:4px; flex:0 0 auto; }
@@ -4521,7 +4523,10 @@ function liveOddsCards(games, day, lead){
   if (!games.length) return "";
   const note = lead ? "<p class='warn'>" + lead + "</p>" : "";
   if (!list.length) return note + "<p class='warn'>No games in that sport.</p>";
-  const html = note + list.map(g => mgmGameCard(g, day, "", false)).join("");
+  const html = note + list.map(g => {
+    try { return mgmGameCard(g, day, "", false); }
+    catch (err) { return "<p class='warn'>" + esc((g && g.label) || "Game") + " did not render. " + esc(err && err.message || err) + "</p>"; }
+  }).join("");
   savePrevLines(games, day);
   return html;
 }
@@ -4604,6 +4609,13 @@ function storeLiveBoard(pack){
   idbPut("live", pack);
 }
 async function drawOddsCompare(force){
+  try { return await renderOddsCompare(force); }
+  catch (err) {
+    const box = document.getElementById("oddscompare");
+    if (box) box.innerHTML = "<p class='warn'>Live Odds stopped. " + esc(err && err.message || err) + "</p>";
+  }
+}
+async function renderOddsCompare(force){
   const key = oddskey.value.trim();
   const box = document.getElementById("oddscompare");
   if (!box) return;
@@ -8152,7 +8164,7 @@ function mgmButton(top, price, hot, data){
   return "<button type='button' class='mgm-odd board-price" + (hot ? " best-price" : "") + "'" + attrs + "><b>" + esc(top) + "</b><span>" + esc(mgmMoney(price)) + "</span></button>";
 }
 function mgmOpen(g, market, day, book, names){
-  const row = g.markets[market];
+  const row = g.markets && g.markets[market];
   const posted = (row && row.books) || {};
   const text = posted[book];
   const sides = text && text !== "-" ? shopSides(text) : null;
@@ -8509,20 +8521,29 @@ function snapshotOpensFromBoard(data){
   Object.keys((data && data.days) || {}).forEach(day => snapshotOpens(indexedGames(data.days[day] || {}), day));
 }
 function prevLines(){
-  try { return JSON.parse(sessionStorage.getItem("gg-last-lines") || "{}"); } catch (e) { return {}; }
+  try {
+    const pack = JSON.parse(sessionStorage.getItem("gg-line-track") || "{}");
+    return {day: pack.day || "", games: pack.last || {}};
+  } catch (e) { return {day: "", games: {}}; }
 }
 function savePrevLines(games, day){
-  const last = prevLines();
-  const bag = last.day === day ? Object.assign({}, last.games || {}) : {};
+  let pack = {};
+  try { pack = JSON.parse(sessionStorage.getItem("gg-line-track") || "{}"); } catch (e) { pack = {}; }
+  const sameDay = pack.day === day;
+  const seen = sameDay ? (pack.seen || {}) : {};
+  const last = sameDay ? (pack.last || {}) : {};
   (games || []).forEach(g => {
     const slot = {};
     ["spreads","totals","h2h"].forEach(market => {
       const books = (g.markets && g.markets[market] && g.markets[market].books) || {};
       slot[market] = Object.assign({}, books);
     });
-    bag[lineKey(g)] = slot;
+    const key = lineKey(g);
+    const now = JSON.stringify(slot);
+    if (seen[key] && seen[key] !== now) last[key] = JSON.parse(seen[key]);
+    seen[key] = now;
   });
-  try { sessionStorage.setItem("gg-last-lines", JSON.stringify({day: day, games: bag})); } catch (e) {}
+  try { sessionStorage.setItem("gg-line-track", JSON.stringify({day: day, seen: seen, last: last})); } catch (e) {}
 }
 function bookQuotes(books, index){
   return ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"].map(book => {
@@ -8579,7 +8600,7 @@ function marketBoardHtml(g, day){
       const openBest = open.slice().sort((a, b) => b.price - a.price)[0];
       if (openBest.price !== best.price) move = sharpMoney(openBest.price) + " to " + sharpMoney(best.price);
     } else move = "This pull";
-    const both = now.find(item => Number.isFinite(item.opp)) || best;
+    const both = (Number.isFinite(best.opp) ? best : null) || now.find(item => Number.isFinite(item.opp)) || best;
     const fair = Number.isFinite(both.opp) ? fairPriceText(both.price, both.opp) : "-";
     const label = market === "h2h" ? "Money" : market === "totals" ? "Total" : "Spread";
     const nowLabel = pointText(market, nowPoint) + " " + sharpMoney(best.price);
@@ -8633,7 +8654,7 @@ function marketBoardHtml(g, day){
     const total = totalPts.slice().sort((a, b) => a - b)[Math.floor(totalPts.length / 2)];
     const homeScore = (total - spread) / 2;
     const awayScore = (total + spread) / 2;
-    implied = "Market score " + away + " " + awayScore.toFixed(1) + ", " + home + " " + homeScore.toFixed(1) + ". That is the no-vig spread and total, not a picked score.";
+    implied = "Market score " + away + " " + awayScore.toFixed(1) + ", " + home + " " + homeScore.toFixed(1) + ". Median spread and total on this board. Not a picked score.";
   }
   const notes = [splitLines.join(" "), middle, steam, implied].filter(Boolean).map(text => "<p class='market-note'>" + esc(text) + "</p>").join("");
   return "<div class='market-board'><table><thead><tr><th>Market</th><th>Open</th><th>Now</th><th>Move</th><th>Best</th><th>Worst</th><th>Cents</th><th>Fair</th><th>$10</th></tr></thead><tbody>" + rows + "</tbody></table>" + notes + "</div>";
@@ -8647,7 +8668,7 @@ function injuryBlurb(sport, team){
   if (!list.length) return "";
   return list.map(item => {
     const name = ((item.athlete || {}).displayName || "Player").split(" ").slice(-1)[0];
-    const cls = injuryStatusClass(item.status) || "warn";
+    const cls = injuryKind(item.status) === "out" ? "inj-out" : "inj-maybe";
     return "<span class='" + cls + "'>" + esc(name + " " + (item.status || "")) + "</span>";
   }).join(" ");
 }
@@ -8682,7 +8703,8 @@ function mgmGameCard(g, day, book, withClose){
     return "<div class='mgm-team'>" + logo + "<span>" + esc((team && (team.name || team.abbr)) || "") + rec + "</span>" + score + "</div>";
   };
   const postedBooks = names.filter(name => ["spreads","totals","h2h"].some(market => {
-    const text = g.markets[market] && g.markets[market].books && g.markets[market].books[name];
+    const books = g.markets && g.markets[market] && g.markets[market].books;
+    const text = books && books[name];
     return text && text !== "-";
   }));
   const ordered = postedBooks.filter(name => name === book).concat(postedBooks.filter(name => name !== book));
