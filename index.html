@@ -5235,8 +5235,9 @@ function bookFigures(slips){
 }
 function bookMonitorHtml(){
   const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
+  const sites = {BetMGM:"https://sports.betmgm.com/en/sports", Caesars:"https://sportsbook.caesars.com/", DraftKings:"https://sportsbook.draftkings.com/", Fanatics:"https://sportsbook.fanatics.com/", FanDuel:"https://sportsbook.fanduel.com/", HardRock:"https://www.hardrock.bet/"};
   const tally = {};
-  names.forEach(name => tally[name] = {best:0, short:0, hold:0, holdN:0, n:0, beat:0, scored:0, clv:0});
+  names.forEach(name => tally[name] = {games:{}, best:0, short:0, hold:0, holdN:0});
   const board = window.__ggOddsBoard;
   const today = easternDay();
   const day = board && board.days && board.days[today] ? today : (board && board.days && board.days[shiftDate(today, -1)] ? shiftDate(today, -1) : "");
@@ -5245,8 +5246,8 @@ function bookMonitorHtml(){
     (block[market] || []).forEach(row => {
       const parsed = names.map(name => ({name: name, sides: shopSides(row.books && row.books[name])})).filter(item => item.sides);
       parsed.forEach(item => {
-        const a = item.sides[0], b = item.sides[1];
-        const pa = impliedProb(a.price), pb = impliedProb(b.price);
+        tally[item.name].games[row.label || market] = 1;
+        const pa = impliedProb(item.sides[0].price), pb = impliedProb(item.sides[1].price);
         if (pa && pb) { tally[item.name].hold += (pa + pb - 1) * 100; tally[item.name].holdN += 1; }
       });
       [0, 1].forEach(index => {
@@ -5270,27 +5271,15 @@ function bookMonitorHtml(){
       });
     });
   });
-  ownSlips(chartSlips()).forEach(b => {
-    if (!b || (b.result !== "win" && b.result !== "loss" && b.result !== "push")) return;
-    if (!tally[b.book]) return;
-    tally[b.book].n += 1;
-    const cv = clv(b);
-    if (cv == null) return;
-    tally[b.book].scored += 1;
-    tally[b.book].clv += cv;
-    if (cv > 0.05) tally[b.book].beat += 1;
-  });
   const when = day ? (day === today ? "Today" : "Yesterday") + ", " + day : "No posted board";
   const rows = names.map(name => {
     const t = tally[name];
+    const posted = Object.keys(t.games).length;
     const hold = t.holdN ? (t.hold / t.holdN).toFixed(1) + "%" : "—";
-    const beat = t.scored ? t.beat + " of " + t.scored : "—";
-    const avgN = t.scored ? t.clv / t.scored : null;
-    const avg = avgN == null ? "—" : (avgN > 0 ? "+" : "") + avgN.toFixed(1) + "%";
-    const avgCls = avgN == null ? "" : avgN > 0.05 ? "win" : avgN < -0.05 ? "loss" : "";
-    return "<tr><td>" + esc(name) + "</td><td>" + (day ? t.best : "—") + "</td><td>" + (day ? t.short : "—") + "</td><td>" + (day ? hold : "—") + "</td><td>" + (t.n || "—") + "</td><td>" + beat + "</td><td class='" + avgCls + "'>" + avg + "</td></tr>";
+    const link = "<a href='" + sites[name] + "' target='_blank' rel='noopener noreferrer'>" + esc(name) + "</a>";
+    return "<tr><td>" + link + "</td><td>" + (day ? posted || "—" : "—") + "</td><td>" + (t.holdN ? hold : "—") + "</td><td>" + (day && posted ? t.best : "—") + "</td><td>" + (day && posted ? t.short : "—") + "</td></tr>";
   }).join("");
-  return "<h2 class='split-title'>Book Monitor</h2><p class='api-note warn'>" + esc(when) + ". Best is how often that book has the highest price on the same number. Short is how often it is the worst. Hold is the average juice. Beat Close and Avg CLV use graded slips logged at that book. Shop the book that is Best. A higher hold costs more.</p><div class='table-wrap'><table><thead><tr><th>Book</th><th>Best</th><th>Short</th><th>Hold</th><th>Graded</th><th>Beat Close</th><th>Avg CLV</th></tr></thead><tbody>" + rows + "</tbody></table></div>";
+  return "<h2 class='split-title'>Book Monitor</h2><p class='api-note warn'>" + esc(when) + ". These are the prices that book is posting. The book sites do not publish a public stats page, and this page does not log in. Posted is how many games that book has a number on. Hold is the juice in that book's own price. Best is how often its price is the highest on the same number. Short is how often it is the worst. A dash means that book has no number on the saved board.</p><div class='table-wrap'><table><thead><tr><th>Book</th><th>Posted</th><th>Hold</th><th>Best</th><th>Short</th></tr></thead><tbody>" + rows + "</tbody></table></div>";
 }
 function group(bets, key){
   const map = {};
