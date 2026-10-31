@@ -4280,18 +4280,48 @@ function blockHasLines(block){
   if (!block) return false;
   return ["h2h","spreads","totals"].some(market => (block[market] || []).some(row => row && row.label && Object.keys(row.books || {}).some(book => row.books[book] && row.books[book] !== "-")));
 }
+function boardPriceCount(block){
+  let n = 0;
+  ["h2h","spreads","totals"].forEach(market => (block && block[market] || []).forEach(row => {
+    Object.keys(row && row.books || {}).forEach(book => { if (row.books[book] && row.books[book] !== "-") n += 1; });
+  }));
+  return n;
+}
+function slimBoard(data){
+  const keep = {};
+  [easternDay(), shiftDate(easternDay(), -1)].forEach(day => {
+    const block = data && data.days && data.days[day];
+    if (!block) return;
+    const next = {};
+    ["h2h","spreads","totals"].forEach(market => {
+      next[market] = (block[market] || []).map(row => {
+        const books = {};
+        Object.keys(row && row.books || {}).forEach(book => { if (row.books[book] && row.books[book] !== "-") books[book] = row.books[book]; });
+        return {sport: row.sport || "", label: row.label || "", start: row.start || "", books: books};
+      }).filter(row => row.label && Object.keys(row.books).length);
+    });
+    keep[day] = next;
+  });
+  return {updated: (data && data.updated) || "", days: keep};
+}
+function storeOddsBoard(data){
+  if (!usableBoard(data)) return;
+  const slim = slimBoard(data);
+  if (!usableBoard(slim)) return;
+  try { localStorage.setItem("gg-odds-board-file", JSON.stringify({at: Date.now(), data: slim})); } catch (e) {}
+}
 function keepPulledDays(posted, saved){
   if (!saved || !saved.days) return posted;
   const out = Object.assign({}, posted || {}, {days: Object.assign({}, (posted && posted.days) || {})});
   Object.keys(saved.days).forEach(day => {
-    if (!blockHasLines(out.days[day]) && blockHasLines(saved.days[day])) out.days[day] = saved.days[day];
+    if (boardPriceCount(saved.days[day]) > boardPriceCount(out.days[day])) out.days[day] = saved.days[day];
   });
   return out;
 }
 function rememberBoard(data){
   if (!usableBoard(data)) return false;
   window.__ggOddsBoard = data;
-  try { localStorage.setItem("gg-odds-board-file", JSON.stringify({at: Date.now(), data: data})); } catch (e) {}
+  storeOddsBoard(data);
   try { drawGameBoard(); } catch (e) {}
   return true;
 }
@@ -4379,6 +4409,13 @@ async function pullLiveBoard(key){
   games.failed = failed;
   return games;
 }
+function savedLiveBoard(){
+  try {
+    const pack = JSON.parse(sessionStorage.getItem("gg-live-board") || "null");
+    if (pack && Array.isArray(pack.games)) { window.__ggLiveBoard = pack; return pack; }
+  } catch (e) {}
+  return null;
+}
 async function drawOddsCompare(force){
   const key = oddskey.value.trim();
   const box = document.getElementById("oddscompare");
@@ -4409,7 +4446,8 @@ async function drawOddsCompare(force){
     wireCompare();
     try {
       const games = await pullLiveBoard(key);
-      window.__ggLiveBoard = {at: Date.now(), games: games};
+      window.__ggLiveBoard = {at: Date.now(), games: games.map(g => ({_sport: g._sport, away_team: g.away_team, home_team: g.home_team, commence_time: g.commence_time, bookmakers: g.bookmakers || []}))};
+      try { sessionStorage.setItem("gg-live-board", JSON.stringify(window.__ggLiveBoard)); } catch (e) {}
     } catch (err) {
       parkOddsTools();
       const posted = publishedOddsHtml(day, market);
@@ -4421,7 +4459,7 @@ async function drawOddsCompare(force){
     }
   }
   parkOddsTools();
-  const live = window.__ggLiveBoard;
+  const live = window.__ggLiveBoard && window.__ggLiveBoard.games ? window.__ggLiveBoard : savedLiveBoard();
   if (live && live.games) {
     let shownDay = day;
     let rows = rowsFromLive(live.games, shownDay, market);
@@ -4894,7 +4932,7 @@ function dropOddsCaches(hard){
   storageKeys().forEach(k => {
     if (k === "gg-snap-cache") { try { localStorage.removeItem(k); } catch (e) {} return; }
     if (!hard) return;
-    if (k === "gg-odds-board-file" || k === "gg-book-prices" || k.indexOf("gg-hist-") === 0 || k.indexOf("gg-day-") === 0 || k.indexOf("gg-board-") === 0) {
+    if (k === "gg-book-prices" || k.indexOf("gg-hist-") === 0 || k.indexOf("gg-day-") === 0 || k.indexOf("gg-board-") === 0) {
       try { localStorage.removeItem(k); } catch (e) {}
     }
   });
@@ -7888,9 +7926,7 @@ async function loadGameDay(day, books){
       ["h2h","spreads","totals"].forEach(market => mergeBoardRows(day, market, rowsFromLive(live, day, market)));
     }
   }
-  if (usableBoard(window.__ggOddsBoard)) {
-    try { localStorage.setItem("gg-odds-board-file", JSON.stringify({at: Date.now(), data: window.__ggOddsBoard})); } catch (e) {}
-  }
+  if (usableBoard(window.__ggOddsBoard)) storeOddsBoard(window.__ggOddsBoard);
   drawGameBoard();
 }
 function ensureGameDay(){
