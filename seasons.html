@@ -7596,13 +7596,13 @@ function drawGameBoard(){
   const book = bookEl ? bookEl.value : "BetMGM";
   const sport = sportBtn ? sportBtn.dataset.sport : "All";
   const day = easternDay();
-  const days = window.__ggOddsBoard && window.__ggOddsBoard.days;
-  const block = days && days[day];
-  if (!block) {
-    const last = Object.keys(days || {}).sort().pop();
-    box.innerHTML = "<p class='warn'>" + (last ? "No board for " + prettyDay(day) + ". The last posted board is " + prettyDay(last) + "." : "The board did not load.") + "</p>";
+  if (!dayHasLines(day)) {
+    box.innerHTML = emptyBoardNote(day);
+    const pull = document.getElementById("pulltoday");
+    if (pull) pull.onclick = () => pullTodayBoard();
     return;
   }
+  const block = window.__ggOddsBoard.days[day];
   const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
   const index = {};
   ["h2h","spreads","totals"].forEach(market => {
@@ -7617,7 +7617,12 @@ function drawGameBoard(){
   let games = Object.values(index);
   if (sport !== "All") games = games.filter(g => g.sport === sport);
   games.sort((a, b) => sportRank(a.sport) - sportRank(b.sport) || String(a.start || "").localeCompare(String(b.start || "")) || a.label.localeCompare(b.label));
-  if (!games.length) { box.innerHTML = "<p class='warn'>No games posted for this sport today.</p>"; return; }
+  if (!games.length) {
+    box.innerHTML = emptyBoardNote(day);
+    const pull = document.getElementById("pulltoday");
+    if (pull) pull.onclick = () => pullTodayBoard();
+    return;
+  }
   box.innerHTML = games.map(g => {
     const cell = market => {
       const row = g.markets[market];
@@ -7779,29 +7784,83 @@ function refreshGameScores(games){
     if ((document.documentElement.dataset.page || "games") === "games") drawGameBoard();
   }).catch(() => {}).finally(() => { gameScoreFlight = null; });
 }
-async function refreshGameBoard(){
+function dayHasLines(day){
+  const block = window.__ggOddsBoard && window.__ggOddsBoard.days && window.__ggOddsBoard.days[day];
+  if (!block) return false;
+  return ["h2h","spreads","totals"].some(market => (block[market] || []).some(row => row && row.label && Object.keys(row.books || {}).some(book => row.books[book] && row.books[book] !== "-")));
+}
+function emptyBoardNote(day){
+  const days = (window.__ggOddsBoard && window.__ggOddsBoard.days) || {};
+  const last = Object.keys(days).filter(dayHasLines).sort().pop();
+  const why = last ? "No posted board for " + prettyDay(day) + ". The last posted board is " + prettyDay(last) + "." : "No posted board for " + prettyDay(day) + ".";
+  return "<p class='warn'>" + why + "</p><button type='button' id='pulltoday'>Pull " + prettyDay(day) + "</button>";
+}
+async function seedBoardFromScores(games, day){
+  await Promise.all((games || []).filter(g => g && g.id && SCORE_FEED[g.sport]).map(async g => {
+    const away = (g.away && (g.away.shortDisplayName || g.away.displayName || g.away.name)) || "";
+    const home = (g.home && (g.home.shortDisplayName || g.home.displayName || g.home.name)) || "";
+    if (!away || !home) return;
+    const label = away + " at " + home;
+    const bits = SCORE_FEED[g.sport].split("/");
+    let data = null;
+    try {
+      const res = await fetch("https://sports.core.api.espn.com/v2/sports/" + bits[0] + "/leagues/" + bits[1] + "/events/" + g.id + "/competitions/" + g.id + "/odds");
+      if (res.ok) data = await res.json();
+    } catch (e) {}
+    const odd = data && (data.items || [])[0];
+    if (!odd) return;
+    const book = (odd.provider && odd.provider.name) || "DraftKings";
+    const lines = espnLines(odd);
+    ["h2h","spreads","totals"].forEach(market => patchBookLine(day, g.sport, label, market, book, lines[market]));
+    const block = window.__ggOddsBoard && window.__ggOddsBoard.days && window.__ggOddsBoard.days[day];
+    if (block && g.start) {
+      const start = new Date(g.start).toISOString();
+      ["h2h","spreads","totals"].forEach(market => {
+        const row = (block[market] || []).find(r => String(r.label || "").toLowerCase() === label.toLowerCase());
+        if (row && !row.start) row.start = start;
+      });
+    }
+  }));
+}
+async function pullTodayBoard(){
   const btn = document.getElementById("gamerefresh");
+  const pull = document.getElementById("pulltoday");
   const box = document.getElementById("gameboard");
+  const day = easternDay();
   if (btn) { btn.disabled = true; btn.textContent = "Pulling"; }
+  if (pull) { pull.disabled = true; pull.textContent = "Pulling"; }
   try {
     const res = await fetch("cards/odds-board.json?ts=" + Date.now());
     const data = res.ok ? await res.json() : null;
     if (usableBoard(data)) rememberBoard(data);
     const key = ((document.getElementById("oddskey") || {}).value || "").trim();
     if (key) {
-      const games = await pullLiveBoard(key);
-      const day = easternDay();
-      ["h2h","spreads","totals"].forEach(market => mergeBoardRows(day, market, rowsFromLive(games, day, market)));
-    } else if (box && !usableBoard(window.__ggOddsBoard)) {
-      box.innerHTML = "<p class='warn'>The board did not load. Save the Odds Key on Add A Bet, then press Refresh.</p>";
+      try {
+        const live = await pullLiveBoard(key);
+        ["h2h","spreads","totals"].forEach(market => mergeBoardRows(day, market, rowsFromLive(live, day, market)));
+      } catch (err) {
+        if (box) box.insertAdjacentHTML("afterbegin", "<p class='warn'>Book pull failed. " + esc(err && err.message || "The feed did not answer.") + "</p>");
+      }
+    }
+    const sports = Object.keys(SCORE_FEED);
+    const packs = await Promise.all(sports.map(sport => scoreboard(sport, day).catch(() => [])));
+    window.__gameScores = packs.flat();
+    window.__gameScoresAt = Date.now();
+    await seedBoardFromScores(window.__gameScores, day);
+    if (usableBoard(window.__ggOddsBoard)) {
+      try { localStorage.setItem("gg-odds-board-file", JSON.stringify({at: Date.now(), data: window.__ggOddsBoard})); } catch (e) {}
     }
     drawGameBoard();
+    if (!dayHasLines(day) && box) box.insertAdjacentHTML("afterbegin", "<p class='warn'>No lines came back for " + prettyDay(day) + ".</p>");
   } catch (err) {
     drawGameBoard();
-    if (box) box.insertAdjacentHTML("afterbegin", "<p class='warn'>Live pull failed. " + esc(err && err.message || "The feed did not answer.") + " The posted board is still up.</p>");
+    if (box) box.insertAdjacentHTML("afterbegin", "<p class='warn'>Pull failed. " + esc(err && err.message || "The feed did not answer.") + "</p>");
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = "Refresh"; }
   }
+}
+async function refreshGameBoard(){
+  return pullTodayBoard();
 }
 const SHARP_STYLE = "us-five-v1";
 const SHARP_SPORTS = ["NFL","NBA","CFB","NHL","MLB","CBB"];
