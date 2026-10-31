@@ -7597,11 +7597,12 @@ document.getElementById("saveledger").onclick = async () => {
     "cards/calendar.json": snapshotCalendar(),
     "cards/dashboard.txt": snapshotDashboard(),
     "cards/grades.txt": snapshotGrades(),
-    "cards/profit-by-day.json": snapshotProfit()
+    "cards/profit-by-day.json": snapshotProfit(),
+    "cards/book-closes.json": snapshotBookCloses()
   };
   const blob = new Blob([JSON.stringify({saved: new Date().toISOString(), bets: bets, files: files}, null, 2)], {type:"application/json"});
   download("GG-LEDGER-" + ymd(new Date()) + ".json", blob);
-  note.textContent = bets.length + " slips saved. Charts and Dashboard are in the file.";
+  note.textContent = bets.length + " slips saved. Charts, Dashboard, and closes are in the file.";
 };
 document.getElementById("exportpdf").onclick = () => download("gnarly-gorilla-sportsbooks.pdf", buildPdf(load()));
 document.getElementById("export").onclick = () => download("gnarly-gorilla-sportsbooks.xlsx", buildSheet(load()));
@@ -7967,7 +7968,7 @@ function applyPublishedBooks(){
 }
 if (pageNeeds("books")) {
   fetch(cardUrl("cards/book-prices.json")).then(r => r.ok ? r.json() : null).then(data => { if (data) { fileBooks = data; applyPublishedBooks(); } }).catch(() => {});
-  fetch(cardUrl("cards/book-closes.json")).then(r => r.ok ? r.json() : null).then(data => { if (data && data.days) { bookCloses = data; render(); } }).catch(() => {});
+  fetch(cardUrl("cards/book-closes.json")).then(r => r.ok ? r.json() : null).then(data => { takeBookCloseFile(data); render(); }).catch(() => {});
 }
 async function loadOddsBoard(data, saved){
   saved = saved || await savedBoardAny();
@@ -7986,7 +7987,10 @@ if (pageNeeds("odds")) Promise.all([
   fetch(cardUrl("cards/odds-board.json")).then(r => r.ok ? r.json() : null).catch(() => null),
   savedBoardAny()
 ]).then(([data, saved]) => loadOddsBoard(data, saved));
-if ((document.documentElement.dataset.page || "games") === "games") fetch(cardUrl("cards/book-closes.json")).then(r => r.ok ? r.json() : null).then(data => { if (data && data.days) { bookCloses = data; render(); } }).catch(() => {});
+if ((document.documentElement.dataset.page || "games") === "games") {
+  fillMissingCloses(loadBookClosesLocal());
+  fetch(cardUrl("cards/book-closes.json")).then(r => r.ok ? r.json() : null).then(data => { takeBookCloseFile(data); render(); }).catch(() => {});
+}
 if (pageNeeds("closes")) fetch("cards/closes.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
   const store = closeStore();
   text.split(/\n/).forEach(line => {
@@ -8044,16 +8048,133 @@ function mgmOpen(g, market, day, book, names){
     return mgmButton(top, side.price, flags[index], {sport: g.sport || "", game: g.label || "", market: market, book: book || "", price: String(side.price), point: point == null ? "" : String(point), side: String(index), date: day || ""});
   });
 }
-function gameClosePack(g, day, book){
+function postedToClose(g, book){
+  const cell = market => g.markets && g.markets[market] && g.markets[market].books && g.markets[market].books[book];
+  const out = {};
+  const spread = shopSides(cell("spreads"));
+  if (spread) out.spread = {away: {point: spread[0].point, price: spread[0].price}, home: {point: spread[1].point, price: spread[1].price}};
+  const money = shopSides(cell("h2h"));
+  if (money) out.h2h = {away: {price: money[0].price}, home: {price: money[1].price}};
+  const total = shopSides(cell("totals"));
+  if (total) out.total = {point: total[0].point != null ? total[0].point : total[1].point, over: total[0].price, under: total[1].price};
+  return Object.keys(out).length ? out : null;
+}
+function closeRowMatch(row, g){
+  if (!row || !g) return false;
   const sport = String(g.sport || "").toUpperCase();
   const scored = findFinalGame((window.__gameScores || []).filter(x => x.sport === sport), g.label);
+  const abbrA = scored && scored.away && scored.away.abbr;
+  const abbrH = scored && scored.home && scored.home.abbr;
+  if (abbrA && abbrH && String(row.away || "").toUpperCase() === String(abbrA).toUpperCase() && String(row.home || "").toUpperCase() === String(abbrH).toUpperCase()) return true;
+  if (sideHit(g.label, row.away) && sideHit(g.label, row.home)) return true;
+  return sameMatchup({sport: g.sport, label: g.label}, {sport: g.sport, label: (row.away || "") + " at " + (row.home || "")});
+}
+function gameHasStarted(g){
+  if (!g) return false;
+  const sport = String(g.sport || "").toUpperCase();
+  const scored = g.live != null || g.final != null ? g : findFinalGame((window.__gameScores || []).filter(x => x.sport === sport), g.label);
+  if (scored && scored.postponed) return false;
+  if (scored && (scored.live || scored.final)) return true;
+  const ms = Date.parse(g.start || "");
+  return Number.isFinite(ms) && ms <= Date.now();
+}
+function loadBookClosesLocal(){
+  try { return JSON.parse(localStorage.getItem("gg-book-closes-v1") || "null"); } catch (e) { return null; }
+}
+function saveBookClosesLocal(){
+  try {
+    const days = (bookCloses && bookCloses.days) || {};
+    const keep = Object.keys(days).sort().slice(-21);
+    const slim = {days: {}};
+    keep.forEach(day => { slim.days[day] = days[day]; });
+    localStorage.setItem("gg-book-closes-v1", JSON.stringify(slim));
+  } catch (e) {}
+}
+function fillMissingCloses(extra){
+  if (!extra || !extra.days) return;
+  if (!bookCloses.days) bookCloses.days = {};
+  Object.keys(extra.days).forEach(day => {
+    Object.keys(extra.days[day] || {}).forEach(sport => {
+      const destDay = bookCloses.days[day] || (bookCloses.days[day] = {});
+      const list = destDay[sport] || (destDay[sport] = []);
+      (extra.days[day][sport] || []).forEach(g => {
+        if (!g || !g.away || !g.home || !g.books) return;
+        const label = g.away + " at " + g.home;
+        let hit = list.find(row => closeRowMatch(row, {sport: sport, label: label}));
+        if (!hit) { hit = {away: g.away, home: g.home, books: {}}; list.push(hit); }
+        hit.books = hit.books || {};
+        Object.keys(g.books).forEach(book => { if (!hit.books[book]) hit.books[book] = g.books[book]; });
+      });
+    });
+  });
+}
+function takeBookCloseFile(data){
+  if (data && data.days) bookCloses = data;
+  fillMissingCloses(loadBookClosesLocal());
+}
+function snapshotBookCloses(){
+  return {source: "Frozen at game start from the loaded board. DraftKings may also come from the ESPN close when this browser was closed. A book is never filled from another book.", saved: new Date().toISOString(), days: (bookCloses && bookCloses.days) || {}};
+}
+function closeSlot(day, g){
+  if (!bookCloses.days) bookCloses.days = {};
+  const sport = String(g.sport || "").toUpperCase();
+  const destDay = bookCloses.days[day] || (bookCloses.days[day] = {});
+  const list = destDay[sport] || (destDay[sport] = []);
+  let hit = list.find(row => closeRowMatch(row, g));
+  if (hit) return hit;
+  const scored = findFinalGame((window.__gameScores || []).filter(x => x.sport === sport), g.label);
+  const parts = String(g.label || "").split(/\s+at\s+/i);
+  hit = {away: (scored && scored.away && scored.away.abbr) || (parts[0] || "").trim(), home: (scored && scored.home && scored.home.abbr) || (parts[1] || "").trim(), books: {}};
+  list.push(hit);
+  return hit;
+}
+function freezeStartedCloses(games, day){
+  let wrote = false;
+  (games || []).forEach(g => {
+    if (!gameHasStarted(g)) return;
+    ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"].forEach(book => {
+      const pack = postedToClose(g, book);
+      if (!pack) return;
+      const row = closeSlot(day, g);
+      row.books = row.books || {};
+      if (row.books[book]) return;
+      row.books[book] = pack;
+      wrote = true;
+    });
+  });
+  if (wrote) saveBookClosesLocal();
+  return wrote;
+}
+function catchEspnDraftKings(g, day){
+  if (!g || !g.lines || g.postponed || !/draft/i.test(g.lineBook || "")) return;
+  const started = g.live || g.final || (Number.isFinite(g.start) && g.start <= Date.now());
+  if (!started) return;
+  const away = g.away && (g.away.abbr || g.away.shortDisplayName || g.away.name);
+  const home = g.home && (g.home.abbr || g.home.shortDisplayName || g.home.name);
+  if (!away || !home) return;
+  const label = (g.away.shortDisplayName || g.away.name || away) + " at " + (g.home.shortDisplayName || g.home.name || home);
+  const fake = {sport: g.sport, label: label, markets: {spreads: {books: {DraftKings: g.lines.spreads || ""}}, totals: {books: {DraftKings: g.lines.totals || ""}}, h2h: {books: {DraftKings: g.lines.h2h || ""}}}};
+  const pack = postedToClose(fake, "DraftKings");
+  if (!pack) return;
+  const row = closeSlot(day, fake);
+  row.books = row.books || {};
+  if (row.books.DraftKings) return;
+  row.books.DraftKings = pack;
+  saveBookClosesLocal();
+}
+let closeClock = 0;
+function armCloseClock(games){
+  clearTimeout(closeClock);
+  const next = (games || []).map(g => Date.parse(g.start || "")).filter(ms => Number.isFinite(ms) && ms > Date.now()).sort((a, b) => a - b)[0];
+  if (!next) return;
+  const wait = Math.min(Math.max(next - Date.now() + 1000, 1000), 120000);
+  closeClock = setTimeout(() => { if ((document.documentElement.dataset.page || "games") === "games") drawGameBoard(); }, wait);
+}
+function gameClosePack(g, day, book){
+  const sport = String(g.sport || "").toUpperCase();
   const games = (((bookCloses.days || {})[day] || {})[sport]) || [];
-  const awayAbbr = scored && scored.away && scored.away.abbr;
-  const homeAbbr = scored && scored.home && scored.home.abbr;
-  let hit = awayAbbr && homeAbbr ? games.find(row => String(row.away || "").toUpperCase() === String(awayAbbr).toUpperCase() && String(row.home || "").toUpperCase() === String(homeAbbr).toUpperCase()) : null;
-  if (!hit) hit = games.find(row => sideHit(g.label, row.away) && sideHit(g.label, row.home));
-  if (!hit || !hit.books) return null;
-  return hit.books[book] || hit.books.DraftKings || null;
+  const hit = games.find(row => closeRowMatch(row, g) && row.books && row.books[book]);
+  return hit ? hit.books[book] : null;
 }
 function mgmClose(pack, market){
   if (!pack) return [mgmLock(), mgmLock()];
@@ -8139,6 +8260,8 @@ function drawGameBoard(){
     });
   });
   let games = Object.values(index);
+  freezeStartedCloses(games, day);
+  armCloseClock(games);
   if (sport !== "All") games = games.filter(g => g.sport === sport);
   games = foldBoardGames(games);
   games.sort((a, b) => sportRank(a.sport) - sportRank(b.sport) || String(a.start || "").localeCompare(String(b.start || "")) || a.label.localeCompare(b.label));
@@ -8324,6 +8447,7 @@ async function seedBoardFromScores(games, day){
     const label = away + " at " + home;
     const book = g.lineBook || "DraftKings";
     ["h2h","spreads","totals"].forEach(market => patchBookLine(day, g.sport, label, market, book, g.lines[market]));
+    catchEspnDraftKings(g, day);
     const block = window.__ggOddsBoard && window.__ggOddsBoard.days && window.__ggOddsBoard.days[day];
     if (!block || !g.start) return;
     const start = new Date(g.start).toISOString();
@@ -9255,7 +9379,7 @@ function restoreForm(){
 function armScreen(){
   if (pageNeeds("odds")) onceKind("odds", () => {
     fetch(cardUrl("cards/odds-board.json")).then(r => r.ok ? r.json() : null).then(loadOddsBoard).catch(() => loadOddsBoard(null));
-    if ((document.documentElement.dataset.page || "games") === "games") fetch(cardUrl("cards/book-closes.json")).then(r => r.ok ? r.json() : null).then(data => { if (data && data.days) { bookCloses = data; if ((document.documentElement.dataset.page || "games") === "games") drawGameBoard(); } }).catch(() => {});
+    if ((document.documentElement.dataset.page || "games") === "games") fetch(cardUrl("cards/book-closes.json")).then(r => r.ok ? r.json() : null).then(data => { takeBookCloseFile(data); if ((document.documentElement.dataset.page || "games") === "games") drawGameBoard(); }).catch(() => {});
   });
   if (pageNeeds("seasons")) onceKind("seasons", () => loadSeasons());
   if (pageNeeds("about")) onceKind("about", () => loadLiveFeed());
@@ -9285,7 +9409,7 @@ function armScreen(){
   if (pageNeeds("today")) onceKind("today", () => { refreshTodayCard(); setInterval(refreshTodayCard, 60000); });
   if (pageNeeds("books")) onceKind("books", () => {
     fetch(cardUrl("cards/book-prices.json")).then(r => r.ok ? r.json() : null).then(data => { if (data) { fileBooks = data; applyPublishedBooks(); } }).catch(() => {});
-    fetch(cardUrl("cards/book-closes.json")).then(r => r.ok ? r.json() : null).then(data => { if (data && data.days) { bookCloses = data; render(); } }).catch(() => {});
+    fetch(cardUrl("cards/book-closes.json")).then(r => r.ok ? r.json() : null).then(data => { takeBookCloseFile(data); render(); }).catch(() => {});
     refreshBookMonitor();
     setInterval(() => { if (pageNeeds("books")) refreshBookMonitor(); }, 60 * 60 * 1000);
   });
