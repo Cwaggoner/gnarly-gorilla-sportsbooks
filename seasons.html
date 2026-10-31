@@ -93,11 +93,11 @@ html, body, .page, .page * { overflow-anchor:none; }
 .card { padding:14px; margin-top:14px; scroll-margin-top:var(--pin, 150px); }
 .section-head { display:flex; align-items:center; justify-content:space-between; gap:12px; }
 #slips { min-width:0; max-width:100%; }
-#slips .slip-actions { display:flex; flex-direction:row; flex-wrap:wrap; align-items:center; gap:8px; margin:0; }
+#slips .slip-actions { display:flex; flex-direction:row; flex-wrap:wrap; align-items:flex-end; gap:8px; margin:0; }
 #slips .result-files .slip-actions { align-self:flex-end; }
 #slips .slip-actions button { white-space:nowrap; flex:0 0 auto; }
-#slips .import-line { display:inline-flex; align-items:center; gap:8px; white-space:nowrap; }
-#slips #ledgernote { margin:0; line-height:1; white-space:nowrap; }
+#slips .save-slot { display:flex; flex-direction:column; align-items:center; }
+#slips #ledgernote { margin:0 0 2px; line-height:1; white-space:nowrap; }
 #slips .slip-filters { flex-wrap:wrap; max-width:100%; min-width:0; padding-right:84px; box-sizing:border-box; }
 #slips .result-files { display:flex; align-items:flex-end; gap:8px; flex-wrap:wrap; min-width:0; max-width:100%; }
 #slips .result-files > :nth-child(2) { margin-left:2px; }
@@ -828,8 +828,8 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <div class="result-files">
 <label>Result<select id="fResult"><option value="">All</option><option>pending</option><option>win</option><option>loss</option><option>push</option></select></label>
 <label>Load Ledger<input type="file" id="loadledger" accept=".json,application/json"><span class="file-face">No File Chosen</span></label>
-<label><span class="import-line">Import CSV<span id="ledgernote" class="warn"></span></span><input type="file" id="import" accept=".csv,text/csv"><span class="file-face">No File Chosen</span></label>
-<div class="slip-actions"><button type="button" id="pulllines">Pull Odds & Close</button><button type="button" id="livescores">Check Live Scores</button><button type="button" id="syncledger">Sync Ledger</button><button type="button" id="saveledger">Save Ledger</button><button type="button" id="exportpdf">Export PDF</button><button type="button" id="export">Export Spreadsheet</button><button type="button" class="danger" id="clear">Clear All</button></div>
+<label>Import CSV<input type="file" id="import" accept=".csv,text/csv"><span class="file-face">No File Chosen</span></label>
+<div class="slip-actions"><button type="button" id="pulllines">Pull Odds & Close</button><button type="button" id="livescores">Check Live Scores</button><button type="button" id="syncledger">Sync Ledger</button><span class="save-slot"><span id="ledgernote" class="warn"></span><button type="button" id="saveledger">Save Ledger</button></span><button type="button" id="exportpdf">Export PDF</button><button type="button" id="export">Export Spreadsheet</button><button type="button" class="danger" id="clear">Clear All</button></div>
 </div>
 </div>
 <div class="table-wrap"><table>
