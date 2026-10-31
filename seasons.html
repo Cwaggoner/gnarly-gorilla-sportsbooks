@@ -4440,11 +4440,12 @@ function rowsFromLive(games, day, market){
     return {sport: g._sport, label: g.away_team + " at " + g.home_team, start: g.commence_time, books: books};
   }).sort((a, b) => sportRank(a.sport) - sportRank(b.sport) || String(a.start).localeCompare(String(b.start)) || a.label.localeCompare(b.label));
 }
-async function pullLiveBoard(key){
+async function pullLiveBoard(key, sports){
   const ids = Object.values(BOOK_KEY).join(",");
   const games = [];
   const failed = [];
-  for (const sport of Object.keys(SPORT_KEY)) {
+  const list = sports && sports.length ? sports : Object.keys(SPORT_KEY);
+  for (const sport of list) {
     const url = "https://api.the-odds-api.com/v4/sports/" + SPORT_KEY[sport] + "/odds?apiKey=" + encodeURIComponent(key) + "&regions=us,us2&markets=h2h,spreads,totals&oddsFormat=american&bookmakers=" + ids;
     let res;
     try { res = await fetch(url); }
@@ -5243,6 +5244,34 @@ function bookFigures(slips){
     return esc(k) + ": " + (v.n ? moneyHtml(v.pl) + " (" + v.n + ")" : (slips.length ? "No Price Saved" : "No Slips"));
   }).join(" | ") + "</p>";
 }
+let bookHourFlight = null;
+function openBookSports(){
+  const today = easternDay();
+  return Object.keys(SPORT_KEY).filter(sport => {
+    const start = SEASON_START[sport];
+    if (start && today < start) return false;
+    return !seasonEnded(sport);
+  });
+}
+function refreshBookMonitor(){
+  if (bookHourFlight) return bookHourFlight;
+  const key = ((document.getElementById("oddskey") || {}).value || "").trim();
+  if (!key) return;
+  const at = Number(localStorage.getItem("gg-book-monitor-at") || 0);
+  if (at && Date.now() - at < 60 * 60 * 1000) return;
+  const sports = openBookSports();
+  if (!sports.length) return;
+  const day = easternDay();
+  bookHourFlight = (async () => {
+    const games = await pullLiveBoard(key, sports);
+    if (!games || (games.failed && games.failed.length >= sports.length)) return;
+    ["h2h","spreads","totals"].forEach(market => mergeBoardRows(day, market, rowsFromLive(games, day, market)));
+    storeLiveBoard({at: Date.now(), games: games.map(g => ({_sport: g._sport, away_team: g.away_team, home_team: g.home_team, commence_time: g.commence_time, bookmakers: g.bookmakers || []}))});
+    try { localStorage.setItem("gg-book-monitor-at", String(Date.now())); } catch (e) {}
+    render();
+  })().catch(() => {}).finally(() => { bookHourFlight = null; });
+  return bookHourFlight;
+}
 function bookMonitorHtml(){
   const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
   const sites = {BetMGM:"https://sports.betmgm.com/en/sports", Caesars:"https://sportsbook.caesars.com/", DraftKings:"https://sportsbook.draftkings.com/", Fanatics:"https://sportsbook.fanatics.com/", FanDuel:"https://sportsbook.fanduel.com/", HardRock:"https://www.hardrock.bet/"};
@@ -5282,6 +5311,8 @@ function bookMonitorHtml(){
     });
   });
   const when = day ? (day === today ? "Today" : "Yesterday") + ", " + day : "No posted board";
+  const checked = Number(localStorage.getItem("gg-book-monitor-at") || 0);
+  const checkedNote = checked ? " Last book check " + new Date(checked).toLocaleTimeString("en-US", {hour:"numeric", minute:"2-digit"}) + ". The next check is one hour later." : " The first check runs when this page opens and the Odds Key is saved.";
   const rows = names.map(name => {
     const t = tally[name];
     const posted = Object.keys(t.games).length;
@@ -5289,7 +5320,7 @@ function bookMonitorHtml(){
     const link = "<a href='" + sites[name] + "' target='_blank' rel='noopener noreferrer'>" + esc(name) + "</a>";
     return "<tr><td>" + link + "</td><td>" + (day ? posted || "—" : "—") + "</td><td>" + (t.holdN ? hold : "—") + "</td><td>" + (day && posted ? t.best : "—") + "</td><td>" + (day && posted ? t.short : "—") + "</td></tr>";
   }).join("");
-  return "<h2 class='split-title'>Book Monitor</h2><p class='api-note warn'>" + esc(when) + ". These are the prices that book is posting. The book sites do not publish a public stats page, and this page does not log in. Posted is how many games that book has a number on. Hold is the juice in that book's own price. Best is how often its price is the highest on the same number. Short is how often it is the worst.</p><p class='api-note warn' style='margin-top:0'>A dash means that book has no number on the saved board.</p><div class='table-wrap'><table><thead><tr><th>Book</th><th>Posted</th><th>Hold</th><th>Best</th><th>Short</th></tr></thead><tbody>" + rows + "</tbody></table></div>";
+  return "<h2 class='split-title'>Book Monitor</h2><p class='api-note warn'>" + esc(when + "." + checkedNote) + " These are the prices that book is posting. The book sites do not publish a public stats page, and this page does not log in. Posted is how many games that book has a number on. Hold is the juice in that book's own price. Best is how often its price is the highest on the same number. Short is how often it is the worst.</p><p class='api-note warn' style='margin-top:0'>A dash means that book has no number on the saved board.</p><div class='table-wrap'><table><thead><tr><th>Book</th><th>Posted</th><th>Hold</th><th>Best</th><th>Short</th></tr></thead><tbody>" + rows + "</tbody></table></div>";
 }
 function group(bets, key){
   const map = {};
@@ -8920,6 +8951,8 @@ function armScreen(){
   if (pageNeeds("books")) onceKind("books", () => {
     fetch(cardUrl("cards/book-prices.json")).then(r => r.ok ? r.json() : null).then(data => { if (data) { fileBooks = data; applyPublishedBooks(); } }).catch(() => {});
     fetch(cardUrl("cards/book-closes.json")).then(r => r.ok ? r.json() : null).then(data => { if (data && data.days) { bookCloses = data; render(); } }).catch(() => {});
+    refreshBookMonitor();
+    setInterval(() => { if (pageNeeds("books")) refreshBookMonitor(); }, 60 * 60 * 1000);
   });
   if (pageNeeds("closes")) onceKind("closes", () => fetch("cards/closes.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
     const store = closeStore();
