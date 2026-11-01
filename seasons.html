@@ -101,6 +101,35 @@ html, body, .page, .page * { overflow-anchor:none; }
 #slips #ledgernote { position:absolute; right:0; bottom:calc(100% + 2px); margin:0; line-height:1; white-space:nowrap; }
 #slips .slip-filters { flex-wrap:wrap; max-width:100%; min-width:0; box-sizing:border-box; }
 #slips .slip-frame, .align-frame { border:1px solid var(--gray); border-radius:10px; padding:10px 12px; margin:0 0 8px; box-sizing:border-box; }
+.card > .odds-tools,
+#gameboard,
+#oddscompare,
+#sharkboard,
+#stats,
+.dash-tools,
+.card > .odds-notes,
+.card > .jump,
+#reportcard > .tools,
+#report,
+.charts > div,
+.full-dates,
+.full-games,
+.full-sports,
+.score-strip,
+#calendar,
+#addbet .stack,
+#breaks > p,
+#breaks > .table-wrap {
+  border:1px solid var(--gray);
+  border-radius:10px;
+  padding:10px 12px;
+  margin:0 0 8px;
+  box-sizing:border-box;
+}
+#gameboard:empty,
+#oddscompare:empty,
+#sharkboard:empty,
+#report:empty { border:0; padding:0; margin:0; }
 #slips table.score-align { width:100%; min-width:0; margin:0; }
 #slips table.score-align td { white-space:normal; padding:0; border:0; background:transparent; }
 #slips table.score-align td:first-child { width:1%; white-space:nowrap; vertical-align:top; }
