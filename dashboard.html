@@ -627,6 +627,8 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .mgm-mid { min-width:0; display:flex; flex-direction:column; align-items:flex-start; gap:8px; }
 .mgm-form { margin:0 0 4px 36px; color:#8fb898; font-size:11px; line-height:1.35; }
 .mgm-form .loss, .mgm-form .warn { font-weight:700; }
+.mgm-hurt { display:flex; flex-direction:column; align-items:flex-start; gap:2px; margin:0 0 4px 36px; }
+.mgm-hurt > span { display:block; font-size:11px; line-height:1.35; font-weight:700; }
 .market-board { border:0; background:transparent; padding:0; overflow-x:auto; min-width:0; max-width:100%; box-sizing:border-box; display:flex; flex-direction:column; align-items:stretch; gap:8px; }
 .market-board table { width:100%; min-width:0; margin:0; border:0; border-radius:0; background:transparent; overflow:visible; border-collapse:collapse; font-size:11px; }
 .market-stack { width:100%; margin:0; }
@@ -641,8 +643,8 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .team-read h4 { margin:0 0 4px; color:#39ff14; font-size:12px; }
 .team-read p { margin:0; color:#d6ffd0; font-size:13px; line-height:1.45; white-space:normal; }
 .team-read .vol { color:#00e5ff; margin:0; }
-.mgm-form .inj-out { color:var(--red); font-weight:700; }
-.mgm-form .inj-maybe { color:var(--amber); font-weight:700; }
+.mgm-form .inj-out, .mgm-hurt .inj-out { color:var(--red); font-weight:700; }
+.mgm-form .inj-maybe, .mgm-hurt .inj-maybe { color:var(--amber); font-weight:700; }
 .mgm-side { min-width:0; }
 .mgm-books { display:flex; gap:12px; min-width:0; align-items:end; flex-wrap:nowrap; overflow-x:auto; }
 .mgm-set { display:grid; grid-template-columns:repeat(3,64px); gap:4px; flex:0 0 auto; }
@@ -8995,7 +8997,7 @@ function injuryBlurb(sport, team){
   return list.map(item => {
     const name = ((item.athlete || {}).displayName || "Player").split(" ").slice(-1)[0];
     const cls = injuryKind(item.status) === "out" ? "inj-out" : "inj-maybe";
-    return "<p class='mgm-form'><span class='" + cls + "'>" + esc(name + " " + (item.status || "")) + "</span></p>";
+    return "<span class='" + cls + "'>" + esc(name + " " + (item.status || "")) + "</span>";
   }).join("");
 }
 function sideForm(sport, team){
@@ -9004,7 +9006,7 @@ function sideForm(sport, team){
   const inj = injuryBlurb(sport, team);
   if (!bits.length && !inj) return "";
   const grey = bits.length ? "<p class='mgm-form'>" + esc(bits.join(" · ")) + "</p>" : "";
-  return grey + inj;
+  return grey + (inj ? "<div class='mgm-hurt'>" + inj + "</div>" : "");
 }
 let liveExtraFlight = null;
 function armLiveExtras(games){
