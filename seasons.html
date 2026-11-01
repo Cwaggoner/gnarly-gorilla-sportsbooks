@@ -139,6 +139,17 @@ li.warn:not(:empty)::before { content:"•"; color:#ff00ff; font-weight:700; mar
 .section-head :is(.warn, .api-note, .slips-side, .fine, .passed-note)::before,
 h2 :is(.warn, .api-note, .slips-side)::before,
 .split-title :is(.warn, .api-note)::before { content:none; margin-right:0; }
+:is(p, div, li):is(.api-note, .passed-note, .fine, .warn):not(:empty),
+.odds-notes li,
+.score-hold,
+.score-line { position:relative; padding-left:14px; }
+:is(p, div, li):is(.api-note, .passed-note, .fine, .warn):not(:empty)::before,
+.odds-notes li::before,
+.score-hold::before,
+.score-line::before { position:absolute; left:0; margin-right:0; }
+.section-head :is(.warn, .api-note, .slips-side, .fine, .passed-note):not(.score-line),
+h2 :is(.warn, .api-note, .slips-side),
+.split-title :is(.warn, .api-note) { padding-left:0; }
 .api-note { margin-top:18px; }
 .api-note button, .api-note select { font-size:13px; color:var(--text); }
 .api-note button { color:var(--title); }
