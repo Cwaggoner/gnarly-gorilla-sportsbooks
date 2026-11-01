@@ -1761,7 +1761,7 @@ function sportLean(rows){
 }
 function pendingCardRows(){
   const sports = {CBB:1, CFB:1, MLB:1, NBA:1, NFL:1, NHL:1};
-  return load().filter(b => b && b.result === "pending" && !isNoPick(b) && sports[String(b.sport || "").toUpperCase()] && b.pick).map(b => [String(b.date || "").slice(0, 10) || easternDay(), String(b.sport).toUpperCase(), b.type || "Spread", b.pick, b.odds == null ? "" : String(b.odds), b.notes || (b.edge ? "Edge" : "")]);
+  return load().filter(b => b && b.result === "pending" && !isNoPick(b) && sports[String(b.sport || "").toUpperCase()] && b.pick).map(b => [String(b.date || "").slice(0, 10) || easternDay(), String(b.sport).toUpperCase(), b.type || "Spread", b.pick, b.odds == null ? "" : String(b.odds), b.notes || (b.edge ? "Edge" : ""), b.book || ""]);
 }
 function drawCardAnalysis(text){
   postedCard = text || "";
@@ -1771,14 +1771,20 @@ function drawCardAnalysis(text){
   const today = easternDay();
   const dated = all.filter(p => /^\d{4}-\d{2}-\d{2}$/.test(p[0]));
   const posted = dated.length ? dated.filter(p => p[0] === today) : all;
+  const cardBook = ((document.getElementById("cardbook") || {}).value) || "BetMGM";
   const seen = new Set();
   const rows = [];
-  posted.filter(r => !isNoCard(r)).concat(pendingCardRows()).forEach(r => {
-    const key = r[1] + "|" + normPick(r[3]);
+  const take = (r, book) => {
+    const named = book || r[6] || cardBook;
+    const key = r[1] + "|" + normPick(r[3]) + "|" + bookKey(named);
     if (!r[3] || seen.has(key)) return;
     seen.add(key);
-    rows.push(r);
-  });
+    const row = r.slice();
+    row[6] = named;
+    rows.push(row);
+  };
+  pendingCardRows().forEach(r => take(r, r[6]));
+  posted.filter(r => !isNoCard(r)).forEach(r => take(r, r[6] || cardBook));
   posted.filter(isNoCard).forEach(r => { if (!rows.some(row => row[1] === r[1])) rows.push(r); });
   const title = document.querySelector("#cardanalysis h3");
   const read = document.getElementById("sharpread");
@@ -1800,16 +1806,17 @@ function drawCardAnalysis(text){
       return "<div class='analysis-cell'><b>" + sport + "</b><div class='meta'>" + label + "</div><p>" + (ended ? "Season is closed for this sport." : "No picks posted for this sport.") + "</p></div>";
     }
     const edges = plays.filter(r => /edge/i.test(r[5] || "") || /^high\b/i.test(r[5] || ""));
-    const note = edges.length ? edges.map(r => r[3]).join("; ") : (plays[0][3] + " leads the card.");
+    const books = [...new Set(plays.map(r => r[6]).filter(Boolean))];
+    const note = edges.length ? edges.map(r => (r[6] ? r[6] + " " : "") + r[3]).join("; ") : ((plays[0][6] ? plays[0][6] + " " : "") + plays[0][3] + " leads the card.");
     const buttons = plays.map(r => {
       const price = Number(String(r[4] || "").replace(/[^\d.+-]/g, ""));
       if (!Number.isFinite(price)) return "";
-      const data = {sport: r[1], type: r[2] || "Spread", pick: r[3], odds: String(price), date: r[0], edge: /edge/i.test(r[5] || "") ? "1" : "0"};
+      const data = {sport: r[1], type: r[2] || "Spread", pick: r[3], odds: String(price), date: r[0], book: r[6] || "", edge: /edge/i.test(r[5] || "") ? "1" : "0"};
       const attrs = Object.keys(data).map(key => " data-" + key + "='" + encodeURIComponent(data[key]) + "'").join("");
       const shown = (price > 0 ? "+" : "") + price;
-      return "<button type='button' class='card-price'" + attrs + ">" + esc(r[3] + " " + shown) + "</button>";
+      return "<button type='button' class='card-price'" + attrs + ">" + esc((r[6] ? r[6] + "  " : "") + r[3] + " " + shown) + "</button>";
     }).join("");
-    return "<div class='analysis-cell'><b>" + sport + "</b><div class='meta'>" + plays.length + " plays" + (edges.length ? " · " + edges.length + " edge" + (edges.length === 1 ? "" : "s") : "") + "</div><p>" + sportLean(plays) + ". " + note + "</p><div class='card-prices'>" + buttons + "</div></div>";
+    return "<div class='analysis-cell'><b>" + sport + "</b><div class='meta'>" + plays.length + " plays" + (books.length ? " · " + esc(books.join(", ")) : "") + (edges.length ? " · " + edges.length + " edge" + (edges.length === 1 ? "" : "s") : "") + "</div><p>" + sportLean(plays) + ". " + esc(note) + "</p><div class='card-prices'>" + buttons + "</div></div>";
   }).join("");
   if (title) title.textContent = "Analysis · " + day;
   if (read) read.textContent = sharpRead(rows);
@@ -3035,6 +3042,7 @@ document.body.addEventListener("click", e => {
       type: decodeURIComponent(cardBtn.dataset.type || "Spread"),
       pick: decodeURIComponent(cardBtn.dataset.pick || ""),
       odds: Number(decodeURIComponent(cardBtn.dataset.odds || "")),
+      book: decodeURIComponent(cardBtn.dataset.book || ""),
       notes: decodeURIComponent(cardBtn.dataset.notes || ""),
       edge: cardBtn.dataset.edge === "1" || /^high\b/i.test(decodeURIComponent(cardBtn.dataset.notes || ""))
     });
@@ -5947,8 +5955,8 @@ function addSlipLeg(leg){
   const opener = document.getElementById("slipopen");
   if (opener) opener.hidden = true;
   try { sessionStorage.removeItem("gg-slip-closed"); } catch (e) {}
-  const key = [leg.sport, leg.pick, Number(leg.odds)].join("|");
-  if (!betSlip.some(row => [row.sport, row.pick, row.odds].join("|") === key)) betSlip.push({date: leg.date || easternDay(), sport: leg.sport || "", type: leg.type || "Spread", pick: leg.pick, odds: Number(leg.odds), book: leg.book || "", edge: !!leg.edge, notes: leg.notes || ""});
+  const key = [leg.book || "", leg.sport, leg.pick, Number(leg.odds)].join("|");
+  if (!betSlip.some(row => [row.book || "", row.sport, row.pick, row.odds].join("|") === key)) betSlip.push({date: leg.date || easternDay(), sport: leg.sport || "", type: leg.type || "Spread", pick: leg.pick, odds: Number(leg.odds), book: leg.book || "", edge: !!leg.edge, notes: leg.notes || ""});
   rememberSlip();
   paintSlip();
 }
@@ -5996,7 +6004,7 @@ function paintSlip(){
   const winEl = document.getElementById("slipwin");
   const picked = slipTicket();
   if (legs) {
-    legs.innerHTML = betSlip.length ? betSlip.map((p, i) => "<div class='slip-row" + (p.edge ? " edge" : "") + "'><span>" + esc((p.sport ? p.sport + " " : "") + p.pick + " " + (p.odds > 0 ? "+" : "") + p.odds) + "</span><button type='button' class='slip-x' data-i='" + i + "'>Remove</button></div>").join("") : "<p class='warn'>The slip is empty.</p>";
+    legs.innerHTML = betSlip.length ? betSlip.map((p, i) => "<div class='slip-row" + (p.edge ? " edge" : "") + "'><span>" + esc((p.book ? p.book + "  " : "") + (p.sport ? p.sport + " " : "") + p.pick + " " + (p.odds > 0 ? "+" : "") + p.odds) + "</span><button type='button' class='slip-x' data-i='" + i + "'>Remove</button></div>").join("") : "<p class='warn'>The slip is empty.</p>";
   }
   const math = slipMath(picked);
   if (price) {
