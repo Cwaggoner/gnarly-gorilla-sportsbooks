@@ -399,6 +399,7 @@ footer#about { border:0; background:transparent; box-shadow:none; }
 @media (max-width:800px) { .shark { grid-template-columns:1fr; } .shark-picks { grid-template-columns:1fr; } }
 .feed-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:0 0 8px; }
 .feed-head h2 { margin:0; }
+.feed-head h2 .espn-mark { height:1em; width:auto; margin-left:6px; vertical-align:-0.12em; display:inline-block; }
 .feed-head p { margin:0; text-align:right; max-width:46%; }
 .live-feed table { width:100%; border-collapse:collapse; }
 .live-feed th, .live-feed td { border-bottom:1px solid #1f3a1f; padding:6px 8px; text-align:left; vertical-align:top; }
@@ -1124,7 +1125,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </div>
 </div>
 <aside class="about-box live-feed">
-<div class="feed-head"><h2>Live Feed&nbsp;&nbsp;(ESPN)</h2></div>
+<div class="feed-head"><h2>Live Feed&nbsp;&nbsp;(ESPN)<img class="espn-mark" src="espn.svg" alt=""></h2></div>
 <div class="align-frame"><table class="score-align"><tbody><tr><td></td><td class="score-copy"><p class="warn" id="feednote">Loading the feed.</p></td></tr></tbody></table></div>
 <div class="table-wrap"><table><thead><tr><th>Time</th><th>Sport</th><th>Headline</th></tr></thead><tbody id="livefeed"></tbody></table></div>
 </aside>
