@@ -152,8 +152,8 @@ html, body, .page, .page * { overflow-anchor:none; }
 #slips .result-files > :nth-child(2) { margin-left:2px; }
 .section-head h2 { margin:0; }
 .slips-side { margin:0; text-align:left; max-width:62%; font-size:12px; }
-#games .head-notes { display:flex; flex-direction:column; align-items:flex-start; gap:2px; max-width:none; }
-#games .head-notes .slips-side { max-width:none; }
+#games .odds-tools { position:relative; }
+#games .game-pin { position:absolute; margin:0; white-space:nowrap; line-height:1.4; z-index:2; pointer-events:none; }
 .score-notes { display:flex; flex-direction:column; align-items:flex-start; gap:2px; max-width:62%; }
 .score-notes .score-line { margin:0; max-width:none; }
 .section-head .score-notes .score-line::before { content:"•"; color:#ff00ff; font-weight:700; margin-right:6px; }
@@ -910,7 +910,9 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <div class="section-head"><h2>Games<span class="league-marks"><img src='leagues/cbb.png' alt='College Basketball' title='NCAA Basketball' width='20' height='20' decoding='async'><img src='leagues/cfb.png' alt='College Football' title='NCAA Football' width='20' height='20' decoding='async'><img src='leagues/mlb.png' alt='MLB' title='Major League Baseball' width='20' height='20' decoding='async'><img src='leagues/nba.png' alt='NBA' title='National Basketball Association' width='20' height='20' decoding='async'><img src='leagues/nfl.png' alt='NFL' title='National Football League' width='20' height='20' decoding='async'><img src='leagues/nhl.png' alt='NHL' title='National Hockey League' width='20' height='20' decoding='async'></span></h2></div>
 <p id="gamenote" class="warn" hidden></p>
 <div class="align-frame"><table class="score-align"><tbody><tr><td><div class="odds-tools">
-<label>Book<select id="gamebook" class="book-select"><option>BetMGM</option><option>Caesars</option><option>DraftKings</option><option>Fanatics</option><option>FanDuel</option><option>HardRock</option></select></label>
+<p class="warn game-pin" id="gamepinleft">Tap a price. Final scores post when the game ends.</p>
+<p class="warn game-pin" id="gamepinright"><span class="best-price">Magenta</span> is the best price on that same number.</p>
+<label><span id="booktag">Book</span><select id="gamebook" class="book-select"><option>BetMGM</option><option>Caesars</option><option>DraftKings</option><option>Fanatics</option><option>FanDuel</option><option>HardRock</option></select></label>
 <div class="sport-bar" id="sportbar">
 <button type="button" class="on" data-sport="All">All</button>
 <div class="sport-align" id="sportalign">
@@ -930,7 +932,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </span>
 </div>
 <button type="button" id="gamerefresh">Refresh</button>
-</div></div></td><td class="score-copy"><div class="head-notes"><p class="warn slips-side">Tap a price. Final scores post when the game ends.</p><p class="warn slips-side"><span class="best-price">Magenta</span> is the best price on that same number.</p></div></td></tr></tbody></table></div>
+</div></div></td></tr></tbody></table></div>
 <div id="gameboard"><p class="warn">Loading the board.</p></div>
 </section>
 <section class="card view" id="dashboard">
@@ -9762,7 +9764,7 @@ function alignSportBrackets(){
     const right = books[books.length - 1].getBoundingClientRect().right;
     return {left: left, right: right, n: books.length};
   }).filter(Boolean);
-  if (!spans.length) { group.style.width = ""; group.style.flexBasis = ""; group.style.marginLeft = ""; return; }
+  if (!spans.length) { group.style.width = ""; group.style.flexBasis = ""; group.style.marginLeft = ""; placeGameNotes(); return; }
   const best = spans.slice().sort((a, b) => (b.right - b.left) - (a.right - a.left) || b.n - a.n)[0];
   const width = Math.max(0, Math.round(best.right - best.left));
   group.style.minWidth = "0px";
@@ -9782,6 +9784,34 @@ function alignSportBrackets(){
   group.style.marginLeft = "0px";
   const shift = Math.round(best.left - group.getBoundingClientRect().left);
   group.style.marginLeft = shift + "px";
+  placeGameNotes();
+}
+function placeGameNotes(){
+  const tools = document.querySelector("#games .odds-tools");
+  const left = document.getElementById("gamepinleft");
+  const right = document.getElementById("gamepinright");
+  const cbb = document.querySelector("#games button[data-sport='CBB']");
+  const refresh = document.getElementById("gamerefresh");
+  const book = document.getElementById("booktag");
+  if (!tools || !left || !right || !cbb || !refresh || !book) return;
+  if ((document.documentElement.dataset.page || "games") !== "games") return;
+  const host = tools.getBoundingClientRect();
+  const bookBox = book.getBoundingClientRect();
+  const cbbBox = cbb.getBoundingClientRect();
+  const refBox = refresh.getBoundingClientRect();
+  if (!host.width || !bookBox.height || !cbbBox.width || !refBox.width) return;
+  const noteH = left.offsetHeight || bookBox.height;
+  let top = bookBox.top - host.top + (bookBox.height - noteH) / 2;
+  const above = cbbBox.top - host.top - noteH;
+  if (top > above && top - above <= 6) top = Math.max(0, above);
+  if (top < 0) top = 0;
+  const topPx = Math.round(top) + "px";
+  left.style.top = topPx;
+  right.style.top = topPx;
+  left.style.right = "auto";
+  left.style.left = Math.round(cbbBox.left - host.left) + "px";
+  right.style.left = "auto";
+  right.style.right = Math.round(host.right - refBox.right) + "px";
 }
 function espnQuote(n){
   if (n == null || !Number.isFinite(Number(n))) return "";
@@ -9948,8 +9978,10 @@ function setGameNote(text){
   if (!msg || !btn) { note.hidden = true; return; }
   const hr = host.getBoundingClientRect();
   const r = btn.getBoundingClientRect();
+  const pin = document.getElementById("gamepinright");
+  const pinBox = pin ? pin.getBoundingClientRect() : null;
   note.style.left = (r.left - hr.left + r.width / 2) + "px";
-  note.style.top = (r.top - hr.top - 4) + "px";
+  note.style.top = (pinBox && pinBox.height ? pinBox.top - hr.top - 2 : r.top - hr.top - 4) + "px";
   note.hidden = false;
 }
 async function pullTodayBoard(){
@@ -11033,6 +11065,7 @@ function showView(id){
     const left = btn.offsetLeft - (scroller.clientWidth - btn.offsetWidth) / 2;
     try { scroller.scrollTo({left: Math.max(0, left), behavior:"smooth"}); } catch (e) {}
   });
+  if (screen === "games") requestAnimationFrame(alignSportBrackets);
   if (screen === "scoreboard") loadLiveBoard();
   if (screen === "sharks") loadSharks();
   if (screen === "about") { paintSharpTeam(); requestAnimationFrame(sizeSharpTeam); }
@@ -11064,6 +11097,8 @@ rememberBoot();
 showView(screenNow());
 restoreForm();
 pinOffset();
+placeGameNotes();
+requestAnimationFrame(placeGameNotes);
 const gamebook = document.getElementById("gamebook");
 if (gamebook) gamebook.onchange = () => {
   if (form && form.book && [...form.book.options].some(o => o.value === gamebook.value)) form.book.value = gamebook.value;
@@ -11080,6 +11115,7 @@ if (sportbar) sportbar.onclick = e => {
 };
 window.addEventListener("resize", pinOffset);
 window.addEventListener("resize", () => requestAnimationFrame(alignSportBrackets));
+window.addEventListener("resize", () => requestAnimationFrame(placeGameNotes));
 window.addEventListener("resize", sizeSharpTeam);
 window.addEventListener("resize", () => setGameNote((document.getElementById("gamenote") || {}).textContent || ""));
 const gameTools = document.querySelector("#games .odds-tools");
