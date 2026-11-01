@@ -9003,7 +9003,9 @@ function sideForm(sport, team){
   const bits = [team.record, team.homeRec && ("H " + team.homeRec), team.roadRec && ("R " + team.roadRec), team.last10 && ("L10 " + team.last10), (team.lines || []).length ? team.lines.join("-") : ""].filter(Boolean);
   const inj = injuryBlurb(sport, team);
   if (!bits.length && !inj) return "";
-  return "<p class='mgm-form'>" + esc(bits.join(" · ")) + (inj ? " " + inj : "") + "</p>";
+  const grey = bits.length ? "<p class='mgm-form'>" + esc(bits.join(" · ")) + "</p>" : "";
+  const hurt = inj ? "<p class='mgm-form'>" + inj + "</p>" : "";
+  return grey + hurt;
 }
 let liveExtraFlight = null;
 function armLiveExtras(games){
