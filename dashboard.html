@@ -4457,6 +4457,8 @@ function slipPickHtml(b){
 function render(){
   if (rendering) return;
   rendering = true;
+  const parked = load();
+  if (parkColtsCaesars(parked)) save(parked);
   const dash = "—";
   const page = document.documentElement.dataset.page || "games";
   try {
@@ -7590,14 +7592,28 @@ async function postedCardRows(){
   }));
   return rows;
 }
+function isColtsCard(row){
+  return String(row && row.date || "").slice(0, 10) === "2026-11-01" && /\bcolts\b/i.test(row.pick || "");
+}
+function parkColtsCaesars(list){
+  let moved = false;
+  (list || []).forEach(b => {
+    if (!isColtsCard(b)) return;
+    if (b.book && b.book !== "BetMGM") return;
+    b.book = "Caesars";
+    moved = true;
+  });
+  return moved;
+}
 function seedCardSlips(rows){
   const bets = load();
   let added = 0;
+  if (parkColtsCaesars(bets)) added += 1;
   (rows || []).forEach(row => {
     if (picksAreFinal(row.date)) return;
     if (gradedPool().some(b => (sameSlip(b, row) || sameGrade(b, row)) && b.result !== "pending")) return;
     if (bets.some(b => sameSlip(b, row) || sameGrade(b, row))) return;
-    bets.push(stampPlaced({id: "card-" + [row.date, row.sport, normPick(row.pick)].join("|"), date: row.date, book: "BetMGM", sport: row.sport, type: row.type || "Spread", pick: row.pick, odds: row.odds, stake: 10, result: "pending", fromCard: true, notes: row.notes || ""}));
+    bets.push(stampPlaced({id: "card-" + [row.date, row.sport, normPick(row.pick)].join("|"), date: row.date, book: isColtsCard(row) ? "Caesars" : "BetMGM", sport: row.sport, type: row.type || "Spread", pick: row.pick, odds: row.odds, stake: 10, result: "pending", fromCard: true, notes: row.notes || ""}));
     added++;
   });
   if (added) save(bets);
@@ -7810,7 +7826,7 @@ async function catchUp(){
     if (dash) localStorage.setItem("gg-dashboard-published", dash);
   } catch (err) {}
   if (wantLedger && localStorage.getItem("gg-hold-ledger") !== "1") {
-    const kept = load().filter(b => b && inSlipWindow(b.date) && (b.manual || String(b.sport || "").toUpperCase() === "MUL" || betType(b) === "Parlay"));
+    const kept = load().filter(b => b && inSlipWindow(b.date) && (b.manual || String(b.sport || "").toUpperCase() === "MUL" || betType(b) === "Parlay" || isColtsCard(b)));
     try {
       const data = await ledgerP;
       if (data) {
@@ -7819,6 +7835,7 @@ async function catchUp(){
       }
     } catch (err) {}
     pinThisMul(kept);
+    parkColtsCaesars(kept);
     localStorage.setItem(KEY, JSON.stringify(kept));
   }
   if (wantGrades) await applyGrades(gradesText).catch(() => {});
