@@ -1,8 +1,14 @@
 # file: grades
+2026-11-01 | NHL | Hurricanes ML vs Winnipeg Jets | close 225 | win |  | 3.51
+2026-11-01 | CBB | SGP CBB Wildcats -7.5 at Notre Dame Fighting Irish and CBB Villanova Wildcats at Notre Dame Fighting Irish Over 146.5 | close | loss |  | -10.00
+2026-11-01 | CBB | Wildcats -7.5 at Notre Dame Fighting Irish | close -115 | loss |  | -10.00
+2026-11-01 | CBB | Villanova Wildcats at Notre Dame Fighting Irish Over 146.5 | close -105 | loss |  | -10.00
+2026-11-01 | NFL | Indianapolis Colts at Jacksonville Jaguars Under  | close -105 | win |  | 9.52
+2026-11-01 | NFL | Jaguars ML vs Indianapolis Colts | close 360 | win |  | 2.08
 2026-10-31 | RANGE | All Win 54.16 | All Lose -60.00
 2026-10-31 | CFB | Georgia St -4 vs Coastal | close -110 | loss | 20-31 | -10.00
 2026-10-31 | CFB | UTEP +24.5 at N Dakota St | close -108 | win | 7-31 | 8.70
-2026-10-31 | CFB | Nevada +22.5 at UCLA | close -110 | loss | 0-27 | -10.00
+2026-10-31 | CFB | Nevada +22.5 at UCLA | close -108 | loss | 0-27 | -10.00
 2026-10-31 | CFB | Minnesota +20.5 at Indiana | close -108 | win | 16-23 | 9.26
 2026-10-31 | CFB | Rutgers +16.5 vs Michigan | close -102 | win | 21-28 | 8.93
 2026-10-31 | CFB | USC +6.5 | close -110 | win | 30-18 | 9.09
