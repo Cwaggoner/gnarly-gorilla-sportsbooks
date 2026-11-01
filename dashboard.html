@@ -4428,7 +4428,7 @@ function gradeNote(b){
     return result === "win" ? side + " hit" : side + " missed";
   }
   if (type === "Moneyline" || /\bml\b|moneyline/i.test(pick)) return result === "win" ? "Won ML" : "Lost ML";
-  if (type === "SGP" || type === "Parlay") return result === "win" ? "Both legs hit" : "A leg missed";
+  if (type === "SGP" || type === "Parlay") return result === "win" ? "All legs won" : result === "push" ? "A leg pushed" : "A leg lost";
   const line = (pick.match(/[+-]\d+(?:\.\d+)?/) || [])[0] || "";
   if (result === "win") return line ? "Covered " + line : "Covered";
   return line ? "Missed " + line : "Missed";
@@ -7376,6 +7376,54 @@ function firstGameStart(date){
   const times = list.map(g => Date.parse(g.start)).filter(ms => Number.isFinite(ms) && slateDateOf(ms) === date);
   return times.length ? Math.min.apply(null, times) : NaN;
 }
+function slipPickLegs(b){
+  const type = betType(b);
+  const pick = String(b && b.pick || "");
+  if (type === "SGP" || type === "Parlay" || String(b && b.sport || "").toUpperCase() === "MUL") return pick.split(/\s+and\s+/i).map(s => s.trim()).filter(Boolean);
+  return pick ? [pick] : [];
+}
+function slipLegBoards(b, games){
+  const pool = games && games.length ? games : (window.__slipGames || []);
+  const listed = gamesForSlip(pool, b);
+  const source = listed.length ? listed : pool;
+  return slipPickLegs(b).map(leg => ({leg: leg, game: findFinalGame(source, leg) || findFinalGame(pool, leg)}));
+}
+function legCover(leg, game){
+  const clean = gradeLegText(leg);
+  const direct = gradeLeg(clean, game) || gradeLeg(leg, game);
+  if (direct === "win" || direct === "loss" || direct === "push") return direct;
+  if (!game || !game.final) return null;
+  const home = Number(game.homeScore), away = Number(game.awayScore);
+  if (!Number.isFinite(home) || !Number.isFinite(away)) return null;
+  const text = clean || String(leg || "");
+  const ou = text.match(/\b(over|under)\s+([0-9]+(?:\.[0-9]+)?)/i);
+  if (ou) {
+    const line = Number(ou[2]), total = home + away;
+    if (total === line) return "push";
+    return (ou[1].toLowerCase() === "over" ? total > line : total < line) ? "win" : "loss";
+  }
+  const hs = mentionScore(text, game.home), as = mentionScore(text, game.away);
+  if (Math.max(hs, as) < 4) return null;
+  const mine = hs >= as ? home : away;
+  const opp = hs >= as ? away : home;
+  const spread = (text.match(/[+-]\d+(?:\.\d+)?/g) || []).map(Number).find(n => n && Math.abs(n) < 50);
+  if (spread != null) {
+    const adj = mine + spread;
+    if (Math.abs(adj - opp) < 0.001) return "push";
+    return adj > opp ? "win" : "loss";
+  }
+  if (mine === opp) return "push";
+  return mine > opp ? "win" : "loss";
+}
+function gradeScoreColumn(b, games){
+  const rows = slipLegBoards(b, games);
+  if (!rows.length) return null;
+  const results = rows.map(row => row.game && row.game.final ? legCover(row.leg, row.game) : null);
+  if (results.some(r => r !== "win" && r !== "loss" && r !== "push")) return null;
+  if (results.some(r => r === "loss")) return "loss";
+  if (results.some(r => r === "push")) return "push";
+  return results.every(r => r === "win") ? "win" : null;
+}
 function applyFinalGrades(games){
   const finals = (games || []).filter(g => g && g.final);
   if (!finals.length) return 0;
@@ -7387,8 +7435,8 @@ function applyFinalGrades(games){
     if (!b || b.result !== "pending" || isNoPick(b) || !inSlipWindow(b.date)) return false;
     parkSlipOnGames(b, finals);
     if (!inSlipWindow(b.date)) return false;
-    const wide = String(b.sport || "").toUpperCase() === "MUL" || betType(b) === "Parlay";
-    const result = gradeFromScores(b, wide ? finals : gamesForSlip(finals, b));
+    const multi = String(b.sport || "").toUpperCase() === "MUL" || betType(b) === "Parlay" || betType(b) === "SGP";
+    const result = multi ? gradeScoreColumn(b, games) : gradeFromScores(b, gamesForSlip(finals, b));
     if (result !== "win" && result !== "loss" && result !== "push") return false;
     b.result = result;
     delete b.profit;
@@ -10300,16 +10348,12 @@ function slipScoreHtml(game){
 }
 function slipScoreCell(b){
   if (!b || betType(b) === "Prop") return "—";
-  const games = gamesForSlip(window.__slipGames || [], b);
-  const type = betType(b);
-  const legs = (type === "SGP" || type === "Parlay") ? String(b.pick || "").split(/\s+and\s+/i) : [String(b.pick || "")];
   const seen = [];
   const bits = [];
-  legs.forEach(leg => {
-    const game = findFinalGame(games, leg);
-    if (!game || seen.indexOf(game) >= 0) return;
-    seen.push(game);
-    const html = slipScoreHtml(game);
+  slipLegBoards(b).forEach(row => {
+    if (!row.game || seen.indexOf(row.game) >= 0) return;
+    seen.push(row.game);
+    const html = slipScoreHtml(row.game);
     if (html) bits.push(html);
   });
   return bits.length ? bits.join("<br>") : "—";
