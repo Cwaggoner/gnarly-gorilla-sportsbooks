@@ -154,6 +154,7 @@ html, body, .page, .page * { overflow-anchor:none; }
 #slips .result-files > :nth-child(2) { margin-left:2px; }
 .section-head h2 { margin:0; font-size:25px; }
 .slips-side { margin:0; text-align:left; max-width:62%; font-size:12px; }
+.nowrap { white-space:nowrap; }
 #games .odds-tools { position:relative; }
 #games .game-pin { position:absolute; margin:0; white-space:nowrap; line-height:1.4; z-index:2; pointer-events:none; }
 .score-notes { display:flex; flex-direction:column; align-items:flex-start; gap:2px; max-width:62%; }
@@ -1168,7 +1169,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <div class="section-head"><h2>Calendar</h2></div>
 <div class="cal-tools"><table class="cal-line"><tbody><tr>
 <td><div class="tools"><div class="btn-pair"><span>Navigation</span><div><button type="button" id="prevMonth">Prev</button><button type="button" id="nextMonth">Next</button><button type="button" id="resetcal">Use Shared Calendar</button></div></div><label>Load My Calendar<input type="file" id="loadcal" accept=".json,application/json"><span class="file-face">No File Chosen</span></label><div class="btn-pair"><span class="pair-title"><span id="calnote" class="warn"></span></span></div></div></td>
-<td class="score-copy"><span id="monthpl"></span><p class="warn slips-side">Everyone sees the shared $10 calendar until they upload a file. An uploaded file stays in this browser only.<br>Other users do not see it. Use Shared Calendar to go back.</p></td>
+<td class="score-copy"><span id="monthpl"></span><p class="warn slips-side">Everyone sees the shared $10 calendar until they upload a file.<br><span class="nowrap">An uploaded file stays in this browser only.</span><br>Other users do not see it. Use Shared Calendar to go back.</p></td>
 <td class="cal-icons"><div class="cal-crew">
 <a class="crew-hit" href="index.html?page=sharks#shark-gorilla" data-jump="sharks" data-sharp="shark-gorilla" title="Gnarly Gorilla"><img src="about-gorilla.jpg" alt="Gnarly Gorilla" width="72" height="72" loading="lazy" decoding="async"></a>
 <a class="crew-hit" href="index.html?page=sharks#shark-vito" data-jump="sharks" data-sharp="shark-vito" title="Vito the Spot"><img src="jungle-leopard.jpg" alt="Vito the Spot" width="72" height="72" loading="lazy" decoding="async"></a>
