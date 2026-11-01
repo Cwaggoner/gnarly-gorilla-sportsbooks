@@ -70,6 +70,8 @@ header img { width:72px; height:72px; border-radius:12px; display:block; }
 .head-flag svg { width:28px; height:18px; display:block; border-radius:2px; box-shadow:0 1px 2px rgba(0,0,0,.6); }
 header .head-text { display:flex; flex-direction:column; justify-content:center; }
 header h1 { margin:0; color:var(--title); font-size:22px; letter-spacing:.04em; display:flex; align-items:center; flex-wrap:wrap; gap:8px; }
+.gg-title { position:relative; display:inline-block; }
+.law-warn { position:absolute; left:calc(100% + 15px); top:50%; transform:translateY(-50%); margin:0; padding:0; font-size:18px; line-height:18px; height:18px; font-weight:700; letter-spacing:0; color:var(--amber); white-space:nowrap; pointer-events:none; }
 .spin { position:absolute; left:50%; top:50%; z-index:3; display:block; width:16px; height:16px; margin:0; border:2px solid #243024; border-top-color:#39ff14; border-radius:50%; background:#0a0a0a; box-shadow:0 0 0 6px #0a0a0a; animation:spin .7s linear infinite; }
 .spin[hidden] { display:none; }
 @keyframes spin { from { transform:translate(-50%, -50%) rotate(0deg); } to { transform:translate(-50%, -50%) rotate(360deg); } }
@@ -630,6 +632,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
   header { grid-template-columns:56px minmax(0,1fr) auto 56px; gap:6px; padding:4px 6px; }
   header img, .cal-crew img { width:44px; height:44px; border-radius:8px; }
   header h1 { font-size:16px; }
+  .law-warn { font-size:14px; line-height:14px; height:14px; }
   header p { font-size:11px; }
   .page { padding:8px; }
   .card { padding:10px; }
@@ -828,7 +831,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <header>
 <div class="head-icon"><img src="gg-icon.png" alt="Gnarly Gorilla" width="72" height="72" fetchpriority="high"></div>
 <div class="head-text">
-<h1><span class="gg-name">Gnarly Gorilla</span> Sportsbooks</h1>
+<h1><span class="gg-title"><span class="gg-name">Gnarly Gorilla</span> Sportsbooks<span id="lawwarn" class="law-warn" hidden></span></span></h1>
 <p id="liveline" class="warn">All picks live by 9:30 AM. Closed Value Lines update at 6:00 PM.</p>
 <p>Free bet ledger for <span class="gg-name">Gnarly Gorilla</span> Sports Decks. Log CBB, CFB, MLB, NBA, NFL, and NHL slips, grade them the next day, and copy the report card.</p>
 </div>
@@ -6050,6 +6053,12 @@ form.onsubmit = e => {
   const chosenBook = knownBook(picked && picked.dataset.book) || knownBook(row.book);
   if (chosenBook) row.book = chosenBook;
   delete row.editId;
+  const why = slipLaw({...row, result: d.result || "pending"});
+  if (why) {
+    document.getElementById("editnote").textContent = why;
+    paintLawWarn();
+    return;
+  }
   if (d.editId) {
     const bet = bets.find(b => String(b.id) === d.editId);
     if (bet) {
@@ -6059,7 +6068,7 @@ form.onsubmit = e => {
   } else {
     const made = stampPlaced({id: Date.now(), ...row, result: d.result || "pending", manual: true});
     if (!placePending(bets, made)) {
-      document.getElementById("editnote").textContent = "That pick is already on the slips. It was not added again.";
+      document.getElementById("editnote").textContent = lawBlock || "That pick is already on the slips. It was not added again.";
       return;
     }
   }
@@ -6239,7 +6248,7 @@ document.getElementById("sgpadd").onclick = () => {
       if (placePending(bets, row)) { added += 1; if (!firstId) firstId = row.id; }
       else skipped += 1;
     });
-    if (!added) { if (note) note.textContent = "Those singles are already on the slips."; return; }
+    if (!added) { if (note) note.textContent = lawBlock || "Those singles are already on the slips."; paintLawWarn(); return; }
     save(bets);
     if (note) note.textContent = "Added " + added + " single" + (added === 1 ? "" : "s") + " to Slips." + (skipped ? " " + skipped + " already there." : "") + " Nothing was sent to a sportsbook.";
     landOnSlip(firstId);
@@ -6266,7 +6275,7 @@ document.getElementById("sgpadd").onclick = () => {
     best: picked.some(p => p.best && String(p.book || built.book) === String(built.book))
   }));
   const bets = load();
-  if (!placePending(bets, row)) { if (note) note.textContent = "That ticket is already on the slips."; return; }
+  if (!placePending(bets, row)) { if (note) note.textContent = lawBlock || "That ticket is already on the slips."; paintLawWarn(); return; }
   save(bets);
   if (note) note.textContent = "Added to Slips. Nothing was sent to a sportsbook. " + row.pick + " at " + (built.odds > 0 ? "+" : "") + built.odds + ".";
   landOnSlip(row.id);
@@ -7107,11 +7116,12 @@ async function loadPending(){
     if (!inSlipWindow(date)) return;
     if (/^(over|under)\s+\d/i.test(pick)) { note.textContent = "Skipped " + pick + ". A total needs the game, such as Bruins at Rangers Under 5.5."; return; }
     const row = stampPlaced({id: Date.now() + Math.random(), date, book, sport, type: type || "Spread", pick, odds: Number(odds), stake: 10, result: "pending", notes: notes || "", fromCard: true});
-    if (!placePending(bets, row)) return;
+    if (!placePending(bets, row)) { if (lawBlock) { note.textContent = lawBlock; paintLawWarn(); } return; }
   });
   const added = bets.length - before;
   if (!added) {
-    note.textContent = "Nothing loaded. Upload the Pick-Card PDF or paste Sport | Type | Pick | Odds lines first.";
+    note.textContent = lawBlock || "Nothing loaded. Upload the Pick-Card PDF or paste Sport | Type | Pick | Odds lines first.";
+    paintLawWarn();
     return;
   }
   save(bets);
@@ -7163,10 +7173,91 @@ function markEdge(b){
   return b;
 }
 function placePending(list, row){
+  const why = slipLaw(row);
+  if (why) { lawBlock = why; return false; }
+  lawBlock = "";
   const known = list.concat(loadGrade()).concat(gradeFile || []);
   if (known.some(b => sameSlip(b, row))) return false;
   list.push(row);
   return true;
+}
+const NO_COLLEGE = new Set(["Oregon"]);
+const NO_COLLEGE_PROPS = new Set(["Arizona","Colorado","Delaware","Illinois","Indiana","Iowa","Kansas","Louisiana","Maine","Maryland","Massachusetts","New Hampshire","New Jersey","New York","Ohio","Oregon","Pennsylvania","Rhode Island","Tennessee","Vermont","Virginia"]);
+let lawBlock = "";
+function paintLawWarn(){
+  const el = document.getElementById("lawwarn");
+  if (!el) return;
+  if (visitorState) { el.hidden = true; el.textContent = ""; return; }
+  el.hidden = false;
+  el.textContent = "Location unknown. No slip will be added.";
+}
+function wagerSide(pick){
+  const text = String(pick || "").replace(/^(sgp|parlay)\s+/i, "");
+  const ml = text.match(/^(.+?)\s+ml\b/i);
+  if (ml) return ml[1].trim().toLowerCase();
+  if (/\b(over|under)\b/i.test(text)) return "";
+  const spread = text.match(/^(.+?)\s+[+-]\d+(?:\.\d+)?\b/);
+  return spread ? spread[1].trim().toLowerCase() : "";
+}
+function spreadPoint(pick){
+  if (/\b(over|under)\b/i.test(pick)) return null;
+  const nums = String(pick || "").match(/[+-]\d+(?:\.\d+)?/g) || [];
+  const n = nums.map(Number).find(v => Number.isFinite(v) && v !== 0 && Math.abs(v) < 50);
+  return Number.isFinite(n) ? n : null;
+}
+function ticketLegs(row){
+  if (row && Array.isArray(row.legs) && row.legs.length) return row.legs;
+  const pick = String(row && row.pick || "");
+  const type = betType(row || {});
+  if (type === "SGP" || type === "Parlay" || /\sand\s/i.test(pick)) {
+    return pick.replace(/^(sgp|parlay)\s+/i, "").split(/\s+and\s+/i).map(text => ({pick: text.trim(), sport: row.sport || "", type: betType({pick: text})}));
+  }
+  return row ? [row] : [];
+}
+function isPlayerProp(row){
+  const type = String(row && row.type || "");
+  const pick = String(row && row.pick || "");
+  if (/^prop$/i.test(type) || /\bprop\b/i.test(pick)) return true;
+  return /\b(yards|rebounds|assists|strikeouts|receptions|touchdowns|saves|goals)\b/i.test(pick);
+}
+function favoriteSpreadMl(legs){
+  const list = legs || [];
+  for (let i = 0; i < list.length; i++) {
+    for (let j = i + 1; j < list.length; j++) {
+      const a = list[i], b = list[j];
+      const kinds = [betType(a), betType(b)];
+      if (kinds.indexOf("Spread") < 0 || kinds.indexOf("Moneyline") < 0) continue;
+      if (!sgpSame([a, b])) continue;
+      const left = wagerSide(a.pick).split(/\s+/).pop();
+      const right = wagerSide(b.pick).split(/\s+/).pop();
+      if (!left || left !== right) continue;
+      const spread = betType(a) === "Spread" ? a : b;
+      const point = spreadPoint(spread.pick);
+      if (point != null && point < 0) return "A favorite moneyline and that same favorite's spread are the same bet. The book will not take both, so it was not added to Slips.";
+    }
+  }
+  return "";
+}
+function slipLaw(row){
+  if (!row) return "";
+  if (!visitorState) return "Location unknown. No slip will be added.";
+  const rule = stateRules[visitorState];
+  if (rule && rule.status === "not-legal") return visitorState + " does not allow sports betting. It was not added to Slips.";
+  if (rule && rule.status === "retail-only") return visitorState + " has no online book on this site. It was not added to Slips.";
+  const book = knownBook(row.book);
+  if (rule && book && Array.isArray(rule.books) && !rule.books.includes(book)) return book + " is not a listed book in " + visitorState + ". It was not added to Slips.";
+  const legs = ticketLegs(row);
+  const college = [row].concat(legs).some(leg => {
+    const sport = String((leg && leg.sport) || row.sport || "").toUpperCase();
+    return sport === "CBB" || sport === "CFB" || /\b(CBB|CFB)\b/.test(String(leg && leg.pick || ""));
+  });
+  if (college && NO_COLLEGE.has(visitorState)) return visitorState + " does not allow a college wager. It was not added to Slips.";
+  if (college && NO_COLLEGE_PROPS.has(visitorState) && [row].concat(legs).some(isPlayerProp)) return visitorState + " does not allow a college player prop. It was not added to Slips.";
+  if (betType(row) === "SGP" || betType(row) === "Parlay" || legs.length > 1) {
+    const pair = favoriteSpreadMl(legs);
+    if (pair) return pair;
+  }
+  return "";
 }
 function parseCardLine(line){
   line = String(line || "").trim();
@@ -7191,8 +7282,7 @@ function replaceTodayCard(text, book){
   const kept = bets.filter(b => !(String(b.date).slice(0, 10) === today && b.result === "pending" && b.fromCard));
   rows.forEach(row => {
     const slip = stampPlaced(markEdge({id: Date.now() + Math.random(), date: row.date, book: book || "BetMGM", sport: row.sport, type: row.type, pick: row.pick, odds: row.odds, stake: 10, result: "pending", notes: row.notes, fromCard: true}));
-    if (kept.some(b => sameSlip(b, slip))) return;
-    kept.push(slip);
+    if (!placePending(kept, slip)) return;
   });
   save(kept);
   return rows.length;
@@ -7925,10 +8015,13 @@ if (pageNeeds("ledger") || pageNeeds("grades") || pageNeeds("dashfile")) catchUp
 else fixMulOctober31();
 let stateRules = {};
 let visitorState = "";
+try { visitorState = localStorage.getItem("gg-visitor-state") || ""; } catch (e) {}
+paintLawWarn();
 function applyState(name){
   visitorState = name || "";
   const line = document.getElementById("headregion");
   if (line && name) line.textContent = String(name).toUpperCase();
+  paintLawWarn();
   if (name) { try { localStorage.setItem("gg-visitor-state", name); } catch (e) {} }
   const rule = stateRules[name];
   const note = document.getElementById("staterule");
@@ -7974,6 +8067,7 @@ later(() => {
   const books = document.getElementById("statebooks");
   if (!place) {
     if (books) books.textContent = "State rules could not be read from this connection. The ledger is still available.";
+    paintLawWarn();
     return;
   }
   if (place.country && place.country !== "US") {
@@ -7982,9 +8076,11 @@ later(() => {
   }
   if (place.region) applyState(place.region);
   else if (books) books.textContent = "State rules could not be read from this connection. The ledger is still available.";
+  paintLawWarn();
 }).catch(() => {
   const books = document.getElementById("statebooks");
   if (books) books.textContent = "State rules could not be read from this connection. The ledger is still available.";
+  paintLawWarn();
 }); });
 ["injurysport", "injuryshow"].forEach(id => { const el = document.getElementById(id); if (el) el.onchange = filterInjury; });
 document.getElementById("loadcard").onclick = () => loadPending();
@@ -10809,7 +10905,11 @@ function sharpAddOpen(sharkId){
       manual: true,
       edge: /^high\b/i.test(String(t.confidence || ""))
     }));
-    if (!placePending(bets, row)) { already += 1; return; }
+    if (!placePending(bets, row)) {
+      if (lawBlock) { if (note) note.textContent = lawBlock; paintLawWarn(); return; }
+      already += 1;
+      return;
+    }
     added += 1;
   });
   if (added) save(bets);
