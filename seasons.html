@@ -8528,6 +8528,20 @@ function snapshotProfit(){
   base.source = "Saved with the ledger from this browser. Older days stay. Days with graded slips are updated.";
   return base;
 }
+async function snapshotOddsBoard(){
+  const live = window.__ggOddsBoard;
+  const saved = await savedBoardAny();
+  let data = null;
+  if (usableBoard(live) && usableBoard(saved)) data = keepPulledDays(live, saved);
+  else if (usableBoard(live)) data = live;
+  else data = saved;
+  if (!usableBoard(data)) return null;
+  const slim = slimBoard(data);
+  if (!usableBoard(slim)) return null;
+  if (!slim.updated) slim.updated = new Date().toISOString();
+  slim.source = "Saved with the ledger from this browser. Today and yesterday only. A dash means that book had no posted number. No book was copied into another book.";
+  return slim;
+}
 document.getElementById("saveledger").onclick = async () => {
   const note = document.getElementById("ledgernote");
   note.textContent = "Saving slips, charts, and dashboard...";
@@ -8543,6 +8557,7 @@ document.getElementById("saveledger").onclick = async () => {
     ]);
   } catch (e) {}
   const bets = load();
+  const board = await snapshotOddsBoard();
   const files = {
     "cards/calendar.json": snapshotCalendar(),
     "cards/dashboard.txt": snapshotDashboard(),
@@ -8550,9 +8565,10 @@ document.getElementById("saveledger").onclick = async () => {
     "cards/profit-by-day.json": snapshotProfit(),
     "cards/book-closes.json": snapshotBookCloses()
   };
+  if (board) files["cards/odds-board.json"] = board;
   const blob = new Blob([JSON.stringify({saved: new Date().toISOString(), bets: bets, files: files}, null, 2)], {type:"application/json"});
   download("GG-LEDGER-" + ymd(new Date()) + ".json", blob);
-  note.textContent = bets.length + " slips saved. Charts, Dashboard, and closes are in the file.";
+  note.textContent = bets.length + " slips saved. Charts, Dashboard, and closes are in the file." + (board ? " Games board is in the file." : " Games board was not in this browser.");
 };
 document.getElementById("exportpdf").onclick = () => download("gnarly-gorilla-sportsbooks.pdf", buildPdf(load()));
 document.getElementById("export").onclick = () => download("gnarly-gorilla-sportsbooks.xlsx", buildSheet(load()));
