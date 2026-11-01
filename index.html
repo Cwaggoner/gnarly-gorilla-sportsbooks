@@ -533,9 +533,9 @@ tr.row-pending.edge td.result { color:var(--amber); }
 #rows td.slip-score { white-space:nowrap; font-variant-numeric:tabular-nums; }
 #rows td.slip-score .wmark { color:#39ff14; font-weight:700; margin-left:4px; }
 #rows td.slip-score .slip-q { color:#f0e14a; font-weight:700; margin-left:6px; }
-#rows td.slip-pick { white-space:normal; }
-#rows .slip-legs { display:flex; flex-direction:column; align-items:flex-start; gap:2px; }
-#rows .slip-legs span { white-space:nowrap; }
+#rows td.slip-pick, #report td.slip-pick { white-space:normal; vertical-align:top; }
+#rows .slip-legs, #report .slip-legs { display:flex; flex-direction:column; align-items:flex-start; gap:2px; }
+#rows .slip-legs span, #report .slip-legs span { white-space:nowrap; }
 .tools { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; align-items:flex-end; }
 .jump { display:flex; gap:6px; margin:6px 0; justify-content:center; align-items:center; }
 .jump button { padding:4px 8px; font-size:12px; }
@@ -4513,17 +4513,25 @@ function gradeNote(b){
   return line ? "Missed " + line : "Missed";
 }
 function slipLegText(text){
-  return String(text || "").replace(/\b(?:CBB|CFB|MLB|NBA|NFL|NHL|MUL)\b\s*/gi, " ").replace(/\s+/g, " ").trim();
+  return String(text || "").replace(/^(?:same game parlay|parlay|sgp)\s+/i, "").replace(/\b(?:CBB|CFB|MLB|NBA|NFL|NHL|MUL)\b\s*/gi, " ").replace(/\s+/g, " ").trim();
+}
+function slipPickParts(b){
+  const pick = String(b && b.pick || "");
+  const type = String(b && b.type || "");
+  const multi = type === "SGP" || type === "Parlay" || /^(?:same game parlay|parlay|sgp)\b/i.test(pick);
+  if (!multi) {
+    const one = slipLegText(pick);
+    return one ? [one] : [];
+  }
+  const legs = pick.replace(/^(?:same game parlay|parlay|sgp)\s+/i, "").split(/\s+and\s+/i).map(slipLegText).filter(Boolean);
+  const lines = [];
+  for (let i = 0; i < legs.length; i += 2) lines.push(legs.slice(i, i + 2).join(" and "));
+  return lines.length ? lines : [slipLegText(pick)].filter(Boolean);
 }
 function slipPickHtml(b){
-  let pick = String(b && b.pick || "");
-  if (b && b.type === "Parlay") pick = pick.replace(/^parlay\s+/i, "");
-  if (!b || (b.type !== "SGP" && b.type !== "Parlay")) return esc(slipLegText(pick));
-  const legs = pick.split(/\s+and\s+/i).map(slipLegText).filter(Boolean);
-  if (legs.length < 3) return esc(legs.join(" and "));
-  const lines = [];
-  for (let i = 0; i < legs.length; i += 2) lines.push("<span>" + esc(legs.slice(i, i + 2).join(" and ")) + "</span>");
-  return "<span class='slip-legs'>" + lines.join("") + "</span>";
+  const lines = slipPickParts(b);
+  if (lines.length < 2) return esc(lines[0] || "");
+  return "<span class='slip-legs'>" + lines.map(line => "<span>" + esc(line) + "</span>").join("") + "</span>";
 }
 function render(){
   if (window.__stateBlocked) return;
@@ -4593,8 +4601,9 @@ function render(){
       rows.forEach(b => {
         const plCell = b.result === "pending" ? "OPEN" : moneyHtml(slipMoney(b));
         const edge = markEdge(b).edge;
-        copy.push([b.date, b.result.toUpperCase(), b.sport, b.pick, b.odds, plCell].join("  "));
-        body += "<tr" + (edge ? " class='edge'" : "") + "><td>" + esc(b.date) + "</td><td>" + esc(b.result.toUpperCase()) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.pick) + "</td><td>" + esc(b.odds) + "</td><td>" + plCell + "</td></tr>";
+        const pickLines = slipPickParts(b);
+        copy.push([b.date, b.result.toUpperCase(), b.sport, pickLines.join(" / "), b.odds, plCell].join("  "));
+        body += "<tr" + (edge ? " class='edge'" : "") + "><td>" + esc(b.date) + "</td><td>" + esc(b.result.toUpperCase()) + "</td><td>" + esc(b.sport) + "</td><td class='slip-pick'>" + slipPickHtml(b) + "</td><td>" + esc(b.odds) + "</td><td>" + plCell + "</td></tr>";
       });
     });
     body += "</tbody></table>";
@@ -6030,7 +6039,7 @@ function slipRow(picked){
     book: ticketBooks(picked)[0] || slipBook(picked[0] && picked[0].book),
     sport: sports.size === 1 ? [...sports][0] : (one ? picked[0].sport : "MUL"),
     type: one ? (picked[0].type || "Spread") : (math.same ? "SGP" : "Parlay"),
-    pick: one ? picked[0].pick : ((math.same ? "SGP " : "Parlay ") + picked.map(p => (p.sport ? p.sport + " " : "") + p.pick).join(" and ")),
+    pick: one ? picked[0].pick : picked.map(p => slipLegText(p.pick)).filter(Boolean).join(" and "),
     odds: math.american,
     stake: math.stake,
     same: math.same,
@@ -6077,7 +6086,6 @@ document.getElementById("sgpadd").onclick = () => {
   const built = slipRow(picked);
   if (mode === "sgp" && !built.same) { if (note) note.textContent = "Those legs are not the same game. Switch to Parlay."; return; }
   built.type = mode === "sgp" ? "SGP" : "Parlay";
-  built.pick = (mode === "sgp" ? "SGP " : "Parlay ") + picked.map(p => (p.sport ? p.sport + " " : "") + p.pick).join(" and ");
   const row = stampPlaced(markEdge({
     id: Date.now(),
     date: built.date,
@@ -6158,7 +6166,7 @@ async function saveSlipImage(){
     ctx.fillStyle = leg.edge ? "#f0e14a" : "#d6ffd0";
     ctx.font = "32px sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText(fit((leg.sport ? leg.sport + "   " : "") + leg.pick), 72, y);
+    ctx.fillText(fit(leg.pick), 72, y);
     ctx.fillStyle = "#39ff14";
     ctx.textAlign = "right";
     ctx.fillText((leg.odds > 0 ? "+" : "") + leg.odds, 1008, y);
@@ -7393,7 +7401,7 @@ function firstGameStart(date){
 function slipPickLegs(b){
   const type = betType(b);
   const pick = String(b && b.pick || "");
-  if (type === "SGP" || type === "Parlay" || String(b && b.sport || "").toUpperCase() === "MUL") return pick.split(/\s+and\s+/i).map(s => s.trim()).filter(Boolean);
+  if (type === "SGP" || type === "Parlay" || String(b && b.sport || "").toUpperCase() === "MUL") return pick.replace(/^(?:same game parlay|parlay|sgp)\s+/i, "").split(/\s+and\s+/i).map(slipLegText).filter(Boolean);
   return pick ? [pick] : [];
 }
 function slipLegBoards(b, games){
@@ -7969,7 +7977,16 @@ async function jpegPdf(canvas) {
 }
 async function buildReportPages(mode) {
   const report = document.getElementById("report");
-  const rows = [...report.querySelectorAll("h2, tbody tr")].map(el => el.tagName === "H2" ? {cells:[el.textContent], edge:false, head:true} : {cells:[...el.children].map(td => td.textContent), edge:el.classList.contains("edge"), head:false});
+  const rows = [...report.querySelectorAll("h2, tbody tr")].map(el => {
+    if (el.tagName === "H2") return {cells:[el.textContent], lines:[[el.textContent]], edge:false, head:true};
+    const lines = [...el.children].map(td => {
+      const legs = [...td.querySelectorAll(".slip-legs span")];
+      if (legs.length) return legs.map(span => span.textContent.trim()).filter(Boolean);
+      const text = td.textContent || "";
+      return text ? [text] : [""];
+    });
+    return {cells: lines.map(line => line.join(" ")), lines: lines, edge: el.classList.contains("edge"), head: false};
+  });
   const summary = [...report.querySelectorAll(":scope > p")].map(p => p.textContent);
   const landscape = mode === "print";
   const dpi = 120;
@@ -8041,9 +8058,19 @@ async function buildReportPages(mode) {
     ctx.font = "16px sans-serif";
     heads.forEach((h, i) => ctx.fillText(h, xs[i], y));
     ctx.font = "15px sans-serif";
+    const clipText = (text, maxW) => {
+      let t = String(text || "");
+      if (ctx.measureText(t).width <= maxW) return t;
+      while (t.length > 1 && ctx.measureText(t + "…").width > maxW) t = t.slice(0, -1);
+      return t + "…";
+    };
+    const lineH = 18;
     pageRows.forEach(row => {
       const cells = row.cells || [];
       if (row.head || cells.length === 1 && /^(Pending|Graded|Date)$/.test(cells[0] || "")) return;
+      const sets = row.lines || cells.map(cell => [cell]);
+      const pickLines = cells.length > 1 ? ((sets[3] && sets[3].length) ? sets[3] : [""]) : [cells[0] || ""];
+      const rowLines = Math.max(1, pickLines.length);
       y += rowH;
       if (cells.length === 1) {
         ctx.fillStyle = "#39ff14";
@@ -8051,7 +8078,16 @@ async function buildReportPages(mode) {
         return;
       }
       ctx.fillStyle = row.edge ? "#f0e14a" : "#d6ffd0";
-      cells.forEach((cell, i) => ctx.fillText(String(cell), xs[i], y));
+      sets.forEach((lines, i) => {
+        const next = xs[i + 1] || (pageW - margin);
+        const maxW = Math.max(40, next - xs[i] - 12);
+        if (i === 3) {
+          lines.forEach((line, n) => ctx.fillText(clipText(line, maxW), xs[i], y + n * lineH));
+          return;
+        }
+        ctx.fillText(clipText(lines[0] || "", maxW), xs[i], y);
+      });
+      y += (rowLines - 1) * lineH;
     });
     if (!pageRows.length) { ctx.fillStyle = "#d6ffd0"; ctx.fillText("No slips on this report.", margin, y + 28); }
     return canvas;
@@ -8172,10 +8208,18 @@ function buildPdf(bets){
   function add(body){ objects.push(body); return objects.length; }
   const fontId = add("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>");
   const boldId = add("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>");
-  const cols = [28, 72, 124, 156, 204, 330, 366, 402, 446, 492];
+  const cols = [28, 76, 124, 162, 210, 420, 456, 496, 536, 572];
   const heads = ["Date","Book","Sport","Type","Pick","Odds","Stake","Result","P/L","Notes"];
   const pages = [];
-  for (let i = 0; i < Math.max(sorted.length, 1); i += 48) pages.push(sorted.slice(i, i + 48));
+  let chunk = [];
+  let used = 0;
+  sorted.forEach(b => {
+    const h = Math.max(1, slipPickParts(b).length) * 11;
+    if (chunk.length && used + h > 660) { pages.push(chunk); chunk = []; used = 0; }
+    chunk.push(b);
+    used += h;
+  });
+  if (chunk.length || !pages.length) pages.push(chunk);
   const pageIds = [];
   pages.forEach((chunk, pageIndex) => {
     const cmds = [
@@ -8190,10 +8234,19 @@ function buildPdf(bets){
     heads.forEach((h, i) => cmds.push("1 0 0 1 " + cols[i] + " 728 Tm (" + h + ") Tj"));
     cmds.push("ET", "0.84 1 0.82 rg", "BT", "/F1 7 Tf");
     if (!sorted.length && pageIndex === 0) cmds.push("1 0 0 1 28 708 Tm (No slips yet.) Tj");
-    chunk.forEach((b, i) => {
-      const y = 708 - i * 11;
-      const cells = [b.date, b.book, b.sport, b.type, b.pick, b.odds, Number(b.stake).toFixed(2), b.result, b.result === "pending" ? "-" : money(profit(b)), b.notes || ""];
-      cells.forEach((c, n) => cmds.push("1 0 0 1 " + cols[n] + " " + y + " Tm (" + pdfEscape(c).slice(0, n === 4 ? 22 : 14) + ") Tj"));
+    let y = 708;
+    chunk.forEach(b => {
+      const pickLines = slipPickParts(b);
+      const cells = [b.date, b.book, b.sport, b.type, "", b.odds, Number(b.stake).toFixed(2), b.result, b.result === "pending" ? "-" : money(profit(b)), b.notes || ""];
+      cells.forEach((c, n) => {
+        if (n === 4) return;
+        const width = (cols[n + 1] || 604) - cols[n] - 6;
+        const max = Math.max(8, Math.floor(width / 3.6));
+        cmds.push("1 0 0 1 " + cols[n] + " " + y + " Tm (" + pdfEscape(c).slice(0, max) + ") Tj");
+      });
+      const pickMax = Math.max(8, Math.floor((cols[5] - cols[4] - 6) / 3.6));
+      pickLines.forEach((line, n) => cmds.push("1 0 0 1 " + cols[4] + " " + (y - n * 11) + " Tm (" + pdfEscape(line).slice(0, pickMax) + ") Tj"));
+      y -= Math.max(1, pickLines.length) * 11;
     });
     cmds.push("ET");
     cmds.push("0.56 0.72 0.60 rg", "BT", "/F1 7 Tf", "1 0 0 1 28 24 Tm (Gnarly Gorilla Sportsbooks  |  page " + (pageIndex + 1) + "  |  not a sportsbook login) Tj", "ET");
@@ -8272,13 +8325,16 @@ function zipStore(files){
 function xmlEsc(s){ return String(s == null ? "" : s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
 function buildSheet(bets){
   const rows = [["Date","Book","Sport","Type","Pick","Odds","Stake","Result","Profit","Notes","Placed","Sharp CLV","Beat Close"]];
+  const heights = [15];
   bets.slice().sort((a,b) => a.date.localeCompare(b.date)).forEach(b => {
     const cv = sharpClv(b);
     const beat = clv(b);
-    rows.push([b.date, b.book, b.sport, b.type, b.pick, b.odds, b.stake, b.result, b.result === "pending" ? "" : profit(b).toFixed(2), b.notes || "", b.placed ? formatTime(b.placed, false) : "No Time Saved", sharpLabel(cv, b), beat == null ? "" : (beat > 0.05 ? "Beat" : "Missed")]);
+    const pickLines = slipPickParts(b);
+    rows.push([b.date, b.book, b.sport, b.type, pickLines.join("\n"), b.odds, b.stake, b.result, b.result === "pending" ? "" : profit(b).toFixed(2), b.notes || "", b.placed ? formatTime(b.placed, false) : "No Time Saved", sharpLabel(cv, b), beat == null ? "" : (beat > 0.05 ? "Beat" : "Missed")]);
+    heights.push(Math.max(15, pickLines.length * 15));
   });
-  const sheet = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0" zoomScale="100"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><sheetFormatPr defaultRowHeight="12"/><cols><col min="1" max="1" width="12"/><col min="2" max="4" width="12"/><col min="5" max="5" width="22"/><col min="6" max="10" width="12"/></cols><sheetData>' + rows.map((r,i) => "<row r=\"" + (i+1) + "\" ht=\"12\" customHeight=\"1\">" + r.map((c,j) => "<c r=\"" + String.fromCharCode(65+j) + (i+1) + "\" t=\"inlineStr\" s=\"" + (i === 0 ? 2 : 1) + "\"><is><t>" + xmlEsc(c) + "</t></is></c>").join("") + "</row>").join("") + "</sheetData></worksheet>";
-  const styles = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="3"><font><sz val="8"/><name val="Calibri"/></font><font><sz val="8"/><color rgb="FFD6FFD0"/><name val="Calibri"/></font><font><b/><sz val="8"/><color rgb="FF39FF14"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF102010"/></patternFill></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="3"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/><xf numFmtId="0" fontId="2" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/></cellXfs></styleSheet>';
+  const sheet = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0" zoomScale="100"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><sheetFormatPr defaultRowHeight="15"/><cols><col min="1" max="1" width="12"/><col min="2" max="4" width="12"/><col min="5" max="5" width="48"/><col min="6" max="13" width="14"/></cols><sheetData>' + rows.map((r,i) => "<row r=\"" + (i+1) + "\" ht=\"" + heights[i] + "\" customHeight=\"1\">" + r.map((c,j) => { const text = c == null ? "" : String(c); const wrap = text.indexOf("\n") >= 0; return "<c r=\"" + String.fromCharCode(65+j) + (i+1) + "\" t=\"inlineStr\" s=\"" + (i === 0 ? 2 : (wrap ? 3 : 1)) + "\"><is><t" + (wrap ? " xml:space=\"preserve\"" : "") + ">" + xmlEsc(text) + "</t></is></c>"; }).join("") + "</row>").join("") + "</sheetData></worksheet>";
+  const styles = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="3"><font><sz val="8"/><name val="Calibri"/></font><font><sz val="8"/><color rgb="FFD6FFD0"/><name val="Calibri"/></font><font><b/><sz val="8"/><color rgb="FF39FF14"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF102010"/></patternFill></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="4"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/><xf numFmtId="0" fontId="2" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1" applyAlignment="1"><alignment wrapText="1" vertical="top"/></xf></cellXfs></styleSheet>';
   return zipStore([
     {name:"[Content_Types].xml", data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>'},
     {name:"_rels/.rels", data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'},
