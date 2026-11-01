@@ -424,14 +424,14 @@ table.score-align .score-hold + .score-hold { margin-top:2px; }
 .score-row { display:flex; flex-wrap:nowrap; align-items:stretch; gap:8px; overflow-x:auto; overflow-y:hidden; scrollbar-width:none; flex:1 1 auto; width:auto; min-width:0; -webkit-overflow-scrolling:touch; }
 .score-full { flex:0 0 auto; align-self:center; color:#39ff14; font-weight:700; font-size:13px; line-height:1.2; text-decoration:none; text-align:center; border:1px solid #39ff14; border-radius:8px; padding:8px 10px; background:#0e0e0e; white-space:nowrap; }
 .score-row::-webkit-scrollbar { display:none; }
-.score-card { flex:0 0 272px; width:272px; min-height:160px; box-sizing:border-box; display:flex; flex-direction:column; border:1px solid #243024; border-radius:10px; background:#0e0e0e; padding:8px 10px; }
+.score-card { flex:0 0 272px; width:272px; min-height:160px; box-sizing:border-box; display:flex; flex-direction:column; border:0; border-radius:10px; background:#0e0e0e; padding:8px 10px; }
 .score-arrow { position:absolute; top:50%; transform:translateY(-50%); z-index:2; width:36px; height:56px; padding:0; display:flex; align-items:center; justify-content:center; border-radius:8px; background:rgba(10,10,10,.92); border:1px solid #39ff14; }
 .score-arrow[hidden] { display:none !important; }
 #seasonliveleft { left:0; }
 #seasonliveright { right:0; }
 .score-row .score-empty { flex:1 0 auto; margin:8px; }
-.score-card.live { border-color:#f0e14a; }
-.score-card.final { border-color:#39ff14; }
+.score-card.live { border:1px solid #f0e14a; }
+.score-card.final { border:1px solid #39ff14; }
 .score-top { display:flex; justify-content:space-between; align-items:center; gap:8px; font-size:12px; color:#8fb898; margin-bottom:4px; }
 .score-card.live .score-state { color:#f0e14a; font-weight:700; }
 .score-card.final .score-state { color:#39ff14; font-weight:700; }
@@ -677,9 +677,9 @@ html[data-page="scoreboard"] main { min-width:0; }
 .full-status { display:flex; flex-wrap:wrap; gap:6px; margin:0 0 8px; }
 .full-status button.on { color:#39ff14; outline:1px solid #39ff14; }
 .full-games { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:8px; }
-.full-card { border:1px solid #243024; border-radius:10px; background:#0e0e0e; padding:10px 12px; min-width:0; }
-.full-card.live { border-color:#f0e14a; }
-.full-card.final { border-color:#39ff14; }
+.full-card { border:0; border-radius:10px; background:#0e0e0e; padding:10px 12px; min-width:0; width:100%; box-sizing:border-box; }
+.full-card.live { border:1px solid #f0e14a; }
+.full-card.final { border:1px solid #39ff14; }
 .full-card.live .score-state { color:#f0e14a; font-weight:700; }
 .full-card.final .score-state { color:#39ff14; font-weight:700; }
 .full-side { display:grid; grid-template-columns:32px minmax(0,1fr) auto auto; gap:8px; align-items:center; padding:4px 0; }
@@ -717,7 +717,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .game-final-tag { margin-right:6px; }
 .game-lines { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
 .game-lines h4 { margin:0 0 4px; color:#8fb898; font-size:12px; font-weight:600; }
-.mgm-card { display:grid; grid-template-columns:minmax(230px, max-content) minmax(0,1fr) max-content; align-items:center; column-gap:12px; width:100%; box-sizing:border-box; border:1px solid #243024; border-radius:8px; background:#0e0e0e; margin:6px 0; padding:8px 10px; }
+.mgm-card { display:grid; grid-template-columns:minmax(230px, max-content) minmax(0,1fr) max-content; align-items:center; column-gap:12px; width:100%; max-width:100%; box-sizing:border-box; border:0; border-radius:0; background:#0e0e0e; margin:6px 0; padding:8px 10px; }
 .mgm-card.no-close { grid-template-columns:minmax(210px, max-content) minmax(0,1fr) minmax(250px, 300px); align-items:start; }
 .sharp-shop { border:1px solid #39ff14; border-radius:8px; background:rgba(57,255,20,.08); padding:8px 10px; min-width:0; }
 .sharp-shop h3 { margin:0 0 6px; color:#39ff14; font-size:13px; letter-spacing:.04em; }
@@ -737,7 +737,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .market-stack { width:100%; margin:0; }
 .market-board th, .market-board td { padding:3px 5px; text-align:left; color:#d6ffd0; border-bottom:1px solid #1f3a1f; background:transparent; white-space:nowrap; font-size:11px; }
 .market-board th { color:#8fb898; font-weight:700; }
-.market-notes { border:1px solid #243024; border-radius:8px; background:#101610; padding:8px 10px; box-sizing:border-box; width:100%; }
+.market-notes { border:0; border-radius:0; background:transparent; padding:8px 0 0; box-sizing:border-box; width:100%; }
 .market-notes .market-note { margin:0 0 6px; color:#d6ffd0; font-size:12px; line-height:1.4; white-space:normal; text-align:left; }
 .market-notes .market-note:last-child { margin-bottom:0; }
 .team-read { position:relative; overflow:hidden; display:grid; grid-template-columns:1fr 1fr; gap:0; width:100%; box-sizing:border-box; margin:8px 0 0; border:1px solid #39ff14; border-radius:10px; padding:0; background:rgba(57,255,20,.06); }
