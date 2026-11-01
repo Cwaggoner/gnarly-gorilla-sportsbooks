@@ -255,7 +255,7 @@ th.th-center { text-align:center; }
 #betload button { width:100%; }
 #betload img { width:100%; max-width:160px; height:auto; flex:1 1 auto; object-fit:contain; border:1px solid var(--line); border-radius:8px; padding:8px; box-sizing:border-box; background:#0e0e0e; cursor:pointer; }
 #betnotes { display:flex; flex-direction:column; justify-content:center; gap:8px; min-height:120px; }
-#sgpbox { position:fixed; right:12px; bottom:12px; display:flex; flex-direction:column; gap:8px; width:min(580px, calc(100vw - 24px)); max-height:calc(100vh - var(--pin, 96px) - 16px); overflow:auto; z-index:40; grid-column:auto; background:#141414; border:1px solid #39ff14; border-radius:10px; padding:10px; box-shadow:0 10px 28px rgba(0,0,0,.7); }
+#sgpbox { position:fixed; right:12px; bottom:12px; display:flex; flex-direction:column; gap:8px; width:min(680px, calc(100vw - 24px)); max-height:calc(100vh - var(--pin, 96px) - 16px); overflow:auto; z-index:40; grid-column:auto; background:#141414; border:1px solid #39ff14; border-radius:10px; padding:10px; box-shadow:0 10px 28px rgba(0,0,0,.7); }
 #sgpbox h3 { display:flex; align-items:center; gap:8px; margin:0; color:#39ff14; font-size:16px; text-align:left; cursor:grab; touch-action:none; user-select:none; }
 #sgpbox.dragging h3 { cursor:grabbing; }
 #slipdock { margin-left:auto; height:28px; padding:2px 8px; }
@@ -275,7 +275,7 @@ th.th-center { text-align:center; }
 .slip-row { display:flex; justify-content:space-between; gap:8px; align-items:center; border:1px solid #243024; border-radius:8px; padding:6px 8px; color:#d6ffd0; text-align:left; }
 .slip-row.edge { color:#f0e14a; }
 .slip-bet { flex:1 1 auto; min-width:0; }
-.slip-type-box, .slip-book-box { flex:0 0 auto; box-sizing:border-box; height:28px; display:inline-flex; align-items:center; border:1px solid var(--gray); border-radius:8px; padding:0 8px; color:#39ff14; font:700 15px/1.2 system-ui,sans-serif; background:#0e0e0e; white-space:nowrap; }
+.slip-sport-box, .slip-type-box, .slip-book-box { flex:0 0 auto; box-sizing:border-box; height:28px; display:inline-flex; align-items:center; border:1px solid var(--gray); border-radius:8px; padding:0 8px; color:#39ff14; font:700 15px/1.2 system-ui,sans-serif; background:#0e0e0e; white-space:nowrap; }
 .slip-book-box.best-price { color:#ff00ff; border-color:#ff00ff; }
 .slip-row button { box-sizing:border-box; height:28px; padding:0 8px; font-size:15px; line-height:1.2; }
 .slip-actions { display:flex; gap:8px; flex-wrap:wrap; }
@@ -6144,7 +6144,7 @@ function paintSlip(){
   const winEl = document.getElementById("slipwin");
   const picked = slipTicket();
   if (legs) {
-    legs.innerHTML = betSlip.length ? betSlip.map((p, i) => "<div class='slip-row" + (p.edge ? " edge" : "") + "'><span class='slip-book-box" + (p.best ? " best-price" : "") + "'>" + esc(knownBook(p.book) || p.book || "—") + "</span><span class='slip-type-box'>" + esc(p.type || "Spread") + "</span><span class='slip-bet'>" + esc((p.sport ? p.sport + " " : "") + p.pick + " " + (p.odds > 0 ? "+" : "") + p.odds) + "</span><button type='button' class='slip-x' data-i='" + i + "'>Remove</button></div>").join("") : "<p class='warn'>The slip is empty.</p>";
+    legs.innerHTML = betSlip.length ? betSlip.map((p, i) => "<div class='slip-row" + (p.edge ? " edge" : "") + "'><span class='slip-sport-box'>" + esc(p.sport || "—") + "</span><span class='slip-book-box" + (p.best ? " best-price" : "") + "'>" + esc(knownBook(p.book) || p.book || "—") + "</span><span class='slip-type-box'>" + esc(p.type || "Spread") + "</span><span class='slip-bet'>" + esc(p.pick + " " + (p.odds > 0 ? "+" : "") + p.odds) + "</span><button type='button' class='slip-x' data-i='" + i + "'>Remove</button></div>").join("") : "<p class='warn'>The slip is empty.</p>";
   }
   const math = slipMath(picked);
   const mode = slipMode();
