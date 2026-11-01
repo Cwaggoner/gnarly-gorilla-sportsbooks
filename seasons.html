@@ -8029,8 +8029,10 @@ paintLawWarn();
 function blockStatePage(name){
   window.__stateBlocked = true;
   const state = String(name || "Unknown");
+  const names = Object.keys(stateRules).filter(key => stateRules[key] && stateRules[key].status === "not-legal");
+  const list = (names.length ? names : ["Alabama","Alaska","California","Georgia","Hawaii","Idaho","Minnesota","Oklahoma","South Carolina","Texas","Utah"]).map(key => "<li>" + esc(key) + "</li>").join("");
   document.title = "Blocked | Gnarly Gorilla Sportsbooks";
-  document.body.innerHTML = "<div class='page' style='min-height:100vh;display:flex;align-items:center;justify-content:center'><section class='card' style='max-width:640px;width:100%;margin:0 auto;padding:28px;text-align:center'><img src='gg-icon.png' alt='Gnarly Gorilla' width='72' height='72' style='width:72px;height:72px;border-radius:12px;border:1px solid #39ff14'><h1 style='margin:16px 0 10px;color:#39ff14;font-size:22px;line-height:1.2;letter-spacing:.04em'>This website has blocked your State</h1><p style='margin:0;color:#d6ffd0;font-size:18px;line-height:1.3;font-weight:700'>" + esc(state) + "</p></section></div>";
+  document.body.innerHTML = "<div class='page' style='min-height:100vh;display:flex;align-items:center;justify-content:center'><section class='card' style='max-width:640px;width:100%;margin:0 auto;padding:28px;text-align:center'><img src='gg-icon.png' alt='Gnarly Gorilla' width='72' height='72' style='width:72px;height:72px;border-radius:12px;border:1px solid #39ff14'><h1 style='margin:16px 0 10px;color:#39ff14;font-size:22px;line-height:1.2;letter-spacing:.04em'>This website has blocked your State</h1><p style='margin:0;color:#d6ffd0;font-size:18px;line-height:1.3;font-weight:700'>" + esc(state) + "</p><ul style='list-style:none;margin:16px 0 0;padding:0;color:#d6ffd0;font-size:15px;line-height:1.5'>" + list + "</ul></section></div>";
 }
 function stateName(raw){
   const text = String(raw || "").trim();
