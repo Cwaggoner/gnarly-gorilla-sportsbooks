@@ -3807,7 +3807,7 @@ function showSeasons(checked){
   wave += " H448";
   const ekg = "<span class='ekg' style='--draw:" + pulse + "'><svg viewBox='0 0 448 36' preserveAspectRatio='none' aria-label='Season pulse'><path class='trace " + tone + "' d='" + wave + "'></path></svg><span class='ekg-cover'></span></span>";
   const live = "<div id='seasonlive'><div class='section-head'><h2>Live Scores</h2></div><div class='align-frame'><table class='score-align'><tbody><tr><td><div class='sport-bar' id='seasonlivesports'><button type='button' data-sport='All' class='on'>All</button>" + ["CBB","CFB","MLB","NBA","NFL","NHL"].map(code => leagueBtn(code)).join("") + "<a class='score-full' id='scorefull' href='index.html?page=scoreboard'>Full Scoreboard</a><span class='score-day'><button type='button' id='seasonliveprev'>Prev</button><b id='seasonliveday'></b><button type='button' id='seasonlivenext'>Next</button><button type='button' id='seasonlivetoday'>Today</button></span></div></td></tr></tbody></table></div><div class='score-strip'><button type='button' class='score-arrow' id='seasonliveleft' aria-label='Scroll scores left'><svg viewBox='0 0 24 24' width='22' height='22' aria-hidden='true'><path d='M15 5 L8 12 L15 19' fill='none' stroke='#39ff14' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/></svg></button><div class='score-row' id='seasonliverow'></div><button type='button' class='score-arrow' id='seasonliveright' aria-label='Scroll scores right'><svg viewBox='0 0 24 24' width='22' height='22' aria-hidden='true'><path d='M9 5 L16 12 L9 19' fill='none' stroke='#39ff14' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/></svg></button></div></div>";
-  const records = "<div class='card-rest' id='seasonrecords'><div class='section-head'><h2>Win/Loss Records</h2></div><div class='align-frame'><div class='tools'><label>Sport<select id='recsport'></select></label><label>Conference<select id='recconf'></select></label><label>Division<select id='recdiv'></select></label></div><div class='score-copy'><p class='warn slips-side' id='recnote'>Loading standings.</p><div class='score-notes' id='seasonlivenote'><p class='warn score-line'>Loading the board.</p></div><div id='seasonlivenotes'></div></div></div><div class='table-wrap'><table><thead><tr><th>Team</th><th>Sport</th><th>Conference</th><th>Division</th><th>W</th><th>L</th><th>T/OTL</th><th>PCT</th><th>GB</th><th>Streak</th></tr></thead><tbody id='recrows'></tbody></table></div></div>";
+  const records = "<div class='card-rest' id='seasonrecords'><div class='section-head'><h2>Win/Loss Records</h2></div><div class='align-frame'><div class='tools'><label>Sport<select id='recsport'></select></label><label>Conference<select id='recconf'></select></label><label>Division<select id='recdiv'></select></label></div><div class='score-copy'><p class='warn slips-side' id='recnote'>Loading standings.</p><div class='score-notes' id='seasonlivenote'><p class='warn score-line'>Loading the board.</p></div><div id='seasonlivenotes'></div></div></div><div class='table-wrap'><table><thead><tr><th>Team</th><th>Sport</th><th>Division/Conference Rank</th><th>Conference</th><th>Division</th><th>W</th><th>L</th><th>T/OTL</th><th>PCT</th><th>GB</th><th>Streak</th></tr></thead><tbody id='recrows'></tbody></table></div></div>";
   const trivia = "<div class='card-rest' id='seasontrivia'><b>Daily Sports Trivia</b><p class='warn'>A new question at midnight. The same question stays up all day.</p><p data-q>Loading today's question.</p><button type='button' id='triviareveal'>Show answer</button><p data-a class='warn' hidden></p></div>";
   const checkedBit = seasonChecked ? "Checked " + esc(seasonChecked) + ". " : "";
   box.innerHTML = live + "<div class='section-head'><h2>Season Dates</h2></div><div class='align-frame'><table class='score-align'><tbody><tr><td></td><td class='score-copy'><p class='warn slips-side'>" + checkedBit + "NFL May, NHL July, MLB July, NBA August, CFB August, CBB September. Postseason nights stay open until the last game ends or " + zoneTime(4, 0) + ". NBA and NHL through June 30, MLB through the World Series, NFL through the Super Bowl, CFB through the championship, March Madness March 13 through the title game.</p></td></tr></tbody></table></div><table><thead><tr><th colspan='6' class='th-center'>" + ekg + "</th></tr><tr><th>Sport</th><th>Start</th><th>Last Card</th><th>Status</th><th>Where</th><th>Days Left</th></tr></thead><tbody>" + rows + "</tbody></table>" + records + trivia;
@@ -3876,6 +3876,32 @@ function capAbbr(text){
   if (!s || s === "—") return s || "—";
   if (!/\s/.test(s) && /^[A-Za-z0-9]{2,8}$/.test(s)) return s.toUpperCase();
   return s.replace(/\b(East|West|North|South)\b/g, w => w.toUpperCase());
+}
+function applyStandRanks(rows){
+  const buckets = {};
+  const add = (key, row) => { (buckets[key] = buckets[key] || []).push(row); };
+  (rows || []).forEach(row => {
+    row.confRank = "";
+    row.divRank = "";
+    if (row.conference && row.conference !== "—") add("c|" + row.sport + "|" + row.conference, row);
+    if (row.division && row.division !== "—" && row.division !== row.conference) add("d|" + row.sport + "|" + row.conference + "|" + row.division, row);
+  });
+  Object.keys(buckets).forEach(key => {
+    const ordered = buckets[key].slice().sort((a, b) => (b.w - a.w) || (a.l - b.l) || (a.t - b.t) || a.team.localeCompare(b.team));
+    let rank = 0, prev = "";
+    ordered.forEach((row, i) => {
+      const mark = row.w + "-" + row.l + "-" + row.t;
+      if (mark !== prev) { rank = i + 1; prev = mark; }
+      if (key.indexOf("c|") === 0) row.confRank = rank;
+      else row.divRank = rank;
+    });
+  });
+}
+function rankText(row){
+  const bits = [];
+  if (row && row.divRank) bits.push("Div " + row.divRank);
+  if (row && row.confRank) bits.push("Conf " + row.confRank);
+  return bits.join(" · ") || "—";
 }
 function standLabel(node, short){
   const abbr = String(node && node.abbreviation || "").trim();
@@ -3971,10 +3997,10 @@ function paintRecords(){
     let head = "";
     if (key !== last) {
       last = key;
-      head = "<tr class='sport'><td colspan='10'>" + esc(r.sport + " · " + r.conference + (r.division && r.division !== "—" ? " · " + r.division : "")) + "</td></tr>";
+      head = "<tr class='sport'><td colspan='11'>" + esc(r.sport + " · " + r.conference + (r.division && r.division !== "—" ? " · " + r.division : "")) + "</td></tr>";
     }
-    return head + "<tr><td>" + esc(r.team) + "</td><td>" + esc(r.sport) + "</td><td>" + esc(r.conference) + "</td><td>" + esc(r.division) + "</td><td>" + r.w + "</td><td>" + r.l + "</td><td>" + r.t + "</td><td>" + esc(r.pct) + "</td><td>" + esc(r.gb) + "</td><td>" + esc(r.streak) + "</td></tr>";
-  }).join("") || "<tr><td colspan='10'>No teams for that filter.</td></tr>";
+    return head + "<tr><td>" + esc(r.team) + "</td><td>" + esc(r.sport) + "</td><td>" + esc(rankText(r)) + "</td><td>" + esc(r.conference) + "</td><td>" + esc(r.division) + "</td><td>" + r.w + "</td><td>" + r.l + "</td><td>" + r.t + "</td><td>" + esc(r.pct) + "</td><td>" + esc(r.gb) + "</td><td>" + esc(r.streak) + "</td></tr>";
+  }).join("") || "<tr><td colspan='11'>No teams for that filter.</td></tr>";
   if (!note) return;
   const quiet = ["CBB","CFB","MLB","NBA","NFL","NHL"].filter(s => SEASON_START[s] && easternDay() < SEASON_START[s] && recordRows.some(r => r.sport === s));
   note.textContent = "Board for " + recordsStamp() + ". It updates at 12:30 AM Eastern and stays up until the next 12:30 AM (" + formatTime(nextRecordAt(), false) + ")." + (quiet.length ? " " + quiet.join(", ") + " has not started. This is the last board posted." : "");
@@ -3996,6 +4022,7 @@ async function loadRecords(force){
   }
   if (!document.getElementById("seasonrecords")) return;
   recordRows = ((pack && pack.rows) || []).map(r => Object.assign({}, r, {conference: capAbbr(r.conference), division: capAbbr(r.division)}));
+  applyStandRanks(recordRows);
   recordMeta = (pack && pack.seasons) || {};
   paintRecords();
   const note = document.getElementById("recnote");
