@@ -8137,7 +8137,9 @@ document.getElementById("plot").onclick = () => {
     const plotted = chartSlips();
     const pending = slipsLeftToSettle(bets);
     const sports = [...new Set(plotted.map(b => String(b.sport || "").trim().toUpperCase()))].filter(Boolean);
-    note.textContent = (plotted.length ? plotted.length + " settled slips plotted." : "No settled slips yet.") + " " + pending + " slips left to settle. CLV checked for " + sports.join(", ") + "." + (filled ? " " + filled + " closes saved." : "");
+    const head = (plotted.length ? plotted.length + " settled slips plotted." : "No settled slips yet.") + " " + pending + " slips left to settle.";
+    const tail = "CLV checked for " + sports.join(", ") + "." + (filled ? " " + filled + " closes saved." : "");
+    note.innerHTML = esc(head) + "<br>" + esc(tail);
   }).catch(err => { note.textContent = err.message || "CLV update failed."; });
 };
 document.getElementById("clearbet").onclick = event => {
