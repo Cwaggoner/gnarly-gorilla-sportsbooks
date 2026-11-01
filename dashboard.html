@@ -8355,7 +8355,13 @@ document.getElementById("import").onchange = e => {
   };
   reader.readAsText(file);
 };
-document.getElementById("clear").onclick = () => { if (confirm("Delete every bet in this browser?")) save([]); };
+document.getElementById("clear").onclick = () => {
+  const bets = load();
+  const pending = bets.filter(b => b && b.result === "pending");
+  if (!pending.length) return;
+  if (!confirm("Remove the pending slips? Graded slips stay.")) return;
+  save(bets.filter(b => !b || b.result !== "pending"));
+};
 ["fSport","fBook","fType","fResult"].forEach(id => {
   const el = document.getElementById(id);
   const apply = () => { el.offsetHeight; requestAnimationFrame(render); if (id === "fBook") showBookIcon(el.value); };
