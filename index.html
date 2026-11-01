@@ -521,6 +521,9 @@ tr.row-pending.edge td.result { color:var(--amber); }
 #rows td.slip-score { white-space:nowrap; font-variant-numeric:tabular-nums; }
 #rows td.slip-score .wmark { color:#39ff14; font-weight:700; margin-left:4px; }
 #rows td.slip-score .slip-q { color:#f0e14a; font-weight:700; margin-left:6px; }
+#rows td.slip-pick { white-space:normal; }
+#rows .slip-legs { display:flex; flex-direction:column; align-items:flex-start; gap:2px; }
+#rows .slip-legs span { white-space:nowrap; }
 .tools { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; align-items:flex-end; }
 .jump { display:flex; gap:6px; margin:6px 0; justify-content:center; align-items:center; }
 .jump button { padding:4px 8px; font-size:12px; }
@@ -4429,7 +4432,13 @@ function gradeNote(b){
   if (result === "win") return line ? "Covered " + line : "Covered";
   return line ? "Missed " + line : "Missed";
 }
-function render(){
+function slipPickHtml(b){
+  const pick = String(b && b.pick || "");
+  if (!b || b.type !== "SGP") return esc(pick);
+  const legs = pick.split(/\s+and\s+/i);
+  if (legs.length < 3) return esc(pick);
+  return "<span class='slip-legs'><span>" + esc(legs.slice(0, 2).join(" and ")) + "</span><span>" + esc(legs.slice(2).join(" and ")) + "</span></span>";
+}
   if (rendering) return;
   rendering = true;
   const dash = "—";
@@ -4561,7 +4570,7 @@ function render(){
     const rowCls = b.result === "win" ? "row-win" : b.result === "loss" ? "row-loss" : b.result === "pending" ? (edge ? "row-pending edge" : "row-pending") : (b.manual ? "manual" : b.fromCard ? "fromcard" : "");
     const liveCell = b.result === "pending" ? slipLiveCell(b) : {text: "—", band: ""};
     const confText = String(liveCell.text || "").replace(/^Confidence:\s*/i, "");
-    return head + "<tr" + (rowCls ? " class='" + rowCls + "'" : "") + "><td>" + b.date + placedText(b) + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td>" + esc(b.pick) + "</td><td class='slip-score'>" + slipScoreCell(b) + "</td><td>" + (b.priceText ? esc(b.priceText) : (usableClose(b.odds) ? b.odds : dash)) + "</td><td class='col-close'>" + (b.closeText ? esc(b.closeText) : (usableClose(b.close) ? b.close : dash)) + "</td><td class='" + (cv > 0 ? "win" : cv < 0 ? "loss" : "") + "'>" + clvText(b) + "</td><td class='" + sharpCls + "'>" + esc(sharpLabel(sharpCv, b)) + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='result " + cls + "'>" + b.result + "</td><td class='slip-conf " + String(liveCell.band || "").toLowerCase() + "'>" + esc(confText) + "</td><td class='" + cls + "'>" + moneyHtml(p) + "</td><td>" + grade + "</td></tr>";
+    return head + "<tr" + (rowCls ? " class='" + rowCls + "'" : "") + "><td>" + b.date + placedText(b) + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td class='slip-pick'>" + slipPickHtml(b) + "</td><td class='slip-score'>" + slipScoreCell(b) + "</td><td>" + (b.priceText ? esc(b.priceText) : (usableClose(b.odds) ? b.odds : dash)) + "</td><td class='col-close'>" + (b.closeText ? esc(b.closeText) : (usableClose(b.close) ? b.close : dash)) + "</td><td class='" + (cv > 0 ? "win" : cv < 0 ? "loss" : "") + "'>" + clvText(b) + "</td><td class='" + sharpCls + "'>" + esc(sharpLabel(sharpCv, b)) + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='result " + cls + "'>" + b.result + "</td><td class='slip-conf " + String(liveCell.band || "").toLowerCase() + "'>" + esc(confText) + "</td><td class='" + cls + "'>" + moneyHtml(p) + "</td><td>" + grade + "</td></tr>";
     } catch (err) { return ""; }
   }).join("") || "<tr><td colspan='15'>" + ((document.getElementById("fBook") || {}).value ? "No slips for " + esc(document.getElementById("fBook").value) + "." : "No bets yet.") + "</td></tr>";
   } finally {
