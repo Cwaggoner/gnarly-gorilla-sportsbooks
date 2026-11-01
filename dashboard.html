@@ -4691,94 +4691,6 @@ function shopSides(cell){
   if (sides.some(s => !s)) return null;
   return sides;
 }
-function shopFair(price, opp){
-  const other = usableClose(opp) ? opp : holdOpp(price);
-  const fair = fairProb(price, other);
-  return fair > 0 ? fair : 0;
-}
-function shopPoint(market, point){
-  if (!Number.isFinite(point)) return "";
-  if (market === "totals") return String(point);
-  return (point > 0 ? "+" : "") + point;
-}
-function shopAdd(row, market, day, index, book, price, point, split){
-  if (!book || !usableClose(price)) return "<td class='add-col'></td>";
-  const data = {sport: row.sport || "", game: row.label || "", market: market, book: book, price: String(price), point: point == null ? "" : String(point), side: String(index), date: day || "", split: split ? "1" : "0"};
-  const attrs = Object.keys(data).map(key => " data-" + key + "='" + encodeURIComponent(data[key]) + "'").join("");
-  return "<td class='add-col'><button type='button' class='add-price'" + attrs + ">Add</button></td>";
-}
-function bestPriceHtml(rows, market, day){
-  const books = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
-  const list = (rows || []).slice().sort((a, b) => sportRank(a.sport) - sportRank(b.sport) || String(a.label || "").localeCompare(String(b.label || "")));
-  const body = list.map(row => [0, 1].map(index => {
-    const posted = books.map(name => {
-      const sides = shopSides(row.books && row.books[name]);
-      return sides ? {name: name, side: sides[index], opp: sides[1 - index]} : null;
-    }).filter(Boolean);
-    const sideWord = market === "totals" ? (index === 0 ? "Over" : "Under") : (index === 0 ? "Away" : "Home");
-    const game = esc((row.sport ? row.sport + " " : "") + (row.label || ""));
-    if (!posted.length) return "<tr class='shop-row'><td>" + game + "</td><td>" + sideWord + "</td><td>-</td><td>-</td><td>-</td><td class='add-col'></td></tr>";
-    const keys = [...new Set(posted.map(x => x.side.point == null ? "" : String(x.side.point)))];
-    if (keys.length > 1) {
-      const split = [];
-      keys.forEach(key => {
-        const group = posted.filter(x => (x.side.point == null ? "" : String(x.side.point)) === key);
-        const label = key === "" ? "ML" : shopPoint(market, group[0].side.point);
-        split.push(label + " " + group.map(x => x.name).join(", "));
-      });
-      const mgmSide = (posted.find(x => x.name === "BetMGM") || {}).side;
-      return "<tr class='shop-row'><td>" + game + "</td><td>" + sideWord + "</td><td>" + esc(mgmSide ? mgmSide.text : "-") + "</td><td>" + esc(split.join(" · ")) + "</td><td class='warn'>Number split</td>" + shopAdd(row, market, day, index, mgmSide ? "BetMGM" : "", mgmSide && mgmSide.price, mgmSide && mgmSide.point, true) + "</tr>";
-    }
-    const mgm = posted.find(x => x.name === "BetMGM");
-    const others = posted.filter(x => x.name !== "BetMGM").sort((a, b) => b.side.price - a.side.price || books.indexOf(a.name) - books.indexOf(b.name));
-    const point = posted[0].side.point;
-    const side = sideWord + (point == null ? "" : " " + shopPoint(market, point));
-    const mgmCell = mgm ? esc(mgm.side.text) : "-";
-    if (!mgm || !others.length) {
-      const only = mgm || others[0];
-      return "<tr class='shop-row'><td>" + game + "</td><td>" + esc(side) + "</td><td>" + mgmCell + "</td><td>" + esc(only.name + " " + (only.side.price > 0 ? "+" : "") + only.side.price) + "</td><td>-</td>" + shopAdd(row, market, day, index, only.name, only.side.price, only.side.point, false) + "</tr>";
-    }
-    const best = others[0];
-    const fairBest = shopFair(best.side.price, best.opp.price);
-    const fairMgm = shopFair(mgm.side.price, mgm.opp.price);
-    if (!fairBest || !fairMgm) return "<tr class='shop-row'><td>" + game + "</td><td>" + esc(side) + "</td><td>" + mgmCell + "</td><td>" + esc(best.name + " " + (best.side.price > 0 ? "+" : "") + best.side.price) + "</td><td>-</td>" + shopAdd(row, market, day, index, best.name, best.side.price, best.side.point, false) + "</tr>";
-    const gap = (fairBest - fairMgm) * 100;
-    const winner = mgm.side.price > best.side.price || (mgm.side.price === best.side.price && fairMgm <= fairBest) ? mgm : best;
-    const bestCell = esc(winner.name + " " + (winner.side.price > 0 ? "+" : "") + winner.side.price);
-    const matched = Math.abs(gap) < 0.05;
-    const gapCell = matched ? "Matched" : (gap > 0 ? "+" : "") + gap.toFixed(1) + "%";
-    const cls = "shop-row" + (!matched && gap < 0 ? " edge" : "");
-    const gapHtml = matched ? "Matched" : "<span class='" + (gap > 0 ? "win" : "") + "'>" + gapCell + "</span>";
-    return "<tr class='" + cls + "'><td>" + game + "</td><td>" + esc(side) + "</td><td>" + mgmCell + "</td><td>" + bestCell + "</td><td>" + gapHtml + "</td>" + shopAdd(row, market, day, index, winner.name, winner.side.price, winner.side.point, false) + "</tr>";
-  }).join("")).join("");
-  const note = "Updated " + boardWhen() + ". Add uses the best same number. A minus gap means BetMGM is short.";
-  return "<h2 class='split-title'>Best Price</h2><p class='api-note'>" + note + "</p><table class='compare shop'><thead><tr><th>Game</th><th>Side</th><th>BetMGM</th><th>Best Same Number</th><th>No-Vig Gap</th><th class='add-col'>Add</th></tr></thead><tbody>" + (body || "<tr class='shop-row'><td colspan='6'>No posted prices for this market.</td></tr>") + "</tbody></table>";
-}
-function paintBookCell(cell, hot, row, market, day, book){
-  const text = String(cell || "").trim();
-  if (!text || text === "-") return "-";
-  const sides = shopSides(text);
-  if (!sides || !row) return esc(text);
-  const parts = String(row.label || "").split(/\s+at\s+/i);
-  const nick = s => String(s || "").trim().split(/\s+/).slice(-1)[0] || "";
-  const away = nick(parts[0]);
-  const home = nick(parts[1]);
-  const sharedPoint = sides[0] && sides[0].point;
-  return sides.map((side, index) => {
-    if (!side) return "-";
-    const point = side.point == null && market === "totals" ? sharedPoint : side.point;
-    const data = {sport: row.sport || "", game: row.label || "", market: market || "h2h", book: book || "", price: String(side.price), point: point == null ? "" : String(point), side: String(index), date: day || ""};
-    const attrs = Object.keys(data).map(key => " data-" + key + "='" + encodeURIComponent(String(data[key])) + "'").join("");
-    const cls = hot && hot[index] ? "board-price best-price" : "board-price";
-    const priceText = (side.price > 0 ? "+" : "") + side.price;
-    const who = index === 1 ? home : away;
-    let label = side.text;
-    if (market === "totals" && point != null) label = (index === 0 ? "Over " : "Under ") + point + " " + priceText;
-    else if (market === "spreads" && point != null) label = (who ? who + " " : "") + (point > 0 ? "+" : "") + point + " " + priceText;
-    else if (who) label = who + " " + priceText;
-    return "<button type='button' class='" + cls + "'" + attrs + ">" + esc(label) + "</button>";
-  }).join("");
-}
 function bestPriceFlags(booksMap, bookNames){
   const hot = {};
   bookNames.forEach(name => { hot[name] = [false, false]; });
@@ -4831,23 +4743,6 @@ function oddsBullets(parts){
     if (text) items.push(/[.!?]$/.test(text) ? text : text + ".");
   }));
   return "<ul class='odds-notes'>" + items.map(text => "<li>" + text + "</li>").join("") + "</ul>";
-}
-function boardWhen(){
-  const raw = (window.__ggOddsBoard && window.__ggOddsBoard.updated) || "";
-  const when = raw && formatTime(raw, false);
-  return when || zoneTime(4, 0);
-}
-function oddsTableHtml(rows, day, market, lead){
-  if (!rows || !rows.length) return "";
-  const books = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
-  const label = market === "spreads" ? "Spread, away / home" : market === "totals" ? "Total, over point and price / under price" : "Moneyline, away / home";
-  const head = "<th>Game</th><th class='timecol'>Time</th>" + books.map(b => "<th>" + b + "</th>").join("");
-  const body = rows.map(r => {
-    const flags = bestPriceFlags(r.books, books);
-    return "<tr><td>" + esc(r.sport + " " + r.label) + "</td><td class='gametime' data-start='" + esc(r.start || "") + "'>" + esc(r.start ? formatTime(r.start, false) : "") + "</td>" + books.map(b => "<td class='price-cell'>" + paintBookCell(r.books && r.books[b], flags[b], r, market, day, b) + "</td>").join("") + "</tr>";
-  }).join("");
-  const line = lead || ((day === easternDay() ? "Today" : "Yesterday") + ". " + label + ". Updated " + boardWhen() + ". Tap a price to add it. Magenta is the best number.");
-  return "<p class='warn'>" + line + "</p><h2 class='split-title'>Live Odds Comparison</h2><table class='compare'><thead><tr class='cols'>" + head + "</tr></thead><tbody>" + body + "</tbody></table>" + bestPriceHtml(rows, market, day);
 }
 function usableBoard(data){
   if (!data || !data.days || typeof data.days !== "object") return false;
@@ -5255,49 +5150,6 @@ function absorbLiveBoard(live){
   window.__ggLiveMergedAt = live.at;
   if (window.__ggOddsBoard) rememberBoard(window.__ggOddsBoard);
 }
-const ODDS_START = {
-  "CFB Tulane at Memphis": "2026-10-16T23:30:00Z",
-  "CFB Washington at Purdue": "2026-10-17T00:00:00Z",
-  "CFB App State at Coastal Carolina": "2026-10-17T00:00:00Z",
-  "CFB Memphis vs Tulane": "2026-10-16T23:30:00Z",
-  "MLB Tampa Bay Rays at Cleveland Guardians": "2026-10-15T17:00:00Z",
-  "NBA Milwaukee Bucks at Indiana Pacers": "2026-10-16T23:00:00Z",
-  "NBA Toronto Raptors at Detroit Pistons": "2026-10-16T23:00:00Z",
-  "NBA Boston Celtics at Philadelphia 76ers": "2026-10-16T23:00:00Z",
-  "NBA Miami Heat at Orlando Magic": "2026-10-16T23:00:00Z",
-  "NBA Atlanta Hawks at Dallas Mavericks": "2026-10-17T00:00:00Z",
-  "NBA Sacramento Kings at San Antonio Spurs": "2026-10-17T00:00:00Z",
-  "NBA Charlotte Hornets at Memphis Grizzlies": "2026-10-17T00:00:00Z",
-  "NBA Washington Wizards at New Orleans Pelicans": "2026-10-17T00:00:00Z",
-  "NBA Minnesota Timberwolves at Chicago Bulls": "2026-10-17T00:00:00Z",
-  "NBA Portland Trail Blazers at Golden State Warriors": "2026-10-17T02:00:00Z",
-  "NBA Utah Jazz at Phoenix Suns": "2026-10-17T02:00:00Z",
-  "NBA Denver Nuggets at Los Angeles Lakers": "2026-10-17T02:30:00Z",
-  "NHL Pittsburgh Penguins at Colorado Avalanche": "2026-10-17T01:00:00Z"
-};
-function ensureOddsTimeColumn(){
-  const table = document.querySelector("#oddscompare table.compare");
-  if (!table) return;
-  const head = table.querySelector("thead tr.cols") || table.querySelector("thead tr");
-  if (head && !head.querySelector(".timecol")) {
-    const th = document.createElement("th");
-    th.className = "timecol";
-    th.textContent = "Time";
-    const game = head.querySelector("th");
-    if (game) game.insertAdjacentElement("afterend", th);
-  }
-  table.querySelectorAll("tbody tr").forEach(tr => {
-    if (tr.querySelector(".gametime")) return;
-    const game = tr.querySelector("td");
-    if (!game) return;
-    const td = document.createElement("td");
-    td.className = "gametime";
-    const start = ODDS_START[(game.textContent || "").trim()] || "";
-    if (start) td.dataset.start = start;
-    td.textContent = start ? formatTime(start, false) : "";
-    game.insertAdjacentElement("afterend", td);
-  });
-}
 function gameStarts(){
   try { return JSON.parse(localStorage.getItem("gg-game-starts") || "{}"); } catch (e) { return {}; }
 }
@@ -5347,20 +5199,6 @@ function applyGameStarts(){
   saveGameStarts(map);
 }
 function paintOddsTimes(){ applyGameStarts(); }
-function sortOddsRows(){
-  const tbody = document.querySelector("#oddscompare tbody");
-  if (!tbody) return;
-  [...tbody.querySelectorAll("tr")].sort((a, b) => {
-    const at = (a.querySelector("td") || {}).textContent || "";
-    const bt = (b.querySelector("td") || {}).textContent || "";
-    const sport = sportRank(at) - sportRank(bt);
-    if (sport) return sport;
-    const atime = ((a.querySelector(".gametime") || {}).dataset || {}).start || "";
-    const btime = ((b.querySelector(".gametime") || {}).dataset || {}).start || "";
-    if (atime !== btime) return atime < btime ? -1 : 1;
-    return at.localeCompare(bt);
-  }).forEach(row => tbody.appendChild(row));
-}
 function placeOddsTools(){
   const tools = document.getElementById("compareday");
   if (!tools || tools.closest("table.score-align")) return;
@@ -5387,15 +5225,6 @@ function parkOddsTools(){
   const box = document.getElementById("oddscompare");
   if (!tools || !card || !box || !box.contains(tools)) return;
   card.insertBefore(tools, box);
-}
-function filterCompare(){
-  const sport = (document.getElementById("comparesport") || {}).value || "All";
-  const rows = [...document.querySelectorAll("#oddscompare tbody tr")];
-  if (!rows.length) return;
-  if (!sport || sport === "All") { rows.forEach(r => { r.style.display = ""; }); return; }
-  const matches = rows.filter(r => ((r.querySelector("td") || {}).textContent || "").indexOf(sport) === 0);
-  if (!matches.length) { rows.forEach(r => { r.style.display = ""; }); return; }
-  rows.forEach(r => { r.style.display = matches.indexOf(r) >= 0 ? "" : "none"; });
 }
 function ensureSport(){
   if (document.getElementById("comparesport")) return;
@@ -6073,10 +5902,6 @@ function gameTeams(pick){
   const left = words(parts[0]);
   const right = words(parts[1]);
   return [left[left.length - 1], right[right.length - 1]].filter(Boolean);
-}
-function sgpGame(pick){
-  const teams = gameTeams(pick);
-  return teams.length ? teams.slice().sort().join("|") : String(pick || "").toLowerCase();
 }
 function decFromAmerican(price){
   price = Number(price);
@@ -8019,7 +7844,7 @@ function blockStatePage(name){
   document.title = "Blocked | Gnarly Gorilla Sportsbooks";
   document.body.innerHTML = "<div class='page' style='min-height:100vh;display:flex;align-items:center;justify-content:center'><section class='card' style='max-width:640px;width:100%;margin:0 auto;padding:28px;text-align:center'><img src='gg-icon.png' alt='Gnarly Gorilla' width='72' height='72' style='width:72px;height:72px;border-radius:12px;border:1px solid #39ff14'><h1 style='margin:16px 0 10px;color:#39ff14;font-size:22px;line-height:1.2;letter-spacing:.04em'>This website has blocked your State</h1><p style='margin:0;color:#d6ffd0;font-size:18px;line-height:1.3;font-weight:700'>" + esc(state) + "</p><ul style='list-style:none;margin:16px 0 0;padding:0;color:#d6ffd0;font-size:15px;line-height:1.5'>" + list + "</ul></section></div>";
 }
-function stateName(raw){
+function legalStateName(raw){
   const text = String(raw || "").trim();
   if (!text) return "";
   if (stateRules[text]) return text;
@@ -8027,7 +7852,7 @@ function stateName(raw){
   return hit || text;
 }
 function applyState(name){
-  const found = stateName(name);
+  const found = legalStateName(name);
   visitorState = found || "";
   const rule = stateRules[found];
   if (rule && rule.status === "not-legal") {
@@ -9816,9 +9641,6 @@ function armLiveExtras(games){
       if ((document.documentElement.dataset.page || "") === "liveodds" && (packs || keptInj)) drawOddsCompare(false).catch(() => {});
     }).finally(() => { liveExtraFlight = null; });
   });
-}
-function armInjuryFeeds(sports){
-  armLiveExtras((sports || []).map(sport => ({sport: sport, label: ""})));
 }
 function mgmGameCard(g, day, book, withClose){
   const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
