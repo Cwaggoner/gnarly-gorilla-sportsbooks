@@ -7276,11 +7276,14 @@ function gamesForSlip(games, b){
     return !sports.size || sports.has(code);
   });
 }
+function gradeLegText(leg){
+  return slipLegText(String(leg || "").replace(/^(?:parlay|sgp)\s+/i, ""));
+}
 function gradeFromScores(b, games){
   const type = betType(b);
   if (type === "Prop") return null;
   const legs = (type === "SGP" || type === "Parlay") ? String(b.pick).split(/\s+and\s+/i) : [b.pick];
-  const results = legs.map(leg => gradeLeg(leg, findFinalGame(games, leg)));
+  const results = legs.map(leg => gradeLeg(gradeLegText(leg), findFinalGame(games, leg)));
   if (results.some(r => !r || r === "live" || r === "postponed")) return results.find(r => r === "live" || r === "postponed") || null;
   if (results.some(r => r === "loss")) return "loss";
   if (results.some(r => r === "push")) return "push";
@@ -7344,7 +7347,7 @@ function applyFinalGrades(games){
     b.profit = Number.isFinite(made) ? Number(made.toFixed(2)) : 0;
     stampFileClose(b);
     graded++;
-    touched.add(day);
+    touched.add(String(b.date || "").slice(0, 10));
     return true;
   };
   bets.forEach(gradeOne);
@@ -10273,14 +10276,15 @@ function ensureSlipScores(){
   const live = have.some(g => g && g.live);
   const stale = Date.now() - (window.__slipGamesAt || 0) >= (live ? 15000 : 60000);
   const missing = sports.some(sport => dates.some(date => !have.some(g => g && g.sport === sport && String(g.date || "").slice(0, 10) === date)));
-  if (!missing && !stale) return;
+  if (!missing && !stale) { applyFinalGrades(have); return; }
   if (slipScoreFlight) return;
   slipScoreFlight = Promise.all(sports.flatMap(sport => dates.map(date => scoreboard(sport, date).catch(() => [])))).then(packs => {
     const games = packs.flat();
     if (games.length) {
       window.__slipGames = games;
       window.__slipGamesAt = Date.now();
-      if (!rendering) render();
+      const graded = applyFinalGrades(games);
+      if (!graded && !rendering) render();
     }
   }).catch(() => {}).finally(() => { slipScoreFlight = null; });
 }
