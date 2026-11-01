@@ -434,10 +434,10 @@ table.score-align .score-hold + .score-hold { margin-top:2px; }
 #liveodds .score-copy #oddslead li + li { margin-top:2px; }
 .score-strip { position:relative; display:flex; align-items:center; gap:8px; margin:var(--box-gap) 0; min-width:0; }
 .score-row { display:flex; flex-wrap:nowrap; align-items:stretch; gap:8px; overflow-x:auto; overflow-y:hidden; scrollbar-width:none; flex:1 1 auto; width:auto; min-width:0; -webkit-overflow-scrolling:touch; }
-.score-full { flex:0 0 auto; align-self:center; color:#39ff14; font-weight:700; font-size:13px; line-height:1.2; text-decoration:none; text-align:center; border:1px solid #39ff14; border-radius:8px; padding:8px 10px; background:#0e0e0e; white-space:nowrap; }
+.score-full { flex:0 0 auto; align-self:center; color:#39ff14; font-weight:700; font-size:13px; line-height:1.2; text-decoration:none; text-align:center; border:1px solid var(--gray); border-radius:8px; padding:8px 10px; background:#0e0e0e; white-space:nowrap; }
 .score-row::-webkit-scrollbar { display:none; }
 .score-card { flex:0 0 272px; width:272px; min-height:160px; box-sizing:border-box; display:flex; flex-direction:column; border:1px solid var(--gray); border-radius:10px; background:#0e0e0e; padding:8px 10px; }
-.score-arrow { position:absolute; top:50%; transform:translateY(-50%); z-index:2; width:36px; height:56px; padding:0; display:flex; align-items:center; justify-content:center; border-radius:8px; background:rgba(10,10,10,.92); border:1px solid #39ff14; }
+.score-arrow { position:absolute; top:50%; transform:translateY(-50%); z-index:2; width:36px; height:56px; padding:0; display:flex; align-items:center; justify-content:center; border-radius:8px; background:rgba(10,10,10,.92); border:1px solid var(--gray); }
 .score-arrow[hidden] { display:none !important; }
 #seasonliveleft { left:0; }
 #seasonliveright { right:0; }
@@ -474,7 +474,8 @@ table.season-hold.filled th { color:#39ff14; background:#102010; }
 #reportDay { color-scheme:dark; }
 #reportDay::-webkit-calendar-picker-indicator { filter:invert(1); opacity:1; cursor:pointer; }
 textarea { width:100%; min-height:120px; font:13px/1.4 ui-monospace, monospace; }
-button { cursor:pointer; color:var(--title); font-weight:700; }
+button { cursor:pointer; color:var(--title); font-weight:700; border-color:var(--gray); }
+button.on, a.on { border-color:#39ff14; }
 button.danger { color:var(--red); }
 button.amber { color:var(--amber); }
 table { width:100%; border-collapse:separate; border-spacing:0; margin:var(--box-gap) 0; border:1px solid #39ff14; border-radius:10px; overflow:hidden; }
