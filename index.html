@@ -6112,7 +6112,7 @@ function paintSlip(){
   }
   if (btn) {
     btn.disabled = !picked.length || (mode !== "single" && (picked.length < 2 || (mode === "sgp" && picked.length >= 2 && !math.same)));
-    btn.textContent = mode === "sgp" ? "Add SGP" : mode === "parlay" ? "Add Parlay" : "Add";
+    btn.textContent = "Add";
   }
   if (image) image.disabled = !picked.length;
   if (winEl) winEl.textContent = picked.length && Number.isFinite(math.win) ? "Wins $" + math.win.toFixed(2) : "";
