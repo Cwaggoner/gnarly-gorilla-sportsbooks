@@ -4535,8 +4535,14 @@ function render(){
     if (!had && b.realClose && usableClose(b.close) && stored.indexOf(b) >= 0) filledClose = true;
   });
   if (filledClose) localStorage.setItem(KEY, JSON.stringify(stored));
-  let unique = collapseSlips(all);
   let movedDate = false;
+  stored.forEach(b => {
+    if (!b) return;
+    if (/^multi$/i.test(b.sport || "")) b.sport = "MUL";
+    if (parkSlipOnGames(b, window.__slipGames || [])) movedDate = true;
+  });
+  if (movedDate) localStorage.setItem(KEY, JSON.stringify(stored));
+  let unique = collapseSlips(all);
   unique.forEach(b => {
     if (!b.id) b.id = [b.date, b.sport, b.pick].join("|");
     if (!b.book) b.book = "BetMGM";
@@ -4545,9 +4551,7 @@ function render(){
     if (!b.stake) b.stake = 10;
     const ticket = ticketOdds(b);
     if (ticket != null) b.odds = ticket;
-    if (stored.indexOf(b) >= 0 && parkSlipOnGames(b, window.__slipGames || [])) movedDate = true;
   });
-  if (movedDate) localStorage.setItem(KEY, JSON.stringify(stored));
   unique = dropMatchedPending(unique);
   const windowed = unique.filter(b => inSlipWindow(b.date));
   windowed.sort((a,b) => String(b.date).localeCompare(String(a.date)));
@@ -7287,7 +7291,8 @@ function gamesForSlip(games, b){
 function parkSlipOnGames(b, games){
   if (!b) return false;
   const type = betType(b);
-  if (type !== "Parlay" && String(b.sport || "").toUpperCase() !== "MUL") return false;
+  const sport = String(b.sport || "").toUpperCase();
+  if (type !== "Parlay" && sport !== "MUL") return false;
   const legs = String(b.pick || "").split(/\s+and\s+/i);
   const sports = new Set(slipSports(b));
   const pool = (games || []).filter(g => {
@@ -7301,9 +7306,11 @@ function parkSlipOnGames(b, games){
     const day = gameSlateDay(game);
     if (day && days.indexOf(day) < 0) days.push(day);
   });
-  if (days.length !== 1) return false;
-  if (String(b.date || "").slice(0, 10) === days[0]) return false;
-  b.date = days[0];
+  const had = String(b.date || "").slice(0, 10);
+  let next = days.length === 1 ? days[0] : "";
+  if (sport === "MUL" && had === "2026-11-01" && next !== "2026-11-01") next = next || "2026-10-31";
+  if (!next || next === had) return false;
+  b.date = next;
   return true;
 }
 function gradeLegText(leg){
