@@ -6076,16 +6076,8 @@ function rememberSlip(){
   try { sessionStorage.setItem("gg-bet-slip", JSON.stringify(betSlip)); } catch (e) {}
 }
 try { const savedSlip = JSON.parse(sessionStorage.getItem("gg-bet-slip") || "[]"); if (Array.isArray(savedSlip)) betSlip = savedSlip; } catch (e) {}
-function chosenSlipBook(){
-  if ((document.documentElement.dataset.page || "games") !== "games") return "";
-  const el = document.getElementById("gamebook");
-  return knownBook(el && el.value) || "BetMGM";
-}
 function addSlipLeg(leg){
   if (!leg || !leg.pick || !Number.isFinite(Number(leg.odds))) return;
-  const only = chosenSlipBook();
-  const book = knownBook(leg.book) || only;
-  if (only && book !== only) return;
   const box = document.getElementById("sgpbox");
   const dock = document.getElementById("slipdock");
   if (box) box.classList.remove("slip-min", "slip-closed");
@@ -6093,8 +6085,8 @@ function addSlipLeg(leg){
   const opener = document.getElementById("slipopen");
   if (opener) opener.hidden = true;
   try { sessionStorage.removeItem("gg-slip-closed"); } catch (e) {}
-  const key = [book, leg.sport, leg.pick, Number(leg.odds)].join("|");
-  if (!betSlip.some(row => [row.book || "", row.sport, row.pick, row.odds].join("|") === key)) betSlip.push({date: leg.date || easternDay(), sport: leg.sport || "", type: leg.type || "Spread", pick: leg.pick, odds: Number(leg.odds), book: book, edge: !!leg.edge, notes: leg.notes || "", game: leg.game || "", best: !!leg.best});
+  const key = [leg.book || "", leg.sport, leg.pick, Number(leg.odds)].join("|");
+  if (!betSlip.some(row => [row.book || "", row.sport, row.pick, row.odds].join("|") === key)) betSlip.push({date: leg.date || easternDay(), sport: leg.sport || "", type: leg.type || "Spread", pick: leg.pick, odds: Number(leg.odds), book: leg.book || "", edge: !!leg.edge, notes: leg.notes || "", game: leg.game || "", best: !!leg.best});
   rememberSlip();
   paintSlip();
 }
@@ -6143,11 +6135,6 @@ function slipMode(){
   return ((document.getElementById("slipmode") || {}).value) || "single";
 }
 function paintSlip(){
-  const only = chosenSlipBook();
-  if (only) {
-    const next = betSlip.filter(row => knownBook(row.book) === only);
-    if (next.length !== betSlip.length) { betSlip = next; rememberSlip(); }
-  }
   const legs = document.getElementById("sgplegs");
   const price = document.getElementById("sgpprice");
   const risk = document.getElementById("sgprisk");
@@ -9826,8 +9813,8 @@ function mgmGameCard(g, day, book, withClose){
     const text = books && books[name];
     return text && text !== "-";
   }));
-  const chosen = book ? [book] : postedBooks;
-  const sets = chosen.map(name => mgmSet(name, ["Spread", "Total", "Money"], [mgmOpen(g, "spreads", day, name, names), mgmOpen(g, "totals", day, name, names), mgmOpen(g, "h2h", day, name, names)], "book")).join("");
+  const ordered = postedBooks.filter(name => name === book).concat(postedBooks.filter(name => name !== book));
+  const sets = ordered.map(name => mgmSet(name, ["Spread", "Total", "Money"], [mgmOpen(g, "spreads", day, name, names), mgmOpen(g, "totals", day, name, names), mgmOpen(g, "h2h", day, name, names)], "book")).join("");
   const close = withClose ? mgmSet("Close", ["Spread", "Total", "Money"], [mgmClose(gameClosePack(g, day, book), "spreads"), mgmClose(gameClosePack(g, day, book), "totals"), mgmClose(gameClosePack(g, day, book), "h2h")], "close") : "";
   const tag = scored && scored.live && !scored.final ? (scored.detail || "Live") : (scored && scored.final ? "Final" : "");
   const dot = "<span class='" + (scored && scored.live && !scored.final ? "live-dot" : "status-dot" + (scored && scored.final ? " final" : "")) + "'></span>";
@@ -11228,10 +11215,6 @@ pinOffset();
 const gamebook = document.getElementById("gamebook");
 if (gamebook) gamebook.onchange = () => {
   if (form && form.book && [...form.book.options].some(o => o.value === gamebook.value)) form.book.value = gamebook.value;
-  const only = knownBook(gamebook.value) || "BetMGM";
-  betSlip = betSlip.filter(row => knownBook(row.book) === only);
-  rememberSlip();
-  paintSlip();
   drawGameBoard();
 };
 const gameRefresh = document.getElementById("gamerefresh");
