@@ -50,6 +50,7 @@
 </script>
 <style>
 :root { --bg:#0a0a0a; --card:#141414; --line:#243024; --title:#39ff14; --text:#d6ffd0; --gray:var(--line); --muted:#8fb898; --amber:#f0e14a; --red:#ff6b6b; --section:calc(15px * 1.4); --box-gap:12px; }
+@font-face { font-family:"Watch LCD"; src:url("fonts/dseg7-classic-bold.woff2") format("woff2"); font-weight:100 900; font-style:normal; font-display:swap; }
 * { box-sizing:border-box; }
 body { margin:0; background:var(--bg); color:var(--text); font:15px/1.4 system-ui, sans-serif; }
 header, .sitenav, footer.card { width:calc(100% - 28px); margin-left:auto; margin-right:auto; }
@@ -517,6 +518,20 @@ tr.type td { color:#d6ffd0; font-weight:700; background:#0e0e0e; padding-left:16
 tr.type td .type-row { display:flex; justify-content:flex-start; align-items:center; gap:12px; }
 tr.type td .type-count { font-weight:400; color:#8fb898; font-size:12px; }
 th { color:var(--title); background:#102010; }
+th,
+tr.sport td,
+#slipheadpin span,
+.card > h2,
+.section-head > h2,
+h2.split-title,
+h3.split-title,
+.sport-title h2,
+.sport-title b {
+  font-family:"Watch LCD", monospace;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+#rows tr.sport td { font-family:system-ui, sans-serif; text-transform:none; letter-spacing:0; }
 .win { color:var(--title); } .loss { color:var(--red); } .push, .warn { color:var(--amber); } .zero { color:#ffffff; font-style:italic; }
 tr.manual td { color:#00e5ff; }
 tr.fromcard td { color:#b0b0b0; }
