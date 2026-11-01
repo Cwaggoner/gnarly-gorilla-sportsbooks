@@ -1636,13 +1636,25 @@ function pendingLabel(row){
   return row.pending;
 }
 function publishedDashboard(only){
-  const slips = [];
-  (gradeFile || []).concat(load()).concat(loadGrade()).forEach(b => {
-    if (!b || !b.date || isNoPick(b) || (b.result !== "win" && b.result !== "loss" && b.result !== "push")) return;
-    if (slips.some(s => sameSlip(s, b) || sameGrade(s, b))) return;
-    const close = closeMap[b.date + "|" + b.pick];
-    slips.push(close ? Object.assign({}, b, {close}) : b);
-  });
+  let slips = hotPool && hotPool.dash;
+  if (!slips) {
+    slips = [];
+    const buckets = new Map();
+    (gradeFile || []).concat(load()).concat(loadGrade()).forEach(b => {
+      if (!b || !b.date || isNoPick(b) || (b.result !== "win" && b.result !== "loss" && b.result !== "push")) return;
+      const date = String(b.date).slice(0, 10);
+      const sport = String(b.sport || "").toUpperCase();
+      const id = date + "\n" + sport;
+      let bucket = buckets.get(id);
+      if (!bucket) { bucket = []; buckets.set(id, bucket); }
+      if (bucket.some(s => sameSlip(s, b) || sameGrade(s, b))) return;
+      const close = closeMap[b.date + "|" + b.pick];
+      const row = close ? Object.assign({}, b, {close}) : b;
+      bucket.push(row);
+      slips.push(row);
+    });
+    if (hotPool) hotPool.dash = slips;
+  }
   const dates = Array.isArray(only) && only.length ? only : lastSevenDates();
   const personal = personalCalendar() || {};
   return dates.map(date => {
@@ -2652,7 +2664,10 @@ async function loadCalendarFile(){
 }
 let driveCard = {date: "", lines: [], loaded: false};
 function gradedPool(){
-  return collapseSlips(load().concat(loadGrade()).concat(gradeFile).filter(b => b && b.pick && !isNoPick(b)));
+  if (hotPool && hotPool.graded) return hotPool.graded;
+  const rows = collapseSlips(load().concat(loadGrade()).concat(gradeFile).filter(b => b && b.pick && !isNoPick(b)));
+  if (hotPool) hotPool.graded = rows;
+  return rows;
 }
 function slipsForDay(date){
   return gradedPool().filter(b => String(b.date || "").slice(0, 10) === date && (b.result === "win" || b.result === "loss" || b.result === "push"));
@@ -3321,8 +3336,11 @@ function slateTable(list, date, extra){
   return "<div class='table-wrap'><table class='season-hold filled'><thead><tr>" + gameHead + "<th>Time</th><th>Location</th><th>Record</th><th class='note-col'>Notes</th>" + addHead + "</tr></thead><tbody>" + rows + "</tbody></table></div>";
 }
 function cardSlips(){
+  if (hotPool && hotPool.cards) return hotPool.cards;
   const all = load().concat(loadGrade()).concat(gradeFile || []).filter(b => b && b.pick && !isNoPick(b));
-  return dropMatchedPending(collapseSlips(all)).filter(b => inSlipWindow(b.date));
+  const rows = dropMatchedPending(collapseSlips(all)).filter(b => inSlipWindow(b.date));
+  if (hotPool) hotPool.cards = rows;
+  return rows;
 }
 function pendingSlips(){
   return cardSlips().filter(b => b.result === "pending");
@@ -4451,21 +4469,22 @@ function sameWager(a, b){
   const long = short === A.teams ? B.teams : A.teams;
   return short.every(w => long.includes(w));
 }
+let hotPool = null;
 function collapseSlips(rows){
-  const byKey = {};
+  const buckets = new Map();
+  const out = [];
   (rows || []).forEach(b => {
     if (!b || !b.pick) return;
     const date = String(b.date || "").slice(0, 10);
     const sport = String(b.sport || "").toUpperCase();
     const book = knownBook(b.book) || "";
-    const hit = Object.keys(byKey).find(k => {
-      const prior = byKey[k];
-      const priorBook = knownBook(prior.book) || "";
-      return String(prior.date || "").slice(0, 10) === date && String(prior.sport || "").toUpperCase() === sport && priorBook === book && sameWager(prior.pick, b.pick);
-    });
-    const key = hit || [date, sport, book, normPick(b.pick)].join("|");
-    const prior = byKey[key];
-    if (!prior) { byKey[key] = b; return; }
+    const id = date + "\n" + sport + "\n" + book;
+    let list = buckets.get(id);
+    if (!list) { list = []; buckets.set(id, list); }
+    const at = list.findIndex(slot => sameWager(slot.row.pick, b.pick));
+    if (at < 0) { list.push({row: b, i: out.length}); out.push(b); return; }
+    const slot = list[at];
+    const prior = slot.row;
     const incoming = Number(b.profit), had = Number(prior.profit);
     const takeNext = (prior.result === "pending" && b.result !== "pending") || (prior.result === b.result && Number.isFinite(incoming) && incoming !== 0 && (!Number.isFinite(had) || had === 0));
     const keep = takeNext ? b : prior;
@@ -4481,9 +4500,10 @@ function collapseSlips(rows){
     }
     if (!keep.placed && other.placed) keep.placed = other.placed;
     if (other.best) keep.best = true;
-    byKey[key] = keep;
+    slot.row = keep;
+    out[slot.i] = keep;
   });
-  return Object.values(byKey);
+  return out;
 }
 function normPick(pick){
   return expandTeams(pick).replace(/[^a-z0-9.+-]+/g, " ").replace(/\s+/g, " ").trim();
@@ -4567,6 +4587,7 @@ function render(){
   const dash = "—";
   const page = document.documentElement.dataset.page || "games";
   try {
+  hotPool = {};
   applyLineWindowCloses();
   if (page !== "slips") {
   if (page === "dashboard") { try { drawDashboard(); } catch (err) {} }
@@ -4710,6 +4731,7 @@ function render(){
     } catch (err) { return ""; }
   }).join("") || "<tr><td colspan='15'>" + ((document.getElementById("fBook") || {}).value ? "No slips for " + esc(document.getElementById("fBook").value) + "." : "No bets yet.") + "</td></tr>";
   } finally {
+    hotPool = null;
     rendering = false;
     try { pinSlipHead(); } catch (e) {}
   }
@@ -7834,7 +7856,6 @@ async function catchUp(){
   await fixMulOctober31();
   clearStalePending();
   render();
-  if (document.documentElement.dataset.page === "dashboard") { try { drawDashboard(); } catch (e) {} }
   if (document.documentElement.dataset.page === "slips") gradeOpenSlate().catch(() => {});
 }
 function pageNeeds(kind){
