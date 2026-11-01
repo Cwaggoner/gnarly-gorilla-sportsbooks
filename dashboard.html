@@ -275,9 +275,9 @@ th.th-center { text-align:center; }
 .slip-row { display:flex; justify-content:space-between; gap:8px; align-items:center; border:1px solid #243024; border-radius:8px; padding:6px 8px; color:#d6ffd0; text-align:left; }
 .slip-row.edge { color:#f0e14a; }
 .slip-bet { flex:1 1 auto; min-width:0; }
-.slip-type-box, .slip-book-box { flex:0 0 auto; border:1px solid var(--gray); border-radius:8px; padding:4px 8px; color:#39ff14; font:700 15px/1.2 system-ui,sans-serif; background:#0e0e0e; white-space:nowrap; }
+.slip-type-box, .slip-book-box { flex:0 0 auto; box-sizing:border-box; height:28px; display:inline-flex; align-items:center; border:1px solid var(--gray); border-radius:8px; padding:0 8px; color:#39ff14; font:700 15px/1.2 system-ui,sans-serif; background:#0e0e0e; white-space:nowrap; }
 .slip-book-box.best-price { color:#ff00ff; border-color:#ff00ff; }
-.slip-row button { height:28px; padding:2px 8px; font-size:15px; line-height:1.2; }
+.slip-row button { box-sizing:border-box; height:28px; padding:0 8px; font-size:15px; line-height:1.2; }
 .slip-actions { display:flex; gap:8px; flex-wrap:wrap; }
 .sgp-legs { display:flex; flex-direction:column; gap:4px; }
 .sgp-leg { display:flex; gap:8px; align-items:flex-start; color:#d6ffd0; font-size:13px; text-align:left; }
