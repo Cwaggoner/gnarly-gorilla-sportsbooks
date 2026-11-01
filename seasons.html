@@ -4435,10 +4435,12 @@ function gradeNote(b){
 }
 function slipPickHtml(b){
   const pick = String(b && b.pick || "");
-  if (!b || b.type !== "SGP") return esc(pick);
+  if (!b || (b.type !== "SGP" && b.type !== "Parlay")) return esc(pick);
   const legs = pick.split(/\s+and\s+/i);
   if (legs.length < 3) return esc(pick);
-  return "<span class='slip-legs'><span>" + esc(legs.slice(0, 2).join(" and ")) + "</span><span>" + esc(legs.slice(2).join(" and ")) + "</span></span>";
+  const lines = [];
+  for (let i = 0; i < legs.length; i += 2) lines.push("<span>" + esc(legs.slice(i, i + 2).join(" and ")) + "</span>");
+  return "<span class='slip-legs'>" + lines.join("") + "</span>";
 }
 function render(){
   if (rendering) return;
@@ -7017,10 +7019,10 @@ async function loadPending(){
 function betType(b){
   const pick = String(b && b.pick || "");
   const given = String(b && b.type || "");
-  if (/\band\b/i.test(pick) || /^sgp\b/i.test(pick) || /^sgp$/i.test(given)) return "SGP";
+  if (/^parlay$/i.test(given) || /^parlay\b/i.test(pick)) return "Parlay";
+  if (/^sgp$/i.test(given) || /^sgp\b/i.test(pick) || /\band\b/i.test(pick)) return "SGP";
   if (/\b(over|under)\b/i.test(pick) || /^total$/i.test(given)) return "Total";
   if (/\bml\b|moneyline/i.test(pick) || /^moneyline$/i.test(given)) return "Moneyline";
-  if (/parlay/i.test(pick) || /^parlay$/i.test(given)) return "Parlay";
   if (/prop/i.test(pick) || /^prop$/i.test(given)) return "Prop";
   if (/[+-]\d/.test(pick) || /run line|puck line|spread/i.test(given + " " + pick)) return "Spread";
   return given || "Spread";
