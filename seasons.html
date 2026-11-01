@@ -645,6 +645,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .mgm-team i { margin-left:6px; color:#8fb898; font-style:normal; font-weight:500; font-size:12px; }
 .mgm-score { margin-left:auto; color:#39ff14; font-size:16px; min-width:2ch; text-align:right; }
 .mgm-team img, .mgm-logo { width:28px; height:28px; object-fit:contain; flex:0 0 28px; border-radius:4px; background:#102010; }
+.mgm-team img, .score-team img, .full-side img { background:#f4f4f4; padding:1px; box-sizing:border-box; }
 .mgm-h, .mgm-group { color:#8fb898; font:700 11px/1 system-ui,sans-serif; letter-spacing:.04em; text-transform:uppercase; text-align:center; }
 .mgm-group { grid-column:1 / -1; text-align:left; }
 .mgm-close .mgm-group, .mgm-book .mgm-group { display:flex; align-items:center; gap:6px; text-align:center; overflow:visible; }
@@ -4612,6 +4613,8 @@ function indexedGames(rowsByMarket){
       const hit = index[key] || (index[key] = {sport: row.sport || "", label: row.label, start: row.start || "", markets: {}});
       hit.markets[market] = row;
       if (!hit.start && row.start) hit.start = row.start;
+      if (row.awayFace) hit.awayFace = row.awayFace;
+      if (row.homeFace) hit.homeFace = row.homeFace;
     });
   });
   return foldBoardGames(Object.values(index)).sort((a, b) => sportRank(a.sport) - sportRank(b.sport) || String(a.start || "").localeCompare(String(b.start || "")) || a.label.localeCompare(b.label));
@@ -9035,8 +9038,26 @@ function mgmGameCard(g, day, book, withClose){
   const startIso = Number.isFinite(startMs) ? new Date(startMs).toISOString() : "";
   const soon = !tag && startingInText(g.start);
   const soonHtml = startIso && !tag ? "<span class='mgm-start' data-start='" + esc(startIso) + "'" + (soon ? "" : " hidden") + ">" + esc(soon) + "</span>" : "";
-  const awayFace = face(scored && scored.away || {name: awayName});
-  const homeFace = face(scored && scored.home || {name: homeName});
+  const sideFace = name => {
+    const pool = (window.__gameScores || []).filter(x => x.sport === String(g.sport || "").toUpperCase());
+    let best = null, score = 0, ties = 0;
+    pool.forEach(row => [row.away, row.home].forEach(team => {
+      const n = mentionScore(name, team);
+      if (!n) return;
+      if (n > score) { score = n; best = team; ties = 1; }
+      else if (n === score) ties += 1;
+    }));
+    return score >= 4 && ties === 1 ? best : null;
+  };
+  const pickedFace = (team, stored, name) => {
+    if (team && teamLogo(team.logo)) return team;
+    if (stored && teamLogo(stored.logo)) return stored;
+    const found = sideFace(name);
+    if (found && teamLogo(found.logo)) return found;
+    return team || stored || {name: name};
+  };
+  const awayFace = face(pickedFace(scored && scored.away, g.awayFace, awayName));
+  const homeFace = face(pickedFace(scored && scored.home, g.homeFace, homeName));
   const awayForm = withClose ? "" : sideForm(g.sport, scored && scored.away);
   const homeForm = withClose ? "" : sideForm(g.sport, scored && scored.home);
   const venue = !withClose && scored && scored.venue ? "<p class='mgm-form'>" + esc(scored.venue + (scored.indoor ? " · indoor" : "")) + "</p>" : "";
@@ -9069,6 +9090,8 @@ function drawGameBoard(){
       const hit = index[key] || (index[key] = {sport: row.sport || "", label: row.label, start: row.start || "", markets: {}});
       hit.markets[market] = row;
       if (!hit.start && row.start) hit.start = row.start;
+      if (row.awayFace) hit.awayFace = row.awayFace;
+      if (row.homeFace) hit.homeFace = row.homeFace;
     });
   });
   let games = Object.values(index);
@@ -9230,14 +9253,20 @@ async function seedBoardFromScores(games, day){
     if (!away || !home) return;
     const label = away + " at " + home;
     const book = g.lineBook || "DraftKings";
+    const faceOf = team => team ? {name: team.shortDisplayName || team.displayName || team.name || "", abbr: team.abbreviation || "", logo: team.logo || ""} : null;
     ["h2h","spreads","totals"].forEach(market => patchBookLine(day, g.sport, label, market, book, g.lines[market]));
     catchEspnDraftKings(g, day);
     const block = window.__ggOddsBoard && window.__ggOddsBoard.days && window.__ggOddsBoard.days[day];
-    if (!block || !g.start) return;
-    const start = new Date(g.start).toISOString();
+    if (!block) return;
+    const start = g.start ? new Date(g.start).toISOString() : "";
+    const awayFace = faceOf(g.away);
+    const homeFace = faceOf(g.home);
     ["h2h","spreads","totals"].forEach(market => {
       const row = (block[market] || []).find(r => String(r.sport || "").toUpperCase() === g.sport && sameMatchup(r, {sport: g.sport, label: label}));
-      if (row && !row.start) row.start = start;
+      if (!row) return;
+      if (start && !row.start) row.start = start;
+      if (awayFace) row.awayFace = awayFace;
+      if (homeFace) row.homeFace = homeFace;
     });
   });
 }
