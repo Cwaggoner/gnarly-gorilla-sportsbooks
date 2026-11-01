@@ -2893,9 +2893,8 @@ async function nightlyUpdate(){
   const today = easternDay();
   const todays = slateSettled(yesterday()) ? text.split(/\n/).filter(line => line.trim().startsWith(today)) : [];
   if (todays.length) {
-    const added = replaceTodayCard(todays.join("\n"), document.getElementById("cardbook").value || "BetMGM");
     drawCardAnalysis(todays.join("\n"));
-    if (note) note.textContent = "After midnight. Yesterday graded. " + (added || 0) + " " + today + " picks loaded.";
+    if (note) note.textContent = "After midnight. Yesterday graded. Today's card is posted. Nothing was added to Slips.";
     return;
   }
   drawCardAnalysis(text);
@@ -2908,9 +2907,8 @@ async function nightlyUpdate(){
       if (!lines.length) return;
       clearInterval(window.cardWatch);
       window.cardWatch = null;
-      const added = replaceTodayCard(lines.join("\n"), document.getElementById("cardbook").value || "BetMGM");
       drawCardAnalysis(lines.join("\n"));
-      if (note) note.textContent = "Morning card published. " + (added || 0) + " " + easternDay() + " picks loaded.";
+      if (note) note.textContent = "Morning card published. It stays on Today's Card until you add a price.";
       loadPickSlate();
     }, 60000);
   }
@@ -4417,7 +4415,7 @@ function dropMatchedPending(rows){
   });
 }
 function clearStalePending(){
-  const bets = dropMatchedPending(load());
+  const bets = dropUnchosenCard(dropMatchedPending(load()));
   const older = bets.filter(b => !inSlipWindow(b.date));
   if (older.length) archiveSlips(older.filter(b => b.result !== "pending"));
   const kept = bets.filter(b => inSlipWindow(b.date));
@@ -4457,8 +4455,8 @@ function slipPickHtml(b){
 function render(){
   if (rendering) return;
   rendering = true;
-  const parked = load();
-  if (parkColtsCaesars(parked)) save(parked);
+  const parked = dropUnchosenCard(load());
+  if (parkColtsCaesars(parked) || parked.length !== load().length) save(parked);
   const dash = "—";
   const page = document.documentElement.dataset.page || "games";
   try {
@@ -7208,7 +7206,6 @@ async function refreshTodayCard(){
   const sharp = (text.split(/\n/).find(line => line.trim().startsWith("# sharp:")) || "").trim();
   const lines = text.split(/\n/).filter(line => line.trim().startsWith(today));
   drawCardAnalysis(lines.length ? [sharp, lines.join("\n")].filter(Boolean).join("\n") : text);
-  if (lines.length) replaceTodayCard(lines.join("\n"), (document.getElementById("cardbook") || {}).value || "BetMGM");
   loadPickSlate();
 }
 async function applyGrades(ready){
@@ -7605,24 +7602,23 @@ function parkColtsCaesars(list){
   });
   return moved;
 }
-function seedCardSlips(rows){
-  const bets = load();
-  let added = 0;
-  if (parkColtsCaesars(bets)) added += 1;
-  (rows || []).forEach(row => {
-    if (picksAreFinal(row.date)) return;
-    if (gradedPool().some(b => (sameSlip(b, row) || sameGrade(b, row)) && b.result !== "pending")) return;
-    if (bets.some(b => sameSlip(b, row) || sameGrade(b, row))) return;
-    bets.push(stampPlaced({id: "card-" + [row.date, row.sport, normPick(row.pick)].join("|"), date: row.date, book: isColtsCard(row) ? "Caesars" : "BetMGM", sport: row.sport, type: row.type || "Spread", pick: row.pick, odds: row.odds, stake: 10, result: "pending", fromCard: true, notes: row.notes || ""}));
-    added++;
+function dropUnchosenCard(list){
+  return (list || []).filter(b => {
+    if (!b || b.manual || b.result !== "pending") return true;
+    if (b.fromCard || String(b.id || "").indexOf("card-") === 0) return false;
+    return true;
   });
-  if (added) save(bets);
-  return added;
+}
+function seedCardSlips(){
+  const bets = load();
+  const next = dropUnchosenCard(bets);
+  if (parkColtsCaesars(next) || next.length !== bets.length) save(next);
+  return 0;
 }
 async function gradeOpenSlate(){
   if (scoreBusy) { scheduleGradeCheck(15000); return; }
   const rows = await postedCardRows().catch(() => []);
-  seedCardSlips(rows);
+  seedCardSlips();
   const pending = gradedPool().filter(b => b && b.result === "pending" && !isNoPick(b) && inSlipWindow(b.date));
   const today = easternDay();
   const dates = [...new Set(rows.map(r => r.date).concat(pending.map(b => String(b.date || "").slice(0, 10))))].filter(date => date === today || date === yesterday());
@@ -7826,12 +7822,12 @@ async function catchUp(){
     if (dash) localStorage.setItem("gg-dashboard-published", dash);
   } catch (err) {}
   if (wantLedger && localStorage.getItem("gg-hold-ledger") !== "1") {
-    const kept = load().filter(b => b && inSlipWindow(b.date) && (b.manual || String(b.sport || "").toUpperCase() === "MUL" || betType(b) === "Parlay" || isColtsCard(b)));
+    const kept = dropUnchosenCard(load().filter(b => b && inSlipWindow(b.date) && (b.manual || String(b.sport || "").toUpperCase() === "MUL" || betType(b) === "Parlay" || isColtsCard(b))));
     try {
       const data = await ledgerP;
       if (data) {
         const published = (Array.isArray(data) ? data : (data.bets || [])).filter(b => b && inSlipWindow(b.date) && !isNoPick(b));
-        published.forEach(b => { if (!kept.some(x => sameSlip(x, b))) kept.push(b); });
+        published.forEach(b => { if (b.fromCard && !b.manual && b.result === "pending") return; if (!kept.some(x => sameSlip(x, b))) kept.push(b); });
       }
     } catch (err) {}
     pinThisMul(kept);
