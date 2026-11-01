@@ -1,14 +1,14 @@
 # GG report 2026-11-01
-# Yesterday 2026-10-31 graded. Record 4-2-0. Profit $15.98. CLV No Close Saved.
+# Yesterday 2026-10-31 graded. Record 4-2-0. Profit $15.98. CLV -0.083 pts avg.
 
-Analysis: CFB slips graded. USC +6.5 won 30-18 (close -110 matched). Slip noted Edge.
+Analysis: CFB slips graded. Closes from BetMGM/ledger and DraftKings. USC +6.5 matched, Edge. Others High confidence, edge true. Skipped prices for no made number except USC.
 
-2026-10-31 | CFB | win | USC +6.5 EDGE
-2026-10-31 | CFB | win | UTEP +24.5 at N Dakota St
-2026-10-31 | CFB | win | Minnesota +20.5 at Indiana
-2026-10-31 | CFB | win | Rutgers +16.5 vs Michigan
-2026-10-31 | CFB | loss | Georgia St -4 vs Coastal
-2026-10-31 | CFB | loss | Nevada +22.5 at UCLA
+2026-10-31 | CFB | win | USC +6.5 EDGE #F0E14A
+2026-10-31 | CFB | win | UTEP +24.5 at N Dakota St High #F0E14A
+2026-10-31 | CFB | win | Minnesota +20.5 at Indiana High #F0E14A
+2026-10-31 | CFB | win | Rutgers +16.5 vs Michigan High #F0E14A
+2026-10-31 | CFB | loss | Georgia St -4 vs Coastal edge #F0E14A
+2026-10-31 | CFB | loss | Nevada +22.5 at UCLA High #F0E14A
 2026-10-31 | NBA | No Picks
 2026-10-31 | NHL | No Picks
 2026-10-31 | NFL | No Picks
