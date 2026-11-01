@@ -272,6 +272,8 @@ th.th-center { text-align:center; }
 #todaycard .analysis-cell .card-price { width:100%; max-width:100%; box-sizing:border-box; display:block; white-space:normal; }
 .slip-row { display:flex; justify-content:space-between; gap:8px; align-items:center; border:1px solid #243024; border-radius:8px; padding:6px 8px; color:#d6ffd0; text-align:left; }
 .slip-row.edge { color:#f0e14a; }
+.slip-row .slip-book { color:#39ff14; font-weight:700; margin-right:6px; }
+.slip-row .slip-book.best-price { color:#ff00ff; }
 .slip-row button { height:28px; padding:2px 8px; }
 .slip-actions { display:flex; gap:8px; flex-wrap:wrap; }
 .sgp-legs { display:flex; flex-direction:column; gap:4px; }
@@ -2993,11 +2995,54 @@ function openGameBet(sport, game, date){
   stashForm();
   goPage("addbet");
 }
+function knownBook(text){
+  const raw = String(text || "").replace(/\+/g, " ").trim();
+  return ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"].find(name => name.toLowerCase() === raw.toLowerCase()) || "";
+}
+function buttonBook(btn){
+  if (!btn) return "";
+  let raw = "";
+  try { raw = decodeURIComponent(btn.getAttribute("data-book") || ""); } catch (e) { raw = btn.getAttribute("data-book") || ""; }
+  let book = knownBook(raw);
+  if (book) return book;
+  const group = btn.closest(".mgm-set");
+  const label = group && group.querySelector(".mgm-group b");
+  book = knownBook(label && label.textContent);
+  if (book) return book;
+  const cell = btn.closest("td");
+  const row = cell && cell.parentElement;
+  const table = row && row.closest("table");
+  if (!cell || !row || !table) return "";
+  const heads = [...table.querySelectorAll("thead th")];
+  const index = [...row.children].indexOf(cell);
+  return knownBook(heads[index] && heads[index].textContent);
+}
+function bookForPrice(sport, pick, odds, date){
+  const day = String(date || "").slice(0, 10) || easternDay();
+  const board = window.__ggOddsBoard && window.__ggOddsBoard.days && window.__ggOddsBoard.days[day];
+  if (!board) return "";
+  const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
+  const text = String(pick || "");
+  const market = /\b(over|under)\b/i.test(text) ? "totals" : (/\bml\b|moneyline/i.test(text) ? "h2h" : "spreads");
+  const row = (board[market] || []).find(item => { try { return sgpSame([{game: item.label}, {pick: text}]); } catch (e) { return false; } });
+  if (!row || !row.books) return "";
+  const price = Number(odds);
+  const flags = bestPriceFlags(row.books, names);
+  let same = "";
+  names.forEach(name => {
+    const sides = shopSides(row.books[name]);
+    if (!sides || !sides.some(side => side && Number(side.price) === price)) return;
+    const hot = flags[name] && flags[name].some(Boolean);
+    if (hot) same = name;
+    else if (!same) same = name;
+  });
+  return same;
+}
 function openBestBet(btn, scroll){
   const sport = decodeURIComponent(btn.dataset.sport || "");
   const game = decodeURIComponent(btn.dataset.game || "");
   const market = btn.dataset.market || "h2h";
-  const book = decodeURIComponent(btn.dataset.book || "");
+  const book = buttonBook(btn);
   const price = decodeURIComponent(btn.dataset.price || "");
   const point = decodeURIComponent(btn.dataset.point || "");
   const side = btn.dataset.side || "0";
@@ -3030,6 +3075,7 @@ function openBestBet(btn, scroll){
   opt.textContent = pick + " (" + price + ")";
   opt.dataset.price = price;
   opt.dataset.close = price;
+  opt.dataset.book = book;
   opt.selected = true;
   sel.appendChild(opt);
   document.getElementById("picknote").textContent = book + " " + price + " is on the bet slip and filled in above. Add writes the slip. Save Bet still saves this one leg by itself." + (split ? " The books do not share one number, so this is the BetMGM side." : "");
@@ -3052,7 +3098,7 @@ document.body.addEventListener("click", e => {
       type: decodeURIComponent(cardBtn.dataset.type || "Spread"),
       pick: decodeURIComponent(cardBtn.dataset.pick || ""),
       odds: Number(decodeURIComponent(cardBtn.dataset.odds || "")),
-      book: decodeURIComponent(cardBtn.dataset.book || ""),
+      book: buttonBook(cardBtn) || bookForPrice(decodeURIComponent(cardBtn.dataset.sport || ""), decodeURIComponent(cardBtn.dataset.pick || ""), decodeURIComponent(cardBtn.dataset.odds || ""), decodeURIComponent(cardBtn.dataset.date || "")),
       notes: decodeURIComponent(cardBtn.dataset.notes || ""),
       edge: cardBtn.dataset.edge === "1" || /^high\b/i.test(decodeURIComponent(cardBtn.dataset.notes || ""))
     });
@@ -6000,6 +6046,9 @@ form.onsubmit = e => {
     return;
   }
   const row = {...d, odds: Number(d.odds), stake: Number(d.stake), close: d.close ? Number(d.close) : ""};
+  const picked = form.pick.selectedOptions && form.pick.selectedOptions[0];
+  const chosenBook = knownBook(picked && picked.dataset.book) || knownBook(row.book);
+  if (chosenBook) row.book = chosenBook;
   delete row.editId;
   if (d.editId) {
     const bet = bets.find(b => String(b.id) === d.editId);
@@ -6123,7 +6172,7 @@ function paintSlip(){
   const winEl = document.getElementById("slipwin");
   const picked = slipTicket();
   if (legs) {
-    legs.innerHTML = betSlip.length ? betSlip.map((p, i) => "<div class='slip-row" + (p.edge ? " edge" : "") + "'><span>" + esc((p.book ? p.book + "  " : "") + (p.sport ? p.sport + " " : "") + p.pick + " " + (p.odds > 0 ? "+" : "") + p.odds) + "</span><button type='button' class='slip-x' data-i='" + i + "'>Remove</button></div>").join("") : "<p class='warn'>The slip is empty.</p>";
+    legs.innerHTML = betSlip.length ? betSlip.map((p, i) => "<div class='slip-row" + (p.edge ? " edge" : "") + "'><span>" + (p.book ? "<b class='slip-book" + (p.best ? " best-price" : "") + "'>" + esc(p.book) + "</b>" : "") + esc((p.sport ? p.sport + " " : "") + p.pick + " " + (p.odds > 0 ? "+" : "") + p.odds) + "</span><button type='button' class='slip-x' data-i='" + i + "'>Remove</button></div>").join("") : "<p class='warn'>The slip is empty.</p>";
   }
   const math = slipMath(picked);
   const mode = slipMode();
@@ -6152,7 +6201,7 @@ function slipRow(picked){
   const one = picked.length === 1;
   return {
     date: picked[0].date || easternDay(),
-    book: (picked.find(p => p.book) || {}).book || form.book.value || "BetMGM",
+    book: (picked.every(p => p.book && p.book === picked[0].book) ? picked[0].book : (picked.find(p => p.book) || {}).book) || form.book.value || "BetMGM",
     sport: sports.size === 1 ? [...sports][0] : (one ? picked[0].sport : "MUL"),
     type: one ? (picked[0].type || "Spread") : (math.same ? "SGP" : "Parlay"),
     pick: one ? picked[0].pick : ((math.same ? "SGP " : "Parlay ") + picked.map(p => (p.sport ? p.sport + " " : "") + p.pick).join(" and ")),
@@ -6175,7 +6224,7 @@ document.getElementById("sgpadd").onclick = () => {
       const row = stampPlaced(markEdge({
         id: Date.now() + Math.random(),
         date: leg.date || easternDay(),
-        book: leg.book || form.book.value || "BetMGM",
+        book: leg.book || bookForPrice(leg.sport, leg.pick, leg.odds, leg.date) || form.book.value || "BetMGM",
         sport: leg.sport || "",
         type: leg.type || "Spread",
         pick: leg.pick,
@@ -6990,15 +7039,13 @@ function applyCloses(bets, games, bookKey){
 }
 async function repriceSlips(){
   const note = document.getElementById("pdfnote");
+  const bets = load();
   const book = form.book.value;
   const bookKey = BOOK_KEY[book];
   const key = oddskey.value.trim();
-  const bets = load();
-  const pending = bets.filter(b => b.result === "pending");
-  pending.forEach(b => { b.book = book; });
-  save(bets);
-  if (!pending.length) { note.textContent = "No pending slips to reprice."; return; }
-  if (!bookKey || !key) { note.textContent = "Book set to " + book + " on " + pending.length + " pending slips. Add the odds key to pull that book's price."; return; }
+  const pending = bets.filter(b => b.result === "pending" && b.book === book);
+  if (!pending.length) { if (note) note.textContent = "No " + book + " slips to reprice."; return; }
+  if (!bookKey || !key) { if (note) note.textContent = "Add the odds key to pull " + book + "."; return; }
   const sports = [...new Set(pending.map(b => b.sport).filter(s => SPORT_KEY[s]))];
   const boards = {};
   for (const sport of sports) boards[sport] = await fetchBook(SPORT_KEY[sport], bookKey, key);
@@ -10751,7 +10798,7 @@ function sharpAddOpen(sharkId){
     const row = stampPlaced(markEdge({
       id: Date.now() + Math.random(),
       date: t.date || card.date || easternDay(),
-      book: book,
+      book: bookForPrice(t.sport, t.slip, t.odds, t.date) || book,
       sport: t.sport || "",
       type: t.market || "Spread",
       pick: t.slip,
