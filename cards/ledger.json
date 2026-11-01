@@ -1,5 +1,5 @@
 {
-  "saved": "2026-11-01T17:01:33.441Z",
+  "saved": "2026-11-01T17:15:40.677Z",
   "graded_through": "2026-10-22",
   "clv_note": "Closes are the kickoff price on the same number. Giants +1.5, Cowboys +1.5, the October 18 parlay, and Commanders +7.5 still have no close. The bet price was not copied.",
   "bets": [
@@ -6857,7 +6857,7 @@
       "pick": "SGP CBB Wildcats -7.5 at Notre Dame Fighting Irish and CBB Villanova Wildcats at Notre Dame Fighting Irish Over 146.5",
       "odds": 287,
       "stake": 10,
-      "result": "pending",
+      "result": "loss",
       "notes": "Two legs. Same game. Calculator price, not a book same-game price. Not a wager.",
       "manual": true,
       "edge": false,
@@ -6866,7 +6866,8 @@
       "close": "",
       "closeOpp": "",
       "fairClose": 0,
-      "realClose": false
+      "realClose": false,
+      "profit": -10
     },
     {
       "id": 1793540216193.2754,
@@ -6877,7 +6878,7 @@
       "pick": "Wildcats -7.5 at Notre Dame Fighting Irish",
       "odds": -102,
       "stake": 10,
-      "result": "pending",
+      "result": "loss",
       "notes": "Straight bet. Not a wager.",
       "manual": true,
       "edge": false,
@@ -6886,7 +6887,8 @@
       "close": -102,
       "closeOpp": -118,
       "closePoint": -7.5,
-      "realClose": true
+      "realClose": true,
+      "profit": -10
     },
     {
       "id": 1793540216194.6372,
@@ -6897,7 +6899,7 @@
       "pick": "Villanova Wildcats at Notre Dame Fighting Irish Over 146.5",
       "odds": -105,
       "stake": 10,
-      "result": "pending",
+      "result": "loss",
       "notes": "Straight bet. Not a wager.",
       "manual": true,
       "edge": false,
@@ -6906,7 +6908,8 @@
       "close": -105,
       "closeOpp": -115,
       "closePoint": 146.5,
-      "realClose": true
+      "realClose": true,
+      "profit": -10
     },
     {
       "id": 1793540241731.5596,
