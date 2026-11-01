@@ -829,10 +829,10 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .mgm-set { display:grid; grid-template-columns:repeat(3,64px); gap:4px; flex:0 0 auto; }
 .mgm-set.mgm-close { justify-self:end; }
 .mgm-card:not(.no-close) { grid-template-columns:minmax(230px, max-content) minmax(0,1fr); }
-.mgm-line { display:flex; align-items:flex-end; min-width:0; width:100%; }
-.mgm-line .mgm-books { flex:0 1 auto; min-width:0; }
+.mgm-line { display:flex; align-items:flex-end; min-width:0; width:100%; overflow-x:auto; }
+.mgm-line .mgm-books { flex:0 0 auto; min-width:0; overflow:visible; }
 .mgm-line .mgm-set.mgm-close { flex:0 0 auto; }
-.mgm-gap { flex:0 0 80px; width:80px; min-width:80px; max-width:80px; align-self:flex-end; margin:0 4px; display:grid; grid-template-rows:auto auto 46px 46px; gap:4px; box-sizing:border-box; overflow:visible; }
+.mgm-gap { flex:0 0 64px; width:64px; min-width:64px; max-width:64px; align-self:flex-end; margin:0 4px; display:grid; grid-template-rows:auto auto 46px 46px; gap:4px; box-sizing:border-box; overflow:visible; }
 .mgm-gap .mgm-group { display:flex; align-items:center; gap:6px; color:#f0e14a; overflow:visible; }
 .mgm-gap .mgm-group b { font:700 11px/1 system-ui,sans-serif; letter-spacing:.04em; white-space:nowrap; color:#f0e14a; }
 .mgm-gap .mgm-group i { flex:1 1 auto; height:0; position:relative; display:block; margin:0; align-self:center; }
