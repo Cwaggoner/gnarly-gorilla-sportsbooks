@@ -3032,7 +3032,7 @@ function openBestBet(btn, scroll){
   sel.appendChild(opt);
   document.getElementById("picknote").textContent = book + " " + price + " is on the bet slip and filled in above. Add writes the slip. Save Bet still saves this one leg by itself." + (split ? " The books do not share one number, so this is the BetMGM side." : "");
   document.getElementById("editnote").textContent = "";
-  addSlipLeg({date: date, sport: sport, type: type, pick: pick, odds: Number(price), book: book, edge: false});
+  addSlipLeg({date: date, sport: sport, type: type, pick: pick, odds: Number(price), book: book, edge: false, game: game});
   if (scroll !== false) { stashForm(); goPage("addbet"); }
 }
 document.body.addEventListener("click", e => {
@@ -5996,11 +5996,21 @@ function sgpDayPlays(){
     date: r[0], sport: r[1], type: r[2], pick: r[3], odds: Number(String(r[4]).replace(/[^\d.+-]/g, "")), notes: r[5] || "", edge: /edge/i.test(r[5] || "")
   }));
 }
+function gameTeams(pick){
+  let text = String(pick || "");
+  text = text.replace(/\b(over|under|ml|moneyline)\b/gi, " ");
+  text = text.replace(/[+-]?\d+(?:\.\d+)?/g, " ");
+  text = text.replace(/\s+/g, " ").trim();
+  const parts = text.split(/\s+(?:at|vs\.?)\s+/i);
+  const words = bit => bit.trim().split(/\s+/).filter(w => w.length > 2).map(w => w.toLowerCase());
+  if (parts.length < 2) return words(text).slice(-1);
+  const left = words(parts[0]);
+  const right = words(parts[1]);
+  return [left[left.length - 1], right[right.length - 1]].filter(Boolean);
+}
 function sgpGame(pick){
-  const parts = String(pick || "").split(/\s+(?:at|vs\.?)\s+/i);
-  if (parts.length < 2) return String(pick || "").toLowerCase();
-  const nick = bit => bit.replace(/\s*[+-]?\d+(?:\.\d+)?/g, " ").trim().split(/\s+/).filter(Boolean).pop().toLowerCase();
-  return [nick(parts[0]), nick(parts[1])].sort().join("|");
+  const teams = gameTeams(pick);
+  return teams.length ? teams.slice().sort().join("|") : String(pick || "").toLowerCase();
 }
 function decFromAmerican(price){
   price = Number(price);
@@ -6027,7 +6037,7 @@ function addSlipLeg(leg){
   if (opener) opener.hidden = true;
   try { sessionStorage.removeItem("gg-slip-closed"); } catch (e) {}
   const key = [leg.book || "", leg.sport, leg.pick, Number(leg.odds)].join("|");
-  if (!betSlip.some(row => [row.book || "", row.sport, row.pick, row.odds].join("|") === key)) betSlip.push({date: leg.date || easternDay(), sport: leg.sport || "", type: leg.type || "Spread", pick: leg.pick, odds: Number(leg.odds), book: leg.book || "", edge: !!leg.edge, notes: leg.notes || ""});
+  if (!betSlip.some(row => [row.book || "", row.sport, row.pick, row.odds].join("|") === key)) betSlip.push({date: leg.date || easternDay(), sport: leg.sport || "", type: leg.type || "Spread", pick: leg.pick, odds: Number(leg.odds), book: leg.book || "", edge: !!leg.edge, notes: leg.notes || "", game: leg.game || ""});
   rememberSlip();
   paintSlip();
 }
@@ -6055,9 +6065,15 @@ function drawSgp(){
   paintSlip();
 }
 function sgpSame(picked){
-  const posted = picked.filter(p => !p.partner);
-  if (picked.some(p => p.partner)) return posted.length === 1;
-  return new Set(posted.map(p => sgpGame(p.pick))).size <= 1 && posted.length > 0;
+  const legs = (picked || []).filter(p => p && (p.game || p.pick));
+  if (legs.length < 2) return legs.length === 1;
+  const sets = legs.map(p => gameTeams(p.game || p.pick)).filter(t => t.length);
+  const full = sets.filter(t => t.length >= 2).map(t => t.slice().sort().join("|"));
+  if (full.length && new Set(full).size === 1) {
+    const pair = full[0].split("|");
+    return sets.every(t => t.every(name => pair.indexOf(name) >= 0));
+  }
+  return new Set(sets.map(t => t.slice().sort().join("|"))).size === 1;
 }
 function slipMath(picked){
   const stake = Number(form.stake.value) || 10;
@@ -6086,7 +6102,7 @@ function paintSlip(){
     if (!picked.length) price.textContent = "Click a price. Add saves each leg as its own bet unless you switch to SGP or Parlay.";
     else if (mode === "single") price.textContent = picked.length + " single" + (picked.length === 1 ? "" : "s") + ". Each one is its own slip.";
     else if (picked.length < 2) price.textContent = (mode === "sgp" ? "An SGP" : "A parlay") + " needs at least two legs.";
-    else if (mode === "sgp" && !math.same) price.textContent = "Those legs are not the same game. Switch to Parlay, or leave it on Single.";
+    else if (mode === "sgp" && !math.same) price.textContent = "Those legs are not the same game. Switch to Parlay.";
     else price.textContent = (mode === "sgp" ? "SGP. Same game." : "Parlay.") + " Calculator price " + (math.american > 0 ? "+" : "") + math.american + ". A $" + math.stake.toFixed(0) + " win pays $" + math.win.toFixed(2) + ". This is not the book's same-game price.";
   }
   if (risk) {
@@ -6152,7 +6168,7 @@ document.getElementById("sgpadd").onclick = () => {
   }
   if (picked.length < 2) { if (note) note.textContent = (mode === "sgp" ? "An SGP" : "A parlay") + " needs at least two legs."; return; }
   const built = slipRow(picked);
-  if (mode === "sgp" && !built.same) { if (note) note.textContent = "Those legs are not the same game. Switch to Parlay, or leave it on Single."; return; }
+  if (mode === "sgp" && !built.same) { if (note) note.textContent = "Those legs are not the same game. Switch to Parlay."; return; }
   built.type = mode === "sgp" ? "SGP" : "Parlay";
   built.pick = (mode === "sgp" ? "SGP " : "Parlay ") + picked.map(p => (p.sport ? p.sport + " " : "") + p.pick).join(" and ");
   const row = stampPlaced(markEdge({
