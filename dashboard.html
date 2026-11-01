@@ -584,7 +584,8 @@ table.season-hold.filled td.note-col p { margin:0; display:-webkit-box; -webkit-
 #breaks .book-crew td { vertical-align:top; }
 #breaks .book-crew .api-note { margin:0; }
 #breaks .book-crew td.book-rest { padding-top:4px; }
-table.cal-line { width:100%; margin:0 0 12px; border:0; border-radius:0; background:transparent; overflow:visible; }
+#calendarcard .cal-tools { border:1px solid var(--gray); border-radius:10px; padding:10px 12px; margin:var(--section) 0; box-sizing:border-box; width:100%; max-width:100%; }
+table.cal-line { width:100%; margin:0; border:0; border-radius:0; background:transparent; overflow:visible; }
 table.cal-line td { border:0; background:transparent; vertical-align:top; padding:0; box-shadow:none; }
 table.cal-line td.cal-icons { text-align:right; width:1%; white-space:nowrap; }
 table.cal-line .tools { margin:0; align-items:flex-start; }
@@ -1072,7 +1073,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </section>
 <section class="card view" id="calendarcard">
 <div class="section-head"><h2>Calendar</h2><span id="monthpl"></span><p class="warn slips-side">Everyone sees the shared $10 calendar until they upload a file. An uploaded file stays in this browser only.<br>Other users do not see it. Use Shared Calendar to go back.</p></div>
-<table class="cal-line"><tbody><tr>
+<div class="cal-tools"><table class="cal-line"><tbody><tr>
 <td><div class="tools"><div class="btn-pair"><span>Navigation</span><div><button type="button" id="prevMonth">Prev</button><button type="button" id="nextMonth">Next</button></div></div><label>Load My Calendar<input type="file" id="loadcal" accept=".json,application/json"><span class="file-face">No File Chosen</span></label><div class="btn-pair"><span class="pair-title"><span id="calnote" class="warn"></span></span><div><button type="button" id="resetcal">Use Shared Calendar</button></div></div></div></td>
 <td class="cal-icons"><div class="cal-crew">
 <a class="crew-hit" href="index.html?page=sharks#shark-gorilla" data-jump="sharks" data-sharp="shark-gorilla" title="Gnarly Gorilla"><img src="about-gorilla.jpg" alt="Gnarly Gorilla" width="72" height="72" loading="lazy" decoding="async"></a>
@@ -1081,7 +1082,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <a class="crew-hit" href="index.html?page=sharks#shark-paulie" data-jump="sharks" data-sharp="shark-paulie" title="Paulie the Fade"><img src="jungle-hyena.jpg" alt="Paulie the Fade" width="72" height="72" loading="lazy" decoding="async"></a>
 <a class="crew-hit" href="index.html?page=sharks#shark-gino" data-jump="sharks" data-sharp="shark-gino" title="Gino the Wire"><img src="jungle-bird.jpg" alt="Gino the Wire" width="72" height="72" loading="lazy" decoding="async"></a>
 </div></td>
-</tr></tbody></table>
+</tr></tbody></table></div>
 <div class="cal" id="calendar"></div>
 </section>
 </main>
