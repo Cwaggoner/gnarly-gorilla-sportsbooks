@@ -102,9 +102,6 @@ html, body, .page, .page * { overflow-anchor:none; }
 #slips .slip-filters { flex-wrap:wrap; max-width:100%; min-width:0; box-sizing:border-box; }
 #slips .slip-frame, .align-frame { border:1px solid var(--gray); border-radius:10px; padding:10px 12px; margin:var(--section) 0 0; box-sizing:border-box; width:100%; max-width:100%; align-self:stretch; }
 .card > .odds-tools,
-#gameboard,
-#oddscompare,
-#sharkboard,
 #stats,
 .card > .odds-notes,
 .card > .jump,
@@ -112,13 +109,9 @@ html, body, .page, .page * { overflow-anchor:none; }
 #report,
 .charts > div,
 .full-dates,
-.full-games,
 .full-sports,
-.score-strip,
-#calendar,
 #addbet .stack,
-#breaks > p,
-#breaks > .table-wrap {
+#breaks > p {
   border:1px solid var(--gray);
   border-radius:10px;
   padding:10px 12px;
@@ -128,7 +121,17 @@ html, body, .page, .page * { overflow-anchor:none; }
   max-width:100%;
   align-self:stretch;
 }
-#gameboard:empty,
+#gameboard,
+#oddscompare,
+#sharkboard,
+.full-games,
+.score-strip,
+#calendar,
+#breaks > .table-wrap { border:0; padding:0; background:transparent; width:100%; max-width:100%; box-sizing:border-box; }
+.game-row,
+#oddscompare > .mgm-card,
+.full-card,
+.shark { width:100%; max-width:100%; box-sizing:border-box; }
 #oddscompare:empty,
 #sharkboard:empty,
 #report:empty { border:0; padding:0; margin:0; }
@@ -424,7 +427,7 @@ table.score-align .score-hold + .score-hold { margin-top:2px; }
 .score-row { display:flex; flex-wrap:nowrap; align-items:stretch; gap:8px; overflow-x:auto; overflow-y:hidden; scrollbar-width:none; flex:1 1 auto; width:auto; min-width:0; -webkit-overflow-scrolling:touch; }
 .score-full { flex:0 0 auto; align-self:center; color:#39ff14; font-weight:700; font-size:13px; line-height:1.2; text-decoration:none; text-align:center; border:1px solid #39ff14; border-radius:8px; padding:8px 10px; background:#0e0e0e; white-space:nowrap; }
 .score-row::-webkit-scrollbar { display:none; }
-.score-card { flex:0 0 272px; width:272px; min-height:160px; box-sizing:border-box; display:flex; flex-direction:column; border:0; border-radius:10px; background:#0e0e0e; padding:8px 10px; }
+.score-card { flex:0 0 272px; width:272px; min-height:160px; box-sizing:border-box; display:flex; flex-direction:column; border:1px solid var(--gray); border-radius:10px; background:#0e0e0e; padding:8px 10px; }
 .score-arrow { position:absolute; top:50%; transform:translateY(-50%); z-index:2; width:36px; height:56px; padding:0; display:flex; align-items:center; justify-content:center; border-radius:8px; background:rgba(10,10,10,.92); border:1px solid #39ff14; }
 .score-arrow[hidden] { display:none !important; }
 #seasonliveleft { left:0; }
@@ -677,7 +680,7 @@ html[data-page="scoreboard"] main { min-width:0; }
 .full-status { display:flex; flex-wrap:wrap; gap:6px; margin:0 0 8px; }
 .full-status button.on { color:#39ff14; outline:1px solid #39ff14; }
 .full-games { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:8px; }
-.full-card { border:0; border-radius:10px; background:#0e0e0e; padding:10px 12px; min-width:0; width:100%; box-sizing:border-box; }
+.full-card { border:1px solid var(--gray); border-radius:10px; background:#0e0e0e; padding:10px 12px; min-width:0; width:100%; box-sizing:border-box; }
 .full-card.live { border:1px solid #f0e14a; }
 .full-card.final { border:1px solid #39ff14; }
 .full-card.live .score-state { color:#f0e14a; font-weight:700; }
