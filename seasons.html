@@ -4535,6 +4535,7 @@ function render(){
   unique.forEach(b => {
     if (!b.id) b.id = [b.date, b.sport, b.pick].join("|");
     if (!b.book) b.book = "BetMGM";
+    if (/^multi$/i.test(b.sport || "")) b.sport = "MUL";
     b.type = betType(b);
     if (!b.stake) b.stake = 10;
     const ticket = ticketOdds(b);
@@ -6089,7 +6090,7 @@ function slipRow(picked){
   return {
     date: picked[0].date || easternDay(),
     book: (picked.find(p => p.book) || {}).book || form.book.value || "BetMGM",
-    sport: sports.size === 1 ? [...sports][0] : (one ? picked[0].sport : "Multi"),
+    sport: sports.size === 1 ? [...sports][0] : (one ? picked[0].sport : "MUL"),
     type: one ? (picked[0].type || "Spread") : (math.same ? "SGP" : "Parlay"),
     pick: one ? picked[0].pick : ((math.same ? "SGP " : "Parlay ") + picked.map(p => (p.sport ? p.sport + " " : "") + p.pick).join(" and ")),
     odds: math.american,
