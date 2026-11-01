@@ -3868,6 +3868,12 @@ function readRecordCache(){
 function writeRecordCache(pack){
   try { localStorage.setItem("gg-standings-v1", JSON.stringify(pack)); } catch (e) {}
 }
+function capAbbr(text){
+  const s = String(text || "").trim();
+  if (!s || s === "—") return s || "—";
+  if (!/\s/.test(s) && /^[A-Za-z0-9]{2,8}$/.test(s)) return s.toUpperCase();
+  return s.replace(/\b(East|West|North|South)\b/g, w => w.toUpperCase());
+}
 function standLabel(node, short){
   const abbr = String(node && node.abbreviation || "").trim();
   const name = String(node && (node.name || node.shortName) || "").trim().replace(/\s+Division$/, "");
@@ -3904,7 +3910,7 @@ function standRows(sport, data){
       if (games) pct = (!Number.isFinite(raw) || (raw === 0 && w > 0)) ? (w / games).toFixed(3).replace(/^0/, "") : raw.toFixed(3).replace(/^0/, "");
       const team = (entry.team && (entry.team.displayName || entry.team.shortDisplayName)) || "";
       if (!team) return;
-      rows.push({sport: sport, conference: conference || "—", division: division || "—", team: team, w: w, l: l, t: t, pct: pct, gb: bag.gamesBehind || "—", streak: bag.streak || "—"});
+      rows.push({sport: sport, conference: capAbbr(conference || "—"), division: capAbbr(division || "—"), team: team, w: w, l: l, t: t, pct: pct, gb: bag.gamesBehind || "—", streak: bag.streak || "—"});
     });
   };
   ((data && data.children) || []).forEach(conf => take(conf, standLabel(conf, true), ""));
@@ -3986,7 +3992,7 @@ async function loadRecords(force){
     if (pack && pack.rows && pack.rows.length) writeRecordCache(pack);
   }
   if (!document.getElementById("seasonrecords")) return;
-  recordRows = (pack && pack.rows) || [];
+  recordRows = ((pack && pack.rows) || []).map(r => Object.assign({}, r, {conference: capAbbr(r.conference), division: capAbbr(r.division)}));
   recordMeta = (pack && pack.seasons) || {};
   paintRecords();
   const note = document.getElementById("recnote");
