@@ -4503,6 +4503,7 @@ function slipPickHtml(b){
   return "<span class='slip-legs'>" + lines.join("") + "</span>";
 }
 function render(){
+  if (window.__stateBlocked) return;
   if (rendering) return;
   rendering = true;
   const parked = dropUnchosenCard(load());
@@ -8025,13 +8026,32 @@ let stateRules = {};
 let visitorState = "";
 try { visitorState = localStorage.getItem("gg-visitor-state") || ""; } catch (e) {}
 paintLawWarn();
+function blockStatePage(name){
+  window.__stateBlocked = true;
+  const state = String(name || "Unknown");
+  document.title = "Blocked | Gnarly Gorilla Sportsbooks";
+  document.body.innerHTML = "<div class='page' style='min-height:100vh;display:flex;align-items:center;justify-content:center'><section class='card' style='max-width:640px;width:100%;margin:0 auto;padding:28px;text-align:center'><img src='gg-icon.png' alt='Gnarly Gorilla' width='72' height='72' style='width:72px;height:72px;border-radius:12px;border:1px solid #39ff14'><h1 style='margin:16px 0 10px;color:#39ff14;font-size:22px;line-height:1.2;letter-spacing:.04em'>This website has blocked your State</h1><p style='margin:0;color:#d6ffd0;font-size:18px;line-height:1.3;font-weight:700'>" + esc(state) + "</p></section></div>";
+}
+function stateName(raw){
+  const text = String(raw || "").trim();
+  if (!text) return "";
+  if (stateRules[text]) return text;
+  const hit = Object.keys(stateRules).find(name => name.toLowerCase() === text.toLowerCase() || String((stateRules[name] && stateRules[name].code) || "").toLowerCase() === text.toLowerCase());
+  return hit || text;
+}
 function applyState(name){
-  visitorState = name || "";
+  const found = stateName(name);
+  visitorState = found || "";
+  const rule = stateRules[found];
+  if (rule && rule.status === "not-legal") {
+    try { localStorage.setItem("gg-visitor-state", found); } catch (e) {}
+    blockStatePage(found);
+    return;
+  }
   const line = document.getElementById("headregion");
-  if (line && name) line.textContent = String(name).toUpperCase();
+  if (line && found) line.textContent = String(found).toUpperCase();
   paintLawWarn();
-  if (name) { try { localStorage.setItem("gg-visitor-state", name); } catch (e) {} }
-  const rule = stateRules[name];
+  if (found) { try { localStorage.setItem("gg-visitor-state", found); } catch (e) {} }
   const note = document.getElementById("staterule");
   const books = document.getElementById("statebooks");
   if (!rule) {
@@ -8039,7 +8059,7 @@ function applyState(name){
     return;
   }
   if (note) note.textContent = rule.rule + " This is a summary of published state rules as of October 2026, not legal advice. Confirm with the state regulator before you bet. If gambling is causing problems, call or text 1-800-GAMBLER.";
-  if (books) books.textContent = rule.books.length ? "Listed books for " + name + ": " + rule.books.join(", ") + ". A book not on that list is not treated as available here. The posted line is the book line, not a state-adjusted price." : "No listed book from this site is available in " + name + ".";
+  if (books) books.textContent = rule.books.length ? "Listed books for " + found + ": " + rule.books.join(", ") + ". A book not on that list is not treated as available here. The posted line is the book line, not a state-adjusted price." : "No listed book from this site is available in " + found + ".";
   document.querySelectorAll("select.book-select").forEach(sel => {
     [...sel.options].forEach(opt => {
       const label = String(opt.getAttribute("value") || opt.textContent || "").replace(/ \(not listed\)$/, "");
@@ -11172,6 +11192,7 @@ function armScreen(){
   if (pageNeeds("ledger") || pageNeeds("grades") || pageNeeds("dashfile")) onceKind(catchKey(), () => catchUp());
 }
 function showView(id){
+  if (window.__stateBlocked) return;
   const screens = ["games","seasons","dashboard","todaycard","liveodds","slips","reportcard","charts","breaks","addbet","calendarcard","scoreboard","sharks","about"];
   const box = document.getElementById(id);
   if (!box) return;
