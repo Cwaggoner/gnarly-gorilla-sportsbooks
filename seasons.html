@@ -840,8 +840,14 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .mgm-gap .mgm-group i::before { content:""; position:absolute; left:0; right:0; top:0; border-top:1px solid var(--gray); }
 .mgm-gap .mgm-group i:first-child::after { content:""; position:absolute; left:0; top:0; height:8px; border-left:1px solid var(--gray); }
 .mgm-gap .mgm-group i:last-child::after { content:""; position:absolute; right:0; top:0; height:8px; border-right:1px solid var(--gray); }
-.mgm-gap-box { grid-row:3 / span 2; align-self:stretch; height:auto; border:1px solid var(--gray); border-radius:4px; box-sizing:border-box; display:flex; align-items:center; justify-content:center; color:var(--muted); }
+.mgm-gap-box { grid-row:3 / span 2; align-self:stretch; height:auto; position:relative; border:1px solid var(--gray); border-radius:4px; box-sizing:border-box; display:flex; align-items:center; justify-content:center; color:var(--muted); }
 .mgm-gap-box svg { width:16px; height:16px; display:block; }
+.mgm-gap-box.settled { padding:0 4px 16px; }
+.outcome-mark { font:900 52px/1 Impact, "Arial Black", system-ui, sans-serif; letter-spacing:.02em; text-transform:uppercase; }
+.outcome-mark.win { color:#ff00ff; }
+.outcome-mark.loss { color:#0068E8; }
+.outcome-mark.nb { color:#d6ffd0; font-size:36px; }
+.outcome-score { position:absolute; left:2px; right:2px; bottom:4px; margin:0; text-align:center; font:700 12px/1 system-ui, sans-serif; letter-spacing:.03em; text-transform:uppercase; color:#d6ffd0; }
 .mgm-when { margin:0 0 4px; color:#8fb898; font:700 12px/1.2 system-ui,sans-serif; white-space:nowrap; }
 .mgm-start { margin-left:8px; color:#39ff14; }
 .mgm-team { display:flex; align-items:center; gap:8px; min-height:46px; color:#d6ffd0; font:700 14px/1.2 system-ui,sans-serif; }
@@ -9881,9 +9887,53 @@ function mgmGameCard(g, day, book, withClose){
   const back = !withClose && gameInActiveWindow(g.start) ? activesBack(String(g.sport || "").toUpperCase(), awayName, homeName) : null;
   const backHtml = Array.isArray(back) ? "<div class='mgm-back'>" + (back.length > 1 ? "<span>Back</span>" + back.map(name => "<span>" + esc(name) + "</span>").join("") : esc(back.length ? "Back: " + back[0] : "No one back from the injury list.")) + "</div>" : "";
   const books = "<div class='mgm-books'>" + sets + "</div>";
-  const mid = withClose ? "<div class='mgm-line'>" + books + "<div class='mgm-tail'><div class='mgm-gap'><span class='mgm-group'><i></i><b>Outcome</b><i></i></span><span class='mgm-h'>Win/Loss</span><div class='mgm-gap-box'><svg viewBox='0 0 24 24' aria-hidden='true'><path d='M8 11V8a4 4 0 0 1 8 0v3' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round'/><rect x='6' y='11' width='12' height='9' rx='1.6' fill='currentColor'/></svg></div></div>" + close + "</div></div>" : "<div class='mgm-mid'>" + books + marketBoardHtml(g, day) + "</div>";
+  const mid = withClose ? "<div class='mgm-line'>" + books + "<div class='mgm-tail'><div class='mgm-gap'><span class='mgm-group'><i></i><b>Outcome</b><i></i></span><span class='mgm-h'>Win/Loss</span><div class='mgm-gap-box" + (scored && scored.final ? " settled" : "") + "'>" + outcomeInner(g, scored) + "</div></div>" + close + "</div></div>" : "<div class='mgm-mid'>" + books + marketBoardHtml(g, day) + "</div>";
   const tail = withClose ? "" : sharpShopHtml(g, day);
   return "<article class='mgm-card" + (withClose ? "" : " no-close") + "' data-sport='" + esc(sportCode(g.sport)) + "' data-start='" + esc(g.start || "") + "'><div class='mgm-side'><p class='mgm-when'>" + dot + esc((g.sport ? g.sport + "  " : "") + when) + soonHtml + (tag ? "  " + esc(tag) : "") + "</p>" + awayFace + awayForm + homeFace + homeForm + backHtml + "</div>" + mid + tail + "</article>";
+}
+function ticketMark(g, scored){
+  if (!scored || !scored.final) return "";
+  const day = (g.start && slateDateOf(g.start)) || String(g.date || "").slice(0, 10);
+  const sport = String(g.sport || "").toUpperCase();
+  const hits = [];
+  load().forEach(b => {
+    if (!b || isNoPick(b)) return;
+    const bday = String(b.date || "").slice(0, 10);
+    if (day && bday && bday !== day) return;
+    const bs = String(b.sport || "").toUpperCase();
+    const type = betType(b);
+    if (bs && SCORE_FEED[bs] && bs !== sport && type !== "Parlay" && type !== "SGP") return;
+    const legs = (type === "Parlay" || type === "SGP") ? String(b.pick || "").split(/\s+and\s+/i) : [b.pick];
+    const mine = legs.filter(leg => findFinalGame([scored], gradeLegText(leg)));
+    if (!mine.length) return;
+    let result = String(b.result || "").toLowerCase();
+    if (type === "Parlay" || type === "SGP" || (result !== "win" && result !== "loss" && result !== "push")) {
+      const results = mine.map(leg => gradeLeg(gradeLegText(leg), scored));
+      if (results.some(r => r === "loss")) result = "loss";
+      else if (results.some(r => r === "win")) result = "win";
+      else if (results.every(r => r === "push")) result = "push";
+      else result = "";
+    }
+    if (result === "win" || result === "loss" || result === "push") hits.push(result);
+  });
+  if (!hits.length) return "nb";
+  if (hits.some(r => r === "loss")) return "loss";
+  if (hits.some(r => r === "win")) return "win";
+  return "push";
+}
+function outcomeInner(g, scored){
+  if (!scored || !scored.final) return "<svg viewBox='0 0 24 24' aria-hidden='true'><path d='M8 11V8a4 4 0 0 1 8 0v3' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round'/><rect x='6' y='11' width='12' height='9' rx='1.6' fill='currentColor'/></svg>";
+  const mark = ticketMark(g, scored);
+  const letter = mark === "win" ? "W" : mark === "loss" ? "L" : mark === "nb" ? "NB" : "";
+  const away = scored.away || {};
+  const home = scored.home || {};
+  const as = Number.isFinite(Number(scored.awayScore)) ? scored.awayScore : "";
+  const hs = Number.isFinite(Number(scored.homeScore)) ? scored.homeScore : "";
+  const an = String(away.abbreviation || away.name || "").toUpperCase();
+  const hn = String(home.abbreviation || home.name || "").toUpperCase();
+  const score = as !== "" && hs !== "" ? [an, as, hn, hs].filter(v => v !== "").join(" ") : "";
+  const cls = mark === "win" ? "win" : mark === "loss" ? "loss" : "nb";
+  return (letter ? "<b class='outcome-mark " + cls + "'>" + letter + "</b>" : "") + (score ? "<span class='outcome-score'>" + esc(score) + "</span>" : "");
 }
 function drawGameBoard(){
   const box = document.getElementById("gameboard");
