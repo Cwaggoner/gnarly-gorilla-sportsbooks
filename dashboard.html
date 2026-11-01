@@ -5876,55 +5876,15 @@ async function pullSlipWindow(){
   }
 }
 function slipsForBooks(list){
-  const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
-  const owned = new Set(list.map(b => [String(b.date).slice(0, 10), b.sport, normPick(b.pick), bookKey(b.book)].join("|")));
-  const out = [];
-  list.forEach(b => {
-    names.forEach(book => {
-      const key = [String(b.date).slice(0, 10), b.sport, normPick(b.pick), bookKey(book)].join("|");
-      const parlay = b.type === "SGP" || /\band\b/i.test(String(b.pick || ""));
-      const pair = parlay ? null : bookPair(b, book);
-      const hit = pair && pair.hit;
-      const opp = pair && pair.opp;
-      const closed = parlay ? null : quotedClose(b, book);
-      if (bookKey(b.book) === bookKey(book)) {
-        if (closed) {
-          const nums = String(b.pick || "").match(/[+-]?\d+(?:\.\d+)?/g) || [];
-          const onNumber = closed.point == null || nums.some(n => Math.abs(Number(n) - Number(closed.point)) < 0.01);
-          out.push(Object.assign({}, b, {close: closed.price, closeOpp: closed.opp != null ? closed.opp : b.closeOpp, closePoint: closed.point, realClose: true, closeText: onNumber ? "" : lineLabel(closed.point, closed.price)}));
-        }
-        else out.push(b);
-        return;
-      }
-      if (owned.has(key)) return;
-      const signedPoint = (row) => {
-        const type = b.type || betType(b);
-        if (type === "Moneyline") return true;
-        if (!row || row.point == null || row.point === "") return false;
-        const nums = String(b.pick || "").match(/[+-]?\d+(?:\.\d+)?/g) || [];
-        return nums.some(n => Math.abs(Number(n) - Number(row.point)) < 0.01);
-      };
-      const onNumber = !!(hit && signedPoint(hit));
-      const closeOnNumber = !!(closed && signedPoint(closed));
-      const copy = Object.assign({}, b, {
-        book: book,
-        id: String(b.id) + "|" + book,
-        viewOnly: true,
-        odds: onNumber && hit.price != null ? hit.price : "",
-        close: closed && closed.price != null ? closed.price : "",
-        closeOpp: closed && closed.opp != null ? closed.opp : "",
-        closePoint: closed ? closed.point : "",
-        realClose: !!closed,
-        priceText: hit && !onNumber ? lineLabel(hit.point, hit.price) : "",
-        closeText: closed && !closeOnNumber ? lineLabel(closed.point, closed.price) : "",
-        noPrice: !hit,
-        lineDiffers: !!(hit && !onNumber)
-      });
-      delete copy.profit;
-      out.push(copy);
-    });
+  return (list || []).map(b => {
+    const book = b.book || "BetMGM";
+    const parlay = b.type === "SGP" || b.type === "Parlay" || /\band\b/i.test(String(b.pick || ""));
+    const closed = parlay ? null : quotedClose(b, book);
+    if (!closed) return b;
+    const nums = String(b.pick || "").match(/[+-]?\d+(?:\.\d+)?/g) || [];
+    const onNumber = closed.point == null || nums.some(n => Math.abs(Number(n) - Number(closed.point)) < 0.01);
+    return Object.assign({}, b, {book: book, close: closed.price, closeOpp: closed.opp != null ? closed.opp : b.closeOpp, closePoint: closed.point, realClose: true, closeText: onNumber ? "" : lineLabel(closed.point, closed.price)});
   });
-  return out;
 }
 function bookFigures(slips){
   const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
