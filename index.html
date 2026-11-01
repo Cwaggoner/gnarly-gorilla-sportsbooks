@@ -1074,7 +1074,7 @@ document.addEventListener("click", e => {
 const KEY = "gnarly-gorilla-sportsbooks-v1";
 const GRADE_KEY = "gnarly-gorilla-grading-v1";
 const UNIT = 10;
-const ASSET = "20261029b";
+const ASSET = "20261031c";
 function cardUrl(path){ return path + "?v=" + ASSET; }
 function later(fn){
   if (window.requestIdleCallback) requestIdleCallback(function(){ fn(); }, {timeout: 1200});
@@ -2355,9 +2355,21 @@ function attachPair(b){
 }
 function stampFileClose(b){
   if (!b || b.result === "void") return b;
-  if (b.result === "pending") { b.close = ""; b.closeOpp = ""; b.fairClose = 0; b.realClose = false; return b; }
+  const quoted = quotedClose(b, b.book || "BetMGM");
+  if (quoted && usableClose(quoted.price)) {
+    b.close = Number(quoted.price);
+    if (usableClose(quoted.opp)) b.closeOpp = Number(quoted.opp);
+    if (quoted.point != null && Number.isFinite(Number(quoted.point))) b.closePoint = Number(quoted.point);
+    b.realClose = true;
+    return b;
+  }
+  if (b.result === "pending") {
+    if (b.realClose && usableClose(b.close)) return b;
+    b.close = ""; b.closeOpp = ""; b.fairClose = 0; b.realClose = false;
+    return b;
+  }
   if (!usableClose(b.close)) b.close = "";
-  if (usableClose(b.close) && b.realClose && Number(b.close) !== Number(b.odds)) { attachPair(b); return b; }
+  if (usableClose(b.close) && b.realClose) { attachPair(b); return b; }
   const hist = savedCloseFor(b);
   if (hist != null) { b.close = hist; b.realClose = true; attachPair(b); return b; }
   if (usableClose(b.close)) { b.realClose = true; attachPair(b); return b; }
@@ -4250,8 +4262,15 @@ function render(){
   if (page === "liveodds") drawOddsCompare(false).catch(() => {});
   return;
   }
-  const all = load().concat(loadGrade()).concat(gradeFile).filter(b => b && b.pick && !isNoPick(b) && !/^RANGE$/i.test(b.pick) && !/^all win/i.test(b.result || ""));
-  all.forEach(stampFileClose);
+  const stored = load();
+  const all = stored.concat(loadGrade()).concat(gradeFile).filter(b => b && b.pick && !isNoPick(b) && !/^RANGE$/i.test(b.pick) && !/^all win/i.test(b.result || ""));
+  let filledClose = false;
+  all.forEach(b => {
+    const had = usableClose(b.close) && b.realClose;
+    stampFileClose(b);
+    if (!had && b.realClose && usableClose(b.close) && stored.indexOf(b) >= 0) filledClose = true;
+  });
+  if (filledClose) localStorage.setItem(KEY, JSON.stringify(stored));
   let unique = collapseSlips(all);
   unique.forEach(b => {
     if (!b.id) b.id = [b.date, b.sport, b.pick].join("|");
