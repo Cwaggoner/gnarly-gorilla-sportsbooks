@@ -3899,8 +3899,8 @@ function applyStandRanks(rows){
 }
 function rankText(row){
   const bits = [];
-  if (row && row.divRank) bits.push("Div " + row.divRank);
-  if (row && row.confRank) bits.push("Conf " + row.confRank);
+  if (row && row.divRank) bits.push("Div #" + row.divRank);
+  if (row && row.confRank) bits.push("Conf #" + row.confRank);
   return bits.join(" · ") || "—";
 }
 function standLabel(node, short){
