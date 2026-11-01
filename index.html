@@ -757,7 +757,6 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .sharp-shop .sharp-add { width:136px; min-width:136px; height:22px; margin-top:2px; padding:0 8px; box-sizing:border-box; display:inline-flex; align-items:center; justify-content:center; border-radius:6px; font:700 11px/1 system-ui,sans-serif; white-space:nowrap; text-align:center; }
 .mgm-mid { min-width:0; display:flex; flex-direction:column; align-items:flex-start; gap:8px; }
 .mgm-form { margin:0 0 4px 36px; color:#8fb898; font-size:11px; line-height:1.35; }
-.mgm-where { text-transform:uppercase; }
 .mgm-form .loss, .mgm-form .warn { font-weight:700; }
 .mgm-hurt { display:flex; flex-direction:column; align-items:flex-start; gap:2px; margin:0 0 4px 36px; }
 .mgm-back { margin:calc(var(--section) * 2) 0 0 36px; color:#39ff14; font-size:12px; line-height:1.35; }
@@ -9668,12 +9667,11 @@ function mgmGameCard(g, day, book, withClose){
   const homeFace = face(pickedFace(scored && scored.home, g.homeFace, homeName));
   const awayForm = withClose ? "" : sideForm(g.sport, scored && scored.away);
   const homeForm = withClose ? "" : sideForm(g.sport, scored && scored.home);
-  const gamesVenue = withClose && scored && scored.venue ? "<p class='mgm-form mgm-where'>" + esc(scored.venue + (scored.indoor ? " · indoor" : "")) + "</p>" : "";
   const back = !withClose && gameInActiveWindow(g.start) ? activesBack(String(g.sport || "").toUpperCase(), awayName, homeName) : null;
   const backHtml = Array.isArray(back) ? "<div class='mgm-back'>" + (back.length > 1 ? "<span>Back</span>" + back.map(name => "<span>" + esc(name) + "</span>").join("") : esc(back.length ? "Back: " + back[0] : "No one back from the injury list.")) + "</div>" : "";
   const mid = "<div class='mgm-mid'><div class='mgm-books'>" + sets + "</div>" + (withClose ? "" : marketBoardHtml(g, day)) + "</div>";
   const tail = withClose ? close : sharpShopHtml(g, day);
-  return "<article class='mgm-card" + (withClose ? "" : " no-close") + "' data-sport='" + esc(sportCode(g.sport)) + "' data-start='" + esc(g.start || "") + "'><div class='mgm-side'><p class='mgm-when'>" + dot + esc((g.sport ? g.sport + "  " : "") + when) + soonHtml + (tag ? "  " + esc(tag) : "") + "</p>" + awayFace + awayForm + homeFace + homeForm + gamesVenue + backHtml + "</div>" + mid + tail + "</article>";
+  return "<article class='mgm-card" + (withClose ? "" : " no-close") + "' data-sport='" + esc(sportCode(g.sport)) + "' data-start='" + esc(g.start || "") + "'><div class='mgm-side'><p class='mgm-when'>" + dot + esc((g.sport ? g.sport + "  " : "") + when) + soonHtml + (tag ? "  " + esc(tag) : "") + "</p>" + awayFace + awayForm + homeFace + homeForm + backHtml + "</div>" + mid + tail + "</article>";
 }
 function drawGameBoard(){
   const box = document.getElementById("gameboard");
