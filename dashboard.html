@@ -830,10 +830,10 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .mgm-set.mgm-close { justify-self:end; }
 .mgm-card:not(.no-close) { grid-template-columns:minmax(230px, max-content) minmax(0,1fr); }
 .mgm-line { display:flex; align-items:flex-end; min-width:0; width:100%; }
-.mgm-line .mgm-books { flex:1 1 auto; min-width:0; overflow-x:auto; }
-.mgm-tail { flex:0 0 auto; display:flex; align-items:flex-end; margin-left:4px; }
+.mgm-line .mgm-books { flex:1 1 auto; min-width:0; overflow-x:auto; overflow-y:hidden; }
+.mgm-tail { flex:0 0 auto; display:flex; align-items:flex-end; margin-left:4px; position:relative; z-index:1; }
 .mgm-line .mgm-set.mgm-close { flex:0 0 auto; }
-.mgm-gap { flex:0 0 156px; width:156px; min-width:156px; max-width:156px; align-self:flex-end; margin:0 4px 0 0; display:grid; grid-template-rows:auto auto 46px 46px; gap:4px; box-sizing:border-box; overflow:visible; }
+.mgm-gap { flex:0 0 var(--outcome-w, 90px); width:var(--outcome-w, 90px); min-width:var(--outcome-w, 90px); max-width:var(--outcome-w, 90px); align-self:flex-end; margin:0 4px 0 0; display:grid; grid-template-rows:auto auto 46px 46px; gap:4px; box-sizing:border-box; overflow:visible; }
 .mgm-gap .mgm-group { display:flex; align-items:center; gap:6px; color:#f0e14a; overflow:visible; }
 .mgm-gap .mgm-group b { font:700 11px/1 system-ui,sans-serif; letter-spacing:.04em; white-space:nowrap; color:#f0e14a; }
 .mgm-gap .mgm-group i { flex:1 1 auto; height:0; position:relative; display:block; margin:0; align-self:center; }
@@ -9934,10 +9934,33 @@ function drawGameBoard(){
   alignSportBrackets();
   requestAnimationFrame(alignSportBrackets);
 }
+function lockOutcomeWidth(){
+  if ((document.documentElement.dataset.page || "games") !== "games") return;
+  const lines = [...document.querySelectorAll("#gameboard .mgm-line")];
+  let width = 0;
+  let found = false;
+  lines.forEach(line => {
+    const books = line.querySelector(".mgm-books");
+    const close = line.querySelector(".mgm-set.mgm-close");
+    if (!books || !close) return;
+    const hard = [...books.querySelectorAll(".mgm-set.mgm-book")].find(set => /hardrock/i.test(((set.querySelector(".mgm-group b") || {}).textContent || "")));
+    if (!hard) return;
+    const money = hard.querySelectorAll(".mgm-h")[2];
+    if (!money) return;
+    const edge = money.getBoundingClientRect().right - books.getBoundingClientRect().left + books.scrollLeft;
+    const next = Math.round(line.clientWidth - close.offsetWidth - edge - 8);
+    if (!found || next < width) width = next;
+    found = true;
+  });
+  if (!found) return;
+  if (width < 64) width = 64;
+  document.documentElement.style.setProperty("--outcome-w", width + "px");
+}
 function alignSportBrackets(){
   const group = document.getElementById("sportalign");
   if (!group) return;
   if ((document.documentElement.dataset.page || "games") !== "games") return;
+  lockOutcomeWidth();
   const spans = [...document.querySelectorAll("#gameboard .mgm-card")].map(card => {
     const books = [...card.querySelectorAll(".mgm-set.mgm-book")];
     if (!books.length) return null;
