@@ -755,6 +755,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .mgm-form { margin:0 0 4px 36px; color:#8fb898; font-size:11px; line-height:1.35; }
 .mgm-form .loss, .mgm-form .warn { font-weight:700; }
 .mgm-hurt { display:flex; flex-direction:column; align-items:flex-start; gap:2px; margin:0 0 4px 36px; }
+.mgm-back { margin:2px 0 0 36px; color:#39ff14; font-size:12px; line-height:1.35; }
 .mgm-hurt > span { display:block; font-size:11px; line-height:1.35; font-weight:700; }
 .market-board { border:0; background:transparent; padding:0; overflow-x:auto; min-width:0; max-width:100%; box-sizing:border-box; display:flex; flex-direction:column; align-items:stretch; gap:8px; }
 .market-board table { width:100%; min-width:0; margin:0; border:0; border-radius:0; background:transparent; overflow:visible; border-collapse:collapse; font-size:11px; }
@@ -3270,6 +3271,9 @@ function injuryWorth(status){
   if (/active|probable|healthy/i.test(s)) return false;
   return /out|doubt|question|day-to-day|day to day|reserve|\bil\b|suspend/i.test(s);
 }
+function injuryActive(status){
+  return /active|probable|healthy/i.test(String(status || ""));
+}
 function injuryRank(status){
   const s = String(status || "");
   if (/reserve|\bil\b|suspend|out for season/i.test(s)) return 0;
@@ -3306,10 +3310,84 @@ function keepInjuryFeed(sport, feed){
     return false;
   }
   feed.fetchedAt = Date.now();
+  noteInjuryBase(sport, feed);
   window.__injuryFeeds = window.__injuryFeeds || {};
   window.__injuryFeeds[sport] = feed;
   if (window.__injuryMiss) delete window.__injuryMiss[sport];
   return true;
+}
+function injuryBaseStore(){
+  const day = easternDay();
+  if (window.__injuryBase && window.__injuryBase.day === day) return window.__injuryBase;
+  let store = null;
+  try { store = JSON.parse(localStorage.getItem("gg-injury-base") || "null"); } catch (e) { store = null; }
+  if (!store || store.day !== day || !store.players) store = {day: day, players: {}};
+  window.__injuryBase = store;
+  return store;
+}
+function noteInjuryBase(sport, feed){
+  const store = injuryBaseStore();
+  let added = false;
+  ((feed && feed.injuries) || []).forEach(club => {
+    const team = club.displayName || (club.team && club.team.displayName) || "";
+    ((club.injuries) || []).forEach(item => {
+      const name = (item.athlete && item.athlete.displayName) || "";
+      if (!team || !name) return;
+      const key = sport + "|" + team.toLowerCase() + "|" + name.toLowerCase();
+      if (store.players[key]) return;
+      store.players[key] = {sport: sport, team: team, name: name, status: item.status || ""};
+      added = true;
+    });
+  });
+  if (added) { try { localStorage.setItem("gg-injury-base", JSON.stringify(store)); } catch (e) {} }
+}
+function gameInActiveWindow(start){
+  const ms = Date.parse(start || "");
+  if (!Number.isFinite(ms)) return false;
+  const left = ms - Date.now();
+  return left > 0 && left <= 10 * 60 * 1000;
+}
+function activesBack(sport, away, home){
+  const feed = (window.__injuryFeeds || {})[sport];
+  const store = injuryBaseStore();
+  if (!feed || !store.players) return null;
+  const sides = [away, home].filter(Boolean);
+  const back = [];
+  Object.keys(store.players).forEach(key => {
+    const row = store.players[key];
+    if (!row || row.sport !== sport || !injuryWorth(row.status)) return;
+    if (!sides.some(name => sameClub(row.team, name))) return;
+    const club = ((feed.injuries) || []).find(item => sameClub(item.displayName || (item.team && item.team.displayName), row.team));
+    if (!club) return;
+    const now = ((club.injuries) || []).find(item => String((item.athlete && item.athlete.displayName) || "").toLowerCase() === String(row.name || "").toLowerCase());
+    const status = now ? (now.status || "") : "";
+    if (!now || injuryActive(status) || !injuryWorth(status)) back.push(String(row.name || "").split(" ").slice(-1)[0] || row.name);
+  });
+  return back;
+}
+let activeBackClock = 0;
+let activeBackAt = 0;
+let activeBackFlight = null;
+function pullActiveBack(games){
+  const watch = (games || []).filter(g => gameInActiveWindow(g.start));
+  const sports = [...new Set(watch.map(g => String(g.sport || "").toUpperCase()))].filter(s => SCORE_FEED[s]);
+  if (!sports.length || activeBackFlight) return;
+  activeBackAt = Date.now();
+  activeBackFlight = Promise.all(sports.map(sport => fetch("https://site.api.espn.com/apis/site/v2/sports/" + SCORE_FEED[sport] + "/injuries").then(r => r.ok ? r.json() : null).catch(() => null))).then(packs => {
+    sports.forEach((sport, i) => keepInjuryFeed(sport, packs[i]));
+    if ((document.documentElement.dataset.page || "") === "liveodds") drawOddsCompare(false).catch(() => {});
+  }).finally(() => { activeBackFlight = null; });
+}
+function armActiveBack(games){
+  clearInterval(activeBackClock);
+  if ((document.documentElement.dataset.page || "") !== "liveodds") return;
+  const watch = (games || []).filter(g => gameInActiveWindow(g.start));
+  if (!watch.length) return;
+  if (Date.now() - activeBackAt > 55000) pullActiveBack(games);
+  activeBackClock = setInterval(() => {
+    if ((document.documentElement.dataset.page || "") !== "liveodds") { clearInterval(activeBackClock); return; }
+    pullActiveBack(games);
+  }, 60000);
 }
 function filterInjury(){
   const sport = (document.getElementById("injurysport") || {}).value || "All";
@@ -4930,6 +5008,7 @@ async function renderOddsCompare(force){
       wireCompare();
       armStartingIn();
       armLiveExtras(games);
+      armActiveBack(games);
       later(() => absorbLiveBoard(live));
       fitMarketBoards();
       return "Live as of " + when + ".";
@@ -4951,6 +5030,7 @@ async function renderOddsCompare(force){
       armStartingIn();
       const block = window.__ggOddsBoard && window.__ggOddsBoard.days && window.__ggOddsBoard.days[day];
       if (block) armLiveExtras(indexedGames({h2h: block.h2h, spreads: block.spreads, totals: block.totals}));
+      if (block) armActiveBack(indexedGames({h2h: block.h2h, spreads: block.spreads, totals: block.totals}));
       fitMarketBoards();
       return;
     }
@@ -9225,9 +9305,11 @@ function mgmGameCard(g, day, book, withClose){
   const awayForm = withClose ? "" : sideForm(g.sport, scored && scored.away);
   const homeForm = withClose ? "" : sideForm(g.sport, scored && scored.home);
   const venue = !withClose && scored && scored.venue ? "<p class='mgm-form'>" + esc(scored.venue + (scored.indoor ? " · indoor" : "")) + "</p>" : "";
+  const back = !withClose && gameInActiveWindow(g.start) ? activesBack(String(g.sport || "").toUpperCase(), awayName, homeName) : null;
+  const backHtml = Array.isArray(back) ? "<p class='mgm-back'>" + esc(back.length ? "Back: " + back.join(", ") : "No one back from the injury list.") + "</p>" : "";
   const mid = "<div class='mgm-mid'><div class='mgm-books'>" + sets + "</div>" + (withClose ? "" : marketBoardHtml(g, day)) + "</div>";
   const tail = withClose ? close : sharpShopHtml(g, day);
-  return "<article class='mgm-card" + (withClose ? "" : " no-close") + "'><div class='mgm-side'><p class='mgm-when'>" + dot + esc((g.sport ? g.sport + "  " : "") + when) + soonHtml + (tag ? "  " + esc(tag) : "") + "</p>" + awayFace + awayForm + homeFace + homeForm + venue + "</div>" + mid + tail + "</article>";
+  return "<article class='mgm-card" + (withClose ? "" : " no-close") + "'><div class='mgm-side'><p class='mgm-when'>" + dot + esc((g.sport ? g.sport + "  " : "") + when) + soonHtml + (tag ? "  " + esc(tag) : "") + "</p>" + awayFace + awayForm + homeFace + homeForm + venue + backHtml + "</div>" + mid + tail + "</article>";
 }
 function drawGameBoard(){
   const box = document.getElementById("gameboard");
