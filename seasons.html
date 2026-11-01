@@ -499,6 +499,10 @@ table { width:100%; border-collapse:separate; border-spacing:0; margin:var(--box
 .card, .page { max-width:100%; }
 .table-wrap { display:block; width:100%; overflow-x:auto; }
 #slips .table-wrap { overflow:auto; max-width:100%; margin:var(--box-gap) 0; border:1px solid #39ff14; border-radius:10px; }
+#slipheadpin { position:fixed; z-index:20; overflow:hidden; pointer-events:none; background:#102010; border:1px solid #39ff14; border-bottom:0; box-sizing:border-box; }
+#slipheadpin[hidden] { display:none !important; }
+#slipheadpin .slipheadpin-row { display:flex; width:max-content; }
+#slipheadpin span { box-sizing:border-box; padding:8px; color:#39ff14; font:700 13px/1.2 system-ui,sans-serif; white-space:nowrap; background:#102010; border-bottom:1px solid #39ff14; }
 #slips table { display:table; width:max-content; min-width:100%; margin-top:0; border:0; border-radius:0; background:transparent; }
 #slips .table-wrap tr:last-child td { border-bottom:0; }
 #bookbadge { width:72px; height:72px; box-sizing:border-box; border:1px solid #39ff14; border-radius:12px; background:#0a0a0a; overflow:hidden; pointer-events:none; }
@@ -4671,6 +4675,7 @@ function render(){
   }).join("") || "<tr><td colspan='15'>" + ((document.getElementById("fBook") || {}).value ? "No slips for " + esc(document.getElementById("fBook").value) + "." : "No bets yet.") + "</td></tr>";
   } finally {
     rendering = false;
+    try { pinSlipHead(); } catch (e) {}
   }
   ensureSlipScores();
 }
@@ -11083,6 +11088,53 @@ function pinOffset(){
   const bar = document.querySelector(".topbar");
   if (bar) document.documentElement.style.setProperty("--pin", (bar.offsetHeight + 8) + "px");
 }
+function pinSlipHead(){
+  const wrap = document.querySelector("#slips .table-wrap");
+  const table = wrap && wrap.querySelector("table");
+  const thead = table && table.querySelector("thead");
+  const row = thead && thead.querySelector("tr");
+  let bar = document.getElementById("slipheadpin");
+  if (!bar) {
+    bar = document.createElement("div");
+    bar.id = "slipheadpin";
+    bar.hidden = true;
+    bar.innerHTML = "<div class='slipheadpin-row'></div>";
+    document.body.appendChild(bar);
+  }
+  const cells = bar.querySelector(".slipheadpin-row");
+  const showHead = () => { if (row) [...row.children].forEach(th => { th.style.visibility = ""; }); };
+  const hide = () => { bar.hidden = true; showHead(); };
+  if (!wrap || !table || !row || document.documentElement.dataset.page !== "slips") { hide(); return; }
+  const pin = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--pin")) || 150;
+  const space = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--section")) || 21;
+  const top = pin - 8 + space;
+  const head = thead.getBoundingClientRect();
+  const box = table.getBoundingClientRect();
+  if (head.top >= top || box.bottom <= top + head.height + 8) { hide(); return; }
+  const ths = [...row.children];
+  if (cells.children.length !== ths.length) cells.innerHTML = ths.map(th => "<span>" + th.textContent + "</span>").join("");
+  [...cells.children].forEach((span, i) => {
+    const w = ths[i].getBoundingClientRect().width;
+    span.style.flex = "0 0 " + w + "px";
+    span.style.width = w + "px";
+  });
+  const wrapBox = wrap.getBoundingClientRect();
+  bar.hidden = false;
+  bar.style.top = top + "px";
+  bar.style.left = wrapBox.left + "px";
+  bar.style.width = wrapBox.width + "px";
+  cells.style.transform = "translateX(" + (head.left - wrapBox.left) + "px)";
+  ths.forEach(th => { th.style.visibility = "hidden"; });
+}
+let slipHeadFrame = 0;
+function queueSlipHead(){
+  if (slipHeadFrame) return;
+  slipHeadFrame = requestAnimationFrame(() => { slipHeadFrame = 0; pinSlipHead(); });
+}
+window.addEventListener("scroll", queueSlipHead, {passive: true});
+window.addEventListener("resize", queueSlipHead);
+const slipWrap = document.querySelector("#slips .table-wrap");
+if (slipWrap) slipWrap.addEventListener("scroll", queueSlipHead, {passive: true});
 paintLeagueMarks();
 </script>
 </body>
