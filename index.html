@@ -2829,11 +2829,22 @@ function drawCalendar(){
   monthDates.forEach(date => {
     const slips = slipsForDay(date);
     if (!slateSettled(date) && !slips.length) return;
-    let pl = Number(board[date] && board[date].pl);
-    if ((!slateSettled(date) || !Number.isFinite(pl)) && slips.length) pl = Math.round(slips.reduce((s, b) => s + slipMoney(b), 0) * 100) / 100;
+    if (slips.length) {
+      slips.forEach(b => {
+        const n = slipMoney(b);
+        if (!Number.isFinite(n) || n === 0) return;
+        if (n > 0) gain += n;
+        else loss += Math.abs(n);
+      });
+      return;
+    }
+    const pl = Number(board[date] && board[date].pl);
     if (!Number.isFinite(pl) || pl === 0) return;
-    if (pl > 0) gain += pl; else loss += Math.abs(pl);
+    if (pl > 0) gain += pl;
+    else loss += Math.abs(pl);
   });
+  gain = Math.round(gain * 100) / 100;
+  loss = Math.round(loss * 100) / 100;
   const box = document.getElementById("monthpl");
   if (box) box.innerHTML = "<b>Monthly Win/Loss Record <span class='win'>" + money(gain) + "</span> <span class='loss'>-" + money(loss).replace("-", "") + "</span><span class='net-gap'>Net " + moneyHtml(gain - loss) + "</span></b>";
   if (openDate && !document.getElementById("closeday")) openDay(openDate);
