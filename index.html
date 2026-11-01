@@ -1349,6 +1349,7 @@ let slipConfHold = new Map();
 function save(bets){
   localStorage.setItem(KEY, JSON.stringify(bets));
   if (!rendering) render();
+  if (document.getElementById("analysisgrid")) drawCardAnalysis(postedCard);
 }
 function forgetManual(bet){
   if (!bet) return load();
@@ -1758,6 +1759,10 @@ function sportLean(rows){
   if (types.some(t => t === "sgp")) bits.push("SGP");
   return bits.length ? bits.join(" and ") : "posted plays";
 }
+function pendingCardRows(){
+  const sports = {CBB:1, CFB:1, MLB:1, NBA:1, NFL:1, NHL:1};
+  return load().filter(b => b && b.result === "pending" && !isNoPick(b) && sports[String(b.sport || "").toUpperCase()] && b.pick).map(b => [String(b.date || "").slice(0, 10) || easternDay(), String(b.sport).toUpperCase(), b.type || "Spread", b.pick, b.odds == null ? "" : String(b.odds), b.notes || (b.edge ? "Edge" : "")]);
+}
 function drawCardAnalysis(text){
   postedCard = text || "";
   const grid = document.getElementById("analysisgrid");
@@ -1765,10 +1770,19 @@ function drawCardAnalysis(text){
   const all = cardLines(text);
   const today = easternDay();
   const dated = all.filter(p => /^\d{4}-\d{2}-\d{2}$/.test(p[0]));
-  const rows = dated.length ? dated.filter(p => p[0] === today) : all;
+  const posted = dated.length ? dated.filter(p => p[0] === today) : all;
+  const seen = new Set();
+  const rows = [];
+  posted.filter(r => !isNoCard(r)).concat(pendingCardRows()).forEach(r => {
+    const key = r[1] + "|" + normPick(r[3]);
+    if (!r[3] || seen.has(key)) return;
+    seen.add(key);
+    rows.push(r);
+  });
+  posted.filter(isNoCard).forEach(r => { if (!rows.some(row => row[1] === r[1])) rows.push(r); });
   const title = document.querySelector("#cardanalysis h3");
   const read = document.getElementById("sharpread");
-  if (dated.length && !rows.length) {
+  if (!rows.length) {
     grid.innerHTML = "<p class='warn'>Today's card is not posted yet. Yesterday's picks stay off this card.</p>";
     if (title) title.textContent = "Analysis · " + today;
     if (read) read.textContent = "No card is live yet. It posts with the morning picks. Yesterday is not carried onto this card.";
