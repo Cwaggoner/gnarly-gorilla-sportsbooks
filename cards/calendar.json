@@ -901,14 +901,14 @@
       }
     },
     "2026-10-31": {
-      "pl": 9.09,
-      "n": 1,
-      "wins": 1,
-      "losses": 0,
+      "pl": 15.98,
+      "n": 6,
+      "wins": 4,
+      "losses": 2,
       "pushes": 0,
-      "allWin": 9.09,
-      "allLose": -10,
-      "clv": 0,
+      "allWin": 54.16,
+      "allLose": -60,
+      "clv": null,
       "sports": {
         "CBB": {
           "profit": 0,
@@ -919,12 +919,12 @@
           "record": "0-0-0"
         },
         "CFB": {
-          "profit": 9.09,
-          "n": 1,
-          "wins": 1,
-          "losses": 0,
+          "profit": 15.98,
+          "n": 6,
+          "wins": 4,
+          "losses": 2,
           "pushes": 0,
-          "record": "1-0-0"
+          "record": "4-2-0"
         },
         "MLB": {
           "profit": 0,
