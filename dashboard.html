@@ -742,6 +742,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .game-lines { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
 .game-lines h4 { margin:0 0 4px; color:#8fb898; font-size:12px; font-weight:600; }
 .mgm-card { display:grid; grid-template-columns:minmax(230px, max-content) minmax(0,1fr) max-content; align-items:center; column-gap:12px; width:100%; max-width:100%; box-sizing:border-box; border:1px solid var(--gray); border-radius:10px; background:#0e0e0e; margin:var(--box-gap) 0; padding:8px 10px; }
+#oddscompare .mgm-card.sport-off { display:none !important; }
 .mgm-card.no-close { grid-template-columns:minmax(210px, max-content) minmax(0,1fr) minmax(250px, 300px); align-items:start; }
 .sharp-shop { border:1px solid #39ff14; border-radius:8px; background:rgba(57,255,20,.08); padding:8px 10px; min-width:0; }
 .sharp-shop h3 { margin:0 0 6px; color:#39ff14; font-size:13px; letter-spacing:.04em; }
@@ -932,7 +933,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </ul>
 <ul class="odds-notes" id="sharpcheck"></ul></td></tr></tbody></table></div>
 </section>
-<section class="card view" id="liveodds"><div class="section-head"><h2>Live Odds</h2></div><div class="align-frame"><table class="score-align"><tbody><tr><td><div class="odds-tools" id="compareday"><button type="button" id="day-yesterday">Yesterday</button><button type="button" id="day-today">Today</button><select id="comparesport"><option selected>All</option><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option></select><button type="button" id="refreshodds">Refresh</button></div></td><td class="score-copy"><p class="warn slips-side">Moneyline, spread, and total across books. Refresh pulls the live price.</p><div id="oddslead"></div></td></tr></tbody></table></div><div id="oddscompare"></div></section>
+<section class="card view" id="liveodds"><div class="section-head"><h2>Live Odds</h2></div><div class="align-frame"><table class="score-align"><tbody><tr><td><div class="odds-tools" id="compareday"><button type="button" id="day-yesterday">Yesterday</button><button type="button" id="day-today">Today</button><select id="comparesport"><option value="All" selected>All</option><option value="CBB">CBB</option><option value="CFB">CFB</option><option value="MLB">MLB</option><option value="NBA">NBA</option><option value="NFL">NFL</option><option value="NHL">NHL</option></select><button type="button" id="refreshodds">Refresh</button></div></td><td class="score-copy"><p class="warn slips-side">Moneyline, spread, and total across books. Refresh pulls the live price.</p><div id="oddslead"></div></td></tr></tbody></table></div><div id="oddscompare"></div></section>
 <section class="card view" id="todaycard">
 <div class="section-head"><h2>Today's Card</h2></div>
 <div class="payout-box">
@@ -4858,10 +4859,29 @@ function indexedGames(rowsByMarket){
   });
   return foldBoardGames(Object.values(index)).sort((a, b) => sportRank(a.sport) - sportRank(b.sport) || String(a.start || "").localeCompare(String(b.start || "")) || a.label.localeCompare(b.label));
 }
+function sportCode(name){
+  const raw = String(name || "").toUpperCase().split(/[^A-Z0-9]+/).filter(Boolean)[0] || "";
+  if (raw === "NCAAB" || raw === "CBB") return "CBB";
+  if (raw === "NCAAF" || raw === "CFB") return "CFB";
+  return raw;
+}
 function compareSportList(games){
-  const sport = (document.getElementById("comparesport") || {}).value || localStorage.getItem("gg-compare-sport") || "All";
-  if (!sport || sport === "All") return games;
-  return games.filter(g => String(g.sport || "").toUpperCase() === String(sport).toUpperCase());
+  const sport = sportCode((document.getElementById("comparesport") || {}).value || localStorage.getItem("gg-compare-sport") || "All");
+  if (!sport || sport === "ALL") return games;
+  return games.filter(g => sportCode(g.sport) === sport);
+}
+function applyCompareSport(){
+  const want = sportCode((document.getElementById("comparesport") || {}).value || localStorage.getItem("gg-compare-sport") || "All");
+  const cards = [...document.querySelectorAll("#oddscompare .mgm-card")];
+  if (!cards.length) return;
+  const box = cards[0].parentNode;
+  cards.map(card => {
+    const sport = sportCode(card.dataset.sport || ((card.querySelector(".mgm-when") || {}).textContent || ""));
+    return {card: card, sport: sport, rank: sportRank(sport), start: card.dataset.start || ""};
+  }).sort((a, b) => a.rank - b.rank || a.start.localeCompare(b.start)).forEach(row => {
+    row.card.classList.toggle("sport-off", !!(want && want !== "ALL" && row.sport !== want));
+    box.appendChild(row.card);
+  });
 }
 function paintOddsLead(html){
   const lead = document.getElementById("oddslead");
@@ -5272,9 +5292,15 @@ function wireCompare(){
   const sport = document.getElementById("comparesport");
   if (sport && !sport.dataset.wired) {
     sport.dataset.wired = "1";
-    sport.value = localStorage.getItem("gg-compare-sport") || "All";
-    sport.onchange = () => { localStorage.setItem("gg-compare-sport", sport.value); drawOddsCompare(false).catch(() => {}); };
+    sport.onchange = () => {
+      localStorage.setItem("gg-compare-sport", sport.value || "All");
+      applyCompareSport();
+      drawOddsCompare(false).catch(() => {});
+    };
   }
+  const savedSport = localStorage.getItem("gg-compare-sport");
+  if (sport && savedSport && [...sport.options].some(o => o.value === savedSport)) sport.value = savedSport;
+  applyCompareSport();
 }
 function priceProfit(result, price, stake){
   stake = Number(stake) || 10;
@@ -6380,7 +6406,6 @@ function sportKeys(sport){
 }
 const oddskey = document.getElementById("oddskey");
 oddskey.value = localStorage.getItem("gg-odds-key") || "";
-localStorage.removeItem("gg-compare-sport");
 // key is saved only by the Commit button
 function teamOf(pick){
   const total = String(pick).match(/^(.*?)\s*(over|under)\s+\d+(?:\.\d+)?$/i);
@@ -9335,7 +9360,7 @@ function mgmGameCard(g, day, book, withClose){
   const backHtml = Array.isArray(back) ? "<div class='mgm-back'>" + (back.length > 1 ? "<span>Back</span>" + back.map(name => "<span>" + esc(name) + "</span>").join("") : esc(back.length ? "Back: " + back[0] : "No one back from the injury list.")) + "</div>" : "";
   const mid = "<div class='mgm-mid'><div class='mgm-books'>" + sets + "</div>" + (withClose ? "" : marketBoardHtml(g, day)) + "</div>";
   const tail = withClose ? close : sharpShopHtml(g, day);
-  return "<article class='mgm-card" + (withClose ? "" : " no-close") + "'><div class='mgm-side'><p class='mgm-when'>" + dot + esc((g.sport ? g.sport + "  " : "") + when) + soonHtml + (tag ? "  " + esc(tag) : "") + "</p>" + awayFace + awayForm + homeFace + homeForm + venue + backHtml + "</div>" + mid + tail + "</article>";
+  return "<article class='mgm-card" + (withClose ? "" : " no-close") + "' data-sport='" + esc(sportCode(g.sport)) + "' data-start='" + esc(g.start || "") + "'><div class='mgm-side'><p class='mgm-when'>" + dot + esc((g.sport ? g.sport + "  " : "") + when) + soonHtml + (tag ? "  " + esc(tag) : "") + "</p>" + awayFace + awayForm + homeFace + homeForm + venue + backHtml + "</div>" + mid + tail + "</article>";
 }
 function drawGameBoard(){
   const box = document.getElementById("gameboard");
