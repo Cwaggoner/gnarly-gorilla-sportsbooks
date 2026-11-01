@@ -4433,11 +4433,14 @@ function gradeNote(b){
   if (result === "win") return line ? "Covered " + line : "Covered";
   return line ? "Missed " + line : "Missed";
 }
+function slipLegText(text){
+  return String(text || "").replace(/\b(?:CBB|CFB|MLB|NBA|NFL|NHL|MUL)\b\s*/gi, " ").replace(/\s+/g, " ").trim();
+}
 function slipPickHtml(b){
   let pick = String(b && b.pick || "");
   if (b && b.type === "Parlay") pick = pick.replace(/^parlay\s+/i, "");
-  if (!b || (b.type !== "SGP" && b.type !== "Parlay")) return esc(pick);
-  const legs = pick.split(/\s+and\s+/i).map(s => s.trim()).filter(Boolean);
+  if (!b || (b.type !== "SGP" && b.type !== "Parlay")) return esc(slipLegText(pick));
+  const legs = pick.split(/\s+and\s+/i).map(slipLegText).filter(Boolean);
   if (legs.length < 3) return esc(legs.join(" and "));
   const lines = [];
   for (let i = 0; i < legs.length; i += 2) lines.push("<span>" + esc(legs.slice(i, i + 2).join(" and ")) + "</span>");
