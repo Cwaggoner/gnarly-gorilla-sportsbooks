@@ -4562,7 +4562,7 @@ function render(){
       : note
       ? "<span class='" + cls + "'>" + esc(note) + "</span>"
       : !finished ? "Game not finished"
-      : "<button data-set='win' data-id='" + b.id + "'>Win</button> <button class='danger' data-set='loss' data-id='" + b.id + "'>Loss</button> <button class='amber' data-set='push' data-id='" + b.id + "'>Push</button>";
+      : dash;
     const cv = clv(b);
     const sharpCv = sharpClv(b);
     const sharpCls = sharpCv === "differs" ? "warn" : (typeof sharpCv === "number" ? (sharpCv > 0.05 ? "win" : (sharpCv < -0.05 ? "loss" : "")) : "");
@@ -6373,16 +6373,6 @@ document.getElementById("rows").onclick = e => {
     if (gone && gone.manual) save(forgetManual(gone));
     else save(bets.filter(b => String(b.id) !== t.dataset.del));
     return;
-  }
-  if (t.dataset.set) {
-    const bets = load();
-    const bet = bets.find(b => String(b.id) === t.dataset.id);
-    if (bet && t.dataset.set !== "pending" && !slateSettled(bet.date)) {
-      document.getElementById("editnote").textContent = "Game not finished. Result stays pending until that slate ends. A postseason game stays open until " + zoneTime(4, 0) + ".";
-      return;
-    }
-    if (bet) bet.result = t.dataset.set;
-    save(bets);
   }
 };
 
