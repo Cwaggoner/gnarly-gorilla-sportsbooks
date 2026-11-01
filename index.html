@@ -150,7 +150,7 @@ html, body, .page, .page * { overflow-anchor:none; }
 #slips .result-files > :nth-child(2) { margin-left:2px; }
 .section-head h2 { margin:0; }
 .slips-side { margin:0; text-align:left; max-width:62%; font-size:12px; }
-#games .head-notes { display:flex; flex-direction:column; align-items:flex-start; gap:2px; max-width:62%; }
+#games .head-notes { display:flex; flex-direction:column; align-items:flex-start; gap:2px; max-width:none; }
 #games .head-notes .slips-side { max-width:none; }
 .score-notes { display:flex; flex-direction:column; align-items:flex-start; gap:2px; max-width:62%; }
 .score-notes .score-line { margin:0; max-width:none; }
@@ -637,7 +637,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 .compare th { color:#39ff14; }
 #liveodds > .section-head { margin-bottom:4px; }
 .odds-tools { display:flex; flex-direction:row; align-items:center; justify-content:flex-start; gap:8px; margin:0 0 6px; flex-wrap:nowrap; width:max-content; max-width:100%; }
-#games > .odds-tools { gap:0; align-items:flex-end; flex-wrap:nowrap; overflow:visible; }
+#games .odds-tools { gap:0; align-items:flex-end; flex-wrap:nowrap; overflow:visible; }
 #games #sportbar { margin:0; flex-wrap:nowrap; align-items:flex-end; }
 #games .sport-align { display:flex; align-items:flex-end; justify-content:space-between; flex:0 0 auto; gap:6px; box-sizing:border-box; }
 #games #sportbar .book-links { display:contents; }
@@ -725,7 +725,9 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .sport-bar button { height:38px; min-width:7ch; }
 #sportbar #gamerefresh { margin-left:0; }
 #games { position:relative; }
-.section-head > h2, .card > h2 { display:flex; align-items:center; gap:10px; }
+.section-head > h2, .card > h2, h2.split-title, h3.split-title, .sport-title, .feed-head { display:flex; align-items:center; gap:10px; }
+.section-head > h2 { flex:1 1 auto; width:100%; min-width:0; }
+.league-marks { margin-left:auto; display:inline-flex; align-items:center; gap:6px; flex:0 0 auto; }
 .league-marks { display:inline-flex; align-items:center; gap:6px; flex:0 0 auto; }
 .league-marks img, button.league img { width:20px; height:20px; flex:0 0 20px; display:block; object-fit:contain; }
 #gamenote { position:absolute; margin:0; white-space:nowrap; line-height:1; z-index:5; pointer-events:none; transform:translate(-50%, -100%); }
@@ -877,14 +879,14 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </div>
 </nav>
 </div>
-<div id="seasons" class="card view"><div class="section-head"><h2>Season Dates</h2><p class="warn slips-side">Checked in the month each league publishes its schedule.</p></div></div>
+<div id="seasons" class="card view"><div class="section-head"><h2>Season Dates</h2></div></div>
 <div id="scoreboard" class="card view"><div class="section-head"><h2>Full Scoreboard</h2></div><div class="full-board"><aside class="full-sports" id="fullsports"></aside><div class="full-main"><div class="full-dates"><button type="button" class="full-chev" id="fulldateprev" aria-label="Previous day">&#8249;</button><div class="full-date-row" id="fulldates"></div><button type="button" class="full-chev" id="fulldatenext" aria-label="Next day">&#8250;</button></div><div class="align-frame"><table class="score-align"><tbody><tr><td><div class="full-status" id="fullstatus"><button type="button" data-status="all" class="on">All</button><button type="button" data-status="live">Live</button><button type="button" data-status="pre">Upcoming</button><button type="button" data-status="final">Final</button></div></td><td class="score-copy"><div class="score-notes" id="fullscorenote"><p class="warn score-line">Loading the board.</p></div><div id="fullholds"></div></td></tr></tbody></table></div><div class="full-games" id="fullrows"></div></div></div></div>
-<section class="card view" id="sharks"><div class="section-head"><h2>Sports Sharps</h2><p class="warn slips-side" id="sharpnote">Four games each. Made at 9:30 AM Eastern and locked until the next morning.</p></div><div class="shark-list" id="sharkboard"><p class="warn">Loading the sharps.</p></div></section>
+<section class="card view" id="sharks"><div class="section-head"><h2>Sports Sharps</h2></div><div class="align-frame"><table class="score-align"><tbody><tr><td></td><td class="score-copy"><p class="warn slips-side" id="sharpnote">Four games each. Made at 9:30 AM Eastern and locked until the next morning.</p></td></tr></tbody></table></div><div class="shark-list" id="sharkboard"><p class="warn">Loading the sharps.</p></div></section>
 <main>
 <section class="card view on" id="games">
-<div class="section-head"><h2>Games<span class="league-marks"><img src='leagues/cbb.png' alt='College Basketball' title='NCAA Basketball' width='20' height='20' decoding='async'><img src='leagues/cfb.png' alt='College Football' title='NCAA Football' width='20' height='20' decoding='async'><img src='leagues/mlb.png' alt='MLB' title='Major League Baseball' width='20' height='20' decoding='async'><img src='leagues/nba.png' alt='NBA' title='National Basketball Association' width='20' height='20' decoding='async'><img src='leagues/nfl.png' alt='NFL' title='National Football League' width='20' height='20' decoding='async'><img src='leagues/nhl.png' alt='NHL' title='National Hockey League' width='20' height='20' decoding='async'></span></h2><div class="head-notes"><p class="warn slips-side">Tap a price. Nothing is sent to a book. Final scores post when the game ends.</p><p class="warn slips-side"><span class="best-price">Magenta</span> is the best price on that same number. It shows only when another book is worse.</p></div></div>
+<div class="section-head"><h2>Games<span class="league-marks"><img src='leagues/cbb.png' alt='College Basketball' title='NCAA Basketball' width='20' height='20' decoding='async'><img src='leagues/cfb.png' alt='College Football' title='NCAA Football' width='20' height='20' decoding='async'><img src='leagues/mlb.png' alt='MLB' title='Major League Baseball' width='20' height='20' decoding='async'><img src='leagues/nba.png' alt='NBA' title='National Basketball Association' width='20' height='20' decoding='async'><img src='leagues/nfl.png' alt='NFL' title='National Football League' width='20' height='20' decoding='async'><img src='leagues/nhl.png' alt='NHL' title='National Hockey League' width='20' height='20' decoding='async'></span></h2></div>
 <p id="gamenote" class="warn" hidden></p>
-<div class="odds-tools">
+<div class="align-frame"><table class="score-align"><tbody><tr><td><div class="odds-tools">
 <label>Book<select id="gamebook" class="book-select"><option>BetMGM</option><option>Caesars</option><option>DraftKings</option><option>Fanatics</option><option>FanDuel</option><option>HardRock</option></select></label>
 <div class="sport-bar" id="sportbar">
 <button type="button" class="on" data-sport="All">All</button>
@@ -905,8 +907,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </span>
 </div>
 <button type="button" id="gamerefresh">Refresh</button>
-</div>
-</div>
+</div></div></td><td class="score-copy"><div class="head-notes"><p class="warn slips-side">Tap a price. Nothing is sent to a book. Final scores post when the game ends.</p><p class="warn slips-side"><span class="best-price">Magenta</span> is the best price on that same number. It shows only when another book is worse.</p></div></td></tr></tbody></table></div>
 <div id="gameboard"><p class="warn">Loading the board.</p></div>
 </section>
 <section class="card view" id="dashboard">
@@ -929,7 +930,8 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </section>
 <section class="card view" id="liveodds"><div class="section-head"><h2>Live Odds</h2></div><div class="align-frame"><table class="score-align"><tbody><tr><td><div class="odds-tools" id="compareday"><button type="button" id="day-yesterday">Yesterday</button><button type="button" id="day-today">Today</button><select id="comparesport"><option selected>All</option><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option></select><button type="button" id="refreshodds">Refresh</button></div></td><td class="score-copy"><p class="warn slips-side">Moneyline, spread, and total across books. Refresh pulls the live price.</p><div id="oddslead"></div></td></tr></tbody></table></div><div id="oddscompare"></div></section>
 <section class="card view" id="todaycard">
-<div class="section-head"><h2>Today's Card</h2><p class="warn slips-side">Click a price to put it on the slip.</p></div>
+<div class="section-head"><h2>Today's Card</h2></div>
+<div class="align-frame"><table class="score-align"><tbody><tr><td></td><td class="score-copy"><p class="warn slips-side">Click a price to put it on the slip.</p></td></tr></tbody></table></div>
 <div class="payout-box">
 <h3>$10 Win</h3>
 <p class="warn">What a $10 bet wins at the American odds used on these cards. Amber is -110, the usual number.</p>
@@ -1004,7 +1006,8 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </div>
 </section>
 <section class="card view" id="charts">
-<div class="section-head"><h2>Charts</h2><p class="warn slips-side">Profit uses settled slips. CLV is no-vig: your price against a fair close, with the book's cut removed. A matched -110 is about -4.5%. <span id="plotnote"></span></p><button type="button" id="plot">Plot</button></div>
+<div class="section-head"><h2>Charts</h2></div>
+<div class="align-frame"><table class="score-align"><tbody><tr><td><button type="button" id="plot">Plot</button></td><td class="score-copy"><p class="warn slips-side">Profit uses settled slips. CLV is no-vig: your price against a fair close, with the book's cut removed. A matched -110 is about -4.5%. <span id="plotnote"></span></p></td></tr></tbody></table></div>
 <div class="charts">
 <div><h2 id="profitTitle" class="split-title">Cumulative Profit</h2><canvas id="profitChart" width="640" height="220"></canvas><p id="chartlesson" class="warn"></p></div>
 <div><div class="sport-title"><h2>Profit By Sport</h2><b id="sportbest"></b><b id="monthbest"></b></div><canvas id="sportChart" width="420" height="220"></canvas><div class="sport-nav"><button type="button" id="sportprev">Previous</button><button type="button" id="sportnext">Next</button></div><p id="sportday"></p></div>
@@ -1088,9 +1091,10 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </table></div>
 </section>
 <section class="card view" id="calendarcard">
-<div class="section-head"><h2>Calendar</h2><span id="monthpl"></span><p class="warn slips-side">Everyone sees the shared $10 calendar until they upload a file. An uploaded file stays in this browser only.<br>Other users do not see it. Use Shared Calendar to go back.</p></div>
+<div class="section-head"><h2>Calendar</h2></div>
 <div class="cal-tools"><table class="cal-line"><tbody><tr>
 <td><div class="tools"><div class="btn-pair"><span>Navigation</span><div><button type="button" id="prevMonth">Prev</button><button type="button" id="nextMonth">Next</button></div></div><label>Load My Calendar<input type="file" id="loadcal" accept=".json,application/json"><span class="file-face">No File Chosen</span></label><div class="btn-pair"><span class="pair-title"><span id="calnote" class="warn"></span></span><div><button type="button" id="resetcal">Use Shared Calendar</button></div></div></div></td>
+<td class="score-copy"><span id="monthpl"></span><p class="warn slips-side">Everyone sees the shared $10 calendar until they upload a file. An uploaded file stays in this browser only.<br>Other users do not see it. Use Shared Calendar to go back.</p></td>
 <td class="cal-icons"><div class="cal-crew">
 <a class="crew-hit" href="index.html?page=sharks#shark-gorilla" data-jump="sharks" data-sharp="shark-gorilla" title="Gnarly Gorilla"><img src="about-gorilla.jpg" alt="Gnarly Gorilla" width="72" height="72" loading="lazy" decoding="async"></a>
 <a class="crew-hit" href="index.html?page=sharks#shark-vito" data-jump="sharks" data-sharp="shark-vito" title="Vito the Spot"><img src="jungle-leopard.jpg" alt="Vito the Spot" width="72" height="72" loading="lazy" decoding="async"></a>
@@ -1120,7 +1124,8 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </div>
 </div>
 <aside class="about-box live-feed">
-<div class="feed-head"><h2>Live Feed&nbsp;&nbsp;(ESPN)</h2><p class="warn" id="feednote">Loading the feed.</p></div>
+<div class="feed-head"><h2>Live Feed&nbsp;&nbsp;(ESPN)</h2></div>
+<div class="align-frame"><table class="score-align"><tbody><tr><td></td><td class="score-copy"><p class="warn" id="feednote">Loading the feed.</p></td></tr></tbody></table></div>
 <div class="table-wrap"><table><thead><tr><th>Time</th><th>Sport</th><th>Headline</th></tr></thead><tbody id="livefeed"></tbody></table></div>
 </aside>
 </div>
@@ -3568,11 +3573,11 @@ function showSeasons(checked){
   });
   wave += " H448";
   const ekg = "<span class='ekg' style='--draw:" + pulse + "'><svg viewBox='0 0 448 36' preserveAspectRatio='none' aria-label='Season pulse'><path class='trace " + tone + "' d='" + wave + "'></path></svg><span class='ekg-cover'></span></span>";
-  const live = "<div id='seasonlive'><div class='section-head'><h2>Live Scores</h2><div class='score-notes' id='seasonlivenote'><p class='warn score-line'>Loading the board.</p></div></div><div class='score-strip'><button type='button' class='score-arrow' id='seasonliveleft' aria-label='Scroll scores left'><svg viewBox='0 0 24 24' width='22' height='22' aria-hidden='true'><path d='M15 5 L8 12 L15 19' fill='none' stroke='#39ff14' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/></svg></button><div class='score-row' id='seasonliverow'></div><button type='button' class='score-arrow' id='seasonliveright' aria-label='Scroll scores right'><svg viewBox='0 0 24 24' width='22' height='22' aria-hidden='true'><path d='M9 5 L16 12 L9 19' fill='none' stroke='#39ff14' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/></svg></button></div><div class='align-frame'><table class='score-align'><tbody><tr><td><div class='sport-bar' id='seasonlivesports'><button type='button' data-sport='All' class='on'>All</button>" + ["CBB","CFB","MLB","NBA","NFL","NHL"].map(code => leagueBtn(code)).join("") + "<a class='score-full' id='scorefull' href='index.html?page=scoreboard'>Full Scoreboard</a><span class='score-day'><button type='button' id='seasonliveprev'>Prev</button><b id='seasonliveday'></b><button type='button' id='seasonlivenext'>Next</button><button type='button' id='seasonlivetoday'>Today</button></span></div></td><td class='score-copy'><div id='seasonlivenotes'></div></td></tr></tbody></table></div></div>";
-  const records = "<div class='card-rest' id='seasonrecords'><div class='section-head'><h2>Win/Loss Records</h2><p class='warn slips-side' id='recnote'>Loading standings.</p></div><div class='tools'><label>Sport<select id='recsport'></select></label><label>Conference<select id='recconf'></select></label><label>Division<select id='recdiv'></select></label></div><div class='table-wrap'><table><thead><tr><th>Team</th><th>Sport</th><th>Conference</th><th>Division</th><th>W</th><th>L</th><th>T/OTL</th><th>PCT</th><th>GB</th><th>Streak</th></tr></thead><tbody id='recrows'></tbody></table></div></div>";
+  const live = "<div id='seasonlive'><div class='section-head'><h2>Live Scores</h2></div><div class='score-strip'><button type='button' class='score-arrow' id='seasonliveleft' aria-label='Scroll scores left'><svg viewBox='0 0 24 24' width='22' height='22' aria-hidden='true'><path d='M15 5 L8 12 L15 19' fill='none' stroke='#39ff14' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/></svg></button><div class='score-row' id='seasonliverow'></div><button type='button' class='score-arrow' id='seasonliveright' aria-label='Scroll scores right'><svg viewBox='0 0 24 24' width='22' height='22' aria-hidden='true'><path d='M9 5 L16 12 L9 19' fill='none' stroke='#39ff14' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/></svg></button></div><div class='align-frame'><table class='score-align'><tbody><tr><td><div class='sport-bar' id='seasonlivesports'><button type='button' data-sport='All' class='on'>All</button>" + ["CBB","CFB","MLB","NBA","NFL","NHL"].map(code => leagueBtn(code)).join("") + "<a class='score-full' id='scorefull' href='index.html?page=scoreboard'>Full Scoreboard</a><span class='score-day'><button type='button' id='seasonliveprev'>Prev</button><b id='seasonliveday'></b><button type='button' id='seasonlivenext'>Next</button><button type='button' id='seasonlivetoday'>Today</button></span></div></td><td class='score-copy'><div class='score-notes' id='seasonlivenote'><p class='warn score-line'>Loading the board.</p></div><div id='seasonlivenotes'></div></td></tr></tbody></table></div></div>";
+  const records = "<div class='card-rest' id='seasonrecords'><div class='section-head'><h2>Win/Loss Records</h2></div><div class='align-frame'><table class='score-align'><tbody><tr><td><div class='tools'><label>Sport<select id='recsport'></select></label><label>Conference<select id='recconf'></select></label><label>Division<select id='recdiv'></select></label></div></td><td class='score-copy'><p class='warn slips-side' id='recnote'>Loading standings.</p></td></tr></tbody></table></div><div class='table-wrap'><table><thead><tr><th>Team</th><th>Sport</th><th>Conference</th><th>Division</th><th>W</th><th>L</th><th>T/OTL</th><th>PCT</th><th>GB</th><th>Streak</th></tr></thead><tbody id='recrows'></tbody></table></div></div>";
   const trivia = "<div class='card-rest' id='seasontrivia'><b>Daily Sports Trivia</b><p class='warn'>A new question at midnight. The same question stays up all day.</p><p data-q>Loading today's question.</p><button type='button' id='triviareveal'>Show answer</button><p data-a class='warn' hidden></p></div>";
   const checkedBit = seasonChecked ? "Checked " + esc(seasonChecked) + ". " : "";
-  box.innerHTML = live + "<div class='section-head'><h2>Season Dates</h2><p class='warn slips-side'>" + checkedBit + "NFL May, NHL July, MLB July, NBA August, CFB August, CBB September. Postseason nights stay open until the last game ends or " + zoneTime(4, 0) + ". NBA and NHL through June 30, MLB through the World Series, NFL through the Super Bowl, CFB through the championship, March Madness March 13 through the title game.</p></div><table><thead><tr><th colspan='6' class='th-center'>" + ekg + "</th></tr><tr><th>Sport</th><th>Start</th><th>Last Card</th><th>Status</th><th>Where</th><th>Days Left</th></tr></thead><tbody>" + rows + "</tbody></table>" + records + trivia;
+  box.innerHTML = live + "<div class='section-head'><h2>Season Dates</h2></div><div class='align-frame'><table class='score-align'><tbody><tr><td></td><td class='score-copy'><p class='warn slips-side'>" + checkedBit + "NFL May, NHL July, MLB July, NBA August, CFB August, CBB September. Postseason nights stay open until the last game ends or " + zoneTime(4, 0) + ". NBA and NHL through June 30, MLB through the World Series, NFL through the Super Bowl, CFB through the championship, March Madness March 13 through the title game.</p></td></tr></tbody></table></div><table><thead><tr><th colspan='6' class='th-center'>" + ekg + "</th></tr><tr><th>Sport</th><th>Start</th><th>Last Card</th><th>Status</th><th>Where</th><th>Days Left</th></tr></thead><tbody>" + rows + "</tbody></table>" + records + trivia;
   paintLeagueMarks(box);
   if (pageNeeds("seasons")) { loadRecords(); loadLiveBoard(); }
 }
@@ -3809,9 +3814,9 @@ function leagueMarksHtml(){
   return "<span class='league-marks'>" + row.map(item => "<img src='leagues/" + item[0] + ".png' alt='" + item[1] + "' title='" + item[2] + "' width='20' height='20' decoding='async'>").join("") + "</span>";
 }
 function paintLeagueMarks(root){
-  (root || document).querySelectorAll(".section-head > h2, .card > h2").forEach(h2 => {
-    if (h2.querySelector(".league-marks")) return;
-    h2.insertAdjacentHTML("beforeend", leagueMarksHtml());
+  (root || document).querySelectorAll(".section-head, .sport-title, .feed-head, h2.split-title, h3.split-title, .card > h2").forEach(box => {
+    if (box.querySelector(".league-marks")) return;
+    box.insertAdjacentHTML("beforeend", leagueMarksHtml());
   });
 }
 function scorePage(){
@@ -10585,7 +10590,7 @@ window.addEventListener("resize", pinOffset);
 window.addEventListener("resize", () => requestAnimationFrame(alignSportBrackets));
 window.addEventListener("resize", sizeSharpTeam);
 window.addEventListener("resize", () => setGameNote((document.getElementById("gamenote") || {}).textContent || ""));
-const gameTools = document.querySelector("#games > .odds-tools");
+const gameTools = document.querySelector("#games .odds-tools");
 if (gameTools) gameTools.addEventListener("scroll", () => setGameNote((document.getElementById("gamenote") || {}).textContent || ""), {passive: true});
 function pinOffset(){
   const bar = document.querySelector(".topbar");
