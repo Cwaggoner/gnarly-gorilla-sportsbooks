@@ -828,6 +828,11 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .mgm-books { display:flex; gap:12px; min-width:0; align-items:end; flex-wrap:nowrap; overflow-x:auto; }
 .mgm-set { display:grid; grid-template-columns:repeat(3,64px); gap:4px; flex:0 0 auto; }
 .mgm-set.mgm-close { justify-self:end; }
+.mgm-card:not(.no-close) { grid-template-columns:minmax(230px, max-content) minmax(0,1fr); }
+.mgm-line { display:flex; align-items:flex-end; min-width:0; width:100%; }
+.mgm-line .mgm-books { flex:0 1 auto; min-width:0; }
+.mgm-line .mgm-set.mgm-close { flex:0 0 auto; }
+.mgm-gap { flex:1 1 auto; align-self:flex-end; height:96px; min-width:12px; margin:0 4px; border:1px solid var(--gray); border-radius:4px; box-sizing:border-box; }
 .mgm-when { margin:0 0 4px; color:#8fb898; font:700 12px/1.2 system-ui,sans-serif; white-space:nowrap; }
 .mgm-start { margin-left:8px; color:#39ff14; }
 .mgm-team { display:flex; align-items:center; gap:8px; min-height:46px; color:#d6ffd0; font:700 14px/1.2 system-ui,sans-serif; }
@@ -9866,8 +9871,9 @@ function mgmGameCard(g, day, book, withClose){
   const homeForm = withClose ? "" : sideForm(g.sport, scored && scored.home);
   const back = !withClose && gameInActiveWindow(g.start) ? activesBack(String(g.sport || "").toUpperCase(), awayName, homeName) : null;
   const backHtml = Array.isArray(back) ? "<div class='mgm-back'>" + (back.length > 1 ? "<span>Back</span>" + back.map(name => "<span>" + esc(name) + "</span>").join("") : esc(back.length ? "Back: " + back[0] : "No one back from the injury list.")) + "</div>" : "";
-  const mid = "<div class='mgm-mid'><div class='mgm-books'>" + sets + "</div>" + (withClose ? "" : marketBoardHtml(g, day)) + "</div>";
-  const tail = withClose ? close : sharpShopHtml(g, day);
+  const books = "<div class='mgm-books'>" + sets + "</div>";
+  const mid = withClose ? "<div class='mgm-line'>" + books + "<div class='mgm-gap' aria-hidden='true'></div>" + close + "</div>" : "<div class='mgm-mid'>" + books + marketBoardHtml(g, day) + "</div>";
+  const tail = withClose ? "" : sharpShopHtml(g, day);
   return "<article class='mgm-card" + (withClose ? "" : " no-close") + "' data-sport='" + esc(sportCode(g.sport)) + "' data-start='" + esc(g.start || "") + "'><div class='mgm-side'><p class='mgm-when'>" + dot + esc((g.sport ? g.sport + "  " : "") + when) + soonHtml + (tag ? "  " + esc(tag) : "") + "</p>" + awayFace + awayForm + homeFace + homeForm + backHtml + "</div>" + mid + tail + "</article>";
 }
 function drawGameBoard(){
