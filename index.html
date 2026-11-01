@@ -4903,6 +4903,16 @@ function liveOddsCards(games, day, lead){
   savePrevLines(games, day);
   return html;
 }
+function postedGames(day){
+  const block = window.__ggOddsBoard && window.__ggOddsBoard.days && window.__ggOddsBoard.days[day];
+  if (!block) return [];
+  return indexedGames({h2h: block.h2h, spreads: block.spreads, totals: block.totals});
+}
+function withPostedGames(games, day){
+  const have = games || [];
+  const extra = postedGames(day).filter(g => !have.some(row => sameMatchup(row, g)));
+  return have.concat(extra).sort((a, b) => sportRank(a.sport) - sportRank(b.sport) || String(a.start || "").localeCompare(String(b.start || "")) || String(a.label || "").localeCompare(String(b.label || "")));
+}
 function publishedOddsHtml(day, lead){
   const block = window.__ggOddsBoard && window.__ggOddsBoard.days && window.__ggOddsBoard.days[day];
   if (!block) return "";
@@ -5039,11 +5049,13 @@ async function renderOddsCompare(force){
   if (live && live.games) {
     let shownDay = day;
     let games = indexedGames({h2h: rowsFromLive(live.games, shownDay, "h2h"), spreads: rowsFromLive(live.games, shownDay, "spreads"), totals: rowsFromLive(live.games, shownDay, "totals")});
+    seedBoardFromScores(window.__gameScores || [], shownDay);
+    games = withPostedGames(games, shownDay);
     if (!games.length && shownDay !== easternDay()) {
       const todayGames = indexedGames({h2h: rowsFromLive(live.games, easternDay(), "h2h"), spreads: rowsFromLive(live.games, easternDay(), "spreads"), totals: rowsFromLive(live.games, easternDay(), "totals")});
       if (todayGames.length) {
         shownDay = easternDay();
-        games = todayGames;
+        games = withPostedGames(todayGames, shownDay);
         localStorage.setItem("gg-compare-day", "today");
       }
     }
@@ -5057,6 +5069,7 @@ async function renderOddsCompare(force){
       armActiveBack(games);
       later(() => absorbLiveBoard(live));
       fitMarketBoards();
+      fillMissingScoreLines(shownDay, games);
       return "Live as of " + when + ".";
     }
     if (force) {
@@ -9507,6 +9520,21 @@ function armGameScores(games){
   const wait = !scores.length || live ? 15000 : open ? 30000 : 120000;
   gameScoreTimer = setTimeout(() => { refreshGameScores(games); }, wait);
   if ((document.documentElement.dataset.page || "") !== "liveodds" && Date.now() - (window.__gameScoresAt || 0) > 12000) refreshGameScores(games);
+}
+let scoreFillFlight = null;
+let scoreFillAt = 0;
+function fillMissingScoreLines(day, games){
+  if (scoreFillFlight || Date.now() - scoreFillAt < 60000) return;
+  const have = new Set((games || []).map(g => sportCode(g.sport)));
+  const need = Object.keys(SCORE_FEED).filter(s => !have.has(s));
+  if (!need.length) return;
+  scoreFillAt = Date.now();
+  scoreFillFlight = Promise.all(need.map(sport => scoreboard(sport, day).catch(() => []))).then(packs => {
+    const rows = packs.flat().filter(g => g && g.lines);
+    if (!rows.length) return;
+    seedBoardFromScores(rows, day);
+    if ((document.documentElement.dataset.page || "") === "liveodds") drawOddsCompare(false).catch(() => {});
+  }).catch(() => {}).finally(() => { scoreFillFlight = null; });
 }
 function refreshGameScores(games){
   if (gameScoreFlight) return;
