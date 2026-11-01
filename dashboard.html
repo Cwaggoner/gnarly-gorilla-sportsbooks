@@ -6930,10 +6930,18 @@ function gradeFromScores(b, games){
 async function scoreboard(sport, date){
   const path = SCORE_FEED[sport];
   if (!path) return [];
-  const res = await fetch("https://site.api.espn.com/apis/site/v2/sports/" + path + "/scoreboard?dates=" + String(date).replace(/-/g, "") + "&limit=400");
-  if (!res.ok) return [];
-  const data = await res.json();
-  return (data.events || []).map(ev => {
+  const day = String(date || "").slice(0, 10);
+  const days = [day];
+  if (sport === "CBB") days.push(shiftDate(day, 1));
+  const group = sport === "CBB" ? "&groups=50" : "";
+  const lists = await Promise.all(days.filter(Boolean).map(async d => {
+    const res = await fetch("https://site.api.espn.com/apis/site/v2/sports/" + path + "/scoreboard?dates=" + String(d).replace(/-/g, "") + "&limit=400" + group);
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.events || [];
+  }));
+  const seen = new Set();
+  return lists.flat().map(ev => {
     const comp = (ev.competitions || [])[0] || {};
     const teams = comp.competitors || [];
     const homeSide = teams.find(t => t.homeAway === "home") || {};
@@ -6943,8 +6951,13 @@ async function scoreboard(sport, date){
     const status = (comp.status && comp.status.type) || {};
     const posted = espnBoardLines((comp.odds || [])[0]);
     const venue = comp.venue || {};
-    return {sport, date, id: ev.id, final: status.completed === true || /final/i.test(status.name || status.description || ""), postponed: /postpon|cancel|delay/i.test(status.name || ""), live: status.state === "in", detail: status.shortDetail || status.detail || "", home: home, away: away, homeScore: Number(homeSide.score), awayScore: Number(awaySide.score), start: Date.parse(ev.date || ""), lineBook: posted && posted.book, lines: posted && posted.lines, venue: venue.fullName || "", indoor: venue.indoor === true};
-  }).filter(g => g.home.displayName && g.away.displayName);
+    return {sport, date: day, id: ev.id, final: status.completed === true || /final/i.test(status.name || status.description || ""), postponed: /postpon|cancel|delay/i.test(status.name || ""), live: status.state === "in", detail: status.shortDetail || status.detail || "", home: home, away: away, homeScore: Number(homeSide.score), awayScore: Number(awaySide.score), start: Date.parse(ev.date || ""), lineBook: posted && posted.book, lines: posted && posted.lines, venue: venue.fullName || "", indoor: venue.indoor === true};
+  }).filter(g => {
+    if (!g.home.displayName || !g.away.displayName || seen.has(g.id)) return false;
+    seen.add(g.id);
+    if (sport === "CBB" && day) return slateDateOf(g.start) === day;
+    return true;
+  });
 }
 let scoreTimer = 0;
 let scoreLoop = 0;
