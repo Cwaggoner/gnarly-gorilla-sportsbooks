@@ -7257,6 +7257,24 @@ function gradeLeg(pick, game){
   if (mine === opp) return "push";
   return mine > opp ? "win" : "loss";
 }
+function slipSports(b){
+  const sport = String(b && b.sport || "").toUpperCase();
+  if (SCORE_FEED[sport]) return [sport];
+  const named = [...new Set((String(b && b.pick || "").toUpperCase().match(/\b(NFL|NBA|NHL|MLB|CBB|CFB)\b/g) || []))];
+  if (named.length) return named;
+  if (sport === "MUL" || sport === "MULTI") return Object.keys(SCORE_FEED);
+  return [];
+}
+function gamesForSlip(games, b){
+  const day = String(b && b.date || "").slice(0, 10);
+  const sports = new Set(slipSports(b));
+  return (games || []).filter(g => {
+    if (!g) return false;
+    if (day && g.date && String(g.date).slice(0, 10) !== day) return false;
+    const code = String(g.sport || "").toUpperCase();
+    return !sports.size || sports.has(code);
+  });
+}
 function gradeFromScores(b, games){
   const type = betType(b);
   if (type === "Prop") return null;
@@ -7317,9 +7335,7 @@ function applyFinalGrades(games){
   const touched = new Set();
   const gradeOne = b => {
     if (!b || b.result !== "pending" || isNoPick(b) || !inSlipWindow(b.date)) return false;
-    const sport = String(b.sport || "").toUpperCase();
-    const day = String(b.date || "").slice(0, 10);
-    const result = gradeFromScores(b, finals.filter(g => g.sport === sport && (!g.date || String(g.date).slice(0, 10) === day)));
+    const result = gradeFromScores(b, gamesForSlip(finals, b));
     if (result !== "win" && result !== "loss" && result !== "push") return false;
     b.result = result;
     delete b.profit;
@@ -7367,7 +7383,7 @@ async function gradeFinishedSlips(quiet){
       refreshSlateRecords().catch(() => {});
       return {graded: 0, live: 0, left: 0};
     }
-    const sports = [...new Set(pending.map(b => String(b.sport || "").toUpperCase()))].filter(s => SCORE_FEED[s]);
+    const sports = [...new Set(pending.flatMap(slipSports))];
     const dates = [...new Set(pending.map(b => String(b.date || "").slice(0, 10)))];
     const games = (await Promise.all(sports.flatMap(sport => dates.map(date => scoreboard(sport, date).catch(() => []))))).flat();
     window.__slipGames = games;
@@ -7404,7 +7420,7 @@ function scheduleGradeCheck(ms){
 function slipBoardGames(slip, games){
   const type = betType(slip);
   const legs = (type === "SGP" || type === "Parlay") ? String(slip.pick || "").split(/\s+and\s+/i) : [slip.pick];
-  return legs.map(leg => findFinalGame((games || []).filter(g => !slip.sport || g.sport === String(slip.sport || "").toUpperCase()), leg));
+  return legs.map(leg => findFinalGame(gamesForSlip(games, slip), leg));
 }
 async function postedCardRows(){
   const files = ["cards/today.txt", "cards/parts/nhl.txt", "cards/parts/nba.txt", "cards/parts/mlb.txt", "cards/parts/nfl.txt", "cards/parts/cbb.txt", "cards/parts/cfb.txt"];
@@ -7446,7 +7462,7 @@ async function gradeOpenSlate(){
   });
   const openDates = dates.filter(date => !picksAreFinal(date));
   if (!openDates.length) { scheduleGradeCheck(300000); showClock(); return; }
-  const sports = [...new Set(openDates.reduce((list, date) => list.concat(rows.filter(r => r.date === date).map(r => r.sport), pending.filter(b => String(b.date || "").slice(0, 10) === date).map(b => String(b.sport || "").toUpperCase())), []))].filter(s => SCORE_FEED[s]);
+  const sports = [...new Set(openDates.reduce((list, date) => list.concat(rows.filter(r => r.date === date).map(r => r.sport), pending.filter(b => String(b.date || "").slice(0, 10) === date).flatMap(slipSports)), []))].filter(s => SCORE_FEED[s]);
   if (!sports.length) { scheduleGradeCheck(300000); showClock(); return; }
   scoreBusy = true;
   try {
@@ -10208,7 +10224,7 @@ function slipLegConfidence(b, leg, game){
 }
 function slipLiveCell(b){
   if (!b || b.result !== "pending" || betType(b) === "Prop") return {text: "—", band: ""};
-  const games = (window.__slipGames || []).filter(g => !b.sport || g.sport === String(b.sport || "").toUpperCase());
+  const games = gamesForSlip(window.__slipGames || [], b);
   const type = betType(b);
   const legs = (type === "SGP" || type === "Parlay") ? String(b.pick || "").split(/\s+and\s+/i) : [String(b.pick || "")];
   const views = legs.map(leg => slipLegConfidence(b, leg, findFinalGame(games, leg))).filter(Boolean);
@@ -10231,7 +10247,7 @@ function slipScoreHtml(game){
 }
 function slipScoreCell(b){
   if (!b || betType(b) === "Prop") return "—";
-  const games = (window.__slipGames || []).filter(g => !b.sport || g.sport === String(b.sport || "").toUpperCase());
+  const games = gamesForSlip(window.__slipGames || [], b);
   const type = betType(b);
   const legs = (type === "SGP" || type === "Parlay") ? String(b.pick || "").split(/\s+and\s+/i) : [String(b.pick || "")];
   const seen = [];
@@ -10249,7 +10265,7 @@ let slipScoreFlight = null;
 function ensureSlipScores(){
   if ((document.documentElement.dataset.page || "games") !== "slips") return;
   const slips = load().filter(b => b && inSlipWindow(b.date) && betType(b) !== "Prop");
-  const sports = [...new Set(slips.map(b => String(b.sport || "").toUpperCase()))].filter(s => SCORE_FEED[s]);
+  const sports = [...new Set(slips.flatMap(slipSports))].filter(s => SCORE_FEED[s]);
   const dates = [...new Set(slips.map(b => String(b.date || "").slice(0, 10)))].filter(Boolean);
   if (!sports.length || !dates.length) return;
   const have = window.__slipGames || [];
