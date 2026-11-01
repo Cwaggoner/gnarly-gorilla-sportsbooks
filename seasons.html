@@ -49,7 +49,7 @@
 {"@context":"https://schema.org","@type":"WebApplication","name":"Gnarly Gorilla Sportsbooks","url":"https://cwaggoner.github.io/gnarly-gorilla-sportsbooks/","applicationCategory":"SportsApplication","operatingSystem":"Chrome, ChromeOS","description":"Free bet ledger for logging and grading sports slips across BetMGM, Caesars, DraftKings, Fanatics, FanDuel, and HardRock.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"image":"https://cwaggoner.github.io/gnarly-gorilla-sportsbooks/og-image.png"}
 </script>
 <style>
-:root { --bg:#0a0a0a; --card:#141414; --line:#243024; --title:#39ff14; --text:#d6ffd0; --gray:var(--line); --muted:#8fb898; --amber:#f0e14a; --red:#ff6b6b; --section:calc(15px * 1.4); }
+:root { --bg:#0a0a0a; --card:#141414; --line:#243024; --title:#39ff14; --text:#d6ffd0; --gray:var(--line); --muted:#8fb898; --amber:#f0e14a; --red:#ff6b6b; --section:calc(15px * 1.4); --box-gap:12px; }
 * { box-sizing:border-box; }
 body { margin:0; background:var(--bg); color:var(--text); font:15px/1.4 system-ui, sans-serif; }
 header { position:relative; display:grid; grid-template-columns:96px 1fr auto 96px; align-items:stretch; gap:12px; width:100%; box-sizing:border-box; margin:0; padding:6px 10px; border:1px solid #39ff14; border-radius:10px; background:#0a0a0a; }
@@ -100,7 +100,7 @@ html, body, .page, .page * { overflow-anchor:none; }
 #slips .save-slot { position:relative; display:inline-flex; align-items:center; flex:0 0 auto; }
 #slips #ledgernote { position:absolute; right:0; bottom:calc(100% + 2px); margin:0; line-height:1; white-space:nowrap; }
 #slips .slip-filters { flex-wrap:wrap; max-width:100%; min-width:0; box-sizing:border-box; }
-#slips .slip-frame, .align-frame { border:1px solid var(--gray); border-radius:10px; padding:10px 12px; margin:var(--section) 0 0; box-sizing:border-box; width:100%; max-width:100%; align-self:stretch; }
+#slips .slip-frame, .align-frame { border:1px solid var(--gray); border-radius:10px; padding:10px 12px; margin:var(--box-gap) 0; box-sizing:border-box; width:100%; max-width:100%; align-self:stretch; }
 .card > .odds-tools,
 #stats,
 .card > .odds-notes,
@@ -114,7 +114,7 @@ html, body, .page, .page * { overflow-anchor:none; }
   border:1px solid var(--gray);
   border-radius:10px;
   padding:10px 12px;
-  margin:var(--section) 0 0;
+  margin:var(--box-gap) 0;
   box-sizing:border-box;
   width:100%;
   max-width:100%;
@@ -126,7 +126,7 @@ html, body, .page, .page * { overflow-anchor:none; }
 .full-games,
 .score-strip,
 #calendar,
-#breaks > .table-wrap { border:0; padding:0; margin-top:var(--section); background:transparent; width:100%; max-width:100%; box-sizing:border-box; }
+#breaks > .table-wrap { border:0; padding:0; margin:var(--box-gap) 0; background:transparent; width:100%; max-width:100%; box-sizing:border-box; }
 .game-row,
 #oddscompare > .mgm-card,
 .full-card,
@@ -156,12 +156,12 @@ html, body, .page, .page * { overflow-anchor:none; }
 .section-head .score-notes .score-line::before { content:"•"; color:#ff00ff; font-weight:700; margin-right:6px; }
 .card-analysis h3 { margin:0 0 8px; color:var(--title); font-size:16px; }
 .card > h2, .card > .section-head, h2.split-title, h3.split-title, .sport-title { background:rgba(57,255,20,.12); border:1px solid #39ff14; border-radius:10px; padding:10px 14px; width:100%; max-width:100%; box-sizing:border-box; }
-.card > h2, .card > .section-head { margin:0 0 12px; }
-h2.split-title, h3.split-title { margin:var(--section) 0 12px; font-size:16px; color:var(--title); }
-.card-analysis { margin:0 0 10px; border:0; padding:0; background:transparent; }
-.analysis-body, .injury-box { border:1px solid #39ff14; border-radius:10px; padding:10px 12px; background:#0e0e0e; width:100%; max-width:100%; box-sizing:border-box; }
-.card-analysis h3.split-title { margin:var(--section) 0 12px; }
-.charts h2.split-title, .charts .sport-title { margin:0 0 12px; }
+.card > h2, .card > .section-head { margin:0 0 var(--box-gap); }
+h2.split-title, h3.split-title { margin:var(--box-gap) 0; font-size:16px; color:var(--title); }
+.card-analysis { margin:0; border:0; padding:0; background:transparent; }
+.analysis-body, .injury-box { border:1px solid #39ff14; border-radius:10px; padding:10px 12px; background:#0e0e0e; width:100%; max-width:100%; box-sizing:border-box; margin:var(--box-gap) 0; }
+.card-analysis h3.split-title { margin:var(--box-gap) 0; }
+.charts h2.split-title, .charts .sport-title { margin:0 0 var(--box-gap); }
 .api-note, .slips-side, .fine, .passed-note, .warn { color:var(--amber); font-size:12px; line-height:1.35; }
 .api-note:not(:empty)::before,
 .passed-note:not(:empty)::before,
@@ -202,7 +202,7 @@ form, .row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1f
 .stack { display:flex; flex-direction:row; gap:8px; grid-column:1 / -1; align-items:flex-end; }
 #picknote, #loadnote, #editnote { display:flex; align-items:center; min-height:38px; margin:0; padding:8px 12px; border:1px solid var(--line); border-radius:8px; box-sizing:border-box; }
 .bet-fields-box { grid-column:1 / -1; border:1px solid #39ff14; border-radius:10px; padding:10px 12px; background:#0e0e0e; }
-.payout-box { margin:var(--section) 0 0; border:1px solid #39ff14; border-radius:10px; padding:10px; width:100%; max-width:100%; box-sizing:border-box; }
+.payout-box { margin:var(--box-gap) 0; border:1px solid #39ff14; border-radius:10px; padding:10px; width:100%; max-width:100%; box-sizing:border-box; }
 .payout-box h3 { margin:0 0 8px; color:#39ff14; font-size:16px; }
 .payout-bars { display:flex; align-items:flex-end; gap:6px; height:148px; }
 .payout-col { flex:1 1 0; min-width:0; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; gap:4px; }
@@ -303,7 +303,7 @@ input, select, button, textarea { background:#0e0e0e; color:var(--text); border:
 #betfields input[type=date] { width:16ch; min-width:16ch; max-width:16ch; }
 .book-key { display:flex; align-items:flex-end; gap:12px; }
 #oddskeybox { display:flex; margin:0; }
-.key-box { margin-top:var(--section); border:1px solid #39ff14; border-radius:10px; padding:10px; width:100%; max-width:100%; box-sizing:border-box; }
+.key-box { margin:var(--box-gap) 0; border:1px solid #39ff14; border-radius:10px; padding:10px; width:100%; max-width:100%; box-sizing:border-box; }
 .key-row { display:flex; align-items:flex-end; gap:12px; flex-wrap:wrap; }
 #addbet.card { border:0; background:transparent; box-shadow:none; }
 #addbet > h2 { margin-bottom:0; }
@@ -315,9 +315,9 @@ input, select, button, textarea { background:#0e0e0e; color:var(--text); border:
 #seasons { margin-bottom:18px; min-width:0; max-width:100%; border:0; background:transparent; box-shadow:none; }
 #seasons > table { margin-bottom:28px; }
 html[data-page="seasons"] main { min-width:0; }
-#seasonrecords { margin:var(--section) 0 0; border:0; padding:0; background:transparent; }
+#seasonrecords { margin:var(--box-gap) 0; border:0; padding:0; background:transparent; }
 #seasonrecords .tools { border:1px solid var(--gray); border-radius:10px; padding:8px 10px; box-sizing:border-box; width:100%; max-width:100%; }
-#seasonrecords .table-wrap { max-width:100%; overflow:auto; border:1px solid #39ff14; border-radius:10px; margin-top:var(--section); }
+#seasonrecords .table-wrap { max-width:100%; overflow:auto; border:1px solid #39ff14; border-radius:10px; margin:var(--box-gap) 0; }
 #seasonrecords table { display:table; width:max-content; min-width:100%; margin:0; }
 #seasonrecords select { max-width:32ch; }
 #seasons > .section-head { margin-top:var(--section); }
@@ -430,7 +430,7 @@ table.score-align .score-hold + .score-hold { margin-top:2px; }
 #liveodds .score-copy #oddslead .odds-notes { margin:0; }
 #liveodds .score-copy #oddslead p + p,
 #liveodds .score-copy #oddslead li + li { margin-top:2px; }
-.score-strip { position:relative; display:flex; align-items:center; gap:8px; margin:var(--section) 0 0; min-width:0; }
+.score-strip { position:relative; display:flex; align-items:center; gap:8px; margin:var(--box-gap) 0; min-width:0; }
 .score-row { display:flex; flex-wrap:nowrap; align-items:stretch; gap:8px; overflow-x:auto; overflow-y:hidden; scrollbar-width:none; flex:1 1 auto; width:auto; min-width:0; -webkit-overflow-scrolling:touch; }
 .score-full { flex:0 0 auto; align-self:center; color:#39ff14; font-weight:700; font-size:13px; line-height:1.2; text-decoration:none; text-align:center; border:1px solid #39ff14; border-radius:8px; padding:8px 10px; background:#0e0e0e; white-space:nowrap; }
 .score-row::-webkit-scrollbar { display:none; }
@@ -475,17 +475,17 @@ textarea { width:100%; min-height:120px; font:13px/1.4 ui-monospace, monospace; 
 button { cursor:pointer; color:var(--title); font-weight:700; }
 button.danger { color:var(--red); }
 button.amber { color:var(--amber); }
-table { width:100%; border-collapse:separate; border-spacing:0; margin-top:var(--section); border:1px solid #39ff14; border-radius:10px; overflow:hidden; }
+table { width:100%; border-collapse:separate; border-spacing:0; margin:var(--box-gap) 0; border:1px solid #39ff14; border-radius:10px; overflow:hidden; }
 .table-wrap > table,
 .align-frame table,
 .injury-box table,
 .card-rest table,
 .key-box table,
 .live-feed table,
-#report table { margin-top:0; }
+#report table { margin:0; }
 .card, .page { max-width:100%; }
 .table-wrap { display:block; width:100%; overflow-x:auto; }
-#slips .table-wrap { overflow:auto; max-width:100%; margin-top:var(--section); border:1px solid #39ff14; border-radius:10px; }
+#slips .table-wrap { overflow:auto; max-width:100%; margin:var(--box-gap) 0; border:1px solid #39ff14; border-radius:10px; }
 #slips table { display:table; width:max-content; min-width:100%; margin-top:0; border:0; border-radius:0; background:transparent; }
 #slips .table-wrap tr:last-child td { border-bottom:0; }
 #bookbadge { width:72px; height:72px; box-sizing:border-box; border:1px solid #39ff14; border-radius:12px; background:#0a0a0a; overflow:hidden; pointer-events:none; }
@@ -546,7 +546,7 @@ table.season-hold.filled td.note-col p { margin:0; display:-webkit-box; -webkit-
 .sharp-read { margin-top:10px; }
 .sharp-read b { color:#39ff14; font-size:12px; }
 .sharp-read p { margin:4px 0 0; color:#d6ffd0; font-size:12px; line-height:1.35; }
-.card-rest { margin-top:var(--section); border:1px solid #39ff14; border-radius:8px; padding:10px; width:100%; max-width:100%; box-sizing:border-box; }
+.card-rest { margin:var(--box-gap) 0; border:1px solid #39ff14; border-radius:8px; padding:10px; width:100%; max-width:100%; box-sizing:border-box; }
 @media (max-width:760px) { .analysis-grid { grid-template-columns:1fr 1fr; } }
 #dashboard.card { border:0; background:transparent; box-shadow:none; }
 #dashboard.view.on { display:flex; flex-direction:column; }
@@ -554,7 +554,7 @@ table.season-hold.filled td.note-col p { margin:0; display:-webkit-box; -webkit-
 #dashboard .align-frame .dash-tools { margin:0; border:0; padding:0; flex-wrap:nowrap; align-items:flex-end; }
 #dashboard .align-frame .odds-notes { margin:0; }
 #dashboard .align-frame .score-copy { display:flex; flex-direction:column; align-items:flex-start; gap:2px; }
-#dashChart { border:1px solid #39ff14; border-radius:8px; margin:var(--section) 0 0; }
+#dashChart { border:1px solid #39ff14; border-radius:8px; margin:var(--box-gap) 0; }
 #report table, #report th, #report td { border:0; background:transparent; box-shadow:none; }
 #report th { color:var(--title); font-weight:700; }
 #report hr.split { border:0; border-top:2px solid #39ff14; margin:16px 0 12px; }
@@ -590,13 +590,13 @@ table.season-hold.filled td.note-col p { margin:0; display:-webkit-box; -webkit-
 .slash { color:#39ff14; }
 #breaks.card { border:0; background:transparent; box-shadow:none; }
 #breaks > h2 { margin-bottom:4px; }
-#breaks .book-block { border:1px solid var(--gray); border-radius:10px; padding:10px 12px; margin:var(--section) 0 0; box-sizing:border-box; width:100%; max-width:100%; }
+#breaks .book-block { border:1px solid var(--gray); border-radius:10px; padding:10px 12px; margin:var(--box-gap) 0; box-sizing:border-box; width:100%; max-width:100%; }
 #breaks .book-crew { margin:0; }
 #breaks .book-crew td { vertical-align:top; }
 #breaks .book-crew .api-note { margin:0; }
 #breaks .book-crew td.book-rest { padding-top:4px; }
 #calendarcard.card { border:0; background:transparent; box-shadow:none; }
-#calendarcard .cal-tools { border:1px solid var(--gray); border-radius:10px; padding:10px 12px; margin:var(--section) 0; box-sizing:border-box; width:100%; max-width:100%; }
+#calendarcard .cal-tools { border:1px solid var(--gray); border-radius:10px; padding:10px 12px; margin:var(--box-gap) 0; box-sizing:border-box; width:100%; max-width:100%; }
 table.cal-line { width:100%; margin:0; border:0; border-radius:0; background:transparent; overflow:visible; }
 table.cal-line td { border:0; background:transparent; vertical-align:top; padding:0; box-shadow:none; }
 table.cal-line td.cal-icons { text-align:right; width:1%; white-space:nowrap; }
@@ -693,7 +693,7 @@ html[data-page="scoreboard"] main { min-width:0; }
 .full-date-row button.on .wk, .full-date-row button.on .num { color:#39ff14; }
 .full-status { display:flex; flex-wrap:wrap; gap:6px; margin:0 0 8px; }
 .full-status button.on { color:#39ff14; outline:1px solid #39ff14; }
-.full-games { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:8px; margin-top:var(--section); }
+.full-games { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:var(--box-gap); margin:var(--box-gap) 0; }
 .full-card { border:1px solid var(--gray); border-radius:10px; background:#0e0e0e; padding:10px 12px; min-width:0; width:100%; box-sizing:border-box; }
 .full-card.live { border:1px solid #f0e14a; }
 .full-card.final { border:1px solid #39ff14; }
@@ -725,7 +725,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .league-marks { display:inline-flex; align-items:center; gap:6px; flex:0 0 auto; }
 .league-marks img, button.league img { width:20px; height:20px; flex:0 0 20px; display:block; object-fit:contain; }
 #gamenote { position:absolute; margin:0; white-space:nowrap; line-height:1; z-index:5; pointer-events:none; transform:translate(-50%, -100%); }
-.game-row { border:1px solid var(--gray); border-radius:10px; margin:8px 0; padding:10px; background:#101610; }
+.game-row { border:1px solid var(--gray); border-radius:10px; margin:var(--box-gap) 0; padding:10px; background:#101610; }
 .game-row h3 { margin:0 0 4px; color:#39ff14; font-size:15px; }
 .game-who { margin:0 0 8px; color:#d6ffd0; font-size:13px; }
 .game-src { margin:0 0 4px; color:#f0e14a; font-size:12px; }
@@ -734,7 +734,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .game-final-tag { margin-right:6px; }
 .game-lines { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
 .game-lines h4 { margin:0 0 4px; color:#8fb898; font-size:12px; font-weight:600; }
-.mgm-card { display:grid; grid-template-columns:minmax(230px, max-content) minmax(0,1fr) max-content; align-items:center; column-gap:12px; width:100%; max-width:100%; box-sizing:border-box; border:1px solid var(--gray); border-radius:10px; background:#0e0e0e; margin:6px 0; padding:8px 10px; }
+.mgm-card { display:grid; grid-template-columns:minmax(230px, max-content) minmax(0,1fr) max-content; align-items:center; column-gap:12px; width:100%; max-width:100%; box-sizing:border-box; border:1px solid var(--gray); border-radius:10px; background:#0e0e0e; margin:var(--box-gap) 0; padding:8px 10px; }
 .mgm-card.no-close { grid-template-columns:minmax(210px, max-content) minmax(0,1fr) minmax(250px, 300px); align-items:start; }
 .sharp-shop { border:1px solid #39ff14; border-radius:8px; background:rgba(57,255,20,.08); padding:8px 10px; min-width:0; }
 .sharp-shop h3 { margin:0 0 6px; color:#39ff14; font-size:13px; letter-spacing:.04em; }
