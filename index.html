@@ -3004,6 +3004,20 @@ function knownBook(text){
   const raw = String(text || "").replace(/\+/g, " ").trim();
   return ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"].find(name => name.toLowerCase() === raw.toLowerCase()) || "";
 }
+function slipBook(explicit){
+  const named = knownBook(explicit);
+  if (named) return named;
+  const page = document.documentElement.dataset.page || "games";
+  if (page === "games") {
+    const picked = knownBook((document.getElementById("gamebook") || {}).value);
+    if (picked) return picked;
+  }
+  if (page === "todaycard") {
+    const picked = knownBook((document.getElementById("cardbook") || {}).value);
+    if (picked) return picked;
+  }
+  return knownBook(form && form.book && form.book.value) || "";
+}
 function buttonBook(btn){
   if (!btn) return "";
   let raw = "";
@@ -3047,7 +3061,7 @@ function openBestBet(btn, scroll){
   const sport = decodeURIComponent(btn.dataset.sport || "");
   const game = decodeURIComponent(btn.dataset.game || "");
   const market = btn.dataset.market || "h2h";
-  const book = buttonBook(btn);
+  const book = slipBook(buttonBook(btn));
   const price = decodeURIComponent(btn.dataset.price || "");
   const point = decodeURIComponent(btn.dataset.point || "");
   const side = btn.dataset.side || "0";
@@ -3103,7 +3117,7 @@ document.body.addEventListener("click", e => {
       type: decodeURIComponent(cardBtn.dataset.type || "Spread"),
       pick: decodeURIComponent(cardBtn.dataset.pick || ""),
       odds: Number(decodeURIComponent(cardBtn.dataset.odds || "")),
-      book: buttonBook(cardBtn) || bookForPrice(decodeURIComponent(cardBtn.dataset.sport || ""), decodeURIComponent(cardBtn.dataset.pick || ""), decodeURIComponent(cardBtn.dataset.odds || ""), decodeURIComponent(cardBtn.dataset.date || "")),
+      book: buttonBook(cardBtn) || slipBook(bookForPrice(decodeURIComponent(cardBtn.dataset.sport || ""), decodeURIComponent(cardBtn.dataset.pick || ""), decodeURIComponent(cardBtn.dataset.odds || ""), decodeURIComponent(cardBtn.dataset.date || ""))),
       notes: decodeURIComponent(cardBtn.dataset.notes || ""),
       edge: cardBtn.dataset.edge === "1" || /^high\b/i.test(decodeURIComponent(cardBtn.dataset.notes || ""))
     });
@@ -4413,11 +4427,13 @@ function collapseSlips(rows){
     if (!b || !b.pick) return;
     const date = String(b.date || "").slice(0, 10);
     const sport = String(b.sport || "").toUpperCase();
+    const book = knownBook(b.book) || "";
     const hit = Object.keys(byKey).find(k => {
       const prior = byKey[k];
-      return String(prior.date || "").slice(0, 10) === date && String(prior.sport || "").toUpperCase() === sport && sameWager(prior.pick, b.pick);
+      const priorBook = knownBook(prior.book) || "";
+      return String(prior.date || "").slice(0, 10) === date && String(prior.sport || "").toUpperCase() === sport && priorBook === book && sameWager(prior.pick, b.pick);
     });
-    const key = hit || [date, sport, normPick(b.pick)].join("|");
+    const key = hit || [date, sport, book, normPick(b.pick)].join("|");
     const prior = byKey[key];
     if (!prior) { byKey[key] = b; return; }
     const incoming = Number(b.profit), had = Number(prior.profit);
@@ -6086,8 +6102,8 @@ function addSlipLeg(leg){
   const opener = document.getElementById("slipopen");
   if (opener) opener.hidden = true;
   try { sessionStorage.removeItem("gg-slip-closed"); } catch (e) {}
-  const key = [leg.book || "", leg.sport, leg.pick, Number(leg.odds)].join("|");
-  if (!betSlip.some(row => [row.book || "", row.sport, row.pick, row.odds].join("|") === key)) betSlip.push({date: leg.date || easternDay(), sport: leg.sport || "", type: leg.type || "Spread", pick: leg.pick, odds: Number(leg.odds), book: leg.book || "", edge: !!leg.edge, notes: leg.notes || "", game: leg.game || "", best: !!leg.best});
+  const key = [slipBook(leg.book), leg.sport, leg.pick, Number(leg.odds)].join("|");
+  if (!betSlip.some(row => [slipBook(row.book), row.sport, row.pick, row.odds].join("|") === key)) betSlip.push({date: leg.date || easternDay(), sport: leg.sport || "", type: leg.type || "Spread", pick: leg.pick, odds: Number(leg.odds), book: slipBook(leg.book), edge: !!leg.edge, notes: leg.notes || "", game: leg.game || "", best: !!leg.best});
   rememberSlip();
   paintSlip();
 }
@@ -6173,7 +6189,7 @@ function slipRow(picked){
   const one = picked.length === 1;
   return {
     date: picked[0].date || easternDay(),
-    book: (picked.every(p => knownBook(p.book) && knownBook(p.book) === knownBook(picked[0].book)) ? knownBook(picked[0].book) : (knownBook((picked.find(p => knownBook(p.book)) || {}).book))) || form.book.value || "BetMGM",
+    book: slipBook(picked[0] && picked[0].book),
     sport: sports.size === 1 ? [...sports][0] : (one ? picked[0].sport : "MUL"),
     type: one ? (picked[0].type || "Spread") : (math.same ? "SGP" : "Parlay"),
     pick: one ? picked[0].pick : ((math.same ? "SGP " : "Parlay ") + picked.map(p => (p.sport ? p.sport + " " : "") + p.pick).join(" and ")),
@@ -6196,7 +6212,7 @@ document.getElementById("sgpadd").onclick = () => {
       const row = stampPlaced(markEdge({
         id: Date.now() + Math.random(),
         date: leg.date || easternDay(),
-        book: knownBook(leg.book) || leg.book || form.book.value || "BetMGM",
+        book: slipBook(leg.book),
         sport: leg.sport || "",
         type: leg.type || "Spread",
         pick: leg.pick,
@@ -7140,7 +7156,7 @@ function placePending(list, row){
   if (why) { lawBlock = why; return false; }
   lawBlock = "";
   const known = list.concat(loadGrade()).concat(gradeFile || []);
-  if (known.some(b => sameSlip(b, row))) return false;
+  if (known.some(b => sameSlip(b, row) && (knownBook(b.book) || "") === (knownBook(row.book) || ""))) return false;
   list.push(row);
   return true;
 }
