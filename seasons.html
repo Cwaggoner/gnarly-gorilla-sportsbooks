@@ -4536,6 +4536,7 @@ function render(){
   });
   if (filledClose) localStorage.setItem(KEY, JSON.stringify(stored));
   let unique = collapseSlips(all);
+  let movedDate = false;
   unique.forEach(b => {
     if (!b.id) b.id = [b.date, b.sport, b.pick].join("|");
     if (!b.book) b.book = "BetMGM";
@@ -4544,7 +4545,9 @@ function render(){
     if (!b.stake) b.stake = 10;
     const ticket = ticketOdds(b);
     if (ticket != null) b.odds = ticket;
+    if (stored.indexOf(b) >= 0 && parkSlipOnGames(b, window.__slipGames || [])) movedDate = true;
   });
+  if (movedDate) localStorage.setItem(KEY, JSON.stringify(stored));
   unique = dropMatchedPending(unique);
   const windowed = unique.filter(b => inSlipWindow(b.date));
   windowed.sort((a,b) => String(b.date).localeCompare(String(a.date)));
@@ -7266,15 +7269,42 @@ function slipSports(b){
   if (sport === "MUL" || sport === "MULTI") return Object.keys(SCORE_FEED);
   return [];
 }
+function gameSlateDay(g){
+  return (g && g.start && slateDateOf(g.start)) || String(g && g.date || "").slice(0, 10);
+}
 function gamesForSlip(games, b){
   const day = String(b && b.date || "").slice(0, 10);
   const sports = new Set(slipSports(b));
   return (games || []).filter(g => {
     if (!g) return false;
-    if (day && g.date && String(g.date).slice(0, 10) !== day) return false;
+    const played = gameSlateDay(g);
+    const posted = String(g.date || "").slice(0, 10);
+    if (day && played !== day && posted !== day) return false;
     const code = String(g.sport || "").toUpperCase();
     return !sports.size || sports.has(code);
   });
+}
+function parkSlipOnGames(b, games){
+  if (!b) return false;
+  const type = betType(b);
+  if (type !== "Parlay" && String(b.sport || "").toUpperCase() !== "MUL") return false;
+  const legs = String(b.pick || "").split(/\s+and\s+/i);
+  const sports = new Set(slipSports(b));
+  const pool = (games || []).filter(g => {
+    const code = String(g && g.sport || "").toUpperCase();
+    return g && (!sports.size || sports.has(code));
+  });
+  const days = [];
+  legs.forEach(leg => {
+    const game = findFinalGame(pool, leg);
+    if (!game) return;
+    const day = gameSlateDay(game);
+    if (day && days.indexOf(day) < 0) days.push(day);
+  });
+  if (days.length !== 1) return false;
+  if (String(b.date || "").slice(0, 10) === days[0]) return false;
+  b.date = days[0];
+  return true;
 }
 function gradeLegText(leg){
   return slipLegText(String(leg || "").replace(/^(?:parlay|sgp)\s+/i, ""));
@@ -7339,6 +7369,8 @@ function applyFinalGrades(games){
   const touched = new Set();
   const gradeOne = b => {
     if (!b || b.result !== "pending" || isNoPick(b) || !inSlipWindow(b.date)) return false;
+    parkSlipOnGames(b, finals);
+    if (!inSlipWindow(b.date)) return false;
     const result = gradeFromScores(b, gamesForSlip(finals, b));
     if (result !== "win" && result !== "loss" && result !== "push") return false;
     b.result = result;
