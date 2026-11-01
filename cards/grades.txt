@@ -1,10 +1,10 @@
 # file: grades
 2026-10-31 | RANGE | All Win 54.16 | All Lose -60.00
-2026-10-31 | CFB | Georgia St -4 vs Coastal | close -110 | loss |  | -10.00
-2026-10-31 | CFB | UTEP +24.5 at N Dakota St | close -108 | win |  | 8.70
-2026-10-31 | CFB | Nevada +22.5 at UCLA | close -110 | loss |  | -10.00
-2026-10-31 | CFB | Minnesota +20.5 at Indiana | close -108 | win |  | 9.26
-2026-10-31 | CFB | Rutgers +16.5 vs Michigan | close -102 | win |  | 8.93
+2026-10-31 | CFB | Georgia St -4 vs Coastal | close -110 | loss | 20-31 | -10.00
+2026-10-31 | CFB | UTEP +24.5 at N Dakota St | close -108 | win | 7-31 | 8.70
+2026-10-31 | CFB | Nevada +22.5 at UCLA | close -110 | loss | 0-27 | -10.00
+2026-10-31 | CFB | Minnesota +20.5 at Indiana | close -108 | win | 16-23 | 9.26
+2026-10-31 | CFB | Rutgers +16.5 vs Michigan | close -102 | win | 21-28 | 8.93
 2026-10-31 | CFB | USC +6.5 | close -110 | win | 30-18 | 9.09
 2026-10-31 | NBA | No Picks
 2026-10-31 | NHL | No Picks
