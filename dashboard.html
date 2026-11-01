@@ -1874,9 +1874,15 @@ function loadProfitFile(){
 function sportTag(kind, name){
   return name ? "(" + kind + " - " + name + ")" : "";
 }
+function publishedDayClosed(date){
+  const row = (publishedCalendar || {})[String(date || "").slice(0, 10)];
+  if (!row) return false;
+  const settled = (Number(row.wins) || 0) + (Number(row.losses) || 0) + (Number(row.pushes) || 0);
+  return Number(row.n) > 0 && settled >= Number(row.n);
+}
 function sportChartDays(){
   const today = easternDay();
-  const days = Object.keys(publishedCalendar || {}).filter(date => date < today && chartDayReady(date)).sort();
+  const days = Object.keys(publishedCalendar || {}).filter(date => date <= today && (date < today ? chartDayReady(date) : (chartDayReady(date) || publishedDayClosed(date)))).sort();
   return days.length ? days : [yesterday()];
 }
 let sportDay = "";
@@ -1936,7 +1942,7 @@ function drawBars(canvas, bets){
   ctx.fillStyle = "#0e0e0e";
   ctx.fillRect(0,0,cssW,h);
   ctx.font = "12px sans-serif";
-  const label = r => r[1].yday ? "" : (!chartDayReady(day) ? "Last Game Open" : seasonText(r[0]));
+  const label = r => r[1].yday ? "" : ((chartDayReady(day) || publishedDayClosed(day)) ? seasonText(r[0]) : "Last Game Open");
   const labelW = Math.max(...rows.map(r => ctx.measureText(r[0]).width), 36);
   const valueW = Math.max(...rows.map(r => ctx.measureText(money(r[1].pl) + "  " + label(r)).width), 70);
   const left = 12 + labelW + 8;

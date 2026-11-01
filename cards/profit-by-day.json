@@ -3,8 +3,8 @@
   "saved": "2026-11-01T03:21:37.120Z",
   "unit": 10,
   "through": "2026-10-31",
-  "source": "Graded $10 slips for October 1 through October 25. Each day matches the cumulative Profit By Day line. This file is the season log. It is not on the website.",
-  "reading": "Through October 30 the month is $-118.27. Best sport is CFB at $5.96 (82-86-0). Worst sport is NHL at $-55.35 (81-100-2).",
+  "source": "Graded $10 slips for October 1 through October 31. Each day matches the cumulative Profit By Day line. This file is the season log.",
+  "reading": "Through October 31 the month is $-102.29. Best sport is CFB at $21.94 (86-88-0). Worst sport is NHL at $-55.35 (81-100-2).",
   "days": [
     {
       "date": "2026-10-01",
@@ -2150,10 +2150,10 @@
   ],
   "month": {
     "2026-10": {
-      "profit": -118.27,
-      "n": 614,
-      "wins": 285,
-      "losses": 323,
+      "profit": -102.29,
+      "n": 620,
+      "wins": 289,
+      "losses": 325,
       "pushes": 6,
       "sports": {
         "CBB": {
@@ -2165,12 +2165,12 @@
           "record": "0-0-0"
         },
         "CFB": {
-          "profit": 5.96,
-          "n": 168,
-          "wins": 82,
-          "losses": 86,
+          "profit": 21.94,
+          "n": 174,
+          "wins": 86,
+          "losses": 88,
           "pushes": 0,
-          "record": "82-86-0"
+          "record": "86-88-0"
         },
         "MLB": {
           "profit": -34.68,
@@ -2205,7 +2205,7 @@
           "record": "81-100-2"
         }
       },
-      "record": "285-323-6",
+      "record": "289-325-6",
       "best": "CFB",
       "worst": "NHL"
     }
@@ -2219,17 +2219,17 @@
       "pushes": 0,
       "record": "0-0-0",
       "from": "2026-10-01",
-      "through": "2026-10-30"
+      "through": "2026-10-31"
     },
     "CFB": {
-      "profit": 5.96,
-      "n": 168,
-      "wins": 82,
-      "losses": 86,
+      "profit": 21.94,
+      "n": 174,
+      "wins": 86,
+      "losses": 88,
       "pushes": 0,
-      "record": "82-86-0",
+      "record": "86-88-0",
       "from": "2026-10-01",
-      "through": "2026-10-30"
+      "through": "2026-10-31"
     },
     "MLB": {
       "profit": -34.68,
@@ -2239,7 +2239,7 @@
       "pushes": 0,
       "record": "27-32-0",
       "from": "2026-10-01",
-      "through": "2026-10-30"
+      "through": "2026-10-31"
     },
     "NBA": {
       "profit": -35.49,
@@ -2249,7 +2249,7 @@
       "pushes": 0,
       "record": "62-70-0",
       "from": "2026-10-01",
-      "through": "2026-10-30"
+      "through": "2026-10-31"
     },
     "NFL": {
       "profit": 1.29,
@@ -2259,7 +2259,7 @@
       "pushes": 4,
       "record": "33-35-4",
       "from": "2026-10-01",
-      "through": "2026-10-30"
+      "through": "2026-10-31"
     },
     "NHL": {
       "profit": -55.35,
@@ -2269,7 +2269,7 @@
       "pushes": 2,
       "record": "81-100-2",
       "from": "2026-10-01",
-      "through": "2026-10-30"
+      "through": "2026-10-31"
     }
   }
 }
