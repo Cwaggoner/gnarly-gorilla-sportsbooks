@@ -6654,7 +6654,11 @@
       "manual": true,
       "edge": true,
       "placed": "2026-10-31T11:18:42.713Z",
-      "profit": -10
+      "profit": -10,
+      "close": -110,
+      "closePoint": -3.5,
+      "closeOpp": -108,
+      "realClose": true
     },
     {
       "id": 1793448514945.31,
@@ -6672,7 +6676,11 @@
       "placed": "2026-10-31T12:08:34.945Z",
       "confidence": "High",
       "confidencePct": 60,
-      "profit": 8.7
+      "profit": 8.7,
+      "close": -108,
+      "closePoint": 24,
+      "closeOpp": -110,
+      "realClose": true
     },
     {
       "id": 1793448514951.651,
@@ -6690,7 +6698,11 @@
       "placed": "2026-10-31T12:08:34.951Z",
       "confidence": "High",
       "confidencePct": 63,
-      "profit": -10
+      "profit": -10,
+      "close": -110,
+      "closePoint": 22,
+      "closeOpp": -110,
+      "realClose": true
     },
     {
       "id": 1793448514953.634,
@@ -6748,7 +6760,11 @@
       "result": "pending",
       "fromCard": true,
       "notes": "made -1.2, book -6.5, gap 5.3, reason confirmed starter change Julian Sayin out Luke Fahey starting not fully priced, turnover USC negative by 2 bench Fahey backup, Edge",
-      "placed": "2026-10-31T14:28:53.730Z"
+      "placed": "2026-10-31T14:28:53.730Z",
+      "close": -110,
+      "closePoint": 6.5,
+      "closeOpp": -108,
+      "realClose": true
     }
   ],
   "pending_date": "2026-10-29"

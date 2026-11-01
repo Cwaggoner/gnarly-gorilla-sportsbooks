@@ -5058,12 +5058,13 @@ function rememberBooks(sport, games){
   localStorage.setItem("gg-book-prices", JSON.stringify(all));
 }
 function sideHit(pick, team){
-  const words = s => String(s || "").toLowerCase().replace(/[^a-z0-9&]/g, " ").split(/\s+/).filter(w => w && !/^(the|at|vs|and|over|under|ml|moneyline)$/.test(w) && !/^[+-]\d/.test(w) && !/^\d+(?:\.\d+)?$/.test(w));
-  const teamWords = words(team);
-  const pickWords = words(pick);
+  const stop = /^(the|at|vs|and|over|under|ml|moneyline|state|north|south|east|west|new|old)$/;
+  const words = s => String(s || "").toLowerCase().replace(/[^a-z0-9&]/g, " ").split(/\s+/).filter(w => w && !/^[+-]\d/.test(w) && !/^\d+(?:\.\d+)?$/.test(w));
+  const expand = w => w === "st" ? "state" : w === "n" ? "north" : w === "s" ? "south" : w === "e" ? "east" : w === "w" ? "west" : w;
+  const teamWords = words(team).map(expand).filter(w => !stop.test(w));
+  const pickWords = words(pick).map(expand).filter(w => !stop.test(w));
   if (!teamWords.length || !pickWords.length) return false;
-  const last = teamWords[teamWords.length - 1];
-  return pickWords.some(w => w === last || (w.length >= 4 && last.length >= 4 && (last.indexOf(w) === 0 || w.indexOf(last) === 0)));
+  return pickWords.some(w => teamWords.some(t => w === t || (w.length >= 4 && t.length >= 4 && (t.indexOf(w) === 0 || w.indexOf(t) === 0))));
 }
 function bookPair(slip, book){
   let all = {};
@@ -5454,7 +5455,11 @@ function slipsForBooks(list){
       const opp = pair && pair.opp;
       const closed = parlay ? null : quotedClose(b, book);
       if (bookKey(b.book) === bookKey(book)) {
-        if (closed) out.push(Object.assign({}, b, {close: closed.price, closeOpp: closed.opp != null ? closed.opp : b.closeOpp, closePoint: closed.point, realClose: true}));
+        if (closed) {
+          const nums = String(b.pick || "").match(/[+-]?\d+(?:\.\d+)?/g) || [];
+          const onNumber = closed.point == null || nums.some(n => Math.abs(Number(n) - Number(closed.point)) < 0.01);
+          out.push(Object.assign({}, b, {close: closed.price, closeOpp: closed.opp != null ? closed.opp : b.closeOpp, closePoint: closed.point, realClose: true, closeText: onNumber ? "" : lineLabel(closed.point, closed.price)}));
+        }
         else out.push(b);
         return;
       }
@@ -6667,7 +6672,7 @@ function parseGradeLine(line){
 function keepClose(b){
   if (!b) return b;
   b.type = betType(b);
-  if (b.result === "pending") { b.close = ""; b.realClose = false; return b; }
+  if (b.result === "pending" && !(b.realClose && usableClose(b.close))) { b.close = ""; b.realClose = false; return b; }
   const hist = savedCloseFor(b);
   if (usableClose(hist)) { b.close = Number(hist); b.realClose = true; return b; }
   if (!usableClose(b.close)) b.close = "";
