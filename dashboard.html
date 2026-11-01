@@ -8995,8 +8995,8 @@ function injuryBlurb(sport, team){
   return list.map(item => {
     const name = ((item.athlete || {}).displayName || "Player").split(" ").slice(-1)[0];
     const cls = injuryKind(item.status) === "out" ? "inj-out" : "inj-maybe";
-    return "<span class='" + cls + "'>" + esc(name + " " + (item.status || "")) + "</span>";
-  }).join(" ");
+    return "<p class='mgm-form'><span class='" + cls + "'>" + esc(name + " " + (item.status || "")) + "</span></p>";
+  }).join("");
 }
 function sideForm(sport, team){
   if (!team) return "";
@@ -9004,8 +9004,7 @@ function sideForm(sport, team){
   const inj = injuryBlurb(sport, team);
   if (!bits.length && !inj) return "";
   const grey = bits.length ? "<p class='mgm-form'>" + esc(bits.join(" · ")) + "</p>" : "";
-  const hurt = inj ? "<p class='mgm-form'>" + inj + "</p>" : "";
-  return grey + hurt;
+  return grey + inj;
 }
 let liveExtraFlight = null;
 function armLiveExtras(games){
