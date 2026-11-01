@@ -4557,12 +4557,13 @@ function render(){
     const cls = b.result === "win" ? "win" : b.result === "loss" ? "loss" : "push";
     const finished = slateSettled(b.date);
     const note = gradeNote(b);
+    const parlayOpen = b.result === "pending" && betType(b) === "Parlay";
+    const waiting = parlayOpen || !finished ? "Game not finished" : dash;
     const grade = b.viewOnly
-      ? (b.noPrice ? "No Price Saved" : b.lineDiffers ? "Line differs" : (note ? "<span class='" + cls + "'>" + esc(note) + "</span>" : dash))
+      ? (b.noPrice ? "No Price Saved" : b.lineDiffers ? "Line differs" : (note ? "<span class='" + cls + "'>" + esc(note) + "</span>" : waiting))
       : note
       ? "<span class='" + cls + "'>" + esc(note) + "</span>"
-      : !finished ? "Game not finished"
-      : dash;
+      : waiting;
     const cv = clv(b);
     const sharpCv = sharpClv(b);
     const sharpCls = sharpCv === "differs" ? "warn" : (typeof sharpCv === "number" ? (sharpCv > 0.05 ? "win" : (sharpCv < -0.05 ? "loss" : "")) : "");
