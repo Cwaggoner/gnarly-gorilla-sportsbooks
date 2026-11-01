@@ -155,6 +155,31 @@ form, .row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1f
 .payout-win { color:#39ff14; }
 .payout-col.usual .payout-win, .payout-col.usual .payout-odds { color:#f0e14a; }
 .payout-odds { color:#d6ffd0; }
+.payout-bars .payout-col:nth-child(1) .payout-bar { height:33%; }
+.payout-bars .payout-col:nth-child(2) .payout-bar { height:38%; }
+.payout-bars .payout-col:nth-child(3) .payout-bar { height:45%; }
+.payout-bars .payout-col:nth-child(4) .payout-bar { height:48%; }
+.payout-bars .payout-col:nth-child(5) .payout-bar { height:50%; }
+.payout-bars .payout-col:nth-child(6) .payout-bar { height:55%; }
+.payout-bars .payout-col:nth-child(7) .payout-bar { height:60%; }
+.payout-bars .payout-col:nth-child(8) .payout-bar { height:65%; }
+.payout-bars .payout-col:nth-child(9) .payout-bar { height:75%; }
+.payout-bars .payout-col:nth-child(10) .payout-bar { height:88%; }
+.payout-bars .payout-col:nth-child(11) .payout-bar { height:100%; }
+#liveline { margin:6px 0 0; font-size:12px; }
+#monthpl { margin-left:10ch; color:#d6ffd0; }
+.cal .dow.month-name { grid-column:1 / -1; color:#39ff14; }
+.net-gap { margin-left:5ch; }
+.tone-live { color:#39ff14; }
+.tone-wait { color:#f0e14a; }
+.tone-dim { color:#8fb898; }
+.tone-hot { color:#ff6b6b; }
+.ekg .trace.tone-wait { stroke:#f0e14a; }
+.ekg .trace.tone-hot { stroke:#ff6b6b; }
+th.th-center { text-align:center; }
+#seasontrivia > b { color:#39ff14; }
+#seasontrivia > p.warn { margin:4px 0 8px; }
+.note-tight { margin-top:0; }
 .bet-top { display:grid; grid-template-columns:minmax(0,1fr) 170px 210px; gap:10px; align-items:stretch; }
 #betfields { display:flex; flex-direction:column; justify-content:flex-start; gap:8px; align-items:stretch; }
 .field-grid { display:grid; grid-template-columns:16ch 12ch 8ch 11ch minmax(0,1fr) 11ch; gap:2px; align-content:start; justify-content:start; }
@@ -688,7 +713,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <div class="head-icon"><img src="gg-icon.png" alt="Gnarly Gorilla" width="72" height="72" fetchpriority="high"></div>
 <div class="head-text">
 <h1><span class="gg-name">Gnarly Gorilla</span> Sportsbooks</h1>
-<p id="liveline" class="warn" style="margin:6px 0 0;font-size:12px;">All picks live by 9:30 AM. Closed Value Lines update at 6:00 PM.</p>
+<p id="liveline" class="warn">All picks live by 9:30 AM. Closed Value Lines update at 6:00 PM.</p>
 <p>Free bet ledger for <span class="gg-name">Gnarly Gorilla</span> Sports Decks. Log CBB, CFB, MLB, NBA, NFL, and NHL slips, grade them the next day, and copy the report card.</p>
 </div>
 <div class="head-flag" aria-label="United States"><svg viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg" role="img"><defs><linearGradient id="flaggloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".45" stop-color="#fff" stop-opacity=".08"/><stop offset="1" stop-color="#000" stop-opacity=".25"/></linearGradient></defs><rect width="28" height="18" fill="#b22234"/><g fill="#fff"><rect y="1.38" width="28" height="1.38"/><rect y="4.15" width="28" height="1.38"/><rect y="6.92" width="28" height="1.38"/><rect y="9.69" width="28" height="1.38"/><rect y="12.46" width="28" height="1.38"/><rect y="15.23" width="28" height="1.38"/></g><rect width="11.2" height="9.7" fill="#3c3b6e"/><rect width="28" height="18" fill="url(#flaggloss)"/></svg><span>USA</span><span id="headrules">BETTING RULES</span><span id="headregion"></span></div>
@@ -811,17 +836,17 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <h3>$10 Win</h3>
 <p class="warn">What a $10 bet wins at the American odds used on these cards. Amber is -110, the usual number.</p>
 <div class="payout-bars">
-<div class="payout-col"><div class="payout-bar" style="height:33%"></div><span class="payout-win">$6.67</span><span class="payout-odds">-150</span></div>
-<div class="payout-col"><div class="payout-bar" style="height:38%"></div><span class="payout-win">$7.69</span><span class="payout-odds">-130</span></div>
-<div class="payout-col usual"><div class="payout-bar" style="height:45%"></div><span class="payout-win">$9.09</span><span class="payout-odds">-110</span></div>
-<div class="payout-col"><div class="payout-bar" style="height:48%"></div><span class="payout-win">$9.52</span><span class="payout-odds">-105</span></div>
-<div class="payout-col"><div class="payout-bar" style="height:50%"></div><span class="payout-win">$10</span><span class="payout-odds">+100</span></div>
-<div class="payout-col"><div class="payout-bar" style="height:55%"></div><span class="payout-win">$11</span><span class="payout-odds">+110</span></div>
-<div class="payout-col"><div class="payout-bar" style="height:60%"></div><span class="payout-win">$12</span><span class="payout-odds">+120</span></div>
-<div class="payout-col"><div class="payout-bar" style="height:65%"></div><span class="payout-win">$13</span><span class="payout-odds">+130</span></div>
-<div class="payout-col"><div class="payout-bar" style="height:75%"></div><span class="payout-win">$15</span><span class="payout-odds">+150</span></div>
-<div class="payout-col"><div class="payout-bar" style="height:88%"></div><span class="payout-win">$17.50</span><span class="payout-odds">+175</span></div>
-<div class="payout-col"><div class="payout-bar" style="height:100%"></div><span class="payout-win">$20</span><span class="payout-odds">+200</span></div>
+<div class="payout-col"><div class="payout-bar"></div><span class="payout-win">$6.67</span><span class="payout-odds">-150</span></div>
+<div class="payout-col"><div class="payout-bar"></div><span class="payout-win">$7.69</span><span class="payout-odds">-130</span></div>
+<div class="payout-col usual"><div class="payout-bar"></div><span class="payout-win">$9.09</span><span class="payout-odds">-110</span></div>
+<div class="payout-col"><div class="payout-bar"></div><span class="payout-win">$9.52</span><span class="payout-odds">-105</span></div>
+<div class="payout-col"><div class="payout-bar"></div><span class="payout-win">$10</span><span class="payout-odds">+100</span></div>
+<div class="payout-col"><div class="payout-bar"></div><span class="payout-win">$11</span><span class="payout-odds">+110</span></div>
+<div class="payout-col"><div class="payout-bar"></div><span class="payout-win">$12</span><span class="payout-odds">+120</span></div>
+<div class="payout-col"><div class="payout-bar"></div><span class="payout-win">$13</span><span class="payout-odds">+130</span></div>
+<div class="payout-col"><div class="payout-bar"></div><span class="payout-win">$15</span><span class="payout-odds">+150</span></div>
+<div class="payout-col"><div class="payout-bar"></div><span class="payout-win">$17.50</span><span class="payout-odds">+175</span></div>
+<div class="payout-col"><div class="payout-bar"></div><span class="payout-win">$20</span><span class="payout-odds">+200</span></div>
 </div>
 </div>
 <div class="card-analysis" id="cardanalysis"><h3 class="split-title">Analysis</h3><div class="analysis-body"><div class="analysis-grid" id="analysisgrid"></div><div class="sharp-read"><b>Analysis:</b><p id="sharpread"></p></div><div id="cardgames"></div></div></div>
@@ -970,7 +995,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <p class="api-note warn">Live prices need the Odds API key on Add A Bet. Close needs a paid subscription. CLV is no-vig: the book's cut is removed, and a moved spread or total is counted. A matched -110 close is about -4.5%, not zero. When the other side was not saved, it is estimated at a -110 hold until Plot stores the real pair. A free key loads the board only. A saved list returns on refresh with no new call.<br><button type="button" class="odds-link" onclick="window.open('https://the-odds-api.com/','_blank','noopener,noreferrer')">Open The Odds API</button></p>
 </section>
 <section class="card view" id="calendarcard">
-<div class="section-head"><h2>Calendar</h2><span id="monthpl" style="margin-left:10ch;color:#d6ffd0"></span><p class="warn slips-side">Everyone sees the shared $10 calendar until they upload a file. An uploaded file stays in this browser only.<br>Other users do not see it. Use Shared Calendar to go back.</p></div>
+<div class="section-head"><h2>Calendar</h2><span id="monthpl"></span><p class="warn slips-side">Everyone sees the shared $10 calendar until they upload a file. An uploaded file stays in this browser only.<br>Other users do not see it. Use Shared Calendar to go back.</p></div>
 <table class="cal-line"><tbody><tr>
 <td><div class="tools"><div class="btn-pair"><span>Navigation</span><div><button type="button" id="prevMonth">Prev</button><button type="button" id="nextMonth">Next</button></div></div><label>Load My Calendar<input type="file" id="loadcal" accept=".json,application/json"><span class="file-face">No File Chosen</span></label><div class="btn-pair"><span class="pair-title"><span id="calnote" class="warn"></span></span><div><button type="button" id="resetcal">Use Shared Calendar</button></div></div></div></td>
 <td class="cal-icons"><div class="cal-crew">
@@ -2483,7 +2508,7 @@ function drawCalendar(){
   const start = first.getDay();
   const days = new Date(y, m + 1, 0).getDate();
   const names = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-  let html = "<div class='dow' style='grid-column:1/-1;color:#39ff14'>" + first.toLocaleString(undefined,{month:"long", year:"numeric"}) + "</div>";
+  let html = "<div class='dow month-name'>" + first.toLocaleString(undefined,{month:"long", year:"numeric"}) + "</div>";
   html += names.map(n => "<div class='dow'>" + n + "</div>").join("");
   for (let i = 0; i < start; i++) html += "<div></div>";
   const today = easternDay();
@@ -2598,7 +2623,7 @@ function drawCalendar(){
     if (pl > 0) gain += pl; else loss += Math.abs(pl);
   });
   const box = document.getElementById("monthpl");
-  if (box) box.innerHTML = "<b>Monthly Win/Loss Record <span class='win'>" + money(gain) + "</span> <span class='loss'>-" + money(loss).replace("-", "") + "</span><span style=\"margin-left:5ch\">Net " + moneyHtml(gain - loss) + "</span></b>";
+  if (box) box.innerHTML = "<b>Monthly Win/Loss Record <span class='win'>" + money(gain) + "</span> <span class='loss'>-" + money(loss).replace("-", "") + "</span><span class='net-gap'>Net " + moneyHtml(gain - loss) + "</span></b>";
   if (openDate && !document.getElementById("closeday")) openDay(openDate);
 }
 
@@ -3434,14 +3459,14 @@ function showSeasons(checked){
   const names = {CBB:"CBB - College Basketball", CFB:"CFB - College Football", MLB:"MLB - Major League Baseball", NBA:"NBA - National Basketball Association", NFL:"NFL - National Football League", NHL:"NHL - National Hockey League"};
   const rows = ["CBB","CFB","MLB","NBA","NFL","NHL"].map(s => {
     const status = seasonStatus(s, pendingSlips());
-    const color = /Pending/.test(status) ? "#f0e14a" : (status === "Closed" || status === "Not started") ? "#8fb898" : "#39ff14";
+    const tone = /Pending/.test(status) ? "tone-wait" : (status === "Closed" || status === "Not started") ? "tone-dim" : "tone-live";
     const pace = seasonPace(s);
-    const leftColor = pace.left === "0" || pace.left === "—" ? "#8fb898" : Number(pace.left) <= 14 ? "#f0e14a" : "#39ff14";
-    return "<tr><td>" + names[s] + "</td><td>" + SEASON_START[s] + "</td><td>" + SEASON_END[s] + "</td><td style='color:" + color + "'>" + status + "</td><td>" + pace.day + "</td><td style='color:" + leftColor + "'>" + pace.left + "</td></tr>";
+    const leftTone = pace.left === "0" || pace.left === "—" ? "tone-dim" : Number(pace.left) <= 14 ? "tone-wait" : "tone-live";
+    return "<tr><td>" + names[s] + "</td><td>" + SEASON_START[s] + "</td><td>" + SEASON_END[s] + "</td><td class='" + tone + "'>" + status + "</td><td>" + pace.day + "</td><td class='" + leftTone + "'>" + pace.left + "</td></tr>";
   }).join("");
   const open = ["CBB","CFB","MLB","NBA","NFL","NHL"].filter(s => !seasonEnded(s) && !seasonNotStarted(s)).length;
   const pulse = open === 6 ? "6.6s" : open >= 4 ? "7.4s" : open >= 2 ? "9s" : open === 1 ? "13s" : "15s";
-  const color = open === 6 ? "#39ff14" : open >= 3 ? "#f0e14a" : "#ff6b6b";
+  const tone = open === 6 ? "tone-live" : open >= 3 ? "tone-wait" : "tone-hot";
   let wave = "M0 18";
   const spikes = open > 1 ? [40, 110, 180, 250, 320, 390] : open === 1 ? [40, 110, 180, 250, 320, 390] : [];
   spikes.forEach(x => {
@@ -3449,12 +3474,12 @@ function showSeasons(checked){
     else wave += " H" + x + " L" + (x + 2) + " 18 L" + (x + 3) + " 14 L" + (x + 4) + " 22 L" + (x + 5) + " 18";
   });
   wave += " H448";
-  const ekg = "<span class='ekg' style='--draw:" + pulse + "'><svg viewBox='0 0 448 36' preserveAspectRatio='none' aria-label='Season pulse'><path class='trace' d='" + wave + "' style='stroke:" + color + "'></path></svg><span class='ekg-cover'></span></span>";
+  const ekg = "<span class='ekg' style='--draw:" + pulse + "'><svg viewBox='0 0 448 36' preserveAspectRatio='none' aria-label='Season pulse'><path class='trace " + tone + "' d='" + wave + "'></path></svg><span class='ekg-cover'></span></span>";
   const live = "<div id='seasonlive'><div class='section-head'><h2>Live Scores</h2><div class='score-notes' id='seasonlivenote'><p class='warn score-line'>Loading the board.</p></div></div><div class='score-strip'><button type='button' class='score-arrow' id='seasonliveleft' aria-label='Scroll scores left'><svg viewBox='0 0 24 24' width='22' height='22' aria-hidden='true'><path d='M15 5 L8 12 L15 19' fill='none' stroke='#39ff14' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/></svg></button><div class='score-row' id='seasonliverow'></div><button type='button' class='score-arrow' id='seasonliveright' aria-label='Scroll scores right'><svg viewBox='0 0 24 24' width='22' height='22' aria-hidden='true'><path d='M9 5 L16 12 L9 19' fill='none' stroke='#39ff14' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/></svg></button></div><table class='score-align'><tbody><tr><td><div class='sport-bar' id='seasonlivesports'><button type='button' data-sport='All' class='on'>All</button>" + ["CBB","CFB","MLB","NBA","NFL","NHL"].map(code => leagueBtn(code)).join("") + "<a class='score-full' id='scorefull' href='index.html?page=scoreboard'>Full Scoreboard</a><span class='score-day'><button type='button' id='seasonliveprev'>Prev</button><b id='seasonliveday'></b><button type='button' id='seasonlivenext'>Next</button><button type='button' id='seasonlivetoday'>Today</button></span></div></td><td class='score-copy'><div id='seasonlivenotes'></div></td></tr></tbody></table></div>";
   const records = "<div class='card-rest' id='seasonrecords'><div class='section-head'><h2>Win/Loss Records</h2><p class='warn slips-side' id='recnote'>Loading standings.</p></div><div class='tools'><label>Sport<select id='recsport'></select></label><label>Conference<select id='recconf'></select></label><label>Division<select id='recdiv'></select></label></div><div class='table-wrap'><table><thead><tr><th>Team</th><th>Sport</th><th>Conference</th><th>Division</th><th>W</th><th>L</th><th>T/OTL</th><th>PCT</th><th>GB</th><th>Streak</th></tr></thead><tbody id='recrows'></tbody></table></div></div>";
-  const trivia = "<div class='card-rest' id='seasontrivia'><b style='color:#39ff14'>Daily Sports Trivia</b><p class='warn' style='margin:4px 0 8px'>A new question at midnight. The same question stays up all day.</p><p data-q>Loading today's question.</p><button type='button' id='triviareveal'>Show answer</button><p data-a class='warn' hidden></p></div>";
+  const trivia = "<div class='card-rest' id='seasontrivia'><b>Daily Sports Trivia</b><p class='warn'>A new question at midnight. The same question stays up all day.</p><p data-q>Loading today's question.</p><button type='button' id='triviareveal'>Show answer</button><p data-a class='warn' hidden></p></div>";
   const checkedBit = seasonChecked ? "Checked " + esc(seasonChecked) + ". " : "";
-  box.innerHTML = live + "<div class='section-head'><h2>Season Dates</h2><p class='warn slips-side'>" + checkedBit + "NFL May, NHL July, MLB July, NBA August, CFB August, CBB September. Postseason nights stay open until the last game ends or " + zoneTime(4, 0) + ". NBA and NHL through June 30, MLB through the World Series, NFL through the Super Bowl, CFB through the championship, March Madness March 13 through the title game.</p></div><table><thead><tr><th colspan='6' style='text-align:center'>" + ekg + "</th></tr><tr><th>Sport</th><th>Start</th><th>Last Card</th><th>Status</th><th>Where</th><th>Days Left</th></tr></thead><tbody>" + rows + "</tbody></table>" + records + trivia;
+  box.innerHTML = live + "<div class='section-head'><h2>Season Dates</h2><p class='warn slips-side'>" + checkedBit + "NFL May, NHL July, MLB July, NBA August, CFB August, CBB September. Postseason nights stay open until the last game ends or " + zoneTime(4, 0) + ". NBA and NHL through June 30, MLB through the World Series, NFL through the Super Bowl, CFB through the championship, March Madness March 13 through the title game.</p></div><table><thead><tr><th colspan='6' class='th-center'>" + ekg + "</th></tr><tr><th>Sport</th><th>Start</th><th>Last Card</th><th>Status</th><th>Where</th><th>Days Left</th></tr></thead><tbody>" + rows + "</tbody></table>" + records + trivia;
   paintLeagueMarks(box);
   if (pageNeeds("seasons")) { loadRecords(); loadLiveBoard(); }
 }
@@ -5632,7 +5657,7 @@ function bookMonitorHtml(){
     const link = "<a href='" + sites[name] + "' target='_blank' rel='noopener noreferrer'>" + esc(name) + "</a>";
     return "<tr><td>" + link + "</td><td>" + (day ? posted || "—" : "—") + "</td><td>" + (t.holdN ? hold : "—") + "</td><td>" + (day && posted ? t.best : "—") + "</td><td>" + (day && posted ? t.short : "—") + "</td></tr>";
   }).join("");
-  return "<h2 class='split-title'>Book Monitor</h2><p class='api-note warn'>" + esc(when + "." + checkedNote) + " These are the prices that book is posting. The book sites do not publish a public stats page, and this page does not log in. Posted is how many games that book has a number on. Hold is the juice in that book's own price. Best is how often its price is the highest on the same number. Short is how often it is the worst.</p><p class='api-note warn' style='margin-top:0'>A dash means that book has no number on the saved board.</p><div class='table-wrap'><table><thead><tr><th>Book</th><th>Posted</th><th>Hold</th><th>Best</th><th>Short</th></tr></thead><tbody>" + rows + "</tbody></table></div>";
+  return "<h2 class='split-title'>Book Monitor</h2><p class='api-note warn'>" + esc(when + "." + checkedNote) + " These are the prices that book is posting. The book sites do not publish a public stats page, and this page does not log in. Posted is how many games that book has a number on. Hold is the juice in that book's own price. Best is how often its price is the highest on the same number. Short is how often it is the worst.</p><p class='api-note warn note-tight'>A dash means that book has no number on the saved board.</p><div class='table-wrap'><table><thead><tr><th>Book</th><th>Posted</th><th>Hold</th><th>Best</th><th>Short</th></tr></thead><tbody>" + rows + "</tbody></table></div>";
 }
 function group(bets, key){
   const map = {};
