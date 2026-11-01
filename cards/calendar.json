@@ -1,1 +1,64 @@
-PLACEHOLDER
+{
+  "dates": {
+    "2026-10-07": {
+      "pl": -5.73,
+      "n": 24,
+      "wins": 10,
+      "losses": 14,
+      "pushes": 0,
+      "allWin": 379.21,
+      "allLose": -240,
+      "clv": null,
+      "sports": {
+        "CBB": {
+          "profit": 0,
+          "n": 0,
+          "wins": 0,
+          "losses": 0,
+          "pushes": 0,
+          "record": "0-0-0"
+        },
+        "CFB": {
+          "profit": -21.23,
+          "n": 6,
+          "wins": 2,
+          "losses": 4,
+          "pushes": 0,
+          "record": "2-4-0"
+        },
+        "MLB": {
+          "profit": 25.02,
+          "n": 4,
+          "wins": 3,
+          "losses": 1,
+          "pushes": 0,
+          "record": "3-1-0"
+        },
+        "NBA": {
+          "profit": -22.73,
+          "n": 8,
+          "wins": 3,
+          "losses": 5,
+          "pushes": 0,
+          "record": "3-5-0"
+        },
+        "NFL": {
+          "profit": 0,
+          "n": 0,
+          "wins": 0,
+          "losses": 0,
+          "pushes": 0,
+          "record": "0-0-0"
+        },
+        "NHL": {
+          "profit": 13.2,
+          "n": 6,
+          "wins": 2,
+          "losses": 4,
+          "pushes": 0,
+          "record": "2-4-0"
+        }
+      }
+    }
+  }
+}
