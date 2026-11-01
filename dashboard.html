@@ -6831,7 +6831,7 @@ async function applyGrades(ready){
 }
 const SCORE_FEED = {NFL:"football/nfl", NBA:"basketball/nba", NHL:"hockey/nhl", MLB:"baseball/mlb", CFB:"football/college-football", CBB:"basketball/mens-college-basketball"};
 function teamWords(team){
-  return [team && team.name, team && team.shortDisplayName, team && team.displayName, team && team.location].filter(Boolean).map(s => String(s).toLowerCase());
+  return [team && team.abbreviation, team && team.name, team && team.shortDisplayName, team && team.displayName, team && team.location].filter(Boolean).map(s => String(s).toLowerCase());
 }
 function mentionScore(pick, team){
   const text = " " + expandTeams(pick).replace(/[^a-z0-9.+-]+/g, " ") + " ";
@@ -6843,6 +6843,8 @@ function mentionScore(pick, team){
     if (i < 2 && size >= 4) best = Math.max(best, size + 2);
     else if (words.length >= 2 || words.some(w => w.length >= 5)) best = Math.max(best, size);
   });
+  const abbr = String(team && team.abbreviation || "").toLowerCase();
+  if (abbr.length >= 2 && abbr.length <= 5 && new RegExp("\\b" + abbr.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b").test(text)) best = Math.max(best, 4);
   return best;
 }
 function findFinalGame(games, pick){

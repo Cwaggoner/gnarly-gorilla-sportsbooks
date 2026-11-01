@@ -6757,14 +6757,15 @@
       "pick": "USC +6.5",
       "odds": -110,
       "stake": 10,
-      "result": "pending",
+      "result": "win",
       "fromCard": true,
       "notes": "made -1.2, book -6.5, gap 5.3, reason confirmed starter change Julian Sayin out Luke Fahey starting not fully priced, turnover USC negative by 2 bench Fahey backup, Edge",
       "placed": "2026-10-31T14:28:53.730Z",
       "close": -110,
       "closePoint": 6.5,
       "closeOpp": -108,
-      "realClose": true
+      "realClose": true,
+      "profit": 9.09
     }
   ],
   "pending_date": "2026-10-29"

@@ -2090,12 +2090,12 @@
     },
     {
       "date": "2026-10-31",
-      "profit": 6.89,
-      "n": 5,
-      "wins": 3,
+      "profit": 15.98,
+      "n": 6,
+      "wins": 4,
       "losses": 2,
       "pushes": 0,
-      "record": "3-2-0",
+      "record": "4-2-0",
       "sports": {
         "CBB": {
           "profit": 0,
@@ -2106,12 +2106,12 @@
           "record": "0-0-0"
         },
         "CFB": {
-          "profit": 6.89,
-          "n": 5,
-          "wins": 3,
+          "profit": 15.98,
+          "n": 6,
+          "wins": 4,
           "losses": 2,
           "pushes": 0,
-          "record": "3-2-0"
+          "record": "4-2-0"
         },
         "MLB": {
           "profit": 0,
