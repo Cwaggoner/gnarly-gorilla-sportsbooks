@@ -516,6 +516,7 @@ tr.row-loss td { color:#ff6b6b; }
 tr.row-pending td { color:var(--amber); }
 tr.row-pending.edge td { color:var(--amber); }
 tr.row-pending.edge td.result { color:var(--amber); }
+#slips td .best-price { color:#ff00ff; }
 #rows td.slip-conf { white-space:nowrap; font-weight:700; }
 #rows td.slip-conf.high { color:#f0e14a; }
 #rows td.slip-conf.medium { color:#d6ffd0; }
@@ -3035,7 +3036,7 @@ function openBestBet(btn, scroll){
   sel.appendChild(opt);
   document.getElementById("picknote").textContent = book + " " + price + " is on the bet slip and filled in above. Add writes the slip. Save Bet still saves this one leg by itself." + (split ? " The books do not share one number, so this is the BetMGM side." : "");
   document.getElementById("editnote").textContent = "";
-  addSlipLeg({date: date, sport: sport, type: type, pick: pick, odds: Number(price), book: book, edge: false, game: game});
+  addSlipLeg({date: date, sport: sport, type: type, pick: pick, odds: Number(price), book: book, edge: false, game: game, best: btn.classList.contains("best-price")});
   if (scroll !== false) { stashForm(); goPage("addbet"); }
 }
 document.body.addEventListener("click", e => {
@@ -4384,6 +4385,7 @@ function collapseSlips(rows){
       if (otherConf.pct != null) keep.confidencePct = otherConf.pct;
     }
     if (!keep.placed && other.placed) keep.placed = other.placed;
+    if (other.best) keep.best = true;
     byKey[key] = keep;
   });
   return Object.values(byKey);
@@ -4596,7 +4598,7 @@ function render(){
     const rowCls = b.result === "win" ? "row-win" : b.result === "loss" ? "row-loss" : b.result === "pending" ? (edge ? "row-pending edge" : "row-pending") : (b.manual ? "manual" : b.fromCard ? "fromcard" : "");
     const liveCell = b.result === "pending" ? slipLiveCell(b) : {text: "—", band: ""};
     const confText = String(liveCell.text || "").replace(/^Confidence:\s*/i, "");
-    return head + "<tr data-slip='" + encodeURIComponent(String(b.id || "")) + "'" + (rowCls ? " class='" + rowCls + "'" : "") + "><td>" + b.date + placedText(b) + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td class='slip-pick'>" + slipPickHtml(b) + "</td><td class='slip-score'>" + slipScoreCell(b) + "</td><td>" + (b.priceText ? esc(b.priceText) : (usableClose(b.odds) ? b.odds : dash)) + "</td><td class='col-close'>" + (b.closeText ? esc(b.closeText) : (usableClose(b.close) ? b.close : dash)) + "</td><td class='" + (cv > 0 ? "win" : cv < 0 ? "loss" : "") + "'>" + clvText(b) + "</td><td class='" + sharpCls + "'>" + esc(sharpLabel(sharpCv, b)) + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='result " + cls + "'>" + b.result + "</td><td class='slip-conf " + String(liveCell.band || "").toLowerCase() + "'>" + esc(confText) + "</td><td class='" + cls + "'>" + moneyHtml(p) + "</td><td>" + grade + "</td></tr>";
+    return head + "<tr data-slip='" + encodeURIComponent(String(b.id || "")) + "'" + (rowCls ? " class='" + rowCls + "'" : "") + "><td>" + b.date + placedText(b) + "</td><td>" + (slipBookBest(b) ? "<span class='best-price'>" + esc(b.book) + "</span>" : esc(b.book)) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td class='slip-pick'>" + slipPickHtml(b) + "</td><td class='slip-score'>" + slipScoreCell(b) + "</td><td>" + (b.priceText ? esc(b.priceText) : (usableClose(b.odds) ? b.odds : dash)) + "</td><td class='col-close'>" + (b.closeText ? esc(b.closeText) : (usableClose(b.close) ? b.close : dash)) + "</td><td class='" + (cv > 0 ? "win" : cv < 0 ? "loss" : "") + "'>" + clvText(b) + "</td><td class='" + sharpCls + "'>" + esc(sharpLabel(sharpCv, b)) + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='result " + cls + "'>" + b.result + "</td><td class='slip-conf " + String(liveCell.band || "").toLowerCase() + "'>" + esc(confText) + "</td><td class='" + cls + "'>" + moneyHtml(p) + "</td><td>" + grade + "</td></tr>";
     } catch (err) { return ""; }
   }).join("") || "<tr><td colspan='15'>" + ((document.getElementById("fBook") || {}).value ? "No slips for " + esc(document.getElementById("fBook").value) + "." : "No bets yet.") + "</td></tr>";
   } finally {
@@ -4729,6 +4731,30 @@ function bestPriceFlags(booksMap, bookNames){
     });
   });
   return hot;
+}
+function slipBookBest(b){
+  if (!b) return false;
+  if (b.best) return true;
+  const day = String(b.date || "").slice(0, 10);
+  const board = window.__ggOddsBoard && window.__ggOddsBoard.days && window.__ggOddsBoard.days[day];
+  if (!board || !b.book) return false;
+  const market = /total/i.test(b.type || "") || /\b(over|under)\b/i.test(b.pick || "") ? "totals" : (/money/i.test(b.type || "") || /\bml\b/i.test(b.pick || "") ? "h2h" : "spreads");
+  const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
+  const row = (board[market] || []).find(r => {
+    try { return sgpSame([{game: r.label}, {pick: b.pick}]); } catch (e) { return false; }
+  });
+  if (!row || !row.books || !row.books[b.book]) return false;
+  const flags = (bestPriceFlags(row.books, names)[b.book]) || [false, false];
+  const pick = String(b.pick || "");
+  if (market === "totals") return /\bunder\b/i.test(pick) ? !!flags[1] : !!flags[0];
+  const teams = String(row.label || "").split(/\s+at\s+/i);
+  const away = (gameTeams(teams[0] || "").slice(-1)[0]) || "";
+  const home = (gameTeams(teams[1] || "").slice(-1)[0]) || "";
+  const left = (pick.split(/\s+(?:at|vs\.?)\s+/i)[0] || pick);
+  const side = (gameTeams(left).slice(-1)[0]) || "";
+  if (side && side === home) return !!flags[1];
+  if (side && side === away) return !!flags[0];
+  return false;
 }
 function oddsBullets(parts){
   const items = [];
@@ -6040,7 +6066,7 @@ function addSlipLeg(leg){
   if (opener) opener.hidden = true;
   try { sessionStorage.removeItem("gg-slip-closed"); } catch (e) {}
   const key = [leg.book || "", leg.sport, leg.pick, Number(leg.odds)].join("|");
-  if (!betSlip.some(row => [row.book || "", row.sport, row.pick, row.odds].join("|") === key)) betSlip.push({date: leg.date || easternDay(), sport: leg.sport || "", type: leg.type || "Spread", pick: leg.pick, odds: Number(leg.odds), book: leg.book || "", edge: !!leg.edge, notes: leg.notes || "", game: leg.game || ""});
+  if (!betSlip.some(row => [row.book || "", row.sport, row.pick, row.odds].join("|") === key)) betSlip.push({date: leg.date || easternDay(), sport: leg.sport || "", type: leg.type || "Spread", pick: leg.pick, odds: Number(leg.odds), book: leg.book || "", edge: !!leg.edge, notes: leg.notes || "", game: leg.game || "", best: !!leg.best});
   rememberSlip();
   paintSlip();
 }
@@ -6158,7 +6184,8 @@ document.getElementById("sgpadd").onclick = () => {
         result: "pending",
         notes: "Straight bet. Not a wager.",
         manual: true,
-        edge: !!leg.edge
+        edge: !!leg.edge,
+        best: !!leg.best
       }));
       if (placePending(bets, row)) { added += 1; if (!firstId) firstId = row.id; }
       else skipped += 1;
@@ -6186,7 +6213,8 @@ document.getElementById("sgpadd").onclick = () => {
     result: "pending",
     notes: (picked.length >= 3 ? "Third leg. The hit rate is cut again. " : "Two legs. ") + (built.type === "SGP" ? "Same game. " : "Parlay. ") + "Calculator price, not a book same-game price. Not a wager.",
     manual: true,
-    edge: picked.some(p => p.edge)
+    edge: picked.some(p => p.edge),
+    best: picked.some(p => p.best && String(p.book || built.book) === String(built.book))
   }));
   const bets = load();
   if (!placePending(bets, row)) { if (note) note.textContent = "That ticket is already on the slips."; return; }
