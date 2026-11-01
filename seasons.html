@@ -350,6 +350,11 @@ table.score-align .sport-bar { margin:0; flex-wrap:nowrap; }
 table.score-align .score-copy { padding-left:12px; width:99%; }
 table.score-align .score-hold { margin:0; }
 table.score-align .score-hold + .score-hold { margin-top:2px; }
+#scoreboard table.score-align { margin:0 0 8px; }
+#scoreboard table.score-align .full-status { margin:0; flex-wrap:nowrap; }
+#scoreboard .score-copy .score-notes { max-width:none; }
+#scoreboard .score-copy .score-line { margin:0; }
+#scoreboard .score-copy #fullholds:not(:empty) { margin-top:2px; }
 .score-strip { position:relative; display:flex; align-items:center; gap:8px; margin:0 0 12px; min-width:0; }
 .score-row { display:flex; flex-wrap:nowrap; align-items:stretch; gap:8px; overflow-x:auto; overflow-y:hidden; scrollbar-width:none; flex:1 1 auto; width:auto; min-width:0; -webkit-overflow-scrolling:touch; }
 .score-full { flex:0 0 auto; align-self:center; color:#39ff14; font-weight:700; font-size:13px; line-height:1.2; text-decoration:none; text-align:center; border:1px solid #39ff14; border-radius:8px; padding:8px 10px; background:#0e0e0e; white-space:nowrap; }
@@ -779,7 +784,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </nav>
 </div>
 <div id="seasons" class="card view"><div class="section-head"><h2>Season Dates</h2><p class="warn slips-side">Checked in the month each league publishes its schedule.</p></div></div>
-<div id="scoreboard" class="card view"><div class="section-head"><h2>Full Scoreboard</h2><div class="score-notes" id="fullscorenote"><p class="warn score-line">Loading the board.</p></div></div><div class="full-board"><aside class="full-sports" id="fullsports"></aside><div class="full-main"><div class="full-dates"><button type="button" class="full-chev" id="fulldateprev" aria-label="Previous day">&#8249;</button><div class="full-date-row" id="fulldates"></div><button type="button" class="full-chev" id="fulldatenext" aria-label="Next day">&#8250;</button></div><div class="full-status" id="fullstatus"><button type="button" data-status="all" class="on">All</button><button type="button" data-status="live">Live</button><button type="button" data-status="pre">Upcoming</button><button type="button" data-status="final">Final</button></div><div id="fullholds"></div><div class="full-games" id="fullrows"></div></div></div></div>
+<div id="scoreboard" class="card view"><div class="section-head"><h2>Full Scoreboard</h2></div><div class="full-board"><aside class="full-sports" id="fullsports"></aside><div class="full-main"><div class="full-dates"><button type="button" class="full-chev" id="fulldateprev" aria-label="Previous day">&#8249;</button><div class="full-date-row" id="fulldates"></div><button type="button" class="full-chev" id="fulldatenext" aria-label="Next day">&#8250;</button></div><table class="score-align"><tbody><tr><td><div class="full-status" id="fullstatus"><button type="button" data-status="all" class="on">All</button><button type="button" data-status="live">Live</button><button type="button" data-status="pre">Upcoming</button><button type="button" data-status="final">Final</button></div></td><td class="score-copy"><div class="score-notes" id="fullscorenote"><p class="warn score-line">Loading the board.</p></div><div id="fullholds"></div></td></tr></tbody></table><div class="full-games" id="fullrows"></div></div></div></div>
 <section class="card view" id="sharks"><div class="section-head"><h2>Sports Sharps</h2><p class="warn slips-side" id="sharpnote">Four games each. Made at 9:30 AM Eastern and locked until the next morning.</p></div><div class="shark-list" id="sharkboard"><p class="warn">Loading the sharps.</p></div></section>
 <main>
 <section class="card view on" id="games">
