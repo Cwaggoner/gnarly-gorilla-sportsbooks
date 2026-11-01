@@ -4532,6 +4532,7 @@ function render(){
   return;
   }
   const stored = load();
+  if (pinThisMul(stored)) localStorage.setItem(KEY, JSON.stringify(stored));
   const all = stored.concat(loadGrade()).concat(gradeFile).filter(b => b && b.pick && !isNoPick(b) && !/^RANGE$/i.test(b.pick) && !/^all win/i.test(b.result || ""));
   let filledClose = false;
   all.forEach(b => {
@@ -7644,6 +7645,22 @@ document.getElementById("loaddrive").onclick = async () => {
   if (!slateSettled(yesterday())) { note.textContent = "Yesterday is still open. Today's card waits until that slate ends."; return; }
   await loadDriveCard().catch(err => { note.textContent = err.message; });
 };
+function pinThisMul(list){
+  let moved = false;
+  (list || []).forEach(b => {
+    if (!b) return;
+    const sport = String(b.sport || "").toUpperCase();
+    const date = String(b.date || "").slice(0, 10);
+    if (date !== "2026-11-01") return;
+    const codes = String(b.pick || "").toUpperCase().match(/\b(NFL|NBA|NHL|MLB|CBB|CFB)\b/g) || [];
+    const multi = sport === "MUL" || sport === "MULTI" || (betType(b) === "Parlay" && new Set(codes).size > 1);
+    if (!multi) return;
+    b.date = "2026-10-31";
+    if (sport === "MULTI") b.sport = "MUL";
+    moved = true;
+  });
+  return moved;
+}
 function oct31MulTicket(b){
   if (!b || isNoPick(b)) return false;
   const sport = String(b.sport || "").toUpperCase();
@@ -7681,6 +7698,11 @@ function stampOctober31(){
 }
 let mulFixFlight = null;
 function fixMulOctober31(){
+  const open = load();
+  if (pinThisMul(open)) {
+    localStorage.setItem(KEY, JSON.stringify(open));
+    localStorage.removeItem("gg-mul-oct31-fixed");
+  }
   if (localStorage.getItem("gg-mul-oct31-fixed") === "1") return Promise.resolve(false);
   if (mulFixFlight) return mulFixFlight;
   mulFixFlight = (async () => {
@@ -7705,7 +7727,12 @@ function fixMulOctober31(){
       b.profit = Number.isFinite(made) ? Number(made.toFixed(2)) : 0;
       graded++;
     });
-    if (!targets.every(b => b.result === "win" || b.result === "loss" || b.result === "push")) return false;
+    if (!targets.every(b => b.result === "win" || b.result === "loss" || b.result === "push")) {
+      const picks = new Set(targets.map(b => normPick(b.pick)));
+      const dated = bets.filter(b => String(b.date || "").slice(0, 10) !== "2026-11-01" || !picks.has(normPick(b.pick)));
+      save(dated);
+      return false;
+    }
     const picks = new Set(targets.map(b => normPick(b.pick)));
     const next = bets.filter(b => String(b.date || "").slice(0, 10) !== "2026-11-01" || !picks.has(normPick(b.pick)));
     save(next);
@@ -7744,6 +7771,7 @@ async function catchUp(){
         published.forEach(b => { if (!kept.some(x => sameSlip(x, b))) kept.push(b); });
       }
     } catch (err) {}
+    pinThisMul(kept);
     localStorage.setItem(KEY, JSON.stringify(kept));
   }
   if (wantGrades) await applyGrades(gradesText).catch(() => {});
