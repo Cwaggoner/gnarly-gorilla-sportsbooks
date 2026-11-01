@@ -1130,6 +1130,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <p><span class="gg-name">Gnarly Gorilla</span> Sportsbooks is a free browser bet ledger for the daily <span class="gg-name">Gnarly Gorilla</span> pick cards. It tracks American-odds slips for CBB, CFB, MLB, NBA, NFL, and NHL at BetMGM, Caesars, DraftKings, Fanatics, FanDuel, and HardRock. Bets stay in this browser. The page does not log into a sportsbook and does not place wagers.</p>
 <p class="warn" id="staterule">Bet Responsibly. Gambling involves risk. Wagers can lose the full stake. This ledger is a record of picks and results, not a sportsbook, not betting advice, and not an offer to place a wager. You must be 21 or older where sports betting is legal. If gambling is causing problems, call or text 1-800-GAMBLER.</p>
 <p class="warn" id="statebooks">State rules load from the visitor location.</p>
+<p class="warn" id="illegalstates">No legal sports betting: Alabama, Alaska, California, Georgia, Hawaii, Idaho, Minnesota, Oklahoma, South Carolina, Texas, and Utah. Nothing is added to Slips in those states.</p>
 <p class="crew-title">Gnarly Gorilla Sports Sharps</p>
 <div class="crew-row">
 <figure class="crew-card"><a class="crew-hit" href="index.html?page=sharks#shark-gorilla"><img loading="lazy" decoding="async" class="about-mark" src="about-gorilla.jpg" alt="Gnarly Gorilla"></a><figcaption class="crew-bio"><b>Gnarly Gorilla</b><p>The number, not the noise. A small edge is enough. I do not sell a sure thing.</p><p class="crew-fee">I have a fee. The first $10 of the stake is mine.</p></figcaption></figure>
@@ -7184,6 +7185,13 @@ function placePending(list, row){
 const NO_COLLEGE = new Set(["Oregon"]);
 const NO_COLLEGE_PROPS = new Set(["Arizona","Colorado","Delaware","Illinois","Indiana","Iowa","Kansas","Louisiana","Maine","Maryland","Massachusetts","New Hampshire","New Jersey","New York","Ohio","Oregon","Pennsylvania","Rhode Island","Tennessee","Vermont","Virginia"]);
 let lawBlock = "";
+function paintIllegalStates(){
+  const el = document.getElementById("illegalstates");
+  if (!el) return;
+  const names = Object.keys(stateRules).filter(name => stateRules[name] && stateRules[name].status === "not-legal");
+  if (names.length < 2) return;
+  el.textContent = "No legal sports betting: " + names.slice(0, -1).join(", ") + ", and " + names[names.length - 1] + ". Nothing is added to Slips in those states.";
+}
 function paintLawWarn(){
   const el = document.getElementById("lawwarn");
   if (!el) return;
@@ -8062,6 +8070,7 @@ later(() => {
   if (line && saved) line.textContent = saved.toUpperCase();
   fetch(cardUrl("cards/state-rules.json")).then(r => r.ok ? r.json() : null).then(async data => {
   stateRules = (data && data.states) || {};
+  paintIllegalStates();
   if (saved && stateRules[saved]) { applyState(saved); return; }
   const place = await locateVisitor();
   const books = document.getElementById("statebooks");
