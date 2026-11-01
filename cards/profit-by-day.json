@@ -1,6 +1,6 @@
 {
   "file": "GG-PROFIT-BY-DAY",
-  "saved": "2026-10-31T21:46:55.438Z",
+  "saved": "2026-11-01T03:21:37.120Z",
   "unit": 10,
   "through": "2026-10-31",
   "source": "Graded $10 slips for October 1 through October 25. Each day matches the cumulative Profit By Day line. This file is the season log. It is not on the website.",
@@ -2090,12 +2090,12 @@
     },
     {
       "date": "2026-10-31",
-      "profit": -1.07,
-      "n": 2,
-      "wins": 1,
-      "losses": 1,
+      "profit": 6.89,
+      "n": 5,
+      "wins": 3,
+      "losses": 2,
       "pushes": 0,
-      "record": "1-1-0",
+      "record": "3-2-0",
       "sports": {
         "CBB": {
           "profit": 0,
@@ -2106,12 +2106,12 @@
           "record": "0-0-0"
         },
         "CFB": {
-          "profit": -1.07,
-          "n": 2,
-          "wins": 1,
-          "losses": 1,
+          "profit": 6.89,
+          "n": 5,
+          "wins": 3,
+          "losses": 2,
           "pushes": 0,
-          "record": "1-1-0"
+          "record": "3-2-0"
         },
         "MLB": {
           "profit": 0,

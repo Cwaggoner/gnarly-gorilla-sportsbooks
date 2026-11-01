@@ -1,5 +1,5 @@
 {
-  "saved": "2026-10-31T21:46:55.438Z",
+  "saved": "2026-11-01T03:21:37.120Z",
   "graded_through": "2026-10-22",
   "clv_note": "Closes are the kickoff price on the same number. Giants +1.5, Cowboys +1.5, the October 18 parlay, and Commanders +7.5 still have no close. The bet price was not copied.",
   "bets": [
@@ -6665,13 +6665,14 @@
       "pick": "UTEP +24.5 at N Dakota St",
       "odds": -115,
       "stake": 10,
-      "result": "pending",
+      "result": "win",
       "notes": "Vito the Spot. Confidence: High 60%.",
       "manual": true,
       "edge": true,
       "placed": "2026-10-31T12:08:34.945Z",
       "confidence": "High",
-      "confidencePct": 60
+      "confidencePct": 60,
+      "profit": 8.7
     },
     {
       "id": 1793448514951.651,
@@ -6682,13 +6683,14 @@
       "pick": "Nevada +22.5 at UCLA",
       "odds": -112,
       "stake": 10,
-      "result": "pending",
+      "result": "loss",
       "notes": "Vito the Spot. Confidence: High 63%.",
       "manual": true,
       "edge": true,
       "placed": "2026-10-31T12:08:34.951Z",
       "confidence": "High",
-      "confidencePct": 63
+      "confidencePct": 63,
+      "profit": -10
     },
     {
       "id": 1793448514953.634,
@@ -6699,13 +6701,18 @@
       "pick": "Minnesota +20.5 at Indiana",
       "odds": -108,
       "stake": 10,
-      "result": "pending",
+      "result": "win",
       "notes": "Vito the Spot. Confidence: High 63%.",
       "manual": true,
       "edge": true,
       "placed": "2026-10-31T12:08:34.953Z",
       "confidence": "High",
-      "confidencePct": 63
+      "confidencePct": 63,
+      "profit": 9.26,
+      "close": -108,
+      "realClose": true,
+      "closePoint": 20.5,
+      "closeOpp": -110
     },
     {
       "id": 1793448514955.3003,
