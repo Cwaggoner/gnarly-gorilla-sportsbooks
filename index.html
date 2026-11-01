@@ -1603,11 +1603,14 @@ function publishedDashboard(only){
     slips.push(close ? Object.assign({}, b, {close}) : b);
   });
   const dates = Array.isArray(only) && only.length ? only : lastSevenDates();
+  const personal = personalCalendar() || {};
   return dates.map(date => {
-    const day = publishedCalendar[date] || {};
-    const lines = slips.filter(b => b.date === date);
+    const published = publishedCalendar[date] || {};
+    const own = personal[date] && Number.isFinite(Number(personal[date].pl)) ? personal[date] : null;
+    const day = own || published;
+    const lines = slips.filter(b => String(b.date || "").slice(0, 10) === date);
     const expected = Number(day.n);
-    const complete = !expected || lines.length === expected;
+    const complete = !expected || lines.length >= expected;
     const fromLines = complete && lines.length > 0;
     const profit = fromLines ? dayProfit(date, lines, day) : (Number.isFinite(Number(day.pl)) ? Number(day.pl) : (lines.length ? dayProfit(date, lines, day) : null));
     const staked = fromLines ? lines.reduce((s, b) => s + (Number(b.stake) > 0 ? Number(b.stake) : UNIT), 0) : (Number(day.n) || 0) * UNIT;
@@ -4501,7 +4504,9 @@ function render(){
     body += "<h2 class='split-title'>" + title + "</h2>";
     if (!sorted.length) { const empty = title === "Pending" ? "None - Picks Start at " + zoneTime(9, 0) : "None"; copy.push(empty); body += "<p>" + empty + "</p>"; return; }
     body += "<table><thead><tr><th>Date</th><th>Result</th><th>Sport</th><th>Pick</th><th>Odds</th><th>P/L</th></tr></thead><tbody>";
-    ["CBB","CFB","MLB","NBA","NFL","NHL"].forEach(sport => {
+    const sports = ["CBB","CFB","MLB","NBA","NFL","NHL"];
+    if (sorted.some(b => String(b.sport).toUpperCase() === "MUL")) sports.push("MUL");
+    sports.forEach(sport => {
       const rows = sorted.filter(b => String(b.sport).toUpperCase() === sport);
       copy.push(sport);
       body += "<tr class='sport'><td colspan='6'>" + sport + "</td></tr>";
@@ -7316,8 +7321,7 @@ function parkSlipOnGames(b, games){
     if (day && days.indexOf(day) < 0) days.push(day);
   });
   const had = String(b.date || "").slice(0, 10);
-  let next = days.length === 1 ? days[0] : "";
-  if (sport === "MUL" && had === "2026-11-01" && next !== "2026-11-01") next = next || "2026-10-31";
+  const next = days.length === 1 ? days[0] : "";
   if (!next || next === had) return false;
   b.date = next;
   return true;
@@ -7640,6 +7644,81 @@ document.getElementById("loaddrive").onclick = async () => {
   if (!slateSettled(yesterday())) { note.textContent = "Yesterday is still open. Today's card waits until that slate ends."; return; }
   await loadDriveCard().catch(err => { note.textContent = err.message; });
 };
+function oct31MulTicket(b){
+  if (!b || isNoPick(b)) return false;
+  const sport = String(b.sport || "").toUpperCase();
+  const date = String(b.date || "").slice(0, 10);
+  const codes = String(b.pick || "").toUpperCase().match(/\b(NFL|NBA|NHL|MLB|CBB|CFB)\b/g) || [];
+  const multi = sport === "MUL" || sport === "MULTI" || new Set(codes).size > 1;
+  if (!multi || betType(b) !== "Parlay" && sport !== "MUL" && sport !== "MULTI") return false;
+  if (date === "2026-11-01") return true;
+  return (date === "2026-10-31" || !date) && (b.result === "pending" || !b.result);
+}
+function stampOctober31(){
+  const day = "2026-10-31";
+  const lines = gradedPool().filter(b => String(b.date || "").slice(0, 10) === day && (b.result === "win" || b.result === "loss" || b.result === "push") && !isNoPick(b));
+  if (!lines.length) return;
+  const wins = lines.filter(b => b.result === "win").length;
+  const losses = lines.filter(b => b.result === "loss").length;
+  const pushes = lines.filter(b => b.result === "push").length;
+  const pl = Math.round(lines.reduce((s, b) => s + slipMoney(b), 0) * 100) / 100;
+  const sports = {};
+  lines.forEach(b => {
+    const k = String(b.sport || "MUL").toUpperCase();
+    const row = sports[k] || {profit: 0, n: 0, wins: 0, losses: 0, pushes: 0, record: "0-0-0"};
+    row.n += 1;
+    row.profit = Math.round((row.profit + slipMoney(b)) * 100) / 100;
+    if (b.result === "win") row.wins += 1;
+    else if (b.result === "loss") row.losses += 1;
+    else row.pushes += 1;
+    row.record = row.wins + "-" + row.losses + "-" + row.pushes;
+    sports[k] = row;
+  });
+  const mine = personalCalendar() || {};
+  const prior = (publishedCalendar || {})[day] || {};
+  mine[day] = Object.assign({}, prior, {pl: pl, n: lines.length, wins: wins, losses: losses, pushes: pushes, record: wins + "-" + losses + "-" + pushes, sports: sports});
+  localStorage.setItem("gg-calendar-personal", JSON.stringify(mine));
+}
+let mulFixFlight = null;
+function fixMulOctober31(){
+  if (localStorage.getItem("gg-mul-oct31-fixed") === "1") return Promise.resolve(false);
+  if (mulFixFlight) return mulFixFlight;
+  mulFixFlight = (async () => {
+    const bets = load();
+    if (!bets.length) return false;
+    const targets = bets.filter(oct31MulTicket);
+    if (!targets.length) { localStorage.setItem("gg-mul-oct31-fixed", "1"); return false; }
+    const sports = [...new Set(targets.flatMap(slipSports))].filter(s => SCORE_FEED[s]);
+    const packs = await Promise.all(sports.flatMap(sport => ["2026-10-31", "2026-11-01"].map(date => scoreboard(sport, date).catch(() => []))));
+    const games = packs.flat().filter(g => gameSlateDay(g) === "2026-10-31" || String(g.date || "").slice(0, 10) === "2026-10-31");
+    let graded = 0;
+    targets.forEach(b => {
+      b.date = "2026-10-31";
+      b.sport = "MUL";
+      b.type = "Parlay";
+      if (b.result === "win" || b.result === "loss" || b.result === "push") return;
+      const result = gradeScoreColumn(b, games);
+      if (result !== "win" && result !== "loss" && result !== "push") return;
+      b.result = result;
+      delete b.profit;
+      const made = profit(b);
+      b.profit = Number.isFinite(made) ? Number(made.toFixed(2)) : 0;
+      graded++;
+    });
+    if (!targets.every(b => b.result === "win" || b.result === "loss" || b.result === "push")) return false;
+    const picks = new Set(targets.map(b => normPick(b.pick)));
+    const next = bets.filter(b => String(b.date || "").slice(0, 10) !== "2026-11-01" || !picks.has(normPick(b.pick)));
+    save(next);
+    stampOctober31();
+    localStorage.setItem("gg-mul-oct31-fixed", "1");
+    if (!rendering) render();
+    try { drawDashboard(); } catch (e) {}
+    try { drawCharts(); } catch (e) {}
+    try { drawCalendar(); } catch (e) {}
+    return graded > 0;
+  })().catch(() => false);
+  return mulFixFlight;
+}
 async function catchUp(){
   const wantLedger = pageNeeds("ledger");
   const wantGrades = pageNeeds("grades");
@@ -7657,7 +7736,7 @@ async function catchUp(){
     if (dash) localStorage.setItem("gg-dashboard-published", dash);
   } catch (err) {}
   if (wantLedger && localStorage.getItem("gg-hold-ledger") !== "1") {
-    const kept = load().filter(b => b && b.manual && inSlipWindow(b.date));
+    const kept = load().filter(b => b && inSlipWindow(b.date) && (b.manual || String(b.sport || "").toUpperCase() === "MUL" || betType(b) === "Parlay"));
     try {
       const data = await ledgerP;
       if (data) {
@@ -7668,6 +7747,7 @@ async function catchUp(){
     localStorage.setItem(KEY, JSON.stringify(kept));
   }
   if (wantGrades) await applyGrades(gradesText).catch(() => {});
+  await fixMulOctober31();
   clearStalePending();
   render();
   if (document.documentElement.dataset.page === "dashboard") { try { drawDashboard(); } catch (e) {} }
@@ -7707,6 +7787,7 @@ function rememberBoot(){
   if (pageNeeds("ledger") || pageNeeds("grades") || pageNeeds("dashfile")) armedKind.add(catchKey());
 }
 if (pageNeeds("ledger") || pageNeeds("grades") || pageNeeds("dashfile")) catchUp();
+else fixMulOctober31();
 let stateRules = {};
 let visitorState = "";
 function applyState(name){
