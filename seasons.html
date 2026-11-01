@@ -6151,6 +6151,9 @@ function slipMath(picked){
 function slipMode(){
   return ((document.getElementById("slipmode") || {}).value) || "single";
 }
+function ticketBooks(picked){
+  return [...new Set((picked || []).map(p => knownBook(p.book)).filter(Boolean))];
+}
 function paintSlip(){
   const legs = document.getElementById("sgplegs");
   const price = document.getElementById("sgpprice");
@@ -6164,8 +6167,11 @@ function paintSlip(){
   }
   const math = slipMath(picked);
   const mode = slipMode();
+  const books = ticketBooks(picked);
+  const splitBooks = mode !== "single" && books.length > 1;
   if (price) {
     if (!picked.length) price.textContent = "Click a price. Add saves each leg as its own bet unless you switch to SGP or Parlay.";
+    else if (splitBooks) price.textContent = (mode === "sgp" ? "An SGP" : "A parlay") + " stays on one sportsbook. These legs are " + books.join(" and ") + ".";
     else if (mode === "single") price.textContent = picked.length + " single" + (picked.length === 1 ? "" : "s") + ". Each one is its own slip.";
     else if (picked.length < 2) price.textContent = (mode === "sgp" ? "An SGP" : "A parlay") + " needs at least two legs.";
     else if (mode === "sgp" && !math.same) price.textContent = "Those legs are not the same game. Switch to Parlay.";
@@ -6177,7 +6183,7 @@ function paintSlip(){
       : "Two legs is the bet. A third leg keeps only about half of the two-leg winners. At a 47% clip that is about 22% down to 10%.";
   }
   if (btn) {
-    btn.disabled = !picked.length || (mode !== "single" && (picked.length < 2 || (mode === "sgp" && picked.length >= 2 && !math.same)));
+    btn.disabled = !picked.length || splitBooks || (mode !== "single" && (picked.length < 2 || (mode === "sgp" && picked.length >= 2 && !math.same)));
     btn.textContent = "Add";
   }
   if (image) image.disabled = !picked.length;
@@ -6189,7 +6195,7 @@ function slipRow(picked){
   const one = picked.length === 1;
   return {
     date: picked[0].date || easternDay(),
-    book: slipBook(picked[0] && picked[0].book),
+    book: ticketBooks(picked)[0] || slipBook(picked[0] && picked[0].book),
     sport: sports.size === 1 ? [...sports][0] : (one ? picked[0].sport : "MUL"),
     type: one ? (picked[0].type || "Spread") : (math.same ? "SGP" : "Parlay"),
     pick: one ? picked[0].pick : ((math.same ? "SGP " : "Parlay ") + picked.map(p => (p.sport ? p.sport + " " : "") + p.pick).join(" and ")),
@@ -6234,6 +6240,8 @@ document.getElementById("sgpadd").onclick = () => {
     return;
   }
   if (picked.length < 2) { if (note) note.textContent = (mode === "sgp" ? "An SGP" : "A parlay") + " needs at least two legs."; return; }
+  const books = ticketBooks(picked);
+  if (books.length > 1) { if (note) note.textContent = (mode === "sgp" ? "An SGP" : "A parlay") + " stays on one sportsbook. These legs are " + books.join(" and ") + "."; return; }
   const built = slipRow(picked);
   if (mode === "sgp" && !built.same) { if (note) note.textContent = "Those legs are not the same game. Switch to Parlay."; return; }
   built.type = mode === "sgp" ? "SGP" : "Parlay";
