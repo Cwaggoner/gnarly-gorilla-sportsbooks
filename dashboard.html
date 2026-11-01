@@ -4593,7 +4593,7 @@ function render(){
     const rowCls = b.result === "win" ? "row-win" : b.result === "loss" ? "row-loss" : b.result === "pending" ? (edge ? "row-pending edge" : "row-pending") : (b.manual ? "manual" : b.fromCard ? "fromcard" : "");
     const liveCell = b.result === "pending" ? slipLiveCell(b) : {text: "—", band: ""};
     const confText = String(liveCell.text || "").replace(/^Confidence:\s*/i, "");
-    return head + "<tr" + (rowCls ? " class='" + rowCls + "'" : "") + "><td>" + b.date + placedText(b) + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td class='slip-pick'>" + slipPickHtml(b) + "</td><td class='slip-score'>" + slipScoreCell(b) + "</td><td>" + (b.priceText ? esc(b.priceText) : (usableClose(b.odds) ? b.odds : dash)) + "</td><td class='col-close'>" + (b.closeText ? esc(b.closeText) : (usableClose(b.close) ? b.close : dash)) + "</td><td class='" + (cv > 0 ? "win" : cv < 0 ? "loss" : "") + "'>" + clvText(b) + "</td><td class='" + sharpCls + "'>" + esc(sharpLabel(sharpCv, b)) + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='result " + cls + "'>" + b.result + "</td><td class='slip-conf " + String(liveCell.band || "").toLowerCase() + "'>" + esc(confText) + "</td><td class='" + cls + "'>" + moneyHtml(p) + "</td><td>" + grade + "</td></tr>";
+    return head + "<tr data-slip='" + encodeURIComponent(String(b.id || "")) + "'" + (rowCls ? " class='" + rowCls + "'" : "") + "><td>" + b.date + placedText(b) + "</td><td>" + esc(b.book) + "</td><td>" + esc(b.sport) + "</td><td>" + esc(b.type) + "</td><td class='slip-pick'>" + slipPickHtml(b) + "</td><td class='slip-score'>" + slipScoreCell(b) + "</td><td>" + (b.priceText ? esc(b.priceText) : (usableClose(b.odds) ? b.odds : dash)) + "</td><td class='col-close'>" + (b.closeText ? esc(b.closeText) : (usableClose(b.close) ? b.close : dash)) + "</td><td class='" + (cv > 0 ? "win" : cv < 0 ? "loss" : "") + "'>" + clvText(b) + "</td><td class='" + sharpCls + "'>" + esc(sharpLabel(sharpCv, b)) + "</td><td>$" + Number(b.stake).toFixed(2) + "</td><td class='result " + cls + "'>" + b.result + "</td><td class='slip-conf " + String(liveCell.band || "").toLowerCase() + "'>" + esc(confText) + "</td><td class='" + cls + "'>" + moneyHtml(p) + "</td><td>" + grade + "</td></tr>";
     } catch (err) { return ""; }
   }).join("") || "<tr><td colspan='15'>" + ((document.getElementById("fBook") || {}).value ? "No slips for " + esc(document.getElementById("fBook").value) + "." : "No bets yet.") + "</td></tr>";
   } finally {
@@ -6125,7 +6125,7 @@ document.getElementById("sgpadd").onclick = () => {
   if (!picked.length) return;
   if (mode === "single") {
     const bets = load();
-    let added = 0, skipped = 0;
+    let added = 0, skipped = 0, firstId = "";
     picked.forEach(leg => {
       const row = stampPlaced(markEdge({
         id: Date.now() + Math.random(),
@@ -6141,13 +6141,13 @@ document.getElementById("sgpadd").onclick = () => {
         manual: true,
         edge: !!leg.edge
       }));
-      if (placePending(bets, row)) added += 1;
+      if (placePending(bets, row)) { added += 1; if (!firstId) firstId = row.id; }
       else skipped += 1;
     });
     if (!added) { if (note) note.textContent = "Those singles are already on the slips."; return; }
     save(bets);
     if (note) note.textContent = "Added " + added + " single" + (added === 1 ? "" : "s") + " to Slips." + (skipped ? " " + skipped + " already there." : "") + " Nothing was sent to a sportsbook.";
-    goPage("slips");
+    landOnSlip(firstId);
     return;
   }
   if (picked.length < 2) { if (note) note.textContent = (mode === "sgp" ? "An SGP" : "A parlay") + " needs at least two legs."; return; }
@@ -6173,7 +6173,7 @@ document.getElementById("sgpadd").onclick = () => {
   if (!placePending(bets, row)) { if (note) note.textContent = "That ticket is already on the slips."; return; }
   save(bets);
   if (note) note.textContent = "Added to Slips. Nothing was sent to a sportsbook. " + row.pick + " at " + (built.odds > 0 ? "+" : "") + built.odds + ".";
-  goPage("slips");
+  landOnSlip(row.id);
 };
 const slipModeEl = document.getElementById("slipmode");
 if (slipModeEl) slipModeEl.onchange = paintSlip;
@@ -10851,6 +10851,15 @@ function takeSharpLand(){
   const y = node.getBoundingClientRect().top + window.pageYOffset - barH - 8;
   window.scrollTo({top: Math.max(0, y), behavior:"smooth"});
   return true;
+}
+function landOnSlip(id){
+  goPage("slips");
+  const hunt = () => {
+    const want = String(id || "");
+    const row = [...document.querySelectorAll("#rows tr[data-slip]")].find(tr => decodeURIComponent(tr.getAttribute("data-slip") || "") === want);
+    if (row) row.scrollIntoView({block: "center", behavior: "smooth"});
+  };
+  requestAnimationFrame(() => requestAnimationFrame(hunt));
 }
 function goPage(id){
   if (!document.getElementById(id)) { location.assign(pageUrl(id)); return; }
