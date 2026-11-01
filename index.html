@@ -7228,15 +7228,24 @@ function gradeLeg(pick, game){
   const spanOf = team => {
     let at = -1, end = -1;
     teamWords(team).forEach(bit => {
-      const found = text.lastIndexOf(bit);
-      if (found > at) { at = found; end = found + bit.length; }
+      const bits = [bit].concat(String(bit || "").split(/\s+/).filter(w => w.length > 2));
+      bits.forEach(word => {
+        const found = text.lastIndexOf(word);
+        if (found > at) { at = found; end = found + word.length; }
+      });
     });
     return {at: at, end: end};
   };
-  const homeSpan = spanOf(game.home);
-  const awaySpan = spanOf(game.away);
+  let homeSpan = spanOf(game.home);
+  let awaySpan = spanOf(game.away);
+  if (homeSpan.at < 0 && awaySpan.at < 0) {
+    const hs = mentionScore(pick, game.home);
+    const as = mentionScore(pick, game.away);
+    if (Math.max(hs, as) < 4) return null;
+    if (hs >= as) homeSpan = {at: 1, end: 2};
+    else awaySpan = {at: 1, end: 2};
+  }
   const homeAt = homeSpan.at, awayAt = awaySpan.at;
-  if (homeAt < 0 && awayAt < 0) return null;
   const gap = (span, marker) => {
     if (span.at < 0) return Infinity;
     if (marker >= span.at && marker <= span.end) return 0;
@@ -7378,7 +7387,8 @@ function applyFinalGrades(games){
     if (!b || b.result !== "pending" || isNoPick(b) || !inSlipWindow(b.date)) return false;
     parkSlipOnGames(b, finals);
     if (!inSlipWindow(b.date)) return false;
-    const result = gradeFromScores(b, gamesForSlip(finals, b));
+    const wide = String(b.sport || "").toUpperCase() === "MUL" || betType(b) === "Parlay";
+    const result = gradeFromScores(b, wide ? finals : gamesForSlip(finals, b));
     if (result !== "win" && result !== "loss" && result !== "push") return false;
     b.result = result;
     delete b.profit;
