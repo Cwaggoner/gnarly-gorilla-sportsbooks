@@ -106,7 +106,6 @@ html, body, .page, .page * { overflow-anchor:none; }
 #oddscompare,
 #sharkboard,
 #stats,
-.dash-tools,
 .card > .odds-notes,
 .card > .jump,
 #reportcard > .tools,
@@ -532,6 +531,9 @@ table.season-hold.filled td.note-col p { margin:0; display:-webkit-box; -webkit-
 #dashboard.view.on { display:flex; flex-direction:column; }
 #dashboard.view:not(.on) { display:none !important; }
 #dashboard .dash-tools { margin-top:14px; }
+#dashboard .align-frame .dash-tools { margin:0; border:0; padding:0; }
+#dashboard .align-frame .odds-notes { margin:0; }
+#dashboard .align-frame .score-copy { display:flex; flex-direction:column; align-items:flex-start; gap:2px; }
 #dashChart { border:1px solid #39ff14; border-radius:8px; margin:0 0 16px; }
 #report table, #report th, #report td { border:0; background:transparent; box-shadow:none; }
 #report th { color:var(--title); font-weight:700; }
@@ -885,16 +887,15 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <thead><tr><th>Date</th><th>W/L Record</th><th>Profit</th><th>ROI</th><th>Units</th><th>Pending</th><th>Avg CLV</th></tr></thead>
 <tbody id="dashrows"></tbody>
 </table>
-<div class="tools dash-tools">
+<div class="align-frame"><table class="score-align"><tbody><tr><td><div class="tools dash-tools">
 <div class="btn-pair"><span>Data Save/Reset</span><div><button type="button" id="savedash">Save Dashboard</button><button type="button" id="resetdash">Reset</button></div></div>
 <label>Load Dashboard<input type="file" id="loaddash" accept=".txt,text/plain"><span class="file-face">No File Chosen</span></label>
 <span id="dashnote" class="warn"></span>
-</div>
-<ul class="odds-notes">
+</div></td><td class="score-copy"><ul class="odds-notes">
 <li>Last 7 days on this card.</li>
 <li>The full history stays in the saved file.</li>
 </ul>
-<ul class="odds-notes" id="sharpcheck"></ul>
+<ul class="odds-notes" id="sharpcheck"></ul></td></tr></tbody></table></div>
 </section>
 <section class="card view" id="liveodds"><div class="section-head"><h2>Live Odds</h2></div><div class="align-frame"><table class="score-align"><tbody><tr><td><div class="odds-tools" id="compareday"><button type="button" id="day-yesterday">Yesterday</button><button type="button" id="day-today">Today</button><select id="comparesport"><option selected>All</option><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option></select><button type="button" id="refreshodds">Refresh</button></div></td><td class="score-copy"><p class="warn slips-side">Moneyline, spread, and total across books. Refresh pulls the live price.</p><div id="oddslead"></div></td></tr></tbody></table></div><div id="oddscompare"></div></section>
 <section class="card view" id="todaycard">
