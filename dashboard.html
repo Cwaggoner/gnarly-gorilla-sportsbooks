@@ -832,7 +832,14 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .mgm-line { display:flex; align-items:flex-end; min-width:0; width:100%; }
 .mgm-line .mgm-books { flex:0 1 auto; min-width:0; }
 .mgm-line .mgm-set.mgm-close { flex:0 0 auto; }
-.mgm-gap { flex:1 1 auto; align-self:flex-end; height:96px; min-width:12px; margin:0 4px; border:1px solid var(--gray); border-radius:4px; box-sizing:border-box; }
+.mgm-gap { flex:1 1 auto; align-self:flex-end; min-width:78px; margin:0 4px; display:grid; grid-template-rows:auto auto 46px 46px; gap:4px; box-sizing:border-box; }
+.mgm-gap .mgm-group { display:flex; align-items:center; gap:6px; color:#f0e14a; overflow:visible; }
+.mgm-gap .mgm-group b { font:700 11px/1 system-ui,sans-serif; letter-spacing:.04em; white-space:nowrap; color:#f0e14a; }
+.mgm-gap .mgm-group i { flex:1 1 auto; height:0; position:relative; display:block; margin:0; align-self:center; }
+.mgm-gap .mgm-group i::before { content:""; position:absolute; left:0; right:0; top:0; border-top:1px solid var(--gray); }
+.mgm-gap .mgm-group i:first-child::after { content:""; position:absolute; left:0; top:0; height:8px; border-left:1px solid var(--gray); }
+.mgm-gap .mgm-group i:last-child::after { content:""; position:absolute; right:0; top:0; height:8px; border-right:1px solid var(--gray); }
+.mgm-gap-box { grid-row:3 / span 2; border:1px solid var(--gray); border-radius:4px; box-sizing:border-box; }
 .mgm-when { margin:0 0 4px; color:#8fb898; font:700 12px/1.2 system-ui,sans-serif; white-space:nowrap; }
 .mgm-start { margin-left:8px; color:#39ff14; }
 .mgm-team { display:flex; align-items:center; gap:8px; min-height:46px; color:#d6ffd0; font:700 14px/1.2 system-ui,sans-serif; }
@@ -9872,7 +9879,7 @@ function mgmGameCard(g, day, book, withClose){
   const back = !withClose && gameInActiveWindow(g.start) ? activesBack(String(g.sport || "").toUpperCase(), awayName, homeName) : null;
   const backHtml = Array.isArray(back) ? "<div class='mgm-back'>" + (back.length > 1 ? "<span>Back</span>" + back.map(name => "<span>" + esc(name) + "</span>").join("") : esc(back.length ? "Back: " + back[0] : "No one back from the injury list.")) + "</div>" : "";
   const books = "<div class='mgm-books'>" + sets + "</div>";
-  const mid = withClose ? "<div class='mgm-line'>" + books + "<div class='mgm-gap' aria-hidden='true'></div>" + close + "</div>" : "<div class='mgm-mid'>" + books + marketBoardHtml(g, day) + "</div>";
+  const mid = withClose ? "<div class='mgm-line'>" + books + "<div class='mgm-gap'><span class='mgm-group'><i></i><b>Outcome</b><i></i></span><span class='mgm-h'>Win/Loss</span><div class='mgm-gap-box'></div></div>" + close + "</div>" : "<div class='mgm-mid'>" + books + marketBoardHtml(g, day) + "</div>";
   const tail = withClose ? "" : sharpShopHtml(g, day);
   return "<article class='mgm-card" + (withClose ? "" : " no-close") + "' data-sport='" + esc(sportCode(g.sport)) + "' data-start='" + esc(g.start || "") + "'><div class='mgm-side'><p class='mgm-when'>" + dot + esc((g.sport ? g.sport + "  " : "") + when) + soonHtml + (tag ? "  " + esc(tag) : "") + "</p>" + awayFace + awayForm + homeFace + homeForm + backHtml + "</div>" + mid + tail + "</article>";
 }
