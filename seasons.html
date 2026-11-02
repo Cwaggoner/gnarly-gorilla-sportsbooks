@@ -2015,14 +2015,17 @@ function monthDays(){
   const rows = [];
   for (let d = 1; d <= days; d++) {
     const date = y + "-" + String(m + 1).padStart(2, "0") + "-" + String(d).padStart(2, "0");
-    if (date > today || !chartDayReady(date)) continue;
+    if (date > today) continue;
     const personal = !!(mine[date] && Number.isFinite(Number(mine[date].pl)));
     const slips = slipsForDay(date);
-    let day = personal ? mine[date] : board[date];
+    const published = board[date];
+    const ready = chartDayReady(date) || firstGameDown(date) || slips.length > 0 || (date < today && published && Number.isFinite(Number(published.pl)));
+    if (!ready) continue;
+    let day = personal ? mine[date] : published;
     if (slips.length && !personal) day = Object.assign({}, day || {}, {pl: Math.round(slips.reduce((s, b) => s + slipMoney(b), 0) * 100) / 100, n: slips.length});
     const pl = Number(day && day.pl);
-    if (!Number.isFinite(pl)) continue;
-    rows.push({date, pl});
+    if (!Number.isFinite(pl) && !slips.length) continue;
+    rows.push({date, pl: Number.isFinite(pl) ? pl : 0});
   }
   return rows;
 }
@@ -2783,7 +2786,7 @@ async function loadCalendarFile(){
 let driveCard = {date: "", lines: [], loaded: false};
 function gradedPool(){
   if (hotPool && hotPool.graded) return hotPool.graded;
-  const rows = collapseSlips(load().concat(loadGrade()).concat(gradeFile).filter(b => b && b.pick && !isNoPick(b)));
+  const rows = collapseSlips(load().concat(loadGrade()).concat(gradeFile).concat(chartLedger).filter(b => b && b.pick && !isNoPick(b)));
   if (hotPool) hotPool.graded = rows;
   return rows;
 }
