@@ -1471,6 +1471,7 @@ function save(bets){
   localStorage.setItem(KEY, JSON.stringify(bets));
   if (!rendering) render();
   if (document.getElementById("analysisgrid")) drawCardAnalysis(postedCard);
+  attachSlipGames().then(added => { if (added) drawPickSlate(); }).catch(() => {});
 }
 function forgetManual(bet){
   if (!bet) return load();
@@ -3512,6 +3513,36 @@ function drawPickSlate(){
   paintSeasonStatus();
   drawPassedSlate();
 }
+function slipSlateHit(slip){
+  const sport = String(slip && slip.sport || "").toUpperCase();
+  const pool = ((pickSlate && pickSlate.games) || []).concat((pickSlate && pickSlate.passed) || []).filter(g => String(g && g.sport || "").toUpperCase() === sport).map(g => {
+    const sides = slateSides(g);
+    return {sport: sport, away: {name: sides.away.name, displayName: sides.away.name, shortDisplayName: sides.away.name}, home: {name: sides.home.name, displayName: sides.home.name, shortDisplayName: sides.home.name}};
+  });
+  return findFinalGame(pool, slip && slip.pick);
+}
+async function attachSlipGames(){
+  const pending = load().filter(b => b && b.result === "pending" && !isNoPick(b) && inSlipWindow(b.date) && SCORE_FEED[String(b.sport || "").toUpperCase()] && !slipSlateHit(b));
+  if (!pending.length) return false;
+  const sports = [...new Set(pending.map(b => String(b.sport || "").toUpperCase()))];
+  const days = [...new Set(pending.map(b => String(b.date || "").slice(0, 10)).filter(Boolean))];
+  const found = (await Promise.all(sports.flatMap(sport => days.map(day => scoreboard(sport, day).catch(() => []))))).flat();
+  if (!pickSlate) pickSlate = {date: easternDay(), games: [], passed: []};
+  pickSlate.games = pickSlate.games || [];
+  let added = false;
+  pending.forEach(b => {
+    if (slipSlateHit(b)) return;
+    const sport = String(b.sport || "").toUpperCase();
+    const game = findFinalGame(found.filter(g => g.sport === sport && gameSlateDay(g) === String(b.date || "").slice(0, 10)), b.pick);
+    if (!game) return;
+    const away = game.away.shortDisplayName || game.away.name || game.away.displayName;
+    const home = game.home.shortDisplayName || game.home.name || game.home.displayName;
+    const label = away + " at " + home;
+    pickSlate.games.push({sport: sport, game: label, start: game.start ? new Date(game.start).toISOString() : "", location: game.venue || "", away: {name: away, record: game.away.record || ""}, home: {name: home, record: game.home.record || ""}, awayRecord: game.away.record || "", homeRecord: game.home.record || ""});
+    added = true;
+  });
+  return added;
+}
 function teamPickScore(team, pick){
   const ident = String(team || "").toLowerCase().split(/[^a-z0-9]+/).filter(w => w.length > 2 && w !== "the" && w !== "and");
   const words = new Set(String(pick || "").toLowerCase().split(/[^a-z0-9]+/).filter(w => w.length > 2));
@@ -3776,15 +3807,17 @@ async function loadPickSlate(){
   try {
     let data = await readJson("cards/pick-slate.json");
     if (!data || !Array.isArray(data.games) || !data.games.length) data = await readJson("cards/scoreboard.json");
-    if (!data || !Array.isArray(data.games) || !data.games.length) { later(() => { drawInjuryReport().catch(() => {}); }); return; }
+    if (!data || !Array.isArray(data.games)) data = {date: easternDay(), games: [], passed: []};
     const card = await fetch("cards/today.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").catch(() => "");
     applyPostedCard(data, card);
     normalizeSlate(data);
-    if (!data.games.length) { later(() => { drawInjuryReport().catch(() => {}); }); return; }
-    const stamp = JSON.stringify([data.date, data.games, data.passed || []]);
-    const same = pickSlate && pickSlate._stamp === stamp;
-    data._stamp = stamp;
+    const prev = pickSlate;
     pickSlate = data;
+    await attachSlipGames();
+    if (!(pickSlate.games || []).length && !(pickSlate.passed || []).length) { later(() => { drawInjuryReport().catch(() => {}); }); return; }
+    const stamp = JSON.stringify([pickSlate.date, pickSlate.games, pickSlate.passed || []]);
+    const same = prev && prev._stamp === stamp;
+    pickSlate._stamp = stamp;
     later(() => { drawInjuryReport().catch(() => {}); });
     if (!same) drawCalendar();
     refreshSlateRecords().then(updated => { if (!same && !updated) drawPickSlate(); }).catch(() => { if (!same) drawPickSlate(); });
@@ -7582,6 +7615,11 @@ function mentionScore(pick, team){
   });
   const abbr = String(team && team.abbreviation || "").toLowerCase();
   if (abbr.length >= 2 && abbr.length <= 5 && new RegExp("\\b" + abbr.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b").test(text)) best = Math.max(best, 4);
+  const short = String(team && (team.shortDisplayName || team.location || "") || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  const token = short.split(" ").filter(w => w && !/^(state|tech|university|college|the)$/.test(w)).pop() || "";
+  if (token.length >= 3 && token.length <= 12 && new RegExp("\\b" + token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b").test(text)) best = Math.max(best, 4);
+  const lone = String(team && team.name || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  if (lone.length >= 2 && lone.length <= 5 && !/^(state|tech)$/.test(lone) && new RegExp("\\b" + lone + "\\b").test(text)) best = Math.max(best, 4);
   return best;
 }
 function findFinalGame(games, pick){
@@ -7718,15 +7756,15 @@ async function scoreboard(sport, date){
   const path = SCORE_FEED[sport];
   if (!path) return [];
   const day = String(date || "").slice(0, 10);
-  const days = [day];
-  if (sport === "CBB") days.push(shiftDate(day, 1));
-  const group = sport === "CBB" ? "&groups=50" : "";
-  const lists = await Promise.all(days.filter(Boolean).map(async d => {
-    const res = await fetch("https://site.api.espn.com/apis/site/v2/sports/" + path + "/scoreboard?dates=" + String(d).replace(/-/g, "") + "&limit=400" + group);
+  const days = [day, shiftDate(day, 1)].filter(Boolean);
+  const groups = sport === "CBB" ? ["50"] : sport === "CFB" ? ["80", "81"] : [""];
+  const lists = await Promise.all(days.flatMap(d => groups.map(async group => {
+    const extra = group ? "&groups=" + group : "";
+    const res = await fetch("https://site.api.espn.com/apis/site/v2/sports/" + path + "/scoreboard?dates=" + String(d).replace(/-/g, "") + "&limit=400" + extra);
     if (!res.ok) return [];
     const data = await res.json();
     return data.events || [];
-  }));
+  })));
   const seen = new Set();
   return lists.flat().map(ev => {
     const comp = (ev.competitions || [])[0] || {};
@@ -7742,8 +7780,7 @@ async function scoreboard(sport, date){
   }).filter(g => {
     if (!g.home.displayName || !g.away.displayName || seen.has(g.id)) return false;
     seen.add(g.id);
-    if (sport === "CBB" && day) return slateDateOf(g.start) === day;
-    return true;
+    return !day || slateDateOf(g.start) === day;
   });
 }
 let scoreTimer = 0;
