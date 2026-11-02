@@ -9206,8 +9206,8 @@ if (pageNeeds("closes")) fetch("cards/closes.txt?ts=" + Date.now()).then(r => r.
 function mgmBlank(){
   return "<span class='mgm-odd empty'><b>—</b><span></span></span>";
 }
-function mgmLock(){
-  return "<span class='mgm-odd locked' title='Close not posted'><svg viewBox='0 0 24 24' aria-hidden='true'><path d='M8 11V8a4 4 0 0 1 8 0v3' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round'/><rect x='6' y='11' width='12' height='9' rx='1.6' fill='currentColor'/></svg></span>";
+function mgmLock(title){
+  return "<span class='mgm-odd locked' title='" + esc(title || "Close not posted") + "'><svg viewBox='0 0 24 24' aria-hidden='true'><path d='M8 11V8a4 4 0 0 1 8 0v3' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round'/><rect x='6' y='11' width='12' height='9' rx='1.6' fill='currentColor'/></svg></span>";
 }
 function mgmMoney(n){
   const v = Number(n);
@@ -9219,7 +9219,7 @@ function mgmFace(top, price, locked){
   return "<span class='mgm-odd'><b>" + esc(top) + "</b><span>" + esc(mgmMoney(price)) + "</span></span>";
 }
 function mgmButton(top, price, hot, data){
-  if (!mgmMoney(price)) return mgmBlank();
+  if (!mgmMoney(price)) return mgmLock("Not posted");
   const attrs = Object.keys(data || {}).map(key => " data-" + key + "='" + encodeURIComponent(String(data[key])) + "'").join("");
   return "<button type='button' class='mgm-odd board-price" + (hot ? " best-price" : "") + "'" + attrs + "><b>" + esc(top) + "</b><span>" + esc(mgmMoney(price)) + "</span></button>";
 }
@@ -9229,10 +9229,10 @@ function mgmOpen(g, market, day, book, names){
   const text = posted[book];
   const sides = text && text !== "-" ? shopSides(text) : null;
   const flags = sides ? ((bestPriceFlags(posted, names)[book]) || [false, false]) : [false, false];
-  if (!sides) return [mgmBlank(), mgmBlank()];
+  if (!sides) return [mgmLock("Not posted"), mgmLock("Not posted")];
   return [0, 1].map(index => {
     const side = sides[index];
-    if (!side) return mgmBlank();
+    if (!side) return mgmLock("Not posted");
     const point = side.point;
     let top = "ML";
     if (market === "totals") top = (index === 0 ? "O " : "U ") + (point == null ? "" : point);
@@ -10267,7 +10267,7 @@ function dayHasLines(day){
 }
 function lockedBookRow(){
   const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
-  const pair = [mgmBlank(), mgmBlank()];
+  const pair = [mgmLock("Not posted"), mgmLock("Not posted")];
   const sets = names.map(name => mgmSet(name, ["Spread", "Total", "Money"], [pair, pair, pair], "book")).join("");
   const close = mgmSet("Close", ["Spread", "Total", "Money"], [[mgmLock(), mgmLock()], [mgmLock(), mgmLock()], [mgmLock(), mgmLock()]], "close");
   const outcome = "<div class='mgm-gap'><span class='mgm-group'><i></i><b>Outcome</b><i></i></span><span class='mgm-h'>Win/Loss/No Bet</span><div class='mgm-gap-box'></div></div>";
