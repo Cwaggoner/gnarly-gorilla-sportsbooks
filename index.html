@@ -1207,7 +1207,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <button type="button" class="danger" id="clear">Clear All</button>
 </div>
 </div>
-<div class="slip-actions"><button type="button" id="pulllines">Pull Odds & Close</button><button type="button" id="livescores">Check Live Scores</button><button type="button" id="syncledger">Sync Ledger</button><span class="save-slot"><span id="ledgernote" class="warn"></span><button type="button" id="saveledger">Save Ledger</button></span><button type="button" id="exportpdf">Export PDF</button><button type="button" id="export">Export Spreadsheet</button><button type="button" class="odds-link" onclick="window.open('https://the-odds-api.com/','_blank','noopener,noreferrer')">Open API</button></div></td><td class="score-copy"><p class="warn slips-side">Today and yesterday only. Pull Odds & Close uses the Odds API key and stores the Pinnacle close with the other books. Odds is the price at the start of the game. Close is the next price after it starts. Sharp CLV is that price against Pinnacle with the juice removed. The time under the date is when the slip was written. A game that has not started stays open.</p><p id="pullnote" class="warn"></p><p id="scorenote" class="warn"></p><p class="api-note warn">Live prices need the Odds API key on Add A Bet. Close needs a paid subscription. CLV is no-vig: the book's cut is removed, and a moved spread or total is counted. A matched -110 close is about -4.5%, not zero. When the other side was not saved, it is estimated at a -110 hold until Plot stores the real pair. A free key loads the board only. A saved list returns on refresh with no new call.</p></td><td class="book-cell"><div id="bookbadge"><img id="bookbadgeimg" src="gg-icon.png" alt="Gnarly Gorilla" width="72" height="72" loading="lazy" decoding="async"></div></td></tr></tbody></table></div>
+<div class="slip-actions"><button type="button" id="pulllines">Pull Odds & Close</button><button type="button" id="livescores">Check Live Scores</button><button type="button" id="syncledger">Sync Ledger</button><span class="save-slot"><span id="ledgernote" class="warn"></span><button type="button" id="saveledger">Save Ledger</button></span><button type="button" id="exportpdf">Export PDF</button><button type="button" id="export">Export Spreadsheet</button><button type="button" class="odds-link" onclick="window.open('https://the-odds-api.com/','_blank','noopener,noreferrer')">Open API</button></div></td><td class="score-copy"><p class="warn slips-side">Today, yesterday, and every open slip. Pull Odds & Close uses the Odds API key and stores the Pinnacle close with the other books. Odds is the price at the start of the game. Close is the next price after it starts. Sharp CLV is that price against Pinnacle with the juice removed. The time under the date is when the slip was written. A game that has not started stays open.</p><p id="pullnote" class="warn"></p><p id="scorenote" class="warn"></p><p class="api-note warn">Live prices need the Odds API key on Add A Bet. Close needs a paid subscription. CLV is no-vig: the book's cut is removed, and a moved spread or total is counted. A matched -110 close is about -4.5%, not zero. When the other side was not saved, it is estimated at a -110 hold until Plot stores the real pair. A free key loads the board only. A saved list returns on refresh with no new call.</p></td><td class="book-cell"><div id="bookbadge"><img id="bookbadgeimg" src="gg-icon.png" alt="Gnarly Gorilla" width="72" height="72" loading="lazy" decoding="async"></div></td></tr></tbody></table></div>
 <div class="table-wrap"><table>
 <thead><tr><th>Date</th><th>Book</th><th>Sport</th><th>Type</th><th>Pick</th><th>Score</th><th>Odds</th><th class="col-close">Close</th><th>No-Vig CLV</th><th>Sharp CLV</th><th>Stake</th><th>Result</th><th>Confidence</th><th>P/L</th><th>Grade</th></tr></thead>
 <tbody id="rows"></tbody>
@@ -3099,6 +3099,23 @@ async function nightlyUpdate(){
   }
 }
 function inSlipWindow(date){ date = String(date || "").slice(0, 10); const east = easternDay(); return date === east || date === shiftDate(east, -1); }
+let pinnedSlipDates = new Set();
+let dupSlipId = "";
+function pinSlipDate(date){
+  const day = String(date || "").slice(0, 10);
+  if (/^\d{4}-\d{2}-\d{2}$/.test(day)) pinnedSlipDates.add(day);
+}
+function pinDateNote(){
+  const days = [...pinnedSlipDates].filter(d => !inSlipWindow(d)).sort();
+  if (!days.length) return "";
+  return " for " + days.map(slateDateLabel).filter(Boolean).join(" and ");
+}
+function slipListed(b){
+  if (!b || isNoPick(b)) return false;
+  const day = String(b.date || "").slice(0, 10);
+  if (inSlipWindow(day) || pinnedSlipDates.has(day)) return true;
+  return b.result === "pending";
+}
 let SEASON_END = {MLB:"2026-10-31", CFB:"2027-01-25", NFL:"2027-02-14", CBB:"2027-04-05", NHL:"2027-06-30", NBA:"2027-06-30"};
 let SEASON_START = {MLB:"2026-03-25", CFB:"2026-08-27", NFL:"2026-09-09", CBB:"2026-11-02", NHL:"2026-09-29", NBA:"2026-10-20"};
 let pickSlate = null;
@@ -4695,9 +4712,8 @@ function sameWager(a, b){
   else if (A.line !== B.line) return false;
   else if (A.line == null && !A.ml) return false;
   if (!A.teams.length || !B.teams.length) return false;
-  const short = A.teams.length <= B.teams.length ? A.teams : B.teams;
-  const long = short === A.teams ? B.teams : A.teams;
-  return short.every(w => long.includes(w));
+  const key = list => [...new Set(list)].sort().join("|");
+  return key(A.teams) === key(B.teams);
 }
 let hotPool = null;
 function collapseSlips(rows){
@@ -4763,9 +4779,9 @@ function dropMatchedPending(rows){
 }
 function clearStalePending(){
   const bets = dropUnchosenCard(dropMatchedPending(load()));
-  const older = bets.filter(b => !inSlipWindow(b.date));
-  if (older.length) archiveSlips(older.filter(b => b.result !== "pending"));
-  const kept = bets.filter(b => inSlipWindow(b.date));
+  const older = bets.filter(b => !inSlipWindow(b.date) && b.result !== "pending");
+  if (older.length) archiveSlips(older);
+  const kept = bets.filter(b => inSlipWindow(b.date) || b.result === "pending");
   if (kept.length !== load().length) save(kept);
 }
 function gradeNote(b){
@@ -4923,7 +4939,7 @@ function render(){
     if (ticket != null) b.odds = ticket;
   });
   unique = dropMatchedPending(unique);
-  const windowed = unique.filter(b => inSlipWindow(b.date));
+  const windowed = unique.filter(slipListed);
   windowed.sort((a,b) => String(b.date).localeCompare(String(a.date)));
   const typeRank = t => t === "SGP" ? 99 : ["Moneyline","Parlay","Prop","Spread","Total"].indexOf(t) + 1 || 50;
   const grouped = filtered(slipsForBooks(windowed)).sort((a,b) => sportRank(a.sport) - sportRank(b.sport) || typeRank(a.type) - typeRank(b.type) || b.date.localeCompare(a.date) || String(a.book).localeCompare(String(b.book)));
@@ -6419,7 +6435,7 @@ function slipRow(picked){
   const sports = new Set(picked.map(p => p.sport).filter(Boolean));
   const one = picked.length === 1;
   return {
-    date: picked[0].date || easternDay(),
+    date: slipGameDate(picked[0]),
     book: ticketBooks(picked)[0] || slipBook(picked[0] && picked[0].book),
     sport: sports.size === 1 ? [...sports][0] : (one ? picked[0].sport : "MUL"),
     type: one ? (picked[0].type || "Spread") : (math.same ? "SGP" : "Parlay"),
@@ -6436,13 +6452,14 @@ document.getElementById("sgpadd").onclick = () => {
   const note = document.getElementById("sgpprice");
   const mode = slipMode();
   if (!picked.length) return;
+  dupSlipId = "";
   if (mode === "single") {
     const bets = load();
     let added = 0, skipped = 0, firstId = "";
     picked.forEach(leg => {
       const row = stampPlaced(markEdge({
         id: Date.now() + Math.random(),
-        date: leg.date || easternDay(),
+        date: slipGameDate(leg),
         book: slipBook(leg.book),
         sport: leg.sport || "",
         type: leg.type || "Spread",
@@ -6458,9 +6475,14 @@ document.getElementById("sgpadd").onclick = () => {
       if (placePending(bets, row)) { added += 1; if (!firstId) firstId = row.id; }
       else skipped += 1;
     });
-    if (!added) { if (note) note.textContent = lawBlock || "Those singles are already on the slips."; paintLawWarn(); return; }
+    if (!added) {
+      if (note) note.textContent = lawBlock || ("Those singles are already on the Slips table" + pinDateNote() + ".");
+      paintLawWarn();
+      if (!lawBlock) landOnSlip(dupSlipId);
+      return;
+    }
     save(bets);
-    if (note) note.textContent = "Added " + added + " single" + (added === 1 ? "" : "s") + " to Slips." + (skipped ? " " + skipped + " already there." : "") + " Nothing was sent to a sportsbook.";
+    if (note) note.textContent = "Added " + added + " single" + (added === 1 ? "" : "s") + " to Slips." + (skipped ? " " + skipped + " already on the Slips table" + pinDateNote() + "." : " Nothing was sent to a sportsbook.");
     landOnSlip(firstId);
     return;
   }
@@ -6486,7 +6508,7 @@ document.getElementById("sgpadd").onclick = () => {
     best: picked.some(p => p.best && String(p.book || built.book) === String(built.book))
   }));
   const bets = load();
-  if (!placePending(bets, row)) { if (note) note.textContent = lawBlock || "That ticket is already on the slips."; paintLawWarn(); return; }
+  if (!placePending(bets, row)) { if (note) note.textContent = lawBlock || ("That ticket is already on the Slips table" + pinDateNote() + "."); paintLawWarn(); if (!lawBlock) landOnSlip(dupSlipId); return; }
   save(bets);
   if (note) note.textContent = "Added to Slips. Nothing was sent to a sportsbook. " + row.pick + " at " + (built.odds > 0 ? "+" : "") + built.odds + ".";
   landOnSlip(row.id);
@@ -7389,12 +7411,40 @@ function markEdge(b){
   b.edge = b.edge === true || edgePicks.has(key) || /edge/i.test(b.notes || "") || /^high\b/i.test(b.notes || "") || (cv != null && cv > 0.05);
   return b;
 }
+function slipGameDate(leg){
+  const fallback = (leg && leg.date) || easternDay();
+  const game = String(leg && leg.game || "");
+  const sport = String(leg && leg.sport || "").toUpperCase();
+  if (!game) return fallback;
+  const days = (window.__ggOddsBoard && window.__ggOddsBoard.days) || {};
+  let found = "";
+  Object.keys(days).forEach(day => {
+    ["h2h","spreads","totals"].forEach(market => {
+      ((days[day] || {})[market] || []).forEach(row => {
+        if (found || !row) return;
+        if (sport && String(row.sport || "").toUpperCase() !== sport) return;
+        const label = row.label || "";
+        let match = label === game;
+        if (!match) { try { match = sameMatchup({sport: row.sport, label: label}, {sport: sport, label: game}); } catch (e) { match = false; } }
+        if (!match) return;
+        const slate = row.start ? slateDateOf(row.start) : "";
+        if (slate) found = slate;
+      });
+    });
+  });
+  return found || fallback;
+}
 function placePending(list, row){
   const why = slipLaw(row);
   if (why) { lawBlock = why; return false; }
   lawBlock = "";
   const known = list.concat(loadGrade()).concat(gradeFile || []);
-  if (known.some(b => sameSlip(b, row) && (knownBook(b.book) || "") === (knownBook(row.book) || ""))) return false;
+  const hit = known.find(b => sameSlip(b, row) && (knownBook(b.book) || "") === (knownBook(row.book) || ""));
+  if (hit) {
+    pinSlipDate(hit.date);
+    if (!dupSlipId) dupSlipId = hit.id || [String(hit.date || "").slice(0, 10), hit.sport, hit.pick].join("|");
+    return false;
+  }
   list.push(row);
   return true;
 }
@@ -8187,7 +8237,8 @@ async function catchUp(){
     if (dash) localStorage.setItem("gg-dashboard-published", dash);
   } catch (err) {}
   if (wantLedger && localStorage.getItem("gg-hold-ledger") !== "1") {
-    const kept = dropUnchosenCard(load().filter(b => b && inSlipWindow(b.date) && (b.manual || String(b.sport || "").toUpperCase() === "MUL" || betType(b) === "Parlay" || isColtsCard(b))));
+    const keepLive = b => b && !isNoPick(b) && (b.manual || String(b.sport || "").toUpperCase() === "MUL" || betType(b) === "Parlay" || isColtsCard(b)) && (inSlipWindow(b.date) || b.result === "pending");
+    const kept = dropUnchosenCard(load().filter(keepLive));
     try {
       const data = await ledgerP;
       if (data) {
@@ -8197,6 +8248,10 @@ async function catchUp(){
     } catch (err) {}
     pinThisMul(kept);
     parkColtsCaesars(kept);
+    load().forEach(b => {
+      if (!keepLive(b)) return;
+      if (!kept.some(x => sameSlip(x, b) && (knownBook(x.book) || "") === (knownBook(b.book) || ""))) kept.push(b);
+    });
     localStorage.setItem(KEY, JSON.stringify(kept));
   }
   if (wantGrades) await applyGrades(gradesText).catch(() => {});
@@ -11361,6 +11416,7 @@ function sharpAddOpen(sharkId){
     added += 1;
   });
   if (added) save(bets);
+  else if (already && !lawBlock) { render(); }
   if (note) note.textContent = added
     ? "Added " + added + " of " + shark.name + "'s games to Slips. Started and final games were left off." + (already ? " " + already + " were already there." : "")
     : shark.name + "'s remaining games are already on Slips.";
