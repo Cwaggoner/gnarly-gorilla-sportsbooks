@@ -10267,11 +10267,23 @@ function lockOutcomeWidth(){
   if (width < 64) width = 64;
   document.documentElement.style.setProperty("--outcome-w", width + "px");
 }
+let toolbarLock = null;
 function alignSportBrackets(){
   const group = document.getElementById("sportalign");
   if (!group) return;
   if ((document.documentElement.dataset.page || "games") !== "games") return;
   lockOutcomeWidth();
+  const sport = ((document.querySelector("#sportbar button.on") || {}).dataset || {}).sport || "All";
+  const hold = () => {
+    if (!toolbarLock) return false;
+    group.style.minWidth = "0px";
+    group.style.width = toolbarLock.width;
+    group.style.flexBasis = toolbarLock.basis;
+    group.style.marginLeft = toolbarLock.margin;
+    placeGameNotes();
+    return true;
+  };
+  if (sport !== "All" && hold()) return;
   const spans = [...document.querySelectorAll("#gameboard .mgm-card")].map(card => {
     const books = [...card.querySelectorAll(".mgm-set.mgm-book")];
     if (!books.length) return null;
@@ -10279,7 +10291,7 @@ function alignSportBrackets(){
     const right = books[books.length - 1].getBoundingClientRect().right;
     return {left: left, right: right, n: books.length};
   }).filter(Boolean);
-  if (!spans.length) { group.style.width = ""; group.style.flexBasis = ""; group.style.marginLeft = ""; placeGameNotes(); return; }
+  if (!spans.length) { if (hold()) return; group.style.width = ""; group.style.flexBasis = ""; group.style.marginLeft = ""; placeGameNotes(); return; }
   const best = spans.slice().sort((a, b) => (b.right - b.left) - (a.right - a.left) || b.n - a.n)[0];
   const width = Math.max(0, Math.round(best.right - best.left));
   group.style.minWidth = "0px";
@@ -10299,6 +10311,7 @@ function alignSportBrackets(){
   group.style.marginLeft = "0px";
   const shift = Math.round(best.left - group.getBoundingClientRect().left);
   group.style.marginLeft = shift + "px";
+  if (sport === "All") toolbarLock = {width: group.style.width, basis: group.style.flexBasis, margin: group.style.marginLeft};
   placeGameNotes();
 }
 function placeGameNotes(){
