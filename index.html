@@ -661,7 +661,8 @@ table.cal-line .tools { margin:0; align-items:flex-start; }
 canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--line); border-radius:8px; display:block; }
 .charts canvas { width:100%; height:192px; }
 .sport-nav { display:flex; justify-content:center; gap:8px; margin-top:8px; }
-#charts .chart-foot { display:flex; flex-direction:column; align-items:stretch; gap:8px; }
+#charts .chart-foot { display:grid; grid-template-columns:1.4fr 1fr; gap:12px; align-items:center; padding-left:0; padding-right:0; }
+#charts .chart-foot-nav { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; }
 #charts .chart-foot .sport-nav { margin-top:0; }
 #charts .chart-foot #sportday,
 #charts .chart-foot #chartlesson { margin:0; }
@@ -669,7 +670,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 .sport-title h2 { margin:0; border:0; background:transparent; padding:0; }
 #sportbest, #monthbest { margin-left:10px; color:#39ff14; font-weight:700; }
 #sportday { text-align:center; margin:6px 0 0; color:#d6ffd0; }
-@media (max-width:760px) { .charts { grid-template-columns:1fr; } .bet-top { grid-template-columns:1fr; } .field-grid { grid-template-columns:1fr 1fr; } .field-note { grid-column:1 / -1; } #betload img { max-width:120px; } }
+@media (max-width:760px) { .charts, #charts .chart-foot { grid-template-columns:1fr; } .bet-top { grid-template-columns:1fr; } .field-grid { grid-template-columns:1fr 1fr; } .field-note { grid-column:1 / -1; } #betload img { max-width:120px; } }
 
 @media (max-width:760px) { table { display:block; overflow-x:auto; } table.cal-line { display:table; overflow:visible; } }
 @media (max-width:760px) {
@@ -1130,7 +1131,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <div><h2 id="profitTitle" class="split-title">Cumulative Profit</h2><canvas id="profitChart" width="640" height="220"></canvas></div>
 <div><div class="sport-title"><h2>Profit By Sport</h2><b id="sportbest"></b><b id="monthbest"></b></div><canvas id="sportChart" width="420" height="220"></canvas></div>
 </div>
-<div class="align-frame chart-foot"><p id="chartlesson" class="warn"></p><div class="sport-nav"><button type="button" id="sportprev">Previous</button><button type="button" id="sportnext">Next</button></div><p id="sportday"></p></div>
+<div class="align-frame chart-foot"><div class="chart-foot-note"><p id="chartlesson" class="warn"></p></div><div class="chart-foot-nav"><div class="sport-nav"><button type="button" id="sportprev">Previous</button><button type="button" id="sportnext">Next</button></div><p id="sportday"></p></div></div>
 </section>
 <section class="card view" id="breaks"></section>
 <section class="card view" id="addbet">
