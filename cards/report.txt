@@ -1,16 +1,1 @@
-# GG report 2026-11-01
-# Yesterday 2026-10-31 graded. Record 4-2-0. Profit $15.98. CLV -0.08 pts avg.
-
-Analysis: Six CFB sides graded from the posted card and grades ledger. USC +6.5 was the noted Edge play on the injury/starter change (Sayin out); it covered easily as USC won 30-18. UTEP +24.5 covered by a half-point (31-7). Minnesota +20.5 covered by 13.5 in the 23-16 OT loss. Rutgers +16.5 covered by 9.5 in the 28-21 loss. Georgia St -4 lost by 11 (20-31). Nevada +22.5 lost by 27 (0-27). All six carried edge markers (card Edge or High confidence). Closes matched or were juice-only; average CLV near zero. NBA/NHL/NFL/CBB had No Picks. MLB Season Ended.
-
-2026-10-31 | CFB | win | USC +6.5 EDGE #F0E14A
-2026-10-31 | CFB | win | UTEP +24.5 at N Dakota St High #F0E14A
-2026-10-31 | CFB | win | Minnesota +20.5 at Indiana High #F0E14A
-2026-10-31 | CFB | win | Rutgers +16.5 vs Michigan High #F0E14A
-2026-10-31 | CFB | loss | Georgia St -4 vs Coastal edge #F0E14A
-2026-10-31 | CFB | loss | Nevada +22.5 at UCLA High #F0E14A
-2026-10-31 | NBA | No Picks
-2026-10-31 | NHL | No Picks
-2026-10-31 | NFL | No Picks
-2026-10-31 | CBB | No Picks
-2026-10-31 | MLB | Season Ended
+PLACEHOLDER_WILL_REPLACE
