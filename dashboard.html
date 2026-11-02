@@ -5219,15 +5219,37 @@ function signedQuote(n){
   if (v == null) return "";
   return (v > 0 ? "+" : "") + v;
 }
+function moneySides(outs, awayName, homeName){
+  const plain = (outs || []).filter(o => o && o.name && !/^(over|under|draw|tie)$/i.test(String(o.name)) && toAmerican(o.price) != null);
+  const named = name => plain.find(o => o.name === name) || plain.find(o => sameClub(o.name, name));
+  const away = named(awayName), home = named(homeName);
+  if (away && home && away !== home) return {away: away, home: home};
+  if (plain.length !== 2) return {away: away || null, home: home && home !== away ? home : null};
+  const score = (o, name) => {
+    const a = String(o.name || "").toLowerCase();
+    const b = String(name || "").toLowerCase();
+    if (!a || !b) return 0;
+    if (a === b) return 5;
+    if (sameClub(o.name, name)) return 4;
+    const last = b.split(/\s+/).filter(Boolean).pop() || "";
+    return last.length >= 4 && a.indexOf(last) >= 0 ? 2 : 0;
+  };
+  const pair = plain[0];
+  const other = plain[1];
+  const asHome = score(pair, homeName) + score(other, awayName);
+  const asAway = score(pair, awayName) + score(other, homeName);
+  if (!asHome && !asAway) return {away: null, home: null};
+  return asHome > asAway ? {away: other, home: pair} : {away: pair, home: other};
+}
 function liveBookCell(market, game, bookmaker){
   if (!bookmaker) return "-";
   const mk = (bookmaker.markets || []).find(m => m.key === market);
   const outs = (mk && mk.outcomes) || [];
   const named = name => outs.find(o => o && o.name === name) || outs.find(o => o && sameClub(o.name, name));
   if (market === "h2h") {
-    const away = named(game.away_team), home = named(game.home_team);
-    if (!away && !home) return "-";
-    return signedQuote(away && away.price) + " / " + signedQuote(home && home.price);
+    const side = moneySides(outs, game.away_team, game.home_team);
+    if (!side.away || !side.home) return "-";
+    return signedQuote(side.away.price) + " / " + signedQuote(side.home.price);
   }
   if (market === "spreads") {
     const away = named(game.away_team), home = named(game.home_team);
@@ -5252,15 +5274,14 @@ function rowsFromLive(games, day, market){
 }
 function caesarsMoneylineReady(game){
   const bk = ((game && game.bookmakers) || []).find(b => b.key === "williamhill_us");
-  if (!bk) return true;
+  if (!bk) return false;
   const ml = (bk.markets || []).find(m => m.key === "h2h");
-  const outs = (ml && ml.outcomes) || [];
-  const hit = name => outs.find(o => o && (o.name === name || sameClub(o.name, name)));
-  return toAmerican((hit(game.away_team) || {}).price) != null && toAmerican((hit(game.home_team) || {}).price) != null;
+  const side = moneySides((ml && ml.outcomes) || [], game.away_team, game.home_team);
+  return !!(side.away && side.home);
 }
 async function fillCaesarsMoneyline(list, sport, key){
   if (!list || !list.length || !SPORT_KEY[sport]) return;
-  if (!list.some(g => !caesarsMoneylineReady(g) && ((g.bookmakers || []).some(b => b.key === "williamhill_us")))) return;
+  if (!list.some(g => !caesarsMoneylineReady(g))) return;
   const url = "https://api.the-odds-api.com/v4/sports/" + SPORT_KEY[sport] + "/odds?apiKey=" + encodeURIComponent(key) + "&markets=h2h&oddsFormat=american&bookmakers=williamhill_us";
   let res;
   try { res = await fetch(url); }
