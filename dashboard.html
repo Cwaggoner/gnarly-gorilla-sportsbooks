@@ -685,6 +685,9 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 #liveodds > .section-head { margin-bottom:4px; }
 .odds-tools { display:flex; flex-direction:row; align-items:center; justify-content:flex-start; gap:8px; margin:0 0 6px; flex-wrap:nowrap; width:max-content; max-width:100%; }
 #games .odds-tools { gap:0; align-items:flex-end; flex-wrap:nowrap; overflow:visible; }
+#games .game-sharps { display:flex; align-items:center; align-self:flex-end; gap:4px; margin-left:4px; height:32px; }
+#games .game-sharps a.crew-hit { display:block; width:32px; height:32px; line-height:0; border-radius:8px; }
+#games .game-sharps img { width:32px; height:32px; object-fit:cover; border-radius:8px; border:1px solid var(--gray); background:#0a0a0a; display:block; box-sizing:border-box; }
 #games #sportbar { margin:0; flex-wrap:nowrap; align-items:flex-end; }
 #games #sportbar > button[data-sport="All"] { margin-left:10px; }
 #games .sport-align { display:flex; align-items:flex-end; justify-content:space-between; flex:0 0 auto; gap:6px; box-sizing:border-box; }
@@ -984,6 +987,13 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </span>
 </div>
 <button type="button" id="gamerefresh">Refresh</button>
+<div class="game-sharps">
+<a class="crew-hit" href="index.html?page=sharks#shark-gorilla" data-jump="sharks" data-sharp="shark-gorilla" title="Gnarly Gorilla"><img src="about-gorilla.jpg" alt="Gnarly Gorilla" width="32" height="32" decoding="async"></a>
+<a class="crew-hit" href="index.html?page=sharks#shark-vito" data-jump="sharks" data-sharp="shark-vito" title="Vito the Spot"><img src="jungle-leopard.jpg" alt="Vito the Spot" width="32" height="32" decoding="async"></a>
+<a class="crew-hit" href="index.html?page=sharks#shark-rocco" data-jump="sharks" data-sharp="shark-rocco" title="Rocco No Chase"><img src="jungle-rhino.jpg" alt="Rocco No Chase" width="32" height="32" decoding="async"></a>
+<a class="crew-hit" href="index.html?page=sharks#shark-paulie" data-jump="sharks" data-sharp="shark-paulie" title="Paulie the Fade"><img src="jungle-hyena.jpg" alt="Paulie the Fade" width="32" height="32" decoding="async"></a>
+<a class="crew-hit" href="index.html?page=sharks#shark-gino" data-jump="sharks" data-sharp="shark-gino" title="Gino the Wire"><img src="jungle-bird.jpg" alt="Gino the Wire" width="32" height="32" decoding="async"></a>
+</div>
 </div></div></td></tr></tbody></table></div>
 <div id="gameboard"><p class="warn">Loading the board.</p></div>
 </section>
@@ -10059,13 +10069,14 @@ function placeGameNotes(){
   const right = document.getElementById("gamepinright");
   const cbb = document.querySelector("#games button[data-sport='CBB']");
   const refresh = document.getElementById("gamerefresh");
+  const sharps = document.querySelector("#games .game-sharps");
   const book = document.getElementById("booktag");
   if (!tools || !left || !right || !cbb || !refresh || !book) return;
   if ((document.documentElement.dataset.page || "games") !== "games") return;
   const host = tools.getBoundingClientRect();
   const bookBox = book.getBoundingClientRect();
   const cbbBox = cbb.getBoundingClientRect();
-  const refBox = refresh.getBoundingClientRect();
+  const refBox = (sharps || refresh).getBoundingClientRect();
   if (!host.width || !bookBox.height || !cbbBox.width || !refBox.width) return;
   const noteH = left.offsetHeight || bookBox.height;
   let top = bookBox.top - host.top + (bookBox.height - noteH) / 2;
