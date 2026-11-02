@@ -5279,29 +5279,43 @@ function caesarsMoneylineReady(game){
   const side = moneySides((ml && ml.outcomes) || [], game.away_team, game.home_team);
   return !!(side.away && side.home);
 }
-async function fillCaesarsMoneyline(list, sport, key){
-  if (!list || !list.length || !SPORT_KEY[sport]) return;
-  if (!list.some(g => !caesarsMoneylineReady(g))) return;
-  const url = "https://api.the-odds-api.com/v4/sports/" + SPORT_KEY[sport] + "/odds?apiKey=" + encodeURIComponent(key) + "&markets=h2h&oddsFormat=american&bookmakers=williamhill_us";
+function attachCaesarsMl(dest, srcBk){
+  const ml = srcBk && (srcBk.markets || []).find(m => m.key === "h2h");
+  if (!dest || !ml || !(ml.outcomes || []).length) return;
+  const destBk = (dest.bookmakers || []).find(b => b.key === "williamhill_us");
+  if (!destBk) { dest.bookmakers = (dest.bookmakers || []).concat([srcBk]); return; }
+  destBk.markets = (destBk.markets || []).filter(m => m.key !== "h2h").concat([ml]);
+}
+async function oddsJson(url){
   let res;
   try { res = await fetch(url); }
   catch (e) {
     try { res = await fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(url)); }
-    catch (err) { return; }
+    catch (err) { return null; }
   }
-  if (!res || !res.ok) return;
-  let extra = [];
-  try { extra = await res.json(); }
-  catch (e) { return; }
+  if (!res || !res.ok) return null;
+  try { return await res.json(); }
+  catch (e) { return null; }
+}
+async function fillCaesarsMoneyline(list, sport, key){
+  if (!list || !list.length || !SPORT_KEY[sport]) return;
+  const missing = () => list.filter(g => g && g.id && !caesarsMoneylineReady(g));
+  if (!missing().length) return;
+  const bulkUrl = "https://api.the-odds-api.com/v4/sports/" + SPORT_KEY[sport] + "/odds?apiKey=" + encodeURIComponent(key) + "&markets=h2h&oddsFormat=american&bookmakers=williamhill_us";
+  const extra = await oddsJson(bulkUrl);
   (Array.isArray(extra) ? extra : []).forEach(src => {
     const dest = list.find(g => g.id && g.id === src.id) || list.find(g => g.away_team === src.away_team && g.home_team === src.home_team);
-    const srcBk = ((src && src.bookmakers) || []).find(b => b.key === "williamhill_us");
-    const ml = srcBk && (srcBk.markets || []).find(m => m.key === "h2h");
-    if (!dest || !ml || !(ml.outcomes || []).length) return;
-    const destBk = (dest.bookmakers || []).find(b => b.key === "williamhill_us");
-    if (!destBk) { dest.bookmakers = (dest.bookmakers || []).concat(srcBk); return; }
-    destBk.markets = (destBk.markets || []).filter(m => m.key !== "h2h").concat(ml);
+    attachCaesarsMl(dest, ((src && src.bookmakers) || []).find(b => b.key === "williamhill_us"));
   });
+  const left = missing().slice(0, 40);
+  for (let i = 0; i < left.length; i += 4) {
+    const batch = left.slice(i, i + 4);
+    await Promise.all(batch.map(async g => {
+      const url = "https://api.the-odds-api.com/v4/sports/" + SPORT_KEY[sport] + "/events/" + encodeURIComponent(g.id) + "/odds?apiKey=" + encodeURIComponent(key) + "&markets=h2h&oddsFormat=american&bookmakers=williamhill_us";
+      const one = await oddsJson(url);
+      attachCaesarsMl(g, ((one && one.bookmakers) || []).find(b => b.key === "williamhill_us"));
+    }));
+  }
 }
 async function pullLiveBoard(key, sports){
   const ids = Object.values(BOOK_KEY).join(",");
