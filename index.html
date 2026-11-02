@@ -3969,6 +3969,37 @@ function applyStandRanks(rows){
     });
   });
 }
+function divisionShown(row){
+  if (!row || (row.sport !== "CBB" && row.sport !== "CFB")) return row && row.division || "—";
+  return row.natRank ? "#" + row.natRank : "—";
+}
+async function nationalRanks(){
+  const jobs = [["CFB","football/college-football"],["CBB","basketball/mens-college-basketball"]];
+  const packs = await Promise.all(jobs.map(job => fetch("https://site.api.espn.com/apis/site/v2/sports/" + job[1] + "/rankings").then(r => r.ok ? r.json() : null).catch(() => null)));
+  const map = {};
+  packs.forEach((data, i) => {
+    const sport = jobs[i][0];
+    const polls = (data && data.rankings) || [];
+    const ap = polls.find(p => /ap/i.test(String(p.name || ""))) || polls[0];
+    ((ap && ap.ranks) || []).forEach(row => {
+      const n = Number(row.current);
+      const team = row.team || {};
+      const id = String(team.id || "");
+      const name = [team.location, team.name].filter(Boolean).join(" ").toLowerCase();
+      if (!(n > 0)) return;
+      if (id) map[sport + "|" + id] = n;
+      if (name) map[sport + "|n|" + name] = n;
+    });
+  });
+  return map;
+}
+function applyNationalRanks(rows, map){
+  (rows || []).forEach(row => {
+    if (!row || (row.sport !== "CBB" && row.sport !== "CFB")) return;
+    const named = String(row.team || "").toLowerCase();
+    row.natRank = (map && (map[row.sport + "|" + row.teamId] || map[row.sport + "|n|" + named])) || "";
+  });
+}
 function rankText(row){
   const bits = [];
   if (row && row.confRank) bits.push("Conf #" + row.confRank);
@@ -4011,7 +4042,7 @@ function standRows(sport, data){
       if (games) pct = (!Number.isFinite(raw) || (raw === 0 && w > 0)) ? (w / games).toFixed(3).replace(/^0/, "") : raw.toFixed(3).replace(/^0/, "");
       const team = (entry.team && (entry.team.displayName || entry.team.shortDisplayName)) || "";
       if (!team) return;
-      rows.push({sport: sport, conference: capAbbr(conference || "—"), division: capAbbr(division || "—"), team: team, w: w, l: l, t: t, pct: pct, gb: bag.gamesBehind || "—", streak: bag.streak || "—"});
+      rows.push({sport: sport, conference: capAbbr(conference || "—"), division: capAbbr(division || "—"), team: team, teamId: String(entry.team && entry.team.id || ""), w: w, l: l, t: t, pct: pct, gb: bag.gamesBehind || "—", streak: bag.streak || "—"});
     });
   };
   ((data && data.children) || []).forEach(conf => take(conf, standLabel(conf, true), ""));
@@ -4071,7 +4102,7 @@ function paintRecords(){
       last = key;
       head = "<tr class='sport'><td colspan='11'>" + esc(r.sport + " · " + r.conference + (r.division && r.division !== "—" ? " · " + r.division : "")) + "</td></tr>";
     }
-    return head + "<tr><td>" + esc(r.team) + "</td><td>" + esc(r.sport) + "</td><td>" + esc(rankText(r)) + "</td><td>" + esc(r.conference) + "</td><td>" + esc(r.division) + "</td><td>" + r.w + "</td><td>" + r.l + "</td><td>" + r.t + "</td><td>" + esc(r.pct) + "</td><td>" + esc(r.gb) + "</td><td>" + esc(r.streak) + "</td></tr>";
+    return head + "<tr><td>" + esc(r.team) + "</td><td>" + esc(r.sport) + "</td><td>" + esc(rankText(r)) + "</td><td>" + esc(r.conference) + "</td><td>" + esc(divisionShown(r)) + "</td><td>" + r.w + "</td><td>" + r.l + "</td><td>" + r.t + "</td><td>" + esc(r.pct) + "</td><td>" + esc(r.gb) + "</td><td>" + esc(r.streak) + "</td></tr>";
   }).join("") || "<tr><td colspan='11'>No teams for that filter.</td></tr>";
   if (!note) return;
   const quiet = ["CBB","CFB","MLB","NBA","NFL","NHL"].filter(s => SEASON_START[s] && easternDay() < SEASON_START[s] && recordRows.some(r => r.sport === s));
@@ -4095,6 +4126,7 @@ async function loadRecords(force){
   if (!document.getElementById("seasonrecords")) return;
   recordRows = ((pack && pack.rows) || []).map(r => Object.assign({}, r, {conference: capAbbr(r.conference), division: capAbbr(r.division)}));
   applyStandRanks(recordRows);
+  applyNationalRanks(recordRows, await nationalRanks().catch(() => ({})));
   recordMeta = (pack && pack.seasons) || {};
   paintRecords();
   const note = document.getElementById("recnote");
