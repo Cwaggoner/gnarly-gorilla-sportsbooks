@@ -5248,8 +5248,12 @@ function liveBookCell(market, game, bookmaker){
   const named = name => outs.find(o => o && o.name === name) || outs.find(o => o && sameClub(o.name, name));
   if (market === "h2h") {
     const side = moneySides(outs, game.away_team, game.home_team);
-    if (!side.away || !side.home) return "-";
-    return signedQuote(side.away.price) + " / " + signedQuote(side.home.price);
+    let away = side.away, home = side.home;
+    const plain = outs.filter(o => o && toAmerican(o.price) != null && !/^(over|under|draw|tie)$/i.test(String(o.name || "")));
+    if (away && !home) home = plain.find(o => o !== away) || null;
+    else if (home && !away) away = plain.find(o => o !== home) || null;
+    if (!away || !home || away === home) return "-";
+    return signedQuote(away.price) + " / " + signedQuote(home.price);
   }
   if (market === "spreads") {
     const away = named(game.away_team), home = named(game.home_team);
@@ -5343,7 +5347,7 @@ async function pullLiveBoard(key, sports){
   const failed = [];
   const list = sports && sports.length ? sports : Object.keys(SPORT_KEY);
   for (const sport of list) {
-    const markets = sport === "CBB" ? "spreads,totals" : "h2h,spreads,totals";
+    const markets = "h2h,spreads,totals";
     const url = "https://api.the-odds-api.com/v4/sports/" + SPORT_KEY[sport] + "/odds?apiKey=" + encodeURIComponent(key) + "&regions=us,us2&markets=" + markets + "&oddsFormat=american&bookmakers=" + ids;
     let res;
     try { res = await fetch(url); }
@@ -6810,7 +6814,13 @@ async function fetchOne(sportKey, bookKey, key, fresh){
     sessionStorage.setItem(allKey, pack);
     localStorage.setItem("gg-board-" + sportKey + "-" + bookKey, pack);
     const sportName = Object.keys(SPORT_KEY).find(s => SPORT_KEY[s] === sportKey) || "";
-    if (sportName) rememberBooks(sportName, games);
+    if (sportName) {
+      games.forEach(g => { if (!g._sport) g._sport = sportName; });
+      rememberBooks(sportName, games);
+      const days = new Set(games.map(g => g.commence_time ? slateDateOf(g.commence_time) : "").filter(Boolean));
+      days.forEach(day => ["h2h","spreads","totals"].forEach(market => mergeBoardRows(day, market, rowsFromLive(games, day, market), true)));
+      if (window.__ggOddsBoard) rememberBoard(window.__ggOddsBoard);
+    }
   }
   return games;
 }
@@ -10170,6 +10180,17 @@ function outcomeInner(g, scored){
   const cls = mark === "win" ? "win" : mark === "loss" ? "loss" : "nb";
   return (letter ? "<b class='outcome-mark " + cls + "'>" + letter + "</b>" : "") + (score ? "<span class='outcome-score'>" + esc(score) + "</span>" : "");
 }
+function applyFeedCache(day){
+  if (!day) return;
+  Object.keys(SPORT_KEY).forEach(sport => {
+    let pack = null;
+    try { pack = JSON.parse(sessionStorage.getItem("gg-odds-all-" + SPORT_KEY[sport]) || "null"); } catch (e) { pack = null; }
+    const games = pack && Array.isArray(pack.games) ? pack.games : [];
+    if (!games.length) return;
+    games.forEach(g => { if (!g._sport) g._sport = sport; });
+    ["h2h","spreads","totals"].forEach(market => mergeBoardRows(day, market, rowsFromLive(games, day, market), true));
+  });
+}
 function drawGameBoard(){
   const box = document.getElementById("gameboard");
   if (!box) return;
@@ -10178,6 +10199,7 @@ function drawGameBoard(){
   const book = bookEl ? bookEl.value : "BetMGM";
   const sport = sportBtn ? sportBtn.dataset.sport : "All";
   const day = easternDay();
+  applyFeedCache(day);
   if (!dayHasLines(day)) {
     clearInterval(startClock);
     box.innerHTML = emptyBoardNote(day) + lockedBookRow();
