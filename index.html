@@ -5279,12 +5279,15 @@ function caesarsMoneylineReady(game){
   const side = moneySides((ml && ml.outcomes) || [], game.away_team, game.home_team);
   return !!(side.away && side.home);
 }
-function attachCaesarsMl(dest, srcBk){
-  const ml = srcBk && (srcBk.markets || []).find(m => m.key === "h2h");
-  if (!dest || !ml || !(ml.outcomes || []).length) return;
-  const destBk = (dest.bookmakers || []).find(b => b.key === "williamhill_us");
+function attachMarket(dest, srcBk, market){
+  const mk = srcBk && (srcBk.markets || []).find(m => m.key === market);
+  if (!dest || !srcBk || !mk || !(mk.outcomes || []).length) return;
+  const destBk = (dest.bookmakers || []).find(b => b.key === srcBk.key);
   if (!destBk) { dest.bookmakers = (dest.bookmakers || []).concat([srcBk]); return; }
-  destBk.markets = (destBk.markets || []).filter(m => m.key !== "h2h").concat([ml]);
+  destBk.markets = (destBk.markets || []).filter(m => m.key !== market).concat([mk]);
+}
+function attachCaesarsMl(dest, srcBk){
+  attachMarket(dest, srcBk, "h2h");
 }
 async function oddsJson(url){
   let res;
@@ -5297,9 +5300,24 @@ async function oddsJson(url){
   try { return await res.json(); }
   catch (e) { return null; }
 }
+async function fillSportMoneyline(list, sport, key){
+  if (!list || !list.length || !SPORT_KEY[sport]) return;
+  const ids = Object.values(BOOK_KEY).join(",");
+  const url = "https://api.the-odds-api.com/v4/sports/" + SPORT_KEY[sport] + "/odds?apiKey=" + encodeURIComponent(key) + "&markets=h2h&oddsFormat=american&bookmakers=" + ids;
+  const extra = await oddsJson(url);
+  (Array.isArray(extra) ? extra : []).forEach(src => {
+    const dest = list.find(g => g.id && g.id === src.id) || list.find(g => g.away_team === src.away_team && g.home_team === src.home_team);
+    ((src && src.bookmakers) || []).forEach(bk => attachMarket(dest, bk, "h2h"));
+  });
+}
 async function fillCaesarsMoneyline(list, sport, key){
   if (!list || !list.length || !SPORT_KEY[sport]) return;
-  const missing = () => list.filter(g => g && g.id && !caesarsMoneylineReady(g));
+  const missing = () => list.filter(g => g && g.id && (sport === "CBB" ? Object.values(BOOK_KEY).some(bookKey => {
+    const bk = (g.bookmakers || []).find(b => b.key === bookKey);
+    const ml = bk && (bk.markets || []).find(m => m.key === "h2h");
+    const side = moneySides((ml && ml.outcomes) || [], g.away_team, g.home_team);
+    return !(side.away && side.home);
+  }) : !caesarsMoneylineReady(g)));
   if (!missing().length) return;
   const bulkUrl = "https://api.the-odds-api.com/v4/sports/" + SPORT_KEY[sport] + "/odds?apiKey=" + encodeURIComponent(key) + "&markets=h2h&oddsFormat=american&bookmakers=williamhill_us";
   const extra = await oddsJson(bulkUrl);
@@ -5307,13 +5325,15 @@ async function fillCaesarsMoneyline(list, sport, key){
     const dest = list.find(g => g.id && g.id === src.id) || list.find(g => g.away_team === src.away_team && g.home_team === src.home_team);
     attachCaesarsMl(dest, ((src && src.bookmakers) || []).find(b => b.key === "williamhill_us"));
   });
-  const left = missing().slice(0, 40);
+  const left = missing().slice(0, sport === "CBB" ? 80 : 40);
   for (let i = 0; i < left.length; i += 4) {
     const batch = left.slice(i, i + 4);
     await Promise.all(batch.map(async g => {
-      const url = "https://api.the-odds-api.com/v4/sports/" + SPORT_KEY[sport] + "/events/" + encodeURIComponent(g.id) + "/odds?apiKey=" + encodeURIComponent(key) + "&markets=h2h&oddsFormat=american&bookmakers=williamhill_us";
+      const books = sport === "CBB" ? Object.values(BOOK_KEY).join(",") : "williamhill_us";
+      const url = "https://api.the-odds-api.com/v4/sports/" + SPORT_KEY[sport] + "/events/" + encodeURIComponent(g.id) + "/odds?apiKey=" + encodeURIComponent(key) + "&markets=h2h&oddsFormat=american&bookmakers=" + books;
       const one = await oddsJson(url);
-      attachCaesarsMl(g, ((one && one.bookmakers) || []).find(b => b.key === "williamhill_us"));
+      if (sport === "CBB") ((one && one.bookmakers) || []).forEach(bk => attachMarket(g, bk, "h2h"));
+      else attachCaesarsMl(g, ((one && one.bookmakers) || []).find(b => b.key === "williamhill_us"));
     }));
   }
 }
@@ -5323,7 +5343,8 @@ async function pullLiveBoard(key, sports){
   const failed = [];
   const list = sports && sports.length ? sports : Object.keys(SPORT_KEY);
   for (const sport of list) {
-    const url = "https://api.the-odds-api.com/v4/sports/" + SPORT_KEY[sport] + "/odds?apiKey=" + encodeURIComponent(key) + "&regions=us,us2&markets=h2h,spreads,totals&oddsFormat=american&bookmakers=" + ids;
+    const markets = sport === "CBB" ? "spreads,totals" : "h2h,spreads,totals";
+    const url = "https://api.the-odds-api.com/v4/sports/" + SPORT_KEY[sport] + "/odds?apiKey=" + encodeURIComponent(key) + "&regions=us,us2&markets=" + markets + "&oddsFormat=american&bookmakers=" + ids;
     let res;
     try { res = await fetch(url); }
     catch (e) {
@@ -5335,6 +5356,7 @@ async function pullLiveBoard(key, sports){
     try { list = await res.json(); }
     catch (e) { failed.push(sport); continue; }
     if (!Array.isArray(list)) list = [];
+    if (sport === "CBB") await fillSportMoneyline(list, sport, key);
     await fillCaesarsMoneyline(list, sport, key);
     list.forEach(g => { g._sport = sport; games.push(g); });
     try {
