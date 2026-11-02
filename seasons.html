@@ -2168,9 +2168,16 @@ function publishedDayClosed(date){
   const settled = (Number(row.wins) || 0) + (Number(row.losses) || 0) + (Number(row.pushes) || 0);
   return Number(row.n) > 0 && settled >= Number(row.n);
 }
+function firstGameDown(date){
+  date = String(date || "").slice(0, 10);
+  if (dayGraded(date) || publishedDayClosed(date) || chartDayReady(date)) return true;
+  return (window.__gameScores || []).some(g => g && g.final && slateDateOf(g.start) === date);
+}
 function sportChartDays(){
   const today = easternDay();
-  const days = Object.keys(publishedCalendar || {}).filter(date => date <= today && (date < today ? chartDayReady(date) : (chartDayReady(date) || publishedDayClosed(date)))).sort();
+  const days = Object.keys(publishedCalendar || {}).filter(date => date <= today && (date < today ? chartDayReady(date) : firstGameDown(date)));
+  if (days.indexOf(today) < 0 && firstGameDown(today)) days.push(today);
+  days.sort();
   return days.length ? days : [yesterday()];
 }
 let sportDay = "";
@@ -8014,7 +8021,7 @@ function pageNeeds(kind){
     closes: ["slips","reportcard"],
     profit: ["charts"],
     today: ["todaycard"],
-    grades: ["slips","breaks","dashboard","reportcard"],
+    grades: ["slips","breaks","dashboard","reportcard","charts"],
     dashfile: ["dashboard"],
     about: ["about"]
   };
@@ -11327,6 +11334,14 @@ function armScreen(){
   if (pageNeeds("slate")) onceKind("slate", () => { loadPickSlate(); setInterval(() => { loadPickSlate(); }, 300000); });
   if (pageNeeds("calendar")) onceKind("calendar", () => fetch("cards/calendar.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => { if (data && data.dates) publishedCalendar = data.dates; render(); }).catch(() => {}));
   if (pageNeeds("profit")) onceKind("profit", () => loadProfitFile());
+  if (pageNeeds("profit")) onceKind("chartgames", () => {
+    const day = easternDay();
+    Promise.all(Object.keys(SCORE_FEED).map(sport => scoreboard(sport, day).catch(() => []))).then(packs => {
+      window.__gameScores = (packs || []).flat();
+      window.__gameScoresAt = Date.now();
+      drawCharts();
+    }).catch(() => {});
+  });
   if (pageNeeds("calendar") || pageNeeds("profit")) onceKind("caltick", () => setInterval(() => {
     if (pageNeeds("calendar")) fetch("cards/calendar.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => {
       if (!data || !data.dates) return;
