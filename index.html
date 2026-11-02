@@ -661,6 +661,10 @@ table.cal-line .tools { margin:0; align-items:flex-start; }
 canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--line); border-radius:8px; display:block; }
 .charts canvas { width:100%; height:192px; }
 .sport-nav { display:flex; justify-content:center; gap:8px; margin-top:8px; }
+#charts .chart-foot { display:flex; flex-direction:column; align-items:stretch; gap:8px; }
+#charts .chart-foot .sport-nav { margin-top:0; }
+#charts .chart-foot #sportday,
+#charts .chart-foot #chartlesson { margin:0; }
 .sport-title { display:flex; align-items:center; gap:8px; }
 .sport-title h2 { margin:0; border:0; background:transparent; padding:0; }
 #sportbest, #monthbest { margin-left:10px; color:#39ff14; font-weight:700; }
@@ -1123,9 +1127,10 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <div class="section-head"><h2>Charts</h2></div>
 <div class="align-frame"><table class="score-align"><tbody><tr><td><button type="button" id="plot">Plot</button></td><td class="score-copy"><p class="warn slips-side">Profit uses settled slips. CLV is no-vig: your price against a fair close, with the book's cut removed. A matched -110 is about -4.5%. <span id="plotnote"></span></p></td></tr></tbody></table><div class="game-sharps"><a class="crew-hit" href="index.html?page=sharks#shark-gorilla" data-jump="sharks" data-sharp="shark-gorilla" title="Gnarly Gorilla"><img src="about-gorilla.jpg" alt="Gnarly Gorilla" width="38" height="38" decoding="async"></a><a class="crew-hit" href="index.html?page=sharks#shark-vito" data-jump="sharks" data-sharp="shark-vito" title="Vito the Spot"><img src="jungle-leopard.jpg" alt="Vito the Spot" width="38" height="38" decoding="async"></a><a class="crew-hit" href="index.html?page=sharks#shark-rocco" data-jump="sharks" data-sharp="shark-rocco" title="Rocco No Chase"><img src="jungle-rhino.jpg" alt="Rocco No Chase" width="38" height="38" decoding="async"></a><a class="crew-hit" href="index.html?page=sharks#shark-paulie" data-jump="sharks" data-sharp="shark-paulie" title="Paulie the Fade"><img src="jungle-hyena.jpg" alt="Paulie the Fade" width="38" height="38" decoding="async"></a><a class="crew-hit" href="index.html?page=sharks#shark-gino" data-jump="sharks" data-sharp="shark-gino" title="Gino the Wire"><img src="jungle-bird.jpg" alt="Gino the Wire" width="38" height="38" decoding="async"></a></div></div>
 <div class="charts">
-<div><h2 id="profitTitle" class="split-title">Cumulative Profit</h2><canvas id="profitChart" width="640" height="220"></canvas><p id="chartlesson" class="warn"></p></div>
-<div><div class="sport-title"><h2>Profit By Sport</h2><b id="sportbest"></b><b id="monthbest"></b></div><canvas id="sportChart" width="420" height="220"></canvas><div class="sport-nav"><button type="button" id="sportprev">Previous</button><button type="button" id="sportnext">Next</button></div><p id="sportday"></p></div>
+<div><h2 id="profitTitle" class="split-title">Cumulative Profit</h2><canvas id="profitChart" width="640" height="220"></canvas></div>
+<div><div class="sport-title"><h2>Profit By Sport</h2><b id="sportbest"></b><b id="monthbest"></b></div><canvas id="sportChart" width="420" height="220"></canvas></div>
 </div>
+<div class="align-frame chart-foot"><p id="chartlesson" class="warn"></p><div class="sport-nav"><button type="button" id="sportprev">Previous</button><button type="button" id="sportnext">Next</button></div><p id="sportday"></p></div>
 </section>
 <section class="card view" id="breaks"></section>
 <section class="card view" id="addbet">
