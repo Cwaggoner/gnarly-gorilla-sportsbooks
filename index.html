@@ -262,6 +262,7 @@ th.th-center { text-align:center; }
 #sgpbox h3 { display:flex; align-items:flex-start; gap:8px; margin:0; color:#39ff14; font-size:16px; text-align:left; cursor:grab; touch-action:none; user-select:none; }
 #sgpbox.dragging h3 { cursor:grabbing; }
 .slip-dock-col { margin-left:auto; display:flex; flex-direction:column; align-items:center; gap:4px; }
+.slip-dock-btns { display:flex; align-items:center; justify-content:center; gap:8px; }
 #slipdock { margin-left:0; height:28px; padding:2px 8px; }
 #sgpbox .slip-gorilla { width:72px; height:72px; border-radius:12px; display:block; object-fit:cover; }
 #sgpbox.slip-min { max-height:none; width:min(240px, calc(100vw - 24px)); overflow:hidden; }
@@ -1244,7 +1245,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </div>
 </footer>
 <div class="bet-box slip-min" id="sgpbox">
-<h3>Bet Slip <span class="slip-dock-col"><button type="button" id="slipdock">Show</button><img class="slip-gorilla" src="gg-icon.png" alt="Gnarly Gorilla" width="72" height="72" decoding="async"></span><button type="button" id="slipclose">Close</button></h3>
+<h3>Bet Slip <span class="slip-dock-col"><span class="slip-dock-btns"><button type="button" id="slipdock">Show</button><button type="button" id="slipclose">Close</button></span><a class="crew-hit" href="index.html?page=sharks#shark-gorilla" data-jump="sharks" data-sharp="shark-gorilla" title="Gnarly Gorilla"><img class="slip-gorilla" src="gg-icon.png" alt="Gnarly Gorilla" width="72" height="72" decoding="async"></a></span></h3>
 <p class="warn">Click a price. Nothing is sent to a book.</p>
 <div class="sgp-legs" id="sgplegs"></div>
 <div class="sgp-partner">
@@ -6426,7 +6427,7 @@ if (sessionStorage.getItem("gg-slip-closed") === "1") {
   } else if (saved) apply(saved);
   let drag = null;
   handle.addEventListener("pointerdown", e => {
-    if (e.target.closest("button")) return;
+    if (e.target.closest("button, a")) return;
     const rect = box.getBoundingClientRect();
     drag = {dx: e.clientX - rect.left, dy: e.clientY - rect.top, id: e.pointerId};
     box.classList.add("dragging");
