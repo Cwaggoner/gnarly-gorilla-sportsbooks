@@ -867,6 +867,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .mgm-set { display:grid; grid-template-columns:repeat(3,64px); gap:4px; flex:0 0 auto; }
 .mgm-set.mgm-close { justify-self:end; }
 .mgm-card:not(.no-close) { grid-template-columns:minmax(230px, max-content) minmax(0,1fr); }
+.mgm-card.mgm-rail { grid-template-columns:minmax(0,1fr); }
 .mgm-line { display:flex; align-items:flex-end; min-width:0; width:100%; }
 .mgm-line .mgm-books { flex:1 1 auto; min-width:0; overflow-x:auto; overflow-y:hidden; }
 .mgm-tail { flex:0 0 auto; display:flex; align-items:flex-end; margin-left:4px; position:relative; z-index:1; }
@@ -9946,13 +9947,7 @@ function mgmGameCard(g, day, book, withClose){
     const score = team && team.score ? "<b class='mgm-score'>" + esc(team.score) + "</b>" : "";
     return "<div class='mgm-team'>" + logo + "<span>" + esc((team && (team.name || team.abbr)) || "") + rec + "</span>" + score + "</div>";
   };
-  const postedBooks = names.filter(name => ["spreads","totals","h2h"].some(market => {
-    const books = g.markets && g.markets[market] && g.markets[market].books;
-    const text = books && books[name];
-    return text && text !== "-";
-  }));
-  const ordered = postedBooks.filter(name => name === book).concat(postedBooks.filter(name => name !== book));
-  const sets = ordered.map(name => mgmSet(name, ["Spread", "Total", "Money"], [mgmOpen(g, "spreads", day, name, names), mgmOpen(g, "totals", day, name, names), mgmOpen(g, "h2h", day, name, names)], "book")).join("");
+  const sets = names.map(name => mgmSet(name, ["Spread", "Total", "Money"], [mgmOpen(g, "spreads", day, name, names), mgmOpen(g, "totals", day, name, names), mgmOpen(g, "h2h", day, name, names)], "book")).join("");
   const close = withClose ? mgmSet("Close", ["Spread", "Total", "Money"], [mgmClose(gameClosePack(g, day, book), "spreads"), mgmClose(gameClosePack(g, day, book), "totals"), mgmClose(gameClosePack(g, day, book), "h2h")], "close") : "";
   const tag = scored && scored.live && !scored.final ? (scored.detail || "Live") : (scored && scored.final ? "Final" : "");
   const dot = "<span class='" + (scored && scored.live && !scored.final ? "live-dot" : "status-dot" + (scored && scored.final ? " final" : "")) + "'></span>";
@@ -10043,9 +10038,11 @@ function drawGameBoard(){
   const day = easternDay();
   if (!dayHasLines(day)) {
     clearInterval(startClock);
-    box.innerHTML = emptyBoardNote(day);
+    box.innerHTML = emptyBoardNote(day) + lockedBookRow();
     const pull = document.getElementById("pulltoday");
     if (pull) pull.onclick = () => pullTodayBoard();
+    alignSportBrackets();
+    requestAnimationFrame(alignSportBrackets);
     return;
   }
   const block = window.__ggOddsBoard.days[day];
@@ -10071,9 +10068,11 @@ function drawGameBoard(){
   games.sort((a, b) => sportRank(a.sport) - sportRank(b.sport) || String(a.start || "").localeCompare(String(b.start || "")) || a.label.localeCompare(b.label));
   if (!games.length) {
     clearInterval(startClock);
-    box.innerHTML = emptyBoardNote(day);
+    box.innerHTML = emptyBoardNote(day) + lockedBookRow();
     const pull = document.getElementById("pulltoday");
     if (pull) pull.onclick = () => pullTodayBoard();
+    alignSportBrackets();
+    requestAnimationFrame(alignSportBrackets);
     return;
   }
   box.innerHTML = games.map(g => mgmGameCard(g, day, book, true)).join("");
@@ -10265,6 +10264,14 @@ function refreshGameScores(games){
 function dayHasLines(day){
   const block = window.__ggOddsBoard && window.__ggOddsBoard.days && window.__ggOddsBoard.days[day];
   return blockHasLines(block);
+}
+function lockedBookRow(){
+  const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
+  const pair = [mgmBlank(), mgmBlank()];
+  const sets = names.map(name => mgmSet(name, ["Spread", "Total", "Money"], [pair, pair, pair], "book")).join("");
+  const close = mgmSet("Close", ["Spread", "Total", "Money"], [[mgmLock(), mgmLock()], [mgmLock(), mgmLock()], [mgmLock(), mgmLock()]], "close");
+  const outcome = "<div class='mgm-gap'><span class='mgm-group'><i></i><b>Outcome</b><i></i></span><span class='mgm-h'>Win/Loss/No Bet</span><div class='mgm-gap-box'></div></div>";
+  return "<article class='mgm-card mgm-rail'><div class='mgm-line'><div class='mgm-books'>" + sets + "</div><div class='mgm-tail'>" + outcome + close + "</div></div></article>";
 }
 function emptyBoardNote(day){
   const days = (window.__ggOddsBoard && window.__ggOddsBoard.days) || {};
