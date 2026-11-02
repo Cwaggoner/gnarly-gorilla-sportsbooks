@@ -2181,11 +2181,26 @@ function firstGameDown(date){
   if (dayGraded(date) || publishedDayClosed(date) || chartDayReady(date)) return true;
   return (window.__gameScores || []).some(g => g && g.final && slateDateOf(g.start) === date);
 }
+function settledChartDays(){
+  const days = new Set();
+  load().concat(loadGrade()).concat(gradeFile).concat(chartLedger).forEach(b => {
+    if (!b || isNoPick(b)) return;
+    if (b.result !== "win" && b.result !== "loss" && b.result !== "push") return;
+    const date = String(b.date || "").slice(0, 10);
+    if (/^\d{4}-\d{2}-\d{2}$/.test(date)) days.add(date);
+  });
+  return days;
+}
 function sportChartDays(){
   const today = easternDay();
-  const days = Object.keys(publishedCalendar || {}).filter(date => date <= today && (date < today ? chartDayReady(date) : firstGameDown(date)));
-  if (days.indexOf(today) < 0 && firstGameDown(today)) days.push(today);
-  days.sort();
+  const set = new Set();
+  Object.keys(publishedCalendar || {}).forEach(date => {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || date > today) return;
+    if (date < today || chartDayReady(date) || firstGameDown(date) || publishedDayClosed(date)) set.add(date);
+  });
+  settledChartDays().forEach(date => { if (date <= today) set.add(date); });
+  if (firstGameDown(today) || dayGraded(today) || publishedDayClosed(today)) set.add(today);
+  const days = [...set].sort();
   return days.length ? days : [yesterday()];
 }
 let sportDay = "";
@@ -2195,14 +2210,13 @@ function activeSportDay(){
   return sportDay;
 }
 function gradedOnDay(bets, day){
-  if (!chartDayReady(day)) return [];
   const seen = new Set();
   const rows = [];
-  bets.concat(load()).concat(loadGrade()).concat(gradeFile).forEach(b => {
+  bets.concat(load()).concat(loadGrade()).concat(gradeFile).concat(chartLedger).forEach(b => {
     const sport = String(b.sport || "").trim().toUpperCase();
     const date = String(b.date || "").slice(0, 10);
     const settled = b.result === "win" || b.result === "loss" || b.result === "push";
-    if (!sport || date !== day || !settled) return;
+    if (!b || isNoPick(b) || !sport || date !== day || !settled) return;
     const key = [date, sport, b.pick].join("|");
     if (seen.has(key)) return;
     seen.add(key);
@@ -2216,7 +2230,8 @@ function drawBars(canvas, bets){
   const map = {};
   sports.forEach(sport => { map[sport] = {pl:0, clv:[], n:0, yday:0}; });
   const day = activeSportDay();
-  const saved = publishedCalendar[day] && publishedCalendar[day].sports;
+  const slips = gradedOnDay(bets, day);
+  const saved = !slips.length && publishedCalendar[day] && publishedCalendar[day].sports;
   if (saved) {
     sports.forEach(sport => {
       const row = saved[sport] || {};
@@ -2245,7 +2260,14 @@ function drawBars(canvas, bets){
   ctx.fillStyle = "#0e0e0e";
   ctx.fillRect(0,0,cssW,h);
   ctx.font = "12px sans-serif";
-  const label = r => r[1].yday ? "" : ((chartDayReady(day) || publishedDayClosed(day)) ? seasonText(r[0]) : "Last Game Open");
+  const label = r => {
+    if (r[1].yday) return "";
+    const sport = r[0];
+    const pending = load().concat(loadGrade()).concat(chartLedger).some(b => b && !isNoPick(b) && b.result === "pending" && String(b.date || "").slice(0, 10) === day && String(b.sport || "").toUpperCase() === sport);
+    if (pending) return "Last Game Open";
+    if (day < easternDay() || chartDayReady(day) || publishedDayClosed(day) || firstGameDown(day)) return seasonText(sport);
+    return "Last Game Open";
+  };
   const labelW = Math.max(...rows.map(r => ctx.measureText(r[0]).width), 36);
   const valueW = Math.max(...rows.map(r => ctx.measureText(money(r[1].pl) + "  " + label(r)).width), 70);
   const left = 12 + labelW + 8;
@@ -2712,6 +2734,20 @@ function followMonth(){
   monthCursor = new Date(y, m - 1, 1);
 }
 let publishedCalendar = {};
+let chartLedger = [];
+function takePublishedCalendar(data){
+  const dates = data && (data.dates || data);
+  if (!dates || typeof dates !== "object" || Array.isArray(dates)) return false;
+  const keys = Object.keys(dates).filter(date => /^\d{4}-\d{2}-\d{2}$/.test(date) && dates[date] && Number.isFinite(Number(dates[date].pl)));
+  if (!keys.length) return false;
+  keys.forEach(date => { publishedCalendar[date] = Object.assign({}, publishedCalendar[date] || {}, dates[date]); });
+  try { localStorage.setItem("gg-calendar-published", JSON.stringify(publishedCalendar)); } catch (e) {}
+  return true;
+}
+function takeChartLedger(data){
+  const rows = Array.isArray(data) ? data : ((data && data.bets) || []);
+  chartLedger = rows.filter(b => b && !isNoPick(b) && (b.result === "win" || b.result === "loss" || b.result === "push"));
+}
 function newestDate(keys){
   return (keys || []).map(d => String(d || "").slice(0, 10)).filter(d => /^\d{4}-\d{2}-\d{2}$/.test(d)).sort().pop() || "";
 }
@@ -9127,15 +9163,15 @@ if (pageNeeds("slate")) {
   loadPickSlate();
   setInterval(() => { loadPickSlate(); }, 300000);
 }
-if (pageNeeds("calendar")) fetch("cards/calendar.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => { if (data && data.dates) publishedCalendar = data.dates; render(); }).catch(() => {});
+if (pageNeeds("calendar")) fetch("cards/calendar.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => { if (takePublishedCalendar(data)) render(); }).catch(() => {});
 if (pageNeeds("profit")) loadProfitFile();
+if (pageNeeds("profit")) fetch(cardUrl("cards/ledger.json")).then(r => r.ok ? r.json() : null).then(data => { takeChartLedger(data); if ((document.documentElement.dataset.page || "") === "charts") drawCharts(); }).catch(() => {});
 if (pageNeeds("calendar") || pageNeeds("profit")) setInterval(() => {
   if (pageNeeds("calendar")) fetch("cards/calendar.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => {
-    if (!data || !data.dates) return;
-    publishedCalendar = data.dates;
+    if (!takePublishedCalendar(data)) return;
     drawCharts();
   }).catch(() => {});
-  if (pageNeeds("profit")) loadProfitFile();
+  if (pageNeeds("profit")) { loadProfitFile(); fetch(cardUrl("cards/ledger.json")).then(r => r.ok ? r.json() : null).then(data => { takeChartLedger(data); drawCharts(); }).catch(() => {}); }
 }, 300000);
 if (pageNeeds("report")) fetch("cards/report.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
   let day = ((text.match(/Yesterday\s+(\d{4}-\d{2}-\d{2})/) || [])[1]) || "";
@@ -11392,7 +11428,8 @@ function armScreen(){
   if (pageNeeds("seasons")) onceKind("seasons", () => loadSeasons());
   if (pageNeeds("about")) onceKind("about", () => setTimeout(loadLiveFeed, 0));
   if (pageNeeds("slate")) onceKind("slate", () => { loadPickSlate(); setInterval(() => { loadPickSlate(); }, 300000); });
-  if (pageNeeds("calendar")) onceKind("calendar", () => fetch("cards/calendar.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => { if (data && data.dates) publishedCalendar = data.dates; render(); }).catch(() => {}));
+  if (pageNeeds("calendar")) onceKind("calendar", () => fetch("cards/calendar.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => { if (takePublishedCalendar(data)) render(); }).catch(() => {}));
+  if (pageNeeds("profit")) onceKind("chartledger", () => fetch(cardUrl("cards/ledger.json")).then(r => r.ok ? r.json() : null).then(data => { takeChartLedger(data); drawCharts(); }).catch(() => {}));
   if (pageNeeds("profit")) onceKind("profit", () => loadProfitFile());
   if (pageNeeds("profit")) onceKind("chartgames", () => {
     const day = easternDay();
@@ -11404,11 +11441,10 @@ function armScreen(){
   });
   if (pageNeeds("calendar") || pageNeeds("profit")) onceKind("caltick", () => setInterval(() => {
     if (pageNeeds("calendar")) fetch("cards/calendar.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => {
-      if (!data || !data.dates) return;
-      publishedCalendar = data.dates;
+      if (!takePublishedCalendar(data)) return;
       drawCharts();
     }).catch(() => {});
-    if (pageNeeds("profit")) loadProfitFile();
+    if (pageNeeds("profit")) { loadProfitFile(); fetch(cardUrl("cards/ledger.json")).then(r => r.ok ? r.json() : null).then(data => { takeChartLedger(data); drawCharts(); }).catch(() => {}); }
   }, 300000));
   if (pageNeeds("report")) onceKind("report", () => fetch("cards/report.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
     let day = ((text.match(/Yesterday\s+(\d{4}-\d{2}-\d{2})/) || [])[1]) || "";
