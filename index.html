@@ -264,10 +264,11 @@ th.th-center { text-align:center; }
 .slip-dock-col { margin-left:auto; display:flex; flex-direction:column; align-items:center; gap:4px; }
 .slip-dock-btns { display:flex; align-items:center; justify-content:center; gap:8px; }
 #slipdock { margin-left:0; height:28px; padding:2px 8px; }
-#sgpbox .slip-gorilla { width:72px; height:72px; border-radius:12px; display:block; object-fit:cover; }
+#sgpbox .slip-sharps { display:flex; align-items:center; justify-content:center; gap:4px; }
+#sgpbox .slip-sharps img { width:72px; height:72px; border-radius:12px; display:block; object-fit:cover; }
 #sgpbox.slip-min { max-height:none; width:min(240px, calc(100vw - 24px)); overflow:hidden; }
 #sgpbox.slip-min > :not(h3) { display:none; }
-#sgpbox.slip-min .slip-dock-col > a { display:none; }
+#sgpbox.slip-min .slip-sharps { display:none; }
 #sgpbox.slip-closed { display:none !important; }
 #slipopen { position:fixed; right:12px; bottom:12px; z-index:40; }
 #slipopen[hidden] { display:none !important; }
@@ -669,7 +670,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 @media (max-width:760px) { table { display:block; overflow-x:auto; } table.cal-line { display:table; overflow:visible; } }
 @media (max-width:760px) {
   header { grid-template-columns:56px minmax(0,1fr) auto 56px; gap:6px; padding:4px 6px; }
-  header img, .cal-crew img, #sgpbox .slip-gorilla { width:44px; height:44px; border-radius:8px; }
+  header img, .cal-crew img, #sgpbox .slip-sharps img { width:44px; height:44px; border-radius:8px; }
   header h1 { font-size:16px; }
   .law-warn { font-size:14px; line-height:14px; height:14px; }
   header p { font-size:11px; }
@@ -1246,7 +1247,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </div>
 </footer>
 <div class="bet-box slip-min" id="sgpbox">
-<h3>Bet Slip <span class="slip-dock-col"><span class="slip-dock-btns"><button type="button" id="slipdock">Show</button><button type="button" id="slipclose">Close</button></span><a class="crew-hit" href="index.html?page=sharks#shark-gorilla" data-jump="sharks" data-sharp="shark-gorilla" title="Gnarly Gorilla"><img class="slip-gorilla" src="gg-icon.png" alt="Gnarly Gorilla" width="72" height="72" decoding="async"></a></span></h3>
+<h3>Bet Slip <span class="slip-dock-col"><span class="slip-dock-btns"><button type="button" id="slipdock">Show</button><button type="button" id="slipclose">Close</button></span><span class="slip-sharps"><a class="crew-hit" href="index.html?page=sharks#shark-gorilla" data-jump="sharks" data-sharp="shark-gorilla" title="Gnarly Gorilla"><img src="gg-icon.png" alt="Gnarly Gorilla" width="72" height="72" decoding="async"></a><a class="crew-hit" href="index.html?page=sharks#shark-vito" data-jump="sharks" data-sharp="shark-vito" title="Vito the Spot"><img src="jungle-leopard.jpg" alt="Vito the Spot" width="72" height="72" decoding="async"></a><a class="crew-hit" href="index.html?page=sharks#shark-rocco" data-jump="sharks" data-sharp="shark-rocco" title="Rocco No Chase"><img src="jungle-rhino.jpg" alt="Rocco No Chase" width="72" height="72" decoding="async"></a><a class="crew-hit" href="index.html?page=sharks#shark-paulie" data-jump="sharks" data-sharp="shark-paulie" title="Paulie the Fade"><img src="jungle-hyena.jpg" alt="Paulie the Fade" width="72" height="72" decoding="async"></a><a class="crew-hit" href="index.html?page=sharks#shark-gino" data-jump="sharks" data-sharp="shark-gino" title="Gino the Wire"><img src="jungle-bird.jpg" alt="Gino the Wire" width="72" height="72" decoding="async"></a></span></span></h3>
 <p class="warn">Click a price. Nothing is sent to a book.</p>
 <div class="sgp-legs" id="sgplegs"></div>
 <div class="sgp-partner">
