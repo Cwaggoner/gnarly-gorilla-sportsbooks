@@ -1,1 +1,40 @@
-PLACEHOLDER_CONTENT
+{
+  "source": "ESPN DraftKings close",
+  "days": {
+    "2026-11-02": {
+      "NBA": [
+        {
+          "away": "OKC",
+          "home": "CLE",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 4.5,
+                  "price": -115
+                },
+                "home": {
+                  "point": -4.5,
+                  "price": -105
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 146
+                },
+                "home": {
+                  "price": -173
+                }
+              },
+              "total": {
+                "point": 229.5,
+                "over": -110,
+                "under": -110
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
