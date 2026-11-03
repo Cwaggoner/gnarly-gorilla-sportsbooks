@@ -11538,42 +11538,37 @@ function sharpAddOpen(sharkId){
   const card = window.__sharpCard;
   const shark = SHARKS.find(s => s.id === sharkId);
   const note = document.getElementById("sharpnote");
+  const slipNote = document.getElementById("sgpprice");
   if (!card || !shark) return;
   const open = (card.sharps[sharkId] || []).filter(sharpStillOpen);
   if (!open.length) {
-    if (note) note.textContent = shark.name + " has no games left that have not started.";
+    const msg = shark.name + " has no games left that have not started.";
+    if (note) note.textContent = msg;
+    if (slipNote) slipNote.textContent = msg;
     return;
   }
-  const bets = load();
   const book = (document.querySelector("#addbet [name=book]") || {}).value || "BetMGM";
-  let added = 0, already = 0;
+  let added = 0;
   open.forEach(t => {
-    const row = stampPlaced(markEdge({
-      id: Date.now() + Math.random(),
+    const before = betSlip.length;
+    addSlipLeg({
       date: t.date || card.date || easternDay(),
-      book: bookForPrice(t.sport, t.slip, t.odds, t.date) || book,
       sport: t.sport || "",
       type: t.market || "Spread",
       pick: t.slip,
       odds: Number(t.odds),
-      stake: 10,
-      result: "pending",
-      notes: shark.name + "." + (t.confidence ? " Confidence: " + t.confidence + (t.confidencePct ? " " + t.confidencePct + "%" : "") + "." : ""),
-      manual: true,
-      edge: /^high\b/i.test(String(t.confidence || ""))
-    }));
-    if (!placePending(bets, row)) {
-      if (lawBlock) { if (note) note.textContent = lawBlock; paintLawWarn(); return; }
-      already += 1;
-      return;
-    }
-    added += 1;
+      book: bookForPrice(t.sport, t.slip, t.odds, t.date) || book,
+      notes: shark.name + (t.confidence ? ". " + t.confidence + (t.confidencePct ? " " + t.confidencePct + "%" : "") : ""),
+      edge: /^high\b/i.test(String(t.confidence || "")),
+      game: t.game || ""
+    });
+    if (betSlip.length > before) added += 1;
   });
-  if (added) save(bets);
-  else if (already && !lawBlock) { render(); }
-  if (note) note.textContent = added
-    ? "Added " + added + " of " + shark.name + "'s games to Slips. Started and final games were left off." + (already ? " " + already + " were already there." : "")
-    : shark.name + "'s remaining games are already on Slips.";
+  const msg = added
+    ? "Added " + added + " of " + shark.name + "'s games to the Bet Slip. Started and final games were left off."
+    : shark.name + "'s open games are already on the Bet Slip.";
+  if (note) note.textContent = msg;
+  if (slipNote) slipNote.textContent = msg;
 }
 function sharpPaint(card, book){
   const board = document.getElementById("sharkboard");
