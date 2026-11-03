@@ -5070,12 +5070,12 @@ function savedBoard(){
 }
 function blockHasLines(block){
   if (!block) return false;
-  return ["h2h","spreads","totals"].some(market => (block[market] || []).some(row => row && row.label && Object.keys(row.books || {}).some(book => row.books[book] && row.books[book] !== "-")));
+  return ["h2h","spreads","totals"].some(market => (block[market] || []).some(row => row && row.label && Object.keys(row.books || {}).some(book => row.books[book] && row.books[book] !== "-" && row.books[book] !== "No ML")));
 }
 function boardPriceCount(block){
   let n = 0;
   ["h2h","spreads","totals"].forEach(market => (block && block[market] || []).forEach(row => {
-    Object.keys(row && row.books || {}).forEach(book => { if (row.books[book] && row.books[book] !== "-") n += 1; });
+    Object.keys(row && row.books || {}).forEach(book => { if (row.books[book] && row.books[book] !== "-" && row.books[book] !== "No ML") n += 1; });
   }));
   return n;
 }
@@ -5169,6 +5169,11 @@ function mergeBoardRows(day, market, rows, quiet){
     prev.books = prev.books || {};
     Object.keys(row.books || {}).forEach(book => {
       const val = row.books[book];
+      if (market === "h2h" && book === "Caesars") {
+        const had = prev.books.Caesars;
+        const kept = caesarsMoneyPair(had);
+        if (kept && (!caesarsMoneyPair(val) || rowAlreadyStarted(prev))) return;
+      }
       if (val && val !== "-") prev.books[book] = val;
     });
     if (row.start && !prev.start) prev.start = row.start;
@@ -5295,6 +5300,11 @@ function liveBookCell(market, game, bookmaker){
   const mk = (bookmaker.markets || []).find(m => m.key === market);
   const outs = (mk && mk.outcomes) || [];
   const named = name => outs.find(o => o && o.name === name) || outs.find(o => o && sameClub(o.name, name));
+  if (market === "h2h" && bookmaker.key === "williamhill_us") {
+    const side = caesarsMoneySides(outs, game.away_team, game.home_team);
+    if (!side.away || !side.home || side.away === side.home) return "-";
+    return signedQuote(side.away.price) + " / " + signedQuote(side.home.price);
+  }
   if (market === "h2h") {
     const side = moneySides(outs, game.away_team, game.home_team);
     let away = side.away, home = side.home;
@@ -5320,16 +5330,52 @@ function rowsFromLive(games, day, market){
     const books = {};
     Object.keys(BOOK_KEY).forEach(name => {
       const bk = (g.bookmakers || []).find(b => b.key === BOOK_KEY[name]);
-      books[name] = liveBookCell(market, g, bk);
+      books[name] = name === "Caesars" && market === "h2h" ? caesarsH2hCell(g, bk) : liveBookCell(market, g, bk);
     });
     return {sport: g._sport, label: g.away_team + " at " + g.home_team, start: g.commence_time, books: books};
   }).sort((a, b) => sportRank(a.sport) - sportRank(b.sport) || String(a.start).localeCompare(String(b.start)) || a.label.localeCompare(b.label));
+}
+function caesarsMoneyPair(val){
+  const text = String(val || "");
+  return text !== "" && text !== "-" && text !== "No ML" && text.indexOf("/") >= 0 && /[+-]?\d/.test(text);
+}
+function rowAlreadyStarted(row){
+  const ms = Date.parse(row && row.start || "");
+  return Number.isFinite(ms) && ms <= Date.now();
+}
+function caesarsNameHits(outcomeName, teamName){
+  if (!outcomeName || !teamName) return false;
+  if (outcomeName === teamName || sameClub(outcomeName, teamName)) return true;
+  const words = s => String(s || "").toLowerCase().replace(/[^a-z0-9&]/g, " ").split(/\s+/).filter(Boolean);
+  const hit = (x, y) => x === y || (x.length >= 3 && (y.indexOf(x) === 0 || x.indexOf(y) === 0)) || (x === "oh" && y === "ohio") || (y === "oh" && x === "ohio");
+  const ow = words(outcomeName), tw = words(teamName);
+  if (!ow.length || !tw.length) return false;
+  return ow.every(w => tw.some(t => hit(w, t))) && ow.some(w => w.length >= 4 || tw.indexOf(w) >= 0);
+}
+function caesarsMoneySides(outs, awayName, homeName){
+  const plain = (outs || []).filter(o => o && o.name && !/^(over|under|draw|tie)$/i.test(String(o.name)) && toAmerican(o.price) != null);
+  const awayHits = plain.filter(o => caesarsNameHits(o.name, awayName) && !caesarsNameHits(o.name, homeName));
+  const homeHits = plain.filter(o => caesarsNameHits(o.name, homeName) && !caesarsNameHits(o.name, awayName));
+  if (awayHits.length === 1 && homeHits.length === 1 && awayHits[0] !== homeHits[0]) return {away: awayHits[0], home: homeHits[0]};
+  return {away: null, home: null};
+}
+function caesarsH2hCell(game, bookmaker){
+  const cell = liveBookCell("h2h", game, bookmaker);
+  if (cell !== "-") return cell;
+  if (!bookmaker) return "-";
+  const ml = (bookmaker.markets || []).find(m => m.key === "h2h");
+  const posted = ((ml && ml.outcomes) || []).filter(o => o && toAmerican(o.price) != null && !/^(over|under|draw|tie)$/i.test(String(o.name || "")));
+  if (posted.length) return "-";
+  const spread = liveBookCell("spreads", game, bookmaker);
+  const total = liveBookCell("totals", game, bookmaker);
+  if ((spread && spread !== "-") || (total && total !== "-")) return "No ML";
+  return "-";
 }
 function caesarsMoneylineReady(game){
   const bk = ((game && game.bookmakers) || []).find(b => b.key === "williamhill_us");
   if (!bk) return false;
   const ml = (bk.markets || []).find(m => m.key === "h2h");
-  const side = moneySides((ml && ml.outcomes) || [], game.away_team, game.home_team);
+  const side = caesarsMoneySides((ml && ml.outcomes) || [], game.away_team, game.home_team);
   return !!(side.away && side.home);
 }
 function attachMarket(dest, srcBk, market){
@@ -5360,42 +5406,72 @@ async function fillSportMoneyline(list, sport, key){
   const extra = await oddsJson(url);
   (Array.isArray(extra) ? extra : []).forEach(src => {
     const dest = list.find(g => g.id && g.id === src.id) || list.find(g => g.away_team === src.away_team && g.home_team === src.home_team);
-    ((src && src.bookmakers) || []).forEach(bk => attachMarket(dest, bk, "h2h"));
+    ((src && src.bookmakers) || []).forEach(bk => {
+      if (bk.key === "williamhill_us" && dest && caesarsMoneylineReady(dest)) return;
+      attachMarket(dest, bk, "h2h");
+    });
+  });
+}
+async function oddsMeta(url){
+  let res;
+  try { res = await fetch(url); }
+  catch (e) {
+    try { res = await fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(url)); }
+    catch (err) { return {failed: true, low: false, games: null, game: null}; }
+  }
+  if (!res || !res.ok) return {failed: true, low: !!(res && (res.status === 401 || res.status === 429)), games: null, game: null};
+  const left = Number(res.headers && res.headers.get && res.headers.get("x-requests-remaining"));
+  const low = Number.isFinite(left) && left <= 2;
+  let data = null;
+  try { data = await res.json(); }
+  catch (e) { return {failed: true, low: low, games: null, game: null}; }
+  if (Array.isArray(data)) return {failed: false, low: low, games: data, game: null};
+  if (data && typeof data === "object") return {failed: false, low: low, games: null, game: data};
+  return {failed: true, low: low, games: null, game: null};
+}
+function parkCaesarsMl(list, games){
+  (Array.isArray(games) ? games : []).forEach(src => {
+    const dest = (list || []).find(g => g.id && g.id === src.id) || (list || []).find(g => g.away_team === src.away_team && g.home_team === src.home_team);
+    attachCaesarsMl(dest, ((src && src.bookmakers) || []).find(b => b.key === "williamhill_us"));
   });
 }
 async function fillCaesarsMoneyline(list, sport, key){
-  if (!list || !list.length || !SPORT_KEY[sport]) return;
-  const missing = () => list.filter(g => g && g.id && (sport === "CBB" ? Object.values(BOOK_KEY).some(bookKey => {
-    const bk = (g.bookmakers || []).find(b => b.key === bookKey);
-    const ml = bk && (bk.markets || []).find(m => m.key === "h2h");
-    const side = moneySides((ml && ml.outcomes) || [], g.away_team, g.home_team);
-    return !(side.away && side.home);
-  }) : !caesarsMoneylineReady(g)));
-  if (!missing().length) return;
-  const bulkUrl = "https://api.the-odds-api.com/v4/sports/" + SPORT_KEY[sport] + "/odds?apiKey=" + encodeURIComponent(key) + "&markets=h2h&oddsFormat=american&bookmakers=williamhill_us";
-  const extra = await oddsJson(bulkUrl);
-  (Array.isArray(extra) ? extra : []).forEach(src => {
-    const dest = list.find(g => g.id && g.id === src.id) || list.find(g => g.away_team === src.away_team && g.home_team === src.home_team);
-    attachCaesarsMl(dest, ((src && src.bookmakers) || []).find(b => b.key === "williamhill_us"));
-  });
-  const left = missing().slice(0, sport === "CBB" ? 80 : 40);
-  for (let i = 0; i < left.length; i += 4) {
-    const batch = left.slice(i, i + 4);
+  const out = {failed: false, low: false};
+  if (!list || !list.length || !SPORT_KEY[sport]) return out;
+  const missing = list.filter(g => g && g.id && !caesarsMoneylineReady(g)).slice(0, 8);
+  for (let i = 0; i < missing.length; i += 4) {
+    if (out.low) break;
+    const batch = missing.slice(i, i + 4);
     await Promise.all(batch.map(async g => {
-      const books = sport === "CBB" ? Object.values(BOOK_KEY).join(",") : "williamhill_us";
-      const url = "https://api.the-odds-api.com/v4/sports/" + SPORT_KEY[sport] + "/events/" + encodeURIComponent(g.id) + "/odds?apiKey=" + encodeURIComponent(key) + "&markets=h2h&oddsFormat=american&bookmakers=" + books;
-      const one = await oddsJson(url);
-      if (sport === "CBB") ((one && one.bookmakers) || []).forEach(bk => attachMarket(g, bk, "h2h"));
-      else attachCaesarsMl(g, ((one && one.bookmakers) || []).find(b => b.key === "williamhill_us"));
+      if (out.low) return;
+      const url = "https://api.the-odds-api.com/v4/sports/" + SPORT_KEY[sport] + "/events/" + encodeURIComponent(g.id) + "/odds?apiKey=" + encodeURIComponent(key) + "&markets=h2h&oddsFormat=american&bookmakers=williamhill_us";
+      const one = await oddsMeta(url);
+      if (one.failed) out.failed = true;
+      if (one.low) out.low = true;
+      const books = (one.game && one.game.bookmakers) || (one.games && one.games[0] && one.games[0].bookmakers) || [];
+      const bk = books.find(b => b.key === "williamhill_us");
+      if (bk) attachCaesarsMl(g, bk);
     }));
   }
+  return out;
 }
 async function pullLiveBoard(key, sports){
   const ids = Object.values(BOOK_KEY).join(",");
   const games = [];
   const failed = [];
+  let caesarsNote = false;
   const list = sports && sports.length ? sports : Object.keys(SPORT_KEY);
   for (const sport of list) {
+    let caesarsLow = false;
+    let caesarsGames = null;
+    let caesarsMissed = false;
+    if (SPORT_KEY[sport]) {
+      const firstUrl = "https://api.the-odds-api.com/v4/sports/" + SPORT_KEY[sport] + "/odds?apiKey=" + encodeURIComponent(key) + "&markets=h2h&oddsFormat=american&bookmakers=williamhill_us";
+      const first = await oddsMeta(firstUrl);
+      caesarsGames = first.games;
+      caesarsLow = !!first.low;
+      caesarsMissed = !!(first.failed || first.low);
+    }
     const markets = "h2h,spreads,totals";
     const url = "https://api.the-odds-api.com/v4/sports/" + SPORT_KEY[sport] + "/odds?apiKey=" + encodeURIComponent(key) + "&regions=us,us2&markets=" + markets + "&oddsFormat=american&bookmakers=" + ids;
     let res;
@@ -5409,14 +5485,20 @@ async function pullLiveBoard(key, sports){
     try { list = await res.json(); }
     catch (e) { failed.push(sport); continue; }
     if (!Array.isArray(list)) list = [];
+    if (Array.isArray(caesarsGames)) parkCaesarsMl(list, caesarsGames);
     if (sport === "CBB") await fillSportMoneyline(list, sport, key);
-    await fillCaesarsMoneyline(list, sport, key);
+    if (!caesarsLow) {
+      const more = await fillCaesarsMoneyline(list, sport, key);
+      if (more && (more.failed || more.low)) caesarsMissed = true;
+    }
+    if (caesarsMissed && list.some(g => !caesarsMoneylineReady(g))) caesarsNote = true;
     list.forEach(g => { g._sport = sport; games.push(g); });
     try {
       sessionStorage.setItem("gg-odds-all-" + SPORT_KEY[sport], JSON.stringify({at: Date.now(), games: list}));
     } catch (e) {}
   }
   games.failed = failed;
+  games.caesarsNote = caesarsNote;
   return games;
 }
 function savedLiveBoard(){
@@ -9471,6 +9553,10 @@ function mgmOpen(g, market, day, book, names){
   const row = g.markets && g.markets[market];
   const posted = (row && row.books) || {};
   const text = posted[book];
+  if (text === "No ML") {
+    const mark = "<span class='mgm-odd empty' title='Caesars has no moneyline'><b>No ML</b><span></span></span>";
+    return [mark, mark];
+  }
   const sides = text && text !== "-" ? shopSides(text) : null;
   const flags = sides ? ((bestPriceFlags(posted, names)[book]) || [false, false]) : [false, false];
   if (!sides) return [mgmLock("Not posted"), mgmLock("Not posted")];
@@ -10585,6 +10671,7 @@ async function loadGameDay(day, books){
     if (key) {
       const live = await pullLiveBoard(key);
       ["h2h","spreads","totals"].forEach(market => mergeBoardRows(day, market, rowsFromLive(live, day, market)));
+      if (live && live.caesarsNote) setGameNote("Caesars moneyline did not come back.");
     }
   }
   if (usableBoard(window.__ggOddsBoard)) storeOddsBoard(window.__ggOddsBoard);
