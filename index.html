@@ -7973,7 +7973,8 @@ async function scoreboard(sport, date){
     const status = (comp.status && comp.status.type) || {};
     const posted = espnBoardLines((comp.odds || [])[0]);
     const venue = comp.venue || {};
-    return {sport, date: day, id: ev.id, final: status.completed === true || /final/i.test(status.name || status.description || ""), postponed: /postpon|cancel|delay/i.test(status.name || ""), live: status.state === "in", detail: status.shortDetail || status.detail || "", home: home, away: away, homeScore: Number(homeSide.score), awayScore: Number(awaySide.score), start: Date.parse(ev.date || ""), lineBook: posted && posted.book, lines: posted && posted.lines, venue: venue.fullName || "", indoor: venue.indoor === true};
+    const state = String(status.state || "");
+    return {sport, date: day, id: ev.id, final: state === "post" && (status.completed === true || /final/i.test(status.name || status.description || "")), postponed: /postpon|cancel|delay/i.test(status.name || ""), live: status.state === "in", detail: status.shortDetail || status.detail || "", home: home, away: away, homeScore: Number(homeSide.score), awayScore: Number(awaySide.score), start: Date.parse(ev.date || ""), lineBook: posted && posted.book, lines: posted && posted.lines, venue: venue.fullName || "", indoor: venue.indoor === true};
   }).filter(g => {
     if (!g.home.displayName || !g.away.displayName || seen.has(g.id)) return false;
     seen.add(g.id);
@@ -11319,7 +11320,7 @@ function slipScoreHtml(game){
   return esc(slipTeamTag(game.away)) + " " + away + aW + " — " + esc(slipTeamTag(game.home)) + " " + home + hW;
 }
 function slipScoreCell(b){
-  if (!b || betType(b) === "Prop") return "—";
+  if (!b || b.result === "pending" || betType(b) === "Prop") return "—";
   const seen = [];
   const bits = [];
   slipLegBoards(b).forEach(row => {
