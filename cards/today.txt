@@ -1,4 +1,4 @@
-# file: GG-CARD-2026-10-31
-2026-10-31 | CFB | side | USC +6.5 | -110 | made -1.2, book -6.5, gap 5.3, reason confirmed starter change Julian Sayin out Luke Fahey starting not fully priced, turnover USC negative by 2 bench Fahey backup, Edge
-2026-10-31 | NBA | No Picks
-2026-10-31 | NHL | No Picks
+# file: GG-CARD-2026-11-03
+2026-11-03 | CBB | Side | Stetson +16.5 | -110 | made -5.0, book -16.5, gap 11.5, reason back-to-back. Turnover line: Stetson 9 TO last game vs Clemson 8. Bench line: Magnus Entenmann second scorer. Edge.
+2026-11-03 | CFB | No Picks
+2026-11-03 | NHL | No Picks
