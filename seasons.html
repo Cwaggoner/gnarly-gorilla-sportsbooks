@@ -6539,16 +6539,64 @@ function slipRow(picked){
     legs: picked
   };
 }
-document.getElementById("sgpadd").onclick = () => {
+function scorePool(){
+  return (window.__slipGames || []).concat(window.__gameScores || []);
+}
+function matchedScore(leg, pool){
+  const sport = String(leg && leg.sport || "").toUpperCase();
+  const games = (pool || scorePool()).filter(g => g && (!sport || String(g.sport || "").toUpperCase() === sport));
+  const pick = [leg && leg.game, leg && leg.pick].filter(Boolean).join(" ");
+  return findFinalGame(games, pick) || findFinalGame(games, String(leg && leg.pick || ""));
+}
+async function ensureLegScore(leg){
+  const have = matchedScore(leg);
+  const started = have && Number(have.start) && have.start <= Date.now();
+  if (have && (have.final || !started)) return have;
+  const sport = String(leg && leg.sport || "").toUpperCase();
+  if (!SCORE_FEED[sport]) return have || null;
+  const day = String(slipGameDate(leg) || (leg && leg.date) || easternDay()).slice(0, 10);
+  const rows = await scoreboard(sport, day).catch(() => []);
+  if (rows.length) {
+    const next = (window.__gameScores || []).slice();
+    rows.forEach(g => {
+      if (!g) return;
+      const at = g.id ? next.findIndex(x => x && x.id === g.id) : -1;
+      if (at >= 0) next[at] = g;
+      else next.push(g);
+    });
+    window.__gameScores = next;
+    window.__gameScoresAt = Date.now();
+  }
+  return matchedScore(leg, rows) || have || null;
+}
+async function legIsFinal(leg){
+  const game = await ensureLegScore(leg);
+  if (game) return !!game.final;
+  return slipGameFinished({date: slipGameDate(leg), sport: leg && leg.sport, pick: [leg && leg.game, leg && leg.pick].filter(Boolean).join(" ")});
+}
+function finalSlipNote(legs){
+  const names = (legs || []).map(leg => leg.pick || leg.game).filter(Boolean);
+  if (names.length === 1) return names[0] + " is final. It was not added to Slips.";
+  return names.length + " games are final. They were not added to Slips.";
+}
+document.getElementById("sgpadd").onclick = async () => {
   const picked = slipTicket();
   const note = document.getElementById("sgpprice");
   const mode = slipMode();
-  if (!picked.length) return;
+  const btn = document.getElementById("sgpadd");
+  if (!picked.length || (btn && btn.dataset.busy)) return;
+  if (btn) btn.dataset.busy = "1";
   dupSlipId = "";
+  try {
+  const finals = [];
+  for (let i = 0; i < picked.length; i++) { if (await legIsFinal(picked[i])) finals.push(picked[i]); }
+  const open = picked.filter(leg => finals.indexOf(leg) < 0);
+  if (!open.length) { if (note) note.textContent = finalSlipNote(finals); return; }
+  if (mode !== "single" && finals.length) { if (note) note.textContent = finalSlipNote(finals); return; }
   if (mode === "single") {
     const bets = load();
     let added = 0, skipped = 0, firstId = "";
-    picked.forEach(leg => {
+    open.forEach(leg => {
       const row = stampPlaced(markEdge({
         id: Date.now() + Math.random(),
         date: slipGameDate(leg),
@@ -6574,7 +6622,7 @@ document.getElementById("sgpadd").onclick = () => {
       return;
     }
     save(bets);
-    if (note) note.textContent = "Added " + added + " single" + (added === 1 ? "" : "s") + " to Slips." + (skipped ? " " + skipped + " already on the Slips table" + pinDateNote() + "." : " Nothing was sent to a sportsbook.");
+    if (note) note.textContent = "Added " + added + " single" + (added === 1 ? "" : "s") + " to Slips." + (skipped ? " " + skipped + " already on the Slips table" + pinDateNote() + "." : " Nothing was sent to a sportsbook.") + (finals.length ? " " + finalSlipNote(finals) : "");
     landOnSlip(firstId);
     return;
   }
@@ -6604,6 +6652,9 @@ document.getElementById("sgpadd").onclick = () => {
   save(bets);
   if (note) note.textContent = "Added to Slips. Nothing was sent to a sportsbook. " + row.pick + " at " + (built.odds > 0 ? "+" : "") + built.odds + ".";
   landOnSlip(row.id);
+  } finally {
+    if (btn) delete btn.dataset.busy;
+  }
 };
 const slipModeEl = document.getElementById("slipmode");
 if (slipModeEl) slipModeEl.onchange = paintSlip;
