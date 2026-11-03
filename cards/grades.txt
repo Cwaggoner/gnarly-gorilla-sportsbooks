@@ -1,4 +1,11 @@
 # file: grades
+2026-11-02 | RANGE | All Win 0.00 | All Lose -0.00
+2026-11-02 | NBA | No Picks
+2026-11-02 | NFL | No Picks
+2026-11-02 | NHL | No Picks
+2026-11-02 | CFB | No Picks
+2026-11-02 | CBB | No Picks
+2026-11-02 | MLB | Season Ended
 2026-11-01 | RANGE | All Win 0.00 | All Lose -0.00
 2026-11-01 | NBA | No Picks
 2026-11-01 | NFL | No Picks
