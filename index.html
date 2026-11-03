@@ -5343,12 +5343,22 @@ function rowAlreadyStarted(row){
   const ms = Date.parse(row && row.start || "");
   return Number.isFinite(ms) && ms <= Date.now();
 }
+function caesarsWords(s){
+  let raw = String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  raw = raw.replace(/\bole miss\b/g, "mississippi").replace(/\buconn\b/g, "connecticut").replace(/\bpitt\b/g, "pittsburgh").replace(/\bst\.?\b/g, "saint");
+  const alias = {la: ["los", "angeles"], ny: ["new", "york"], nj: ["new", "jersey"], tb: ["tampa", "bay"], mt: ["mount"], ft: ["fort"]};
+  const out = [];
+  raw.replace(/&/g, " and ").replace(/[^a-z0-9]/g, " ").split(/\s+/).filter(Boolean).forEach(w => {
+    if (alias[w]) out.push.apply(out, alias[w]);
+    else out.push(w);
+  });
+  return out;
+}
 function caesarsNameHits(outcomeName, teamName){
   if (!outcomeName || !teamName) return false;
   if (outcomeName === teamName || sameClub(outcomeName, teamName)) return true;
-  const words = s => String(s || "").toLowerCase().replace(/[^a-z0-9&]/g, " ").split(/\s+/).filter(Boolean);
   const hit = (x, y) => x === y || (x.length >= 3 && (y.indexOf(x) === 0 || x.indexOf(y) === 0)) || (x === "oh" && y === "ohio") || (y === "oh" && x === "ohio");
-  const ow = words(outcomeName), tw = words(teamName);
+  const ow = caesarsWords(outcomeName), tw = caesarsWords(teamName);
   if (!ow.length || !tw.length) return false;
   return ow.every(w => tw.some(t => hit(w, t))) && ow.some(w => w.length >= 4 || tw.indexOf(w) >= 0);
 }
@@ -5435,16 +5445,16 @@ function parkCaesarsMl(list, games){
     attachCaesarsMl(dest, ((src && src.bookmakers) || []).find(b => b.key === "williamhill_us"));
   });
 }
-async function fillCaesarsMoneyline(list, sport, key){
+async function fillCaesarsMoneyline(list, sportKey, key){
   const out = {failed: false, low: false};
-  if (!list || !list.length || !SPORT_KEY[sport]) return out;
-  const missing = list.filter(g => g && g.id && !caesarsMoneylineReady(g)).slice(0, 8);
+  if (!list || !list.length || !sportKey) return out;
+  const missing = list.filter(g => g && g.id && !caesarsMoneylineReady(g));
   for (let i = 0; i < missing.length; i += 4) {
     if (out.low) break;
     const batch = missing.slice(i, i + 4);
     await Promise.all(batch.map(async g => {
       if (out.low) return;
-      const url = "https://api.the-odds-api.com/v4/sports/" + SPORT_KEY[sport] + "/events/" + encodeURIComponent(g.id) + "/odds?apiKey=" + encodeURIComponent(key) + "&markets=h2h&oddsFormat=american&bookmakers=williamhill_us";
+      const url = "https://api.the-odds-api.com/v4/sports/" + sportKey + "/events/" + encodeURIComponent(g.id) + "/odds?apiKey=" + encodeURIComponent(key) + "&regions=us&markets=h2h&oddsFormat=american&bookmakers=williamhill_us";
       const one = await oddsMeta(url);
       if (one.failed) out.failed = true;
       if (one.low) out.low = true;
@@ -5466,7 +5476,7 @@ async function pullLiveBoard(key, sports){
     let caesarsGames = null;
     let caesarsMissed = false;
     if (SPORT_KEY[sport]) {
-      const firstUrl = "https://api.the-odds-api.com/v4/sports/" + SPORT_KEY[sport] + "/odds?apiKey=" + encodeURIComponent(key) + "&markets=h2h&oddsFormat=american&bookmakers=williamhill_us";
+      const firstUrl = "https://api.the-odds-api.com/v4/sports/" + SPORT_KEY[sport] + "/odds?apiKey=" + encodeURIComponent(key) + "&regions=us&markets=h2h&oddsFormat=american&bookmakers=williamhill_us";
       const first = await oddsMeta(firstUrl);
       caesarsGames = first.games;
       caesarsLow = !!first.low;
@@ -5488,7 +5498,7 @@ async function pullLiveBoard(key, sports){
     if (Array.isArray(caesarsGames)) parkCaesarsMl(list, caesarsGames);
     if (sport === "CBB") await fillSportMoneyline(list, sport, key);
     if (!caesarsLow) {
-      const more = await fillCaesarsMoneyline(list, sport, key);
+      const more = await fillCaesarsMoneyline(list, SPORT_KEY[sport], key);
       if (more && (more.failed || more.low)) caesarsMissed = true;
     }
     if (caesarsMissed && list.some(g => !caesarsMoneylineReady(g))) caesarsNote = true;
@@ -6946,6 +6956,12 @@ async function fetchOne(sportKey, bookKey, key, fresh){
   catch (e) { res = await fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(url)); }
   if (!res.ok) throw new Error("Odds feed returned " + res.status);
   const games = await res.json();
+  if (Array.isArray(games) && games.length) {
+    const caesarsUrl = "https://api.the-odds-api.com/v4/sports/" + sportKey + "/odds?apiKey=" + encodeURIComponent(key) + "&regions=us&markets=h2h&oddsFormat=american&bookmakers=williamhill_us";
+    const caesars = await oddsMeta(caesarsUrl);
+    if (Array.isArray(caesars.games)) parkCaesarsMl(games, caesars.games);
+    if (!caesars.low) await fillCaesarsMoneyline(games, sportKey, key);
+  }
   if (games && games.length) {
     const pack = JSON.stringify({at: Date.now(), games});
     sessionStorage.setItem(allKey, pack);
