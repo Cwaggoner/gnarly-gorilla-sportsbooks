@@ -292,3 +292,4 @@
 2026-10-31 | CFB | -108 | Minnesota +20.5 at Indiana | -108
 2026-10-31 | CFB | -102 | Rutgers +16.5 vs Michigan | -102
 2026-10-31 | CFB | -110 | USC +6.5 | -110
+2026-11-03 | CBB | -110 | Stetson +16.5 | -115
