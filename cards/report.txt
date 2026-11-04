@@ -1,11 +1,11 @@
-# GG report 2026-11-03
-# Yesterday 2026-11-02 graded. Record 0-0-0. Profit $0.00. CLV No Close Saved.
+# GG report 2026-11-04
+# Yesterday 2026-11-03 graded. Record 0-1-0. Profit -$10.00. CLV Matched Bet Price.
 
-Analysis: No picks posted for NBA, NFL, NHL, CFB, CBB. MLB Season Ended. No slips to grade. No closes required.
+Analysis: CBB Stetson +16.5 lost 81-55. Close -115. EDGE noted on card. No other slips. CFB, NHL, NBA, NFL No Picks. MLB Season Ended.
 
-2026-11-02 | NBA | No Picks
-2026-11-02 | NFL | No Picks
-2026-11-02 | NHL | No Picks
-2026-11-02 | CFB | No Picks
-2026-11-02 | CBB | No Picks
-2026-11-02 | MLB | Season Ended
+2026-11-03 | CBB | Stetson +16.5 | close -115 | loss | 81-55 | -10.00 EDGE
+2026-11-03 | CFB | No Picks
+2026-11-03 | NHL | No Picks
+2026-11-03 | NBA | No Picks
+2026-11-03 | NFL | No Picks
+2026-11-03 | MLB | Season Ended
