@@ -1,5 +1,6 @@
-# file: GG-CARD-2026-11-04
-2026-11-04 | CBB | No Picks
-2026-11-04 | CFB | No Picks
-2026-11-04 | NBA | No Picks
-2026-11-04 | NHL | No Picks
+# file: GG-CARD-2026-11-05
+2026-11-05 | CBB | Spread | Wake Forest +17.5 | -110 | made -3, book -17.5, gap 14.5, reason injury Gabe Nesmith out ankle surgery possible season not fully priced. Edge. Turnover line: Wake 11 TO last, Vandy 14 TO. Bench: Placide second scorer, Tanner lead.
+2026-11-05 | CFB | No Picks
+2026-11-05 | NBA | No Picks
+2026-11-05 | NFL | No Picks
+2026-11-05 | NHL | ML | Chicago Blackhawks +320 | made +253, book +320, gap 67, reason back-to-back, Edge
