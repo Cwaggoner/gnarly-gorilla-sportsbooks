@@ -5860,7 +5860,9 @@ function sideHit(pick, team){
   return pickWords.some(w => teamWords.some(t => w === t || (w.length >= 4 && t.length >= 4 && (t.indexOf(w) === 0 || w.indexOf(t) === 0))));
 }
 function nickHit(pick, team){
-  const words = String(team || "").toLowerCase().replace(/[^a-z0-9]/g, " ").split(/\s+/).filter(Boolean);
+  const club = {bos:"boston celtics",bkn:"brooklyn nets",cha:"charlotte hornets",chi:"chicago bulls",cle:"cleveland cavaliers",dal:"dallas mavericks",den:"denver nuggets",det:"detroit pistons",gsw:"golden state warriors",hou:"houston rockets",ind:"indiana pacers",lac:"los angeles clippers",lal:"los angeles lakers",mem:"memphis grizzlies",mia:"miami heat",mil:"milwaukee bucks",min:"minnesota timberwolves",nop:"new orleans pelicans",ny:"new york knicks",nyk:"new york knicks",okc:"oklahoma city thunder",orl:"orlando magic",phi:"philadelphia 76ers",phx:"phoenix suns",por:"portland trail blazers",sac:"sacramento kings",sas:"san antonio spurs",sa:"san antonio spurs",tor:"toronto raptors",uta:"utah jazz",was:"washington wizards",wsh:"washington wizards"};
+  const raw = String(team || "").toLowerCase().replace(/[^a-z0-9]/g, " ").replace(/\s+/g, " ").trim();
+  const words = String(club[raw] || raw).split(" ").filter(Boolean);
   const nick = words[words.length - 1] || "";
   if (nick && nick.length >= 4 && sideHit(pick, nick)) return true;
   const skip = /^(los|angeles|new|san|golden|state|oklahoma|city|trail)$/;
@@ -5917,7 +5919,8 @@ function quotedClose(slip, book){
   const games = (((bookCloses.days || {})[String(slip.date || "").slice(0, 10)] || {})[String(slip.sport || "").toUpperCase()]) || [];
   const nickBoth = games.filter(g => nickHit(slip.pick, g.away) && nickHit(slip.pick, g.home));
   const nickOne = games.filter(g => nickHit(slip.pick, g.away) || nickHit(slip.pick, g.home));
-  const game = nickBoth.length === 1 ? nickBoth[0] : (nickOne.length === 1 ? nickOne[0] : null);
+  const hits = nickBoth.length ? nickBoth : nickOne;
+  const game = hits.find(g => g.books && g.books[book]) || (hits.length === 1 ? hits[0] : null);
   const dk = game && game.books && game.books[book];
   if (!dk) return null;
   const type = slip.type || betType(slip);
@@ -6256,6 +6259,16 @@ async function pullSlipWindow(){
           const snaps = [open];
           let cursor = open;
           let guard = 0;
+          while (cursor && cursor.previous_timestamp && guard < 3) {
+            const prevMs = Date.parse(cursor.previous_timestamp);
+            if (!Number.isFinite(prevMs) || prevMs < startMs - 15 * 60000) break;
+            cursor = await oddsSnap(SPORT_KEY[sport], cursor.previous_timestamp, key, remain, true);
+            if (!cursor.cached) called++;
+            snaps.unshift(cursor);
+            guard++;
+          }
+          cursor = open;
+          guard = 0;
           while (cursor && cursor.next_timestamp && guard < 4) {
             const nextMs = Date.parse(cursor.next_timestamp);
             if (!Number.isFinite(nextMs) || nextMs > Date.now() + 15000 || nextMs > startMs + 15 * 60000) break;
@@ -6271,12 +6284,23 @@ async function pullSlipWindow(){
           list.forEach(g => {
             const id = day + "|" + sport + "|" + g.away_team + " at " + g.home_team;
             const liveOpen = findSnapGame(open, g);
-            const post = snaps.find(s => snapAt(s, start) >= startMs - 1000 && findSnapGame(s, g));
-            const atTip = snaps.find(s => {
+            const priced = snap => {
+              const row = findSnapGame(snap, g);
+              if (!row) return null;
+              const books = marketBundle(row).closes || {};
+              return Object.keys(books).length ? row : null;
+            };
+            const candidates = snaps.filter(s => {
               const ts = snapAt(s, start);
-              return ts >= startMs - 10 * 60000 && ts <= startMs + 1000 && findSnapGame(s, g);
+              return ts >= startMs - 15 * 60000 && ts <= startMs + 15 * 60000 && priced(s);
             });
-            const liveClose = (post && findSnapGame(post, g)) || (atTip && findSnapGame(atTip, g)) || null;
+            candidates.sort((a, b) => {
+              const aTs = snapAt(a, start), bTs = snapAt(b, start);
+              const aAfter = aTs >= startMs - 1000 ? 0 : 1;
+              const bAfter = bTs >= startMs - 1000 ? 0 : 1;
+              return aAfter - bAfter || Math.abs(aTs - startMs) - Math.abs(bTs - startMs);
+            });
+            const liveClose = candidates.length ? priced(candidates[0]) : null;
             if (liveOpen) { writeWindowOpen(pack, day, sport, liveOpen); opened++; }
             if (liveClose) { writeWindowClose(pack, day, sport, liveClose); closed++; }
             const wanted = sportSlips.filter(s => slipNamesGame(s, {away: g.away_team, home: g.home_team}, known) && !closeOnSlip(s));
