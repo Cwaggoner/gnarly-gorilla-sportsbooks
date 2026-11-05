@@ -293,3 +293,5 @@
 2026-10-31 | CFB | -102 | Rutgers +16.5 vs Michigan | -102
 2026-10-31 | CFB | -110 | USC +6.5 | -110
 2026-11-03 | CBB | -110 | Stetson +16.5 | -115
+2026-11-05 | CBB | -110 | Wake Forest +17.5 | -115
+2026-11-05 | NHL | 320 | Chicago Blackhawks +320 | 333
