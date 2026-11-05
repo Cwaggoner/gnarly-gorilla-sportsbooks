@@ -6074,10 +6074,10 @@ function slimSnapGame(g){
     }))
   };
 }
-async function oddsSnap(sportKey, iso, key, remain){
+async function oddsSnap(sportKey, iso, key, remain, force){
   const cache = snapCache();
   const id = sportKey + "|pin|" + iso;
-  if (cache[id] && cache[id].data) return Object.assign({cached: true}, cache[id]);
+  if (!force && cache[id] && cache[id].data) return Object.assign({cached: true}, cache[id]);
   const url = "https://api.the-odds-api.com/v4/historical/sports/" + sportKey + "/odds?apiKey=" + encodeURIComponent(key) + "&regions=us,us2&markets=spreads,totals,h2h&oddsFormat=american&bookmakers=betmgm,williamhill_us,draftkings,fanatics,fanduel,hardrockbet,pinnacle&date=" + encodeURIComponent(iso);
   const res = await fetch(url);
   if (remain) remain.n = res.headers.get("x-requests-remaining") || remain.n;
@@ -6139,6 +6139,27 @@ function writeWindowClose(pack, day, sport, g){
   if (!row) { row = {away: g.away_team, home: g.home_team, books: {}}; list.push(row); }
   Object.keys(built.closes).forEach(book => { row.books[book] = Object.assign({}, row.books[book] || {}, built.closes[book]); });
 }
+function closeOnSlip(s){
+  if (!s || s.type === "SGP" || /\band\b/i.test(String(s.pick || ""))) return true;
+  const q = quotedClose(s, s.book);
+  return !!(q && usableClose(q.price));
+}
+function snapHasClose(g, slip){
+  if (!g || !slip) return false;
+  const dk = (marketBundle(g).closes || {})[slip.book];
+  if (!dk) return false;
+  const type = slip.type || betType(slip);
+  if (type === "Total") {
+    if (!dk.total) return false;
+    const price = /under/i.test(slip.pick) ? dk.total.under : dk.total.over;
+    return price != null;
+  }
+  const side = (dk[type === "Moneyline" ? "h2h" : "spread"] || {});
+  const homeOn = sideHit(slip.pick, g.home_team);
+  const awayOn = sideHit(slip.pick, g.away_team);
+  const key = homeOn && !awayOn ? "home" : "away";
+  return !!(side[key] && side[key].price != null);
+}
 async function pullSlipWindow(){
   if (window.__ggPulling) return;
   window.__ggPulling = true;
@@ -6146,6 +6167,7 @@ async function pullSlipWindow(){
   try {
     const key = ((document.getElementById("oddskey") || {}).value || "").trim();
     fillMissingCloses(loadBookClosesLocal());
+    applyLineWindowCloses();
     const days = [yesterday(), easternDay()];
     const slips = slipsOnWindow();
     if (!slips.length) { note.textContent = "No slips on " + days[0] + " or " + days[1] + "."; return; }
@@ -6157,6 +6179,7 @@ async function pullSlipWindow(){
     let opened = 0, closed = 0, called = 0;
     const waiting = [];
     const missing = [];
+    const blank = [];
     for (const day of days) {
       const daySlips = slips.filter(b => String(b.date).slice(0, 10) === day);
       const daySports = [...new Set(daySlips.map(b => String(b.sport || "").toUpperCase()))];
@@ -6172,14 +6195,14 @@ async function pullSlipWindow(){
           let hit = list.find(item => item.away === row.away && item.home === row.home);
           if (!hit) { hit = {away: row.away, home: row.home, books: {}}; list.push(hit); }
           hit.books = Object.assign({}, hit.books || {}, row.books);
-          const ready = slipsHit.every(s => s.type === "SGP" || /\band\b/i.test(String(s.pick || "")) || row.books[s.book]);
+          const ready = slipsHit.every(s => closeOnSlip(s));
           if (ready && !(pack.done[id] || {}).close) {
             pack.done[id] = Object.assign({}, pack.done[id] || {}, {close: "frozen"});
             closed += slipsHit.filter(s => row.books[s.book]).length;
           }
         });
         let known = (((pack.games || {})[day] || {})[sport]) || [];
-        const covered = s => (((bookCloses.days || {})[day] || {})[sport] || []).some(row => row.books && row.books[s.book] && sideHit(s.pick, row.away) && sideHit(s.pick, row.home));
+        const covered = s => closeOnSlip(s);
         const unmatched = sportSlips.filter(s => !covered(s) && !known.some(g => sideHit(s.pick, g.away) || sideHit(s.pick, g.home)));
         if ((!known.length || unmatched.length) && key && sportSlips.some(s => !covered(s))) {
           const probe = await oddsSnap(SPORT_KEY[sport], day + "T16:00:00Z", key, remain);
@@ -6190,8 +6213,8 @@ async function pullSlipWindow(){
         const byStart = new Map();
         known.forEach(g => {
           const id = gameId(g);
-          if ((pack.done[id] || {}).close) return;
-          if (sportSlips.every(s => covered(s) || !(sideHit(s.pick, g.away) && sideHit(s.pick, g.home)))) return;
+          const need = sportSlips.filter(s => sideHit(s.pick, g.away) && sideHit(s.pick, g.home) && !closeOnSlip(s));
+          if ((pack.done[id] || {}).close === "absent" || !need.length) return;
           if (g.commence && Date.parse(g.commence) > Date.now() + 15000) { waiting.push(g.away + " at " + g.home); return; }
           const row = {away_team: g.away, home_team: g.home, commence_time: g.commence};
           const list = byStart.get(g.commence) || [];
@@ -6204,10 +6227,14 @@ async function pullSlipWindow(){
             continue;
           }
           if (!key) { list.forEach(g => missing.push(g.away_team + " at " + g.home_team)); continue; }
-          const open = await oddsSnap(SPORT_KEY[sport], start, key, remain);
+          let open = await oddsSnap(SPORT_KEY[sport], start, key, remain, false);
           if (!open.cached) called++;
+          if (!open.next_timestamp) {
+            open = await oddsSnap(SPORT_KEY[sport], start, key, remain, true);
+            if (!open.cached) called++;
+          }
           const next = open.next_timestamp;
-          const after = next && Date.parse(next) <= Date.now() + 15000 ? await oddsSnap(SPORT_KEY[sport], next, key, remain) : null;
+          const after = next && Date.parse(next) <= Date.now() + 15000 ? await oddsSnap(SPORT_KEY[sport], next, key, remain, true) : null;
           if (after && !after.cached) called++;
           list.forEach(g => {
             const id = day + "|" + sport + "|" + g.away_team + " at " + g.home_team;
@@ -6215,7 +6242,12 @@ async function pullSlipWindow(){
             const liveClose = after ? findSnapGame(after, g) : null;
             if (liveOpen) { writeWindowOpen(pack, day, sport, liveOpen); opened++; }
             if (liveClose) { writeWindowClose(pack, day, sport, liveClose); closed++; }
-            pack.done[id] = {open: liveOpen ? (open.timestamp || start) : "", close: liveClose ? (after.timestamp || next) : ""};
+            const wanted = sportSlips.filter(s => sideHit(s.pick, g.away_team) && sideHit(s.pick, g.home_team) && !closeOnSlip(s));
+            const left = wanted.filter(s => !(liveClose && snapHasClose(liveClose, s)));
+            const stamp = liveOpen ? (open.timestamp || start) : "";
+            if (wanted.length && !left.length) pack.done[id] = {open: stamp, close: (after && (after.timestamp || next)) || "closed"};
+            else if (after) { pack.done[id] = {open: stamp, close: "absent"}; left.forEach(s => blank.push(s.sport + " " + s.pick)); }
+            else pack.done[id] = {open: stamp, close: ""};
           });
         }
       }
@@ -6226,9 +6258,10 @@ async function pullSlipWindow(){
     const left = remain.n ? " Credits left " + remain.n + "." : "";
     const wait = waiting.length ? " Not started yet: " + [...new Set(waiting)].join(", ") + "." : "";
     const missed = missing.length ? " Still missing a close, and no key is saved: " + [...new Set(missing)].join(", ") + "." : "";
+    const holes = blank.length ? " The book did not post a close for: " + [...new Set(blank)].join(", ") + "." : "";
     const calls = called ? " Called " + called + " missing start" + (called === 1 ? "" : "s") + "." : " No new call.";
     const saved = "Used " + closed + " frozen closes.";
-    note.textContent = (!opened && !closed && !waiting.length && !missing.length ? "Today and yesterday are already saved." : saved + calls + wait + missed) + left + (stored ? "" : " Browser storage is full. The pull stays on this visit only.");
+    note.textContent = (!opened && !closed && !waiting.length && !missing.length && !blank.length ? "Today and yesterday are already saved." : saved + calls + wait + missed + holes) + left + (stored ? "" : " Browser storage is full. The pull stays on this visit only.");
   } catch (err) {
     if (note) note.textContent = (err && err.message) || "Pull failed.";
   } finally {
