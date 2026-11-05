@@ -283,7 +283,9 @@ th.th-center { text-align:center; }
 .card-prices { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
 .card-price { height:auto; text-align:left; color:#39ff14; cursor:pointer; }
 #todaycard .analysis-cell .card-prices { flex-direction:column; flex-wrap:nowrap; align-items:stretch; width:100%; }
-#todaycard .analysis-cell .card-price { width:100%; max-width:100%; box-sizing:border-box; display:block; white-space:normal; }
+#todaycard .analysis-cell .card-price { width:100%; max-width:100%; box-sizing:border-box; display:flex; justify-content:space-between; align-items:center; gap:12px; text-align:left; white-space:normal; }
+#todaycard .analysis-cell .card-pick { min-width:0; }
+#todaycard .analysis-cell .card-when { margin-left:auto; flex:0 0 auto; color:#d6ffd0; font-size:12px; white-space:nowrap; }
 .slip-row { display:flex; justify-content:space-between; gap:8px; align-items:center; border:1px solid #243024; border-radius:8px; padding:6px 8px; color:#d6ffd0; text-align:left; }
 .slip-row.edge { color:#f0e14a; }
 .slip-bet { flex:1 1 auto; min-width:0; }
@@ -1906,6 +1908,42 @@ function pendingCardRows(){
   const sports = {CBB:1, CFB:1, MLB:1, NBA:1, NFL:1, NHL:1};
   return load().filter(b => b && b.result === "pending" && !isNoPick(b) && sports[String(b.sport || "").toUpperCase()] && b.pick).map(b => [String(b.date || "").slice(0, 10) || easternDay(), String(b.sport).toUpperCase(), b.type || "Spread", b.pick, b.odds == null ? "" : String(b.odds), b.notes || (b.edge ? "Edge" : ""), b.book || ""]);
 }
+function pickStart(row){
+  const sport = String(row[1] || "").toUpperCase();
+  const pick = String(row[3] || "");
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(String(row[0] || "")) ? String(row[0]).slice(0, 10) : easternDay();
+  const slate = ((pickSlate && pickSlate.games) || []).concat((pickSlate && pickSlate.passed) || []).filter(g => String(g.sport || "").toUpperCase() === sport);
+  const ranked = slate.map(g => {
+    const sides = slateSides(g);
+    return {g: g, n: (nickHit(pick, sides.away.name) ? 1 : 0) + (nickHit(pick, sides.home.name) ? 1 : 0)};
+  }).filter(x => x.n).sort((a, b) => b.n - a.n);
+  if (ranked.length && (ranked.length === 1 || ranked[0].n > ranked[1].n)) {
+    const start = slateStart(ranked[0].g);
+    if (start) return start;
+  }
+  const day = window.__ggOddsBoard && window.__ggOddsBoard.days && window.__ggOddsBoard.days[date];
+  const board = (day ? ["h2h", "spreads", "totals"].flatMap(m => day[m] || []) : []).map(item => {
+    const parts = String(item.label || "").split(/\s+at\s+/i);
+    const n = (nickHit(pick, parts[0] || "") ? 1 : 0) + (nickHit(pick, parts[1] || "") ? 1 : 0);
+    return {item: item, n: n};
+  }).filter(x => x.n && x.item.start && (!x.item.sport || String(x.item.sport).toUpperCase() === sport)).sort((a, b) => b.n - a.n);
+  if (board.length && (board.length === 1 || board[0].n > board[1].n)) return board[0].item.start;
+  return "";
+}
+function pickWhen(row){
+  const start = pickStart(row);
+  if (start) {
+    const when = new Date(start);
+    if (!Number.isNaN(when.getTime())) {
+      const dateText = when.toLocaleDateString("en-US", {timeZone: siteZone(), weekday: "short", month: "short", day: "numeric"});
+      return dateText + ", " + formatTime(when, false);
+    }
+  }
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(String(row[0] || "")) ? String(row[0]).slice(0, 10) : "";
+  if (!date) return "";
+  const stamp = new Date(Date.UTC(Number(date.slice(0, 4)), Number(date.slice(5, 7)) - 1, Number(date.slice(8, 10)), 16));
+  return stamp.toLocaleDateString("en-US", {timeZone: "UTC", weekday: "short", month: "short", day: "numeric"});
+}
 function drawCardAnalysis(text){
   postedCard = text || "";
   const grid = document.getElementById("analysisgrid");
@@ -1957,7 +1995,8 @@ function drawCardAnalysis(text){
       const data = {sport: r[1], type: r[2] || "Spread", pick: r[3], odds: String(price), date: r[0], book: r[6] || "", edge: /edge/i.test(r[5] || "") ? "1" : "0"};
       const attrs = Object.keys(data).map(key => " data-" + key + "='" + encodeURIComponent(data[key]) + "'").join("");
       const shown = (price > 0 ? "+" : "") + price;
-      return "<button type='button' class='card-price'" + attrs + ">" + esc((r[6] ? r[6] + "  " : "") + r[3] + " " + shown) + "</button>";
+      const when = pickWhen(r);
+      return "<button type='button' class='card-price'" + attrs + "><span class='card-pick'>" + esc((r[6] ? r[6] + "  " : "") + r[3] + " " + shown) + "</span>" + (when ? "<span class='card-when'>" + esc(when) + "</span>" : "") + "</button>";
     }).join("");
     return "<div class='analysis-cell'><b>" + sport + "</b><div class='meta'>" + plays.length + " plays" + (books.length ? " · " + esc(books.join(", ")) : "") + (edges.length ? " · " + edges.length + " edge" + (edges.length === 1 ? "" : "s") : "") + "</div><p>" + sportLean(plays) + ". " + esc(note) + "</p><div class='card-prices'>" + buttons + "</div></div>";
   }).join("");
@@ -3837,11 +3876,12 @@ async function loadPickSlate(){
     const prev = pickSlate;
     pickSlate = data;
     await attachSlipGames();
-    if (!(pickSlate.games || []).length && !(pickSlate.passed || []).length) { later(() => { drawInjuryReport().catch(() => {}); }); return; }
+    if (!(pickSlate.games || []).length && !(pickSlate.passed || []).length) { if (postedCard && document.getElementById("analysisgrid")) drawCardAnalysis(postedCard); later(() => { drawInjuryReport().catch(() => {}); }); return; }
     const stamp = JSON.stringify([pickSlate.date, pickSlate.games, pickSlate.passed || []]);
     const same = prev && prev._stamp === stamp;
     pickSlate._stamp = stamp;
     later(() => { drawInjuryReport().catch(() => {}); });
+    if (postedCard && document.getElementById("analysisgrid")) drawCardAnalysis(postedCard);
     if (!same) drawCalendar();
     refreshSlateRecords().then(updated => { if (!same && !updated) drawPickSlate(); }).catch(() => { if (!same) drawPickSlate(); });
     armHourlyScores();
