@@ -5862,8 +5862,9 @@ function sideHit(pick, team){
 function nickHit(pick, team){
   const words = String(team || "").toLowerCase().replace(/[^a-z0-9]/g, " ").split(/\s+/).filter(Boolean);
   const nick = words[words.length - 1] || "";
-  if (!nick || nick.length < 4) return sideHit(pick, team);
-  return sideHit(pick, nick);
+  if (nick && nick.length >= 4 && sideHit(pick, nick)) return true;
+  const skip = /^(los|angeles|new|san|golden|state|oklahoma|city|trail)$/;
+  return words.some(w => w !== nick && w.length >= 4 && !skip.test(w) && sideHit(pick, w));
 }
 function bookPair(slip, book){
   let all = {};
@@ -6232,7 +6233,7 @@ async function pullSlipWindow(){
         known.forEach(g => {
           const id = gameId(g);
           const need = sportSlips.filter(s => slipNamesGame(s, g, known) && !closeOnSlip(s));
-          if ((pack.done[id] || {}).walked || !need.length) return;
+          if (!need.length) return;
           if (g.commence && Date.parse(g.commence) > Date.now() + 15000) { waiting.push(g.away + " at " + g.home); return; }
           const row = {away_team: g.away, home_team: g.home, commence_time: g.commence};
           const list = byStart.get(g.commence) || [];
@@ -6251,21 +6252,38 @@ async function pullSlipWindow(){
             open = await oddsSnap(SPORT_KEY[sport], start, key, remain, true);
             if (!open.cached) called++;
           }
-          const next = open.next_timestamp;
-          const after = next && Date.parse(next) <= Date.now() + 15000 ? await oddsSnap(SPORT_KEY[sport], next, key, remain, true) : null;
-          if (after && !after.cached) called++;
+          const startMs = Date.parse(start);
+          const snaps = [open];
+          let cursor = open;
+          let guard = 0;
+          while (cursor && cursor.next_timestamp && guard < 4) {
+            const nextMs = Date.parse(cursor.next_timestamp);
+            if (!Number.isFinite(nextMs) || nextMs > Date.now() + 15000 || nextMs > startMs + 15 * 60000) break;
+            cursor = await oddsSnap(SPORT_KEY[sport], cursor.next_timestamp, key, remain, true);
+            if (!cursor.cached) called++;
+            snaps.push(cursor);
+            guard++;
+          }
+          const snapAt = (snap, fallback) => {
+            const ms = Date.parse((snap && snap.timestamp) || fallback || "");
+            return Number.isFinite(ms) ? ms : NaN;
+          };
           list.forEach(g => {
             const id = day + "|" + sport + "|" + g.away_team + " at " + g.home_team;
             const liveOpen = findSnapGame(open, g);
-            const liveClose = after ? findSnapGame(after, g) : null;
+            const post = snaps.find(s => snapAt(s, start) >= startMs - 1000 && findSnapGame(s, g));
+            const atTip = snaps.find(s => {
+              const ts = snapAt(s, start);
+              return ts >= startMs - 10 * 60000 && ts <= startMs + 1000 && findSnapGame(s, g);
+            });
+            const liveClose = (post && findSnapGame(post, g)) || (atTip && findSnapGame(atTip, g)) || null;
             if (liveOpen) { writeWindowOpen(pack, day, sport, liveOpen); opened++; }
             if (liveClose) { writeWindowClose(pack, day, sport, liveClose); closed++; }
             const wanted = sportSlips.filter(s => slipNamesGame(s, {away: g.away_team, home: g.home_team}, known) && !closeOnSlip(s));
             const left = wanted.filter(s => !(liveClose && snapHasClose(liveClose, s)));
             const stamp = liveOpen ? (open.timestamp || start) : "";
-            if (wanted.length && !left.length) pack.done[id] = {open: stamp, close: (after && (after.timestamp || next)) || "closed", walked: true};
-            else if (after) { pack.done[id] = {open: stamp, close: "absent", walked: true}; left.forEach(s => blank.push(s.sport + " " + s.pick)); }
-            else pack.done[id] = {open: stamp, close: ""};
+            if (wanted.length && !left.length) pack.done[id] = {open: stamp, close: (liveClose && "closed") || "closed", walked: true};
+            else { pack.done[id] = {open: stamp, close: "absent", walked: true}; left.forEach(s => blank.push(s.sport + " " + s.pick)); }
           });
         }
       }
