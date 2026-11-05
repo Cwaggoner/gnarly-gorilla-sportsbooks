@@ -5859,6 +5859,12 @@ function sideHit(pick, team){
   if (!teamWords.length || !pickWords.length) return false;
   return pickWords.some(w => teamWords.some(t => w === t || (w.length >= 4 && t.length >= 4 && (t.indexOf(w) === 0 || w.indexOf(t) === 0))));
 }
+function nickHit(pick, team){
+  const words = String(team || "").toLowerCase().replace(/[^a-z0-9]/g, " ").split(/\s+/).filter(Boolean);
+  const nick = words[words.length - 1] || "";
+  if (!nick || nick.length < 4) return sideHit(pick, team);
+  return sideHit(pick, nick);
+}
 function bookPair(slip, book){
   let all = {};
   try { all = bookStore(); } catch (e) { return null; }
@@ -5908,8 +5914,9 @@ let bookCloses = {};
 function quotedClose(slip, book){
   if (!slip || !book) return null;
   const games = (((bookCloses.days || {})[String(slip.date || "").slice(0, 10)] || {})[String(slip.sport || "").toUpperCase()]) || [];
-  const named = games.filter(g => sideHit(slip.pick, g.away) || sideHit(slip.pick, g.home));
-  const game = named.length === 1 ? named[0] : games.find(g => sideHit(slip.pick, g.away) && sideHit(slip.pick, g.home));
+  const nickBoth = games.filter(g => nickHit(slip.pick, g.away) && nickHit(slip.pick, g.home));
+  const nickOne = games.filter(g => nickHit(slip.pick, g.away) || nickHit(slip.pick, g.home));
+  const game = nickBoth.length === 1 ? nickBoth[0] : (nickOne.length === 1 ? nickOne[0] : null);
   const dk = game && game.books && game.books[book];
   if (!dk) return null;
   const type = slip.type || betType(slip);
@@ -5921,13 +5928,13 @@ function quotedClose(slip, book){
     const opp = under ? dk.total.over : dk.total.under;
     return price == null ? null : {price: price, opp: opp, point: dk.total.point};
   }
-  const awayOn = sideHit(slip.pick, game.away);
-  const homeOn = sideHit(slip.pick, game.home);
+  const awayOn = nickHit(slip.pick, game.away);
+  const homeOn = nickHit(slip.pick, game.home);
   let side = "away";
   if (homeOn && !awayOn) side = "home";
   else if (awayOn && homeOn) {
     const named = String(slip.pick).match(/([A-Za-z0-9 .&']+?)\s+[+-]\d/);
-    if (named && sideHit(named[1], game.home) && !sideHit(named[1], game.away)) side = "home";
+    if (named && nickHit(named[1], game.home) && !nickHit(named[1], game.away)) side = "home";
   }
   const market = type === "Moneyline" ? "h2h" : "spread";
   const row = (dk[market] || {})[side];
@@ -6139,6 +6146,17 @@ function writeWindowClose(pack, day, sport, g){
   if (!row) { row = {away: g.away_team, home: g.home_team, books: {}}; list.push(row); }
   Object.keys(built.closes).forEach(book => { row.books[book] = Object.assign({}, row.books[book] || {}, built.closes[book]); });
 }
+function slipNamesGame(s, g, games){
+  if (!s || !g) return false;
+  const away = g.away || g.away_team;
+  const home = g.home || g.home_team;
+  const awayOn = nickHit(s.pick, away);
+  const homeOn = nickHit(s.pick, home);
+  if (awayOn && homeOn) return true;
+  if (!awayOn && !homeOn) return false;
+  const hits = (games || []).filter(o => nickHit(s.pick, o.away || o.away_team) || nickHit(s.pick, o.home || o.home_team));
+  return hits.length === 1;
+}
 function closeOnSlip(s){
   if (!s || s.type === "SGP" || /\band\b/i.test(String(s.pick || ""))) return true;
   const q = quotedClose(s, s.book);
@@ -6155,8 +6173,8 @@ function snapHasClose(g, slip){
     return price != null;
   }
   const side = (dk[type === "Moneyline" ? "h2h" : "spread"] || {});
-  const homeOn = sideHit(slip.pick, g.home_team);
-  const awayOn = sideHit(slip.pick, g.away_team);
+  const homeOn = nickHit(slip.pick, g.home_team);
+  const awayOn = nickHit(slip.pick, g.away_team);
   const key = homeOn && !awayOn ? "home" : "away";
   return !!(side[key] && side[key].price != null);
 }
@@ -6213,8 +6231,8 @@ async function pullSlipWindow(){
         const byStart = new Map();
         known.forEach(g => {
           const id = gameId(g);
-          const need = sportSlips.filter(s => sideHit(s.pick, g.away) && sideHit(s.pick, g.home) && !closeOnSlip(s));
-          if ((pack.done[id] || {}).close === "absent" || !need.length) return;
+          const need = sportSlips.filter(s => slipNamesGame(s, g, known) && !closeOnSlip(s));
+          if ((pack.done[id] || {}).walked || !need.length) return;
           if (g.commence && Date.parse(g.commence) > Date.now() + 15000) { waiting.push(g.away + " at " + g.home); return; }
           const row = {away_team: g.away, home_team: g.home, commence_time: g.commence};
           const list = byStart.get(g.commence) || [];
@@ -6242,11 +6260,11 @@ async function pullSlipWindow(){
             const liveClose = after ? findSnapGame(after, g) : null;
             if (liveOpen) { writeWindowOpen(pack, day, sport, liveOpen); opened++; }
             if (liveClose) { writeWindowClose(pack, day, sport, liveClose); closed++; }
-            const wanted = sportSlips.filter(s => sideHit(s.pick, g.away_team) && sideHit(s.pick, g.home_team) && !closeOnSlip(s));
+            const wanted = sportSlips.filter(s => slipNamesGame(s, {away: g.away_team, home: g.home_team}, known) && !closeOnSlip(s));
             const left = wanted.filter(s => !(liveClose && snapHasClose(liveClose, s)));
             const stamp = liveOpen ? (open.timestamp || start) : "";
-            if (wanted.length && !left.length) pack.done[id] = {open: stamp, close: (after && (after.timestamp || next)) || "closed"};
-            else if (after) { pack.done[id] = {open: stamp, close: "absent"}; left.forEach(s => blank.push(s.sport + " " + s.pick)); }
+            if (wanted.length && !left.length) pack.done[id] = {open: stamp, close: (after && (after.timestamp || next)) || "closed", walked: true};
+            else if (after) { pack.done[id] = {open: stamp, close: "absent", walked: true}; left.forEach(s => blank.push(s.sport + " " + s.pick)); }
             else pack.done[id] = {open: stamp, close: ""};
           });
         }
