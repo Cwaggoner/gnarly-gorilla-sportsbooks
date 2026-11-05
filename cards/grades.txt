@@ -1,4 +1,11 @@
 # file: grades
+2026-11-04 | RANGE | All Win 0.00 | All Lose -0.00
+2026-11-04 | CBB | No Picks
+2026-11-04 | CFB | No Picks
+2026-11-04 | NBA | No Picks
+2026-11-04 | NHL | No Picks
+2026-11-04 | NFL | No Picks
+2026-11-04 | MLB | Season Ended
 2026-11-03 | RANGE | All Win 9.09 | All Lose -10.00
 2026-11-03 | CBB | Stetson +16.5 | close -115 | loss | 81-55 | -10.00
 2026-11-03 | CFB | No Picks
