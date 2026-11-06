@@ -2008,16 +2008,24 @@ function upcomingBoard(date){
     return played === day;
   });
 }
-function pickStart(row){
-  const sport = String(row[1] || "").toUpperCase();
-  const pick = String(row[3] || "");
-  const date = /^\d{4}-\d{2}-\d{2}$/.test(String(row[0] || "")) ? String(row[0]).slice(0, 10) : easternDay();
-  const board = upcomingBoard(date).filter(g => String(g.sport || "").toUpperCase() === sport);
-  const source = board.length ? board : kickPool(sport, date);
-  const ranked = source.map(g => {
+function kickBits(text){
+  const expand = w => w === "st" ? "state" : w === "n" ? "north" : w === "s" ? "south" : w === "e" ? "east" : w === "w" ? "west" : w;
+  return String(text || "").toLowerCase().replace(/\bst\b/g, "st").replace(/[^a-z0-9&]+/g, " ").trim().split(/\s+/).map(expand).filter(Boolean);
+}
+function pairBonus(pick, name){
+  const words = kickBits(pick).filter(w => w.length >= 3 && !/^(the|and|over|under|ml)$/.test(w));
+  const blob = " " + kickBits(name).join(" ") + " ";
+  let bonus = 0;
+  for (let i = 0; i < words.length - 1; i++) {
+    if (blob.indexOf(" " + words[i] + " " + words[i + 1] + " ") >= 0) bonus += 8;
+  }
+  return bonus;
+}
+function bestKick(source, pick){
+  const ranked = (source || []).map(g => {
     const names = kickNames(g);
-    const away = kickScore(pick, names[0]);
-    const home = kickScore(pick, names[1]);
+    const away = kickScore(pick, names[0]) + pairBonus(pick, names[0]);
+    const home = kickScore(pick, names[1]) + pairBonus(pick, names[1]);
     return {n: away + home + (away && home ? 6 : 0), ms: kickMs(g)};
   }).filter(x => x.n && x.ms).sort((a, b) => b.n - a.n || a.ms - b.ms);
   if (!ranked.length) return 0;
@@ -2025,6 +2033,19 @@ function pickStart(row){
   const times = [];
   best.forEach(x => { if (!times.some(ms => Math.abs(ms - x.ms) < 120000)) times.push(x.ms); });
   return times.length === 1 ? times[0] : 0;
+}
+function pickStart(row){
+  const sport = String(row[1] || "").toUpperCase();
+  const pick = String(row[3] || "");
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(String(row[0] || "")) ? String(row[0]).slice(0, 10) : easternDay();
+  const days = [date, shiftDate(date, 1), shiftDate(date, -1)].filter((day, i, list) => day && list.indexOf(day) === i);
+  for (let i = 0; i < days.length; i++) {
+    const board = upcomingBoard(days[i]).filter(g => String(g.sport || "").toUpperCase() === sport);
+    if (!board.length) continue;
+    const ms = bestKick(board, pick);
+    if (ms) return ms;
+  }
+  return bestKick(kickPool(sport, date), pick);
 }
 function kickPool(sport, date){
   const list = [];
@@ -2047,7 +2068,7 @@ function pickWhen(row){
   const ms = pickStart(row);
   const date = /^\d{4}-\d{2}-\d{2}$/.test(String(row[0] || "")) ? String(row[0]).slice(0, 10) : "";
   if (ms) {
-    const day = date || slateDateOf(ms);
+    const day = slateDateOf(ms) || date;
     const dateText = typeof prettyDay === "function" && day ? prettyDay(day) : new Date(ms).toLocaleDateString("en-US", {timeZone: siteZone(), weekday: "short", month: "short", day: "numeric"});
     return dateText + ", " + formatTime(ms, false);
   }
@@ -2096,7 +2117,10 @@ function takeUpcoming(date, games){
   window.__upcomingBoard = keep.concat(next);
 }
 function armPickTimes(rows){
-  const dates = [...new Set((rows || []).map(r => /^\d{4}-\d{2}-\d{2}$/.test(String(r && r[0] || "")) ? String(r[0]).slice(0, 10) : easternDay()))];
+  const dates = [...new Set((rows || []).flatMap(r => {
+    const date = /^\d{4}-\d{2}-\d{2}$/.test(String(r && r[0] || "")) ? String(r[0]).slice(0, 10) : easternDay();
+    return [date, shiftDate(date, 1)].filter(Boolean);
+  }))];
   const jobs = [];
   dates.forEach(date => Object.keys(SCORE_FEED).forEach(sport => {
     const key = sport + "|" + date;
