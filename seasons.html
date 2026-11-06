@@ -940,7 +940,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </style>
 </head>
 <body>
-<div class="card-load" id="pageload" role="status" aria-live="polite"><img src="gg-icon.png" alt="" width="96" height="96"><p id="pageloadtext">Loading</p><div class="card-load-bar" aria-hidden="true"><span></span></div></div>
+<div class="card-load" id="pageload" role="status" aria-live="polite"><img src="gg-icon.png" alt="" width="96" height="96" loading="lazy"><p id="pageloadtext">Loading</p><div class="card-load-bar" aria-hidden="true"><span></span></div></div>
 <script>(function(){var t=document.documentElement.getAttribute("data-load")||"";var el=document.getElementById("pageload");var n=document.getElementById("pageloadtext");if(!t){if(el)el.hidden=true;return;}if(n)n.textContent=t;})();</script>
 
 <div class="page">
@@ -953,7 +953,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <p>Free bet ledger for <span class="gg-name">Gnarly Gorilla</span> Sports Decks. Not a betting website, for use as a Ledger only.</p>
 </div>
 <div class="head-flag" aria-label="United States"><svg viewBox="0 0 28 18" xmlns="http://www.w3.org/2000/svg" role="img"><defs><linearGradient id="flaggloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".45" stop-color="#fff" stop-opacity=".08"/><stop offset="1" stop-color="#000" stop-opacity=".25"/></linearGradient></defs><rect width="28" height="18" fill="#b22234"/><g fill="#fff"><rect y="1.38" width="28" height="1.38"/><rect y="4.15" width="28" height="1.38"/><rect y="6.92" width="28" height="1.38"/><rect y="9.69" width="28" height="1.38"/><rect y="12.46" width="28" height="1.38"/><rect y="15.23" width="28" height="1.38"/></g><rect width="11.2" height="9.7" fill="#3c3b6e"/><rect width="28" height="18" fill="url(#flaggloss)"/></svg><span>USA</span><span id="headrules">BETTING RULES</span><span id="headregion"></span></div>
-<div class="head-icon right"><img src="gg-icon.png" alt="Gnarly Gorilla" width="72" height="72" decoding="async"></div>
+<div class="head-icon right"><img src="gg-icon.png" alt="Gnarly Gorilla" width="72" height="72" decoding="async" loading="lazy"></div>
 <span id="pagespin" class="spin" role="status" aria-label="Loading"></span>
 </header>
 <nav class="sitenav" id="sitenav">
@@ -1019,7 +1019,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <section class="card view" id="sharks"><div class="section-head"><h2>Sports Sharps</h2></div><div class="align-frame"><table class="score-align"><tbody><tr><td></td><td class="score-copy"><p class="warn slips-side" id="sharpnote">Four games each. Made at 9:30 AM Eastern and locked until the next morning.</p></td></tr></tbody></table></div><div class="shark-list" id="sharkboard"><p class="warn">Loading the sharps.</p></div></section>
 <main>
 <section class="card view on" id="games">
-<div class="section-head"><h2>Games<span class="league-marks"><img src='leagues/cbb.png' alt='College Basketball' title='NCAA Basketball' width='20' height='20' decoding='async'><img src='leagues/cfb.png' alt='College Football' title='NCAA Football' width='20' height='20' decoding='async'><img src='leagues/mlb.png' alt='MLB' title='Major League Baseball' width='20' height='20' decoding='async'><img src='leagues/nba.png' alt='NBA' title='National Basketball Association' width='20' height='20' decoding='async'><img src='leagues/nfl.png' alt='NFL' title='National Football League' width='20' height='20' decoding='async'><img src='leagues/nhl.png' alt='NHL' title='National Hockey League' width='20' height='20' decoding='async'></span></h2></div>
+<div class="section-head"><h2>Games<span class="league-marks"><img src='leagues/cbb.png' alt='College Basketball' title='NCAA Basketball' width='20' height='20' decoding='async' loading="lazy"><img src='leagues/cfb.png' alt='College Football' title='NCAA Football' width='20' height='20' decoding='async' loading="lazy"><img src='leagues/mlb.png' alt='MLB' title='Major League Baseball' width='20' height='20' decoding='async' loading="lazy"><img src='leagues/nba.png' alt='NBA' title='National Basketball Association' width='20' height='20' decoding='async' loading="lazy"><img src='leagues/nfl.png' alt='NFL' title='National Football League' width='20' height='20' decoding='async' loading="lazy"><img src='leagues/nhl.png' alt='NHL' title='National Hockey League' width='20' height='20' decoding='async' loading="lazy"></span></h2></div>
 <p id="gamenote" class="warn" hidden></p>
 <div class="align-frame"><table class="score-align"><tbody><tr><td><div class="odds-tools">
 <p class="warn game-pin" id="gamepinleft">Tap a price. Final scores post when the game ends.</p>
@@ -1028,28 +1028,28 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <div class="sport-bar" id="sportbar">
 <button type="button" class="on" data-sport="All">All</button>
 <div class="sport-align" id="sportalign">
-<button type="button" class="league" data-sport="CBB" title="NCAA Basketball"><img src="leagues/cbb.png" alt="" width="20" height="20" decoding="async">College Basketball</button>
-<button type="button" class="league" data-sport="CFB" title="NCAA Football"><img src="leagues/cfb.png" alt="" width="20" height="20" decoding="async">College Football</button>
-<button type="button" class="league" data-sport="MLB" title="Major League Baseball"><img src="leagues/mlb.png" alt="" width="20" height="20" decoding="async">MLB</button>
-<button type="button" class="league" data-sport="NBA" title="National Basketball Association"><img src="leagues/nba.png" alt="" width="20" height="20" decoding="async">NBA</button>
-<button type="button" class="league" data-sport="NFL" title="National Football League"><img src="leagues/nfl.png" alt="" width="20" height="20" decoding="async">NFL</button>
-<button type="button" class="league" data-sport="NHL" title="National Hockey League"><img src="leagues/nhl.png" alt="" width="20" height="20" decoding="async">NHL</button>
+<button type="button" class="league" data-sport="CBB" title="NCAA Basketball"><img src="leagues/cbb.png" alt="" width="20" height="20" decoding="async" loading="lazy">College Basketball</button>
+<button type="button" class="league" data-sport="CFB" title="NCAA Football"><img src="leagues/cfb.png" alt="" width="20" height="20" decoding="async" loading="lazy">College Football</button>
+<button type="button" class="league" data-sport="MLB" title="Major League Baseball"><img src="leagues/mlb.png" alt="" width="20" height="20" decoding="async" loading="lazy">MLB</button>
+<button type="button" class="league" data-sport="NBA" title="National Basketball Association"><img src="leagues/nba.png" alt="" width="20" height="20" decoding="async" loading="lazy">NBA</button>
+<button type="button" class="league" data-sport="NFL" title="National Football League"><img src="leagues/nfl.png" alt="" width="20" height="20" decoding="async" loading="lazy">NFL</button>
+<button type="button" class="league" data-sport="NHL" title="National Hockey League"><img src="leagues/nhl.png" alt="" width="20" height="20" decoding="async" loading="lazy">NHL</button>
 <span class="book-links">
-<a href="https://sports.betmgm.com/" target="_blank" rel="noopener noreferrer"><img src="books/betmgm.png" alt="" width="16" height="16" decoding="async">BetMGM</a>
-<a href="https://sportsbook.caesars.com/" target="_blank" rel="noopener noreferrer"><img src="books/caesars.png" alt="" width="16" height="16" decoding="async">Caesars</a>
-<a href="https://sportsbook.draftkings.com/" target="_blank" rel="noopener noreferrer"><img src="books/draftkings.png" alt="" width="16" height="16" decoding="async">DraftKings</a>
-<a href="https://sportsbook.fanatics.com/" target="_blank" rel="noopener noreferrer"><img src="books/fanatics.png?v=blue" alt="" width="16" height="16" decoding="async">Fanatics</a>
-<a href="https://sportsbook.fanduel.com/" target="_blank" rel="noopener noreferrer"><img src="books/fanduel.png" alt="" width="16" height="16" decoding="async">FanDuel</a>
-<a href="https://www.hardrock.bet/" target="_blank" rel="noopener noreferrer"><img src="books/hardrock.png" alt="" width="16" height="16" decoding="async">HardRock</a>
+<a href="https://sports.betmgm.com/" target="_blank" rel="noopener noreferrer"><img src="books/betmgm.png" alt="" width="16" height="16" decoding="async" loading="lazy">BetMGM</a>
+<a href="https://sportsbook.caesars.com/" target="_blank" rel="noopener noreferrer"><img src="books/caesars.png" alt="" width="16" height="16" decoding="async" loading="lazy">Caesars</a>
+<a href="https://sportsbook.draftkings.com/" target="_blank" rel="noopener noreferrer"><img src="books/draftkings.png" alt="" width="16" height="16" decoding="async" loading="lazy">DraftKings</a>
+<a href="https://sportsbook.fanatics.com/" target="_blank" rel="noopener noreferrer"><img src="books/fanatics.png?v=blue" alt="" width="16" height="16" decoding="async" loading="lazy">Fanatics</a>
+<a href="https://sportsbook.fanduel.com/" target="_blank" rel="noopener noreferrer"><img src="books/fanduel.png" alt="" width="16" height="16" decoding="async" loading="lazy">FanDuel</a>
+<a href="https://www.hardrock.bet/" target="_blank" rel="noopener noreferrer"><img src="books/hardrock.png" alt="" width="16" height="16" decoding="async" loading="lazy">HardRock</a>
 </span>
 </div>
 <button type="button" id="gamerefresh">Refresh</button>
 <div class="game-sharps">
-<a class="crew-hit" href="index.html?page=sharks#shark-gorilla" data-jump="sharks" data-sharp="shark-gorilla" title="Gnarly Gorilla"><img src="about-gorilla.jpg" alt="Gnarly Gorilla" width="38" height="38" decoding="async"></a>
-<a class="crew-hit" href="index.html?page=sharks#shark-vito" data-jump="sharks" data-sharp="shark-vito" title="Vito the Spot"><img src="jungle-leopard.jpg" alt="Vito the Spot" width="38" height="38" decoding="async"></a>
-<a class="crew-hit" href="index.html?page=sharks#shark-rocco" data-jump="sharks" data-sharp="shark-rocco" title="Rocco No Chase"><img src="jungle-rhino.jpg" alt="Rocco No Chase" width="38" height="38" decoding="async"></a>
-<a class="crew-hit" href="index.html?page=sharks#shark-paulie" data-jump="sharks" data-sharp="shark-paulie" title="Paulie the Fade"><img src="jungle-hyena.jpg" alt="Paulie the Fade" width="38" height="38" decoding="async"></a>
-<a class="crew-hit" href="index.html?page=sharks#shark-gino" data-jump="sharks" data-sharp="shark-gino" title="Gino the Wire"><img src="jungle-bird.jpg" alt="Gino the Wire" width="38" height="38" decoding="async"></a>
+<a class="crew-hit" href="index.html?page=sharks#shark-gorilla" data-jump="sharks" data-sharp="shark-gorilla" title="Gnarly Gorilla"><img src="about-gorilla.jpg" alt="Gnarly Gorilla" width="38" height="38" decoding="async" loading="lazy"></a>
+<a class="crew-hit" href="index.html?page=sharks#shark-vito" data-jump="sharks" data-sharp="shark-vito" title="Vito the Spot"><img src="jungle-leopard.jpg" alt="Vito the Spot" width="38" height="38" decoding="async" loading="lazy"></a>
+<a class="crew-hit" href="index.html?page=sharks#shark-rocco" data-jump="sharks" data-sharp="shark-rocco" title="Rocco No Chase"><img src="jungle-rhino.jpg" alt="Rocco No Chase" width="38" height="38" decoding="async" loading="lazy"></a>
+<a class="crew-hit" href="index.html?page=sharks#shark-paulie" data-jump="sharks" data-sharp="shark-paulie" title="Paulie the Fade"><img src="jungle-hyena.jpg" alt="Paulie the Fade" width="38" height="38" decoding="async" loading="lazy"></a>
+<a class="crew-hit" href="index.html?page=sharks#shark-gino" data-jump="sharks" data-sharp="shark-gino" title="Gino the Wire"><img src="jungle-bird.jpg" alt="Gino the Wire" width="38" height="38" decoding="async" loading="lazy"></a>
 </div>
 </div></div></td></tr></tbody></table></div>
 <div id="gameboard"><p class="warn">Loading the board.</p></div>
@@ -1072,9 +1072,9 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </ul>
 <ul class="odds-notes" id="sharpcheck"></ul></td></tr></tbody></table></div>
 </section>
-<section class="card view" id="liveodds"><div class="section-head"><h2>Live Odds Analysis</h2></div><div class="align-frame"><table class="score-align"><tbody><tr><td><div class="odds-tools" id="compareday"><button type="button" id="day-yesterday">Yesterday</button><button type="button" id="day-today">Today</button><select id="comparesport"><option value="All" selected>All</option><option value="CBB">CBB</option><option value="CFB">CFB</option><option value="MLB">MLB</option><option value="NBA">NBA</option><option value="NFL">NFL</option><option value="NHL">NHL</option></select><button type="button" id="refreshodds">Refresh</button><div class="game-sharps"><a class="crew-hit" href="index.html?page=sharks#shark-gorilla" data-jump="sharks" data-sharp="shark-gorilla" title="Gnarly Gorilla"><img src="about-gorilla.jpg" alt="Gnarly Gorilla" width="32" height="32" decoding="async"></a><a class="crew-hit" href="index.html?page=sharks#shark-vito" data-jump="sharks" data-sharp="shark-vito" title="Vito the Spot"><img src="jungle-leopard.jpg" alt="Vito the Spot" width="32" height="32" decoding="async"></a><a class="crew-hit" href="index.html?page=sharks#shark-rocco" data-jump="sharks" data-sharp="shark-rocco" title="Rocco No Chase"><img src="jungle-rhino.jpg" alt="Rocco No Chase" width="32" height="32" decoding="async"></a><a class="crew-hit" href="index.html?page=sharks#shark-paulie" data-jump="sharks" data-sharp="shark-paulie" title="Paulie the Fade"><img src="jungle-hyena.jpg" alt="Paulie the Fade" width="32" height="32" decoding="async"></a><a class="crew-hit" href="index.html?page=sharks#shark-gino" data-jump="sharks" data-sharp="shark-gino" title="Gino the Wire"><img src="jungle-bird.jpg" alt="Gino the Wire" width="32" height="32" decoding="async"></a></div></div></td><td class="score-copy"><p class="warn slips-side">Moneyline, spread, and total across books. Refresh pulls the live price.</p><div id="oddslead"></div></td></tr></tbody></table></div><div id="oddscompare"></div></section>
+<section class="card view" id="liveodds"><div class="section-head"><h2>Live Odds Analysis</h2></div><div class="align-frame"><table class="score-align"><tbody><tr><td><div class="odds-tools" id="compareday"><button type="button" id="day-yesterday">Yesterday</button><button type="button" id="day-today">Today</button><select id="comparesport"><option value="All" selected>All</option><option value="CBB">CBB</option><option value="CFB">CFB</option><option value="MLB">MLB</option><option value="NBA">NBA</option><option value="NFL">NFL</option><option value="NHL">NHL</option></select><button type="button" id="refreshodds">Refresh</button><div class="game-sharps"><a class="crew-hit" href="index.html?page=sharks#shark-gorilla" data-jump="sharks" data-sharp="shark-gorilla" title="Gnarly Gorilla"><img src="about-gorilla.jpg" alt="Gnarly Gorilla" width="32" height="32" decoding="async" loading="lazy"></a><a class="crew-hit" href="index.html?page=sharks#shark-vito" data-jump="sharks" data-sharp="shark-vito" title="Vito the Spot"><img src="jungle-leopard.jpg" alt="Vito the Spot" width="32" height="32" decoding="async" loading="lazy"></a><a class="crew-hit" href="index.html?page=sharks#shark-rocco" data-jump="sharks" data-sharp="shark-rocco" title="Rocco No Chase"><img src="jungle-rhino.jpg" alt="Rocco No Chase" width="32" height="32" decoding="async" loading="lazy"></a><a class="crew-hit" href="index.html?page=sharks#shark-paulie" data-jump="sharks" data-sharp="shark-paulie" title="Paulie the Fade"><img src="jungle-hyena.jpg" alt="Paulie the Fade" width="32" height="32" decoding="async" loading="lazy"></a><a class="crew-hit" href="index.html?page=sharks#shark-gino" data-jump="sharks" data-sharp="shark-gino" title="Gino the Wire"><img src="jungle-bird.jpg" alt="Gino the Wire" width="32" height="32" decoding="async" loading="lazy"></a></div></div></td><td class="score-copy"><p class="warn slips-side">Moneyline, spread, and total across books. Refresh pulls the live price.</p><div id="oddslead"></div></td></tr></tbody></table></div><div id="oddscompare"></div></section>
 <section class="card view" id="todaycard">
-<div class="card-load" id="cardload" role="status" aria-live="polite"><img src="gg-icon.png" alt="" width="96" height="96"><p>Loading Today's Card</p><div class="card-load-bar" aria-hidden="true"><span></span></div></div>
+<div class="card-load" id="cardload" role="status" aria-live="polite"><img src="gg-icon.png" alt="" width="96" height="96" loading="lazy"><p>Loading Today's Card</p><div class="card-load-bar" aria-hidden="true"><span></span></div></div>
 <div class="section-head"><h2>Today's Card</h2></div>
 <div class="payout-box">
 <h3>$10 Win</h3>
@@ -1141,17 +1141,17 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <div class="tools"><button type="button" id="copyreport">Copy Report</button><button type="button" id="printreport">Print Report</button><button type="button" id="savepng">Save PNG</button><span id="copynote" class="warn"></span><span id="printnote" class="warn"></span></div>
 <div id="printpreview" class="print-preview" hidden>
 <div class="jump"><button type="button" data-jump="reportcard">Report</button><button type="button" data-jump="printpreview2">Page 2</button></div>
-<img id="printimg" alt="Report card print preview" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+<img id="printimg" alt="Report card print preview" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" loading="lazy">
 <div class="tools"><button type="button" id="saveprint">Save PDF</button></div>
 </div>
 <div id="printpreview2" class="print-preview" hidden>
 <div class="jump"><button type="button" data-jump="reportcard">Report</button><button type="button" data-jump="printpreview">Page 1</button></div>
-<img id="printimg2" alt="Report card second page" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+<img id="printimg2" alt="Report card second page" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" loading="lazy">
 </div>
 </section>
 <section class="card view" id="charts">
 <div class="section-head"><h2>Charts</h2></div>
-<div class="align-frame"><table class="score-align"><tbody><tr><td><button type="button" id="plot">Plot</button></td><td class="score-copy"><p class="warn slips-side">Profit uses settled slips. CLV is no-vig: your price against a fair close, with the book's cut removed. A matched -110 is about -4.5%. <span id="plotnote"></span></p></td></tr></tbody></table><div class="game-sharps"><a class="crew-hit" href="index.html?page=sharks#shark-gorilla" data-jump="sharks" data-sharp="shark-gorilla" title="Gnarly Gorilla"><img src="about-gorilla.jpg" alt="Gnarly Gorilla" width="38" height="38" decoding="async"></a><a class="crew-hit" href="index.html?page=sharks#shark-vito" data-jump="sharks" data-sharp="shark-vito" title="Vito the Spot"><img src="jungle-leopard.jpg" alt="Vito the Spot" width="38" height="38" decoding="async"></a><a class="crew-hit" href="index.html?page=sharks#shark-rocco" data-jump="sharks" data-sharp="shark-rocco" title="Rocco No Chase"><img src="jungle-rhino.jpg" alt="Rocco No Chase" width="38" height="38" decoding="async"></a><a class="crew-hit" href="index.html?page=sharks#shark-paulie" data-jump="sharks" data-sharp="shark-paulie" title="Paulie the Fade"><img src="jungle-hyena.jpg" alt="Paulie the Fade" width="38" height="38" decoding="async"></a><a class="crew-hit" href="index.html?page=sharks#shark-gino" data-jump="sharks" data-sharp="shark-gino" title="Gino the Wire"><img src="jungle-bird.jpg" alt="Gino the Wire" width="38" height="38" decoding="async"></a></div></div>
+<div class="align-frame"><table class="score-align"><tbody><tr><td><button type="button" id="plot">Plot</button></td><td class="score-copy"><p class="warn slips-side">Profit uses settled slips. CLV is no-vig: your price against a fair close, with the book's cut removed. A matched -110 is about -4.5%. <span id="plotnote"></span></p></td></tr></tbody></table><div class="game-sharps"><a class="crew-hit" href="index.html?page=sharks#shark-gorilla" data-jump="sharks" data-sharp="shark-gorilla" title="Gnarly Gorilla"><img src="about-gorilla.jpg" alt="Gnarly Gorilla" width="38" height="38" decoding="async" loading="lazy"></a><a class="crew-hit" href="index.html?page=sharks#shark-vito" data-jump="sharks" data-sharp="shark-vito" title="Vito the Spot"><img src="jungle-leopard.jpg" alt="Vito the Spot" width="38" height="38" decoding="async" loading="lazy"></a><a class="crew-hit" href="index.html?page=sharks#shark-rocco" data-jump="sharks" data-sharp="shark-rocco" title="Rocco No Chase"><img src="jungle-rhino.jpg" alt="Rocco No Chase" width="38" height="38" decoding="async" loading="lazy"></a><a class="crew-hit" href="index.html?page=sharks#shark-paulie" data-jump="sharks" data-sharp="shark-paulie" title="Paulie the Fade"><img src="jungle-hyena.jpg" alt="Paulie the Fade" width="38" height="38" decoding="async" loading="lazy"></a><a class="crew-hit" href="index.html?page=sharks#shark-gino" data-jump="sharks" data-sharp="shark-gino" title="Gino the Wire"><img src="jungle-bird.jpg" alt="Gino the Wire" width="38" height="38" decoding="async" loading="lazy"></a></div></div>
 <div class="charts">
 <div><h2 id="profitTitle" class="split-title">Cumulative Profit</h2><canvas id="profitChart" width="640" height="220"></canvas></div>
 <div><div class="sport-title"><h2>Profit By Sport</h2><b id="sportbest"></b><b id="monthbest"></b></div><canvas id="sportChart" width="420" height="220"></canvas></div>
@@ -1166,7 +1166,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <button type="submit" id="savebtn">Add to Bet Slip</button>
 <button type="button" id="clearbet">Clear</button>
 <button type="button" id="canceledit">Cancel Edit</button>
-<div class="game-sharps"><a class="crew-hit" href="index.html?page=sharks#shark-gorilla" data-jump="sharks" data-sharp="shark-gorilla" title="Gnarly Gorilla"><img src="about-gorilla.jpg" alt="Gnarly Gorilla" width="38" height="38" decoding="async"></a><a class="crew-hit" href="index.html?page=sharks#shark-vito" data-jump="sharks" data-sharp="shark-vito" title="Vito the Spot"><img src="jungle-leopard.jpg" alt="Vito the Spot" width="38" height="38" decoding="async"></a><a class="crew-hit" href="index.html?page=sharks#shark-rocco" data-jump="sharks" data-sharp="shark-rocco" title="Rocco No Chase"><img src="jungle-rhino.jpg" alt="Rocco No Chase" width="38" height="38" decoding="async"></a><a class="crew-hit" href="index.html?page=sharks#shark-paulie" data-jump="sharks" data-sharp="shark-paulie" title="Paulie the Fade"><img src="jungle-hyena.jpg" alt="Paulie the Fade" width="38" height="38" decoding="async"></a><a class="crew-hit" href="index.html?page=sharks#shark-gino" data-jump="sharks" data-sharp="shark-gino" title="Gino the Wire"><img src="jungle-bird.jpg" alt="Gino the Wire" width="38" height="38" decoding="async"></a></div>
+<div class="game-sharps"><a class="crew-hit" href="index.html?page=sharks#shark-gorilla" data-jump="sharks" data-sharp="shark-gorilla" title="Gnarly Gorilla"><img src="about-gorilla.jpg" alt="Gnarly Gorilla" width="38" height="38" decoding="async" loading="lazy"></a><a class="crew-hit" href="index.html?page=sharks#shark-vito" data-jump="sharks" data-sharp="shark-vito" title="Vito the Spot"><img src="jungle-leopard.jpg" alt="Vito the Spot" width="38" height="38" decoding="async" loading="lazy"></a><a class="crew-hit" href="index.html?page=sharks#shark-rocco" data-jump="sharks" data-sharp="shark-rocco" title="Rocco No Chase"><img src="jungle-rhino.jpg" alt="Rocco No Chase" width="38" height="38" decoding="async" loading="lazy"></a><a class="crew-hit" href="index.html?page=sharks#shark-paulie" data-jump="sharks" data-sharp="shark-paulie" title="Paulie the Fade"><img src="jungle-hyena.jpg" alt="Paulie the Fade" width="38" height="38" decoding="async" loading="lazy"></a><a class="crew-hit" href="index.html?page=sharks#shark-gino" data-jump="sharks" data-sharp="shark-gino" title="Gino the Wire"><img src="jungle-bird.jpg" alt="Gino the Wire" width="38" height="38" decoding="async" loading="lazy"></a></div>
 </div>
 <div class="bet-fields-box">
 <div class="bet-top">
@@ -1276,14 +1276,14 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </div>
 </div>
 <aside class="about-box live-feed">
-<div class="feed-head"><h2>Live Feed<img class="espn-mark" src="espn.svg" alt="ESPN"></h2></div>
+<div class="feed-head"><h2>Live Feed<img class="espn-mark" src="espn.svg" alt="ESPN" loading="lazy"></h2></div>
 <div class="align-frame"><table class="score-align"><tbody><tr><td></td><td class="score-copy"><p class="warn" id="feednote">Loading the feed.</p></td></tr></tbody></table></div>
 <div class="table-wrap"><table><thead><tr><th>Time</th><th>Sport</th><th>Headline</th></tr></thead><tbody id="livefeed"></tbody></table></div>
 </aside>
 </div>
 </footer>
 <div class="bet-box slip-min" id="sgpbox">
-<h3>Bet Slip <span class="slip-dock-col"><span class="slip-dock-btns"><button type="button" id="slipdock">Show</button><button type="button" id="slipclose">Close</button></span><span class="slip-sharps"><a class="crew-hit" href="index.html?page=sharks#shark-gorilla" data-jump="sharks" data-sharp="shark-gorilla" title="Gnarly Gorilla"><img src="gg-icon.png" alt="Gnarly Gorilla" width="72" height="72" decoding="async"></a><a class="crew-hit" href="index.html?page=sharks#shark-vito" data-jump="sharks" data-sharp="shark-vito" title="Vito the Spot"><img src="jungle-leopard.jpg" alt="Vito the Spot" width="72" height="72" decoding="async"></a><a class="crew-hit" href="index.html?page=sharks#shark-rocco" data-jump="sharks" data-sharp="shark-rocco" title="Rocco No Chase"><img src="jungle-rhino.jpg" alt="Rocco No Chase" width="72" height="72" decoding="async"></a><a class="crew-hit" href="index.html?page=sharks#shark-paulie" data-jump="sharks" data-sharp="shark-paulie" title="Paulie the Fade"><img src="jungle-hyena.jpg" alt="Paulie the Fade" width="72" height="72" decoding="async"></a><a class="crew-hit" href="index.html?page=sharks#shark-gino" data-jump="sharks" data-sharp="shark-gino" title="Gino the Wire"><img src="jungle-bird.jpg" alt="Gino the Wire" width="72" height="72" decoding="async"></a></span></span></h3>
+<h3>Bet Slip <span class="slip-dock-col"><span class="slip-dock-btns"><button type="button" id="slipdock">Show</button><button type="button" id="slipclose">Close</button></span><span class="slip-sharps"><a class="crew-hit" href="index.html?page=sharks#shark-gorilla" data-jump="sharks" data-sharp="shark-gorilla" title="Gnarly Gorilla"><img src="gg-icon.png" alt="Gnarly Gorilla" width="72" height="72" decoding="async" loading="lazy"></a><a class="crew-hit" href="index.html?page=sharks#shark-vito" data-jump="sharks" data-sharp="shark-vito" title="Vito the Spot"><img src="jungle-leopard.jpg" alt="Vito the Spot" width="72" height="72" decoding="async" loading="lazy"></a><a class="crew-hit" href="index.html?page=sharks#shark-rocco" data-jump="sharks" data-sharp="shark-rocco" title="Rocco No Chase"><img src="jungle-rhino.jpg" alt="Rocco No Chase" width="72" height="72" decoding="async" loading="lazy"></a><a class="crew-hit" href="index.html?page=sharks#shark-paulie" data-jump="sharks" data-sharp="shark-paulie" title="Paulie the Fade"><img src="jungle-hyena.jpg" alt="Paulie the Fade" width="72" height="72" decoding="async" loading="lazy"></a><a class="crew-hit" href="index.html?page=sharks#shark-gino" data-jump="sharks" data-sharp="shark-gino" title="Gino the Wire"><img src="jungle-bird.jpg" alt="Gino the Wire" width="72" height="72" decoding="async" loading="lazy"></a></span></span></h3>
 <p class="warn">Click a price. Nothing is sent to a book.</p>
 <div class="sgp-legs" id="sgplegs"></div>
 <div class="sgp-partner">
@@ -4614,10 +4614,31 @@ function scoreGroups(sport){
   if (sport === "CFB") return ["", "80", "81"];
   return [""];
 }
+function scoreHoldKey(sport, ymd){
+  return "gg-score-v1|" + sport + "|" + ymd;
+}
+function readScoreHold(sport, ymd){
+  try {
+    const pack = JSON.parse(sessionStorage.getItem(scoreHoldKey(sport, ymd)) || "null");
+    if (!pack || !pack.ok || !Array.isArray(pack.games)) return null;
+    return pack;
+  } catch (e) { return null; }
+}
+function writeScoreHold(sport, ymd, pack){
+  if (!pack || !pack.ok) return;
+  try {
+    sessionStorage.setItem(scoreHoldKey(sport, ymd), JSON.stringify({ok: true, at: pack.at || Date.now(), days: pack.days || [], games: pack.games || []}));
+  } catch (e) {}
+}
 async function fetchScoreDay(sport, ymd){
   const key = sport + "|" + ymd;
   const hit = livePackCache.get(key);
   if (scoreCacheFresh(hit)) return hit;
+  const held = readScoreHold(sport, ymd);
+  if (held && scoreCacheFresh(held)) {
+    livePackCache.set(key, held);
+    return held;
+  }
   const stamp = String(ymd).replace(/-/g, "");
   const next = shiftDate(ymd, 1);
   const stamps = [stamp, next ? String(next).replace(/-/g, "") : ""].filter(Boolean);
@@ -4645,6 +4666,7 @@ async function fetchScoreDay(sport, ymd){
   const league = (((lists.find(Boolean) || {}).leagues || [])[0]) || {};
   const pack = {games: events, days: calendarDays(league.calendar, league.calendarIsWhitelist), ok: true, at: Date.now()};
   livePackCache.set(key, pack);
+  writeScoreHold(sport, ymd, pack);
   return pack;
 }
 function readLiveHold(){
@@ -4906,6 +4928,18 @@ async function loadLiveBoard(){
   const note = document.getElementById("seasonlivenote");
   const fullNote = document.getElementById("fullscorenote");
   const sports = ["CBB","CFB","MLB","NBA","NFL","NHL"];
+  const cachedGames = [];
+  sports.forEach(sport => {
+    const pack = livePackCache.get(sport + "|" + liveBoardDate) || readScoreHold(sport, liveBoardDate);
+    (pack && pack.games || []).forEach(g => cachedGames.push(Object.assign({sport: sport}, g)));
+  });
+  if (cachedGames.length) {
+    cachedGames.sort((a, b) => sportRank(a.sport) - sportRank(b.sport) || (a.live ? 0 : a.final ? 2 : 1) - (b.live ? 0 : b.final ? 2 : 1) || a.start - b.start);
+    liveBoardGames = cachedGames;
+    paintLiveBoard();
+    hidePageLoad("scoreboard");
+    hidePageLoad("seasons");
+  }
   let packs = [];
   try {
     packs = await Promise.all(sports.map(sport => scoresForSport(sport, liveBoardDate)));
@@ -9962,10 +9996,17 @@ async function loadOddsBoard(data, saved){
   if ((document.documentElement.dataset.page || "games") === "games" && !dayHasLines(easternDay())) ensureGameDay();
   hidePageLoad("games");
 }
-if (pageNeeds("odds")) Promise.all([
-  fetch(cardUrl("cards/odds-board.json")).then(r => r.ok ? r.json() : null).catch(() => null),
-  savedBoardAny()
-]).then(([data, saved]) => loadOddsBoard(data, saved));
+if (pageNeeds("odds")) {
+  const localBoard = savedBoard();
+  const oddsNet = Promise.all([
+    fetch(cardUrl("cards/odds-board.json")).then(r => r.ok ? r.json() : null).catch(() => null),
+    savedBoardAny()
+  ]);
+  setTimeout(() => {
+    if (localBoard) loadOddsBoard(localBoard, localBoard);
+    oddsNet.then(([data, saved]) => loadOddsBoard(data, saved));
+  }, 0);
+}
 if ((document.documentElement.dataset.page || "games") === "games") {
   fillMissingCloses(loadBookClosesLocal());
   fetch(cardUrl("cards/book-closes.json")).then(r => r.ok ? r.json() : null).then(data => { takeBookCloseFile(data); render(); }).catch(() => {});
@@ -12397,6 +12438,7 @@ function showView(id){
     try { scroller.scrollTo({left: Math.max(0, left), behavior:"smooth"}); } catch (e) {}
   });
   if (screen === "games") requestAnimationFrame(alignSportBrackets);
+  paintLeagueMarks(document.getElementById(screen));
   if (screen === "scoreboard") loadLiveBoard();
   if (screen === "sharks") loadSharks();
   if (screen === "about") { paintSharpTeam(); requestAnimationFrame(sizeSharpTeam); }
@@ -12426,11 +12468,13 @@ function jumpToCard(id){
 }
 window.addEventListener("popstate", () => showView(screenNow()));
 rememberBoot();
-showView(screenNow());
-restoreForm();
-pinOffset();
-placeGameNotes();
-requestAnimationFrame(placeGameNotes);
+setTimeout(() => {
+  showView(screenNow());
+  restoreForm();
+  pinOffset();
+  placeGameNotes();
+  paintLeagueMarks(document.getElementById(document.documentElement.dataset.page || "games"));
+}, 0);
 const gamebook = document.getElementById("gamebook");
 if (gamebook) gamebook.onchange = () => {
   if (form && form.book && [...form.book.options].some(o => o.value === gamebook.value)) form.book.value = gamebook.value;
@@ -12503,7 +12547,6 @@ window.addEventListener("scroll", queueSlipHead, {passive: true});
 window.addEventListener("resize", queueSlipHead);
 const slipWrap = document.querySelector("#slips .table-wrap");
 if (slipWrap) slipWrap.addEventListener("scroll", queueSlipHead, {passive: true});
-paintLeagueMarks();
 </script>
 </body>
 </html>
