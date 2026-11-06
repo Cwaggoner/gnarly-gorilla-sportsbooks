@@ -1449,6 +1449,7 @@ function picksAreFinal(date){ return finalSlates.has(String(date || "").slice(0,
 function markSlateFinal(date){
   date = String(date || "").slice(0, 10);
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || finalSlates.has(date)) return;
+  if (dayStillPending(date)) return;
   finalSlates.add(date);
   try { sessionStorage.setItem("gg-picks-final", JSON.stringify([...finalSlates])); } catch (e) {}
 }
@@ -2208,6 +2209,33 @@ function drawLine(canvas){
   chartLesson(days);
 }
 let gradeFile = [];
+function gradeKey(b){
+  return [String(b && b.date || "").slice(0, 10), String(b && b.sport || "").toUpperCase(), normPick(b && b.pick)].join("|");
+}
+function takeGradeFile(rows){
+  const incoming = (rows || []).filter(b => b && b.pick && !isNoPick(b));
+  const byKey = new Map();
+  (gradeFile || []).forEach(b => { if (b && b.pick) byKey.set(gradeKey(b), b); });
+  incoming.forEach(b => {
+    const key = gradeKey(b);
+    const prior = byKey.get(key);
+    if (!prior) { byKey.set(key, b); return; }
+    if (b.result === "win" || b.result === "loss" || b.result === "push") {
+      prior.result = b.result;
+      if (Number.isFinite(Number(b.profit)) && Number(b.profit) !== 0) prior.profit = Number(b.profit);
+      if (usableClose(b.close)) { prior.close = Number(b.close); prior.realClose = true; }
+    }
+    if (!prior.sport && b.sport) prior.sport = b.sport;
+    if ((prior.odds === "" || prior.odds == null) && b.odds !== "" && b.odds != null) prior.odds = b.odds;
+  });
+  gradeFile = [...byKey.values()];
+  return gradeFile;
+}
+function dayStillPending(date){
+  date = String(date || "").slice(0, 10);
+  try { return gradedPool().some(b => String(b.date || "").slice(0, 10) === date && b.result === "pending" && !isNoPick(b)); }
+  catch (e) { return false; }
+}
 let liveGradedDates = new Set();
 try { liveGradedDates = new Set(JSON.parse(localStorage.getItem("gg-live-graded") || "[]")); } catch (e) {}
 let edgePicks = new Set();
@@ -8432,10 +8460,13 @@ async function gradeOpenSlate(){
   seedCardSlips();
   const pending = gradedPool().filter(b => b && b.result === "pending" && !isNoPick(b) && inSlipWindow(b.date));
   const today = easternDay();
-  const dates = [...new Set(rows.map(r => r.date).concat(pending.map(b => String(b.date || "").slice(0, 10))))].filter(date => date === today || date === yesterday());
+  const pendingDates = new Set(pending.map(b => String(b.date || "").slice(0, 10)));
+  const dates = [...new Set(rows.map(r => r.date).concat([...pendingDates]))].filter(date => date === today || date === yesterday() || pendingDates.has(date));
   dates.forEach(date => {
-    if (date < today && Date.now() >= slateCutoff(date) && openSlipCount(date) === 0 && slipsForDay(date).length) markSlateFinal(date);
+    if (dayStillPending(date)) finalSlates.delete(date);
+    if (date < today && Date.now() >= slateCutoff(date) && !dayStillPending(date) && slipsForDay(date).length) markSlateFinal(date);
   });
+  try { sessionStorage.setItem("gg-picks-final", JSON.stringify([...finalSlates])); } catch (e) {}
   const openDates = dates.filter(date => !picksAreFinal(date));
   if (!openDates.length) { scheduleGradeCheck(300000); showClock(); return; }
   const sports = [...new Set(openDates.reduce((list, date) => list.concat(rows.filter(r => r.date === date).map(r => r.sport), pending.filter(b => String(b.date || "").slice(0, 10) === date).flatMap(slipSports)), []))].filter(s => SCORE_FEED[s]);
@@ -8629,7 +8660,7 @@ async function catchUp(){
       wantDash ? fetch("cards/dashboard.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").catch(() => "") : Promise.resolve("")
     ]);
     gradesText = grades || "";
-    if (grades) gradeFile = grades.split(/\n/).map(parseGradeLine).filter(Boolean);
+    if (grades) takeGradeFile(grades.split(/\n/).map(parseGradeLine).filter(Boolean));
     if (dash) localStorage.setItem("gg-dashboard-published", dash);
   } catch (err) {}
   if (wantLedger && localStorage.getItem("gg-hold-ledger") !== "1") {
@@ -8650,11 +8681,18 @@ async function catchUp(){
     });
     localStorage.setItem(KEY, JSON.stringify(kept));
   }
+  if (document.documentElement.dataset.page === "reportcard") {
+    try {
+      const data = await fetch(cardUrl("cards/ledger.json")).then(r => r.ok ? r.json() : null);
+      const bets = data && (Array.isArray(data) ? data : data.bets) || [];
+      takeGradeFile(bets.filter(b => b && inSlipWindow(b.date) && !isNoPick(b)));
+    } catch (e) {}
+  }
   if (wantGrades) await applyGrades(gradesText).catch(() => {});
   await fixMulOctober31();
   clearStalePending();
   render();
-  if (document.documentElement.dataset.page === "slips") gradeOpenSlate().catch(() => {});
+  if (document.documentElement.dataset.page === "slips" || document.documentElement.dataset.page === "reportcard") gradeOpenSlate().catch(() => {});
 }
 function pageNeeds(kind){
   const page = document.documentElement.dataset.page || "games";
@@ -9239,12 +9277,12 @@ document.getElementById("syncledger").onclick = async () => {
     const grades = await fetch("cards/grades.txt?ts=" + Date.now());
     if (grades.ok) {
       const text = await grades.text();
-      gradeFile = text.split(/\n/).map(line => {
+      takeGradeFile(text.split(/\n/).map(line => {
         const row = parseGradeLine(line);
         if (!row) return null;
         keepClose(row);
         return row;
-      }).filter(Boolean);
+      }).filter(Boolean));
     }
     await applyGrades();
     const filled = load();
@@ -9396,7 +9434,7 @@ document.getElementById("saveledger").onclick = async () => {
       fetch("cards/grades.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").then(text => {
         if (!text) return;
         const rows = text.split(/\n/).map(parseGradeLine).filter(Boolean);
-        if (rows.length) gradeFile = rows;
+        if (rows.length) takeGradeFile(rows);
       }).catch(() => {})
     ]);
   } catch (e) {}
@@ -12020,7 +12058,7 @@ async function refreshDashboardLive(){
     if (cal) takePublishedCalendar(cal);
     if (grades) {
       const rows = grades.split(/\n/).map(parseGradeLine).filter(Boolean);
-      if (rows.length) gradeFile = rows;
+      if (rows.length) takeGradeFile(rows);
     }
     if ((document.documentElement.dataset.page || "") === "dashboard") await gradeFinishedSlips(true).catch(() => {});
   } catch (e) {}
