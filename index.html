@@ -291,7 +291,13 @@ th.th-center { text-align:center; }
 #todaycard .analysis-cell .card-prices { flex-direction:column; flex-wrap:nowrap; align-items:stretch; width:100%; }
 #todaycard .analysis-cell .card-price { width:100%; max-width:100%; box-sizing:border-box; display:flex; justify-content:space-between; align-items:center; gap:12px; text-align:left; white-space:normal; }
 #todaycard .analysis-cell .card-pick { min-width:0; }
-#todaycard .analysis-cell .card-when { margin-left:auto; flex:0 0 auto; color:#d6ffd0; font-size:12px; white-space:nowrap; }
+#todaycard .card-load { position:fixed; left:0; right:0; bottom:0; top:var(--pin, 96px); z-index:40; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; background:#0a0a0a; }
+#todaycard .card-load[hidden] { display:none !important; }
+#todaycard .card-load img { width:96px; height:96px; border-radius:12px; border:1px solid #39ff14; background:#0a0a0a; }
+#todaycard .card-load p { margin:0; color:#39ff14; font-weight:700; font-size:18px; }
+#todaycard .card-load-bar { width:180px; height:3px; background:#243024; border-radius:3px; overflow:hidden; }
+#todaycard .card-load-bar span { display:block; height:100%; width:40%; background:#39ff14; animation:card-load 1s linear infinite; }
+@keyframes card-load { from { transform:translateX(-120%); } to { transform:translateX(320%); } }
 .slip-row { display:flex; justify-content:space-between; gap:8px; align-items:center; border:1px solid #243024; border-radius:8px; padding:6px 8px; color:#d6ffd0; text-align:left; }
 .slip-row.edge { color:#f0e14a; }
 .slip-bet { flex:1 1 auto; min-width:0; }
@@ -1071,6 +1077,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </section>
 <section class="card view" id="liveodds"><div class="section-head"><h2>Live Odds Analysis</h2></div><div class="align-frame"><table class="score-align"><tbody><tr><td><div class="odds-tools" id="compareday"><button type="button" id="day-yesterday">Yesterday</button><button type="button" id="day-today">Today</button><select id="comparesport"><option value="All" selected>All</option><option value="CBB">CBB</option><option value="CFB">CFB</option><option value="MLB">MLB</option><option value="NBA">NBA</option><option value="NFL">NFL</option><option value="NHL">NHL</option></select><button type="button" id="refreshodds">Refresh</button><div class="game-sharps"><a class="crew-hit" href="index.html?page=sharks#shark-gorilla" data-jump="sharks" data-sharp="shark-gorilla" title="Gnarly Gorilla"><img src="about-gorilla.jpg" alt="Gnarly Gorilla" width="32" height="32" decoding="async"></a><a class="crew-hit" href="index.html?page=sharks#shark-vito" data-jump="sharks" data-sharp="shark-vito" title="Vito the Spot"><img src="jungle-leopard.jpg" alt="Vito the Spot" width="32" height="32" decoding="async"></a><a class="crew-hit" href="index.html?page=sharks#shark-rocco" data-jump="sharks" data-sharp="shark-rocco" title="Rocco No Chase"><img src="jungle-rhino.jpg" alt="Rocco No Chase" width="32" height="32" decoding="async"></a><a class="crew-hit" href="index.html?page=sharks#shark-paulie" data-jump="sharks" data-sharp="shark-paulie" title="Paulie the Fade"><img src="jungle-hyena.jpg" alt="Paulie the Fade" width="32" height="32" decoding="async"></a><a class="crew-hit" href="index.html?page=sharks#shark-gino" data-jump="sharks" data-sharp="shark-gino" title="Gino the Wire"><img src="jungle-bird.jpg" alt="Gino the Wire" width="32" height="32" decoding="async"></a></div></div></td><td class="score-copy"><p class="warn slips-side">Moneyline, spread, and total across books. Refresh pulls the live price.</p><div id="oddslead"></div></td></tr></tbody></table></div><div id="oddscompare"></div></section>
 <section class="card view" id="todaycard">
+<div class="card-load" id="cardload" role="status" aria-live="polite"><img src="gg-icon.png" alt="" width="96" height="96"><p>Loading Today's Card</p><div class="card-load-bar" aria-hidden="true"><span></span></div></div>
 <div class="section-head"><h2>Today's Card</h2></div>
 <div class="payout-box">
 <h3>$10 Win</h3>
@@ -2014,6 +2021,17 @@ function pickWhen(row){
   return stamp.toLocaleDateString("en-US", {timeZone: "UTC", weekday: "short", month: "short", day: "numeric"});
 }
 const kickAsked = new Set();
+let cardTimeJobs = 0;
+let cardFileSeen = false;
+function hideCardLoad(){
+  const el = document.getElementById("cardload");
+  if (el) el.hidden = true;
+}
+function settleCardLoad(){
+  if (cardTimeJobs > 0) return;
+  hideCardLoad();
+}
+if ((document.documentElement.dataset.page || "") === "todaycard") setTimeout(hideCardLoad, 12000);
 function takeUpcoming(date, games){
   const day = String(date || "").slice(0, 10);
   const keep = (window.__upcomingBoard || []).filter(g => (slateDateOf(kickMs(g)) || String(g.date || "").slice(0, 10)) !== day);
@@ -2029,9 +2047,11 @@ function armPickTimes(rows){
     kickAsked.add(key);
     jobs.push({sport: sport, date: date});
   }));
-  if (!jobs.length) return;
+  if (!jobs.length) { settleCardLoad(); return; }
+  cardTimeJobs += jobs.length;
   setTimeout(() => {
     Promise.all(jobs.map(job => (typeof scoreboard === "function" ? scoreboard(job.sport, job.date) : Promise.resolve([])).catch(() => []))).then(packs => {
+      cardTimeJobs = Math.max(0, cardTimeJobs - jobs.length);
       const byDate = {};
       packs.forEach((pack, i) => {
         const date = jobs[i].date;
@@ -2039,7 +2059,8 @@ function armPickTimes(rows){
       });
       Object.keys(byDate).forEach(date => takeUpcoming(date, byDate[date]));
       if (document.getElementById("analysisgrid") && postedCard) drawCardAnalysis(postedCard);
-    }).catch(() => { jobs.forEach(job => kickAsked.delete(job.sport + "|" + job.date)); });
+      else settleCardLoad();
+    }).catch(() => { cardTimeJobs = Math.max(0, cardTimeJobs - jobs.length); jobs.forEach(job => kickAsked.delete(job.sport + "|" + job.date)); settleCardLoad(); });
   }, 0);
 }
 function drawCardAnalysis(text){
@@ -2072,6 +2093,7 @@ function drawCardAnalysis(text){
     if (title) title.textContent = "Analysis · " + today;
     if (read) read.textContent = "No card is live yet. It posts with the morning picks. Yesterday is not carried onto this card.";
     paintSeasonStatus();
+    if (cardFileSeen) settleCardLoad();
     return;
   }
   const sports = ["CBB","CFB","MLB","NBA","NFL","NHL"];
@@ -3977,6 +3999,7 @@ async function readJson(url){
   try { return JSON.parse(text); } catch (err) { return null; }
 }
 async function loadPickSlate(){
+  cardFileSeen = true;
   try {
     let data = await readJson("cards/pick-slate.json");
     if (!data || !Array.isArray(data.games) || !data.games.length) data = await readJson("cards/scoreboard.json");
@@ -3997,6 +4020,7 @@ async function loadPickSlate(){
     refreshSlateRecords().then(updated => { if (!same && !updated) drawPickSlate(); }).catch(() => { if (!same) drawPickSlate(); });
     armHourlyScores();
   } catch (err) {}
+  settleCardLoad();
 }
 function teamSide(c){
   const team = Object.assign({}, (c && c.team) || {});
