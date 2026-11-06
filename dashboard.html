@@ -1948,10 +1948,34 @@ function kickWord(pick, word){
   return words.some(w => w === word || (w.length >= 4 && word.length >= 4 && (w.indexOf(word) === 0 || word.indexOf(w) === 0)));
 }
 function kickScore(pick, name){
+  if (!name) return 0;
   const words = String(name || "").toLowerCase().replace(/[^a-z0-9&]/g, " ").split(/\s+/).filter(w => w.length >= 3 && !/^(the|and|over|under|ml)$/.test(w));
   if (!words.length) return 0;
   const hits = words.filter(w => kickWord(pick, w)).length;
-  return hits ? hits + (nickHit(pick, name) ? 2 : 0) : 0;
+  const nick = nickHit(pick, name) ? 2 : 0;
+  const side = typeof sideHit === "function" && sideHit(pick, name) ? 3 : 0;
+  if (!hits && !nick && !side) return 0;
+  return hits + nick + side;
+}
+function pickStart(row){
+  const sport = String(row[1] || "").toUpperCase();
+  const pick = String(row[3] || "");
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(String(row[0] || "")) ? String(row[0]).slice(0, 10) : easternDay();
+  const ranked = kickPool(sport, date).map(g => {
+    const names = kickNames(g);
+    const away = kickScore(pick, names[0]);
+    const home = kickScore(pick, names[1]);
+    return {n: away + home + (away && home ? 6 : 0), ms: kickMs(g), board: !!(g.label && g.books)};
+  }).filter(x => x.n && x.ms).sort((a, b) => b.n - a.n || (a.board - b.board) || a.ms - b.ms);
+  if (!ranked.length) return 0;
+  let best = ranked.filter(x => x.n === ranked[0].n);
+  const live = best.filter(x => !x.board);
+  if (live.length) best = live;
+  const times = [];
+  best.forEach(x => { if (!times.some(ms => Math.abs(ms - x.ms) < 120000)) times.push(x.ms); });
+  const onSlate = times.filter(ms => slateDateOf(ms) === date);
+  const use = onSlate.length ? onSlate : times;
+  return use.length === 1 ? use[0] : 0;
 }
 function kickPool(sport, date){
   const list = [];
@@ -1969,24 +1993,6 @@ function kickPool(sport, date){
     const slate = slateDateOf(ms);
     return !slate || slate === date || String(g.date || "").slice(0, 10) === date;
   });
-}
-function pickStart(row){
-  const sport = String(row[1] || "").toUpperCase();
-  const pick = String(row[3] || "");
-  const date = /^\d{4}-\d{2}-\d{2}$/.test(String(row[0] || "")) ? String(row[0]).slice(0, 10) : easternDay();
-  const ranked = kickPool(sport, date).map(g => {
-    const names = kickNames(g);
-    const key = names.map(n => String(n).toLowerCase().replace(/[^a-z0-9]/g, "")).filter(Boolean).sort().join("|");
-    const board = !!(g.label && g.books);
-    return {g: g, n: kickScore(pick, names[0]) + kickScore(pick, names[1]), ms: kickMs(g), key: key, board: board};
-  }).filter(x => x.n && x.ms && x.key).sort((a, b) => b.n - a.n || (a.board - b.board) || a.ms - b.ms);
-  if (!ranked.length) return 0;
-  const top = ranked.filter(x => x.n === ranked[0].n && !x.board);
-  const best = top.length ? top : ranked.filter(x => x.n === ranked[0].n);
-  const keys = [...new Set(best.map(x => x.key))];
-  if (keys.length !== 1) return 0;
-  const times = [...new Set(best.map(x => x.ms))].filter(ms => slateDateOf(ms) === date).sort((a, b) => a - b);
-  return (times.length ? times : [...new Set(best.map(x => x.ms))].sort((a, b) => a - b))[0] || 0;
 }
 function pickWhen(row){
   const ms = pickStart(row);
@@ -2015,9 +2021,12 @@ function armPickTimes(rows){
   if (!jobs.length) return;
   setTimeout(() => {
     Promise.all(jobs.map(job => (typeof scoreboard === "function" ? scoreboard(job.sport, job.date) : Promise.resolve([])).catch(() => []))).then(packs => {
-      window.__kickGames = (window.__kickGames || []).concat(packs.flat());
+      packs.forEach((pack, i) => { if (!pack || !pack.length) kickAsked.delete(jobs[i].sport + "|" + jobs[i].date); });
+      const games = packs.flat().filter(Boolean);
+      if (!games.length) return;
+      window.__kickGames = (window.__kickGames || []).concat(games);
       if (document.getElementById("analysisgrid") && postedCard) drawCardAnalysis(postedCard);
-    }).catch(() => {});
+    }).catch(() => { jobs.forEach(job => kickAsked.delete(job.sport + "|" + job.date)); });
   }, 0);
 }
 function drawCardAnalysis(text){
@@ -2066,7 +2075,11 @@ function drawCardAnalysis(text){
     const books = [...new Set(plays.map(r => r[6]).filter(Boolean))];
     const note = edges.length ? edges.map(r => (r[6] ? r[6] + " " : "") + r[3]).join("; ") : ((plays[0][6] ? plays[0][6] + " " : "") + plays[0][3] + " leads the card.");
     const buttons = plays.map(r => {
-      const price = Number(String(r[4] || "").replace(/[^\d.+-]/g, ""));
+      let price = Number(String(r[4] || "").replace(/[^0-9.+-]/g, ""));
+      if (!Number.isFinite(price)) {
+        const found = String(r[3] || "").match(/[+-]\d+(?:\.\d+)?/);
+        price = found ? Number(found[0]) : NaN;
+      }
       if (!Number.isFinite(price)) return "";
       const data = {sport: r[1], type: r[2] || "Spread", pick: r[3], odds: String(price), date: r[0], book: r[6] || "", edge: /edge/i.test(r[5] || "") ? "1" : "0"};
       const attrs = Object.keys(data).map(key => " data-" + key + "='" + encodeURIComponent(data[key]) + "'").join("");
@@ -4525,15 +4538,17 @@ async function fetchScoreDay(sport, ymd){
   const hit = livePackCache.get(key);
   if (scoreCacheFresh(hit)) return hit;
   const stamp = String(ymd).replace(/-/g, "");
+  const next = shiftDate(ymd, 1);
+  const stamps = [stamp, next ? String(next).replace(/-/g, "") : ""].filter(Boolean);
   const groups = scoreGroups(sport);
-  const lists = await Promise.all(groups.map(async group => {
+  const lists = await Promise.all(stamps.flatMap(day => groups.map(async group => {
     const extra = group ? "&groups=" + group : "";
     try {
-      const res = await fetch("https://site.api.espn.com/apis/site/v2/sports/" + SCORE_FEED[sport] + "/scoreboard?dates=" + stamp + "&limit=400" + extra);
+      const res = await fetch("https://site.api.espn.com/apis/site/v2/sports/" + SCORE_FEED[sport] + "/scoreboard?dates=" + day + "&limit=400" + extra);
       if (!res.ok) return null;
       return await res.json();
     } catch (e) { return null; }
-  }));
+  })));
   if (!lists.some(Boolean)) return {games: [], days: [], ok: false, at: 0};
   const seen = new Set();
   const events = [];
