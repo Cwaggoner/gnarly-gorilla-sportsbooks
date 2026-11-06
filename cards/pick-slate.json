@@ -1,1 +1,14 @@
-PLACEHOLDER_WILL_REPLACE
+{
+  "date": "2026-11-06",
+  "source": "ESPN scoreboard at 4:00 AM",
+  "games": [
+    {
+      "sport": "CBB",
+      "game": "Northeastern Huskies at Virginia Cavaliers",
+      "start": "2026-11-06T22:00:00Z",
+      "location": "John Paul Jones Arena, Charlottesville, VA",
+      "records": {"Northeastern": "0-1", "Virginia": "1-0"}
+    }
+  ],
+  "passed": []
+}

@@ -1,1 +1,82 @@
-PLACEHOLDER_ODDS
+{
+  "days": {
+    "2026-11-05": {
+      "h2h": [],
+      "spreads": [],
+      "totals": []
+    },
+    "2026-11-06": {
+      "h2h": [
+        {
+          "sport": "NBA",
+          "label": "Boston Celtics at Charlotte Hornets",
+          "start": "2026-11-07T00:00:00Z",
+          "books": {
+            "BetMGM": "-325 / +260",
+            "Caesars": "-335 / +260",
+            "DraftKings": "-344 / +276",
+            "Fanatics": "-330 / +260",
+            "FanDuel": "-340 / +275",
+            "HardRock": "-350 / +275"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "Washington Wizards at Atlanta Hawks",
+          "start": "2026-11-07T00:00:00Z",
+          "books": {
+            "BetMGM": "+200 / -250",
+            "Caesars": "+210 / -260",
+            "DraftKings": "+199 / -241",
+            "Fanatics": "+210 / -260",
+            "FanDuel": "+220 / -270",
+            "HardRock": "+200 / -250"
+          }
+        },
+        {
+          "sport": "NHL",
+          "label": "Columbus Blue Jackets at Buffalo Sabres",
+          "start": "2026-11-07T00:00:00Z",
+          "books": {
+            "BetMGM": "+150 / -185",
+            "Caesars": "+155 / -185",
+            "DraftKings": "+150 / -180",
+            "Fanatics": "+150 / -180",
+            "FanDuel": "+150 / -182",
+            "HardRock": "-"
+          }
+        }
+      ],
+      "spreads": [
+        {
+          "sport": "NBA",
+          "label": "Philadelphia 76ers at Cleveland Cavaliers",
+          "start": "2026-11-07T00:30:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-2.5 -110 / +2.5 -110",
+            "DraftKings": "-1.5 -110 / +1.5 -110",
+            "Fanatics": "-",
+            "FanDuel": "-2.5 -105 / +2.5 -115",
+            "HardRock": "-"
+          }
+        }
+      ],
+      "totals": [
+        {
+          "sport": "NBA",
+          "label": "Philadelphia 76ers at Cleveland Cavaliers",
+          "start": "2026-11-07T00:30:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "o229.5 -110 / u229.5 -110",
+            "DraftKings": "o229.5 -110 / u229.5 -110",
+            "Fanatics": "o229.5 -110 / u229.5 -110",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        }
+      ]
+    }
+  }
+}
