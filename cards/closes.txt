@@ -291,7 +291,21 @@
 2026-10-31 | CFB | -110 | Nevada +22.5 at UCLA | -110
 2026-10-31 | CFB | -108 | Minnesota +20.5 at Indiana | -108
 2026-10-31 | CFB | -102 | Rutgers +16.5 vs Michigan | -102
-2026-10-31 | CFB | -110 | USC +6.5 | -110
 2026-11-03 | CBB | -110 | Stetson +16.5 | -115
 2026-11-05 | CBB | -110 | Wake Forest +17.5 | -115
 2026-11-05 | NHL | 320 | Chicago Blackhawks +320 | 333
+2026-11-04 | CFB | -112 | Sacramento St +25.5 vs Toledo | -112
+2026-11-04 | NBA | -110 | Hornets -3.5 at Brooklyn Nets | -110
+2026-11-04 | NBA | -105 | Chicago Bulls at New York Knicks Over 234.5 | -105
+2026-11-04 | NBA | -490 | Celtics ML vs Milwaukee Bucks | 450
+2026-11-04 | NBA | -110 | Pacers +6.5 at Memphis Grizzlies | -110
+2026-11-04 | NHL | 105 | Panthers -1.5 vs Chicago Blackhawks | 105
+2026-11-04 | NBA | -112 | Nuggets -4.5 vs Raptors | -110
+2026-11-04 | NBA | -105 | Clippers +5.5 vs Heat | -110
+2026-11-04 | CBB | -112 | SE Louisiana +29.5 at Auburn | -115
+2026-11-05 | CBB | 110 | Green ML vs McNeese Cowboys | -130
+2026-11-05 | CBB | 7000 | Knights ML at Indiana Hoosiers | 7000
+2026-11-05 | CBB | 275 | Hawks ML at Merrimack Warriors | -20000
+2026-11-05 | CBB | -110 | UMass Lowell River Hawks at Merrimack Warriors Over 143.5 | -110
+2026-11-05 | NHL | -108 | Canadiens ML vs Mammoth | -120
+2026-11-05 | NHL | 140 | Flyers ML at Rangers | 120
