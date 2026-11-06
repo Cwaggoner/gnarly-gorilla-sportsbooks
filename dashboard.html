@@ -336,8 +336,10 @@ input, select, button, textarea { background:#0e0e0e; color:var(--text); border:
 #addbet table.score-align { margin:0; }
 #addbet .score-copy { display:flex; flex-direction:column; align-items:flex-start; gap:2px; }
 #addbet .key-box .score-copy .api-note { margin:0; }
-#keystatus { display:block; width:100%; margin:0 0 4px; padding-left:0; text-align:center; }
-#keystatus:not(:empty)::before { content:none; }
+#keystatus, #keyleft { display:block; width:100%; margin:0; padding-left:0; text-align:center; }
+#keystatus { margin-bottom:2px; }
+#keyleft { margin-bottom:4px; }
+#keystatus:not(:empty)::before, #keyleft:not(:empty)::before { content:none; }
 #betnotes .field-note { grid-column:auto; align-self:auto; text-align:left; margin:0; }
 #seasons { margin-bottom:18px; min-width:0; max-width:100%; border:0; background:transparent; box-shadow:none; }
 #seasons > table { margin-bottom:28px; }
@@ -1202,7 +1204,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <label id="oddskeybox">Odds Key<input id="oddskey" type="password" placeholder="Free or paid key" autocomplete="off"></label>
 <button type="button" id="commitkey">Commit</button>
 <button type="button" class="odds-link" onclick="window.open('https://the-odds-api.com/','_blank','noopener,noreferrer')">Open API</button>
-</div></td><td class="score-copy"><p id="keystatus" class="warn"></p><span id="keynote" class="warn"></span><p class="api-note">Paste the key and press Commit. A free key loads the board. Close needs the paid key.</p></td></tr></tbody></table></div>
+</div></td><td class="score-copy"><p id="keystatus" class="warn"></p><p id="keyleft" class="warn"></p><span id="keynote" class="warn"></span><p class="api-note">Paste the key and press Commit. A free key loads the board. Close needs the paid key.</p></td></tr></tbody></table></div>
 </div>
 </section>
 <section class="card view" id="slips">
@@ -7652,6 +7654,7 @@ document.getElementById("commitkey").onclick = () => {
   localStorage.setItem("gg-odds-key", key);
   localStorage.removeItem("gg-key-plan");
   localStorage.removeItem("gg-key-plan-for");
+  localStorage.removeItem("gg-key-left");
   oddskey.value = key;
   Object.keys(localStorage).filter(k => k.startsWith("gg-compare") || k.startsWith("gg-board")).forEach(k => localStorage.removeItem(k));
   Object.keys(sessionStorage).filter(k => k.startsWith("gg-odds")).forEach(k => sessionStorage.removeItem(k));
@@ -7661,15 +7664,23 @@ document.getElementById("commitkey").onclick = () => {
   drawOddsCompare(true).catch(() => {});
   if (typeof fillPickBoard === "function") fillPickBoard().catch(() => {});
 };
-function paintKeyStatus(plan){
+function paintKeyStatus(plan, left){
   const el = document.getElementById("keystatus");
+  const count = document.getElementById("keyleft");
   if (!el) return;
   const key = ((document.getElementById("oddskey") || {}).value || "").trim();
-  if (!key) { el.textContent = "No key"; return; }
+  const savedLeft = localStorage.getItem("gg-key-left");
+  const shown = left == null || left === "" ? savedLeft : String(left);
+  if (!key) {
+    el.textContent = "No key";
+    if (count) count.textContent = "";
+    return;
+  }
   if (plan === "paid") el.textContent = "Paid key";
   else if (plan === "free") el.textContent = "Free key";
   else if (plan === "bad") el.textContent = "Key not valid";
   else el.textContent = "Checking the key";
+  if (count) count.textContent = shown !== "" && shown != null && Number.isFinite(Number(shown)) ? Number(shown).toLocaleString("en-US") + " credits left" : "";
 }
 let keyPlanFlight = null;
 function refreshKeyStatus(force){
@@ -7677,25 +7688,28 @@ function refreshKeyStatus(force){
   if (!key) { paintKeyStatus(""); return Promise.resolve(); }
   const mark = String(key.length) + ":" + key.slice(-4);
   const saved = localStorage.getItem("gg-key-plan") || "";
-  if (!force && saved && localStorage.getItem("gg-key-plan-for") === mark) { paintKeyStatus(saved); return Promise.resolve(); }
+  if (!force && saved && localStorage.getItem("gg-key-plan-for") === mark && localStorage.getItem("gg-key-left") != null) { paintKeyStatus(saved); return Promise.resolve(); }
   paintKeyStatus("");
   if (keyPlanFlight) return keyPlanFlight;
   keyPlanFlight = (async () => {
     let plan = "";
+    let left = "";
     try {
       const res = await fetch("https://api.the-odds-api.com/v4/sports?apiKey=" + encodeURIComponent(key));
       if (res.status === 401 || res.status === 403) plan = "bad";
       else if (res.ok) {
         const used = Number(res.headers.get("x-requests-used"));
-        const left = Number(res.headers.get("x-requests-remaining"));
-        if (Number.isFinite(used) && Number.isFinite(left)) plan = (used + left) > 500 ? "paid" : "free";
+        const remain = Number(res.headers.get("x-requests-remaining"));
+        if (Number.isFinite(remain)) left = String(remain);
+        if (Number.isFinite(used) && Number.isFinite(remain)) plan = (used + remain) > 500 ? "paid" : "free";
       }
     } catch (e) {}
     if (plan) {
       localStorage.setItem("gg-key-plan", plan);
       localStorage.setItem("gg-key-plan-for", mark);
+      if (left !== "") localStorage.setItem("gg-key-left", left);
       localStorage.setItem("gg-paid-key", plan === "paid" ? "1" : "");
-      paintKeyStatus(plan);
+      paintKeyStatus(plan, left);
     } else paintKeyStatus(saved);
   })().finally(() => { keyPlanFlight = null; });
   return keyPlanFlight;
