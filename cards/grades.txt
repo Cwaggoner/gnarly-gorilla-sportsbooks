@@ -1,14 +1,1 @@
-# file: grades
-2026-11-05 | RANGE | All Win 811.94 | All Lose -80.00
-2026-11-05 | CBB | Wake Forest +17.5 | close -115 | loss | 51-74 | -10.00 EDGE
-2026-11-05 | CBB | Green ML vs McNeese Cowboys | close -130 | win | 77-67 | 11.00
-2026-11-05 | CBB | Knights ML at Indiana Hoosiers | close 7000 | loss | 69-92 | -10.00
-2026-11-05 | CBB | Hawks ML at Merrimack Warriors | close -20000 | win | 71-61 | 27.50
-2026-11-05 | CBB | UMass Lowell River Hawks at Merrimack Warriors Over 143.5 | close -110 | loss | 71-61 | -10.00
-2026-11-05 | NHL | Chicago Blackhawks +320 | close +333 | loss | 1-4 | -10.00 EDGE
-2026-11-05 | NHL | Canadiens ML vs Mammoth | close -120 | win | 5-4 | 9.26
-2026-11-05 | NHL | Flyers ML at Rangers | close 120 | loss | 2-3 | -10.00
-2026-11-05 | CFB | No Picks
-2026-11-05 | NBA | No Picks
-2026-11-05 | NFL | No Picks
-2026-11-05 | MLB | Season Ended
+PLACEHOLDER_FULL_CONTENT
