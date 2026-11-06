@@ -136,7 +136,6 @@ html, body, .page, .page * { overflow-anchor:none; }
 .score-strip,
 #calendar,
 #breaks > .table-wrap { border:0; padding:0; margin:var(--box-gap) 0; background:transparent; width:100%; max-width:100%; box-sizing:border-box; }
-.game-row,
 #oddscompare > .mgm-card,
 .full-card,
 .shark { width:100%; max-width:100%; box-sizing:border-box; }
@@ -287,7 +286,6 @@ th.th-center { text-align:center; }
 #slipclose { height:28px; padding:2px 8px; }
 .board-price { display:block; width:100%; height:auto; margin:2px 0; padding:6px 4px; text-align:left; color:#d6ffd0; background:#0e0e0e; cursor:pointer; font-size:12px; line-height:1.2; white-space:normal; }
 .board-price.best-price { color:#ff00ff; border-color:#ff00ff; }
-.compare td.price-cell { min-width:10ch; vertical-align:top; }
 .card-prices { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
 .card-price { height:auto; text-align:left; color:#39ff14; cursor:pointer; }
 #todaycard .analysis-cell .card-prices { flex-direction:column; flex-wrap:nowrap; align-items:stretch; width:100%; }
@@ -434,7 +432,6 @@ footer#about { border:0; background:transparent; box-shadow:none; }
 .shark-juice, .shark-pick .best-price { color:#ff00ff; font-weight:700; }
 .shark-game, .shark-when { margin:0 0 2px; color:var(--text); font:15px/1.4 system-ui,sans-serif; }
 .shark-pick p { margin:0 0 4px; color:var(--text); font:15px/1.4 system-ui,sans-serif; overflow-wrap:anywhere; }
-.shark-model { margin:0 0 6px; color:var(--title); font:700 15px/1.4 system-ui,sans-serif; letter-spacing:.03em; }
 .shark-record { margin:0 0 8px; color:var(--amber); font:700 15px/1.4 system-ui,sans-serif; letter-spacing:.02em; }
 .shark-result { font:700 15px/1.4 system-ui,sans-serif; letter-spacing:.04em; }
 .shark-pick .score-state { display:block; margin:0 0 4px; text-align:right; font-size:12px; font-weight:700; }
@@ -463,7 +460,6 @@ footer#about { border:0; background:transparent; box-shadow:none; }
 .live-feed a:hover { color:#39ff14; }
 .live-feed .table-wrap { max-height:440px; overflow:auto; }
 @media (max-width:800px) { .about-split { grid-template-columns:1fr; } .feed-head { flex-wrap:wrap; } .feed-head p { max-width:none; text-align:left; } }
-.score-nav { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin:0 0 4px; }
 .score-day { display:inline-flex; align-items:center; gap:8px; margin-left:calc(25px - 6px); }
 .score-day b { color:#39ff14; min-width:14ch; text-align:center; }
 table.score-align { width:100%; margin:0; border:0; border-radius:0; overflow:visible; background:transparent; }
@@ -532,7 +528,6 @@ textarea { width:100%; min-height:120px; font:13px/1.4 ui-monospace, monospace; 
 button { cursor:pointer; color:var(--title); font-weight:700; border-color:var(--gray); }
 button.on, a.on { border-color:#39ff14; }
 button.danger { color:var(--red); }
-button.amber { color:var(--amber); }
 table { width:100%; border-collapse:separate; border-spacing:0; margin:var(--box-gap) 0; border:1px solid #39ff14; border-radius:10px; overflow:hidden; }
 .table-wrap > table,
 .align-frame table,
@@ -598,7 +593,6 @@ tr.row-pending.edge td.result { color:var(--amber); }
 #rows td.slip-conf.low { color:#8fb898; }
 #rows td.slip-score { white-space:nowrap; font-variant-numeric:tabular-nums; }
 #rows td.slip-score .wmark { color:#39ff14; font-weight:700; margin-left:4px; }
-#rows td.slip-score .slip-q { color:#f0e14a; font-weight:700; margin-left:6px; }
 #rows td.slip-pick, #report td.slip-pick { white-space:normal; vertical-align:top; }
 #rows .slip-legs, #report .slip-legs { display:flex; flex-direction:column; align-items:flex-start; gap:2px; }
 #rows .slip-legs span, #report .slip-legs span { white-space:nowrap; }
@@ -850,15 +844,6 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .league-marks { display:inline-flex; align-items:center; gap:6px; flex:0 0 auto; }
 .league-marks img, button.league img { width:20px; height:20px; flex:0 0 20px; display:block; object-fit:contain; }
 #gamenote { position:absolute; margin:0; white-space:nowrap; line-height:1; z-index:5; pointer-events:none; transform:translate(-50%, -100%); }
-.game-row { border:1px solid var(--gray); border-radius:10px; margin:var(--box-gap) 0; padding:10px; background:#101610; }
-.game-row h3 { margin:0 0 4px; color:#39ff14; font-size:15px; }
-.game-who { margin:0 0 8px; color:#d6ffd0; font-size:13px; }
-.game-src { margin:0 0 4px; color:#f0e14a; font-size:12px; }
-.game-score { margin:0 0 8px; color:#39ff14; font:700 15px/1.4 system-ui,sans-serif; }
-.game-score.live { color:#f0e14a; }
-.game-final-tag { margin-right:6px; }
-.game-lines { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
-.game-lines h4 { margin:0 0 4px; color:#8fb898; font-size:12px; font-weight:600; }
 .mgm-card { display:grid; grid-template-columns:minmax(230px, max-content) minmax(0,1fr) max-content; align-items:center; column-gap:12px; width:100%; max-width:100%; box-sizing:border-box; border:1px solid var(--gray); border-radius:10px; background:#0e0e0e; margin:var(--box-gap) 0; padding:8px 10px; }
 #oddscompare .mgm-card.sport-off { display:none !important; }
 .mgm-card.no-close { grid-template-columns:minmax(210px, max-content) minmax(0,1fr) minmax(250px, 300px); align-items:start; }
@@ -951,7 +936,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .mgm-odd.empty { color:#5a6a5a; }
 .mgm-odd.locked { color:var(--muted); }
 .mgm-odd.locked svg { width:16px; height:16px; display:block; }
-@media (max-width:800px) { .game-lines { grid-template-columns:1fr; } .mgm-card { grid-template-columns:1fr; } .mgm-set.mgm-close { justify-self:end; } }
+@media (max-width:800px) { .mgm-card { grid-template-columns:1fr; } .mgm-set.mgm-close { justify-self:end; } }
 </style>
 </head>
 <body>
@@ -4102,28 +4087,6 @@ async function loadPickSlate(){
     armHourlyScores();
   } catch (err) {}
   settleCardLoad();
-}
-function teamSide(c){
-  const team = Object.assign({}, (c && c.team) || {});
-  const recs = (c && c.records) || [];
-  const pick = re => {
-    const hit = recs.find(r => re.test(String(r.type || "") + " " + String(r.name || "")));
-    return hit && hit.summary || "";
-  };
-  const overall = pick(/\bytd\b/i) || pick(/overall|total/i) || (recs[0] && recs[0].summary) || "";
-  if (overall) { team.record = overall; team.rec = overall; }
-  team.homeRec = pick(/\bhome\b/i);
-  team.roadRec = pick(/\broad\b|\baway\b/i);
-  team.last10 = pick(/last/i);
-  team.lines = lineNums(c);
-  const stats = (c && c.statistics) || [];
-  const stat = name => {
-    const hit = stats.find(s => s && s.name === name);
-    return hit && hit.displayValue || "";
-  };
-  team.ppg = stat("avgPoints") || stat("avgGoals") || stat("pointsPerGame") || "";
-  if (!team.name) team.name = team.shortDisplayName || team.displayName || "";
-  return team;
 }
 function sameClub(a, b){
   const words = s => String(s || "").toLowerCase().replace(/[^a-z0-9&]/g, " ").split(/\s+/).filter(w => w && !/^(the|at|vs|and|over|under|ml|moneyline)$/.test(w) && !/^[+-]?\d/.test(w));
@@ -7447,56 +7410,6 @@ async function fetchBook(sport, bookKey, key, fresh){
   }
   return games || [];
 }
-async function repricePaste(){
-  const note = document.getElementById("pdfnote");
-  const book = document.getElementById("cardbook").value;
-  const bookKey = BOOK_KEY[book];
-  const key = oddskey.value.trim();
-  localStorage.setItem("gg-odds-key", key);
-  const raw = document.getElementById("paste").value.trim();
-  if (!raw) return;
-  if (!bookKey) { note.textContent = book + " has no live board. Card odds kept."; return; }
-  if (!key) { note.textContent = "Card odds kept. Paste a free key from the-odds-api.com once to pull " + book + "."; return; }
-  const lines = raw.split(/\r?\n/);
-  const sports = [...new Set(lines.map(l => l.split("|")[0].trim()).filter(s => SPORT_KEY[s]))];
-  const boards = {};
-  for (const sport of sports) boards[sport] = await fetchBook(SPORT_KEY[sport], bookKey, key);
-  let priced = 0, missed = 0;
-  const out = lines.map(line => {
-    const parts = line.split("|").map(s => s.trim());
-    if (parts.length < 4 || parts[1] === "SGP") return line;
-    const [sport, type, pick] = parts;
-    const games = boards[sport] || [];
-    const info = teamOf(pick);
-    const market = type === "Total" ? "totals" : type === "Moneyline" ? "h2h" : "spreads";
-    let found = null, matched = null;
-    for (const game of games) {
-      const bk = (game.bookmakers || []).find(b => b.key === bookKey);
-      if (!bk) continue;
-      const mk = (bk.markets || []).find(m => m.key === market);
-      if (!mk) continue;
-      const outcome = matchOutcome(mk.outcomes, info.name, info.side);
-      if (!outcome) continue;
-      if (!gameHits(game, info.game || info.name)) continue;
-      found = outcome;
-      matched = game;
-      break;
-    }
-    if (!found || found.price == null) { missed++; return line; }
-    priced++;
-    let newPick = pick;
-    if (found.point != null && type !== "Moneyline") {
-      if (type === "Total") newPick = totalLabel(matched, info.side, found.point);
-      else newPick = info.name + " " + (found.point > 0 ? "+" : "") + found.point;
-    }
-    parts[2] = newPick;
-    parts[3] = String(found.price);
-    return parts.join(" | ");
-  });
-  document.getElementById("paste").value = out.join("\n");
-  note.textContent = priced + " lines repriced at " + book + (missed ? ". " + missed + " kept the card price." : ".");
-}
-
 async function fillPickBoard(useSaved, scope){
   const allBooks = scope === "all";
   const book = form.book.value;
@@ -10393,9 +10306,6 @@ function mgmSet(group, heads, cols, kind){
   const cls = kind === "close" ? " mgm-close" : (kind === "book" ? " mgm-book" : "");
   const label = !group ? "" : "<span class='mgm-group'><i></i><b>" + esc(group) + "</b><i></i></span>";
   return "<div class='mgm-set" + cls + "'>" + label + heads.map(h => "<span class='mgm-h'>" + h + "</span>").join("") + cols.map(col => col[0]).join("") + cols.map(col => col[1]).join("") + "</div>";
-}
-function teamTokens(name){
-  return String(name || "").toLowerCase().replace(/[^a-z0-9&]/g, " ").split(/\s+/).filter(w => w && !/^(the|at|vs|and|state|university|college|st|saint)$/.test(w));
 }
 function learnClubs(games){
   const map = window.__clubAlias || (window.__clubAlias = {});
