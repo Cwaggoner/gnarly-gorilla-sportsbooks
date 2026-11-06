@@ -1393,12 +1393,35 @@ function easternAt(hour, minute){
   return new Date(ms);
 }
 function zoneTime(hour, minute){ return formatTime(easternAt(hour, minute), false); }
+function slateBoard(date){
+  const day = String(date || "").slice(0, 10);
+  const pool = (window.__slipGames || []).concat(window.__gameScores || []).concat(typeof liveBoardGames !== "undefined" ? liveBoardGames : []);
+  const rows = [];
+  const seen = new Set();
+  pool.forEach(g => {
+    if (!g) return;
+    const played = (typeof gameSlateDay === "function" && gameSlateDay(g)) || String(g.date || "").slice(0, 10);
+    if (played !== day) return;
+    const id = g.id || played + "|" + (g.sport || "") + "|" + ((g.away && (g.away.abbr || g.away.name)) || "") + "|" + ((g.home && (g.home.abbr || g.home.name)) || "");
+    if (seen.has(id)) return;
+    seen.add(id);
+    rows.push(g);
+  });
+  return rows;
+}
+function boardSaysClear(date){
+  const day = String(date || "").slice(0, 10);
+  if (!window.__boardOk || !window.__boardOk[day]) return false;
+  const rows = slateBoard(date).filter(g => !g.why);
+  if (!rows.length) return false;
+  return !rows.some(g => g.live && !g.final) && rows.every(g => g.final || g.postponed);
+}
 function liveByText(){
   const place = siteZone().replace(/_/g, " ").split("/").pop();
   const today = easternDay();
   const prior = shiftDate(today, -1);
-  if (cardPosted(today) && !picksAreFinal(today)) return "Picks are live. The site grades when the last game ends.";
-  const gradedDay = picksAreFinal(today) ? today : (!cardPosted(today) && picksAreFinal(prior) ? prior : "");
+  if (cardPosted(today) && !picksAreFinal(today) && !boardSaysClear(today)) return "Picks are live. The site grades when the last game ends.";
+  const gradedDay = picksAreFinal(today) || boardSaysClear(today) ? today : (!cardPosted(today) && (picksAreFinal(prior) || boardSaysClear(prior)) ? prior : "");
   if (gradedDay) return "Graded. " + slateDateLabel(gradedDay) + " is final. Next picks at " + zoneTime(9, 0) + " " + place + ".";
   return "All picks live by " + zoneTime(9, 30) + " " + place + ". Closed Value Lines update at " + zoneTime(18, 0) + ".";
 }
@@ -4384,7 +4407,9 @@ function liveGameFromEvent(sport, ev){
   const names = ((comp.broadcasts || [])[0] || {}).names;
   const network = Array.isArray(names) ? names.filter(Boolean).slice(0, 2).join(", ") : "";
   const odds = ((comp.odds || [])[0] || {}).details || "";
-  return {sport: sport, id: ev.id, start: Date.parse(ev.date || comp.date || "") || 0, state: state, live: state === "in", final: state === "post" || type.completed === true, detail: type.shortDetail || type.detail || "", situation: sit.downDistanceText || sit.shortDownDistanceText || "", network: network, odds: odds, away: away, home: home};
+  const posted = typeof espnBoardLines === "function" ? espnBoardLines((comp.odds || [])[0]) : null;
+  const final = state === "post" || type.completed === true;
+  return {sport: sport, id: ev.id, start: Date.parse(ev.date || comp.date || "") || 0, state: state, live: state === "in" && !final, final: final, postponed: /postpon|cancel|delay/i.test((type.name || "") + " " + (type.detail || "")), detail: type.shortDetail || type.detail || "", situation: sit.downDistanceText || sit.shortDownDistanceText || "", network: network, odds: odds, away: away, home: home, awayScore: Number(away.score), homeScore: Number(home.score), lineBook: posted && posted.book, lines: posted && posted.lines};
 }
 function prettyDay(ymd){
   return new Date(String(ymd).slice(0, 10) + "T12:00:00Z").toLocaleDateString("en-US", {timeZone:"America/New_York", weekday:"short", month:"short", day:"numeric"});
@@ -4784,6 +4809,12 @@ async function loadLiveBoard(){
   const rank = g => g.live ? 0 : g.final ? 2 : 1;
   games.sort((a, b) => sportRank(a.sport) - sportRank(b.sport) || rank(a) - rank(b) || a.start - b.start);
   liveBoardGames = games;
+  if (!packs.some(p => !p || !p.ok)) {
+    window.__boardOk = Object.assign({}, window.__boardOk, {[liveBoardDate]: true});
+    window.__gameScores = games.filter(g => g && !g.why);
+    window.__gameScoresAt = Date.now();
+    showClock();
+  }
   paintLiveBoard();
   const visible = liveBoardGames.filter(g => liveBoardSport === "All" || g.sport === liveBoardSport);
   const holds = [];
@@ -5061,10 +5092,10 @@ function render(){
     try {
     const p = rowPl(b);
     const cls = b.result === "win" ? "win" : b.result === "loss" ? "loss" : "push";
-    const finished = slateSettled(b.date);
+    const finished = slateSettled(b.date) || boardSaysClear(b.date);
     const note = gradeNote(b);
     const parlayOpen = b.result === "pending" && betType(b) === "Parlay";
-    const waiting = parlayOpen || !finished ? "Game not finished" : dash;
+    const waiting = (parlayOpen || !finished) && !boardSaysClear(b.date) ? "Game not finished" : dash;
     const grade = b.viewOnly
       ? (b.noPrice ? "No Price Saved" : b.lineDiffers ? "Line differs" : (note ? "<span class='" + cls + "'>" + esc(note) + "</span>" : waiting))
       : note
@@ -8226,36 +8257,9 @@ function gradeFromScores(b, games){
   return results.every(r => r === "win") ? "win" : null;
 }
 async function scoreboard(sport, date){
-  const path = SCORE_FEED[sport];
-  if (!path) return [];
   const day = String(date || "").slice(0, 10);
-  const days = [day, shiftDate(day, 1)].filter(Boolean);
-  const groups = sport === "CBB" ? ["50"] : sport === "CFB" ? ["80", "81"] : [""];
-  const lists = await Promise.all(days.flatMap(d => groups.map(async group => {
-    const extra = group ? "&groups=" + group : "";
-    const res = await fetch("https://site.api.espn.com/apis/site/v2/sports/" + path + "/scoreboard?dates=" + String(d).replace(/-/g, "") + "&limit=400" + extra);
-    if (!res.ok) return [];
-    const data = await res.json();
-    return data.events || [];
-  })));
-  const seen = new Set();
-  return lists.flat().map(ev => {
-    const comp = (ev.competitions || [])[0] || {};
-    const teams = comp.competitors || [];
-    const homeSide = teams.find(t => t.homeAway === "home") || {};
-    const awaySide = teams.find(t => t.homeAway === "away") || {};
-    const home = teamSide(homeSide);
-    const away = teamSide(awaySide);
-    const status = (comp.status && comp.status.type) || {};
-    const posted = espnBoardLines((comp.odds || [])[0]);
-    const venue = comp.venue || {};
-    const state = String(status.state || "");
-    return {sport, date: day, id: ev.id, final: state === "post" && (status.completed === true || /final/i.test(status.name || status.description || "")), postponed: /postpon|cancel|delay/i.test(status.name || ""), live: status.state === "in", detail: status.shortDetail || status.detail || "", home: home, away: away, homeScore: Number(homeSide.score), awayScore: Number(awaySide.score), start: Date.parse(ev.date || ""), lineBook: posted && posted.book, lines: posted && posted.lines, venue: venue.fullName || "", indoor: venue.indoor === true};
-  }).filter(g => {
-    if (!g.home.displayName || !g.away.displayName || seen.has(g.id)) return false;
-    seen.add(g.id);
-    return !day || slateDateOf(g.start) === day;
-  });
+  const pack = await fetchScoreDay(sport, day).catch(() => null);
+  return ((pack && pack.games) || []).filter(g => g && !g.why).map(g => Object.assign({}, g, {sport: sport, date: day}));
 }
 let scoreTimer = 0;
 let scoreLoop = 0;
@@ -8384,7 +8388,7 @@ async function gradeFinishedSlips(quiet){
     }
     const graded = applyFinalGrades(games);
     const left = gradedPool().filter(b => b && b.result === "pending" && !isNoPick(b) && inSlipWindow(b.date)).length;
-    const live = Math.max(0, pending.length - graded - left);
+    const live = pending.filter(b => slipBoardGames(b, games).some(g => g && g.live && !g.final)).length;
     if (note && (!quiet || graded)) note.textContent = graded + " slips graded from final scores." + (live ? " " + live + " still in progress." : "") + (left ? " " + left + " left pending." : "") + (graded ? " Report Card updated." : "");
     dropFinishedFromSlate(games);
     render();
@@ -8488,9 +8492,10 @@ async function gradeOpenSlate(){
       const hits = targets.reduce((list, slip) => list.concat(slipBoardGames(slip, games)), []);
       const starts = hits.filter(g => g && Number.isFinite(g.start)).map(g => g.start);
       if (starts.length) nextStart = nextStart ? Math.min(nextStart, Math.min.apply(null, starts)) : Math.min.apply(null, starts);
-      if (!hits.length || hits.some(g => !g || (!g.final && !g.postponed))) { stillLive = true; return; }
-      if (slips.length) { stillLive = true; return; }
-      markSlateFinal(date);
+      const dayGames = games.filter(g => ((typeof gameSlateDay === "function" && gameSlateDay(g)) || String(g.date || "").slice(0, 10)) === date);
+      const boardLive = hits.some(g => g && g.live && !g.final) || dayGames.some(g => g && g.live && !g.final);
+      if (boardLive) { stillLive = true; return; }
+      if (!dayStillPending(date)) markSlateFinal(date);
     });
     const note = document.getElementById("scorenote");
     const gradedDay = picksAreFinal(today) ? today : (!cardPosted(today) && picksAreFinal(yesterday()) ? yesterday() : "");
@@ -9663,6 +9668,33 @@ hourBtn.onclick = () => {
 };
 showClock();
 setInterval(showClock, 1000);
+let boardSyncFlight = null;
+function syncBoardLive(){
+  if (boardSyncFlight || scorePage()) return;
+  const sports = Object.keys(SCORE_FEED);
+  const days = [shiftDate(easternDay(), -1), easternDay()];
+  boardSyncFlight = Promise.all(sports.map(sport => Promise.all(days.map(day => fetchScoreDay(sport, day).catch(() => null))))).then(packs => {
+    const games = [];
+    const ok = Object.assign({}, window.__boardOk);
+    days.forEach(day => { ok[day] = true; });
+    packs.forEach(sportPacks => {
+      (sportPacks || []).forEach((pack, j) => {
+        const day = days[j];
+        if (!pack || !pack.ok) { ok[day] = false; return; }
+        (pack.games || []).forEach(g => { if (g && !g.why) games.push(Object.assign({}, g, {date: day})); });
+      });
+    });
+    window.__boardOk = ok;
+    if (games.length) {
+      window.__gameScores = games;
+      window.__gameScoresAt = Date.now();
+    }
+    showClock();
+    const page = document.documentElement.dataset.page || "";
+    if (!rendering && (page === "slips" || page === "reportcard" || page === "games" || page === "liveodds")) render();
+  }).catch(() => {}).finally(() => { boardSyncFlight = null; });
+}
+syncBoardLive();
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState !== "visible") return;
   if (scorePage()) loadLiveBoard();
