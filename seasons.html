@@ -1121,7 +1121,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <div class="jump"><button type="button" data-jump="printpreview">Page 1</button><button type="button" data-jump="printpreview2">Page 2</button></div>
 <div class="tools">
 <label>Day<input type="date" id="reportDay"></label>
-<label>Show<select id="reportShow"><option value="both">Both</option><option value="pending">Pending</option><option value="graded">Graded</option></select></label>
+<label>Show<select id="reportShow"><option value="both">Both</option><option value="pending">Pending</option><option value="graded" selected>Graded</option></select></label>
 </div>
 <div id="report"></div>
 <div class="tools"><button type="button" id="copyreport">Copy Report</button><button type="button" id="printreport">Print Report</button><button type="button" id="savepng">Save PNG</button><span id="copynote" class="warn"></span><span id="printnote" class="warn"></span></div>
@@ -4925,7 +4925,7 @@ function render(){
   if (page === "reportcard") {
   const y = yesterday();
   const picked = document.getElementById("reportDay").value;
-  const show = document.getElementById("reportShow").value || "both";
+  const show = document.getElementById("reportShow").value || "graded";
   const pool = dropMatchedPending(gradedPool());
   const yDone = pool.some(b => b.date === y && b.result !== "pending" && !isNoPick(b));
   const gradeDate = picked || (yDone ? y : (slateSettled(y) ? y : shiftDate(y, -1)));
@@ -8752,7 +8752,7 @@ async function buildReportPages(mode) {
   const pageH = Math.round((landscape ? 11 : 17) * dpi);
   const margin = 48;
   const rowH = 28;
-  const show = document.getElementById("reportShow").value || "both";
+  const show = document.getElementById("reportShow").value || "graded";
   const sections = [];
   let current = [];
   rows.forEach(row => {
