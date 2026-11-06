@@ -10418,11 +10418,11 @@ function abbrHit(shortName, longName){
   if (!short || short.length < 2 || short.length > 5 || raw.split(/\s+/).length !== 1) return false;
   const place = {north:1, south:1, east:1, west:1, central:1, state:1, florida:1, carolina:1, texas:1, mexico:1, york:1, jersey:1, vegas:1, orleans:1, angeles:1, international:1, atlantic:1, coast:1, gulf:1, tennessee:1, kentucky:1, virginia:1, georgia:1, alabama:1, mississippi:1, louisiana:1, arkansas:1, ohio:1, iowa:1, illinois:1, michigan:1, indiana:1, wisconsin:1, minnesota:1, kansas:1, missouri:1, oklahoma:1, colorado:1, arizona:1, utah:1, nevada:1, oregon:1, washington:1, california:1, dakota:1, hampshire:1, island:1, maine:1, idaho:1, montana:1, wyoming:1, nebraska:1, new:1, san:1, los:1, las:1, fort:1, mount:1, saint:1, southern:1, northern:1, eastern:1, western:1, middle:1, point:1, beach:1, city:1, tech:1, methodist:1, christian:1, commonwealth:1, young:1, brigham:1};
   let words = String(longName || "").toLowerCase().replace(/[^a-z0-9&]/g, " ").split(/\s+/).filter(w => w && !/^(the|of|at|and)$/.test(w));
-  if (words.length >= 2 && !place[words[words.length - 1]]) words = words.slice(0, -1);
+  while (words.length > 1 && !place[words[words.length - 1]]) words.pop();
   words = words.filter(w => !/^(university|college)$/.test(w));
   if (!words.length) return false;
   const initials = words.map(w => w[0]).join("");
-  return initials === short || ("u" + initials) === short || (initials + "u") === short;
+  return initials === short || ("u" + initials) === short || (initials + "u") === short || (words.length >= 2 && (initials + "su") === short);
 }
 function abbrSide(a, b){
   if (abbrHit(a, b) || abbrHit(b, a)) return true;
@@ -10441,6 +10441,24 @@ function abbrSide(a, b){
     return !!stem && school.indexOf(stem) === 0;
   };
   return stAbbr(a, b) || stAbbr(b, a);
+}
+function dirSide(a, b){
+  const dirs = {s:["south","southern"], n:["north","northern"], e:["east","eastern"], w:["west","western"]};
+  const place = {north:1, south:1, east:1, west:1, central:1, state:1, florida:1, carolina:1, texas:1, mexico:1, york:1, jersey:1, vegas:1, orleans:1, angeles:1, international:1, atlantic:1, coast:1, gulf:1, tennessee:1, kentucky:1, virginia:1, georgia:1, alabama:1, mississippi:1, louisiana:1, arkansas:1, ohio:1, iowa:1, illinois:1, michigan:1, indiana:1, wisconsin:1, minnesota:1, kansas:1, missouri:1, oklahoma:1, colorado:1, arizona:1, utah:1, nevada:1, oregon:1, washington:1, california:1, dakota:1, city:1};
+  const one = (shortName, longName) => {
+    const parts = expandSchool(shortName);
+    const choices = dirs[parts[0]];
+    if (!choices || parts.length < 2 || parts[0].length !== 1) return false;
+    const rest = parts.slice(1);
+    const long = expandSchool(longName);
+    return choices.some(dir => {
+      if (long[0] !== dir) return false;
+      const body = long.slice(1);
+      if (rest.length > body.length || !rest.every((w, i) => body[i] === w)) return false;
+      return body.slice(rest.length).every(w => !place[w]);
+    });
+  };
+  return one(a, b) || one(b, a);
 }
 function expandSchool(name){
   const lead = {sc:"south carolina", nc:"north carolina", nd:"north dakota", sd:"south dakota", nm:"new mexico", wv:"west virginia"};
@@ -10471,9 +10489,16 @@ function stateSchoolMatch(a, b){
 }
 function sideMatch(a, b){
   if (!a || !b) return false;
-  if (abbrSide(a, b)) return true;
+  if (abbrSide(a, b) || dirSide(a, b)) return true;
   if (expandSchool(a).includes("state") !== expandSchool(b).includes("state")) return false;
-  if (sameClub(a, b)) return true;
+  const placeWord = {north:1, south:1, east:1, west:1, central:1, state:1, florida:1, carolina:1, texas:1, mexico:1, york:1, jersey:1, vegas:1, orleans:1, angeles:1, international:1, atlantic:1, coast:1, gulf:1, tennessee:1, kentucky:1, virginia:1, georgia:1, alabama:1, mississippi:1, louisiana:1, arkansas:1, ohio:1, iowa:1, illinois:1, michigan:1, indiana:1, wisconsin:1, minnesota:1, kansas:1, missouri:1, oklahoma:1, colorado:1, arizona:1, utah:1, nevada:1, oregon:1, washington:1, california:1, dakota:1, city:1, southern:1, northern:1, eastern:1, western:1, middle:1};
+  const extraPlace = (left, right) => {
+    const A = expandSchool(left), B = expandSchool(right);
+    const short = A.length <= B.length ? A : B;
+    const long = short === A ? B : A;
+    return long.filter(w => short.indexOf(w) < 0).some(w => placeWord[w]);
+  };
+  if (sameClub(a, b) && !extraPlace(a, b)) return true;
   const map = window.__clubAlias || {};
   const ak = map[String(a).toLowerCase().trim()], bk = map[String(b).toLowerCase().trim()];
   if (ak && ak === bk) return true;
@@ -10483,7 +10508,7 @@ function sideMatch(a, b){
   const short = A.length <= B.length ? A : B;
   const long = short === A ? B : A;
   if (!short.every(w => long.indexOf(w) >= 0)) return false;
-  const place = {north:1, south:1, east:1, west:1, central:1, state:1, florida:1, carolina:1, texas:1, mexico:1, york:1, jersey:1, vegas:1, orleans:1, angeles:1, international:1, atlantic:1, coast:1, gulf:1, tennessee:1, kentucky:1, virginia:1, georgia:1, alabama:1, mississippi:1, louisiana:1, arkansas:1, ohio:1, iowa:1, illinois:1, michigan:1, indiana:1, wisconsin:1, minnesota:1, kansas:1, missouri:1, oklahoma:1, colorado:1, arizona:1, utah:1, nevada:1, oregon:1, washington:1, california:1, dakota:1, hampshire:1, island:1, maine:1, idaho:1, montana:1, wyoming:1, nebraska:1};
+  const place = {north:1, south:1, east:1, west:1, central:1, state:1, florida:1, carolina:1, texas:1, mexico:1, york:1, jersey:1, vegas:1, orleans:1, angeles:1, international:1, atlantic:1, coast:1, gulf:1, tennessee:1, kentucky:1, virginia:1, georgia:1, alabama:1, mississippi:1, louisiana:1, arkansas:1, ohio:1, iowa:1, illinois:1, michigan:1, indiana:1, wisconsin:1, minnesota:1, kansas:1, missouri:1, oklahoma:1, colorado:1, arizona:1, utah:1, nevada:1, oregon:1, washington:1, california:1, dakota:1, hampshire:1, island:1, maine:1, idaho:1, montana:1, wyoming:1, nebraska:1, city:1, southern:1, northern:1, eastern:1, western:1, middle:1};
   const extra = long.filter(w => short.indexOf(w) < 0);
   if (extra.some(w => place[w])) return false;
   return short.some(w => w.length >= 4);
