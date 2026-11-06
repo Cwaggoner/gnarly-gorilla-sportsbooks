@@ -1,6 +1,6 @@
-# file: GG-CARD-2026-11-05
-2026-11-05 | CBB | Spread | Wake Forest +17.5 | -110 | made -3, book -17.5, gap 14.5, reason injury Gabe Nesmith out ankle surgery possible season not fully priced. Edge. Turnover line: Wake 11 TO last, Vandy 14 TO. Bench: Placide second scorer, Tanner lead.
-2026-11-05 | CFB | No Picks
-2026-11-05 | NBA | No Picks
-2026-11-05 | NFL | No Picks
-2026-11-05 | NHL | ML | Chicago Blackhawks +320 | made +253, book +320, gap 67, reason back-to-back, Edge
+# file: GG-CARD-2026-11-06
+2026-11-06 | CBB | No Picks
+2026-11-06 | CFB | Spread | New Mexico -10 | -110 | made -5.5, book -10, gap 4.5, reason Nevada QB Carter Jones out (starter change not fully priced), Edge
+Turnover line: Nevada gives it away by 13, New Mexico takes it away by 17. Bench line: Nevada backup QB AJ Bianco (ankle) expected to start.
+2026-11-06 | NBA | No Picks
+2026-11-06 | NHL | No Picks
