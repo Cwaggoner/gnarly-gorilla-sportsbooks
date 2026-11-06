@@ -309,3 +309,4 @@
 2026-11-05 | CBB | -110 | UMass Lowell River Hawks at Merrimack Warriors Over 143.5 | -110
 2026-11-05 | NHL | -108 | Canadiens ML vs Mammoth | -120
 2026-11-05 | NHL | 140 | Flyers ML at Rangers | 120
+2026-11-06 | CFB | -110 | New Mexico -10 | -110
