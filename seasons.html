@@ -1358,6 +1358,24 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
   };
   setTimeout(() => { if (!spinJobs) markSpin(false); }, 0);
 })();
+function flashNav(screen){
+  if (!screen || screen === "addbet" || screen === (document.documentElement.dataset.page || "games")) return;
+  const label = screen === "todaycard" ? "Loading Today's Card" : (SLOW_PAGE[screen] || "");
+  if (!label) return;
+  const text = document.getElementById("pageloadtext");
+  const el = document.getElementById("pageload");
+  if (text) text.textContent = label;
+  if (el) el.hidden = false;
+  if (screen === "todaycard") {
+    const card = document.getElementById("cardload");
+    if (card) card.hidden = false;
+  }
+}
+document.addEventListener("pointerdown", e => {
+  const btn = e.target.closest("#sitenav a[data-jump]");
+  if (!btn || e.button) return;
+  flashNav(btn.getAttribute("data-jump"));
+}, true);
 document.addEventListener("click", e => {
   const btn = e.target.closest("[data-jump]");
   if (!btn) return;
@@ -1368,6 +1386,11 @@ document.addEventListener("click", e => {
     e.preventDefault();
     const sharp = btn.getAttribute("data-sharp");
     if (sharp) window.__sharpLand = sharp;
+    if (btn.closest("#sitenav")) {
+      flashNav(jump);
+      requestAnimationFrame(() => requestAnimationFrame(() => goPage(jump)));
+      return;
+    }
     goPage(jump);
     return;
   }
