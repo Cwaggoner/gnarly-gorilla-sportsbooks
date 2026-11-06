@@ -211,11 +211,11 @@ h2 { margin:0 0 10px; font-size:16px; color:var(--title); }
 form, .row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:8px; align-items:center; }
 .break { grid-column:1 / -1; height:0; }
 .stack { display:flex; flex-direction:row; gap:8px; grid-column:1 / -1; align-items:flex-end; }
-#picknote, #loadnote, #betnotes .field-note, #betnotes .key-slot { display:flex; align-items:center; justify-content:center; align-self:stretch; width:100%; min-height:38px; margin:0; padding:8px 12px; border:1px solid var(--line); border-radius:8px; box-sizing:border-box; text-align:center; }
-#picknote { flex-direction:column; white-space:pre-line; }
+#picknote, #loadnote, #betnotes .field-note, #betnotes .key-slot { display:flex; align-items:center; justify-content:flex-start; align-self:stretch; width:100%; min-height:38px; margin:0; padding:8px 12px; border:1px solid var(--line); border-radius:8px; box-sizing:border-box; text-align:left; }
+#picknote { flex-direction:column; align-items:flex-start; white-space:pre-line; }
 #picknote.split-note:not(:empty)::before { content:none; }
 #picknote.split-note b { color:#ff00ff; font-weight:700; margin-right:6px; }
-#betnotes .key-slot { flex-direction:column; gap:2px; }
+#betnotes .key-slot { flex-direction:column; align-items:flex-start; gap:2px; }
 #betnotes #editnote { display:block; width:100%; min-height:0; margin:0; padding:0; border:0; }
 #betnotes #editnote:empty { display:none; }
 .bet-fields-box { grid-column:1 / -1; border:1px solid #39ff14; border-radius:10px; padding:10px 12px; background:#0e0e0e; }
@@ -267,7 +267,7 @@ th.th-center { text-align:center; }
 #betload { display:flex; flex-direction:column; align-items:stretch; justify-content:center; gap:8px; }
 #betload button { width:100%; }
 #betload img { width:100%; max-width:none; height:auto; flex:0 0 auto; object-fit:cover; border:1px solid var(--line); border-radius:8px; padding:0; box-sizing:border-box; background:#0e0e0e; cursor:pointer; overflow:hidden; }
-#betnotes { display:flex; flex-direction:column; justify-content:center; align-items:stretch; gap:8px; min-height:120px; text-align:center; }
+#betnotes { display:flex; flex-direction:column; justify-content:center; align-items:stretch; gap:8px; min-height:120px; text-align:left; }
 #sgpbox { position:fixed; right:max(12px, calc((100vw - var(--page)) / 2 + 12px)); bottom:12px; display:flex; flex-direction:column; gap:8px; width:min(680px, calc(100vw - 24px)); max-height:calc(100vh - var(--pin, 96px) - 16px); overflow:auto; z-index:60; grid-column:auto; background:#141414; border:1px solid #0068E8; border-radius:10px; padding:10px; box-shadow:0 10px 28px rgba(0,0,0,.7); }
 #sgpbox h3 { display:flex; align-items:flex-start; gap:8px; margin:0; color:#39ff14; font-size:16px; text-align:left; cursor:grab; touch-action:none; user-select:none; }
 #sgpbox.dragging h3 { cursor:grabbing; }
@@ -342,7 +342,7 @@ input, select, button, textarea { background:#0e0e0e; color:var(--text); border:
 #addbet table.score-align { margin:0; }
 #addbet .score-copy { display:flex; flex-direction:column; align-items:flex-start; gap:2px; }
 #addbet .key-box .score-copy .api-note { margin:0; }
-#keystatus, #keyleft { display:block; width:100%; margin:0; padding-left:0; text-align:center; }
+#keystatus, #keyleft { display:block; width:100%; margin:0; padding-left:0; text-align:left; }
 #keystatus { margin-bottom:2px; }
 #keyleft { margin-bottom:4px; }
 #keystatus:not(:empty)::before, #keyleft:not(:empty)::before { content:none; }
