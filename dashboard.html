@@ -3370,12 +3370,44 @@ function drawPassedSlate(){
   if (!cardBox) return;
   const games = pickSlate && Array.isArray(pickSlate.games) ? pickSlate.games : [];
   const date = (pickSlate && pickSlate.date) || easternDay();
-  if (note) note.textContent = games.length ? "Posted matchups. Add opens the bet. Add to Bet Slip puts it on the Bet Slip." : "";
+  if (note) note.textContent = games.length ? "Posted matchups. Add puts the Gnarly Gorilla play on the Bet Slip." : "";
   cardBox.innerHTML = games.length ? slateTable(games, date, true) : "";
 }
 function boardRow(list, game){
   const name = String(game || "").toLowerCase();
   return (list || []).find(r => String(r.label || "").toLowerCase() === name) || null;
+}
+function addCardPlay(btn){
+  const sport = decodeURIComponent(btn.dataset.sport || "");
+  const game = decodeURIComponent(btn.dataset.game || "");
+  const date = decodeURIComponent(btn.dataset.date || "") || easternDay();
+  const plays = slatePlays({sport: sport, game: game}, date);
+  const box = document.getElementById("sgpbox");
+  const dock = document.getElementById("slipdock");
+  const opener = document.getElementById("slipopen");
+  const note = document.getElementById("sgpprice");
+  if (box) box.classList.remove("slip-min", "slip-closed");
+  if (dock) dock.textContent = "Hide";
+  if (opener) opener.hidden = true;
+  try { sessionStorage.removeItem("gg-slip-closed"); } catch (e) {}
+  if (!plays.length) {
+    if (note) note.textContent = "Gnarly Gorilla did not price " + game + ". Nothing was added.";
+    return;
+  }
+  const book = (document.getElementById("cardbook") || {}).value || "BetMGM";
+  let added = 0;
+  plays.forEach(row => {
+    let price = Number(String(row[4] || "").replace(/[^0-9.+-]/g, ""));
+    if (!Number.isFinite(price)) {
+      const found = String(row[3] || "").match(/[+-]\d+(?:\.\d+)?/);
+      price = found ? Number(found[0]) : NaN;
+    }
+    if (!Number.isFinite(price) || !row[3]) return;
+    const before = betSlip.length;
+    addSlipLeg({date: row[0] || date, sport: row[1] || sport, type: row[2] || "Spread", pick: row[3], odds: price, book: row[6] || book, notes: row[5] || "", edge: /edge/i.test(row[5] || "") || /^high\b/i.test(row[5] || ""), game: game});
+    if (betSlip.length > before) added += 1;
+  });
+  if (note) note.textContent = added ? "Added " + added + " Gnarly Gorilla play" + (added === 1 ? "" : "s") + " to the Bet Slip. Add on the Bet Slip writes the Slips table." : "That play is already on the Bet Slip.";
 }
 function openGameBet(sport, game, date){
   const awayHome = String(game || "").split(/\s+at\s+/i);
@@ -3571,6 +3603,7 @@ document.body.addEventListener("click", e => {
   }
   const btn = e.target.closest && e.target.closest(".add-game");
   if (!btn) return;
+  if (btn.closest("#cardgames")) { addCardPlay(btn); return; }
   openGameBet(decodeURIComponent(btn.dataset.sport || ""), decodeURIComponent(btn.dataset.game || ""), decodeURIComponent(btn.dataset.date || ""));
 });
 function slateDateLabel(date){
