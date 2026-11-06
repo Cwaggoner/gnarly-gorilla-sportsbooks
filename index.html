@@ -215,7 +215,7 @@ form, .row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1f
 #picknote { flex-direction:column; align-items:flex-start; white-space:pre-line; }
 #picknote.split-note:not(:empty)::before { content:none; }
 #picknote.split-note b { color:#ff00ff; font-weight:700; margin-right:6px; }
-#betnotes .key-slot { flex-direction:column; align-items:flex-start; gap:2px; }
+#betnotes #loadhint { display:block; width:100%; margin:0; text-align:left; align-self:stretch; }
 #betnotes #editnote { display:block; width:100%; min-height:0; margin:0; padding:0; border:0; }
 #betnotes #editnote:empty { display:none; }
 .bet-fields-box { grid-column:1 / -1; border:1px solid #39ff14; border-radius:10px; padding:10px 12px; background:#0e0e0e; }
@@ -1196,7 +1196,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </div>
 <div class="bet-box" id="betload"><button type="button" id="loadpicks">Load Picks</button><img id="loadicon" src="gg-icon.png" alt="Gnarly Gorilla" width="160" height="160" loading="lazy" decoding="async"></div>
 <div class="bet-box" id="betnotes">
-<p class="warn fine field-note">Load Picks uses the boxes to the left. The icon loads every book.</p>
+<p id="loadhint" class="warn fine field-note">Load Picks uses the boxes to the left. The icon loads every book.</p>
 <p id="picknote" class="warn"></p>
 <span id="loadnote" class="warn"></span>
 <div class="key-slot">
