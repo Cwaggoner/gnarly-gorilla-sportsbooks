@@ -11948,6 +11948,26 @@ function restoreForm(){
   const note = document.getElementById("picknote");
   if (note && data.picknote) note.textContent = data.picknote;
 }
+let dashLiveBusy = false;
+async function refreshDashboardLive(){
+  if ((document.documentElement.dataset.page || "") !== "dashboard" || dashLiveBusy) return;
+  dashLiveBusy = true;
+  try {
+    const [cal, grades] = await Promise.all([
+      fetch("cards/calendar.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).catch(() => null),
+      fetch("cards/grades.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").catch(() => "")
+    ]);
+    if (cal) takePublishedCalendar(cal);
+    if (grades) {
+      const rows = grades.split(/\n/).map(parseGradeLine).filter(Boolean);
+      if (rows.length) gradeFile = rows;
+    }
+    if ((document.documentElement.dataset.page || "") === "dashboard") await gradeFinishedSlips(true).catch(() => {});
+  } catch (e) {}
+  dashLiveBusy = false;
+  if ((document.documentElement.dataset.page || "") !== "dashboard") return;
+  try { drawDashboard(); paintSharpCheck(); } catch (e) {}
+}
 function armScreen(){
   if (pageNeeds("odds")) onceKind("odds", () => {
     fetch(cardUrl("cards/odds-board.json")).then(r => r.ok ? r.json() : null).then(loadOddsBoard).catch(() => loadOddsBoard(null));
@@ -11971,6 +11991,7 @@ function armScreen(){
     if (pageNeeds("calendar")) fetch("cards/calendar.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => {
       if (!takePublishedCalendar(data)) return;
       drawCharts();
+      if ((document.documentElement.dataset.page || "") === "dashboard") { try { drawDashboard(); paintSharpCheck(); } catch (e) {} }
     }).catch(() => {});
     if (pageNeeds("profit")) { loadProfitFile(); fetch(cardUrl("cards/ledger.json")).then(r => r.ok ? r.json() : null).then(data => { takeChartLedger(data); drawCharts(); }).catch(() => {}); }
   }, 300000));
@@ -12013,6 +12034,10 @@ function armScreen(){
     render();
   }).catch(() => {}));
   if (pageNeeds("ledger") || pageNeeds("grades") || pageNeeds("dashfile")) onceKind(catchKey(), () => catchUp());
+  if (pageNeeds("dashfile")) onceKind("dashlive", () => {
+    refreshDashboardLive();
+    setInterval(() => { if ((document.documentElement.dataset.page || "") === "dashboard") refreshDashboardLive(); }, 30000);
+  });
 }
 function showView(id){
   if (window.__stateBlocked) return;
