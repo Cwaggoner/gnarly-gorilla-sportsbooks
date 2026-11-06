@@ -213,6 +213,8 @@ form, .row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1f
 .stack { display:flex; flex-direction:row; gap:8px; grid-column:1 / -1; align-items:flex-end; }
 #picknote, #loadnote, #betnotes .field-note, #betnotes .key-slot { display:flex; align-items:center; justify-content:center; align-self:stretch; width:100%; min-height:38px; margin:0; padding:8px 12px; border:1px solid var(--line); border-radius:8px; box-sizing:border-box; text-align:center; }
 #picknote { flex-direction:column; white-space:pre-line; }
+#picknote.split-note:not(:empty)::before { content:none; }
+#picknote.split-note b { color:#ff00ff; font-weight:700; margin-right:6px; }
 #betnotes .key-slot { flex-direction:column; gap:2px; }
 #betnotes #editnote { display:block; width:100%; min-height:0; margin:0; padding:0; border:0; }
 #betnotes #editnote:empty { display:none; }
@@ -3266,7 +3268,7 @@ function openGameBet(sport, game, date){
     addOpt(away + " at " + home + " Under " + (under[1] || over[1]), under[2], "Total");
     if (dog) addOpt(dog + " and Under " + (under[1] || over[1]) + " " + away + " at " + home, "", "SGP");
   }
-  document.getElementById("picknote").textContent = sel.options.length > 1 ? "Extra bet on " + game + ". Add to Bet Slip puts the chosen line on the Bet Slip. Add on the Bet Slip writes the Slips table." : "No posted price for " + game + ". Choose the type and type the pick.";
+  setPickNote(sel.options.length > 1 ? "Extra bet on " + game + ". Add to Bet Slip puts the chosen line on the Bet Slip. Add on the Bet Slip writes the Slips table." : "No posted price for " + game + ". Choose the type and type the pick.");
   document.getElementById("editnote").textContent = "";
   stashForm();
   goPage("addbet");
@@ -3368,7 +3370,7 @@ function openBestBet(btn, scroll){
   opt.dataset.book = book;
   opt.selected = true;
   sel.appendChild(opt);
-  document.getElementById("picknote").textContent = book + " " + price + " is on the Bet Slip. Add on the Bet Slip writes it to the Slips table." + (split ? " The books do not share one number, so this is the BetMGM side." : "");
+  setPickNote(book + " " + price + " is on the Bet Slip. Add on the Bet Slip writes it to the Slips table." + (split ? " The books do not share one number, so this is the BetMGM side." : ""));
   document.getElementById("editnote").textContent = "";
   addSlipLeg({date: date, sport: sport, type: type, pick: pick, odds: Number(price), book: book, edge: false, game: game, best: btn.classList.contains("best-price")});
   if (scroll !== false) { stashForm(); goPage("addbet"); }
@@ -7482,7 +7484,7 @@ async function fillAllFromBoard(){
 document.getElementById("loadicon").onclick = () => {
   document.getElementById("loadnote").textContent = "Loading...";
   fillAllFromBoard().then(n => n ? n : fillPickBoard(false, "all")).catch(err => {
-    document.getElementById("picknote").textContent = err.message || "Feed error.";
+    setPickNote(err.message || "Feed error.");
     document.getElementById("loadnote").textContent = /key|401|403/i.test(err.message || "") ? "Bad Key" : "Feed Error";
   });
 };
@@ -7490,14 +7492,14 @@ applyGrades().catch(() => {});
 document.getElementById("loadpicks").onclick = () => {
   document.getElementById("loadnote").textContent = "Loading...";
   fillPickBoard().catch(err => {
-    document.getElementById("picknote").textContent = err.message || "Feed error.";
+    setPickNote(err.message || "Feed error.");
     document.getElementById("loadnote").textContent = /key|401|403/i.test(err.message || "") ? "Bad Key" : "Feed Error";
   });
 };
 function refreshPicks(){
   document.getElementById("loadnote").textContent = "Loading...";
   fillPickBoard(false).catch(err => {
-    document.getElementById("picknote").textContent = err.message || "Feed error.";
+    setPickNote(err.message || "Feed error.");
     document.getElementById("loadnote").textContent = /key|401|403/i.test(err.message || "") ? "Bad Key" : "Feed Error";
   });
 }
@@ -7505,10 +7507,29 @@ form.date.onchange = refreshPicks;
 form.type.onchange = refreshPicks;
 form.book.onchange = () => {
   refreshPicks();
-  repriceSlips().catch(err => { document.getElementById("picknote").textContent = err.message; });
+  repriceSlips().catch(err => { setPickNote(err.message); });
 };
 form.sport.onchange = refreshPicks;
-document.getElementById("picknote").textContent = "Press Load Picks for the dropdowns. The icon loads every book.";
+function setPickNote(text){
+  const note = document.getElementById("picknote");
+  if (!note) return;
+  note.classList.remove("split-note");
+  note.textContent = text || "";
+}
+function setSplitNote(book, sport){
+  const note = document.getElementById("picknote");
+  if (!note) return;
+  note.classList.add("split-note");
+  note.replaceChildren();
+  ["Restored " + (book || "") + " " + (sport || "") + " picks.", "No new API call."].forEach(text => {
+    const line = document.createElement("span");
+    const dot = document.createElement("b");
+    dot.textContent = "•";
+    line.append(dot, document.createTextNode(" " + text));
+    note.append(line);
+  });
+}
+setPickNote("Press Load Picks for the dropdowns. The icon loads every book.");
 try {
   const savedPicks = JSON.parse(localStorage.getItem("gg-pick-board") || "null");
   if (savedPicks && savedPicks.options && savedPicks.options.length) {
@@ -7526,7 +7547,7 @@ try {
       sel.appendChild(opt);
     });
     if (savedPicks.value) sel.value = savedPicks.value;
-    document.getElementById("picknote").textContent = "Restored " + (savedPicks.book || "") + " " + (savedPicks.sport || "") + " picks.\nNo new API call.";
+    setSplitNote(savedPicks.book, savedPicks.sport);
   }
 } catch (e) {}
 function findBookPrice(games, bookKey, type, pick){
@@ -9533,7 +9554,7 @@ document.getElementById("clearbet").onclick = event => {
   form.editId.value = "";
   document.getElementById("pickselect").innerHTML = "<option value=''>Select a pick</option>";
   document.getElementById("savebtn").textContent = "Add to Bet Slip";
-  document.getElementById("picknote").textContent = "";
+  setPickNote("");
   document.getElementById("editnote").textContent = "";
 };
 document.getElementById("canceledit").onclick = event => {
@@ -9543,7 +9564,7 @@ document.getElementById("canceledit").onclick = event => {
   form.editId.value = "";
   document.getElementById("savebtn").textContent = "Add to Bet Slip";
   document.getElementById("editnote").textContent = "Edit cancelled.";
-  document.getElementById("picknote").textContent = "";
+  setPickNote("");
 };
 document.querySelectorAll("input[type=file]").forEach(input => input.addEventListener("change", () => { const face = input.parentElement.querySelector(".file-face"); if (face) face.textContent = input.files && input.files[0] ? input.files[0].name : "No File Chosen"; }));
 document.getElementById("loadcal").onchange = e => {
@@ -11982,7 +12003,10 @@ function restoreForm(){
   }
   if (data.editId) document.getElementById("savebtn").textContent = "Update Bet";
   const note = document.getElementById("picknote");
-  if (note && data.picknote) note.textContent = data.picknote;
+  if (note && data.picknote) {
+    note.classList.toggle("split-note", data.picknote.indexOf("No new API call.") >= 0);
+    note.textContent = data.picknote;
+  }
 }
 let dashLiveBusy = false;
 async function refreshDashboardLive(){
