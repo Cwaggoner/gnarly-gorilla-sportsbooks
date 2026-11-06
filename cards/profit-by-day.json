@@ -2873,20 +2873,20 @@
     },
     {
       "date": "2026-11-05",
-      "profit": 18.5,
-      "n": 4,
-      "wins": 2,
-      "losses": 2,
+      "profit": -2.24,
+      "n": 8,
+      "wins": 3,
+      "losses": 5,
       "pushes": 0,
-      "record": "2-2-0",
+      "record": "3-5-0",
       "sports": {
         "CBB": {
-          "profit": 18.5,
-          "n": 4,
+          "profit": 8.5,
+          "n": 5,
           "wins": 2,
-          "losses": 2,
+          "losses": 3,
           "pushes": 0,
-          "record": "2-2-0"
+          "record": "2-3-0"
         },
         "CFB": {
           "profit": 0,
@@ -2921,12 +2921,12 @@
           "record": "0-0-0"
         },
         "NHL": {
-          "profit": 0,
-          "n": 0,
-          "wins": 0,
-          "losses": 0,
+          "profit": -10.74,
+          "n": 3,
+          "wins": 1,
+          "losses": 2,
           "pushes": 0,
-          "record": "0-0-0"
+          "record": "1-2-0"
         }
       }
     }

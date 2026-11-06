@@ -7565,7 +7565,7 @@
       "pick": "Canadiens ML vs Mammoth",
       "odds": -108,
       "stake": 10,
-      "result": "pending",
+      "result": "win",
       "notes": "Straight bet. Not a wager.",
       "manual": true,
       "edge": true,
@@ -7574,7 +7574,8 @@
       "close": -120,
       "closeOpp": 100,
       "fairClose": 0,
-      "realClose": true
+      "realClose": true,
+      "profit": 9.26
     },
     {
       "id": 1793876221305.0505,
@@ -7585,7 +7586,7 @@
       "pick": "Flyers ML at Rangers",
       "odds": 140,
       "stake": 10,
-      "result": "pending",
+      "result": "loss",
       "notes": "Straight bet. Not a wager.",
       "manual": true,
       "edge": false,
@@ -7594,7 +7595,8 @@
       "close": 120,
       "closeOpp": -145,
       "fairClose": 0,
-      "realClose": true
+      "realClose": true,
+      "profit": -10
     }
   ],
   "pending_date": "2026-11-01"

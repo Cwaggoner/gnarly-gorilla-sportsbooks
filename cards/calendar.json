@@ -660,22 +660,22 @@
     }
   },
   "2026-11-05": {
-    "pl": -20.0,
-    "n": 2,
-    "wins": 0,
-    "losses": 2,
+    "pl": -2.24,
+    "n": 8,
+    "wins": 3,
+    "losses": 5,
     "pushes": 0,
-    "allWin": 41.09,
-    "allLose": -20.0,
+    "allWin": 811.94,
+    "allLose": -80,
     "clv": 6.5,
     "sports": {
       "CBB": {
-        "profit": -10.0,
-        "n": 1,
-        "wins": 0,
-        "losses": 1,
+        "profit": 8.5,
+        "n": 5,
+        "wins": 2,
+        "losses": 3,
         "pushes": 0,
-        "record": "0-1-0"
+        "record": "2-3-0"
       },
       "CFB": {
         "profit": 0,
@@ -710,12 +710,12 @@
         "record": "0-0-0"
       },
       "NHL": {
-        "profit": -10.0,
-        "n": 1,
-        "wins": 0,
-        "losses": 1,
+        "profit": -10.74,
+        "n": 3,
+        "wins": 1,
+        "losses": 2,
         "pushes": 0,
-        "record": "0-1-0"
+        "record": "1-2-0"
       }
     }
   },
