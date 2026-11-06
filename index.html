@@ -1211,7 +1211,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <label>Market<select id="fType"><option value="">All</option><option>Moneyline</option><option>Spread</option><option>Total</option><option>Prop</option><option>Parlay</option><option>SGP</option></select></label>
 <div class="result-files">
 <label>Result<select id="fResult"><option value="">All</option><option>pending</option><option>win</option><option>loss</option><option>push</option></select></label>
-<label>Date<select id="fDateSort"><option value="new">Newest</option><option value="old">Oldest</option></select></label>
+<label>Date<select id="fDateSort"><option value="" selected>Unfiltered</option><option value="new">Newest</option><option value="old">Oldest</option></select></label>
 <label>Load Ledger<input type="file" id="loadledger" accept=".json,application/json"><span class="file-face">No File Chosen</span></label>
 <label>Import CSV<input type="file" id="import" accept=".csv,text/csv"><span class="file-face">No File Chosen</span></label>
 <button type="button" class="danger" id="clear">Clear All</button>
@@ -5012,8 +5012,9 @@ function render(){
   const windowed = unique.filter(slipListed);
   windowed.sort((a,b) => String(b.date).localeCompare(String(a.date)));
   const typeRank = t => t === "SGP" ? 99 : ["Moneyline","Parlay","Prop","Spread","Total"].indexOf(t) + 1 || 50;
-  const dateWay = ((document.getElementById("fDateSort") || {}).value) === "old" ? 1 : -1;
-  const grouped = filtered(slipsForBooks(windowed)).sort((a,b) => dateWay * String(a.date).localeCompare(String(b.date)) || sportRank(a.sport) - sportRank(b.sport) || typeRank(a.type) - typeRank(b.type) || String(a.book).localeCompare(String(b.book)));
+  const dateSort = ((document.getElementById("fDateSort") || {}).value) || "";
+  const dateWay = dateSort === "old" ? 1 : -1;
+  const grouped = filtered(slipsForBooks(windowed)).sort((a,b) => dateSort ? (dateWay * String(a.date).localeCompare(String(b.date)) || sportRank(a.sport) - sportRank(b.sport) || typeRank(a.type) - typeRank(b.type) || String(a.book).localeCompare(String(b.book))) : (sportRank(a.sport) - sportRank(b.sport) || typeRank(a.type) - typeRank(b.type) || b.date.localeCompare(a.date) || String(a.book).localeCompare(String(b.book))));
   let lastSport = "", lastType = "";
   document.getElementById("rows").innerHTML = grouped.map(b => {
     try {
