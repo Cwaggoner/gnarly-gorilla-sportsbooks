@@ -4514,19 +4514,38 @@ function calendarDays(cal, whitelist){
   if (!whitelist || !Array.isArray(cal)) return [];
   return cal.filter(x => typeof x === "string").map(x => String(x).slice(0, 10)).filter(Boolean);
 }
+function scoreGroups(sport){
+  if (sport === "CBB") return ["", "50"];
+  if (sport === "CFB") return ["", "80", "81"];
+  return [""];
+}
 async function fetchScoreDay(sport, ymd){
   const key = sport + "|" + ymd;
   const hit = livePackCache.get(key);
   if (scoreCacheFresh(hit)) return hit;
   const stamp = String(ymd).replace(/-/g, "");
-  let data = null;
-  try {
-    const res = await fetch("https://site.api.espn.com/apis/site/v2/sports/" + SCORE_FEED[sport] + "/scoreboard?dates=" + stamp + "&limit=400");
-    if (res.ok) data = await res.json();
-  } catch (e) {}
-  if (!data) return {games: [], days: [], ok: false, at: 0};
-  const events = (data.events || []).map(ev => liveGameFromEvent(sport, ev)).filter(g => g && (!g.start || slateDateOf(g.start) === ymd));
-  const league = (data.leagues || [])[0] || {};
+  const groups = scoreGroups(sport);
+  const lists = await Promise.all(groups.map(async group => {
+    const extra = group ? "&groups=" + group : "";
+    try {
+      const res = await fetch("https://site.api.espn.com/apis/site/v2/sports/" + SCORE_FEED[sport] + "/scoreboard?dates=" + stamp + "&limit=400" + extra);
+      if (!res.ok) return null;
+      return await res.json();
+    } catch (e) { return null; }
+  }));
+  if (!lists.some(Boolean)) return {games: [], days: [], ok: false, at: 0};
+  const seen = new Set();
+  const events = [];
+  lists.forEach(data => {
+    ((data && data.events) || []).forEach(ev => {
+      const game = liveGameFromEvent(sport, ev);
+      if (!game || seen.has(game.id)) return;
+      if (game.start && slateDateOf(game.start) !== ymd) return;
+      seen.add(game.id);
+      events.push(game);
+    });
+  });
+  const league = (((lists.find(Boolean) || {}).leagues || [])[0]) || {};
   const pack = {games: events, days: calendarDays(league.calendar, league.calendarIsWhitelist), ok: true, at: Date.now()};
   livePackCache.set(key, pack);
   return pack;
@@ -8105,10 +8124,10 @@ async function applyGrades(ready){
 }
 const SCORE_FEED = {NFL:"football/nfl", NBA:"basketball/nba", NHL:"hockey/nhl", MLB:"baseball/mlb", CFB:"football/college-football", CBB:"basketball/mens-college-basketball"};
 function teamWords(team){
-  return [team && team.abbreviation, team && team.name, team && team.shortDisplayName, team && team.displayName, team && team.location].filter(Boolean).map(s => String(s).toLowerCase());
+  return [team && team.abbreviation, team && team.name, team && team.shortDisplayName, team && team.displayName, team && team.location].filter(Boolean).map(s => String(s).toLowerCase().replace(/['’]/g, ""));
 }
 function mentionScore(pick, team){
-  const text = " " + expandTeams(pick).replace(/[^a-z0-9.+-]+/g, " ") + " ";
+  const text = " " + expandTeams(pick).replace(/['’]/g, "").replace(/[^a-z0-9.+-]+/g, " ") + " ";
   let best = 0;
   teamWords(team).forEach((bit, i) => {
     const words = bit.split(/\s+/).filter(w => w.length > 2);
