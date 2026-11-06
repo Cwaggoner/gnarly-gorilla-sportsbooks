@@ -5466,7 +5466,7 @@ function mergeBoardRows(day, market, rows, quiet){
   const block = board.days[day] || (board.days[day] = {});
   const old = Array.isArray(block[market]) ? block[market] : [];
   rows.forEach(row => {
-    const prev = old.find(r => String(r && r.sport || "").toUpperCase() === String(row.sport || "").toUpperCase() && (String(r.label || "").toLowerCase() === String(row.label || "").toLowerCase() || sameClub(r.label, row.label)));
+    const prev = old.find(r => sportCode(r && r.sport) === sportCode(row.sport) && (String(r.label || "").toLowerCase() === String(row.label || "").toLowerCase() || sameMatchup(r, row)));
     if (!prev) { old.push(row); return; }
     prev.books = prev.books || {};
     Object.keys(row.books || {}).forEach(book => {
@@ -10424,6 +10424,24 @@ function abbrHit(shortName, longName){
   const initials = words.map(w => w[0]).join("");
   return initials === short || ("u" + initials) === short || (initials + "u") === short;
 }
+function abbrSide(a, b){
+  if (abbrHit(a, b) || abbrHit(b, a)) return true;
+  const head = (shortName, longName) => {
+    const parts = String(shortName || "").trim().split(/\s+/);
+    if (parts.length < 2 || /^st\.?$/i.test(parts[1] || "") || /^state$/i.test(parts[1] || "")) return false;
+    return abbrHit(parts[0], longName);
+  };
+  if (head(a, b) || head(b, a)) return true;
+  const stAbbr = (shortName, longName) => {
+    const short = String(shortName || "").toLowerCase().replace(/[^a-z]/g, "");
+    if (!/^[a-z]{2,8}st$/.test(short) || String(shortName || "").trim().split(/\s+/).length !== 1) return false;
+    if (!/\bstate\b|\bst\b/i.test(longName)) return false;
+    const stem = short.slice(0, -2);
+    const school = String(longName || "").toLowerCase().replace(/[^a-z0-9&]+/g, " ").split(/\s+/).filter(w => w && !/^(the|of|at|and|university|college|state|st)$/.test(w))[0] || "";
+    return !!stem && school.indexOf(stem) === 0;
+  };
+  return stAbbr(a, b) || stAbbr(b, a);
+}
 function expandSchool(name){
   const lead = {sc:"south carolina", nc:"north carolina", nd:"north dakota", sd:"south dakota", nm:"new mexico", wv:"west virginia"};
   const raw = String(name || "").toLowerCase().replace(/[^a-z0-9&]+/g, " ").trim().split(/\s+/).filter(Boolean);
@@ -10457,18 +10475,24 @@ function sideMatch(a, b){
   const map = window.__clubAlias || {};
   const ak = map[String(a).toLowerCase().trim()], bk = map[String(b).toLowerCase().trim()];
   if (ak && ak === bk) return true;
-  if (abbrHit(a, b) || abbrHit(b, a) || stateSchoolMatch(a, b)) return true;
+  if (abbrSide(a, b) || stateSchoolMatch(a, b)) return true;
   const A = teamTokens(a), B = teamTokens(b);
   if (!A.length || !B.length) return false;
   if (A[A.length - 1] === B[B.length - 1]) return true;
   return A.some(w => w.length >= 4 && B.indexOf(w) >= 0);
 }
+function matchupSides(label){
+  const parts = String(label || "").split(/\s+(?:at|@|vs\.?|versus)\s+/i);
+  if (parts.length < 2) return [];
+  return [parts[0].trim(), parts.slice(1).join(" ").trim()];
+}
 function sameMatchup(a, b){
   if (!a || !b) return false;
-  if (String(a.sport || "").toUpperCase() !== String(b.sport || "").toUpperCase()) return false;
+  const as = sportCode(a.sport || ""), bs = sportCode(b.sport || "");
+  if (as && bs && as !== bs) return false;
   if (sameClub(a.label, b.label)) return true;
-  const A = String(a.label || "").split(/\s+at\s+/i);
-  const B = String(b.label || "").split(/\s+at\s+/i);
+  const A = matchupSides(a.label);
+  const B = matchupSides(b.label);
   if (A.length < 2 || B.length < 2) return false;
   return (sideMatch(A[0], B[0]) && sideMatch(A[1], B[1])) || (sideMatch(A[0], B[1]) && sideMatch(A[1], B[0]));
 }
