@@ -3377,11 +3377,16 @@ function boardRow(list, game){
   const name = String(game || "").toLowerCase();
   return (list || []).find(r => String(r.label || "").toLowerCase() === name) || null;
 }
+function attrOf(el, key){
+  if (!el) return "";
+  const raw = el.getAttribute("data-" + key);
+  if (raw == null) return "";
+  try { return decodeURIComponent(raw); } catch (e) { return raw; }
+}
 function addCardPlay(btn){
-  const sport = decodeURIComponent(btn.dataset.sport || "");
-  const game = decodeURIComponent(btn.dataset.game || "");
-  const date = decodeURIComponent(btn.dataset.date || "") || easternDay();
-  const plays = slatePlays({sport: sport, game: game}, date);
+  const sport = attrOf(btn, "sport");
+  const game = attrOf(btn, "game");
+  const date = attrOf(btn, "date") || easternDay();
   const box = document.getElementById("sgpbox");
   const dock = document.getElementById("slipdock");
   const opener = document.getElementById("slipopen");
@@ -3390,6 +3395,9 @@ function addCardPlay(btn){
   if (dock) dock.textContent = "Hide";
   if (opener) opener.hidden = true;
   try { sessionStorage.removeItem("gg-slip-closed"); } catch (e) {}
+  let plays = slatePlays({sport: sport, game: game}, date);
+  const stamped = attrOf(btn, "pick");
+  if (!plays.length && stamped) plays = [[date, sport, attrOf(btn, "type") || "Spread", stamped, attrOf(btn, "odds"), attrOf(btn, "notes"), attrOf(btn, "book")]];
   if (!plays.length) {
     if (note) note.textContent = "Gnarly Gorilla did not price " + game + ". Nothing was added.";
     return;
@@ -3397,14 +3405,14 @@ function addCardPlay(btn){
   const book = (document.getElementById("cardbook") || {}).value || "BetMGM";
   let added = 0;
   plays.forEach(row => {
-    let price = Number(String(row[4] || "").replace(/[^0-9.+-]/g, ""));
+    let price = Number(String(row[4] || "").replace(/[^\d.+-]/g, ""));
     if (!Number.isFinite(price)) {
       const found = String(row[3] || "").match(/[+-]\d+(?:\.\d+)?/);
       price = found ? Number(found[0]) : NaN;
     }
     if (!Number.isFinite(price) || !row[3]) return;
     const before = betSlip.length;
-    addSlipLeg({date: row[0] || date, sport: row[1] || sport, type: row[2] || "Spread", pick: row[3], odds: price, book: row[6] || book, notes: row[5] || "", edge: /edge/i.test(row[5] || "") || /^high\b/i.test(row[5] || ""), game: game});
+    addSlipLeg({date: row[0] || date, sport: row[1] || sport, type: row[2] || "Spread", pick: row[3], odds: price, book: row[6] || book, notes: row[5] || "", edge: /edge/i.test(row[5] || "") || /^high\b/i.test(row[5] || "") || attrOf(btn, "edge") === "1", game: game});
     if (betSlip.length > before) added += 1;
   });
   if (note) note.textContent = added ? "Added " + added + " Gnarly Gorilla play" + (added === 1 ? "" : "s") + " to the Bet Slip. Add on the Bet Slip writes the Slips table." : "That play is already on the Bet Slip.";
@@ -3582,16 +3590,25 @@ document.body.addEventListener("click", e => {
   if (priceBtn) { openBestBet(priceBtn); return; }
   const cardBtn = e.target.closest && e.target.closest(".card-price");
   if (cardBtn) {
+    let price = Number(String(attrOf(cardBtn, "odds")).replace(/[^\d.+-]/g, ""));
+    const pick = attrOf(cardBtn, "pick");
+    if (!Number.isFinite(price)) {
+      const found = pick.match(/[+-]\d+(?:\.\d+)?/);
+      price = found ? Number(found[0]) : NaN;
+    }
     addSlipLeg({
-      date: decodeURIComponent(cardBtn.dataset.date || "") || easternDay(),
-      sport: decodeURIComponent(cardBtn.dataset.sport || ""),
-      type: decodeURIComponent(cardBtn.dataset.type || "Spread"),
-      pick: decodeURIComponent(cardBtn.dataset.pick || ""),
-      odds: Number(decodeURIComponent(cardBtn.dataset.odds || "")),
-      book: buttonBook(cardBtn) || slipBook(bookForPrice(decodeURIComponent(cardBtn.dataset.sport || ""), decodeURIComponent(cardBtn.dataset.pick || ""), decodeURIComponent(cardBtn.dataset.odds || ""), decodeURIComponent(cardBtn.dataset.date || ""))),
-      notes: decodeURIComponent(cardBtn.dataset.notes || ""),
-      edge: cardBtn.dataset.edge === "1" || /^high\b/i.test(decodeURIComponent(cardBtn.dataset.notes || ""))
+      date: attrOf(cardBtn, "date") || easternDay(),
+      sport: attrOf(cardBtn, "sport"),
+      type: attrOf(cardBtn, "type") || "Spread",
+      pick: pick,
+      odds: price,
+      book: attrOf(cardBtn, "book") || buttonBook(cardBtn) || slipBook(""),
+      notes: attrOf(cardBtn, "notes"),
+      edge: attrOf(cardBtn, "edge") === "1" || /edge/i.test(attrOf(cardBtn, "notes"))
     });
+    const note = document.getElementById("sgpprice");
+    if (note && pick && Number.isFinite(price)) note.textContent = "Added " + pick + " to the Bet Slip. Add on the Bet Slip writes the Slips table.";
+    else if (note) note.textContent = "That pick has no price, so it was not added.";
     return;
   }
   const drop = e.target.closest && e.target.closest(".slip-x");
@@ -3752,7 +3769,10 @@ function slateTable(list, date, extra){
     const nick = name => String(name || "").split(/\s+/).slice(-1)[0] || "";
     const line = side => esc(nick(side.name) + " " + (side.record || "—"));
     const records = "<div>" + line(away) + "</div><div>" + line(home) + "</div>";
-    const add = extra ? "<button type='button' class='add-game' data-sport='" + encodeURIComponent(game.sport || "") + "' data-game='" + encodeURIComponent(game.game || "") + "' data-date='" + encodeURIComponent(date || "") + "'>Add</button>" : "";
+    const plays = slatePlays(game, date);
+    const main = plays[0];
+    const playAttr = main ? " data-type='" + encodeURIComponent(main[2] || "Spread") + "' data-pick='" + encodeURIComponent(main[3] || "") + "' data-odds='" + encodeURIComponent(String(main[4] || "")) + "' data-notes='" + encodeURIComponent(main[5] || "") + "' data-book='" + encodeURIComponent(main[6] || "") + "' data-edge='" + ((/edge/i.test(main[5] || "") || /^high\b/i.test(main[5] || "")) ? "1" : "0") + "'" : "";
+    const add = extra ? "<button type='button' class='add-game' data-sport='" + encodeURIComponent(game.sport || "") + "' data-game='" + encodeURIComponent(game.game || "") + "' data-date='" + encodeURIComponent(date || "") + "'" + playAttr + ">Add</button>" : "";
     const spoken = gorillaNote(game, date);
     const note = "<td class='note-col' title='" + esc(spoken).replace(/'/g, "") + "'><p><b class='gg-name'>Gnarly Gorilla: </b>" + esc(spoken) + "</p></td>";
     return "<tr><td>" + esc(game.sport + " " + game.game) + "</td><td>" + esc(when) + "</td><td>" + esc(slateLocation(game)) + "</td><td>" + records + "</td>" + note + (extra ? "<td class='add-col'>" + add + "</td>" : "") + "</tr>";
@@ -4104,6 +4124,7 @@ async function loadPickSlate(){
     if (!data || !Array.isArray(data.games) || !data.games.length) data = await readJson("cards/scoreboard.json");
     if (!data || !Array.isArray(data.games)) data = {date: easternDay(), games: [], passed: []};
     const card = await fetch("cards/today.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").catch(() => "");
+    if (card && !postedCard) postedCard = card;
     applyPostedCard(data, card);
     normalizeSlate(data);
     const prev = pickSlate;

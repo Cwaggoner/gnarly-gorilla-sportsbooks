@@ -1,1 +1,720 @@
-$(cat /workspace/artifacts/cards/pick-slate.json)
+{
+  "date": "2026-11-06",
+  "source": "ESPN scoreboard",
+  "passedNote": "Posted matchups. Add puts the Gnarly Gorilla play on the Bet Slip.",
+  "games": [
+    {
+      "sport": "CBB",
+      "game": "Northeastern Huskies at Virginia Cavaliers",
+      "start": "2026-11-06T22:00Z",
+      "location": "John Paul Jones Arena, Charlottesville, VA",
+      "awayRecord": "0-1",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "James Madison Dukes at Kentucky Wildcats",
+      "start": "2026-11-07T00:00Z",
+      "location": "Rupp Arena, Lexington, KY",
+      "awayRecord": "0-1",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Arkansas State Red Wolves at Alabama Crimson Tide",
+      "start": "2026-11-07T00:30Z",
+      "location": "Coleman Coliseum, Tuscaloosa, AL",
+      "awayRecord": "1-0",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "UConn Huskies at Michigan Wolverines",
+      "start": "2026-11-07T01:00Z",
+      "location": "TD Garden, Boston, MA",
+      "awayRecord": "1-0",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Southern Miss Golden Eagles at Iowa State Cyclones",
+      "start": "2026-11-07T01:00Z",
+      "location": "Hilton Coliseum, Ames, IA",
+      "awayRecord": "1-0",
+      "homeRecord": "0-1"
+    },
+    {
+      "sport": "CBB",
+      "game": "Wagner Seahawks at Miami Hurricanes",
+      "start": "2026-11-07T02:00Z",
+      "location": "Watsco Center, Coral Gables, FL",
+      "awayRecord": "0-1",
+      "homeRecord": "0-1"
+    },
+    {
+      "sport": "CBB",
+      "game": "Middle Tennessee Blue Raiders at Kansas Jayhawks",
+      "start": "2026-11-07T02:00Z",
+      "location": "Allen Fieldhouse, Lawrence, KS",
+      "awayRecord": "1-0",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Omaha Mavericks at BYU Cougars",
+      "start": "2026-11-07T02:00Z",
+      "location": "Marriott Center, Provo, UT",
+      "awayRecord": "1-0",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "North Florida Ospreys at UCLA Bruins",
+      "start": "2026-11-07T03:30Z",
+      "location": "Pauley Pavilion, Los Angeles, CA",
+      "awayRecord": "1-0",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CFB",
+      "game": "Virginia Tech Hokies at SMU Mustangs",
+      "start": "2026-11-07T00:00Z",
+      "location": "Gerald J. Ford Stadium, Dallas, TX",
+      "awayRecord": "6-2",
+      "homeRecord": "6-2"
+    },
+    {
+      "sport": "CFB",
+      "game": "South Florida Bulls at East Carolina Pirates",
+      "start": "2026-11-07T00:30Z",
+      "location": "Dowdy-Ficklen Stadium, Greenville, NC",
+      "awayRecord": "6-2",
+      "homeRecord": "4-4"
+    },
+    {
+      "sport": "CFB",
+      "game": "Nebraska Cornhuskers at Illinois Fighting Illini",
+      "start": "2026-11-07T01:00Z",
+      "location": "Gies Memorial Stadium, Champaign, IL",
+      "awayRecord": "5-3",
+      "homeRecord": "5-3"
+    },
+    {
+      "sport": "CFB",
+      "game": "New Mexico Lobos at Nevada Wolf Pack",
+      "start": "2026-11-07T02:00Z",
+      "location": "Mackay Stadium, Reno, NV",
+      "awayRecord": "7-1",
+      "homeRecord": "3-5"
+    },
+    {
+      "sport": "CFB",
+      "game": "TCU Horned Frogs at Arizona Wildcats",
+      "start": "2026-11-07T03:15Z",
+      "location": "Casino Del Sol Stadium, Tucson, AZ",
+      "awayRecord": "4-4",
+      "homeRecord": "6-2"
+    },
+    {
+      "sport": "NBA",
+      "game": "Washington Wizards at Atlanta Hawks",
+      "start": "2026-11-07T00:00Z",
+      "location": "State Farm Arena, Atlanta, GA",
+      "awayRecord": "4-4",
+      "homeRecord": "5-4"
+    },
+    {
+      "sport": "NBA",
+      "game": "Boston Celtics at Charlotte Hornets",
+      "start": "2026-11-07T00:00Z",
+      "location": "Spectrum Center, Charlotte, NC",
+      "awayRecord": "6-2",
+      "homeRecord": "3-6"
+    },
+    {
+      "sport": "NBA",
+      "game": "Philadelphia 76ers at Cleveland Cavaliers",
+      "start": "2026-11-07T00:30Z",
+      "location": "Rocket Arena, Cleveland, OH",
+      "awayRecord": "8-1",
+      "homeRecord": "4-4"
+    },
+    {
+      "sport": "NBA",
+      "game": "Utah Jazz at Dallas Mavericks",
+      "start": "2026-11-07T01:00Z",
+      "location": "American Airlines Center, Dallas, TX",
+      "awayRecord": "1-7",
+      "homeRecord": "4-4"
+    },
+    {
+      "sport": "NBA",
+      "game": "Oklahoma City Thunder at Memphis Grizzlies",
+      "start": "2026-11-07T01:00Z",
+      "location": "FedExForum, Memphis, TN",
+      "awayRecord": "6-2",
+      "homeRecord": "6-2"
+    },
+    {
+      "sport": "NBA",
+      "game": "Toronto Raptors at Milwaukee Bucks",
+      "start": "2026-11-07T01:00Z",
+      "location": "Fiserv Forum, Milwaukee, WI",
+      "awayRecord": "4-4",
+      "homeRecord": "1-7"
+    },
+    {
+      "sport": "NBA",
+      "game": "Minnesota Timberwolves at New Orleans Pelicans",
+      "start": "2026-11-07T01:00Z",
+      "location": "Smoothie King Center, New Orleans, LA",
+      "awayRecord": "6-3",
+      "homeRecord": "4-4"
+    },
+    {
+      "sport": "NBA",
+      "game": "Portland Trail Blazers at Los Angeles Lakers",
+      "start": "2026-11-07T03:00Z",
+      "location": "crypto.com Arena, Los Angeles, CA",
+      "awayRecord": "6-1",
+      "homeRecord": "7-2"
+    },
+    {
+      "sport": "NBA",
+      "game": "San Antonio Spurs at Sacramento Kings",
+      "start": "2026-11-07T03:00Z",
+      "location": "Golden 1 Center, Sacramento, CA",
+      "awayRecord": "6-2",
+      "homeRecord": "1-7"
+    },
+    {
+      "sport": "NHL",
+      "game": "Columbus Blue Jackets at Buffalo Sabres",
+      "start": "2026-11-07T00:00Z",
+      "location": "KeyBank Center, Buffalo, NY",
+      "awayRecord": "7-7-0",
+      "homeRecord": "7-5-3"
+    },
+    {
+      "sport": "NHL",
+      "game": "San Jose Sharks at Minnesota Wild",
+      "start": "2026-11-07T01:00Z",
+      "location": "Grand Casino Arena, Saint Paul, MN",
+      "awayRecord": "7-9-1",
+      "homeRecord": "11-3-3"
+    },
+    {
+      "sport": "NHL",
+      "game": "Anaheim Ducks at Calgary Flames",
+      "start": "2026-11-07T01:00Z",
+      "location": "Scotiabank Saddledome, Calgary, AB",
+      "awayRecord": "8-7-1",
+      "homeRecord": "7-8-1"
+    },
+    {
+      "sport": "CBB",
+      "game": "Massachusetts Minutemen at Boston College Eagles",
+      "start": "2026-11-06T21:00Z",
+      "location": "TD Garden, Boston, MA",
+      "awayRecord": "1-0",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "West Florida Argonauts at Florida International Panthers",
+      "start": "2026-11-06T22:00Z",
+      "location": "Ocean Bank Convocation Center, Miami, FL",
+      "awayRecord": "1-0",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Arkansas-Pine Bluff Golden Lions at Baylor Bears",
+      "start": "2026-11-06T22:00Z",
+      "location": "Foster Pavilion, Waco, TX",
+      "awayRecord": "0-1",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Eastern Washington Eagles at Oregon Ducks",
+      "start": "2026-11-06T23:00Z",
+      "location": "Matthew Knight Arena, Eugene, OR",
+      "awayRecord": "0-1",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Valparaiso Beacons at Purdue Boilermakers",
+      "start": "2026-11-06T23:30Z",
+      "location": "Mackey Arena, West Lafayette, IN",
+      "awayRecord": "1-0",
+      "homeRecord": "0-1"
+    },
+    {
+      "sport": "CBB",
+      "game": "South Carolina State Bulldogs at South Carolina Upstate Spartans",
+      "start": "2026-11-06T23:30Z",
+      "location": "G.B. Hodge Center, Spartanburg, SC",
+      "awayRecord": "1-0",
+      "homeRecord": "0-1"
+    },
+    {
+      "sport": "CBB",
+      "game": "Youngstown State Penguins at Ohio State Buckeyes",
+      "start": "2026-11-06T23:30Z",
+      "location": "Schottenstein Center, Columbus, OH",
+      "awayRecord": "1-0",
+      "homeRecord": "0-1"
+    },
+    {
+      "sport": "CBB",
+      "game": "Midway Eagles at Eastern Kentucky Colonels",
+      "start": "2026-11-07T00:00Z",
+      "location": "Baptist Health Arena, Richmond, KY",
+      "awayRecord": "",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Roberts Wesleyan Redhawks at Kent State Golden Flashes",
+      "start": "2026-11-07T00:00Z",
+      "location": "M.A.C. Center, Kent, OH",
+      "awayRecord": "",
+      "homeRecord": "0-1"
+    },
+    {
+      "sport": "CBB",
+      "game": "Newberry Wolves at Charleston Cougars",
+      "start": "2026-11-07T00:00Z",
+      "location": "TD Arena, Charleston, SC",
+      "awayRecord": "",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Erskine Flying Fleet at The Citadel Bulldogs",
+      "start": "2026-11-07T00:00Z",
+      "location": "McAlister Field House, Charleston, SC",
+      "awayRecord": "",
+      "homeRecord": "0-1"
+    },
+    {
+      "sport": "CBB",
+      "game": "New Haven Chargers at Rutgers Scarlet Knights",
+      "start": "2026-11-07T00:00Z",
+      "location": "Jersey Mike\u2019s Arena, Piscataway, NJ",
+      "awayRecord": "0-1",
+      "homeRecord": "0-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "New College Mighty Banyans at Florida Gulf Coast Eagles",
+      "start": "2026-11-07T00:00Z",
+      "location": "Alico Arena, Fort Myers, FL",
+      "awayRecord": "",
+      "homeRecord": "0-1"
+    },
+    {
+      "sport": "CBB",
+      "game": "Stetson Hatters at West Virginia Mountaineers",
+      "start": "2026-11-07T00:00Z",
+      "location": "Hope Coliseum, Morgantown, WV",
+      "awayRecord": "0-2",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Yale Bulldogs at UCF Knights",
+      "start": "2026-11-07T00:00Z",
+      "location": "Addition Financial Arena, Orlando, FL",
+      "awayRecord": "1-0",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Holy Cross Crusaders at Villanova Wildcats",
+      "start": "2026-11-07T00:00Z",
+      "location": "Finneran Pavilion, Villanova, PA",
+      "awayRecord": "0-1",
+      "homeRecord": "0-1"
+    },
+    {
+      "sport": "CBB",
+      "game": "Michigan Dearborn Wolves at Cleveland State Vikings",
+      "start": "2026-11-07T00:00Z",
+      "location": "Wolstein Center, Cleveland, OH",
+      "awayRecord": "",
+      "homeRecord": "0-1"
+    },
+    {
+      "sport": "CBB",
+      "game": "UNC Greensboro Spartans at Elon Phoenix",
+      "start": "2026-11-07T00:00Z",
+      "location": "Schar Center, Elon, NC",
+      "awayRecord": "1-0",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Loyola Maryland Greyhounds at Mount St. Mary's Mountaineers",
+      "start": "2026-11-07T00:00Z",
+      "location": "Knott Arena, Emmitsburg, MD",
+      "awayRecord": "0-1",
+      "homeRecord": "0-1"
+    },
+    {
+      "sport": "CBB",
+      "game": "Georgia Southern Eagles at Georgia Tech Yellow Jackets",
+      "start": "2026-11-07T00:00Z",
+      "location": "McCamish Pavilion, Atlanta, GA",
+      "awayRecord": "1-0",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Coppin State Eagles at George Mason Patriots",
+      "start": "2026-11-07T00:00Z",
+      "location": "EagleBank Arena, Fairfax, VA",
+      "awayRecord": "0-1",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "East Tennessee State Buccaneers at NC State Wolfpack",
+      "start": "2026-11-07T00:00Z",
+      "location": "Lenovo Center, Raleigh, NC",
+      "awayRecord": "0-1",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Austin Peay Governors at Kennesaw State Owls",
+      "start": "2026-11-07T00:00Z",
+      "location": "VyStar Arena, Kennesaw, GA",
+      "awayRecord": "1-0",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Wofford Terriers at North Carolina Tar Heels",
+      "start": "2026-11-07T00:00Z",
+      "location": "Dean E. Smith Center, Chapel Hill, NC",
+      "awayRecord": "0-1",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "American University Eagles at Clemson Tigers",
+      "start": "2026-11-07T00:00Z",
+      "location": "Littlejohn Coliseum, Clemson, SC",
+      "awayRecord": "0-1",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Boston University Terriers at Brown Bears",
+      "start": "2026-11-07T00:00Z",
+      "location": "Pizzitola Sports Center, Providence, RI",
+      "awayRecord": "1-0",
+      "homeRecord": "0-1"
+    },
+    {
+      "sport": "CBB",
+      "game": "Saint Louis Billikens at Missouri Tigers",
+      "start": "2026-11-07T00:00Z",
+      "location": "Enterprise Center, St. Louis, MO",
+      "awayRecord": "1-0",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Alma Scots at Central Michigan Chippewas",
+      "start": "2026-11-07T00:00Z",
+      "location": "McGuirk Arena, Mount Pleasant, MI",
+      "awayRecord": "",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Indiana State Sycamores at Ball State Cardinals",
+      "start": "2026-11-07T00:00Z",
+      "location": "Worthen Arena, Muncie, IN",
+      "awayRecord": "0-1",
+      "homeRecord": "0-1"
+    },
+    {
+      "sport": "CBB",
+      "game": "Troy Trojans at Florida State Seminoles",
+      "start": "2026-11-07T00:00Z",
+      "location": "Tucker Center, Tallahassee, FL",
+      "awayRecord": "0-1",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Eastern Michigan Eagles at Xavier Musketeers",
+      "start": "2026-11-07T00:00Z",
+      "location": "Cintas Center, Cincinnati, OH",
+      "awayRecord": "1-0",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Presbyterian Blue Hose at Georgia Bulldogs",
+      "start": "2026-11-07T00:00Z",
+      "location": "Stegeman Coliseum, Athens, GA",
+      "awayRecord": "0-1",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Texas Lutheran Bulldogs at Stephen F. Austin Lumberjacks",
+      "start": "2026-11-07T00:30Z",
+      "location": "William R. Johnson Coliseum, Nacogdoches, TX",
+      "awayRecord": "",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Florida Atlantic Owls at Wright State Raiders",
+      "start": "2026-11-07T00:30Z",
+      "location": "Nutter Center, Dayton, OH",
+      "awayRecord": "1-0",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Delaware Blue Hens at Wisconsin Badgers",
+      "start": "2026-11-07T00:30Z",
+      "location": "Kohl Center, Madison, WI",
+      "awayRecord": "1-0",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Nicholls Colonels at UAB Blazers",
+      "start": "2026-11-07T00:30Z",
+      "location": "Bartow Arena, Birmingham, AL",
+      "awayRecord": "1-0",
+      "homeRecord": "0-1"
+    },
+    {
+      "sport": "CBB",
+      "game": "Robert Morris Colonials at UIC Flames",
+      "start": "2026-11-07T01:00Z",
+      "location": "Credit Union 1 Arena, Chicago, IL",
+      "awayRecord": "0-1",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Truman State Bulldogs at Missouri State Bears",
+      "start": "2026-11-07T01:00Z",
+      "location": "Great Southern Bank Arena, Springfield, MO",
+      "awayRecord": "",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Mississippi U for Women Owls at Alabama A&M Bulldogs",
+      "start": "2026-11-07T01:00Z",
+      "location": "Event Center, Huntsville, AL",
+      "awayRecord": "",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Texas A&M-Corpus Christi Islanders at Louisiana Ragin' Cajuns",
+      "start": "2026-11-07T01:00Z",
+      "location": "Cajundome, Lafayette, LA",
+      "awayRecord": "0-1",
+      "homeRecord": "0-1"
+    },
+    {
+      "sport": "CBB",
+      "game": "Texas Southern Tigers at LSU Tigers",
+      "start": "2026-11-07T01:00Z",
+      "location": "Pete Maravich Assembly Center, Baton Rouge, LA",
+      "awayRecord": "0-1",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Northern Kentucky Norse at Texas A&M Aggies",
+      "start": "2026-11-07T01:00Z",
+      "location": "Reed Arena, College Station, TX",
+      "awayRecord": "2-0",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Stony Brook Seawolves at Northwestern Wildcats",
+      "start": "2026-11-07T01:00Z",
+      "location": "Welsh-Ryan Arena, Evanston, IL",
+      "awayRecord": "1-0",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Southern Jaguars at TCU Horned Frogs",
+      "start": "2026-11-07T01:00Z",
+      "location": "Schollmaier Arena, Fort Worth, TX",
+      "awayRecord": "0-1",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "St. Thomas Tommies at Minnesota Golden Gophers",
+      "start": "2026-11-07T01:00Z",
+      "location": "The Barn by Blue Cross and Blue Shield of Minnesota, Minneapolis, MN",
+      "awayRecord": "1-0",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Detroit Mercy Titans at Marquette Golden Eagles",
+      "start": "2026-11-07T01:00Z",
+      "location": "Fiserv Forum, Milwaukee, WI",
+      "awayRecord": "0-0",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Mississippi Valley State Delta Devils at Oklahoma Sooners",
+      "start": "2026-11-07T01:00Z",
+      "location": "Lloyd Noble Center, Norman, OK",
+      "awayRecord": "0-0",
+      "homeRecord": "0-1"
+    },
+    {
+      "sport": "CBB",
+      "game": "Idaho State Bengals at Wyoming Cowboys",
+      "start": "2026-11-07T01:30Z",
+      "location": "Arena-Auditorium, Laramie, WY",
+      "awayRecord": "0-1",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Southern Illinois Salukis at Kansas City Roos",
+      "start": "2026-11-07T01:30Z",
+      "location": "Swinney Center, Kansas City, MO",
+      "awayRecord": "1-0",
+      "homeRecord": "0-1"
+    },
+    {
+      "sport": "CBB",
+      "game": "Eastern Illinois Panthers at Iowa Hawkeyes",
+      "start": "2026-11-07T01:30Z",
+      "location": "Carver-Hawkeye Arena, Iowa City, IA",
+      "awayRecord": "0-1",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Central Arkansas Bears at Ole Miss Rebels",
+      "start": "2026-11-07T01:30Z",
+      "location": "The Sandy and John Black Pavilion at Ole Miss, Oxford, MS",
+      "awayRecord": "1-0",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Idaho Vandals at Colorado State Rams",
+      "start": "2026-11-07T02:00Z",
+      "location": "Moby Arena, Fort Collins, CO",
+      "awayRecord": "1-0",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Northern Colorado Bears at Arizona State Sun Devils",
+      "start": "2026-11-07T02:00Z",
+      "location": "Desert Financial Arena, Tempe, AZ",
+      "awayRecord": "1-0",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Queens University Royals at Oklahoma State Cowboys",
+      "start": "2026-11-07T02:00Z",
+      "location": "Gallagher-Iba Arena, Stillwater, OK",
+      "awayRecord": "2-0",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Cal State Northridge Matadors at Kansas State Wildcats",
+      "start": "2026-11-07T02:00Z",
+      "location": "Bramlage Coliseum, Manhattan, KS",
+      "awayRecord": "0-1",
+      "homeRecord": "0-1"
+    },
+    {
+      "sport": "CBB",
+      "game": "Briar Cliff Chargers at South Dakota State Jackrabbits",
+      "start": "2026-11-07T02:30Z",
+      "location": "First Bank & Trust Arena, Brookings, SD",
+      "awayRecord": "",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "UT Arlington Mavericks at Portland Pilots",
+      "start": "2026-11-07T02:30Z",
+      "location": "Stan Sheriff Center, Honolulu, HI",
+      "awayRecord": "1-0",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "California Baptist Lancers at Oregon State Beavers",
+      "start": "2026-11-07T02:30Z",
+      "location": "Gill Coliseum, Corvallis, OR",
+      "awayRecord": "0-1",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Tarleton State Texans at San Diego Toreros",
+      "start": "2026-11-07T02:30Z",
+      "location": "Jenny Craig Pavilion, San Diego, CA",
+      "awayRecord": "1-0",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Oakland Golden Grizzlies at Stanford Cardinal",
+      "start": "2026-11-07T03:00Z",
+      "location": "Maples Pavilion, Stanford, CA",
+      "awayRecord": "0-1",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "North Dakota State Bison at San Francisco Dons",
+      "start": "2026-11-07T03:00Z",
+      "location": "The Sobrato Center, San Francisco, CA",
+      "awayRecord": "1-1",
+      "homeRecord": "1-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Lincoln (CA) Oaklanders at Loyola Marymount Lions",
+      "start": "2026-11-07T03:00Z",
+      "location": "Gersten Pavilion, Los Angeles, CA",
+      "awayRecord": "",
+      "homeRecord": "0-1"
+    },
+    {
+      "sport": "CBB",
+      "game": "Bethesda Flames at Hawai'i Rainbow Warriors",
+      "start": "2026-11-07T04:59Z",
+      "location": "Stan Sheriff Center, Honolulu, HI",
+      "awayRecord": "",
+      "homeRecord": "1-0"
+    }
+  ],
+  "passed": []
+}
