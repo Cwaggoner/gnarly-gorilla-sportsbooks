@@ -10424,13 +10424,40 @@ function abbrHit(shortName, longName){
   const initials = words.map(w => w[0]).join("");
   return initials === short || ("u" + initials) === short || (initials + "u") === short;
 }
+function expandSchool(name){
+  const lead = {sc:"south carolina", nc:"north carolina", nd:"north dakota", sd:"south dakota", nm:"new mexico", wv:"west virginia"};
+  const raw = String(name || "").toLowerCase().replace(/[^a-z0-9&]+/g, " ").trim().split(/\s+/).filter(Boolean);
+  const bits = [];
+  for (let i = 0; i < raw.length; i++) {
+    if (raw[i].length === 1 && i + 1 < raw.length && raw[i + 1].length === 1) {
+      bits.push(raw[i] + raw[i + 1]);
+      i += 1;
+      continue;
+    }
+    bits.push(raw[i]);
+  }
+  const out = [];
+  bits.forEach((w, i) => {
+    if (i === 0 && lead[w] && bits.length > 1) { lead[w].split(" ").forEach(part => out.push(part)); return; }
+    if (w === "st" && i > 0) { out.push("state"); return; }
+    if (!/^(the|of|at|and|university|college)$/.test(w)) out.push(w);
+  });
+  return out;
+}
+function stateSchoolMatch(a, b){
+  const A = expandSchool(a), B = expandSchool(b);
+  if (!A.length || !B.length || A.includes("state") !== B.includes("state")) return false;
+  const short = A.length <= B.length ? A : B;
+  const long = short === A ? B : A;
+  return short.length >= 2 && short.every(w => long.indexOf(w) >= 0);
+}
 function sideMatch(a, b){
   if (!a || !b) return false;
   if (sameClub(a, b)) return true;
   const map = window.__clubAlias || {};
   const ak = map[String(a).toLowerCase().trim()], bk = map[String(b).toLowerCase().trim()];
   if (ak && ak === bk) return true;
-  if (abbrHit(a, b) || abbrHit(b, a)) return true;
+  if (abbrHit(a, b) || abbrHit(b, a) || stateSchoolMatch(a, b)) return true;
   const A = teamTokens(a), B = teamTokens(b);
   if (!A.length || !B.length) return false;
   if (A[A.length - 1] === B[B.length - 1]) return true;
