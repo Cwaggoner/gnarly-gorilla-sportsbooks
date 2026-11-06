@@ -979,7 +979,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </script>
 <div class="nav-cell mid">
 <a href="index.html" data-jump="games" class="on">Games</a>
-<a href="index.html?page=live" data-jump="liveodds">Live Odds</a>
+<a href="index.html?page=live" data-jump="liveodds">Analysis</a>
 <a href="index.html?page=sharks" data-jump="sharks">Sharps</a>
 <a href="index.html?page=today" data-jump="todaycard">Today</a>
 <a href="index.html?page=add" data-jump="addbet">Add Bet</a>
@@ -12231,7 +12231,7 @@ function showView(id){
     try { parkOddsTools(); } catch (e) {}
     drawOddsCompare(false).catch(() => {});
   }
-  const titles = {games:"Games", seasons:"Season Dates", dashboard:"Dashboard", todaycard:"Today's Card", liveodds:"Live Odds", slips:"Slips", reportcard:"Report Card", charts:"Charts", breaks:"Books", addbet:"Add Bet", calendarcard:"Calendar", scoreboard:"Scoreboard", sharks:"Sports Sharps", about:"About"};
+  const titles = {games:"Games", seasons:"Season Dates", dashboard:"Dashboard", todaycard:"Today's Card", liveodds:"Analysis", slips:"Slips", reportcard:"Report Card", charts:"Charts", breaks:"Books", addbet:"Add Bet", calendarcard:"Calendar", scoreboard:"Scoreboard", sharks:"Sports Sharps", about:"About"};
   document.title = (titles[screen] || "Ledger") + " | Gnarly Gorilla Sportsbooks";
   const canon = document.querySelector('link[rel="canonical"]');
   if (canon) canon.href = new URL(pageUrl(screen), "https://cwaggoner.github.io/gnarly-gorilla-sportsbooks/").href;
