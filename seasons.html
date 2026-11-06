@@ -10471,6 +10471,8 @@ function stateSchoolMatch(a, b){
 }
 function sideMatch(a, b){
   if (!a || !b) return false;
+  if (abbrSide(a, b)) return true;
+  if (expandSchool(a).includes("state") !== expandSchool(b).includes("state")) return false;
   if (sameClub(a, b)) return true;
   const map = window.__clubAlias || {};
   const ak = map[String(a).toLowerCase().trim()], bk = map[String(b).toLowerCase().trim()];
@@ -10495,10 +10497,9 @@ function sameMatchup(a, b){
   if (!a || !b) return false;
   const as = sportCode(a.sport || ""), bs = sportCode(b.sport || "");
   if (as && bs && as !== bs) return false;
-  if (sameClub(a.label, b.label)) return true;
   const A = matchupSides(a.label);
   const B = matchupSides(b.label);
-  if (A.length < 2 || B.length < 2) return false;
+  if (A.length < 2 || B.length < 2) return sameClub(a.label, b.label);
   return (sideMatch(A[0], B[0]) && sideMatch(A[1], B[1])) || (sideMatch(A[0], B[1]) && sideMatch(A[1], B[0]));
 }
 function sameKick(a, b){
