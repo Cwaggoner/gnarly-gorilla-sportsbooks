@@ -211,7 +211,10 @@ h2 { margin:0 0 10px; font-size:16px; color:var(--title); }
 form, .row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:8px; align-items:center; }
 .break { grid-column:1 / -1; height:0; }
 .stack { display:flex; flex-direction:row; gap:8px; grid-column:1 / -1; align-items:flex-end; }
-#picknote, #loadnote, #editnote, #betnotes .field-note { display:flex; align-items:center; justify-content:center; align-self:stretch; width:100%; min-height:38px; margin:0; padding:8px 12px; border:1px solid var(--line); border-radius:8px; box-sizing:border-box; text-align:center; }
+#picknote, #loadnote, #betnotes .field-note, #betnotes .key-slot { display:flex; align-items:center; justify-content:center; align-self:stretch; width:100%; min-height:38px; margin:0; padding:8px 12px; border:1px solid var(--line); border-radius:8px; box-sizing:border-box; text-align:center; }
+#betnotes .key-slot { flex-direction:column; gap:2px; }
+#betnotes #editnote { display:block; width:100%; min-height:0; margin:0; padding:0; border:0; }
+#betnotes #editnote:empty { display:none; }
 .bet-fields-box { grid-column:1 / -1; border:1px solid #39ff14; border-radius:10px; padding:10px 12px; background:#0e0e0e; }
 .payout-box { margin:var(--box-gap) 0; border:1px solid #39ff14; border-radius:10px; padding:10px; width:100%; max-width:100%; box-sizing:border-box; }
 .payout-box h3 { margin:0 0 8px; color:#39ff14; font-size:16px; }
@@ -1193,14 +1196,16 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <p class="warn fine field-note">Load Picks uses the boxes to the left. The icon loads every book.</p>
 <p id="picknote" class="warn"></p>
 <span id="loadnote" class="warn"></span>
+<div class="key-slot">
+<p id="keystatus" class="warn"></p>
+<p id="keyleft" class="warn"></p>
 <span id="editnote" class="warn"></span>
+</div>
 </div>
 </div>
 </div>
 </form>
 <div class="key-box">
-<p id="keystatus" class="warn"></p>
-<p id="keyleft" class="warn"></p>
 <div class="align-frame"><table class="score-align"><tbody><tr><td><div class="key-row">
 <label id="oddskeybox">Odds Key<input id="oddskey" type="password" placeholder="Free or paid key" autocomplete="off"></label>
 <button type="button" id="commitkey">Commit</button>
