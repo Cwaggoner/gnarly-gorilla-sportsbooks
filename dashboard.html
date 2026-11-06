@@ -20,6 +20,8 @@
   var map = {games:"games", seasons:"seasons", dashboard:"dashboard", today:"todaycard", live:"liveodds", slips:"slips", report:"reportcard", charts:"charts", books:"breaks", add:"addbet", calendar:"calendarcard", scoreboard:"scoreboard", about:"about", sharks:"sharks"};
   var screen = file === "seasons.html" ? "seasons" : file === "dashboard.html" ? "dashboard" : (map[q] || "games");
   document.documentElement.setAttribute("data-page", screen);
+  var loadNames = {games:"Loading the Board", seasons:"Loading Season Dates", dashboard:"Loading Dashboard", liveodds:"Loading Analysis", slips:"Loading Slips", reportcard:"Loading Report Card", charts:"Loading Charts", breaks:"Loading Books", calendarcard:"Loading Calendar", scoreboard:"Loading Scoreboard", sharks:"Loading Sharps", about:"Loading the Feed"};
+  document.documentElement.setAttribute("data-load", loadNames[screen] || "");
 })();
 </script>
 <title>Gnarly Gorilla Sportsbooks | Bet Ledger For CBB, CFB, MLB, NBA, NFL, NHL</title>
@@ -291,12 +293,20 @@ th.th-center { text-align:center; }
 #todaycard .analysis-cell .card-prices { flex-direction:column; flex-wrap:nowrap; align-items:stretch; width:100%; }
 #todaycard .analysis-cell .card-price { width:100%; max-width:100%; box-sizing:border-box; display:flex; justify-content:space-between; align-items:center; gap:12px; text-align:left; white-space:normal; }
 #todaycard .analysis-cell .card-pick { min-width:0; }
-#todaycard .card-load { position:fixed; left:0; right:0; bottom:0; top:var(--pin, 96px); z-index:40; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; background:#0a0a0a; }
-#todaycard .card-load[hidden] { display:none !important; }
-#todaycard .card-load img { width:96px; height:96px; border-radius:12px; border:1px solid #39ff14; background:#0a0a0a; }
-#todaycard .card-load p { margin:0; color:#39ff14; font-weight:700; font-size:18px; }
-#todaycard .card-load-bar { width:180px; height:3px; background:#243024; border-radius:3px; overflow:hidden; }
-#todaycard .card-load-bar span { display:block; height:100%; width:40%; background:#39ff14; animation:card-load 1s linear infinite; }
+#todaycard .card-load,
+.card-load { position:fixed; left:0; right:0; bottom:0; top:var(--pin, 96px); z-index:40; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; background:#0a0a0a; }
+#todaycard .card-load[hidden],
+.card-load[hidden] { display:none !important; }
+#todaycard .card-load img,
+.card-load img { width:96px; height:96px; border-radius:12px; border:1px solid #39ff14; background:#0a0a0a; }
+#todaycard .card-load p,
+.card-load p { margin:0; color:#39ff14; font-weight:700; font-size:18px; }
+#todaycard .card-load-bar,
+.card-load-bar { width:180px; height:3px; background:#243024; border-radius:3px; overflow:hidden; }
+#todaycard .card-load-bar span,
+.card-load-bar span { display:block; height:100%; width:40%; background:#39ff14; animation:card-load 1s linear infinite; }
+html[data-page="addbet"] #pageload,
+html[data-page="todaycard"] #pageload { display:none !important; }
 @keyframes card-load { from { transform:translateX(-120%); } to { transform:translateX(320%); } }
 .slip-row { display:flex; justify-content:space-between; gap:8px; align-items:center; border:1px solid #243024; border-radius:8px; padding:6px 8px; color:#d6ffd0; text-align:left; }
 .slip-row.edge { color:#f0e14a; }
@@ -945,6 +955,8 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </style>
 </head>
 <body>
+<div class="card-load" id="pageload" role="status" aria-live="polite"><img src="gg-icon.png" alt="" width="96" height="96"><p id="pageloadtext">Loading</p><div class="card-load-bar" aria-hidden="true"><span></span></div></div>
+<script>(function(){var t=document.documentElement.getAttribute("data-load")||"";var el=document.getElementById("pageload");var n=document.getElementById("pageloadtext");if(!t){if(el)el.hidden=true;return;}if(n)n.textContent=t;})();</script>
 
 <div class="page">
 <div class="topbar">
@@ -2032,6 +2044,28 @@ function settleCardLoad(){
   hideCardLoad();
 }
 if ((document.documentElement.dataset.page || "") === "todaycard") setTimeout(hideCardLoad, 12000);
+const SLOW_PAGE = {games:"Loading the Board", seasons:"Loading Season Dates", dashboard:"Loading Dashboard", liveodds:"Loading Analysis", slips:"Loading Slips", reportcard:"Loading Report Card", charts:"Loading Charts", breaks:"Loading Books", calendarcard:"Loading Calendar", scoreboard:"Loading Scoreboard", sharks:"Loading Sharps", about:"Loading the Feed"};
+const pageReady = new Set();
+let pageLoadTimer = 0;
+function showPageLoad(screen){
+  const el = document.getElementById("pageload");
+  if (!el) return;
+  if (!SLOW_PAGE[screen] || pageReady.has(screen)) { if ((document.documentElement.dataset.page || "") === screen) el.hidden = true; return; }
+  const text = document.getElementById("pageloadtext");
+  if (text) text.textContent = SLOW_PAGE[screen];
+  el.hidden = false;
+  clearTimeout(pageLoadTimer);
+  pageLoadTimer = setTimeout(() => hidePageLoad(screen), 12000);
+}
+function hidePageLoad(screen){
+  const page = document.documentElement.dataset.page || "games";
+  if (screen && screen !== page) { pageReady.add(screen); return; }
+  pageReady.add(page);
+  const el = document.getElementById("pageload");
+  if (el) el.hidden = true;
+  clearTimeout(pageLoadTimer);
+}
+showPageLoad(document.documentElement.dataset.page || "games");
 function takeUpcoming(date, games){
   const day = String(date || "").slice(0, 10);
   const keep = (window.__upcomingBoard || []).filter(g => (slateDateOf(kickMs(g)) || String(g.date || "").slice(0, 10)) !== day);
@@ -4866,7 +4900,7 @@ async function loadLiveBoard(){
   try {
     packs = await Promise.all(sports.map(sport => scoresForSport(sport, liveBoardDate)));
   } catch (e) { packs = []; }
-  if (!document.getElementById("seasonlive") && !document.getElementById("fullrows")) return;
+  if (!document.getElementById("seasonlive") && !document.getElementById("fullrows")) { hidePageLoad("scoreboard"); return; }
   const games = [];
   packs.forEach(p => (p && p.games || []).forEach(g => games.push(g)));
   if (!games.length && !packs.some(p => p && p.ok)) {
@@ -4876,6 +4910,7 @@ async function loadLiveBoard(){
       setScoreNote(fullNote, [missed]);
     }
     armLiveBoard(60000);
+    hidePageLoad("scoreboard");
     return;
   }
   const rank = g => g.live ? 0 : g.final ? 2 : 1;
@@ -4896,6 +4931,8 @@ async function loadLiveBoard(){
   setScoreNote(note, lines);
   setScoreNote(fullNote, lines);
   armLiveBoard(n ? 15000 : 60000);
+  hidePageLoad("scoreboard");
+  hidePageLoad("seasons");
 }
 function seasonText(sport){ return seasonEnded(sport) ? "Season Ended" : "No Picks"; }
 const TEAM_ALIAS = {njd:"devils", vgk:"knights", okc:"thunder", lad:"dodgers", bkn:"nets"};
@@ -5747,6 +5784,7 @@ async function drawOddsCompare(force){
     const box = document.getElementById("oddscompare");
     if (box) { paintOddsLead("<p class='warn'>Live Odds stopped. " + esc(err && err.message || err) + "</p>"); box.innerHTML = ""; }
   }
+  finally { hidePageLoad("liveodds"); }
 }
 async function renderOddsCompare(force){
   const key = ((document.getElementById("oddskey") || {}).value || "").trim();
@@ -8770,6 +8808,9 @@ async function catchUp(){
   clearStalePending();
   render();
   if (document.documentElement.dataset.page === "slips" || document.documentElement.dataset.page === "reportcard") gradeOpenSlate().catch(() => {});
+  hidePageLoad("slips");
+  hidePageLoad("reportcard");
+  hidePageLoad("breaks");
 }
 function pageNeeds(kind){
   const page = document.documentElement.dataset.page || "games";
@@ -9809,7 +9850,7 @@ function armFeed(){
 async function loadLiveFeed(){
   if (!pageNeeds("about")) return;
   const body = document.getElementById("livefeed");
-  if (!body) return;
+  if (!body) { hidePageLoad("about"); return; }
   const note = document.getElementById("feednote");
   let cached = null;
   try { cached = JSON.parse(sessionStorage.getItem("gg-feed") || "null"); } catch (e) { cached = null; }
@@ -9836,6 +9877,7 @@ async function loadLiveFeed(){
     if (note) note.textContent = "Feed did not load. It will try again in an hour.";
     if (!body.children.length) body.innerHTML = "<tr><td colspan='3'>No headlines yet.</td></tr>";
     armFeed();
+    hidePageLoad("about");
     return;
   }
   const sig = top.map(r => r.id + "|" + r.headline).join("~");
@@ -9851,6 +9893,7 @@ async function loadLiveFeed(){
   }
   if (note) note.textContent = "Updated " + formatTime(new Date(), true) + ". Checks again in an hour.";
   armFeed();
+  hidePageLoad("about");
 }
 if (pageNeeds("seasons")) loadSeasons();
 if (document.documentElement.dataset.page === "scoreboard") {
@@ -9951,11 +9994,13 @@ async function loadOddsBoard(data, saved){
   if (!rememberBoard(data)) {
     const box = document.getElementById("gameboard");
     if (box && !usableBoard(window.__ggOddsBoard)) box.innerHTML = "<p class='warn'>Loading today's games.</p>";
+    hidePageLoad("liveodds");
   } else {
     applyPublishedBooks();
     if ((document.documentElement.dataset.page || "") === "liveodds") drawOddsCompare(false).catch(() => {});
   }
   if ((document.documentElement.dataset.page || "games") === "games" && !dayHasLines(easternDay())) ensureGameDay();
+  hidePageLoad("games");
 }
 if (pageNeeds("odds")) Promise.all([
   fetch(cardUrl("cards/odds-board.json")).then(r => r.ok ? r.json() : null).catch(() => null),
@@ -12037,9 +12082,9 @@ async function refreshSharpGrades(){
 }
 async function loadSharks(){
   const board = document.getElementById("sharkboard");
-  if (!board || board.dataset.loading === "1") return;
+  if (!board || board.dataset.loading === "1") { hidePageLoad("sharks"); return; }
   const day = sharpWindowDate();
-  if (board.dataset.day === day && board.querySelector(".shark img")) { refreshSharpGrades(); armSharpStatus(); return; }
+  if (board.dataset.day === day && board.querySelector(".shark img")) { refreshSharpGrades(); armSharpStatus(); hidePageLoad("sharks"); return; }
   board.dataset.loading = "1";
   board.innerHTML = "<p class='warn'>Loading the sharps.</p>";
   let book = sharpReadBook();
@@ -12065,6 +12110,7 @@ async function loadSharks(){
   window.scrollTo(0, 0);
   takeSharpLand();
   armSharpStatus();
+  hidePageLoad("sharks");
 }
 function armSharpStatus(){
   clearTimeout(window.__sharpGradeTimer);
@@ -12171,6 +12217,7 @@ async function refreshDashboardLive(){
   dashLiveBusy = false;
   if ((document.documentElement.dataset.page || "") !== "dashboard") return;
   try { drawDashboard(); paintSharpCheck(); } catch (e) {}
+  hidePageLoad("dashboard");
 }
 function armScreen(){
   if (pageNeeds("odds")) onceKind("odds", () => {
@@ -12180,7 +12227,7 @@ function armScreen(){
   if (pageNeeds("seasons")) onceKind("seasons", () => loadSeasons());
   if (pageNeeds("about")) onceKind("about", () => setTimeout(loadLiveFeed, 0));
   if (pageNeeds("slate")) onceKind("slate", () => { loadPickSlate(); setInterval(() => { loadPickSlate(); }, 300000); });
-  if (pageNeeds("calendar")) onceKind("calendar", () => fetch("cards/calendar.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => { if (takePublishedCalendar(data)) render(); }).catch(() => {}));
+  if (pageNeeds("calendar")) onceKind("calendar", () => fetch("cards/calendar.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => { if (takePublishedCalendar(data)) render(); }).catch(() => {}).finally(() => hidePageLoad("calendarcard")));
   if (pageNeeds("profit")) onceKind("chartledger", () => fetch(cardUrl("cards/ledger.json")).then(r => r.ok ? r.json() : null).then(data => { takeChartLedger(data); drawCharts(); }).catch(() => {}));
   if (pageNeeds("profit")) onceKind("profit", () => loadProfitFile());
   if (pageNeeds("profit")) onceKind("chartgames", () => {
@@ -12189,7 +12236,7 @@ function armScreen(){
       window.__gameScores = (packs || []).flat();
       window.__gameScoresAt = Date.now();
       drawCharts();
-    }).catch(() => {});
+    }).catch(() => {}).finally(() => hidePageLoad("charts"));
   });
   if (pageNeeds("calendar") || pageNeeds("profit")) onceKind("caltick", () => setInterval(() => {
     if (pageNeeds("calendar")) fetch("cards/calendar.json?ts=" + Date.now()).then(r => r.ok ? r.json() : null).then(data => {
@@ -12252,6 +12299,7 @@ function showView(id){
   const screen = screens.indexOf(id) >= 0 ? id : (parent && screens.indexOf(parent.id) >= 0 ? parent.id : "");
   if (!screen) return;
   document.documentElement.dataset.page = screen;
+  showPageLoad(screen);
   armScreen();
   render();
   screens.forEach(key => {
