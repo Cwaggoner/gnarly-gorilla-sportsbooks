@@ -1957,25 +1957,32 @@ function kickScore(pick, name){
   if (!hits && !nick && !side) return 0;
   return hits + nick + side;
 }
+function upcomingBoard(date){
+  const day = String(date || "").slice(0, 10);
+  return (window.__upcomingBoard || []).filter(g => {
+    if (!g || g.final || g.live) return false;
+    if (!kickMs(g)) return false;
+    const played = slateDateOf(kickMs(g)) || String(g.date || "").slice(0, 10);
+    return played === day;
+  });
+}
 function pickStart(row){
   const sport = String(row[1] || "").toUpperCase();
   const pick = String(row[3] || "");
   const date = /^\d{4}-\d{2}-\d{2}$/.test(String(row[0] || "")) ? String(row[0]).slice(0, 10) : easternDay();
-  const ranked = kickPool(sport, date).map(g => {
+  const board = upcomingBoard(date).filter(g => String(g.sport || "").toUpperCase() === sport);
+  const source = board.length ? board : kickPool(sport, date);
+  const ranked = source.map(g => {
     const names = kickNames(g);
     const away = kickScore(pick, names[0]);
     const home = kickScore(pick, names[1]);
-    return {n: away + home + (away && home ? 6 : 0), ms: kickMs(g), board: !!(g.label && g.books)};
-  }).filter(x => x.n && x.ms).sort((a, b) => b.n - a.n || (a.board - b.board) || a.ms - b.ms);
+    return {n: away + home + (away && home ? 6 : 0), ms: kickMs(g)};
+  }).filter(x => x.n && x.ms).sort((a, b) => b.n - a.n || a.ms - b.ms);
   if (!ranked.length) return 0;
-  let best = ranked.filter(x => x.n === ranked[0].n);
-  const live = best.filter(x => !x.board);
-  if (live.length) best = live;
+  const best = ranked.filter(x => x.n === ranked[0].n);
   const times = [];
   best.forEach(x => { if (!times.some(ms => Math.abs(ms - x.ms) < 120000)) times.push(x.ms); });
-  const onSlate = times.filter(ms => slateDateOf(ms) === date);
-  const use = onSlate.length ? onSlate : times;
-  return use.length === 1 ? use[0] : 0;
+  return times.length === 1 ? times[0] : 0;
 }
 function kickPool(sport, date){
   const list = [];
@@ -1996,35 +2003,41 @@ function kickPool(sport, date){
 }
 function pickWhen(row){
   const ms = pickStart(row);
-  if (ms) {
-    const when = new Date(ms);
-    const dateText = when.toLocaleDateString("en-US", {timeZone: siteZone(), weekday: "short", month: "short", day: "numeric"});
-    return dateText + ", " + formatTime(when, false);
-  }
   const date = /^\d{4}-\d{2}-\d{2}$/.test(String(row[0] || "")) ? String(row[0]).slice(0, 10) : "";
+  if (ms) {
+    const day = date || slateDateOf(ms);
+    const dateText = typeof prettyDay === "function" && day ? prettyDay(day) : new Date(ms).toLocaleDateString("en-US", {timeZone: siteZone(), weekday: "short", month: "short", day: "numeric"});
+    return dateText + ", " + formatTime(ms, false);
+  }
   if (!date) return "";
   const stamp = new Date(Date.UTC(Number(date.slice(0, 4)), Number(date.slice(5, 7)) - 1, Number(date.slice(8, 10)), 16));
   return stamp.toLocaleDateString("en-US", {timeZone: "UTC", weekday: "short", month: "short", day: "numeric"});
 }
 const kickAsked = new Set();
+function takeUpcoming(date, games){
+  const day = String(date || "").slice(0, 10);
+  const keep = (window.__upcomingBoard || []).filter(g => (slateDateOf(kickMs(g)) || String(g.date || "").slice(0, 10)) !== day);
+  const next = (games || []).filter(g => g && !g.final && !g.live && kickMs(g)).map(g => Object.assign({}, g, {date: day}));
+  window.__upcomingBoard = keep.concat(next);
+}
 function armPickTimes(rows){
+  const dates = [...new Set((rows || []).map(r => /^\d{4}-\d{2}-\d{2}$/.test(String(r && r[0] || "")) ? String(r[0]).slice(0, 10) : easternDay()))];
   const jobs = [];
-  (rows || []).forEach(r => {
-    if (!r || isNoCard(r) || pickStart(r)) return;
-    const sport = String(r[1] || "").toUpperCase();
-    const date = /^\d{4}-\d{2}-\d{2}$/.test(String(r[0] || "")) ? String(r[0]).slice(0, 10) : easternDay();
+  dates.forEach(date => Object.keys(SCORE_FEED).forEach(sport => {
     const key = sport + "|" + date;
     if (kickAsked.has(key)) return;
     kickAsked.add(key);
     jobs.push({sport: sport, date: date});
-  });
+  }));
   if (!jobs.length) return;
   setTimeout(() => {
     Promise.all(jobs.map(job => (typeof scoreboard === "function" ? scoreboard(job.sport, job.date) : Promise.resolve([])).catch(() => []))).then(packs => {
-      packs.forEach((pack, i) => { if (!pack || !pack.length) kickAsked.delete(jobs[i].sport + "|" + jobs[i].date); });
-      const games = packs.flat().filter(Boolean);
-      if (!games.length) return;
-      window.__kickGames = (window.__kickGames || []).concat(games);
+      const byDate = {};
+      packs.forEach((pack, i) => {
+        const date = jobs[i].date;
+        byDate[date] = (byDate[date] || []).concat(pack || []);
+      });
+      Object.keys(byDate).forEach(date => takeUpcoming(date, byDate[date]));
       if (document.getElementById("analysisgrid") && postedCard) drawCardAnalysis(postedCard);
     }).catch(() => { jobs.forEach(job => kickAsked.delete(job.sport + "|" + job.date)); });
   }, 0);
