@@ -3370,7 +3370,7 @@ function drawPassedSlate(){
   if (!cardBox) return;
   const games = pickSlate && Array.isArray(pickSlate.games) ? pickSlate.games : [];
   const date = (pickSlate && pickSlate.date) || easternDay();
-  if (note) note.textContent = games.length ? "Posted matchups. Add puts the Gnarly Gorilla play on the Bet Slip." : "";
+  if (note) note.textContent = games.length ? "Posted matchups. Add puts the play on the Bet Slip. A game that is not on the card uses the posted spread." : "";
   cardBox.innerHTML = games.length ? slateTable(games, date, true) : "";
 }
 function boardRow(list, game){
@@ -3382,6 +3382,50 @@ function attrOf(el, key){
   const raw = el.getAttribute("data-" + key);
   if (raw == null) return "";
   try { return decodeURIComponent(raw); } catch (e) { return raw; }
+}
+function spreadForGame(sport, game, date, book){
+  const awayHome = String(game || "").split(/\s+at\s+/i);
+  const awayName = (awayHome[0] || "").trim();
+  const homeName = (awayHome[1] || "").trim();
+  const nick = s => String(s || "").trim().split(/\s+/).slice(-1)[0] || s;
+  const shown = n => (n > 0 ? "+" : "") + n;
+  const fromCell = cell => {
+    const sides = String(cell || "").split("/").map(s => s.trim());
+    const read = text => {
+      const hit = String(text || "").match(/([+-]?\d+(?:\.\d+)?)\s+([+-]\d+)/);
+      return hit ? {point: Number(hit[1]), price: Number(hit[2])} : null;
+    };
+    const away = read(sides[0]);
+    const home = read(sides[1]);
+    if (!away || !home || !Number.isFinite(away.price) || !Number.isFinite(home.price)) return null;
+    const fav = away.point <= home.point ? "away" : "home";
+    const side = fav === "home" ? home : away;
+    const pick = fav === "home" ? nick(homeName) + " " + shown(side.point) + " vs " + awayName : nick(awayName) + " " + shown(side.point) + " at " + homeName;
+    return {type: "Spread", pick: pick, odds: side.price, book: book || "", notes: ""};
+  };
+  const day = (window.__ggOddsBoard && window.__ggOddsBoard.days && window.__ggOddsBoard.days[String(date || "").slice(0, 10)]) || {};
+  const row = boardRow(day.spreads, game);
+  const books = (row && row.books) || {};
+  const cell = book && books[book] && books[book] !== "-" ? books[book] : (books.BetMGM && books.BetMGM !== "-" ? books.BetMGM : "");
+  const posted = fromCell(cell);
+  if (posted) return Promise.resolve(posted);
+  if (typeof SCORE_FEED === "undefined" || !SCORE_FEED[sport]) return Promise.resolve(null);
+  return scoreboard(sport, date).then(rows => {
+    const hit = (rows || []).find(g => g && sameClub(g.away && (g.away.displayName || g.away.name || g.away.shortDisplayName), awayName) && sameClub(g.home && (g.home.displayName || g.home.name || g.home.shortDisplayName), homeName));
+    if (!hit) return null;
+    if (hit.final) return {final: true};
+    const lined = fromCell(hit.lines && hit.lines.spreads);
+    if (lined) { lined.book = knownBook(hit.lineBook) || book || ""; return lined; }
+    const detail = String(hit.odds || "").match(/([A-Za-z&]+)\s+([+-]?\d+(?:\.\d+)?)/);
+    if (!detail) return null;
+    const point = Number(detail[2]);
+    if (!Number.isFinite(point)) return null;
+    const abbr = detail[1].toLowerCase();
+    const homeAbbr = String(hit.home && (hit.home.abbreviation || hit.home.abbr) || "").toLowerCase();
+    const side = abbr && abbr === homeAbbr ? "home" : "away";
+    const pick = side === "home" ? nick(homeName) + " " + shown(point) + " vs " + awayName : nick(awayName) + " " + shown(point) + " at " + homeName;
+    return {type: "Spread", pick: pick, odds: -110, book: book || "", notes: "ESPN spread. Juice was not posted, so this is -110."};
+  }).catch(() => null);
 }
 function addCardPlay(btn){
   const sport = attrOf(btn, "sport");
@@ -3398,24 +3442,30 @@ function addCardPlay(btn){
   let plays = slatePlays({sport: sport, game: game}, date);
   const stamped = attrOf(btn, "pick");
   if (!plays.length && stamped) plays = [[date, sport, attrOf(btn, "type") || "Spread", stamped, attrOf(btn, "odds"), attrOf(btn, "notes"), attrOf(btn, "book")]];
-  if (!plays.length) {
-    if (note) note.textContent = "Gnarly Gorilla did not price " + game + ". Nothing was added.";
-    return;
-  }
   const book = (document.getElementById("cardbook") || {}).value || "BetMGM";
-  let added = 0;
-  plays.forEach(row => {
-    let price = Number(String(row[4] || "").replace(/[^\d.+-]/g, ""));
-    if (!Number.isFinite(price)) {
-      const found = String(row[3] || "").match(/[+-]\d+(?:\.\d+)?/);
-      price = found ? Number(found[0]) : NaN;
-    }
-    if (!Number.isFinite(price) || !row[3]) return;
-    const before = betSlip.length;
-    addSlipLeg({date: row[0] || date, sport: row[1] || sport, type: row[2] || "Spread", pick: row[3], odds: price, book: row[6] || book, notes: row[5] || "", edge: /edge/i.test(row[5] || "") || /^high\b/i.test(row[5] || "") || attrOf(btn, "edge") === "1", game: game});
-    if (betSlip.length > before) added += 1;
+  const finish = lookedUp => {
+    let added = 0;
+    plays.forEach(row => {
+      let price = Number(String(row[4] || "").replace(/[^\d.+-]/g, ""));
+      if (!Number.isFinite(price)) {
+        const found = String(row[3] || "").match(/[+-]\d+(?:\.\d+)?/);
+        price = found ? Number(found[0]) : NaN;
+      }
+      if (!Number.isFinite(price) || !row[3]) return;
+      const before = betSlip.length;
+      addSlipLeg({date: row[0] || date, sport: row[1] || sport, type: row[2] || "Spread", pick: row[3], odds: price, book: row[6] || book, notes: row[5] || "", edge: /edge/i.test(row[5] || "") || /^high\b/i.test(row[5] || "") || attrOf(btn, "edge") === "1", game: game});
+      if (betSlip.length > before) added += 1;
+    });
+    if (note) note.textContent = added ? "Added " + added + " play" + (added === 1 ? "" : "s") + " to the Bet Slip." + (lookedUp ? " That game was not on the card, so this is the posted spread." : " Add on the Bet Slip writes the Slips table.") : "That play is already on the Bet Slip.";
+  };
+  if (plays.length) { finish(false); return; }
+  if (note) note.textContent = "Looking up " + game + ".";
+  spreadForGame(sport, game, date, book).then(found => {
+    if (found && found.final) { if (note) note.textContent = game + " is final. Nothing was added."; return; }
+    if (!found || !found.pick) { if (note) note.textContent = "No posted price for " + game + ". Nothing was added."; return; }
+    plays = [[date, sport, found.type || "Spread", found.pick, String(found.odds), found.notes || "", found.book || book]];
+    finish(true);
   });
-  if (note) note.textContent = added ? "Added " + added + " Gnarly Gorilla play" + (added === 1 ? "" : "s") + " to the Bet Slip. Add on the Bet Slip writes the Slips table." : "That play is already on the Bet Slip.";
 }
 function openGameBet(sport, game, date){
   const awayHome = String(game || "").split(/\s+at\s+/i);
