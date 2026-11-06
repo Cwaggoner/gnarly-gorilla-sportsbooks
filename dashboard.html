@@ -10397,9 +10397,40 @@ function mgmSet(group, heads, cols, kind){
 function teamTokens(name){
   return String(name || "").toLowerCase().replace(/[^a-z0-9&]/g, " ").split(/\s+/).filter(w => w && !/^(the|at|vs|and|state|university|college|st|saint)$/.test(w));
 }
+function learnClubs(games){
+  const map = window.__clubAlias || (window.__clubAlias = {});
+  const add = names => {
+    const norms = [...new Set((names || []).map(n => String(n || "").toLowerCase().trim()).filter(Boolean))];
+    if (norms.length < 2) return;
+    const id = norms.map(n => map[n]).find(Boolean) || norms.slice().sort()[0];
+    norms.forEach(n => { map[n] = id; });
+  };
+  (games || []).forEach(g => {
+    [g && g.away, g && g.home].forEach(team => {
+      if (!team) return;
+      add([team.name, team.shortDisplayName, team.displayName, team.location, team.abbreviation, team.abbr]);
+    });
+  });
+}
+function abbrHit(shortName, longName){
+  const raw = String(shortName || "").trim();
+  const short = raw.toLowerCase().replace(/[^a-z]/g, "");
+  if (!short || short.length < 2 || short.length > 5 || raw.split(/\s+/).length !== 1) return false;
+  const place = {north:1, south:1, east:1, west:1, central:1, state:1, florida:1, carolina:1, texas:1, mexico:1, york:1, jersey:1, vegas:1, orleans:1, angeles:1, international:1, atlantic:1, coast:1, gulf:1, tennessee:1, kentucky:1, virginia:1, georgia:1, alabama:1, mississippi:1, louisiana:1, arkansas:1, ohio:1, iowa:1, illinois:1, michigan:1, indiana:1, wisconsin:1, minnesota:1, kansas:1, missouri:1, oklahoma:1, colorado:1, arizona:1, utah:1, nevada:1, oregon:1, washington:1, california:1, dakota:1, hampshire:1, island:1, maine:1, idaho:1, montana:1, wyoming:1, nebraska:1, new:1, san:1, los:1, las:1, fort:1, mount:1, saint:1, southern:1, northern:1, eastern:1, western:1, middle:1, point:1, beach:1, city:1, tech:1, methodist:1, christian:1, commonwealth:1, young:1, brigham:1};
+  let words = String(longName || "").toLowerCase().replace(/[^a-z0-9&]/g, " ").split(/\s+/).filter(w => w && !/^(the|of|at|and)$/.test(w));
+  if (words.length >= 2 && !place[words[words.length - 1]]) words = words.slice(0, -1);
+  words = words.filter(w => !/^(university|college)$/.test(w));
+  if (!words.length) return false;
+  const initials = words.map(w => w[0]).join("");
+  return initials === short || ("u" + initials) === short || (initials + "u") === short;
+}
 function sideMatch(a, b){
   if (!a || !b) return false;
   if (sameClub(a, b)) return true;
+  const map = window.__clubAlias || {};
+  const ak = map[String(a).toLowerCase().trim()], bk = map[String(b).toLowerCase().trim()];
+  if (ak && ak === bk) return true;
+  if (abbrHit(a, b) || abbrHit(b, a)) return true;
   const A = teamTokens(a), B = teamTokens(b);
   if (!A.length || !B.length) return false;
   if (A[A.length - 1] === B[B.length - 1]) return true;
@@ -10414,10 +10445,17 @@ function sameMatchup(a, b){
   if (A.length < 2 || B.length < 2) return false;
   return (sideMatch(A[0], B[0]) && sideMatch(A[1], B[1])) || (sideMatch(A[0], B[1]) && sideMatch(A[1], B[0]));
 }
+function sameKick(a, b){
+  const am = Date.parse(a && a.start || "");
+  const bm = Date.parse(b && b.start || "");
+  if (!Number.isFinite(am) || !Number.isFinite(bm)) return true;
+  return Math.abs(am - bm) < 3 * 60 * 60 * 1000;
+}
 function foldBoardGames(games){
+  learnClubs(window.__gameScores || []);
   const out = [];
   (games || []).forEach(g => {
-    const hit = out.find(row => sameMatchup(row, g));
+    const hit = out.find(row => sameMatchup(row, g) && sameKick(row, g));
     if (!hit) { out.push(g); return; }
     ["h2h","spreads","totals"].forEach(market => {
       const src = g.markets[market];
