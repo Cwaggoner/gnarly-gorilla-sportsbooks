@@ -4392,7 +4392,7 @@ function liveSide(row){
     const name = String(r.name || "").toLowerCase();
     return type === "ytd" || name === "ytd" || type === "total" || name === "overall";
   });
-  return {name: team.shortDisplayName || team.displayName || "", abbr: team.abbreviation || "", logo: teamLogo(team.logo), score: row && row.score != null && row.score !== "" ? String(row.score) : "", rec: rec && rec.summary || "", lines: lineNums(row)};
+  return {name: team.shortDisplayName || team.displayName || "", shortDisplayName: team.shortDisplayName || "", displayName: team.displayName || "", location: team.location || "", abbreviation: team.abbreviation || "", abbr: team.abbreviation || "", logo: team.logo || "", score: row && row.score != null && row.score !== "" ? String(row.score) : "", rec: rec && rec.summary || "", record: rec && rec.summary || "", lines: lineNums(row)};
 }
 function liveGameFromEvent(sport, ev){
   const comp = (ev.competitions || [])[0] || {};
@@ -11023,26 +11023,28 @@ function emptyBoardNote(day){
 }
 async function seedBoardFromScores(games, day){
   (games || []).forEach(g => {
-    if (!g || !g.lines || !SCORE_FEED[g.sport]) return;
+    if (!g || !SCORE_FEED[g.sport]) return;
     const away = (g.away && (g.away.shortDisplayName || g.away.displayName || g.away.name)) || "";
     const home = (g.home && (g.home.shortDisplayName || g.home.displayName || g.home.name)) || "";
     if (!away || !home) return;
     const label = away + " at " + home;
-    const book = g.lineBook || "DraftKings";
-    const faceOf = team => team ? {name: team.shortDisplayName || team.displayName || team.name || "", abbr: team.abbreviation || "", logo: team.logo || ""} : null;
-    ["h2h","spreads","totals"].forEach(market => patchBookLine(day, g.sport, label, market, book, g.lines[market]));
-    catchEspnDraftKings(g, day);
+    if (g.lines) {
+      const book = g.lineBook || "DraftKings";
+      ["h2h","spreads","totals"].forEach(market => patchBookLine(day, g.sport, label, market, book, g.lines[market]));
+      catchEspnDraftKings(g, day);
+    }
     const block = window.__ggOddsBoard && window.__ggOddsBoard.days && window.__ggOddsBoard.days[day];
     if (!block) return;
     const start = g.start ? new Date(g.start).toISOString() : "";
+    const faceOf = team => team ? {name: team.shortDisplayName || team.displayName || team.name || "", abbr: team.abbreviation || team.abbr || "", logo: team.logo || ""} : null;
     const awayFace = faceOf(g.away);
     const homeFace = faceOf(g.home);
     ["h2h","spreads","totals"].forEach(market => {
       const row = (block[market] || []).find(r => String(r.sport || "").toUpperCase() === g.sport && sameMatchup(r, {sport: g.sport, label: label}));
       if (!row) return;
       if (start && !row.start) row.start = start;
-      if (awayFace) row.awayFace = awayFace;
-      if (homeFace) row.homeFace = homeFace;
+      if (awayFace && awayFace.logo) row.awayFace = awayFace;
+      if (homeFace && homeFace.logo) row.homeFace = homeFace;
     });
   });
 }
