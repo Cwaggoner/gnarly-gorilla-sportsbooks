@@ -344,7 +344,7 @@ input, select, button, textarea { background:#0e0e0e; color:var(--text); border:
 #addbet .key-box .score-copy .api-note { margin:0; }
 #keystatus, #keyleft { display:block; width:100%; margin:0; padding-left:0; text-align:left; }
 #keystatus { margin-bottom:2px; }
-#keyleft { margin-bottom:4px; }
+#keyleft { margin-bottom:4px; white-space:pre-line; }
 #keystatus:not(:empty)::before, #keyleft:not(:empty)::before { content:none; }
 #seasons { margin-bottom:18px; min-width:0; max-width:100%; border:0; background:transparent; box-shadow:none; }
 #seasons > table { margin-bottom:28px; }
@@ -7708,7 +7708,7 @@ function paintKeyStatus(plan, left){
   else if (plan === "free") el.textContent = "Free key";
   else if (plan === "bad") el.textContent = "Key not valid";
   else el.textContent = "Checking the key";
-  if (count) count.textContent = shown !== "" && shown != null && Number.isFinite(Number(shown)) ? Number(shown).toLocaleString("en-US") + " credits left" : "";
+  if (count) count.textContent = shown !== "" && shown != null && Number.isFinite(Number(shown)) ? Number(shown).toLocaleString("en-US") + "\ncredits left" : "";
 }
 let keyPlanFlight = null;
 function refreshKeyStatus(force){
