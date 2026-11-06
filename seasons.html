@@ -895,6 +895,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .outcome-mark.win { color:#ff00ff; }
 .outcome-mark.loss { color:#0068E8; }
 .outcome-mark.nb { color:#0068E8; font-size:36px; }
+.outcome-mark.split { color:#f0e14a; font-size:22px; }
 .outcome-score { position:absolute; left:2px; right:2px; bottom:4px; margin:0; text-align:center; font:700 12px/1 system-ui, sans-serif; letter-spacing:.03em; text-transform:uppercase; color:#d6ffd0; }
 .mgm-when { margin:0 0 4px; color:#8fb898; font:700 12px/1.2 system-ui,sans-serif; white-space:nowrap; }
 .mgm-start { margin-left:8px; color:#39ff14; }
@@ -3951,8 +3952,8 @@ function teamSide(c){
     const hit = recs.find(r => re.test(String(r.type || "") + " " + String(r.name || "")));
     return hit && hit.summary || "";
   };
-  const overall = pick(/overall|total/i) || (recs[0] && recs[0].summary) || "";
-  if (overall) team.record = overall;
+  const overall = pick(/\bytd\b/i) || pick(/overall|total/i) || (recs[0] && recs[0].summary) || "";
+  if (overall) { team.record = overall; team.rec = overall; }
   team.homeRec = pick(/\bhome\b/i);
   team.roadRec = pick(/\broad\b|\baway\b/i);
   team.last10 = pick(/last/i);
@@ -4360,7 +4361,11 @@ function teamLogo(url){
 }
 function liveSide(row){
   const team = (row && row.team) || {};
-  const rec = ((row && row.records) || []).find(r => r.type === "total" || r.name === "overall");
+  const rec = ((row && row.records) || []).find(r => {
+    const type = String(r.type || "").toLowerCase();
+    const name = String(r.name || "").toLowerCase();
+    return type === "ytd" || name === "ytd" || type === "total" || name === "overall";
+  });
   return {name: team.shortDisplayName || team.displayName || "", abbr: team.abbreviation || "", logo: teamLogo(team.logo), score: row && row.score != null && row.score !== "" ? String(row.score) : "", rec: rec && rec.summary || "", lines: lineNums(row)};
 }
 function liveGameFromEvent(sport, ev){
@@ -10533,7 +10538,7 @@ function mgmGameCard(g, day, book, withClose){
   const scored = findFinalGame((window.__gameScores || []).filter(x => x.sport === String(g.sport || "").toUpperCase()), g.label);
   const face = team => {
     const logo = team && teamLogo(team.logo) ? "<img src='" + esc(teamLogo(team.logo)) + "' alt='' width='28' height='28' decoding='async'>" : "<span class='mgm-logo'></span>";
-    const rec = team && team.rec ? "<i>" + esc(team.rec) + "</i>" : "";
+    const rec = team && (team.rec || team.record) ? "<i>" + esc(team.rec || team.record) + "</i>" : "";
     const score = team && team.score ? "<b class='mgm-score'>" + esc(team.score) + "</b>" : "";
     return "<div class='mgm-team'>" + logo + "<span>" + esc((team && (team.name || team.abbr)) || "") + rec + "</span>" + score + "</div>";
   };
@@ -10576,30 +10581,40 @@ function mgmGameCard(g, day, book, withClose){
 }
 function ticketMark(g, scored){
   if (!scored || !scored.final) return "";
-  const day = (g.start && slateDateOf(g.start)) || String(g.date || "").slice(0, 10);
-  const sport = String(g.sport || "").toUpperCase();
-  const hits = [];
-  load().forEach(b => {
+  const day = (g.start && slateDateOf(g.start)) || String(scored.date || g.date || "").slice(0, 10);
+  const sport = String(g.sport || scored.sport || "").toUpperCase();
+  const pool = (window.__gameScores || []).filter(x => String(x.sport || "").toUpperCase() === sport);
+  const games = pool.length ? pool : [scored];
+  const slips = [];
+  const seen = new Set();
+  load().concat(gradeFile || []).concat(loadGrade()).forEach(b => {
     if (!b || isNoPick(b)) return;
     const bday = String(b.date || "").slice(0, 10);
     if (day && bday && bday !== day) return;
     const bs = String(b.sport || "").toUpperCase();
     const type = betType(b);
     if (bs && SCORE_FEED[bs] && bs !== sport && type !== "Parlay" && type !== "SGP") return;
+    const key = [bday, bs, normPick(b.pick)].join("|");
+    if (seen.has(key)) return;
+    seen.add(key);
+    slips.push(b);
+  });
+  const hits = [];
+  slips.forEach(b => {
+    const type = betType(b);
     const legs = (type === "Parlay" || type === "SGP") ? String(b.pick || "").split(/\s+and\s+/i) : [b.pick];
-    const mine = legs.filter(leg => findFinalGame([scored], gradeLegText(leg)));
+    const mine = legs.filter(leg => {
+      const hit = findFinalGame(games, gradeLegText(leg));
+      return hit && (hit === scored || (hit.id && scored.id && String(hit.id) === String(scored.id)));
+    });
     if (!mine.length) return;
-    let result = String(b.result || "").toLowerCase();
-    if (type === "Parlay" || type === "SGP" || (result !== "win" && result !== "loss" && result !== "push")) {
-      const results = mine.map(leg => gradeLeg(gradeLegText(leg), scored));
-      if (results.some(r => r === "loss")) result = "loss";
-      else if (results.some(r => r === "win")) result = "win";
-      else if (results.every(r => r === "push")) result = "push";
-      else result = "";
-    }
-    if (result === "win" || result === "loss" || result === "push") hits.push(result);
+    const results = mine.map(leg => gradeLeg(gradeLegText(leg), scored));
+    if (results.some(r => r === "loss")) hits.push("loss");
+    else if (results.some(r => r === "win")) hits.push("win");
+    else if (results.length && results.every(r => r === "push")) hits.push("push");
   });
   if (!hits.length) return "nb";
+  if (hits.some(r => r === "loss") && hits.some(r => r === "win")) return "split";
   if (hits.some(r => r === "loss")) return "loss";
   if (hits.some(r => r === "win")) return "win";
   return "push";
@@ -10607,7 +10622,7 @@ function ticketMark(g, scored){
 function outcomeInner(g, scored){
   if (!scored || !scored.final) return "<svg viewBox='0 0 24 24' aria-hidden='true'><path d='M8 11V8a4 4 0 0 1 8 0v3' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round'/><rect x='6' y='11' width='12' height='9' rx='1.6' fill='currentColor'/></svg>";
   const mark = ticketMark(g, scored);
-  const letter = mark === "win" ? "W" : mark === "loss" ? "L" : mark === "nb" ? "NB" : "";
+  const letter = mark === "win" ? "W" : mark === "loss" ? "L" : mark === "split" ? "W/L" : mark === "nb" ? "NB" : "";
   const away = scored.away || {};
   const home = scored.home || {};
   const as = Number.isFinite(Number(scored.awayScore)) ? scored.awayScore : "";
@@ -10615,7 +10630,7 @@ function outcomeInner(g, scored){
   const an = String(away.abbreviation || away.name || "").toUpperCase();
   const hn = String(home.abbreviation || home.name || "").toUpperCase();
   const score = as !== "" && hs !== "" ? [an, as, hn, hs].filter(v => v !== "").join(" ") : "";
-  const cls = mark === "win" ? "win" : mark === "loss" ? "loss" : "nb";
+  const cls = mark === "win" ? "win" : mark === "loss" ? "loss" : mark === "split" ? "split" : "nb";
   return (letter ? "<b class='outcome-mark " + cls + "'>" + letter + "</b>" : "") + (score ? "<span class='outcome-score'>" + esc(score) + "</span>" : "");
 }
 function applyFeedCache(day){
