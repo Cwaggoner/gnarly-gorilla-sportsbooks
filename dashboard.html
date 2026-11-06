@@ -263,7 +263,7 @@ th.th-center { text-align:center; }
 .field-note { grid-column:4 / -1; align-self:end; margin:0; text-align:right; }
 #betload { display:flex; flex-direction:column; align-items:stretch; justify-content:center; gap:8px; }
 #betload button { width:100%; }
-#betload img { width:100%; max-width:160px; height:auto; flex:1 1 auto; object-fit:cover; border:1px solid var(--line); border-radius:8px; padding:0; box-sizing:border-box; background:#0e0e0e; cursor:pointer; overflow:hidden; }
+#betload img { width:100%; max-width:none; height:auto; flex:0 0 auto; object-fit:cover; border:1px solid var(--line); border-radius:8px; padding:0; box-sizing:border-box; background:#0e0e0e; cursor:pointer; overflow:hidden; }
 #betnotes { display:flex; flex-direction:column; justify-content:center; align-items:stretch; gap:8px; min-height:120px; text-align:center; }
 #sgpbox { position:fixed; right:max(12px, calc((100vw - var(--page)) / 2 + 12px)); bottom:12px; display:flex; flex-direction:column; gap:8px; width:min(680px, calc(100vw - 24px)); max-height:calc(100vh - var(--pin, 96px) - 16px); overflow:auto; z-index:60; grid-column:auto; background:#141414; border:1px solid #0068E8; border-radius:10px; padding:10px; box-shadow:0 10px 28px rgba(0,0,0,.7); }
 #sgpbox h3 { display:flex; align-items:flex-start; gap:8px; margin:0; color:#39ff14; font-size:16px; text-align:left; cursor:grab; touch-action:none; user-select:none; }
@@ -684,7 +684,7 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 .sport-title h2 { margin:0; border:0; background:transparent; padding:0; }
 #sportbest, #monthbest { margin-left:10px; color:#39ff14; font-weight:700; }
 #sportday { text-align:center; margin:6px 0 0; color:#d6ffd0; }
-@media (max-width:760px) { .charts, #charts .chart-foot { grid-template-columns:1fr; } .bet-top { grid-template-columns:1fr; } .field-grid { grid-template-columns:1fr 1fr; } .field-note { grid-column:1 / -1; } #betload img { max-width:120px; } }
+@media (max-width:760px) { .charts, #charts .chart-foot { grid-template-columns:1fr; } .bet-top { grid-template-columns:1fr; } .field-grid { grid-template-columns:1fr 1fr; } .field-note { grid-column:1 / -1; } }
 
 @media (max-width:760px) { table { display:block; overflow-x:auto; } table.cal-line { display:table; overflow:visible; } }
 @media (max-width:760px) {
