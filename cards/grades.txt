@@ -1,1 +1,10 @@
-PLACEHOLDER
+# file: grades
+2026-11-05 | RANGE | All Win 41.09 | All Lose -20.00
+2026-11-05 | CBB | Wake Forest +17.5 | close -115 | loss | 51-74 | -10.00
+2026-11-05 | NHL | Chicago Blackhawks +320 | close +333 | loss | 1-4 | -10.00
+2026-11-05 | CFB | No Picks
+2026-11-05 | NBA | No Picks
+2026-11-05 | NFL | No Picks
+2026-11-05 | MLB | Season Ended
+2026-11-04 | RANGE | All Win 76.56 | All Lose -90.00
+2026-11-04 | CFB | Sacramento St +25.5 vs Toledo | close -112 | win |  | 8.93
