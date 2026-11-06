@@ -1721,25 +1721,7 @@ function pendingLabel(row){
   return row.pending;
 }
 function publishedDashboard(only){
-  let slips = hotPool && hotPool.dash;
-  if (!slips) {
-    slips = [];
-    const buckets = new Map();
-    (gradeFile || []).concat(load()).concat(loadGrade()).forEach(b => {
-      if (!b || !b.date || isNoPick(b) || (b.result !== "win" && b.result !== "loss" && b.result !== "push")) return;
-      const date = String(b.date).slice(0, 10);
-      const sport = String(b.sport || "").toUpperCase();
-      const id = date + "\n" + sport;
-      let bucket = buckets.get(id);
-      if (!bucket) { bucket = []; buckets.set(id, bucket); }
-      if (bucket.some(s => sameSlip(s, b) || sameGrade(s, b))) return;
-      const close = closeMap[b.date + "|" + b.pick];
-      const row = close ? Object.assign({}, b, {close}) : b;
-      bucket.push(row);
-      slips.push(row);
-    });
-    if (hotPool) hotPool.dash = slips;
-  }
+  const slips = gradedPool().filter(b => b && !isNoPick(b) && (b.result === "win" || b.result === "loss" || b.result === "push"));
   const dates = Array.isArray(only) && only.length ? only : lastSevenDates();
   const personal = personalCalendar() || {};
   return dates.map(date => {
@@ -1747,10 +1729,8 @@ function publishedDashboard(only){
     const own = personal[date] && Number.isFinite(Number(personal[date].pl)) ? personal[date] : null;
     const day = own || published;
     const lines = slips.filter(b => String(b.date || "").slice(0, 10) === date);
-    const expected = Number(day.n);
-    const complete = !expected || lines.length >= expected;
-    const fromLines = complete && lines.length > 0;
-    const profit = fromLines ? dayProfit(date, lines, day) : (Number.isFinite(Number(day.pl)) ? Number(day.pl) : (lines.length ? dayProfit(date, lines, day) : null));
+    const fromLines = lines.length > 0;
+    const profit = fromLines ? dayProfit(date, lines, day) : (Number.isFinite(Number(day.pl)) ? Number(day.pl) : null);
     const staked = fromLines ? lines.reduce((s, b) => s + (Number(b.stake) > 0 ? Number(b.stake) : UNIT), 0) : (Number(day.n) || 0) * UNIT;
     const n = fromLines ? lines.length : (Number(day.n) || 0);
     const priced = lines.filter(b => usableClose(b.close) && usableClose(b.odds));
@@ -2074,18 +2054,7 @@ function sharpRead(rows){
   return "Play the price, not the name. The card is built the sharp way: dogs, named totals, and no short favorite. A play also has to clear turnovers and the bench. A team that gives it away, or has no second scorer, does not get a rest dog. Best use of the card: " + (best || "the posted edges") + ". Those are the only plays with a real number and a reason. Pass a medium dog under 5 points and pass an estimated same-game parlay unless the straight leg is already the play. Shop the -110. If the book is -115 or shorter, pass it. Two legs in the same game is the max. This is a read of the card, not a guarantee.";
 }
 function chartSlips(){
-  const all = load().concat(loadGrade()).concat(gradeFile);
-  const byKey = {};
-  all.forEach(b => {
-    if (!b || !b.pick || isNoPick(b) || /^RANGE$/i.test(b.pick)) return;
-    if (b.result !== "win" && b.result !== "loss" && b.result !== "push") return;
-    const key = [b.date, b.sport, b.pick].join("|");
-    const prior = byKey[key];
-    const incoming = Number(b.profit);
-    const had = Number(prior && prior.profit);
-    if (!prior || (Number.isFinite(incoming) && incoming !== 0 && (!Number.isFinite(had) || had === 0))) byKey[key] = b;
-  });
-  return Object.values(byKey).sort((a, b) => String(a.date).localeCompare(String(b.date)) || String(a.pick).localeCompare(String(b.pick)));
+  return gradedPool().filter(b => b && b.pick && !isNoPick(b) && !/^RANGE$/i.test(b.pick) && (b.result === "win" || b.result === "loss" || b.result === "push")).slice().sort((a, b) => String(a.date).localeCompare(String(b.date)) || String(a.pick).localeCompare(String(b.pick)));
 }
 function drawCharts(){
   const settled = chartSlips();
@@ -2317,19 +2286,11 @@ function activeSportDay(){
   return sportDay;
 }
 function gradedOnDay(bets, day){
-  const seen = new Set();
-  const rows = [];
-  bets.concat(load()).concat(loadGrade()).concat(gradeFile).concat(chartLedger).forEach(b => {
-    const sport = String(b.sport || "").trim().toUpperCase();
-    const date = String(b.date || "").slice(0, 10);
-    const settled = b.result === "win" || b.result === "loss" || b.result === "push";
-    if (!b || isNoPick(b) || !sport || date !== day || !settled) return;
-    const key = [date, sport, b.pick].join("|");
-    if (seen.has(key)) return;
-    seen.add(key);
-    rows.push(b);
+  return gradedPool().filter(b => {
+    const sport = String(b && b.sport || "").trim().toUpperCase();
+    const date = String(b && b.date || "").slice(0, 10);
+    return b && !isNoPick(b) && sport && date === day && (b.result === "win" || b.result === "loss" || b.result === "push");
   });
-  return rows;
 }
 function drawBars(canvas, bets){
   const ctx = canvas.getContext("2d");
@@ -5036,7 +4997,7 @@ function render(){
     if (parkSlipOnGames(b, window.__slipGames || [])) movedDate = true;
   });
   if (movedDate) localStorage.setItem(KEY, JSON.stringify(stored));
-  let unique = collapseSlips(all);
+  let unique = gradedPool().filter(b => b && b.pick && !isNoPick(b) && !/^RANGE$/i.test(b.pick) && !/^all win/i.test(b.result || ""));
   unique.forEach(b => {
     if (!b.id) b.id = [b.date, b.sport, b.pick].join("|");
     if (!b.book) b.book = "BetMGM";
@@ -10585,10 +10546,11 @@ function ticketMark(g, scored){
   const sport = String(g.sport || scored.sport || "").toUpperCase();
   const pool = (window.__gameScores || []).filter(x => String(x.sport || "").toUpperCase() === sport);
   const games = pool.length ? pool : [scored];
-  const slips = [];
+  const hits = [];
   const seen = new Set();
-  load().concat(gradeFile || []).concat(loadGrade()).forEach(b => {
+  gradedPool().forEach(b => {
     if (!b || isNoPick(b)) return;
+    if (b.result !== "win" && b.result !== "loss" && b.result !== "push") return;
     const bday = String(b.date || "").slice(0, 10);
     if (day && bday && bday !== day) return;
     const bs = String(b.sport || "").toUpperCase();
@@ -10597,21 +10559,13 @@ function ticketMark(g, scored){
     const key = [bday, bs, normPick(b.pick)].join("|");
     if (seen.has(key)) return;
     seen.add(key);
-    slips.push(b);
-  });
-  const hits = [];
-  slips.forEach(b => {
-    const type = betType(b);
     const legs = (type === "Parlay" || type === "SGP") ? String(b.pick || "").split(/\s+and\s+/i) : [b.pick];
     const mine = legs.filter(leg => {
       const hit = findFinalGame(games, gradeLegText(leg));
       return hit && (hit === scored || (hit.id && scored.id && String(hit.id) === String(scored.id)));
     });
     if (!mine.length) return;
-    const results = mine.map(leg => gradeLeg(gradeLegText(leg), scored));
-    if (results.some(r => r === "loss")) hits.push("loss");
-    else if (results.some(r => r === "win")) hits.push("win");
-    else if (results.length && results.every(r => r === "push")) hits.push("push");
+    hits.push(String(b.result || "").toLowerCase());
   });
   if (!hits.length) return "nb";
   if (hits.some(r => r === "loss") && hits.some(r => r === "win")) return "split";
