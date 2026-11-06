@@ -4034,13 +4034,39 @@ function filterInjury(){
   const empty = document.getElementById("injuryempty");
   if (empty) empty.hidden = shown > 0;
 }
+function fetchJson(url, ms){
+  const ctrl = typeof AbortController === "function" ? new AbortController() : null;
+  const timer = setTimeout(() => { if (ctrl) ctrl.abort(); }, ms || 8000);
+  return fetch(url, ctrl ? {signal: ctrl.signal} : {}).then(r => r.ok ? r.json() : null).catch(() => null).finally(() => clearTimeout(timer));
+}
+function cardHurtRows(text, teams){
+  const rows = [];
+  const pos = /^(?:QB|RB|WR|TE|OL|DL|LB|CB|DB|S|PK|K|P|PG|SG|SF|PF|C|G|F|D)$/i;
+  String(text || "").split(/\n/).forEach(line => {
+    const re = /\b([A-Z][A-Za-z.'-]+(?:\s+[A-Z][A-Za-z.'-]+){1,2})\s+out\b/g;
+    let hit;
+    while ((hit = re.exec(line))) {
+      const parts = hit[1].split(/\s+/);
+      if (pos.test(parts[0])) parts.shift();
+      const name = parts.join(" ");
+      if (!name || parts.length < 2) continue;
+      const before = line.slice(0, hit.index);
+      const team = (teams || []).find(row => String(row.name || "").split(/\s+/).filter(w => w.length > 3).some(w => new RegExp("\\b" + w + "\\b", "i").test(before)));
+      if (!team || rows.some(row => row.team === team && row.name.toLowerCase() === name.toLowerCase())) continue;
+      rows.push({team: team, name: name, status: "Out", detail: line.replace(/^\d{4}-\d{2}-\d{2}\s*\|/, "").replace(/\s+/g, " ").trim().slice(0, 160)});
+    }
+  });
+  return rows;
+}
 async function drawInjuryReport(){
   const box = document.getElementById("injuryreport");
   if (!box) return;
+  try {
   const sports = Object.keys(SCORE_FEED).filter(s => !seasonEnded(s) && !seasonNotStarted(s));
-  let boards = [];
-  try { boards = (await Promise.all(sports.map(sport => scoreboard(sport, easternDay()).catch(() => [])))).flat(); }
-  catch (e) { boards = []; }
+  const boards = await Promise.race([
+    Promise.all(sports.map(sport => scoreboard(sport, easternDay()).catch(() => []))).then(packs => packs.flat()),
+    new Promise(resolve => setTimeout(() => resolve([]), 8000))
+  ]);
   const wanted = [];
   const addTeam = (sport, name, game, card) => {
     sport = String(sport || "").toUpperCase();
@@ -4057,12 +4083,19 @@ async function drawInjuryReport(){
     addTeam(g.sport, away, game, false);
     addTeam(g.sport, home, game, false);
   });
-  (((pickSlate && pickSlate.games) || []).concat((pickSlate && pickSlate.passed) || [])).forEach(game => {
+  (pickSlate && pickSlate.games || []).forEach(game => {
     const sides = slateSides(game);
     const sport = String(game.sport || "").toUpperCase();
     const label = (sport ? sport + " " : "") + (game.game || [sides.away.name, sides.home.name].filter(Boolean).join(" at "));
     addTeam(sport, sides.away.name, label, true);
     addTeam(sport, sides.home.name, label, true);
+  });
+  (pickSlate && pickSlate.passed || []).forEach(game => {
+    const sides = slateSides(game);
+    const sport = String(game.sport || "").toUpperCase();
+    const label = (sport ? sport + " " : "") + (game.game || [sides.away.name, sides.home.name].filter(Boolean).join(" at "));
+    addTeam(sport, sides.away.name, label, false);
+    addTeam(sport, sides.home.name, label, false);
   });
   if (!wanted.length) {
     box.innerHTML = "<p class='api-note'>No games posted for today yet.</p>";
@@ -4074,32 +4107,28 @@ async function drawInjuryReport(){
   need.forEach(sport => { if (injuryFeedFresh(sport)) bySport[sport] = window.__injuryFeeds[sport]; });
   const pull = need.filter(sport => !bySport[sport] && !injuryMissFresh(sport));
   if (pull.length) {
-    const packs = await Promise.all(pull.map(sport => fetch("https://site.api.espn.com/apis/site/v2/sports/" + SCORE_FEED[sport] + "/injuries").then(r => r.ok ? r.json() : null).catch(() => null)));
+    const packs = await Promise.all(pull.map(sport => fetchJson("https://site.api.espn.com/apis/site/v2/sports/" + SCORE_FEED[sport] + "/injuries", 8000)));
     pull.forEach((sport, i) => { if (keepInjuryFeed(sport, packs[i])) bySport[sport] = window.__injuryFeeds[sport]; });
   }
-  const missing = need.filter(sport => !bySport[sport]);
-  if (missing.length) {
-    const published = await fetch("cards/injuries.json?d=" + easternDay()).then(r => r.ok ? r.json() : null).catch(() => null);
-    if (published && published.date === easternDay() && published.sports) {
-      missing.forEach(sport => {
-        if (keepInjuryFeed(sport, published.sports[sport])) bySport[sport] = window.__injuryFeeds[sport];
-      });
-    }
-  }
+  const noted = cardHurtRows(postedCard, wanted);
   const rows = [];
   wanted.forEach(team => {
     const feed = bySport[team.sport];
     const club = ((feed && feed.injuries) || []).find(item => sameClub(item.displayName || (item.team && item.team.displayName), team.name));
     const list = ((club && club.injuries) || []).filter(item => injuryWorth(item.status)).sort((a, b) => injuryRank(a.status) - injuryRank(b.status));
-    if (!list.length) {
+    const extra = noted.filter(row => row.team === team && !list.some(item => sameClub((item.athlete && item.athlete.displayName) || "", row.name)));
+    if (!list.length && !extra.length) {
       if (!team.card) return;
       rows.push("<tr data-sport='" + esc(team.sport) + "' data-kind='none' data-card='1'><td class='game-col'>" + esc(team.game) + "</td><td class='team-col'>" + esc(team.name) + "</td><td class='player-col'>-</td><td class='pos-col'>-</td><td class='status-col'>-</td><td>No report posted</td></tr>");
       return;
     }
+    extra.forEach(row => {
+      rows.push("<tr data-sport='" + esc(team.sport) + "' data-kind='out'" + (team.card ? " data-card='1'" : "") + "><td class='game-col'>" + esc(team.game) + "</td><td class='team-col'>" + esc(team.name) + "</td><td class='player-col'>" + esc(row.name) + "</td><td class='pos-col'>-</td><td class='status-col loss'>" + esc(row.status) + "</td><td>" + esc(row.detail) + "</td></tr>");
+    });
     list.forEach(item => {
       const athlete = item.athlete || {};
       const pos = (athlete.position && (athlete.position.abbreviation || athlete.position.displayName)) || "-";
-      const detail = item.shortComment || (item.details && (item.details.detail || item.details.type)) || (item.type && (item.type.description || item.type.name)) || "";
+      const detail = item.shortComment || (item.details && !item.details.detail && typeof item.details !== "object" ? item.details : "") || (item.details && (item.details.detail || (item.details.type && (item.details.type.description || item.details.type.name)))) || (item.type && (item.type.description || item.type.name)) || "";
       rows.push("<tr data-sport='" + esc(team.sport) + "' data-kind='" + injuryKind(item.status) + "'" + (team.card ? " data-card='1'" : "") + "><td class='game-col'>" + esc(team.game) + "</td><td class='team-col'>" + esc(team.name) + "</td><td class='player-col'>" + esc(athlete.displayName || "Player") + "</td><td class='pos-col'>" + esc(pos) + "</td><td class='status-col " + injuryStatusClass(item.status) + "'>" + esc(item.status || "-") + "</td><td>" + esc(String(detail).replace(/\s+/g, " ").slice(0, 160)) + "</td></tr>");
     });
   });
@@ -4109,6 +4138,9 @@ async function drawInjuryReport(){
   }
   box.innerHTML = "<table class='compare'><thead><tr><th class='game-col'>Game</th><th class='team-col'>Team</th><th class='player-col'>Player</th><th class='pos-col'>Position</th><th class='status-col'>Status</th><th>Report</th></tr></thead><tbody>" + rows.join("") + "<tr id='injuryempty' hidden><td colspan='6'>No rows for that filter.</td></tr></tbody></table>";
   filterInjury();
+  } catch (err) {
+    box.innerHTML = "<p class='api-note'>Injury report did not load. Reload Today's Card.</p>";
+  }
 }
 async function readJson(url){
   const res = await fetch(cardUrl(url));
