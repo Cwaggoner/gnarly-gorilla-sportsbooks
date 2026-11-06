@@ -212,6 +212,7 @@ form, .row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1f
 .break { grid-column:1 / -1; height:0; }
 .stack { display:flex; flex-direction:row; gap:8px; grid-column:1 / -1; align-items:flex-end; }
 #picknote, #loadnote, #betnotes .field-note, #betnotes .key-slot { display:flex; align-items:center; justify-content:center; align-self:stretch; width:100%; min-height:38px; margin:0; padding:8px 12px; border:1px solid var(--line); border-radius:8px; box-sizing:border-box; text-align:center; }
+#picknote { flex-direction:column; white-space:pre-line; }
 #betnotes .key-slot { flex-direction:column; gap:2px; }
 #betnotes #editnote { display:block; width:100%; min-height:0; margin:0; padding:0; border:0; }
 #betnotes #editnote:empty { display:none; }
@@ -7525,7 +7526,7 @@ try {
       sel.appendChild(opt);
     });
     if (savedPicks.value) sel.value = savedPicks.value;
-    document.getElementById("picknote").textContent = "Restored " + (savedPicks.book || "") + " " + (savedPicks.sport || "") + " picks. No new API call.";
+    document.getElementById("picknote").textContent = "Restored " + (savedPicks.book || "") + " " + (savedPicks.sport || "") + " picks.\nNo new API call.";
   }
 } catch (e) {}
 function findBookPrice(games, bookKey, type, pick){
