@@ -10476,10 +10476,15 @@ function sideMatch(a, b){
   const ak = map[String(a).toLowerCase().trim()], bk = map[String(b).toLowerCase().trim()];
   if (ak && ak === bk) return true;
   if (abbrSide(a, b) || stateSchoolMatch(a, b)) return true;
-  const A = teamTokens(a), B = teamTokens(b);
-  if (!A.length || !B.length) return false;
-  if (A[A.length - 1] === B[B.length - 1]) return true;
-  return A.some(w => w.length >= 4 && B.indexOf(w) >= 0);
+  const A = expandSchool(a), B = expandSchool(b);
+  if (!A.length || !B.length || A.includes("state") !== B.includes("state")) return false;
+  const short = A.length <= B.length ? A : B;
+  const long = short === A ? B : A;
+  if (!short.every(w => long.indexOf(w) >= 0)) return false;
+  const place = {north:1, south:1, east:1, west:1, central:1, state:1, florida:1, carolina:1, texas:1, mexico:1, york:1, jersey:1, vegas:1, orleans:1, angeles:1, international:1, atlantic:1, coast:1, gulf:1, tennessee:1, kentucky:1, virginia:1, georgia:1, alabama:1, mississippi:1, louisiana:1, arkansas:1, ohio:1, iowa:1, illinois:1, michigan:1, indiana:1, wisconsin:1, minnesota:1, kansas:1, missouri:1, oklahoma:1, colorado:1, arizona:1, utah:1, nevada:1, oregon:1, washington:1, california:1, dakota:1, hampshire:1, island:1, maine:1, idaho:1, montana:1, wyoming:1, nebraska:1};
+  const extra = long.filter(w => short.indexOf(w) < 0);
+  if (extra.some(w => place[w])) return false;
+  return short.some(w => w.length >= 4);
 }
 function matchupSides(label){
   const parts = String(label || "").split(/\s+(?:at|@|vs\.?|versus)\s+/i);
