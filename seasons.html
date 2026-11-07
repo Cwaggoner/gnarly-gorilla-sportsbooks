@@ -2943,6 +2943,8 @@ function stampFileClose(b){
     return b;
   }
   if (b.result === "pending") {
+    const hist = savedCloseFor(b);
+    if (hist != null) { b.close = hist; b.realClose = true; return b; }
     if (b.realClose && usableClose(b.close)) return b;
     b.close = ""; b.closeOpp = ""; b.fairClose = 0; b.realClose = false;
     return b;
@@ -8100,7 +8102,12 @@ function parseGradeLine(line){
 function keepClose(b){
   if (!b) return b;
   b.type = betType(b);
-  if (b.result === "pending" && !(b.realClose && usableClose(b.close))) { b.close = ""; b.realClose = false; return b; }
+  if (b.result === "pending") {
+    const hist = savedCloseFor(b);
+    if (usableClose(hist)) { b.close = Number(hist); b.realClose = true; return b; }
+    if (!(b.realClose && usableClose(b.close))) { b.close = ""; b.realClose = false; return b; }
+    return b;
+  }
   const hist = savedCloseFor(b);
   if (usableClose(hist)) { b.close = Number(hist); b.realClose = true; return b; }
   if (!usableClose(b.close)) b.close = "";

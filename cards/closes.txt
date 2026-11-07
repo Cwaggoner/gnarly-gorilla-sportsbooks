@@ -310,3 +310,6 @@
 2026-11-05 | NHL | -108 | Canadiens ML vs Mammoth | -120
 2026-11-05 | NHL | 140 | Flyers ML at Rangers | 120
 2026-11-06 | CFB | -110 | New Mexico -10 | -110
+2026-11-06 | CFB | -108 | Nebraska -4.5 at Illinois | -112
+2026-11-06 | CFB | -108 | Nebraska -4.5 | -112
+2026-11-06 | CFB | -110 | Cornhuskers -4.5 at Illinois Fighting Illini | -112
