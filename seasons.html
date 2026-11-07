@@ -4399,13 +4399,13 @@ function nextRecordAt(){
 }
 function readRecordCache(){
   try {
-    const pack = JSON.parse(localStorage.getItem("gg-standings-v1") || "null");
+    const pack = JSON.parse(localStorage.getItem("gg-standings-v2") || "null");
     if (pack && pack.stamp === recordsStamp() && Array.isArray(pack.rows) && pack.rows.length) return pack;
   } catch (e) {}
   return null;
 }
 function writeRecordCache(pack){
-  try { localStorage.setItem("gg-standings-v1", JSON.stringify(pack)); } catch (e) {}
+  try { localStorage.setItem("gg-standings-v2", JSON.stringify(pack)); } catch (e) {}
 }
 function capAbbr(text){
   const s = String(text || "").trim();
@@ -4434,8 +4434,10 @@ function applyStandRanks(rows){
   });
 }
 function divisionShown(row){
-  if (!row || (row.sport !== "CBB" && row.sport !== "CFB")) return row && row.division || "—";
-  return row.natRank ? "#" + row.natRank : "—";
+  if (!row) return "—";
+  if (row.division && row.division !== "—" && row.division !== row.conference) return row.division;
+  if (row.sport === "CBB" || row.sport === "CFB") return row.natRank ? "#" + row.natRank : "Unranked";
+  return row.division || "—";
 }
 async function nationalRanks(){
   const jobs = [["CFB","football/college-football"],["CBB","basketball/mens-college-basketball"]];
@@ -4466,6 +4468,7 @@ function applyNationalRanks(rows, map){
 }
 function rankText(row){
   const bits = [];
+  if (row && (row.sport === "CBB" || row.sport === "CFB") && row.natRank) bits.push("AP #" + row.natRank);
   if (row && row.confRank) bits.push("Conf #" + row.confRank);
   if (row && row.divRank) bits.push("Div #" + row.divRank);
   return bits.join(" · ") || "—";
@@ -4478,7 +4481,10 @@ function standLabel(node, short){
 }
 function standBag(entry){
   const bag = {};
-  (entry.stats || []).forEach(s => { if (s && s.name) bag[s.name] = s.displayValue; });
+  (entry.stats || []).forEach(s => {
+    if (!s || !s.name || bag[s.name]) return;
+    bag[s.name] = s.displayValue;
+  });
   return bag;
 }
 function overallParts(text){
