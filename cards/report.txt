@@ -1,7 +1,7 @@
-# GG report 2026-11-06
-# Yesterday 2026-11-06 graded. Record 1-1-0. Profit -$0.91. CLV No Bet Price.
+# GG report 2026-11-07
+# Yesterday 2026-11-06 graded. Record 1-1-0. Profit -$0.91. CLV +0.25.
 
-Analysis: CFB day with two slips. New Mexico -10 covered easily in a 31-3 win (EDGE from card note on QB change). Nebraska -4.5 lost 13-24 at Illinois. No slips in other sports. MLB Season Ended.
+Analysis: CFB day with two slips. New Mexico -10 covered easily in a 31-3 win (EDGE from card note on QB change, made -5.5, close -10.5, CLV +0.5). Nebraska -4.5 lost 13-24 at Illinois (no made number in note, skipped for prices). No slips in other sports. MLB Season Ended.
 
 2026-11-06 | CFB | New Mexico -10 | close -110 | win | 31-3 | 9.09 EDGE
 2026-11-06 | CFB | Nebraska -4.5 at Illinois | close -112 | loss | 13-24 | -10.00
