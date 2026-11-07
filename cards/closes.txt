@@ -313,3 +313,14 @@
 2026-11-06 | CFB | -108 | Nebraska -4.5 at Illinois | -112
 2026-11-06 | CFB | -108 | Nebraska -4.5 | -112
 2026-11-06 | CFB | -110 | Cornhuskers -4.5 at Illinois Fighting Illini | -112
+2026-11-06 | CBB |  | Hurricanes -38.5 vs Wagner Seahawks | -115
+2026-11-06 | CBB |  | Miami -38.5 vs Wagner | -115
+2026-11-06 | CBB |  | Miami -38.5 | -115
+2026-11-06 | CBB |  | Miami Hurricanes -38.5 | -115
+2026-11-06 | CBB |  | Wagner +38.5 at Miami | -105
+2026-11-06 | CBB |  | Seahawks +38.5 at Miami Hurricanes | -105
+2026-11-06 | CBB |  | Wagner Seahawks +38.5 at Miami Hurricanes | -105
+2026-11-06 | CBB |  | Wagner at Miami Under 144.5 | -110
+2026-11-06 | CBB |  | Wagner Seahawks at Miami Hurricanes Under 144.5 | -110
+2026-11-06 | CBB |  | Wagner at Miami Over 144.5 | -110
+2026-11-06 | CBB |  | Wagner Seahawks at Miami Hurricanes Over 144.5 | -110
