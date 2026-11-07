@@ -1,1 +1,6 @@
-PLACEHOLDER
+# file: closes
+# Per-slip closing price. Format: date | sport | odds | pick | close
+# Do not write a line before the listed start. A pre-game price is not a close.
+# If no price was captured after the start, leave the close off. Do not copy the bet price.
+# A missing close must not block the grade, the calendar, or the ledger.
+2026-11-07 | CBB | -110 | Morehead State +37.5 | -115
