@@ -1603,10 +1603,7 @@ function openSlipCount(date){
 function dashboardEnd(){
   const today = easternDay();
   let end = shiftDate(today, -1);
-  const todayPosted = (driveCard.date === today && (driveCard.lines || []).length) || slipsForDay(today).length || openSlipCount(today) > 0;
-  if (todayPosted && openSlipCount(today) === 0 && slipsForDay(today).length) end = today;
-  let guard = 0;
-  while (openSlipCount(end) > 0 && guard < 8) { end = shiftDate(end, -1); guard++; }
+  if (slipsForDay(today).length) end = today;
   return end;
 }
 function lastSevenDates(){
@@ -8087,17 +8084,18 @@ function betType(b){
 function isNoPick(b){ return /no picks|season ended/i.test([b && b.pick, b && b.sport, b && b.type, b && b.result, b && b.notes].join(" ")); }
 function parseGradeLine(line){
   const parts = line.split("|").map(s => s.trim());
-  if (parts.length < 5 || !/^\d{4}-\d{2}-\d{2}$/.test(parts[0]) || /^RANGE$/i.test(parts[1] || "") || /no picks|season ended|all win|all lose/i.test([parts[1], parts[2], parts[4] || ""].join(" "))) return null;
-  let money = parts[parts.length - 1];
-  let close = "";
-  if (/^close:/i.test(money)) { close = money.replace(/^close:/i, ""); money = parts[parts.length - 2]; }
-  const result = (parts[4].match(/win|loss|push/i) || [""])[0].toLowerCase();
-  if (!result) return null;
+  if (parts.length < 5 || !/^\d{4}-\d{2}-\d{2}$/.test(parts[0]) || /^RANGE$/i.test(parts[1] || "") || /no picks|season ended|all win|all lose/i.test(parts.slice(1, 4).join(" "))) return null;
+  const resultAt = parts.findIndex((p, i) => i >= 3 && /^(win|loss|push)\b/i.test(p));
+  if (resultAt < 0) return null;
+  const result = parts[resultAt].match(/win|loss|push/i)[0].toLowerCase();
+  const closeField = parts.find((p, i) => i >= 3 && i < resultAt && /^close\b/i.test(p)) || "";
+  const pick = parts.slice(2, resultAt).filter(p => !/^close\b/i.test(p) && !/^(spread|total|moneyline|ml|sgp|parlay)$/i.test(p)).join(" ").trim();
+  if (!pick) return null;
+  const money = parts[parts.length - 1].replace(/\s*EDGE\s*$/i, "");
   const profit = Number(String(money).replace(/[$,+]/g, ""));
-  const closeField = parts.find((p, i) => i >= 3 && /^close\b/i.test(p)) || "";
   const nclose = priceNumber(closeField);
   const goodClose = usableClose(nclose);
-  return {date: parts[0], sport: parts[1], pick: parts[2], odds: "", close: goodClose ? nclose : "", result: result, stake: 10, profit: Number.isFinite(profit) ? profit : 0, realClose: goodClose};
+  return {date: parts[0], sport: parts[1], pick: pick, odds: "", close: goodClose ? nclose : "", result: result, stake: 10, profit: Number.isFinite(profit) ? profit : 0, realClose: goodClose};
 }
 function keepClose(b){
   if (!b) return b;
