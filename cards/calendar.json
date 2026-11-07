@@ -1,1 +1,8 @@
-PLACEHOLDER
+{
+  "2026-11-01": {"pl": -25.11, "n": 17, "allWin": 150.00, "allLose": -170.00, "clv": "Close Not On File"},
+  "2026-11-02": {"pl": -0.74, "n": 2, "allWin": 18.00, "allLose": -20.00, "clv": "Close Not On File"},
+  "2026-11-03": {"pl": -20.85, "n": 10, "allWin": 90.00, "allLose": -100.00, "clv": 3},
+  "2026-11-04": {"pl": 38.53, "n": 9, "allWin": 120.00, "allLose": -90.00, "clv": "Close Not On File"},
+  "2026-11-05": {"pl": -2.24, "n": 8, "allWin": 80.00, "allLose": -80.00, "clv": 6.5},
+  "2026-11-06": {"pl": -0.91, "n": 2, "allWin": 9.09, "allLose": -10.00, "clv": 0.25}
+}
