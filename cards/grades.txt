@@ -19,3 +19,10 @@
 2026-11-06 | NHL | No Picks
 2026-11-06 | NFL | No Picks
 2026-11-06 | MLB | Season Ended
+2026-11-07 | RANGE | All Win 9.09 | All Lose -10.00
+2026-11-07 | CBB | Morehead State +37.5 | close -110 | loss | 57-107 | -10.00 EDGE
+2026-11-07 | CFB | No Picks
+2026-11-07 | NBA | No Picks
+2026-11-07 | NHL | No Picks
+2026-11-07 | NFL | No Picks
+2026-11-07 | MLB | Season Ended
