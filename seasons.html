@@ -2933,7 +2933,8 @@ function attachPair(b){
 }
 function stampFileClose(b){
   if (!b || b.result === "void") return b;
-  const quoted = quotedClose(b, b.book || "BetMGM");
+  const quotedBook = quotedClose(b, b.book || "BetMGM");
+  const quoted = quotedBook && usableClose(quotedBook.price) ? quotedBook : quotedClose(b, "DraftKings");
   if (quoted && usableClose(quoted.price)) {
     b.close = Number(quoted.price);
     if (usableClose(quoted.opp)) b.closeOpp = Number(quoted.opp);

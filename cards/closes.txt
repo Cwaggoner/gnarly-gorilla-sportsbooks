@@ -4,3 +4,34 @@
 # If no price was captured after the start, leave the close off. Do not copy the bet price.
 # A missing close must not block the grade, the calendar, or the ledger.
 2026-11-07 | CBB | -110 | Morehead State +37.5 | -115
+2026-11-07 | NBA |  | Hawks -6.5 | -110
+2026-11-07 | NBA |  | Hawks -6.5 vs Nets | -110
+2026-11-07 | NBA |  | Hawks -6.5 vs Brooklyn Nets | -110
+2026-11-07 | NBA |  | Atlanta Hawks -6.5 vs Brooklyn Nets | -110
+2026-11-07 | NBA |  | Nets +6.5 | -110
+2026-11-07 | NBA |  | Nets +6.5 at Hawks | -110
+2026-11-07 | NBA |  | Nets +6.5 at Atlanta Hawks | -110
+2026-11-07 | NBA |  | Brooklyn Nets +6.5 at Atlanta Hawks | -110
+2026-11-07 | NBA |  | Hawks ML | -265
+2026-11-07 | NBA |  | Nets ML | 217
+2026-11-07 | NBA |  | Nets at Hawks Over 227.5 | -109
+2026-11-07 | NBA |  | Brooklyn Nets at Atlanta Hawks Over 227.5 | -109
+2026-11-07 | NBA |  | Nets at Hawks Under 227.5 | -111
+2026-11-07 | NBA |  | Brooklyn Nets at Atlanta Hawks Under 227.5 | -111
+2026-11-07 | NBA |  | Knicks -4.5 | -112
+2026-11-07 | NBA |  | Knicks -4.5 at Cavaliers | -112
+2026-11-07 | NBA |  | Knicks -4.5 at Cleveland | -112
+2026-11-07 | NBA |  | Knicks -4.5 at Cleveland Cavaliers | -112
+2026-11-07 | NBA |  | New York Knicks -4.5 at Cleveland Cavaliers | -112
+2026-11-07 | NBA |  | Cavaliers +4.5 | -108
+2026-11-07 | NBA |  | Cavaliers +4.5 vs Knicks | -108
+2026-11-07 | NBA |  | Cleveland Cavaliers +4.5 vs New York Knicks | -108
+2026-11-07 | NBA |  | Knicks ML | -197
+2026-11-07 | NBA |  | Cavaliers ML | 164
+2026-11-07 | NBA |  | Knicks at Cavaliers Over 222.5 | -111
+2026-11-07 | NBA |  | Knicks at Cleveland Over 222.5 | -111
+2026-11-07 | NBA |  | New York Knicks at Cleveland Cavaliers Over 222.5 | -111
+2026-11-07 | NBA |  | Knicks at Cavaliers Under 222.5 | -109
+2026-11-07 | NBA |  | Knicks at Cleveland Under 222.5 | -109
+2026-11-07 | NBA |  | New York Knicks at Cleveland Cavaliers Under 222.5 | -109
+
