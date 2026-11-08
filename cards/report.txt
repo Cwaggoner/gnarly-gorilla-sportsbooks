@@ -1,12 +1,11 @@
-# GG report 2026-11-07
-# Yesterday 2026-11-06 graded. Record 1-1-0. Profit -$0.91. CLV +0.25.
+# GG report 2026-11-08
+# Yesterday 2026-11-07 graded. Record 0-1-0. Profit -$10.00. CLV 0.
 
-Analysis: CFB day with two slips. New Mexico -10 covered easily in a 31-3 win (EDGE from card note on QB change, made -5.5, close -10.5, CLV +0.5). Nebraska -4.5 lost 13-24 at Illinois (no made number in note, skipped for prices). No slips in other sports. MLB Season Ended.
+Analysis: CBB day with one slip. Morehead State +37.5 lost 57-107 (EDGE from card note on injuries, made LOU -7.0, close -37.5, CLV 0 matched). No slips in other sports. MLB Season Ended.
 
-2026-11-06 | CFB | New Mexico -10 | close -110 | win | 31-3 | 9.09 EDGE
-2026-11-06 | CFB | Nebraska -4.5 at Illinois | close -112 | loss | 13-24 | -10.00
-2026-11-06 | CBB | No Picks
-2026-11-06 | NBA | No Picks
-2026-11-06 | NHL | No Picks
-2026-11-06 | NFL | No Picks
-2026-11-06 | MLB | Season Ended
+2026-11-07 | CBB | Morehead State +37.5 | close -110 | loss | 57-107 | -10.00 EDGE
+2026-11-07 | CFB | No Picks
+2026-11-07 | NBA | No Picks
+2026-11-07 | NHL | No Picks
+2026-11-07 | NFL | No Picks
+2026-11-07 | MLB | Season Ended

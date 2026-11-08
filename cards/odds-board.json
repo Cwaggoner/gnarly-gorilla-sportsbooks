@@ -1,83 +1,5 @@
 {
   "days": {
-    "2026-11-05": {
-      "h2h": [],
-      "spreads": [],
-      "totals": []
-    },
-    "2026-11-06": {
-      "h2h": [
-        {
-          "sport": "NBA",
-          "label": "Boston Celtics at Charlotte Hornets",
-          "start": "2026-11-07T00:00:00Z",
-          "books": {
-            "BetMGM": "-325 / +260",
-            "Caesars": "-335 / +260",
-            "DraftKings": "-344 / +276",
-            "Fanatics": "-330 / +260",
-            "FanDuel": "-340 / +275",
-            "HardRock": "-350 / +275"
-          }
-        },
-        {
-          "sport": "NBA",
-          "label": "Washington Wizards at Atlanta Hawks",
-          "start": "2026-11-07T00:00:00Z",
-          "books": {
-            "BetMGM": "+200 / -250",
-            "Caesars": "+210 / -260",
-            "DraftKings": "+199 / -241",
-            "Fanatics": "+210 / -260",
-            "FanDuel": "+220 / -270",
-            "HardRock": "+200 / -250"
-          }
-        },
-        {
-          "sport": "NHL",
-          "label": "Columbus Blue Jackets at Buffalo Sabres",
-          "start": "2026-11-07T00:00:00Z",
-          "books": {
-            "BetMGM": "+150 / -185",
-            "Caesars": "+155 / -185",
-            "DraftKings": "+150 / -180",
-            "Fanatics": "+150 / -180",
-            "FanDuel": "+150 / -182",
-            "HardRock": "-"
-          }
-        }
-      ],
-      "spreads": [
-        {
-          "sport": "NBA",
-          "label": "Philadelphia 76ers at Cleveland Cavaliers",
-          "start": "2026-11-07T00:30:00Z",
-          "books": {
-            "BetMGM": "-",
-            "Caesars": "-2.5 -110 / +2.5 -110",
-            "DraftKings": "-1.5 -110 / +1.5 -110",
-            "Fanatics": "-",
-            "FanDuel": "-2.5 -105 / +2.5 -115",
-            "HardRock": "-"
-          }
-        }
-      ],
-      "totals": [
-        {
-          "sport": "NBA",
-          "label": "Philadelphia 76ers at Cleveland Cavaliers",
-          "start": "2026-11-07T00:30:00Z",
-          "books": {
-            "BetMGM": "-",
-            "Caesars": "o229.5 -110 / u229.5 -110",
-            "DraftKings": "o229.5 -110 / u229.5 -110",
-            "Fanatics": "o229.5 -110 / u229.5 -110",
-            "FanDuel": "-",
-            "HardRock": "-"
-          }
-        }
-      ]
-    },
     "2026-11-07": {
       "h2h": [
         {
@@ -92,168 +14,29 @@
             "FanDuel": "-275 / +225",
             "HardRock": "-275 / +225"
           }
-        },
+        }
+      ],
+      "spreads": [],
+      "totals": []
+    },
+    "2026-11-08": {
+      "h2h": [
         {
           "sport": "NBA",
-          "label": "Brooklyn Nets at Atlanta Hawks",
-          "start": "2026-11-08T00:40:00Z",
+          "label": "Philadelphia 76ers at Chicago Bulls",
+          "start": "2026-11-08T20:30:00Z",
           "books": {
-            "BetMGM": "-275 / +225",
-            "Caesars": "-260 / +210",
-            "DraftKings": "-258 / +212",
-            "Fanatics": "-275 / +220",
-            "FanDuel": "-255 / +210",
-            "HardRock": "-260 / +220"
-          }
-        },
-        {
-          "sport": "NBA",
-          "label": "New York Knicks at Cleveland Cavaliers",
-          "start": "2026-11-08T01:10:00Z",
-          "books": {
-            "BetMGM": "-200 / +165",
-            "Caesars": "-205 / +170",
-            "DraftKings": "-191 / +160",
-            "Fanatics": "-200 / +165",
-            "FanDuel": "-198 / +166",
-            "HardRock": "-185 / +150"
-          }
-        },
-        {
-          "sport": "NBA",
-          "label": "Washington Wizards at Oklahoma City Thunder",
-          "start": "2026-11-08T01:10:00Z",
-          "books": {
-            "BetMGM": "-500 / +375",
-            "Caesars": "-480 / +360",
-            "DraftKings": "-449 / +349",
-            "Fanatics": "-475 / +360",
-            "FanDuel": "-460 / +360",
-            "HardRock": "-475 / +375"
-          }
-        },
-        {
-          "sport": "NBA",
-          "label": "Orlando Magic at Golden State Warriors",
-          "start": "2026-11-08T01:40:00Z",
-          "books": {
-            "BetMGM": "-250 / +200",
-            "Caesars": "-250 / +205",
-            "DraftKings": "-258 / +212",
-            "Fanatics": "-260 / +210",
-            "FanDuel": "-230 / +190",
-            "HardRock": "-240 / +195"
-          }
-        },
-        {
-          "sport": "NBA",
-          "label": "Houston Rockets at Phoenix Suns",
-          "start": "2026-11-08T02:10:00Z",
-          "books": {
-            "BetMGM": "-300 / +240",
-            "Caesars": "-305 / +240",
-            "DraftKings": "-308 / +249",
-            "Fanatics": "-320 / +250",
-            "FanDuel": "-310 / +250",
-            "HardRock": "-275 / +225"
-          }
-        },
-        {
-          "sport": "NBA",
-          "label": "San Antonio Spurs at Portland Trail Blazers",
-          "start": "2026-11-08T03:10:00Z",
-          "books": {
-            "BetMGM": "-210 / +170",
-            "Caesars": "-175 / +148",
-            "DraftKings": "-204 / +170",
-            "Fanatics": "-205 / +170",
-            "FanDuel": "-196 / +164",
-            "HardRock": "-200 / +160"
-          }
-        },
-        {
-          "sport": "NHL",
-          "label": "Florida Panthers at Washington Capitals",
-          "start": "2026-11-07T17:40:00Z",
-          "books": {
-            "BetMGM": "+100 / -120",
-            "Caesars": "+106 / -125",
-            "DraftKings": "+102 / -122",
-            "Fanatics": "+100 / -120",
-            "FanDuel": "+100 / -120",
-            "HardRock": "+100 / -120"
-          }
-        },
-        {
-          "sport": "NHL",
-          "label": "St. Louis Blues at Nashville Predators",
-          "start": "2026-11-07T18:10:00Z",
-          "books": {
-            "BetMGM": "-110 / -110",
-            "Caesars": "-113 / -106",
-            "DraftKings": "-110 / -110",
-            "Fanatics": "-110 / -110",
-            "FanDuel": "-110 / -110",
-            "HardRock": "-110 / -110"
-          }
-        },
-        {
-          "sport": "NHL",
-          "label": "New York Rangers at Seattle Kraken",
-          "start": "2026-11-07T22:10:00Z",
-          "books": {
-            "BetMGM": "-125 / +105",
-            "Caesars": "-137 / +111",
-            "DraftKings": "-130 / +110",
-            "Fanatics": "-130 / +110",
-            "FanDuel": "-130 / +108",
-            "HardRock": "-125 / +105"
+            "BetMGM": "-425 / +320",
+            "Caesars": "-420 / +320",
+            "DraftKings": "-395 / +312",
+            "Fanatics": "-425 / +325",
+            "FanDuel": "-430 / +340",
+            "HardRock": "-450 / +325"
           }
         }
       ],
-      "spreads": [
-        {
-          "sport": "NBA",
-          "label": "Denver Nuggets at Indiana Pacers",
-          "start": "2026-11-07T22:10:00Z",
-          "books": {
-            "BetMGM": "-7.5 -110 / +7.5 -110",
-            "Caesars": "-7.5 -110 / +7.5 -110",
-            "DraftKings": "-7.5 -106 / +7.5 -114",
-            "Fanatics": "-7.5 -110 / +7.5 -110",
-            "FanDuel": "-7.5 -110 / +7.5 -110",
-            "HardRock": "-7.5 -105 / +7.5 -115"
-          }
-        },
-        {
-          "sport": "NHL",
-          "label": "Florida Panthers at Washington Capitals",
-          "start": "2026-11-07T17:40:00Z",
-          "books": {
-            "BetMGM": "+1.5 -235 / -1.5 +186",
-            "Caesars": "-",
-            "DraftKings": "+1.5 -238 / -1.5 +195",
-            "Fanatics": "+1.5 -240 / -1.5 +190",
-            "FanDuel": "+1.5 -235 / -1.5 +186",
-            "HardRock": "+1.5 -250 / -1.5 +180"
-          }
-        }
-      ],
-      "totals": [
-        {
-          "sport": "NBA",
-          "label": "Denver Nuggets at Indiana Pacers",
-          "start": "2026-11-07T22:10:00Z",
-          "books": {
-            "BetMGM": "o228.5 -110 / u228.5 -110",
-            "Caesars": "o228.5 -110 / u228.5 -110",
-            "DraftKings": "o229.5 -106 / u229.5 -114",
-            "Fanatics": "o228.5 -110 / u228.5 -110",
-            "FanDuel": "-",
-            "HardRock": "o228.5 -115 / u228.5 -105"
-          }
-        }
-      ]
+      "spreads": [],
+      "totals": []
     }
   }
 }
