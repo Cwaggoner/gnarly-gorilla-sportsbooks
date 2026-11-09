@@ -1,11 +1,7 @@
-# GG report 2026-11-08
-# Yesterday 2026-11-07 graded. Record 0-1-0. Profit -$10.00. CLV 0.
-
-Analysis: CBB day with one slip. Morehead State +37.5 lost 57-107 (EDGE from card note on injuries, made LOU -7.0, close -37.5, CLV 0 matched). No slips in other sports. MLB Season Ended.
-
-2026-11-07 | CBB | Morehead State +37.5 | close -110 | loss | 57-107 | -10.00 EDGE
-2026-11-07 | CFB | No Picks
-2026-11-07 | NBA | No Picks
-2026-11-07 | NHL | No Picks
-2026-11-07 | NFL | No Picks
-2026-11-07 | MLB | Season Ended
+# file: report
+2026-11-08 | CBB | No Picks
+2026-11-08 | CFB | No Picks
+2026-11-08 | NBA | No Picks
+2026-11-08 | NFL | No Picks
+2026-11-08 | NHL | No Picks
+2026-11-08 | MLB | Season Ended
