@@ -10474,9 +10474,15 @@ function armCloseClock(games){
 }
 function gameClosePack(g, day, book){
   const sport = String(g.sport || "").toUpperCase();
-  const games = (((bookCloses.days || {})[day] || {})[sport]) || [];
-  const hit = games.find(row => closeRowMatch(row, g) && row.books && row.books[book]);
-  return hit ? hit.books[book] : null;
+  const days = [day, slateDateOf(g && g.start)].filter((d, i, list) => d && list.indexOf(d) === i);
+  for (let i = 0; i < days.length; i++) {
+    const games = (((bookCloses.days || {})[days[i]] || {})[sport]) || [];
+    const hit = games.find(row => closeRowMatch(row, g) && row.books);
+    if (!hit || !hit.books) continue;
+    if (hit.books[book]) return hit.books[book];
+    if (hit.books.DraftKings) return hit.books.DraftKings;
+  }
+  return null;
 }
 function mgmClose(pack, market){
   if (!pack) return [mgmLock(), mgmLock()];
@@ -11164,8 +11170,11 @@ function drawGameBoard(){
   const book = bookEl ? bookEl.value : "BetMGM";
   const sport = sportBtn ? sportBtn.dataset.sport : "All";
   const day = easternDay();
+  const clock = zoneClock(new Date());
+  const days = clock.hour < 6 ? [shiftDate(day, -1), day] : [day];
   applyFeedCache(day);
-  if (!dayHasLines(day)) {
+  days.forEach(boardDay => applyFeedCache(boardDay));
+  if (!days.some(dayHasLines) && !days.some(boardDay => bookCloses.days && bookCloses.days[boardDay])) {
     clearInterval(startClock);
     box.innerHTML = emptyBoardNote(day) + lockedBookRow();
     const pull = document.getElementById("pulltoday");
@@ -11174,22 +11183,37 @@ function drawGameBoard(){
     requestAnimationFrame(alignSportBrackets);
     return;
   }
-  const block = window.__ggOddsBoard.days[day];
-  const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
   const index = {};
-  ["h2h","spreads","totals"].forEach(market => {
-    (block[market] || []).forEach(row => {
-      if (!row || !row.label) return;
-      const key = (row.sport || "") + "|" + row.label;
-      const hit = index[key] || (index[key] = {sport: row.sport || "", label: row.label, start: row.start || "", markets: {}});
-      hit.markets[market] = row;
-      if (!hit.start && row.start) hit.start = row.start;
-      if (row.awayFace) hit.awayFace = row.awayFace;
-      if (row.homeFace) hit.homeFace = row.homeFace;
+  days.forEach(boardDay => {
+    const block = window.__ggOddsBoard && window.__ggOddsBoard.days && window.__ggOddsBoard.days[boardDay];
+    if (!block) return;
+    ["h2h","spreads","totals"].forEach(market => {
+      (block[market] || []).forEach(row => {
+        if (!row || !row.label) return;
+        const key = boardDay + "|" + (row.sport || "") + "|" + row.label;
+        const hit = index[key] || (index[key] = {sport: row.sport || "", label: row.label, start: row.start || "", boardDay: boardDay, markets: {}});
+        hit.markets[market] = row;
+        if (!hit.start && row.start) hit.start = row.start;
+        if (row.awayFace) hit.awayFace = row.awayFace;
+        if (row.homeFace) hit.homeFace = row.homeFace;
+      });
     });
   });
   let games = Object.values(index);
-  freezeStartedCloses(games, day);
+  days.forEach(boardDay => {
+    const sports = (bookCloses.days || {})[boardDay] || {};
+    Object.keys(sports).forEach(sportName => {
+      (sports[sportName] || []).forEach(row => {
+        if (!row || !row.away || !row.home || !row.books || !row.books.DraftKings) return;
+        const started = Date.parse(row.commence || "");
+        if (!Number.isFinite(started) || Date.now() - started > 18 * 60 * 60 * 1000) return;
+        const label = row.away + " at " + row.home;
+        if (games.some(g => String(g.sport || "").toUpperCase() === sportName && closeRowMatch(row, g))) return;
+        games.push({sport: sportName, label: label, start: row.commence || "", boardDay: boardDay, markets: {}});
+      });
+    });
+  });
+  freezeStartedCloses(games.filter(g => g.boardDay === day), day);
   armCloseClock(games);
   pullDueCloses(games);
   if (sport !== "All") games = games.filter(g => g.sport === sport);
@@ -11204,7 +11228,7 @@ function drawGameBoard(){
     requestAnimationFrame(alignSportBrackets);
     return;
   }
-  box.innerHTML = games.map(g => mgmGameCard(g, day, book, true)).join("");
+  box.innerHTML = games.map(g => mgmGameCard(g, g.boardDay || slateDateOf(g.start) || day, book, true)).join("");
   armGameScores(games);
   armStartingIn();
   alignSportBrackets();
