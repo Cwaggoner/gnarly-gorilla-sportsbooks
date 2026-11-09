@@ -1,1 +1,43 @@
-PLACEHOLDER
+{
+  "source": "ESPN DraftKings close",
+  "saved": "2026-11-09T09:17:00.000Z",
+  "days": {
+    "2026-11-04": {},
+    "2026-11-07": {
+      "NBA": [
+        {
+          "away": "Denver Nuggets",
+          "home": "Indiana Pacers",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": -8.5,
+                  "price": -103
+                },
+                "home": {
+                  "point": 8.5,
+                  "price": -118
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -324
+                },
+                "home": {
+                  "price": 261
+                }
+              },
+              "total": {
+                "point": 229.5,
+                "over": -107,
+                "under": -113
+              }
+            }
+          }
+        }
+      ]
+    },
+    "2026-11-08": {}
+  }
+}
