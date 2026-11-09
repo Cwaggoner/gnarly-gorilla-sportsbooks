@@ -7551,10 +7551,12 @@
       "edge": true,
       "best": false,
       "placed": "2026-11-05T10:57:01.302Z",
-      "close": "",
-      "closeOpp": "",
+      "close": -105,
+      "closeOpp": -115,
       "fairClose": 0,
-      "realClose": false
+      "realClose": true,
+      "closePoint": 6.5,
+      "closeText": "+6.5 -105"
     },
     {
       "id": 1793876221303.5571,

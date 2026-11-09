@@ -4,6 +4,11 @@
 # If no price was captured after the start, leave the close off. Do not copy the bet price.
 # A missing close must not block the grade, the calendar, or the ledger.
 2026-11-07 | CBB | -110 | Morehead State +37.5 | -115
+2026-11-08 | NFL | -108 | Buccaneers +6 at Bears | -105
+2026-11-08 | NFL |  | Buccaneers +6.5 at Bears | -105
+2026-11-08 | NFL |  | Tampa Bay Buccaneers +6.5 at Chicago Bears | -105
+2026-11-08 | NFL |  | Bears -6.5 | -115
+2026-11-08 | NFL |  | Chicago Bears -6.5 vs Tampa Bay Buccaneers | -115
 2026-11-07 | NBA |  | Hawks -6.5 | -110
 2026-11-07 | NBA |  | Hawks -6.5 vs Nets | -110
 2026-11-07 | NBA |  | Hawks -6.5 vs Brooklyn Nets | -110

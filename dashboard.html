@@ -2939,6 +2939,9 @@ function stampFileClose(b){
     b.close = Number(quoted.price);
     if (usableClose(quoted.opp)) b.closeOpp = Number(quoted.opp);
     if (quoted.point != null && Number.isFinite(Number(quoted.point))) b.closePoint = Number(quoted.point);
+    const nums = String(b.pick || "").match(/[+-]?\d+(?:\.\d+)?/g) || [];
+    const onNumber = quoted.point == null || nums.some(n => Math.abs(Number(n) - Number(quoted.point)) < 0.01);
+    b.closeText = onNumber ? "" : lineLabel(quoted.point, quoted.price);
     b.realClose = true;
     return b;
   }
@@ -10179,6 +10182,7 @@ if (pageNeeds("closes")) fetch("cards/closes.txt?ts=" + Date.now()).then(r => r.
   const bets = load();
   if (applySavedCloses(bets)) save(bets);
   render();
+  fetch(cardUrl("cards/book-closes.json")).then(r => r.ok ? r.json() : null).then(data => { takeBookCloseFile(data); render(); }).catch(() => {});
 }).catch(() => {});
 
 function mgmBlank(){
@@ -12590,6 +12594,7 @@ function armScreen(){
     const bets = load();
     if (applySavedCloses(bets)) save(bets);
     render();
+    fetch(cardUrl("cards/book-closes.json")).then(r => r.ok ? r.json() : null).then(data => { takeBookCloseFile(data); render(); }).catch(() => {});
   }).catch(() => {}));
   if (pageNeeds("ledger") || pageNeeds("grades") || pageNeeds("dashfile")) onceKind(catchKey(), () => catchUp());
   if (pageNeeds("dashfile")) onceKind("dashlive", () => {
