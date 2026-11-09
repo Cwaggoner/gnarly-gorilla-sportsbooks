@@ -26,3 +26,10 @@
 2026-11-07 | NHL | No Picks
 2026-11-07 | NFL | No Picks
 2026-11-07 | MLB | Season Ended
+2026-11-08 | RANGE | All Win 0.00 | All Lose 0.00
+2026-11-08 | CBB | No Picks
+2026-11-08 | CFB | No Picks
+2026-11-08 | NBA | No Picks
+2026-11-08 | NFL | No Picks
+2026-11-08 | NHL | No Picks
+2026-11-08 | MLB | Season Ended
