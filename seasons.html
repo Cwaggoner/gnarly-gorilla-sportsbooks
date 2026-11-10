@@ -5,12 +5,26 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script>
 (function(){
+  function screenFrame(){
+    var sw = Math.min(window.screen.width || 0, window.screen.height || 0);
+    var lw = Math.max(window.screen.width || 0, window.screen.height || 0);
+    if (!lw || !sw) return false;
+    var ratio = lw / sw;
+    if (lw >= 1360 && ratio >= 1.7) return false;
+    if (ratio > 2.05) return false;
+    return lw <= 1680 && ratio <= 1.7;
+  }
   try {
     var w = window.innerWidth || document.documentElement.clientWidth || 0;
-    var fit = w > 1920 ? Math.min(w / 1920, 1.5) : 1;
-    if (fit !== 1) {
-      document.documentElement.style.zoom = String(Math.round(fit * 1000) / 1000);
-      document.documentElement.style.width = (100 / fit) + "%";
+    if (screenFrame()) {
+      var meta = document.querySelector('meta[name="viewport"]');
+      if (meta) meta.setAttribute("content", "width=1920");
+    } else {
+      var fit = w > 1920 ? Math.min(w / 1920, 1.5) : 1;
+      if (fit !== 1) {
+        document.documentElement.style.zoom = String(Math.round(fit * 1000) / 1000);
+        document.documentElement.style.width = (100 / fit) + "%";
+      }
     }
   } catch (e) {}
   var file = (location.pathname.split("/").pop() || "index.html").toLowerCase();
@@ -936,9 +950,9 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
   .page { min-width:0; width:100%; max-width:100%; overflow:visible; }
   .page > * { min-width:0; max-width:100%; }
   main, #todaycard { min-width:0; width:100%; max-width:100%; }
-  .topbar { position:fixed; top:0; left:0; right:0; width:auto; max-width:none; min-width:0; overflow:hidden; box-sizing:border-box; }
+  .topbar { position:fixed; top:0; left:0; right:0; width:auto; max-width:none; min-width:0; overflow:visible; box-sizing:border-box; }
   header, .topbar .sitenav { width:100%; max-width:100%; min-width:0; box-sizing:border-box; }
-  header { overflow:hidden; grid-template-columns:48px minmax(0,1fr) minmax(0,max-content) 48px; gap:8px; }
+  header { overflow:visible; grid-template-columns:48px minmax(0,1fr) minmax(0,max-content) 48px; gap:8px; }
   header img { width:44px; height:44px; }
   .gg-title { display:block; max-width:100%; }
   .head-text, header h1, header p { min-width:0; max-width:100%; }
@@ -956,7 +970,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
     max-width:100%;
     min-width:0;
     box-sizing:border-box;
-    overflow:hidden;
+    overflow:visible;
   }
   #todaycard #cardgames .table-wrap,
   #todaycard #injuryreport,
@@ -994,7 +1008,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
   #todaycard td.add-col { width:4.5rem; white-space:nowrap; }
 }
 @media (max-width:1320px) {
-  .sitenav { display:flex; flex-wrap:wrap; align-items:center; gap:6px 8px; overflow:hidden; padding:6px 8px; }
+  .sitenav { display:flex; flex-wrap:wrap; align-items:center; gap:6px 8px; overflow:visible; padding:6px 8px; }
   .nav-cell.left, .nav-cell.right { flex:1 1 100%; order:1; justify-content:flex-start; border:0; padding-left:0; padding-right:0; min-width:0; }
   .nav-cell.right { order:2; }
   .nav-cell.mid { flex:1 1 100%; order:3; justify-content:flex-start; padding:6px 0 0; border-top:1px solid #39ff14; overflow-x:auto; }
@@ -12735,10 +12749,26 @@ if (sportbar) sportbar.onclick = e => {
   sportbar.querySelectorAll("button").forEach(b => b.classList.toggle("on", b === btn));
   drawGameBoard();
 };
+function screenFrame(){
+  const sw = Math.min(window.screen.width || 0, window.screen.height || 0);
+  const lw = Math.max(window.screen.width || 0, window.screen.height || 0);
+  if (!lw || !sw) return false;
+  const ratio = lw / sw;
+  if (lw >= 1360 && ratio >= 1.7) return false;
+  if (ratio > 2.05) return false;
+  return lw <= 1680 && ratio <= 1.7;
+}
 function fitSite(){
   const w = window.innerWidth || 0;
-  const fit = w > 1920 ? Math.min(w / 1920, 1.5) : 1;
   const root = document.documentElement;
+  const meta = document.querySelector('meta[name="viewport"]');
+  if (screenFrame()) {
+    if (root.style.zoom) { root.style.zoom = ""; root.style.width = ""; }
+    if (meta && meta.getAttribute("content") !== "width=1920") meta.setAttribute("content", "width=1920");
+    return;
+  }
+  if (meta && meta.getAttribute("content") === "width=1920") meta.setAttribute("content", "width=device-width, initial-scale=1");
+  const fit = w > 1920 ? Math.min(w / 1920, 1.5) : 1;
   if (fit === 1) {
     if (root.style.zoom) { root.style.zoom = ""; root.style.width = ""; }
     return;
