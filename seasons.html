@@ -1234,7 +1234,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <label>Date<select id="fDateSort"><option value="" selected>Unfiltered</option><option value="new">Newest</option><option value="old">Oldest</option></select></label>
 <label>Load Ledger<input type="file" id="loadledger" accept=".json,application/json"><span class="file-face">No File Chosen</span></label>
 <label>Import CSV<input type="file" id="import" accept=".csv,text/csv"><span class="file-face">No File Chosen</span></label>
-<button type="button" class="danger" id="clear">Clear All</button>
+<button type="button" class="danger" id="clear">Clear Pending</button>
 </div>
 </div>
 <div class="slip-actions"><button type="button" id="pulllines">Pull Odds & Close</button><button type="button" id="livescores">Check Live Scores</button><button type="button" id="syncledger">Sync Ledger</button><span class="save-slot"><span id="ledgernote" class="warn"></span><button type="button" id="saveledger">Save Ledger</button></span><button type="button" id="exportpdf">Export PDF</button><button type="button" id="export">Export Spreadsheet</button><button type="button" class="odds-link" onclick="window.open('https://the-odds-api.com/','_blank','noopener,noreferrer')">Open API</button></div></td><td class="score-copy"><p class="warn slips-side">Today, yesterday, and every open slip. Pull Odds & Close uses the Odds API key and stores the Pinnacle close with the other books. Odds is the price at the start of the game. Close is the next price after it starts. Sharp CLV is that price against Pinnacle with the juice removed. NSC in that column means No Sharp Close. The time under the date is when the slip was written. A game that has not started stays open.</p><p id="pullnote" class="warn"></p><p id="scorenote" class="warn"></p><p class="api-note warn">Live prices need the Odds API key on Add A Bet. Close needs a paid subscription. CLV is no-vig: the book's cut is removed, and a moved spread or total is counted. A matched -110 close is about -4.5%, not zero. When the other side was not saved, it is estimated at a -110 hold until Plot stores the real pair. A free key loads the board only. A saved list returns on refresh with no new call.</p></td><td class="book-cell"><div id="bookbadge"><img id="bookbadgeimg" src="gg-icon.png" alt="Gnarly Gorilla" width="72" height="72" loading="lazy" decoding="async"></div><p class="sucker-line">If you can’t spot the sucker in the first half hour at the table, then you are the sucker.</p></td></tr></tbody></table></div>
@@ -7714,9 +7714,8 @@ document.getElementById("pickselect").onchange = () => {
   if (opt.dataset.market && market[opt.dataset.market] && [...form.type.options].some(o => o.value === market[opt.dataset.market])) form.type.value = market[opt.dataset.market];
   if (opt.dataset.sport && [...form.sport.options].some(o => o.value === opt.dataset.sport)) form.sport.value = opt.dataset.sport;
   if (opt.dataset.book && [...form.book.options].some(o => o.value === opt.dataset.book)) form.book.value = opt.dataset.book;
-  if (!opt.dataset.price) { form.odds.value = ""; form.close.value = ""; return; }
+  if (!opt.dataset.price) { form.odds.value = ""; return; }
   form.odds.value = opt.dataset.price;
-  form.close.value = opt.dataset.close;
 };
 function sidePrice(text){
   const nums = String(text || "").match(/[+-]?\d+(?:\.\d+)?/g) || [];
@@ -9909,10 +9908,12 @@ document.getElementById("resetcal").onclick = () => {
 };
 function refreshTimes(){
   showClock();
-  document.querySelectorAll("[data-start]").forEach(el => {
-    if (el.dataset.start) el.textContent = formatTime(el.dataset.start, false);
-  });
-  try { paintOddsTimes(); } catch (e) {}
+  const page = document.documentElement.dataset.page || "games";
+  if (page === "games") { try { drawGameBoard(); } catch (e) {} return; }
+  if (page === "liveodds") { try { drawOddsCompare(false); } catch (e) {} return; }
+  if (page === "scoreboard") { try { paintFullBoard(); } catch (e) {} return; }
+  if (page === "todaycard") { try { refreshTodayCard(); } catch (e) {} return; }
+  try { render(); } catch (e) {}
 }
 const tzSelect = document.getElementById("timezone");
 tzSelect.value = siteZone();
@@ -11174,11 +11175,8 @@ function drawGameBoard(){
   const book = bookEl ? bookEl.value : "BetMGM";
   const sport = sportBtn ? sportBtn.dataset.sport : "All";
   const day = easternDay();
-  const clock = zoneClock(new Date());
-  const days = clock.hour < 6 ? [shiftDate(day, -1), day] : [day];
   applyFeedCache(day);
-  days.forEach(boardDay => applyFeedCache(boardDay));
-  if (!days.some(dayHasLines) && !days.some(boardDay => bookCloses.days && bookCloses.days[boardDay])) {
+  if (!dayHasLines(day)) {
     clearInterval(startClock);
     box.innerHTML = emptyBoardNote(day) + lockedBookRow();
     const pull = document.getElementById("pulltoday");
@@ -11187,37 +11185,21 @@ function drawGameBoard(){
     requestAnimationFrame(alignSportBrackets);
     return;
   }
+  const block = window.__ggOddsBoard.days[day];
   const index = {};
-  days.forEach(boardDay => {
-    const block = window.__ggOddsBoard && window.__ggOddsBoard.days && window.__ggOddsBoard.days[boardDay];
-    if (!block) return;
-    ["h2h","spreads","totals"].forEach(market => {
-      (block[market] || []).forEach(row => {
-        if (!row || !row.label) return;
-        const key = boardDay + "|" + (row.sport || "") + "|" + row.label;
-        const hit = index[key] || (index[key] = {sport: row.sport || "", label: row.label, start: row.start || "", boardDay: boardDay, markets: {}});
-        hit.markets[market] = row;
-        if (!hit.start && row.start) hit.start = row.start;
-        if (row.awayFace) hit.awayFace = row.awayFace;
-        if (row.homeFace) hit.homeFace = row.homeFace;
-      });
+  ["h2h","spreads","totals"].forEach(market => {
+    (block[market] || []).forEach(row => {
+      if (!row || !row.label) return;
+      const key = (row.sport || "") + "|" + row.label;
+      const hit = index[key] || (index[key] = {sport: row.sport || "", label: row.label, start: row.start || "", markets: {}});
+      hit.markets[market] = row;
+      if (!hit.start && row.start) hit.start = row.start;
+      if (row.awayFace) hit.awayFace = row.awayFace;
+      if (row.homeFace) hit.homeFace = row.homeFace;
     });
   });
   let games = Object.values(index);
-  days.forEach(boardDay => {
-    const sports = (bookCloses.days || {})[boardDay] || {};
-    Object.keys(sports).forEach(sportName => {
-      (sports[sportName] || []).forEach(row => {
-        if (!row || !row.away || !row.home || !row.books || !row.books.DraftKings) return;
-        const started = Date.parse(row.commence || "");
-        if (!Number.isFinite(started) || Date.now() - started > 18 * 60 * 60 * 1000) return;
-        const label = row.away + " at " + row.home;
-        if (games.some(g => String(g.sport || "").toUpperCase() === sportName && closeRowMatch(row, g))) return;
-        games.push({sport: sportName, label: label, start: row.commence || "", boardDay: boardDay, markets: {}});
-      });
-    });
-  });
-  freezeStartedCloses(games.filter(g => g.boardDay === day), day);
+  freezeStartedCloses(games, day);
   armCloseClock(games);
   pullDueCloses(games);
   if (sport !== "All") games = games.filter(g => g.sport === sport);
