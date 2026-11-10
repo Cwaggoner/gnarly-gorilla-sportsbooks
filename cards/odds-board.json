@@ -1,24 +1,5 @@
 {
   "days": {
-    "2026-11-08": {
-      "h2h": [
-        {
-          "sport": "NBA",
-          "label": "Philadelphia 76ers at Chicago Bulls",
-          "start": "2026-11-08T20:30:00Z",
-          "books": {
-            "BetMGM": "-425 / +320",
-            "Caesars": "-420 / +320",
-            "DraftKings": "-395 / +312",
-            "Fanatics": "-425 / +325",
-            "FanDuel": "-430 / +340",
-            "HardRock": "-450 / +325"
-          }
-        }
-      ],
-      "spreads": [],
-      "totals": []
-    },
     "2026-11-09": {
       "h2h": [
         {
@@ -114,6 +95,79 @@
             "Fanatics": "o6.5 -110 / u6.5 -110",
             "FanDuel": "o6.5 -110 / u6.5 -110",
             "HardRock": "o6.5 -110 / u6.5 -110"
+          }
+        }
+      ]
+    },
+    "2026-11-10": {
+      "h2h": [
+        {
+          "sport": "NBA",
+          "label": "Boston Celtics at Philadelphia 76ers",
+          "start": "2026-11-11T01:00:00Z",
+          "books": {
+            "BetMGM": "-115 / -105",
+            "Caesars": "-110 / -110",
+            "DraftKings": "-109 / -109",
+            "Fanatics": "-",
+            "FanDuel": "-120 / +102",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NHL",
+          "label": "Minnesota Wild at Montreal Canadiens",
+          "start": "2026-11-11T00:00:00Z",
+          "books": {
+            "BetMGM": "-130 / +105",
+            "Caesars": "-121 / +103",
+            "DraftKings": "-125 / +105",
+            "Fanatics": "-125 / +105",
+            "FanDuel": "-125 / +104",
+            "HardRock": "-125 / +105"
+          }
+        }
+      ],
+      "spreads": [
+        {
+          "sport": "NBA",
+          "label": "Boston Celtics at Philadelphia 76ers",
+          "start": "2026-11-11T01:00:00Z",
+          "books": {
+            "BetMGM": "-1.5 -105 / +1.5 +105",
+            "Caesars": "+1.5 -115 / -1.5 -105",
+            "DraftKings": "-1.5 -101 / +1.5 -120",
+            "Fanatics": "-",
+            "FanDuel": "-1.5 -110 / +1.5 -110",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NHL",
+          "label": "Minnesota Wild at Montreal Canadiens",
+          "start": "2026-11-11T00:00:00Z",
+          "books": {
+            "BetMGM": "-1.5 +190 / +1.5 -235",
+            "Caesars": "-",
+            "DraftKings": "-1.5 +200 / +1.5 -245",
+            "Fanatics": "-1.5 +190 / +1.5 -240",
+            "FanDuel": "-1.5 +186 / +1.5 -235",
+            "HardRock": "-"
+          }
+        }
+      ],
+      "totals": [
+        {
+          "sport": "NBA",
+          "label": "Milwaukee Bucks at New York Knicks",
+          "start": "2026-11-11T00:30:00Z",
+          "books": {
+            "BetMGM": "o221.5 +100 / u221.5 -120",
+            "Caesars": "o220 -110 / u220 -110",
+            "DraftKings": "o220.5 -105 / u220.5 -115",
+            "Fanatics": "o220 -110 / u220 -110",
+            "FanDuel": "-",
+            "HardRock": "o219.5 -110 / u219.5 -110"
           }
         }
       ]
