@@ -39,3 +39,21 @@
 2026-11-07 | NBA |  | Knicks at Cavaliers Under 222.5 | -109
 2026-11-07 | NBA |  | Knicks at Cleveland Under 222.5 | -109
 2026-11-07 | NBA |  | New York Knicks at Cleveland Cavaliers Under 222.5 | -109
+2026-10-18 | NFL | -122 | New York Giants +1.5 | -125
+2026-10-18 | NFL | -118 | Dallas Cowboys +1.5 | -108
+2026-10-19 | NFL | -110 | Washington Commanders +7.5 | -118
+2026-10-29 | NBA | -110 | Cavaliers ML at Atlanta Hawks | -102
+2026-10-29 | CFB | -110 | Troy +19 | -110
+2026-10-29 | NBA | -110 | Grizzlies +7.5 at Trail Blazers | -110
+2026-11-01 | NHL | 105 | Oilers ML at New York Rangers | 105
+2026-11-01 | CBB | -105 | High Point Panthers at Liberty Flames Over 155.5 | -108
+2026-11-01 | NBA | 144 | Nets ML at Indiana Pacers | 130
+2026-11-01 | NBA | -105 | Los Angeles Clippers at Golden State Warriors Over 219.5 | -115
+2026-11-01 | NBA | -180 | Lakers ML vs Toronto Raptors | -170
+2026-11-06 | CFB | -108 | Nebraska -4.5 at Illinois | -112
+2026-11-07 | CFB | -115 | Duke -4.5 at NC State | -112
+2026-11-07 | CFB | -112 | FIU -4.5 vs Missouri St | -112
+2026-11-07 | CFB | -115 | Louisiana Tech -4.5 at Troy | -105
+2026-11-07 | CFB | -110 | Colorado St +17.5 vs Boise St | -108
+2026-11-07 | CFB | -105 | Rice +16.5 at North Texas | -108
+2026-11-07 | CFB | -102 | Rutgers +16.5 at Wisconsin | -112

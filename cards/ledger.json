@@ -6129,7 +6129,9 @@
       "odds": -118,
       "stake": 10,
       "result": "loss",
-      "profit": -10
+      "profit": -10,
+      "close": -108,
+      "realClose": true
     },
     {
       "date": "2026-10-18",
@@ -6175,7 +6177,9 @@
       "odds": -122,
       "stake": 10,
       "result": "loss",
-      "profit": -10
+      "profit": -10,
+      "close": -125,
+      "realClose": true
     },
     {
       "date": "2026-10-18",
@@ -6293,7 +6297,9 @@
       "odds": -110,
       "stake": 10,
       "result": "win",
-      "profit": 9.09
+      "profit": 9.09,
+      "close": -118,
+      "realClose": true
     },
     {
       "date": "2026-10-19",
@@ -6571,8 +6577,8 @@
       "edge": false,
       "placed": "2026-10-29T11:10:41.644Z",
       "profit": -10,
-      "close": "",
-      "realClose": false
+      "close": -102,
+      "realClose": true
     },
     {
       "id": 1793314259085.2454,
@@ -6587,7 +6593,9 @@
       "notes": "made 10.6, book 19, gap 8.4, reason injury Pettaway out not fully priced, Edge",
       "fromCard": true,
       "edge": true,
-      "placed": "2026-10-29T22:50:59.085Z"
+      "placed": "2026-10-29T22:50:59.085Z",
+      "close": -110,
+      "realClose": true
     },
     {
       "id": 1793314259085.5232,
@@ -6602,7 +6610,9 @@
       "notes": "made POR -1, book POR -7.5, gap 6.5, reason Sharpe out. Turnover: no giveaway flag. Bench: Sharpe out, Memphis has nobody out. Edge.",
       "fromCard": true,
       "edge": true,
-      "placed": "2026-10-29T22:50:59.085Z"
+      "placed": "2026-10-29T22:50:59.085Z",
+      "close": -110,
+      "realClose": true
     },
     {
       "id": 1793328208774,
@@ -6844,10 +6854,10 @@
       "edge": false,
       "best": false,
       "placed": "2026-11-01T13:23:33.326Z",
-      "close": "",
+      "close": 105,
       "closeOpp": "",
       "fairClose": 0,
-      "realClose": false
+      "realClose": true
     },
     {
       "id": 1793540192581,
@@ -6927,10 +6937,10 @@
       "edge": false,
       "best": true,
       "placed": "2026-11-01T13:37:21.731Z",
-      "close": "",
+      "close": -108,
       "closeOpp": "",
       "fairClose": 0,
-      "realClose": false
+      "realClose": true
     },
     {
       "id": 1793541507559.84,
@@ -7008,10 +7018,10 @@
       "edge": false,
       "best": true,
       "placed": "2026-11-01T14:01:38.309Z",
-      "close": "",
+      "close": 130,
       "closeOpp": "",
       "fairClose": 0,
-      "realClose": false
+      "realClose": true
     },
     {
       "id": 1793541698310.1782,
@@ -7028,10 +7038,10 @@
       "edge": false,
       "best": true,
       "placed": "2026-11-01T14:01:38.310Z",
-      "close": "",
+      "close": -115,
       "closeOpp": "",
       "fairClose": 0,
-      "realClose": false
+      "realClose": true
     },
     {
       "id": 1793541698311.0952,
@@ -7048,10 +7058,10 @@
       "edge": false,
       "best": true,
       "placed": "2026-11-01T14:01:38.311Z",
-      "close": "",
+      "close": -170,
       "closeOpp": "",
       "fairClose": 0,
-      "realClose": false
+      "realClose": true
     },
     {
       "id": 1793548561040.7869,
@@ -7130,10 +7140,10 @@
       "placed": "2026-11-03T12:12:41.868Z",
       "confidence": "High",
       "confidencePct": 64,
-      "close": "",
+      "close": -112,
       "closeOpp": "",
       "fairClose": 0,
-      "realClose": false
+      "realClose": true
     },
     {
       "id": 1793707961870.257,
@@ -7151,10 +7161,10 @@
       "placed": "2026-11-03T12:12:41.871Z",
       "confidence": "High",
       "confidencePct": 61,
-      "close": "",
+      "close": -112,
       "closeOpp": "",
       "fairClose": 0,
-      "realClose": false
+      "realClose": true
     },
     {
       "id": 1793707961872.3633,
@@ -7172,10 +7182,10 @@
       "placed": "2026-11-03T12:12:41.872Z",
       "confidence": "High",
       "confidencePct": 64,
-      "close": "",
+      "close": -112,
       "closeOpp": "",
       "fairClose": 0,
-      "realClose": false
+      "realClose": true
     },
     {
       "id": 1793707961873.081,
@@ -7193,10 +7203,10 @@
       "placed": "2026-11-03T12:12:41.874Z",
       "confidence": "High",
       "confidencePct": 61,
-      "close": "",
+      "close": -105,
       "closeOpp": "",
       "fairClose": 0,
-      "realClose": false
+      "realClose": true
     },
     {
       "id": 1793750332969.8452,
@@ -7235,10 +7245,10 @@
       "edge": true,
       "best": false,
       "placed": "2026-11-03T23:58:52.971Z",
-      "close": "",
+      "close": -108,
       "closeOpp": "",
       "fairClose": 0,
-      "realClose": false
+      "realClose": true
     },
     {
       "id": 1793750332972.6863,
@@ -7255,10 +7265,10 @@
       "edge": true,
       "best": false,
       "placed": "2026-11-03T23:58:52.972Z",
-      "close": "",
+      "close": -108,
       "closeOpp": "",
       "fairClose": 0,
-      "realClose": false
+      "realClose": true
     },
     {
       "id": 1793750332973.0488,
@@ -7275,10 +7285,10 @@
       "edge": true,
       "best": false,
       "placed": "2026-11-03T23:58:52.973Z",
-      "close": "",
+      "close": -112,
       "closeOpp": "",
       "fairClose": 0,
-      "realClose": false
+      "realClose": true
     },
     {
       "id": 1793838344459.2295,
