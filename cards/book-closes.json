@@ -1,1 +1,8 @@
-PLACEHOLDER_WILL_REPLACE
+{
+  "source": "ESPN DraftKings close",
+  "saved": "2026-11-10T09:15:00.000Z",
+  "days": {
+    "2026-10-29": {"NBA": [], "CFB": []},
+    "2026-11-09": {"NBA": [{"away": "Los Angeles Lakers", "home": "Atlanta Hawks", "books": {"DraftKings": {"spread": {"away": {"point": 2.5, "price": -106}, "home": {"point": -2.5, "price": -114}}, "h2h": {"away": {"price": 121}, "home": {"price": -144}}, "total": {"point": 233.5, "over": -114, "under": -106}}}}]}
+  }
+}
