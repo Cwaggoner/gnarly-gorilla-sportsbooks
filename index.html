@@ -932,7 +932,33 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .mgm-odd.empty { color:#5a6a5a; }
 .mgm-odd.locked { color:var(--muted); }
 .mgm-odd.locked svg { width:16px; height:16px; display:block; }
-@media (max-width:800px) { .mgm-card { grid-template-columns:1fr; } .mgm-set.mgm-close { justify-self:end; } }
+@media (max-width:1200px) {
+  #todaycard .table-wrap,
+  #todaycard .injury-box,
+  #todaycard #injuryreport {
+    max-width:100%;
+    overflow:hidden;
+    box-sizing:border-box;
+  }
+  #todaycard table {
+    display:table;
+    width:100%;
+    max-width:100%;
+    table-layout:fixed;
+  }
+  #todaycard th,
+  #todaycard td {
+    white-space:normal;
+    overflow-wrap:anywhere;
+    word-break:break-word;
+    min-width:0;
+    width:auto;
+  }
+  #todaycard table.season-hold.filled th.note-col,
+  #todaycard table.season-hold.filled td.note-col { min-width:0; max-width:none; }
+  #todaycard th.add-col,
+  #todaycard td.add-col { width:4.5rem; white-space:nowrap; }
+}
 @media (max-width:1200px) {
   .sitenav { display:flex; flex-wrap:wrap; align-items:center; gap:6px 8px; overflow:visible; padding:6px 8px; }
   .nav-cell.left { flex:1 1 auto; order:1; justify-content:flex-start; border-right:0; padding-right:0; }
