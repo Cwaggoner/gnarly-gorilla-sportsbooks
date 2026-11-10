@@ -933,11 +933,18 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .mgm-odd.locked { color:var(--muted); }
 .mgm-odd.locked svg { width:16px; height:16px; display:block; }
 @media (max-width:1200px) {
+  html, body { overflow-x:hidden; }
+  .page, #todaycard { min-width:0; width:100%; max-width:100%; }
   #todaycard .table-wrap,
   #todaycard .injury-box,
-  #todaycard #injuryreport {
+  #todaycard #injuryreport,
+  #todaycard .payout-box,
+  #todaycard .align-frame,
+  #todaycard .section-head,
+  #todaycard h2.split-title,
+  #todaycard h3.split-title {
     max-width:100%;
-    overflow:hidden;
+    min-width:0;
     box-sizing:border-box;
   }
   #todaycard table {
@@ -954,6 +961,16 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
     min-width:0;
     width:auto;
   }
+  #todaycard #injuryreport th.game-col,
+  #todaycard #injuryreport td.game-col { width:28%; white-space:normal; overflow-wrap:anywhere; word-break:break-word; }
+  #todaycard #injuryreport th.team-col,
+  #todaycard #injuryreport td.team-col { width:18%; white-space:normal; overflow-wrap:anywhere; word-break:break-word; }
+  #todaycard #injuryreport th.player-col,
+  #todaycard #injuryreport td.player-col,
+  #todaycard #injuryreport th.pos-col,
+  #todaycard #injuryreport td.pos-col,
+  #todaycard #injuryreport th.status-col,
+  #todaycard #injuryreport td.status-col { white-space:normal; overflow-wrap:anywhere; word-break:break-word; min-width:0; }
   #todaycard table.season-hold.filled th.note-col,
   #todaycard table.season-hold.filled td.note-col { min-width:0; max-width:none; }
   #todaycard th.add-col,
