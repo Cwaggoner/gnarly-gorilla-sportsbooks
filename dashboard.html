@@ -932,9 +932,14 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .mgm-odd.empty { color:#5a6a5a; }
 .mgm-odd.locked { color:var(--muted); }
 .mgm-odd.locked svg { width:16px; height:16px; display:block; }
-@media (max-width:1200px) {
-  html, body { overflow-x:hidden; }
-  .page, #todaycard { min-width:0; width:100%; max-width:100%; }
+@media (max-width:1320px) {
+  html, body { overflow-x:clip; max-width:100%; }
+  .page, main, #todaycard { min-width:0; width:100%; max-width:100%; }
+  .page { overflow-x:clip; }
+  .topbar { max-width:100%; overflow:hidden; box-sizing:border-box; }
+  header, .topbar .sitenav { width:100%; max-width:100%; min-width:0; box-sizing:border-box; }
+  header { grid-template-columns:56px minmax(0,1fr) minmax(0,max-content) 56px; }
+  .head-text, header h1, header p { min-width:0; }
   #todaycard .table-wrap,
   #todaycard .injury-box,
   #todaycard #injuryreport,
@@ -943,15 +948,23 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
   #todaycard .section-head,
   #todaycard h2.split-title,
   #todaycard h3.split-title {
+    width:100%;
     max-width:100%;
     min-width:0;
     box-sizing:border-box;
+    overflow:hidden;
   }
+  #todaycard #cardgames .table-wrap,
+  #todaycard #injuryreport,
+  #todaycard .injury-box { border:1px solid #39ff14; border-radius:10px; }
   #todaycard table {
     display:table;
     width:100%;
     max-width:100%;
+    min-width:0;
     table-layout:fixed;
+    border:0;
+    margin:0;
   }
   #todaycard th,
   #todaycard td {
@@ -976,12 +989,14 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
   #todaycard th.add-col,
   #todaycard td.add-col { width:4.5rem; white-space:nowrap; }
 }
-@media (max-width:1200px) {
-  .sitenav { display:flex; flex-wrap:wrap; align-items:center; gap:6px 8px; overflow:visible; padding:6px 8px; }
-  .nav-cell.left { flex:1 1 auto; order:1; justify-content:flex-start; border-right:0; padding-right:0; }
-  .nav-cell.right { flex:0 1 auto; order:2; justify-content:flex-end; border-left:0; padding-left:0; }
+@media (max-width:1320px) {
+  .sitenav { display:flex; flex-wrap:wrap; align-items:center; gap:6px 8px; overflow:hidden; padding:6px 8px; }
+  .nav-cell.left, .nav-cell.right { flex:1 1 100%; order:1; justify-content:flex-start; border:0; padding-left:0; padding-right:0; min-width:0; }
+  .nav-cell.right { order:2; }
   .nav-cell.mid { flex:1 1 100%; order:3; justify-content:flex-start; padding:6px 0 0; border-top:1px solid #39ff14; overflow-x:auto; }
   #zonedate, #zonetime { min-width:0; }
+  .sitenav .clock { min-width:0; }
+  .sitenav .tz { flex-wrap:wrap; white-space:normal; }
   .sitenav .tz select { width:auto; min-width:0; max-width:none; flex:0 1 auto; }
   .sitenav .tz button { min-width:0; }
   #games #sportbar { overflow-x:auto; }
