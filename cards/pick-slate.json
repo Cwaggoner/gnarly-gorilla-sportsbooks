@@ -1,1 +1,249 @@
-PLACEHOLDER
+{
+  "date": "2026-11-10",
+  "source": "ESPN scoreboard, no odds key",
+  "passedNote": "Games being played that did not make the picks.",
+  "games": [
+    {
+      "sport": "CFB",
+      "game": "Western Michigan at Akron",
+      "start": "2026-11-11T00:00Z",
+      "location": "InfoCision Stadium, Akron, Ohio",
+      "records": {
+        "Akron": "1-8",
+        "Western Michigan": "6-3"
+      }
+    }
+  ],
+  "passed": [
+    {
+      "sport": "CBB",
+      "game": "Bucknell at Virginia",
+      "start": "2026-11-11T02:00Z",
+      "location": "John Paul Jones Arena, Charlottesville, Virginia",
+      "records": {
+        "Virginia": "3-0",
+        "Bucknell": "0-2"
+      }
+    },
+    {
+      "sport": "CBB",
+      "game": "Florida at Florida State",
+      "start": "2026-11-10T23:00Z",
+      "location": "Tucker Center, Tallahassee, Florida",
+      "records": {
+        "Florida State": "2-0",
+        "Florida": "2-0"
+      }
+    },
+    {
+      "sport": "CBB",
+      "game": "Illinois at Texas Tech",
+      "start": "2026-11-11T01:00Z",
+      "location": "United Supermarkets Arena, Lubbock, Texas",
+      "records": {
+        "Texas Tech": "2-0",
+        "Illinois": "2-0"
+      }
+    },
+    {
+      "sport": "CBB",
+      "game": "Kansas at Kentucky",
+      "start": "2026-11-11T02:30Z",
+      "location": "United Center, Chicago, Illinois",
+      "records": {
+        "Kentucky": "2-0",
+        "Kansas": "2-0"
+      }
+    },
+    {
+      "sport": "CBB",
+      "game": "Memphis at Vanderbilt",
+      "start": "2026-11-11T00:15Z",
+      "location": "Memorial Gymnasium (TN), Nashville, Tennessee",
+      "records": {
+        "Vanderbilt": "2-0",
+        "Memphis": "2-0"
+      }
+    },
+    {
+      "sport": "CBB",
+      "game": "Michigan State at Duke",
+      "start": "2026-11-11T00:00Z",
+      "location": "United Center, Chicago, Illinois",
+      "records": {
+        "Duke": "2-0",
+        "Michigan State": "2-0"
+      }
+    },
+    {
+      "sport": "CBB",
+      "game": "Northern Arizona at Arizona",
+      "start": "2026-11-11T02:00Z",
+      "location": "McKale Center at ALKEME Arena, Tucson, Arizona",
+      "records": {
+        "Arizona": "1-1",
+        "Northern Arizona": "0-2"
+      }
+    },
+    {
+      "sport": "CBB",
+      "game": "Queens University at BYU",
+      "start": "2026-11-11T02:00Z",
+      "location": "Marriott Center, Provo, Utah",
+      "records": {
+        "BYU": "2-0",
+        "Queens University": "2-1"
+      }
+    },
+    {
+      "sport": "CFB",
+      "game": "Kent State at Bowling Green",
+      "start": "2026-11-11T00:00Z",
+      "location": "Doyt L. Perry Stadium, Bowling Green, Ohio",
+      "records": {
+        "Bowling Green": "2-7",
+        "Kent State": "3-6"
+      }
+    },
+    {
+      "sport": "CFB",
+      "game": "Ohio at Miami (OH)",
+      "start": "2026-11-11T01:00Z",
+      "location": "Yager Stadium, Oxford, Ohio",
+      "records": {
+        "Ohio": "7-2",
+        "Miami (OH)": "5-4"
+      }
+    },
+    {
+      "sport": "NBA",
+      "game": "Bucks at Knicks",
+      "start": "2026-11-10T22:30Z",
+      "location": "Madison Square Garden, New York, New York",
+      "records": {
+        "Knicks": "5-4",
+        "Bucks": "1-9"
+      }
+    },
+    {
+      "sport": "NBA",
+      "game": "Celtics at 76ers",
+      "start": "2026-11-10T23:00Z",
+      "location": "Xfinity Mobile Arena, Philadelphia, Pennsylvania",
+      "records": {
+        "76ers": "9-2",
+        "Celtics": "8-2"
+      }
+    },
+    {
+      "sport": "NBA",
+      "game": "Clippers at Suns",
+      "start": "2026-11-11T00:00Z",
+      "location": "Mortgage Matchup Center, Phoenix, Arizona",
+      "records": {
+        "Suns": "3-6",
+        "Clippers": "2-7"
+      }
+    },
+    {
+      "sport": "NBA",
+      "game": "Heat at Jazz",
+      "start": "2026-11-11T00:00Z",
+      "location": "Delta Center, Salt Lake City, Utah",
+      "records": {
+        "Jazz": "1-9",
+        "Heat": "4-6"
+      }
+    },
+    {
+      "sport": "NBA",
+      "game": "Magic at Kings",
+      "start": "2026-11-11T01:00Z",
+      "location": "Golden 1 Center, Sacramento, California",
+      "records": {
+        "Kings": "1-9",
+        "Magic": "2-7"
+      }
+    },
+    {
+      "sport": "NBA",
+      "game": "Thunder at Trail Blazers",
+      "start": "2026-11-11T02:00Z",
+      "location": "Moda Center, Portland, Oregon",
+      "records": {
+        "Trail Blazers": "6-3",
+        "Thunder": "8-2"
+      }
+    },
+    {
+      "sport": "NHL",
+      "game": "Avalanche at Maple Leafs",
+      "start": "2026-11-10T23:00Z",
+      "location": "Scotiabank Arena, Toronto, Ontario",
+      "records": {
+        "Maple Leafs": "8-9-2",
+        "Avalanche": "10-6-2"
+      }
+    },
+    {
+      "sport": "NHL",
+      "game": "Capitals at Senators",
+      "start": "2026-11-10T23:00Z",
+      "location": "Canadian Tire Centre, Ottawa, Ontario",
+      "records": {
+        "Senators": "11-6-1",
+        "Capitals": "9-6-0"
+      }
+    },
+    {
+      "sport": "NHL",
+      "game": "Devils at Jets",
+      "start": "2026-11-10T23:00Z",
+      "location": "Canada Life Centre, Winnipeg, Manitoba",
+      "records": {
+        "Jets": "7-8-3",
+        "Devils": "13-5-0"
+      }
+    },
+    {
+      "sport": "NHL",
+      "game": "Panthers at Blue Jackets",
+      "start": "2026-11-10T23:30Z",
+      "location": "Nationwide Arena, Columbus, Ohio",
+      "records": {
+        "Blue Jackets": "7-8-0",
+        "Panthers": "9-7-2"
+      }
+    },
+    {
+      "sport": "NHL",
+      "game": "Predators at Kings",
+      "start": "2026-11-11T02:00Z",
+      "location": "crypto.com Arena, Los Angeles, California",
+      "records": {
+        "Kings": "5-8-2",
+        "Predators": "8-4-5"
+      }
+    },
+    {
+      "sport": "NHL",
+      "game": "Red Wings at Blues",
+      "start": "2026-11-11T00:00Z",
+      "location": "Enterprise Center, St. Louis, Missouri",
+      "records": {
+        "Blues": "7-8-2",
+        "Red Wings": "7-8-3"
+      }
+    },
+    {
+      "sport": "NHL",
+      "game": "Wild at Canadiens",
+      "start": "2026-11-10T23:00Z",
+      "location": "Bell Centre, Montreal, Quebec",
+      "records": {
+        "Canadiens": "11-3-3",
+        "Wild": "12-3-4"
+      }
+    }
+  ]
+}
