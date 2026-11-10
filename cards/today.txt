@@ -1,5 +1,5 @@
-# file: GG-CARD-2026-11-08
-2026-11-08 | CBB | No Picks
-2026-11-08 | NBA | No Picks
-2026-11-08 | NFL | No Picks
-2026-11-08 | NHL | No Picks
+# file: GG-CARD-2026-11-10
+2026-11-10 | CBB | No Picks
+2026-11-10 | CFB | Spread | Akron +14 | -110 | made 8.4, book 14, gap 5.6, reason injury Akron skill outs. Edge.
+2026-11-10 | NBA | No Picks
+2026-11-10 | NHL | No Picks
