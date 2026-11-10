@@ -57,3 +57,4 @@
 2026-11-07 | CFB | -110 | Colorado St +17.5 vs Boise St | -108
 2026-11-07 | CFB | -105 | Rice +16.5 at North Texas | -108
 2026-11-07 | CFB | -102 | Rutgers +16.5 at Wisconsin | -112
+2026-11-10 | CFB | -110 | Akron +14 | -105
