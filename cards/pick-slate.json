@@ -1,1 +1,29 @@
-PLACEHOLDER_FULL_JSON_HERE
+{
+  "date": "2026-11-11",
+  "source": "ESPN scoreboard, no odds key",
+  "passedNote": "Games being played that did not make the picks.",
+  "games": [
+    {
+      "sport": "CFB",
+      "game": "Sacramento State Hornets at Central Michigan Chippewas",
+      "start": "2026-11-12T00:30Z",
+      "location": "Kelly/Shorts Stadium, Mount Pleasant, Michigan",
+      "records": {
+        "Sacramento State Hornets": "2-8",
+        "Central Michigan Chippewas": "4-5"
+      }
+    }
+  ],
+  "passed": [
+    {
+      "sport": "CBB",
+      "game": "Arkansas-Pine Bluff Golden Lions at UCLA Bruins",
+      "start": "2026-11-12T02:00Z",
+      "location": "Pauley Pavilion, Los Angeles, California",
+      "records": {
+        "Arkansas-Pine Bluff Golden Lions": "0-2",
+        "UCLA Bruins": "2-0"
+      }
+    }
+  ]
+}
