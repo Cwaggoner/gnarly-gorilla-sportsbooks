@@ -40,3 +40,10 @@
 2026-11-09 | NFL | No Picks
 2026-11-09 | NHL | No Picks
 2026-11-09 | MLB | Season Ended
+2026-11-10 | RANGE | All Win 9.09 | All Lose -10.00
+2026-11-10 | CBB | No Picks
+2026-11-10 | CFB | Akron +14 | close -110 | loss | 42-14 | -10.00 EDGE
+2026-11-10 | NBA | No Picks
+2026-11-10 | NHL | No Picks
+2026-11-10 | NFL | No Picks
+2026-11-10 | MLB | Season Ended
