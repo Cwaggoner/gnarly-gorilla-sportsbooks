@@ -5679,6 +5679,7 @@ function keepPulledDays(posted, saved){
 }
 function rememberBoard(data){
   if (!usableBoard(data)) return false;
+  if (window.__ggOddsBoard && window.__ggOddsBoard.days) data = keepPulledDays(data, window.__ggOddsBoard);
   window.__ggOddsBoard = data;
   storeOddsBoard(data);
   try { snapshotOpensFromBoard(data); } catch (e) {}
