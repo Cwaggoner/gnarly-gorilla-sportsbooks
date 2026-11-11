@@ -1,1 +1,342 @@
-PLACEHOLDER
+# file: closes
+# Per-slip closing price. Format: date | sport | odds | pick | close
+# Do not write a line before the listed start. A pre-game price is not a close.
+# If no price was captured after the start, leave the close off. Do not copy the bet price.
+# A missing close must not block the grade, the calendar, or the ledger.
+2026-11-07 | CBB | -110 | Morehead State +37.5 | -115
+2026-11-08 | NFL | -108 | Buccaneers +6 at Bears | -105
+2026-11-08 | NFL |  | Buccaneers +6.5 at Bears | -105
+2026-11-08 | NFL |  | Tampa Bay Buccaneers +6.5 at Chicago Bears | -105
+2026-11-08 | NFL |  | Bears -6.5 | -115
+2026-11-08 | NFL |  | Chicago Bears -6.5 vs Tampa Bay Buccaneers | -115
+2026-11-07 | NBA |  | Hawks -6.5 | -110
+2026-11-07 | NBA |  | Hawks -6.5 vs Nets | -110
+2026-11-07 | NBA |  | Hawks -6.5 vs Brooklyn Nets | -110
+2026-11-07 | NBA |  | Atlanta Hawks -6.5 vs Brooklyn Nets | -110
+2026-11-07 | NBA |  | Nets +6.5 | -110
+2026-11-07 | NBA |  | Nets +6.5 at Hawks | -110
+2026-11-07 | NBA |  | Nets +6.5 at Atlanta Hawks | -110
+2026-11-07 | NBA |  | Brooklyn Nets +6.5 at Atlanta Hawks | -110
+2026-11-07 | NBA |  | Hawks ML | -265
+2026-11-07 | NBA |  | Nets ML | 217
+2026-11-07 | NBA |  | Nets at Hawks Over 227.5 | -109
+2026-11-07 | NBA |  | Brooklyn Nets at Atlanta Hawks Over 227.5 | -109
+2026-11-07 | NBA |  | Nets at Hawks Under 227.5 | -111
+2026-11-07 | NBA |  | Brooklyn Nets at Atlanta Hawks Under 227.5 | -111
+2026-11-07 | NBA |  | Knicks -4.5 | -112
+2026-11-07 | NBA |  | Knicks -4.5 at Cavaliers | -112
+2026-11-07 | NBA |  | Knicks -4.5 at Cleveland | -112
+2026-11-07 | NBA |  | Knicks -4.5 at Cleveland Cavaliers | -112
+2026-11-07 | NBA |  | New York Knicks -4.5 at Cleveland Cavaliers | -112
+2026-11-07 | NBA |  | Cavaliers +4.5 | -108
+2026-11-07 | NBA |  | Cavaliers +4.5 vs Knicks | -108
+2026-11-07 | NBA |  | Cleveland Cavaliers +4.5 vs New York Knicks | -108
+2026-11-07 | NBA |  | Knicks ML | -197
+2026-11-07 | NBA |  | Cavaliers ML | 164
+2026-11-07 | NBA |  | Knicks at Cavaliers Over 222.5 | -111
+2026-11-07 | NBA |  | Knicks at Cleveland Over 222.5 | -111
+2026-11-07 | NBA |  | New York Knicks at Cleveland Cavaliers Over 222.5 | -111
+2026-11-07 | NBA |  | Knicks at Cavaliers Under 222.5 | -109
+2026-11-07 | NBA |  | Knicks at Cleveland Under 222.5 | -109
+2026-11-07 | NBA |  | New York Knicks at Cleveland Cavaliers Under 222.5 | -109
+2026-10-18 | NFL | -122 | New York Giants +1.5 | -125
+2026-10-18 | NFL | -118 | Dallas Cowboys +1.5 | -108
+2026-10-19 | NFL | -110 | Washington Commanders +7.5 | -118
+2026-10-29 | NBA | -110 | Cavaliers ML at Atlanta Hawks | -102
+2026-10-29 | CFB | -110 | Troy +19 | -110
+2026-10-29 | NBA | -110 | Grizzlies +7.5 at Trail Blazers | -110
+2026-11-01 | NHL | 105 | Oilers ML at New York Rangers | 105
+2026-11-01 | CBB | -105 | High Point Panthers at Liberty Flames Over 155.5 | -108
+2026-11-01 | NBA | 144 | Nets ML at Indiana Pacers | 130
+2026-11-01 | NBA | -105 | Los Angeles Clippers at Golden State Warriors Over 219.5 | -115
+2026-11-01 | NBA | -180 | Lakers ML vs Toronto Raptors | -170
+2026-11-06 | CFB | -108 | Nebraska -4.5 at Illinois | -112
+2026-11-07 | CFB | -115 | Duke -4.5 at NC State | -112
+2026-11-07 | CFB | -112 | FIU -4.5 vs Missouri St | -112
+2026-11-07 | CFB | -115 | Louisiana Tech -4.5 at Troy | -105
+2026-11-07 | CFB | -110 | Colorado St +17.5 vs Boise St | -108
+2026-11-07 | CFB | -105 | Rice +16.5 at North Texas | -108
+2026-11-07 | CFB | -102 | Rutgers +16.5 at Wisconsin | -112
+2026-11-10 | NBA |  | Bucks +14.5 at Knicks | -106
+2026-11-10 | NBA |  | Milwaukee Bucks +14.5 at New York Knicks | -106
+2026-11-10 | NBA |  | Knicks -14.5 vs Bucks | -114
+2026-11-10 | NBA |  | New York Knicks -14.5 vs Milwaukee Bucks | -114
+2026-11-10 | NBA |  | Bucks ML at Knicks | 670
+2026-11-10 | NBA |  | Milwaukee Bucks ML at New York Knicks | 670
+2026-11-10 | NBA |  | Knicks ML vs Bucks | -1040
+2026-11-10 | NBA |  | New York Knicks ML vs Milwaukee Bucks | -1040
+2026-11-10 | NBA |  | Bucks at Knicks Over 221.5 | -110
+2026-11-10 | NBA |  | Milwaukee Bucks at New York Knicks Over 221.5 | -110
+2026-11-10 | NBA |  | Bucks at Knicks Under 221.5 | -110
+2026-11-10 | NBA |  | Milwaukee Bucks at New York Knicks Under 221.5 | -110
+2026-11-10 | NBA |  | Celtics -1.5 at 76ers | -114
+2026-11-10 | NBA |  | Boston Celtics -1.5 at Philadelphia 76ers | -114
+2026-11-10 | NBA |  | 76ers +1.5 vs Celtics | -106
+2026-11-10 | NBA |  | Philadelphia 76ers +1.5 vs Boston Celtics | -106
+2026-11-10 | NBA |  | Celtics ML at 76ers | -124
+2026-11-10 | NBA |  | Boston Celtics ML at Philadelphia 76ers | -124
+2026-11-10 | NBA |  | 76ers ML vs Celtics | 105
+2026-11-10 | NBA |  | Philadelphia 76ers ML vs Boston Celtics | 105
+2026-11-10 | NBA |  | Celtics at 76ers Over 216.5 | -113
+2026-11-10 | NBA |  | Boston Celtics at Philadelphia 76ers Over 216.5 | -113
+2026-11-10 | NBA |  | Celtics at 76ers Under 216.5 | -107
+2026-11-10 | NBA |  | Boston Celtics at Philadelphia 76ers Under 216.5 | -107
+2026-11-10 | NBA |  | Clippers +3.5 at Suns | -108
+2026-11-10 | NBA |  | LA Clippers +3.5 at Phoenix Suns | -108
+2026-11-10 | NBA |  | Suns -3.5 vs Clippers | -112
+2026-11-10 | NBA |  | Phoenix Suns -3.5 vs LA Clippers | -112
+2026-11-10 | NBA |  | Clippers ML at Suns | 150
+2026-11-10 | NBA |  | LA Clippers ML at Phoenix Suns | 150
+2026-11-10 | NBA |  | Suns ML vs Clippers | -179
+2026-11-10 | NBA |  | Phoenix Suns ML vs LA Clippers | -179
+2026-11-10 | NBA |  | Clippers at Suns Over 224.5 | -107
+2026-11-10 | NBA |  | LA Clippers at Phoenix Suns Over 224.5 | -107
+2026-11-10 | NBA |  | Clippers at Suns Under 224.5 | -113
+2026-11-10 | NBA |  | LA Clippers at Phoenix Suns Under 224.5 | -113
+2026-11-10 | NBA |  | Heat -8.5 at Jazz | -105
+2026-11-10 | NBA |  | Miami Heat -8.5 at Utah Jazz | -105
+2026-11-10 | NBA |  | Jazz +8.5 vs Heat | -116
+2026-11-10 | NBA |  | Utah Jazz +8.5 vs Miami Heat | -116
+2026-11-10 | NBA |  | Heat ML at Jazz | -344
+2026-11-10 | NBA |  | Miami Heat ML at Utah Jazz | -344
+2026-11-10 | NBA |  | Jazz ML vs Heat | 276
+2026-11-10 | NBA |  | Utah Jazz ML vs Miami Heat | 276
+2026-11-10 | NBA |  | Heat at Jazz Over 227.5 | -113
+2026-11-10 | NBA |  | Miami Heat at Utah Jazz Over 227.5 | -113
+2026-11-10 | NBA |  | Heat at Jazz Under 227.5 | -107
+2026-11-10 | NBA |  | Miami Heat at Utah Jazz Under 227.5 | -107
+2026-11-10 | NBA |  | Magic -5.5 at Kings | -106
+2026-11-10 | NBA |  | Orlando Magic -5.5 at Sacramento Kings | -106
+2026-11-10 | NBA |  | Kings +5.5 vs Magic | -114
+2026-11-10 | NBA |  | Sacramento Kings +5.5 vs Orlando Magic | -114
+2026-11-10 | NBA |  | Magic ML at Kings | -217
+2026-11-10 | NBA |  | Orlando Magic ML at Sacramento Kings | -217
+2026-11-10 | NBA |  | Kings ML vs Magic | 180
+2026-11-10 | NBA |  | Sacramento Kings ML vs Orlando Magic | 180
+2026-11-10 | NBA |  | Magic at Kings Over 222.5 | -107
+2026-11-10 | NBA |  | Orlando Magic at Sacramento Kings Over 222.5 | -107
+2026-11-10 | NBA |  | Magic at Kings Under 222.5 | -113
+2026-11-10 | NBA |  | Orlando Magic at Sacramento Kings Under 222.5 | -113
+2026-11-10 | NBA |  | Thunder -1.5 at Blazers | -105
+2026-11-10 | NBA |  | Oklahoma City Thunder -1.5 at Portland Trail Blazers | -105
+2026-11-10 | NBA |  | Blazers +1.5 vs Thunder | -115
+2026-11-10 | NBA |  | Portland Trail Blazers +1.5 vs Oklahoma City Thunder | -115
+2026-11-10 | NBA |  | Thunder ML at Blazers | -117
+2026-11-10 | NBA |  | Oklahoma City Thunder ML at Portland Trail Blazers | -117
+2026-11-10 | NBA |  | Blazers ML vs Thunder | -101
+2026-11-10 | NBA |  | Portland Trail Blazers ML vs Oklahoma City Thunder | -101
+2026-11-10 | NBA |  | Thunder at Blazers Over 226.5 | -110
+2026-11-10 | NBA |  | Oklahoma City Thunder at Portland Trail Blazers Over 226.5 | -110
+2026-11-10 | NBA |  | Thunder at Blazers Under 226.5 | -110
+2026-11-10 | NBA |  | Oklahoma City Thunder at Portland Trail Blazers Under 226.5 | -110
+2026-11-10 | NHL |  | Avalanche -1.5 at Leafs | 140
+2026-11-10 | NHL |  | Colorado Avalanche -1.5 at Toronto Maple Leafs | 140
+2026-11-10 | NHL |  | Leafs +1.5 vs Avalanche | -166
+2026-11-10 | NHL |  | Toronto Maple Leafs +1.5 vs Colorado Avalanche | -166
+2026-11-10 | NHL |  | Avalanche ML at Leafs | -175
+2026-11-10 | NHL |  | Colorado Avalanche ML at Toronto Maple Leafs | -175
+2026-11-10 | NHL |  | Leafs ML vs Avalanche | 145
+2026-11-10 | NHL |  | Toronto Maple Leafs ML vs Colorado Avalanche | 145
+2026-11-10 | NHL |  | Avalanche at Leafs Over 6.5 | -142
+2026-11-10 | NHL |  | Colorado Avalanche at Toronto Maple Leafs Over 6.5 | -142
+2026-11-10 | NHL |  | Avalanche at Leafs Under 6.5 | 120
+2026-11-10 | NHL |  | Colorado Avalanche at Toronto Maple Leafs Under 6.5 | 120
+2026-11-10 | NHL |  | Wild -1.5 at Canadiens | 195
+2026-11-10 | NHL |  | Minnesota Wild -1.5 at Montreal Canadiens | 195
+2026-11-10 | NHL |  | Canadiens +1.5 vs Wild | -238
+2026-11-10 | NHL |  | Montreal Canadiens +1.5 vs Minnesota Wild | -238
+2026-11-10 | NHL |  | Wild ML at Canadiens | -130
+2026-11-10 | NHL |  | Minnesota Wild ML at Montreal Canadiens | -130
+2026-11-10 | NHL |  | Canadiens ML vs Wild | 110
+2026-11-10 | NHL |  | Montreal Canadiens ML vs Minnesota Wild | 110
+2026-11-10 | NHL |  | Wild at Canadiens Over 6.5 | 105
+2026-11-10 | NHL |  | Minnesota Wild at Montreal Canadiens Over 6.5 | 105
+2026-11-10 | NHL |  | Wild at Canadiens Under 6.5 | -125
+2026-11-10 | NHL |  | Minnesota Wild at Montreal Canadiens Under 6.5 | -125
+2026-11-10 | NHL |  | Capitals -1.5 at Senators | 220
+2026-11-10 | NHL |  | Washington Capitals -1.5 at Ottawa Senators | 220
+2026-11-10 | NHL |  | Senators +1.5 vs Capitals | -270
+2026-11-10 | NHL |  | Ottawa Senators +1.5 vs Washington Capitals | -270
+2026-11-10 | NHL |  | Capitals ML at Senators | -118
+2026-11-10 | NHL |  | Washington Capitals ML at Ottawa Senators | -118
+2026-11-10 | NHL |  | Senators ML vs Capitals | -102
+2026-11-10 | NHL |  | Ottawa Senators ML vs Washington Capitals | -102
+2026-11-10 | NHL |  | Capitals at Senators Over 6.5 | -102
+2026-11-10 | NHL |  | Washington Capitals at Ottawa Senators Over 6.5 | -102
+2026-11-10 | NHL |  | Capitals at Senators Under 6.5 | -118
+2026-11-10 | NHL |  | Washington Capitals at Ottawa Senators Under 6.5 | -118
+2026-11-10 | NHL |  | Devils -1.5 at Jets | 170
+2026-11-10 | NHL |  | New Jersey Devils -1.5 at Winnipeg Jets | 170
+2026-11-10 | NHL |  | Jets +1.5 vs Devils | -205
+2026-11-10 | NHL |  | Winnipeg Jets +1.5 vs New Jersey Devils | -205
+2026-11-10 | NHL |  | Devils ML at Jets | -142
+2026-11-10 | NHL |  | New Jersey Devils ML at Winnipeg Jets | -142
+2026-11-10 | NHL |  | Jets ML vs Devils | 120
+2026-11-10 | NHL |  | Winnipeg Jets ML vs New Jersey Devils | 120
+2026-11-10 | NHL |  | Devils at Jets Over 6.5 | -105
+2026-11-10 | NHL |  | New Jersey Devils at Winnipeg Jets Over 6.5 | -105
+2026-11-10 | NHL |  | Devils at Jets Under 6.5 | -115
+2026-11-10 | NHL |  | New Jersey Devils at Winnipeg Jets Under 6.5 | -115
+2026-11-10 | NHL |  | Panthers -1.5 at Jackets | 210
+2026-11-10 | NHL |  | Florida Panthers -1.5 at Columbus Blue Jackets | 210
+2026-11-10 | NHL |  | Jackets +1.5 vs Panthers | -258
+2026-11-10 | NHL |  | Columbus Blue Jackets +1.5 vs Florida Panthers | -258
+2026-11-10 | NHL |  | Panthers ML at Jackets | -125
+2026-11-10 | NHL |  | Florida Panthers ML at Columbus Blue Jackets | -125
+2026-11-10 | NHL |  | Jackets ML vs Panthers | 105
+2026-11-10 | NHL |  | Columbus Blue Jackets ML vs Florida Panthers | 105
+2026-11-10 | NHL |  | Panthers at Jackets Over 5.5 | -135
+2026-11-10 | NHL |  | Florida Panthers at Columbus Blue Jackets Over 5.5 | -135
+2026-11-10 | NHL |  | Panthers at Jackets Under 5.5 | 114
+2026-11-10 | NHL |  | Florida Panthers at Columbus Blue Jackets Under 5.5 | 114
+2026-11-10 | NHL |  | Wings +1.5 at Blues | -218
+2026-11-10 | NHL |  | Detroit Red Wings +1.5 at St. Louis Blues | -218
+2026-11-10 | NHL |  | Blues -1.5 vs Wings | 180
+2026-11-10 | NHL |  | St. Louis Blues -1.5 vs Detroit Red Wings | 180
+2026-11-10 | NHL |  | Wings ML at Blues | 120
+2026-11-10 | NHL |  | Detroit Red Wings ML at St. Louis Blues | 120
+2026-11-10 | NHL |  | Blues ML vs Wings | -142
+2026-11-10 | NHL |  | St. Louis Blues ML vs Detroit Red Wings | -142
+2026-11-10 | NHL |  | Wings at Blues Over 5.5 | -125
+2026-11-10 | NHL |  | Detroit Red Wings at St. Louis Blues Over 5.5 | -125
+2026-11-10 | NHL |  | Wings at Blues Under 5.5 | 105
+2026-11-10 | NHL |  | Detroit Red Wings at St. Louis Blues Under 5.5 | 105
+2026-11-10 | NHL |  | Predators +1.5 at Kings | -238
+2026-11-10 | NHL |  | Nashville Predators +1.5 at Los Angeles Kings | -238
+2026-11-10 | NHL |  | Kings -1.5 vs Predators | 195
+2026-11-10 | NHL |  | Los Angeles Kings -1.5 vs Nashville Predators | 195
+2026-11-10 | NHL |  | Predators ML at Kings | 105
+2026-11-10 | NHL |  | Nashville Predators ML at Los Angeles Kings | 105
+2026-11-10 | NHL |  | Kings ML vs Predators | -125
+2026-11-10 | NHL |  | Los Angeles Kings ML vs Nashville Predators | -125
+2026-11-10 | NHL |  | Predators at Kings Over 6.5 | 110
+2026-11-10 | NHL |  | Nashville Predators at Los Angeles Kings Over 6.5 | 110
+2026-11-10 | NHL |  | Predators at Kings Under 6.5 | -130
+2026-11-10 | NHL |  | Nashville Predators at Los Angeles Kings Under 6.5 | -130
+2026-11-10 | CFB |  | Broncos -15.5 at Zips | -108
+2026-11-10 | CFB |  | Western Michigan Broncos -15.5 at Akron Zips | -108
+2026-11-10 | CFB |  | Zips +15.5 vs Broncos | -112
+2026-11-10 | CFB |  | Akron Zips +15.5 vs Western Michigan Broncos | -112
+2026-11-10 | CFB |  | Broncos ML at Zips | -750
+2026-11-10 | CFB |  | Western Michigan Broncos ML at Akron Zips | -750
+2026-11-10 | CFB |  | Zips ML vs Broncos | 525
+2026-11-10 | CFB |  | Akron Zips ML vs Western Michigan Broncos | 525
+2026-11-10 | CFB |  | Broncos at Zips Over 50.5 | -118
+2026-11-10 | CFB |  | Western Michigan Broncos at Akron Zips Over 50.5 | -118
+2026-11-10 | CFB |  | Broncos at Zips Under 50.5 | -102
+2026-11-10 | CFB |  | Western Michigan Broncos at Akron Zips Under 50.5 | -102
+2026-11-10 | CFB |  | Flashes +3.5 at Falcons | -108
+2026-11-10 | CFB |  | Kent State Golden Flashes +3.5 at Bowling Green Falcons | -108
+2026-11-10 | CFB |  | Falcons -3.5 vs Flashes | -112
+2026-11-10 | CFB |  | Bowling Green Falcons -3.5 vs Kent State Golden Flashes | -112
+2026-11-10 | CFB |  | Flashes ML at Falcons | 150
+2026-11-10 | CFB |  | Kent State Golden Flashes ML at Bowling Green Falcons | 150
+2026-11-10 | CFB |  | Falcons ML vs Flashes | -180
+2026-11-10 | CFB |  | Bowling Green Falcons ML vs Kent State Golden Flashes | -180
+2026-11-10 | CFB |  | Flashes at Falcons Over 42.5 | -108
+2026-11-10 | CFB |  | Kent State Golden Flashes at Bowling Green Falcons Over 42.5 | -108
+2026-11-10 | CFB |  | Flashes at Falcons Under 42.5 | -112
+2026-11-10 | CFB |  | Kent State Golden Flashes at Bowling Green Falcons Under 42.5 | -112
+2026-11-10 | CFB |  | Bobcats -1.5 at RedHawks | -102
+2026-11-10 | CFB |  | Ohio Bobcats -1.5 at Miami (OH) RedHawks | -102
+2026-11-10 | CFB |  | RedHawks +1.5 vs Bobcats | -118
+2026-11-10 | CFB |  | Miami (OH) RedHawks +1.5 vs Ohio Bobcats | -118
+2026-11-10 | CFB |  | Bobcats ML at RedHawks | -115
+2026-11-10 | CFB |  | Ohio Bobcats ML at Miami (OH) RedHawks | -115
+2026-11-10 | CFB |  | RedHawks ML vs Bobcats | -105
+2026-11-10 | CFB |  | Miami (OH) RedHawks ML vs Ohio Bobcats | -105
+2026-11-10 | CFB |  | Bobcats at RedHawks Over 47.5 | -105
+2026-11-10 | CFB |  | Ohio Bobcats at Miami (OH) RedHawks Over 47.5 | -105
+2026-11-10 | CFB |  | Bobcats at RedHawks Under 47.5 | -115
+2026-11-10 | CFB |  | Ohio Bobcats at Miami (OH) RedHawks Under 47.5 | -115
+2026-11-10 | CBB |  | Gators -8.5 at Seminoles | -115
+2026-11-10 | CBB |  | Florida Gators -8.5 at Florida State Seminoles | -115
+2026-11-10 | CBB |  | Seminoles +8.5 vs Gators | -105
+2026-11-10 | CBB |  | Florida State Seminoles +8.5 vs Florida Gators | -105
+2026-11-10 | CBB |  | Gators ML at Seminoles | -485
+2026-11-10 | CBB |  | Florida Gators ML at Florida State Seminoles | -485
+2026-11-10 | CBB |  | Seminoles ML vs Gators | 370
+2026-11-10 | CBB |  | Florida State Seminoles ML vs Florida Gators | 370
+2026-11-10 | CBB |  | Gators at Seminoles Over 164.5 | -110
+2026-11-10 | CBB |  | Florida Gators at Florida State Seminoles Over 164.5 | -110
+2026-11-10 | CBB |  | Gators at Seminoles Under 164.5 | -110
+2026-11-10 | CBB |  | Florida Gators at Florida State Seminoles Under 164.5 | -110
+2026-11-10 | CBB |  | Spartans +7.5 at Devils | -108
+2026-11-10 | CBB |  | Michigan State Spartans +7.5 at Duke Blue Devils | -108
+2026-11-10 | CBB |  | Devils -7.5 vs Spartans | -112
+2026-11-10 | CBB |  | Duke Blue Devils -7.5 vs Michigan State Spartans | -112
+2026-11-10 | CBB |  | Spartans ML at Devils | 270
+2026-11-10 | CBB |  | Michigan State Spartans ML at Duke Blue Devils | 270
+2026-11-10 | CBB |  | Devils ML vs Spartans | -340
+2026-11-10 | CBB |  | Duke Blue Devils ML vs Michigan State Spartans | -340
+2026-11-10 | CBB |  | Spartans at Devils Over 147.5 | -105
+2026-11-10 | CBB |  | Michigan State Spartans at Duke Blue Devils Over 147.5 | -105
+2026-11-10 | CBB |  | Spartans at Devils Under 147.5 | -115
+2026-11-10 | CBB |  | Michigan State Spartans at Duke Blue Devils Under 147.5 | -115
+2026-11-10 | CBB |  | Illini -2.5 at Raiders | -105
+2026-11-10 | CBB |  | Illinois Fighting Illini -2.5 at Texas Tech Red Raiders | -105
+2026-11-10 | CBB |  | Raiders +2.5 vs Illini | -115
+2026-11-10 | CBB |  | Texas Tech Red Raiders +2.5 vs Illinois Fighting Illini | -115
+2026-11-10 | CBB |  | Illini ML at Raiders | -142
+2026-11-10 | CBB |  | Illinois Fighting Illini ML at Texas Tech Red Raiders | -142
+2026-11-10 | CBB |  | Raiders ML vs Illini | 120
+2026-11-10 | CBB |  | Texas Tech Red Raiders ML vs Illinois Fighting Illini | 120
+2026-11-10 | CBB |  | Illini at Raiders Over 166.5 | -112
+2026-11-10 | CBB |  | Illinois Fighting Illini at Texas Tech Red Raiders Over 166.5 | -112
+2026-11-10 | CBB |  | Illini at Raiders Under 166.5 | -108
+2026-11-10 | CBB |  | Illinois Fighting Illini at Texas Tech Red Raiders Under 166.5 | -108
+2026-11-10 | CBB |  | Bison +38.5 at Cavaliers | -110
+2026-11-10 | CBB |  | Bucknell Bison +38.5 at Virginia Cavaliers | -110
+2026-11-10 | CBB |  | Cavaliers -38.5 vs Bison | -110
+2026-11-10 | CBB |  | Virginia Cavaliers -38.5 vs Bucknell Bison | -110
+2026-11-10 | CBB |  | Bison at Cavaliers Over 151.5 | -110
+2026-11-10 | CBB |  | Bucknell Bison at Virginia Cavaliers Over 151.5 | -110
+2026-11-10 | CBB |  | Bison at Cavaliers Under 151.5 | -110
+2026-11-10 | CBB |  | Bucknell Bison at Virginia Cavaliers Under 151.5 | -110
+2026-11-10 | CBB |  | Lumberjacks +35.5 at Wildcats | -108
+2026-11-10 | CBB |  | Northern Arizona Lumberjacks +35.5 at Arizona Wildcats | -108
+2026-11-10 | CBB |  | Wildcats -35.5 vs Lumberjacks | -112
+2026-11-10 | CBB |  | Arizona Wildcats -35.5 vs Northern Arizona Lumberjacks | -112
+2026-11-10 | CBB |  | Lumberjacks at Wildcats Over 156.5 | -108
+2026-11-10 | CBB |  | Northern Arizona Lumberjacks at Arizona Wildcats Over 156.5 | -108
+2026-11-10 | CBB |  | Lumberjacks at Wildcats Under 156.5 | -112
+2026-11-10 | CBB |  | Northern Arizona Lumberjacks at Arizona Wildcats Under 156.5 | -112
+2026-11-10 | CBB |  | Jayhawks -5.5 at Wildcats | -102
+2026-11-10 | CBB |  | Kansas Jayhawks -5.5 at Kentucky Wildcats | -102
+2026-11-10 | CBB |  | Wildcats +5.5 vs Jayhawks | -118
+2026-11-10 | CBB |  | Kentucky Wildcats +5.5 vs Kansas Jayhawks | -118
+2026-11-10 | CBB |  | Jayhawks ML at Wildcats | -218
+2026-11-10 | CBB |  | Kansas Jayhawks ML at Kentucky Wildcats | -218
+2026-11-10 | CBB |  | Wildcats ML vs Jayhawks | 180
+2026-11-10 | CBB |  | Kentucky Wildcats ML vs Kansas Jayhawks | 180
+2026-11-10 | CBB |  | Jayhawks at Wildcats Over 158.5 | -112
+2026-11-10 | CBB |  | Kansas Jayhawks at Kentucky Wildcats Over 158.5 | -112
+2026-11-10 | CBB |  | Jayhawks at Wildcats Under 158.5 | -108
+2026-11-10 | CBB |  | Kansas Jayhawks at Kentucky Wildcats Under 158.5 | -108
+2026-11-10 | CBB |  | Tigers +13.5 at Commodores | -108
+2026-11-10 | CBB |  | Memphis Tigers +13.5 at Vanderbilt Commodores | -108
+2026-11-10 | CBB |  | Commodores -13.5 vs Tigers | -112
+2026-11-10 | CBB |  | Vanderbilt Commodores -13.5 vs Memphis Tigers | -112
+2026-11-10 | CBB |  | Tigers ML at Commodores | 700
+2026-11-10 | CBB |  | Memphis Tigers ML at Vanderbilt Commodores | 700
+2026-11-10 | CBB |  | Commodores ML vs Tigers | -1100
+2026-11-10 | CBB |  | Vanderbilt Commodores ML vs Memphis Tigers | -1100
+2026-11-10 | CBB |  | Tigers at Commodores Over 161.5 | -105
+2026-11-10 | CBB |  | Memphis Tigers at Vanderbilt Commodores Over 161.5 | -105
+2026-11-10 | CBB |  | Tigers at Commodores Under 161.5 | -115
+2026-11-10 | CBB |  | Memphis Tigers at Vanderbilt Commodores Under 161.5 | -115
+2026-11-10 | CBB |  | Royals +28.5 at Cougars | -108
+2026-11-10 | CBB |  | Queens University Royals +28.5 at BYU Cougars | -108
+2026-11-10 | CBB |  | Cougars -28.5 vs Royals | -112
+2026-11-10 | CBB |  | BYU Cougars -28.5 vs Queens University Royals | -112
+2026-11-10 | CBB |  | Royals ML at Cougars | 3500
+2026-11-10 | CBB |  | Queens University Royals ML at BYU Cougars | 3500
+2026-11-10 | CBB |  | Cougars ML vs Royals | -20000
+2026-11-10 | CBB |  | BYU Cougars ML vs Queens University Royals | -20000
+2026-11-10 | CBB |  | Royals at Cougars Over 181.5 | -115
+2026-11-10 | CBB |  | Queens University Royals at BYU Cougars Over 181.5 | -115
+2026-11-10 | CBB |  | Royals at Cougars Under 181.5 | -105
+2026-11-10 | CBB |  | Queens University Royals at BYU Cougars Under 181.5 | -105
+2026-11-10 | CFB | -110 | Akron +14 | -105
+
+2026-11-11 | CFB | -110 | Sacramento State +18 | -110
