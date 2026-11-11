@@ -1,5 +1,5 @@
-# file: GG-CARD-2026-11-10
-2026-11-10 | CBB | No Picks
-2026-11-10 | CFB | Spread | Akron +14 | -110 | made 8.4, book 14, gap 5.6, reason injury Akron skill outs. Edge.
-2026-11-10 | NBA | No Picks
-2026-11-10 | NHL | No Picks
+# file: GG-CARD-2026-11-11
+2026-11-11 | CBB | No Picks
+2026-11-11 | CFB | Side | Sacramento State +18 | -110 | made -7.2, book -18, gap 10.8, reason confirmed starter change Angel Flores out for season (leading rusher), Glasser starting; Edge. Turnover: Sac State gives it away more (negative margin). Bench: Salazar Jr. backup QB.
+2026-11-11 | NBA | No Picks
+2026-11-11 | NHL | No Picks
