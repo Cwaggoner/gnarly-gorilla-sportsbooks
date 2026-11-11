@@ -6026,7 +6026,7 @@ async function fillCaesarsMoneyline(list, sportKey, key){
   }
   return out;
 }
-async function pullLiveBoard(key, sports){
+async function pullLiveBoard(key, sports, opts){
   const ids = Object.values(BOOK_KEY).join(",");
   const games = [];
   const failed = [];
@@ -6057,8 +6057,8 @@ async function pullLiveBoard(key, sports){
     catch (e) { failed.push(sport); continue; }
     if (!Array.isArray(list)) list = [];
     if (Array.isArray(caesarsGames)) parkCaesarsMl(list, caesarsGames);
-    if (sport === "CBB") await fillSportMoneyline(list, sport, key);
-    if (!caesarsLow) {
+    if (sport === "CBB" && !(opts && opts.skipExtra)) await fillSportMoneyline(list, sport, key);
+    if (!caesarsLow && !(opts && opts.skipExtra)) {
       const more = await fillCaesarsMoneyline(list, SPORT_KEY[sport], key);
       if (more && (more.failed || more.low)) caesarsMissed = true;
     }
@@ -11583,8 +11583,27 @@ function ensureGameDay(){
   if (gameDayFlight || gameDayFilled === day) return gameDayFlight;
   if (Date.now() - gameDayTried < 60000) return gameDayFlight;
   gameDayTried = Date.now();
-  gameDayFlight = loadGameDay(day, false).then(() => { if (dayHasLines(day)) gameDayFilled = day; }).finally(() => { gameDayFlight = null; });
+  gameDayFlight = loadGameDay(day, false).then(ok => { if (ok !== false && dayHasLines(day)) gameDayFilled = day; }).finally(() => { gameDayFlight = null; });
   return gameDayFlight;
+}
+function booksAreThin(day){
+  const block = window.__ggOddsBoard && window.__ggOddsBoard.days && window.__ggOddsBoard.days[day];
+  if (!blockHasLines(block)) return true;
+  let rows = 0, other = 0;
+  ["h2h","spreads","totals"].forEach(market => {
+    (block[market] || []).forEach(row => {
+      if (!row || !row.label) return;
+      rows += 1;
+      const books = row.books || {};
+      if (["BetMGM","Caesars","Fanatics","FanDuel","HardRock"].some(name => books[name] && books[name] !== "-" && books[name] !== "No ML")) other += 1;
+    });
+  });
+  return !rows || other < rows * 0.25;
+}
+function savedOddsKey(){
+  const typed = ((document.getElementById("oddskey") || {}).value || "").trim();
+  if (typed) return typed;
+  try { return (localStorage.getItem("gg-odds-key") || "").trim(); } catch (e) { return ""; }
 }
 async function loadGameDay(day, books){
   const sports = Object.keys(SCORE_FEED);
@@ -11592,22 +11611,25 @@ async function loadGameDay(day, books){
   window.__gameScores = packs.flat();
   window.__gameScoresAt = Date.now();
   seedBoardFromScores(window.__gameScores, day);
-  if (books) {
-    const key = ((document.getElementById("oddskey") || {}).value || "").trim();
-    if (key) {
-      const live = await pullLiveBoard(key);
-      ["h2h","spreads","totals"].forEach(market => mergeBoardRows(day, market, rowsFromLive(live, day, market)));
+  const key = savedOddsKey();
+  let pulled = true;
+  if (key && (books || booksAreThin(day))) {
+    try {
+      const live = await pullLiveBoard(key, null, books ? null : {skipExtra: true});
+      ["h2h","spreads","totals"].forEach(market => mergeBoardRows(day, market, rowsFromLive(live, day, market), true));
       if (live && live.caesarsNote) setGameNote("Caesars moneyline did not come back.");
+      else if (live && live.failed && live.failed.length) setGameNote("Some books did not come back.");
+      else setGameNote("");
+    } catch (err) {
+      pulled = false;
+      setGameNote("The other books did not come back.");
     }
+  } else if (booksAreThin(day)) {
+    setGameNote("Only DraftKings is posted. The other books need the Odds Key on Add A Bet.");
   }
   if (usableBoard(window.__ggOddsBoard)) storeOddsBoard(window.__ggOddsBoard);
   drawGameBoard();
-}
-function ensureGameDay(){
-  if (gameDayFlight || dayHasLines(easternDay())) return gameDayFlight;
-  const day = easternDay();
-  gameDayFlight = loadGameDay(day, false).finally(() => { gameDayFlight = null; });
-  return gameDayFlight;
+  return pulled;
 }
 function setGameNote(text){
   const note = document.getElementById("gamenote");
