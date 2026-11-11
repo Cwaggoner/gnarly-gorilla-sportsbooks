@@ -1,6 +1,6 @@
 # file: report
 2026-11-10 | CBB | No Picks
-2026-11-10 | CFB | Akron +14 | close -110 | loss | 42-14 | -10.00 EDGE
+2026-11-10 | CFB | Akron +14 | close 15.5 | loss | 42-14 | -10.00 EDGE
 2026-11-10 | NBA | No Picks
 2026-11-10 | NHL | No Picks
 2026-11-10 | NFL | No Picks
