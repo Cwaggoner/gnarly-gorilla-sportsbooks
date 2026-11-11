@@ -5669,12 +5669,42 @@ async function savedBoardAny(){
   if (local && kept) return keepPulledDays(local, kept);
   return local || kept;
 }
+function mergeBoardBlocks(base, over){
+  const out = {h2h: [], spreads: [], totals: []};
+  const take = (market, row, overlay) => {
+    if (!row || !row.label) return;
+    const rows = out[market];
+    let prev = rows.find(r => String(r.sport || "").toUpperCase() === String(row.sport || "").toUpperCase() && (String(r.label || "").toLowerCase() === String(row.label || "").toLowerCase() || sameMatchup(r, row)));
+    if (!prev) {
+      prev = {sport: row.sport || "", label: row.label, start: row.start || "", books: {}};
+      if (row.awayFace) prev.awayFace = row.awayFace;
+      if (row.homeFace) prev.homeFace = row.homeFace;
+      rows.push(prev);
+    }
+    if (row.start && !prev.start) prev.start = row.start;
+    if (row.awayFace && !prev.awayFace) prev.awayFace = row.awayFace;
+    if (row.homeFace && !prev.homeFace) prev.homeFace = row.homeFace;
+    Object.keys(row.books || {}).forEach(book => {
+      const val = row.books[book];
+      const cur = prev.books[book];
+      const filled = val && val !== "-" && val !== "No ML";
+      const had = cur && cur !== "-" && cur !== "No ML";
+      if (filled && (overlay || !had)) prev.books[book] = val;
+      else if (!had) prev.books[book] = cur || val || "-";
+    });
+  };
+  ["h2h","spreads","totals"].forEach(market => {
+    (base && base[market] || []).forEach(row => take(market, row, false));
+    (over && over[market] || []).forEach(row => take(market, row, true));
+  });
+  return out;
+}
 function keepPulledDays(posted, saved){
   if (!saved || !saved.days) return posted;
-  const out = Object.assign({}, posted || {}, {days: Object.assign({}, (posted && posted.days) || {})});
-  Object.keys(saved.days).forEach(day => {
-    if (boardPriceCount(saved.days[day]) > boardPriceCount(out.days[day])) out.days[day] = saved.days[day];
-  });
+  if (!posted || !posted.days) return saved;
+  const out = Object.assign({}, posted, {days: Object.assign({}, posted.days)});
+  const days = new Set(Object.keys(out.days).concat(Object.keys(saved.days)));
+  days.forEach(day => { out.days[day] = mergeBoardBlocks(saved.days[day], posted.days[day]); });
   return out;
 }
 function rememberBoard(data){
@@ -10232,7 +10262,7 @@ async function loadOddsBoard(data, saved){
     applyPublishedBooks();
     if ((document.documentElement.dataset.page || "") === "liveodds") drawOddsCompare(false).catch(() => {});
   }
-  if ((document.documentElement.dataset.page || "games") === "games" && !dayHasLines(easternDay())) ensureGameDay();
+  if ((document.documentElement.dataset.page || "games") === "games") ensureGameDay();
   hidePageLoad("games");
 }
 if (pageNeeds("odds")) {
@@ -11261,6 +11291,7 @@ function drawGameBoard(){
   const sport = sportBtn ? sportBtn.dataset.sport : "All";
   const day = easternDay();
   applyFeedCache(day);
+  ensureGameDay();
   if (!dayHasLines(day)) {
     clearInterval(startClock);
     box.innerHTML = emptyBoardNote(day) + lockedBookRow();
@@ -11544,6 +11575,17 @@ async function seedBoardFromScores(games, day){
   });
 }
 let gameDayFlight = null;
+let gameDayFilled = "";
+let gameDayTried = 0;
+function ensureGameDay(){
+  const day = easternDay();
+  if ((document.documentElement.dataset.page || "games") !== "games") return gameDayFlight;
+  if (gameDayFlight || gameDayFilled === day) return gameDayFlight;
+  if (Date.now() - gameDayTried < 60000) return gameDayFlight;
+  gameDayTried = Date.now();
+  gameDayFlight = loadGameDay(day, false).then(() => { if (dayHasLines(day)) gameDayFilled = day; }).finally(() => { gameDayFlight = null; });
+  return gameDayFlight;
+}
 async function loadGameDay(day, books){
   const sports = Object.keys(SCORE_FEED);
   const packs = await Promise.all(sports.map(sport => scoreboard(sport, day).catch(() => [])));
