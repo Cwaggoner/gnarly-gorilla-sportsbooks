@@ -1,104 +1,5 @@
 {
   "days": {
-    "2026-11-09": {
-      "h2h": [
-        {
-          "sport": "NBA",
-          "label": "Cleveland Cavaliers at Charlotte Hornets",
-          "start": "2026-11-10T00:10:00Z",
-          "books": {
-            "BetMGM": "-350 / +280",
-            "Caesars": "-350 / +275",
-            "DraftKings": "-356 / +284",
-            "Fanatics": "-350 / +275",
-            "FanDuel": "-355 / +285",
-            "HardRock": "-350 / +275"
-          }
-        },
-        {
-          "sport": "NBA",
-          "label": "Los Angeles Lakers at Atlanta Hawks",
-          "start": "2026-11-10T00:10:00Z",
-          "books": {
-            "BetMGM": "-140 / +115",
-            "Caesars": "-135 / +115",
-            "DraftKings": "-138 / +117",
-            "Fanatics": "-140 / +115",
-            "FanDuel": "-138 / +118",
-            "HardRock": "-145 / +120"
-          }
-        },
-        {
-          "sport": "NFL",
-          "label": "Buffalo Bills at Minnesota Vikings",
-          "start": "2026-11-10T01:16:00Z",
-          "books": {
-            "BetMGM": "-175 / +140",
-            "Caesars": "-173 / +145",
-            "DraftKings": "-170 / +142",
-            "Fanatics": "-175 / +145",
-            "FanDuel": "-174 / +146",
-            "HardRock": "-175 / +145"
-          }
-        },
-        {
-          "sport": "NHL",
-          "label": "New York Rangers at Edmonton Oilers",
-          "start": "2026-11-10T01:00:00Z",
-          "books": {
-            "BetMGM": "+125 / -155",
-            "Caesars": "+130 / -154",
-            "DraftKings": "+130 / -155",
-            "Fanatics": "+130 / -155",
-            "FanDuel": "+128 / -154",
-            "HardRock": "+125 / -145"
-          }
-        }
-      ],
-      "spreads": [
-        {
-          "sport": "NFL",
-          "label": "Buffalo Bills at Minnesota Vikings",
-          "start": "2026-11-10T01:16:00Z",
-          "books": {
-            "BetMGM": "-3.5 +100 / +2.5 +105",
-            "Caesars": "-3 -117 / +3 -103",
-            "DraftKings": "-3 -118 / +3 -102",
-            "Fanatics": "-3 -115 / +3 -105",
-            "FanDuel": "-3 -115 / +3 -105",
-            "HardRock": "-3 -120 / +3 +100"
-          }
-        }
-      ],
-      "totals": [
-        {
-          "sport": "NFL",
-          "label": "Buffalo Bills at Minnesota Vikings",
-          "start": "2026-11-10T01:16:00Z",
-          "books": {
-            "BetMGM": "o44 -110 / u44 -110",
-            "Caesars": "o44 -108 / u44 -112",
-            "DraftKings": "o43.5 -118 / u43.5 -102",
-            "Fanatics": "o44 -105 / u44 -115",
-            "FanDuel": "-",
-            "HardRock": "o44.5 -105 / u44.5 -115"
-          }
-        },
-        {
-          "sport": "NHL",
-          "label": "New York Rangers at Edmonton Oilers",
-          "start": "2026-11-10T01:00:00Z",
-          "books": {
-            "BetMGM": "o6.5 -110 / u6.5 -110",
-            "Caesars": "o6.5 -113 / u6.5 -109",
-            "DraftKings": "o6.5 -112 / u6.5 -108",
-            "Fanatics": "o6.5 -110 / u6.5 -110",
-            "FanDuel": "o6.5 -110 / u6.5 -110",
-            "HardRock": "o6.5 -110 / u6.5 -110"
-          }
-        }
-      ]
-    },
     "2026-11-10": {
       "h2h": [
         {
@@ -168,6 +69,79 @@
             "Fanatics": "o220 -110 / u220 -110",
             "FanDuel": "-",
             "HardRock": "o219.5 -110 / u219.5 -110"
+          }
+        }
+      ]
+    },
+    "2026-11-11": {
+      "h2h": [
+        {
+          "sport": "NBA",
+          "label": "Washington Wizards at Indiana Pacers",
+          "start": "2026-11-12T00:00:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "+143 / -170",
+            "DraftKings": "+135 / -160",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "San Antonio Spurs at Chicago Bulls",
+          "start": "2026-11-12T01:00:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-800 / +550",
+            "DraftKings": "-680 / +492",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "CBB",
+          "label": "Marquette at Michigan",
+          "start": "2026-11-12T00:00:00Z",
+          "books": {
+            "BetMGM": "+145 / -175",
+            "Caesars": "-",
+            "DraftKings": "+150 / -180",
+            "Fanatics": "-",
+            "FanDuel": "+138 / -166",
+            "HardRock": "+145 / -180"
+          }
+        }
+      ],
+      "spreads": [
+        {
+          "sport": "CBB",
+          "label": "Michigan State at Duke",
+          "start": "2026-11-12T00:00:00Z",
+          "books": {
+            "BetMGM": "+6.5 -110 / -6.5 -110",
+            "Caesars": "+6.5 -110 / -6.5 -110",
+            "DraftKings": "+6.5 -110 / -6.5 -110",
+            "Fanatics": "-",
+            "FanDuel": "+6.5 -110 / -6.5 -110",
+            "HardRock": "+6.5 -110 / -6.5 -110"
+          }
+        }
+      ],
+      "totals": [
+        {
+          "sport": "CBB",
+          "label": "Marquette at Michigan",
+          "start": "2026-11-12T00:00:00Z",
+          "books": {
+            "BetMGM": "o156.5 -115 / u156.5 -105",
+            "Caesars": "o157 -110 / u157 -110",
+            "DraftKings": "o157.5 -108 / u157.5 -112",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "o156.5 -110 / u156.5 -110"
           }
         }
       ]
