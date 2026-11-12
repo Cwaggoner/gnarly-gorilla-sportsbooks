@@ -1,1 +1,42 @@
-PLACEHOLDER
+{
+  "source": "ESPN DraftKings close",
+  "saved": "2026-11-12T09:17:42.000Z",
+  "days": {
+    "2026-10-29": {
+      "NBA": [
+        {
+          "away": "Cleveland Cavaliers",
+          "home": "Atlanta Hawks",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 1.5,
+                  "price": -115
+                },
+                "home": {
+                  "point": -1.5,
+                  "price": -105
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -102
+                },
+                "home": {
+                  "price": -118
+                }
+              },
+              "total": {
+                "point": 237.5,
+                "over": -112,
+                "under": -108
+              },
+              "source": "espn"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
