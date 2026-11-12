@@ -340,3 +340,791 @@
 2026-11-10 | CFB | -110 | Akron +14 | -105
 
 2026-11-11 | CFB | -110 | Sacramento State +18 | -110
+2026-11-11 | NBA |  | Wizards +3.5 at Pacers | -116
+2026-11-11 | NBA |  | Washington Wizards +3.5 at Indiana Pacers | -116
+2026-11-11 | NBA |  | Pacers -3.5 vs Wizards | -104
+2026-11-11 | NBA |  | Indiana Pacers -3.5 vs Washington Wizards | -104
+2026-11-11 | NBA |  | Wizards ML at Pacers | 130
+2026-11-11 | NBA |  | Washington Wizards ML at Indiana Pacers | 130
+2026-11-11 | NBA |  | Pacers ML vs Wizards | -154
+2026-11-11 | NBA |  | Indiana Pacers ML vs Washington Wizards | -154
+2026-11-11 | NBA |  | Wizards at Pacers Over 227.5 | -115
+2026-11-11 | NBA |  | Washington Wizards at Indiana Pacers Over 227.5 | -115
+2026-11-11 | NBA |  | Wizards at Pacers Under 227.5 | -106
+2026-11-11 | NBA |  | Washington Wizards at Indiana Pacers Under 227.5 | -106
+2026-11-11 | NBA |  | Cavaliers +4.5 at Knicks | -106
+2026-11-11 | NBA |  | Cleveland Cavaliers +4.5 at New York Knicks | -106
+2026-11-11 | NBA |  | Knicks -4.5 vs Cavaliers | -114
+2026-11-11 | NBA |  | New York Knicks -4.5 vs Cleveland Cavaliers | -114
+2026-11-11 | NBA |  | Cavaliers ML at Knicks | 180
+2026-11-11 | NBA |  | Cleveland Cavaliers ML at New York Knicks | 180
+2026-11-11 | NBA |  | Knicks ML vs Cavaliers | -217
+2026-11-11 | NBA |  | New York Knicks ML vs Cleveland Cavaliers | -217
+2026-11-11 | NBA |  | Cavaliers at Knicks Over 220.5 | -113
+2026-11-11 | NBA |  | Cleveland Cavaliers at New York Knicks Over 220.5 | -113
+2026-11-11 | NBA |  | Cavaliers at Knicks Under 220.5 | -107
+2026-11-11 | NBA |  | Cleveland Cavaliers at New York Knicks Under 220.5 | -107
+2026-11-11 | NBA |  | Celtics -4.5 at Raptors | -115
+2026-11-11 | NBA |  | Boston Celtics -4.5 at Toronto Raptors | -115
+2026-11-11 | NBA |  | Raptors +4.5 vs Celtics | -105
+2026-11-11 | NBA |  | Toronto Raptors +4.5 vs Boston Celtics | -105
+2026-11-11 | NBA |  | Celtics ML at Raptors | -197
+2026-11-11 | NBA |  | Boston Celtics ML at Toronto Raptors | -197
+2026-11-11 | NBA |  | Raptors ML vs Celtics | 165
+2026-11-11 | NBA |  | Toronto Raptors ML vs Boston Celtics | 165
+2026-11-11 | NBA |  | Celtics at Raptors Over 215.5 | -110
+2026-11-11 | NBA |  | Boston Celtics at Toronto Raptors Over 215.5 | -110
+2026-11-11 | NBA |  | Celtics at Raptors Under 215.5 | -110
+2026-11-11 | NBA |  | Boston Celtics at Toronto Raptors Under 215.5 | -110
+2026-11-11 | NBA |  | Spurs -15.5 at Bulls | -110
+2026-11-11 | NBA |  | San Antonio Spurs -15.5 at Chicago Bulls | -110
+2026-11-11 | NBA |  | Bulls +15.5 vs Spurs | -110
+2026-11-11 | NBA |  | Chicago Bulls +15.5 vs San Antonio Spurs | -110
+2026-11-11 | NBA |  | Spurs ML at Bulls | -1180
+2026-11-11 | NBA |  | San Antonio Spurs ML at Chicago Bulls | -1180
+2026-11-11 | NBA |  | Bulls ML vs Spurs | 740
+2026-11-11 | NBA |  | Chicago Bulls ML vs San Antonio Spurs | 740
+2026-11-11 | NBA |  | Spurs at Bulls Over 237.5 | -110
+2026-11-11 | NBA |  | San Antonio Spurs at Chicago Bulls Over 237.5 | -110
+2026-11-11 | NBA |  | Spurs at Bulls Under 237.5 | -110
+2026-11-11 | NBA |  | San Antonio Spurs at Chicago Bulls Under 237.5 | -110
+2026-11-11 | NBA |  | Nuggets -3.5 at Grizzlies | -115
+2026-11-11 | NBA |  | Denver Nuggets -3.5 at Memphis Grizzlies | -115
+2026-11-11 | NBA |  | Grizzlies +3.5 vs Nuggets | -106
+2026-11-11 | NBA |  | Memphis Grizzlies +3.5 vs Denver Nuggets | -106
+2026-11-11 | NBA |  | Nuggets ML at Grizzlies | -161
+2026-11-11 | NBA |  | Denver Nuggets ML at Memphis Grizzlies | -161
+2026-11-11 | NBA |  | Grizzlies ML vs Nuggets | 136
+2026-11-11 | NBA |  | Memphis Grizzlies ML vs Denver Nuggets | 136
+2026-11-11 | NBA |  | Nuggets at Grizzlies Over 230.5 | -115
+2026-11-11 | NBA |  | Denver Nuggets at Memphis Grizzlies Over 230.5 | -115
+2026-11-11 | NBA |  | Nuggets at Grizzlies Under 230.5 | -106
+2026-11-11 | NBA |  | Denver Nuggets at Memphis Grizzlies Under 230.5 | -106
+2026-11-11 | NBA |  | Lakers -14.5 at Bucks | -108
+2026-11-11 | NBA |  | Los Angeles Lakers -14.5 at Milwaukee Bucks | -108
+2026-11-11 | NBA |  | Bucks +14.5 vs Lakers | -112
+2026-11-11 | NBA |  | Milwaukee Bucks +14.5 vs Los Angeles Lakers | -112
+2026-11-11 | NBA |  | Lakers ML at Bucks | -930
+2026-11-11 | NBA |  | Los Angeles Lakers ML at Milwaukee Bucks | -930
+2026-11-11 | NBA |  | Bucks ML vs Lakers | 620
+2026-11-11 | NBA |  | Milwaukee Bucks ML vs Los Angeles Lakers | 620
+2026-11-11 | NBA |  | Lakers at Bucks Over 230.5 | -107
+2026-11-11 | NBA |  | Los Angeles Lakers at Milwaukee Bucks Over 230.5 | -107
+2026-11-11 | NBA |  | Lakers at Bucks Under 230.5 | -113
+2026-11-11 | NBA |  | Los Angeles Lakers at Milwaukee Bucks Under 230.5 | -113
+2026-11-11 | NBA |  | Nets +2.5 at Pelicans | -111
+2026-11-11 | NBA |  | Brooklyn Nets +2.5 at New Orleans Pelicans | -111
+2026-11-11 | NBA |  | Pelicans -2.5 vs Nets | -109
+2026-11-11 | NBA |  | New Orleans Pelicans -2.5 vs Brooklyn Nets | -109
+2026-11-11 | NBA |  | Nets ML at Pelicans | 120
+2026-11-11 | NBA |  | Brooklyn Nets ML at New Orleans Pelicans | 120
+2026-11-11 | NBA |  | Pelicans ML vs Nets | -142
+2026-11-11 | NBA |  | New Orleans Pelicans ML vs Brooklyn Nets | -142
+2026-11-11 | NBA |  | Nets at Pelicans Over 228.5 | -115
+2026-11-11 | NBA |  | Brooklyn Nets at New Orleans Pelicans Over 228.5 | -115
+2026-11-11 | NBA |  | Nets at Pelicans Under 228.5 | -105
+2026-11-11 | NBA |  | Brooklyn Nets at New Orleans Pelicans Under 228.5 | -105
+2026-11-11 | NBA |  | Magic -4.5 at Jazz | -105
+2026-11-11 | NBA |  | Orlando Magic -4.5 at Utah Jazz | -105
+2026-11-11 | NBA |  | Jazz +4.5 vs Magic | -115
+2026-11-11 | NBA |  | Utah Jazz +4.5 vs Orlando Magic | -115
+2026-11-11 | NBA |  | Magic ML at Jazz | -179
+2026-11-11 | NBA |  | Orlando Magic ML at Utah Jazz | -179
+2026-11-11 | NBA |  | Jazz ML vs Magic | 150
+2026-11-11 | NBA |  | Utah Jazz ML vs Orlando Magic | 150
+2026-11-11 | NBA |  | Magic at Jazz Over 215.5 | -110
+2026-11-11 | NBA |  | Orlando Magic at Utah Jazz Over 215.5 | -110
+2026-11-11 | NBA |  | Magic at Jazz Under 215.5 | -110
+2026-11-11 | NBA |  | Orlando Magic at Utah Jazz Under 215.5 | -110
+2026-11-11 | NBA |  | Warriors +6.5 at Rockets | -110
+2026-11-11 | NBA |  | Golden State Warriors +6.5 at Houston Rockets | -110
+2026-11-11 | NBA |  | Rockets -6.5 vs Warriors | -110
+2026-11-11 | NBA |  | Houston Rockets -6.5 vs Golden State Warriors | -110
+2026-11-11 | NBA |  | Warriors ML at Rockets | 205
+2026-11-11 | NBA |  | Golden State Warriors ML at Houston Rockets | 205
+2026-11-11 | NBA |  | Rockets ML vs Warriors | -249
+2026-11-11 | NBA |  | Houston Rockets ML vs Golden State Warriors | -249
+2026-11-11 | NBA |  | Warriors at Rockets Over 219.5 | -112
+2026-11-11 | NBA |  | Golden State Warriors at Houston Rockets Over 219.5 | -112
+2026-11-11 | NBA |  | Warriors at Rockets Under 219.5 | -108
+2026-11-11 | NBA |  | Golden State Warriors at Houston Rockets Under 219.5 | -108
+2026-11-11 | NBA |  | Thunder +2.5 at Blazers | -106
+2026-11-11 | NBA |  | Oklahoma City Thunder +2.5 at Portland Trail Blazers | -106
+2026-11-11 | NBA |  | Blazers -2.5 vs Thunder | -115
+2026-11-11 | NBA |  | Portland Trail Blazers -2.5 vs Oklahoma City Thunder | -115
+2026-11-11 | NBA |  | Thunder ML at Blazers | 124
+2026-11-11 | NBA |  | Oklahoma City Thunder ML at Portland Trail Blazers | 124
+2026-11-11 | NBA |  | Blazers ML vs Thunder | -147
+2026-11-11 | NBA |  | Portland Trail Blazers ML vs Oklahoma City Thunder | -147
+2026-11-11 | NBA |  | Thunder at Blazers Over 224.5 | -112
+2026-11-11 | NBA |  | Oklahoma City Thunder at Portland Trail Blazers Over 224.5 | -112
+2026-11-11 | NBA |  | Thunder at Blazers Under 224.5 | -108
+2026-11-11 | NBA |  | Oklahoma City Thunder at Portland Trail Blazers Under 224.5 | -108
+2026-11-11 | NHL |  | Lightning -1.5 at Sabres | 190
+2026-11-11 | NHL |  | Tampa Bay Lightning -1.5 at Buffalo Sabres | 190
+2026-11-11 | NHL |  | Sabres +1.5 vs Lightning | -230
+2026-11-11 | NHL |  | Buffalo Sabres +1.5 vs Tampa Bay Lightning | -230
+2026-11-11 | NHL |  | Lightning ML at Sabres | -130
+2026-11-11 | NHL |  | Tampa Bay Lightning ML at Buffalo Sabres | -130
+2026-11-11 | NHL |  | Sabres ML vs Lightning | 110
+2026-11-11 | NHL |  | Buffalo Sabres ML vs Tampa Bay Lightning | 110
+2026-11-11 | NHL |  | Lightning at Sabres Over 6.5 | -120
+2026-11-11 | NHL |  | Tampa Bay Lightning at Buffalo Sabres Over 6.5 | -120
+2026-11-11 | NHL |  | Lightning at Sabres Under 6.5 | 100
+2026-11-11 | NHL |  | Tampa Bay Lightning at Buffalo Sabres Under 6.5 | 100
+2026-11-11 | NHL |  | Rangers -1.5 at Flames | 170
+2026-11-11 | NHL |  | New York Rangers -1.5 at Calgary Flames | 170
+2026-11-11 | NHL |  | Flames +1.5 vs Rangers | -205
+2026-11-11 | NHL |  | Calgary Flames +1.5 vs New York Rangers | -205
+2026-11-11 | NHL |  | Rangers ML at Flames | -148
+2026-11-11 | NHL |  | New York Rangers ML at Calgary Flames | -148
+2026-11-11 | NHL |  | Flames ML vs Rangers | 124
+2026-11-11 | NHL |  | Calgary Flames ML vs New York Rangers | 124
+2026-11-11 | NHL |  | Rangers at Flames Over 5.5 | -125
+2026-11-11 | NHL |  | New York Rangers at Calgary Flames Over 5.5 | -125
+2026-11-11 | NHL |  | Rangers at Flames Under 5.5 | 105
+2026-11-11 | NHL |  | New York Rangers at Calgary Flames Under 5.5 | 105
+2026-11-11 | NHL |  | Flyers +1.5 at Oilers | -148
+2026-11-11 | NHL |  | Philadelphia Flyers +1.5 at Edmonton Oilers | -148
+2026-11-11 | NHL |  | Oilers -1.5 vs Flyers | 124
+2026-11-11 | NHL |  | Edmonton Oilers -1.5 vs Philadelphia Flyers | 124
+2026-11-11 | NHL |  | Flyers ML at Oilers | 160
+2026-11-11 | NHL |  | Philadelphia Flyers ML at Edmonton Oilers | 160
+2026-11-11 | NHL |  | Oilers ML vs Flyers | -192
+2026-11-11 | NHL |  | Edmonton Oilers ML vs Philadelphia Flyers | -192
+2026-11-11 | NHL |  | Flyers at Oilers Over 6.5 | 105
+2026-11-11 | NHL |  | Philadelphia Flyers at Edmonton Oilers Over 6.5 | 105
+2026-11-11 | NHL |  | Flyers at Oilers Under 6.5 | -125
+2026-11-11 | NHL |  | Philadelphia Flyers at Edmonton Oilers Under 6.5 | -125
+2026-11-11 | NHL |  | Mammoth +1.5 at Knights | -205
+2026-11-11 | NHL |  | Utah Mammoth +1.5 at Vegas Golden Knights | -205
+2026-11-11 | NHL |  | Knights -1.5 vs Mammoth | 170
+2026-11-11 | NHL |  | Vegas Golden Knights -1.5 vs Utah Mammoth | 170
+2026-11-11 | NHL |  | Mammoth ML at Knights | 130
+2026-11-11 | NHL |  | Utah Mammoth ML at Vegas Golden Knights | 130
+2026-11-11 | NHL |  | Knights ML vs Mammoth | -155
+2026-11-11 | NHL |  | Vegas Golden Knights ML vs Utah Mammoth | -155
+2026-11-11 | NHL |  | Mammoth at Knights Over 6.5 | 102
+2026-11-11 | NHL |  | Utah Mammoth at Vegas Golden Knights Over 6.5 | 102
+2026-11-11 | NHL |  | Mammoth at Knights Under 6.5 | -122
+2026-11-11 | NHL |  | Utah Mammoth at Vegas Golden Knights Under 6.5 | -122
+2026-11-11 | NHL |  | Predators +1.5 at Ducks | -218
+2026-11-11 | NHL |  | Nashville Predators +1.5 at Anaheim Ducks | -218
+2026-11-11 | NHL |  | Ducks -1.5 vs Predators | 180
+2026-11-11 | NHL |  | Anaheim Ducks -1.5 vs Nashville Predators | 180
+2026-11-11 | NHL |  | Predators ML at Ducks | 114
+2026-11-11 | NHL |  | Nashville Predators ML at Anaheim Ducks | 114
+2026-11-11 | NHL |  | Ducks ML vs Predators | -135
+2026-11-11 | NHL |  | Anaheim Ducks ML vs Nashville Predators | -135
+2026-11-11 | NHL |  | Predators at Ducks Over 6.5 | -148
+2026-11-11 | NHL |  | Nashville Predators at Anaheim Ducks Over 6.5 | -148
+2026-11-11 | NHL |  | Predators at Ducks Under 6.5 | 124
+2026-11-11 | NHL |  | Nashville Predators at Anaheim Ducks Under 6.5 | 124
+2026-11-11 | NHL |  | Penguins -1.5 at Sharks | 160
+2026-11-11 | NHL |  | Pittsburgh Penguins -1.5 at San Jose Sharks | 160
+2026-11-11 | NHL |  | Sharks +1.5 vs Penguins | -192
+2026-11-11 | NHL |  | San Jose Sharks +1.5 vs Pittsburgh Penguins | -192
+2026-11-11 | NHL |  | Penguins ML at Sharks | -148
+2026-11-11 | NHL |  | Pittsburgh Penguins ML at San Jose Sharks | -148
+2026-11-11 | NHL |  | Sharks ML vs Penguins | 124
+2026-11-11 | NHL |  | San Jose Sharks ML vs Pittsburgh Penguins | 124
+2026-11-11 | NHL |  | Penguins at Sharks Over 6.5 | -142
+2026-11-11 | NHL |  | Pittsburgh Penguins at San Jose Sharks Over 6.5 | -142
+2026-11-11 | NHL |  | Penguins at Sharks Under 6.5 | 120
+2026-11-11 | NHL |  | Pittsburgh Penguins at San Jose Sharks Under 6.5 | 120
+2026-11-11 | CFB |  | Bulls -1.5 at Cardinals | -102
+2026-11-11 | CFB |  | Buffalo Bulls -1.5 at Ball State Cardinals | -102
+2026-11-11 | CFB |  | Cardinals +1.5 vs Bulls | -118
+2026-11-11 | CFB |  | Ball State Cardinals +1.5 vs Buffalo Bulls | -118
+2026-11-11 | CFB |  | Bulls ML at Cardinals | -112
+2026-11-11 | CFB |  | Buffalo Bulls ML at Ball State Cardinals | -112
+2026-11-11 | CFB |  | Cardinals ML vs Bulls | -108
+2026-11-11 | CFB |  | Ball State Cardinals ML vs Buffalo Bulls | -108
+2026-11-11 | CFB |  | Bulls at Cardinals Over 52.5 | -115
+2026-11-11 | CFB |  | Buffalo Bulls at Ball State Cardinals Over 52.5 | -115
+2026-11-11 | CFB |  | Bulls at Cardinals Under 52.5 | -105
+2026-11-11 | CFB |  | Buffalo Bulls at Ball State Cardinals Under 52.5 | -105
+2026-11-11 | CFB |  | Hornets +17.5 at Chippewas | -112
+2026-11-11 | CFB |  | Sacramento State Hornets +17.5 at Central Michigan Chippewas | -112
+2026-11-11 | CFB |  | Chippewas -17.5 vs Hornets | -108
+2026-11-11 | CFB |  | Central Michigan Chippewas -17.5 vs Sacramento State Hornets | -108
+2026-11-11 | CFB |  | Hornets ML at Chippewas | 675
+2026-11-11 | CFB |  | Sacramento State Hornets ML at Central Michigan Chippewas | 675
+2026-11-11 | CFB |  | Chippewas ML vs Hornets | -1050
+2026-11-11 | CFB |  | Central Michigan Chippewas ML vs Sacramento State Hornets | -1050
+2026-11-11 | CFB |  | Hornets at Chippewas Over 41.5 | -110
+2026-11-11 | CFB |  | Sacramento State Hornets at Central Michigan Chippewas Over 41.5 | -110
+2026-11-11 | CFB |  | Hornets at Chippewas Under 41.5 | -110
+2026-11-11 | CFB |  | Sacramento State Hornets at Central Michigan Chippewas Under 41.5 | -110
+2026-11-11 | CFB |  | Minutemen +14 at Rockets | -105
+2026-11-11 | CFB |  | Massachusetts Minutemen +14 at Toledo Rockets | -105
+2026-11-11 | CFB |  | Rockets -14 vs Minutemen | -115
+2026-11-11 | CFB |  | Toledo Rockets -14 vs Massachusetts Minutemen | -115
+2026-11-11 | CFB |  | Minutemen ML at Rockets | 455
+2026-11-11 | CFB |  | Massachusetts Minutemen ML at Toledo Rockets | 455
+2026-11-11 | CFB |  | Rockets ML vs Minutemen | -625
+2026-11-11 | CFB |  | Toledo Rockets ML vs Massachusetts Minutemen | -625
+2026-11-11 | CFB |  | Minutemen at Rockets Over 52.5 | -105
+2026-11-11 | CFB |  | Massachusetts Minutemen at Toledo Rockets Over 52.5 | -105
+2026-11-11 | CFB |  | Minutemen at Rockets Under 52.5 | -115
+2026-11-11 | CFB |  | Massachusetts Minutemen at Toledo Rockets Under 52.5 | -115
+2026-11-11 | CBB |  | Gamecocks +33.5 at Cougars | -105
+2026-11-11 | CBB |  | Jacksonville State Gamecocks +33.5 at Houston Cougars | -105
+2026-11-11 | CBB |  | Cougars -33.5 vs Gamecocks | -115
+2026-11-11 | CBB |  | Houston Cougars -33.5 vs Jacksonville State Gamecocks | -115
+2026-11-11 | CBB |  | Gamecocks at Cougars Over 136.5 | -108
+2026-11-11 | CBB |  | Jacksonville State Gamecocks at Houston Cougars Over 136.5 | -108
+2026-11-11 | CBB |  | Gamecocks at Cougars Under 136.5 | -112
+2026-11-11 | CBB |  | Jacksonville State Gamecocks at Houston Cougars Under 136.5 | -112
+2026-11-11 | CBB |  | Lions +47.5 at Bruins | -112
+2026-11-11 | CBB |  | Arkansas-Pine Bluff Golden Lions +47.5 at UCLA Bruins | -112
+2026-11-11 | CBB |  | Bruins -47.5 vs Lions | -108
+2026-11-11 | CBB |  | UCLA Bruins -47.5 vs Arkansas-Pine Bluff Golden Lions | -108
+2026-11-11 | CBB |  | Lions at Bruins Over 156.5 | -110
+2026-11-11 | CBB |  | Arkansas-Pine Bluff Golden Lions at UCLA Bruins Over 156.5 | -110
+2026-11-11 | CBB |  | Lions at Bruins Under 156.5 | -110
+2026-11-11 | CBB |  | Arkansas-Pine Bluff Golden Lions at UCLA Bruins Under 156.5 | -110
+2026-11-11 | CBB |  | Raiders +28.5 at Storm | -108
+2026-11-11 | CBB |  | Colgate Raiders +28.5 at St. John's Red Storm | -108
+2026-11-11 | CBB |  | Storm -28.5 vs Raiders | -112
+2026-11-11 | CBB |  | St. John's Red Storm -28.5 vs Colgate Raiders | -112
+2026-11-11 | CBB |  | Raiders ML at Storm | 4000
+2026-11-11 | CBB |  | Colgate Raiders ML at St. John's Red Storm | 4000
+2026-11-11 | CBB |  | Storm ML vs Raiders | -50000
+2026-11-11 | CBB |  | St. John's Red Storm ML vs Colgate Raiders | -50000
+2026-11-11 | CBB |  | Raiders at Storm Over 158.5 | -110
+2026-11-11 | CBB |  | Colgate Raiders at St. John's Red Storm Over 158.5 | -110
+2026-11-11 | CBB |  | Raiders at Storm Under 158.5 | -110
+2026-11-11 | CBB |  | Colgate Raiders at St. John's Red Storm Under 158.5 | -110
+2026-11-11 | CBB |  | Colonials +29.5 at Razorbacks | -102
+2026-11-11 | CBB |  | Robert Morris Colonials +29.5 at Arkansas Razorbacks | -102
+2026-11-11 | CBB |  | Razorbacks -29.5 vs Colonials | -118
+2026-11-11 | CBB |  | Arkansas Razorbacks -29.5 vs Robert Morris Colonials | -118
+2026-11-11 | CBB |  | Colonials ML at Razorbacks | 5000
+2026-11-11 | CBB |  | Robert Morris Colonials ML at Arkansas Razorbacks | 5000
+2026-11-11 | CBB |  | Razorbacks ML vs Colonials | -100000
+2026-11-11 | CBB |  | Arkansas Razorbacks ML vs Robert Morris Colonials | -100000
+2026-11-11 | CBB |  | Colonials at Razorbacks Over 155.5 | -112
+2026-11-11 | CBB |  | Robert Morris Colonials at Arkansas Razorbacks Over 155.5 | -112
+2026-11-11 | CBB |  | Colonials at Razorbacks Under 155.5 | -108
+2026-11-11 | CBB |  | Robert Morris Colonials at Arkansas Razorbacks Under 155.5 | -108
+2026-11-11 | CBB |  | Eagles +2.5 at Wolverines | -105
+2026-11-11 | CBB |  | Marquette Golden Eagles +2.5 at Michigan Wolverines | -105
+2026-11-11 | CBB |  | Wolverines -2.5 vs Eagles | -115
+2026-11-11 | CBB |  | Michigan Wolverines -2.5 vs Marquette Golden Eagles | -115
+2026-11-11 | CBB |  | Eagles ML at Wolverines | 130
+2026-11-11 | CBB |  | Marquette Golden Eagles ML at Michigan Wolverines | 130
+2026-11-11 | CBB |  | Wolverines ML vs Eagles | -155
+2026-11-11 | CBB |  | Michigan Wolverines ML vs Marquette Golden Eagles | -155
+2026-11-11 | CBB |  | Eagles at Wolverines Over 157.5 | -115
+2026-11-11 | CBB |  | Marquette Golden Eagles at Michigan Wolverines Over 157.5 | -115
+2026-11-11 | CBB |  | Eagles at Wolverines Under 157.5 | -105
+2026-11-11 | CBB |  | Marquette Golden Eagles at Michigan Wolverines Under 157.5 | -105
+2026-11-11 | CBB |  | Trojans -7.5 at Bears | -110
+2026-11-11 | CBB |  | USC Trojans -7.5 at California Golden Bears | -110
+2026-11-11 | CBB |  | Bears +7.5 vs Trojans | -110
+2026-11-11 | CBB |  | California Golden Bears +7.5 vs USC Trojans | -110
+2026-11-11 | CBB |  | Trojans ML at Bears | -340
+2026-11-11 | CBB |  | USC Trojans ML at California Golden Bears | -340
+2026-11-11 | CBB |  | Bears ML vs Trojans | 270
+2026-11-11 | CBB |  | California Golden Bears ML vs USC Trojans | 270
+2026-11-11 | CBB |  | Trojans at Bears Over 159.5 | -110
+2026-11-11 | CBB |  | USC Trojans at California Golden Bears Over 159.5 | -110
+2026-11-11 | CBB |  | Trojans at Bears Under 159.5 | -110
+2026-11-11 | CBB |  | USC Trojans at California Golden Bears Under 159.5 | -110
+2026-11-11 | CBB |  | Lions +34.5 at Cornhuskers | -115
+2026-11-11 | CBB |  | Lindenwood Lions +34.5 at Nebraska Cornhuskers | -115
+2026-11-11 | CBB |  | Cornhuskers -34.5 vs Lions | -105
+2026-11-11 | CBB |  | Nebraska Cornhuskers -34.5 vs Lindenwood Lions | -105
+2026-11-11 | CBB |  | Lions at Cornhuskers Over 153.5 | -105
+2026-11-11 | CBB |  | Lindenwood Lions at Nebraska Cornhuskers Over 153.5 | -105
+2026-11-11 | CBB |  | Lions at Cornhuskers Under 153.5 | -115
+2026-11-11 | CBB |  | Lindenwood Lions at Nebraska Cornhuskers Under 153.5 | -115
+2026-11-11 | CBB |  | Knights +11.5 at Lions | -112
+2026-11-11 | CBB |  | Fairleigh Dickinson Knights +11.5 at East Texas A&M Lions | -112
+2026-11-11 | CBB |  | Lions -11.5 vs Knights | -108
+2026-11-11 | CBB |  | East Texas A&M Lions -11.5 vs Fairleigh Dickinson Knights | -108
+2026-11-11 | CBB |  | Knights ML at Lions | 500
+2026-11-11 | CBB |  | Fairleigh Dickinson Knights ML at East Texas A&M Lions | 500
+2026-11-11 | CBB |  | Lions ML vs Knights | -700
+2026-11-11 | CBB |  | East Texas A&M Lions ML vs Fairleigh Dickinson Knights | -700
+2026-11-11 | CBB |  | Knights at Lions Over 136.5 | -115
+2026-11-11 | CBB |  | Fairleigh Dickinson Knights at East Texas A&M Lions Over 136.5 | -115
+2026-11-11 | CBB |  | Knights at Lions Under 136.5 | -105
+2026-11-11 | CBB |  | Fairleigh Dickinson Knights at East Texas A&M Lions Under 136.5 | -105
+2026-11-11 | CBB |  | Roos -8.5 at Rattlers | -105
+2026-11-11 | CBB |  | Kansas City Roos -8.5 at Florida A&M Rattlers | -105
+2026-11-11 | CBB |  | Rattlers +8.5 vs Roos | -115
+2026-11-11 | CBB |  | Florida A&M Rattlers +8.5 vs Kansas City Roos | -115
+2026-11-11 | CBB |  | Roos ML at Rattlers | -345
+2026-11-11 | CBB |  | Kansas City Roos ML at Florida A&M Rattlers | -345
+2026-11-11 | CBB |  | Rattlers ML vs Roos | 275
+2026-11-11 | CBB |  | Florida A&M Rattlers ML vs Kansas City Roos | 275
+2026-11-11 | CBB |  | Roos at Rattlers Over 144.5 | -112
+2026-11-11 | CBB |  | Kansas City Roos at Florida A&M Rattlers Over 144.5 | -112
+2026-11-11 | CBB |  | Roos at Rattlers Under 144.5 | -108
+2026-11-11 | CBB |  | Kansas City Roos at Florida A&M Rattlers Under 144.5 | -108
+2026-11-11 | CBB |  | Green -1.5 at Danes | 105
+2026-11-11 | CBB |  | Dartmouth Big Green -1.5 at UAlbany Great Danes | 105
+2026-11-11 | CBB |  | Danes +1.5 vs Green | -125
+2026-11-11 | CBB |  | UAlbany Great Danes +1.5 vs Dartmouth Big Green | -125
+2026-11-11 | CBB |  | Green ML at Danes | -112
+2026-11-11 | CBB |  | Dartmouth Big Green ML at UAlbany Great Danes | -112
+2026-11-11 | CBB |  | Danes ML vs Green | -108
+2026-11-11 | CBB |  | UAlbany Great Danes ML vs Dartmouth Big Green | -108
+2026-11-11 | CBB |  | Green at Danes Over 139.5 | -105
+2026-11-11 | CBB |  | Dartmouth Big Green at UAlbany Great Danes Over 139.5 | -105
+2026-11-11 | CBB |  | Green at Danes Under 139.5 | -115
+2026-11-11 | CBB |  | Dartmouth Big Green at UAlbany Great Danes Under 139.5 | -115
+2026-11-11 | CBB |  | Cardinals +11.5 at Aggies | -105
+2026-11-11 | CBB |  | Incarnate Word Cardinals +11.5 at UC Davis Aggies | -105
+2026-11-11 | CBB |  | Aggies -11.5 vs Cardinals | -115
+2026-11-11 | CBB |  | UC Davis Aggies -11.5 vs Incarnate Word Cardinals | -115
+2026-11-11 | CBB |  | Cardinals ML at Aggies | 575
+2026-11-11 | CBB |  | Incarnate Word Cardinals ML at UC Davis Aggies | 575
+2026-11-11 | CBB |  | Aggies ML vs Cardinals | -850
+2026-11-11 | CBB |  | UC Davis Aggies ML vs Incarnate Word Cardinals | -850
+2026-11-11 | CBB |  | Cardinals at Aggies Over 143.5 | -110
+2026-11-11 | CBB |  | Incarnate Word Cardinals at UC Davis Aggies Over 143.5 | -110
+2026-11-11 | CBB |  | Cardinals at Aggies Under 143.5 | -110
+2026-11-11 | CBB |  | Incarnate Word Cardinals at UC Davis Aggies Under 143.5 | -110
+2026-11-11 | CBB |  | Bulls -6.5 at Hawks | -108
+2026-11-11 | CBB |  | South Florida Bulls -6.5 at Saint Joseph's Hawks | -108
+2026-11-11 | CBB |  | Hawks +6.5 vs Bulls | -112
+2026-11-11 | CBB |  | Saint Joseph's Hawks +6.5 vs South Florida Bulls | -112
+2026-11-11 | CBB |  | Bulls ML at Hawks | -285
+2026-11-11 | CBB |  | South Florida Bulls ML at Saint Joseph's Hawks | -285
+2026-11-11 | CBB |  | Hawks ML vs Bulls | 230
+2026-11-11 | CBB |  | Saint Joseph's Hawks ML vs South Florida Bulls | 230
+2026-11-11 | CBB |  | Bulls at Hawks Over 152.5 | -105
+2026-11-11 | CBB |  | South Florida Bulls at Saint Joseph's Hawks Over 152.5 | -105
+2026-11-11 | CBB |  | Bulls at Hawks Under 152.5 | -115
+2026-11-11 | CBB |  | South Florida Bulls at Saint Joseph's Hawks Under 152.5 | -115
+2026-11-11 | CBB |  | Ramblers -10.5 at Falcons | -118
+2026-11-11 | CBB |  | Loyola Chicago Ramblers -10.5 at Air Force Falcons | -118
+2026-11-11 | CBB |  | Falcons +10.5 vs Ramblers | -102
+2026-11-11 | CBB |  | Air Force Falcons +10.5 vs Loyola Chicago Ramblers | -102
+2026-11-11 | CBB |  | Ramblers ML at Falcons | -625
+2026-11-11 | CBB |  | Loyola Chicago Ramblers ML at Air Force Falcons | -625
+2026-11-11 | CBB |  | Falcons ML vs Ramblers | 455
+2026-11-11 | CBB |  | Air Force Falcons ML vs Loyola Chicago Ramblers | 455
+2026-11-11 | CBB |  | Ramblers at Falcons Over 161.5 | -110
+2026-11-11 | CBB |  | Loyola Chicago Ramblers at Air Force Falcons Over 161.5 | -110
+2026-11-11 | CBB |  | Ramblers at Falcons Under 161.5 | -110
+2026-11-11 | CBB |  | Loyola Chicago Ramblers at Air Force Falcons Under 161.5 | -110
+2026-11-11 | CBB |  | Aggies +11.5 at Pirates | -118
+2026-11-11 | CBB |  | North Carolina A&T Aggies +11.5 at East Carolina Pirates | -118
+2026-11-11 | CBB |  | Pirates -11.5 vs Aggies | -102
+2026-11-11 | CBB |  | East Carolina Pirates -11.5 vs North Carolina A&T Aggies | -102
+2026-11-11 | CBB |  | Aggies ML at Pirates | 500
+2026-11-11 | CBB |  | North Carolina A&T Aggies ML at East Carolina Pirates | 500
+2026-11-11 | CBB |  | Pirates ML vs Aggies | -700
+2026-11-11 | CBB |  | East Carolina Pirates ML vs North Carolina A&T Aggies | -700
+2026-11-11 | CBB |  | Aggies at Pirates Over 152.5 | -112
+2026-11-11 | CBB |  | North Carolina A&T Aggies at East Carolina Pirates Over 152.5 | -112
+2026-11-11 | CBB |  | Aggies at Pirates Under 152.5 | -108
+2026-11-11 | CBB |  | North Carolina A&T Aggies at East Carolina Pirates Under 152.5 | -108
+2026-11-11 | CBB |  | Wildcats +19.5 at Aztecs | -112
+2026-11-11 | CBB |  | Bethune-Cookman Wildcats +19.5 at San Diego State Aztecs | -112
+2026-11-11 | CBB |  | Aztecs -19.5 vs Wildcats | -108
+2026-11-11 | CBB |  | San Diego State Aztecs -19.5 vs Bethune-Cookman Wildcats | -108
+2026-11-11 | CBB |  | Wildcats ML at Aztecs | 1700
+2026-11-11 | CBB |  | Bethune-Cookman Wildcats ML at San Diego State Aztecs | 1700
+2026-11-11 | CBB |  | Aztecs ML vs Wildcats | -4500
+2026-11-11 | CBB |  | San Diego State Aztecs ML vs Bethune-Cookman Wildcats | -4500
+2026-11-11 | CBB |  | Wildcats at Aztecs Over 153.5 | -115
+2026-11-11 | CBB |  | Bethune-Cookman Wildcats at San Diego State Aztecs Over 153.5 | -115
+2026-11-11 | CBB |  | Wildcats at Aztecs Under 153.5 | -105
+2026-11-11 | CBB |  | Bethune-Cookman Wildcats at San Diego State Aztecs Under 153.5 | -105
+2026-11-11 | CBB |  | Quakers -8.5 at Midshipmen | -102
+2026-11-11 | CBB |  | Pennsylvania Quakers -8.5 at Navy Midshipmen | -102
+2026-11-11 | CBB |  | Midshipmen +8.5 vs Quakers | -118
+2026-11-11 | CBB |  | Navy Midshipmen +8.5 vs Pennsylvania Quakers | -118
+2026-11-11 | CBB |  | Quakers ML at Midshipmen | -325
+2026-11-11 | CBB |  | Pennsylvania Quakers ML at Navy Midshipmen | -325
+2026-11-11 | CBB |  | Midshipmen ML vs Quakers | 260
+2026-11-11 | CBB |  | Navy Midshipmen ML vs Pennsylvania Quakers | 260
+2026-11-11 | CBB |  | Quakers at Midshipmen Over 145.5 | -115
+2026-11-11 | CBB |  | Pennsylvania Quakers at Navy Midshipmen Over 145.5 | -115
+2026-11-11 | CBB |  | Quakers at Midshipmen Under 145.5 | -105
+2026-11-11 | CBB |  | Pennsylvania Quakers at Navy Midshipmen Under 145.5 | -105
+2026-11-11 | CBB |  | Eagles +7.5 at Keydets | -110
+2026-11-11 | CBB |  | North Carolina Central Eagles +7.5 at VMI Keydets | -110
+2026-11-11 | CBB |  | Keydets -7.5 vs Eagles | -110
+2026-11-11 | CBB |  | VMI Keydets -7.5 vs North Carolina Central Eagles | -110
+2026-11-11 | CBB |  | Eagles ML at Keydets | 285
+2026-11-11 | CBB |  | North Carolina Central Eagles ML at VMI Keydets | 285
+2026-11-11 | CBB |  | Keydets ML vs Eagles | -360
+2026-11-11 | CBB |  | VMI Keydets ML vs North Carolina Central Eagles | -360
+2026-11-11 | CBB |  | Eagles at Keydets Over 147.5 | -105
+2026-11-11 | CBB |  | North Carolina Central Eagles at VMI Keydets Over 147.5 | -105
+2026-11-11 | CBB |  | Eagles at Keydets Under 147.5 | -115
+2026-11-11 | CBB |  | North Carolina Central Eagles at VMI Keydets Under 147.5 | -115
+2026-11-11 | CBB |  | Cougars -1.5 at Owls | -112
+2026-11-11 | CBB |  | Charleston Cougars -1.5 at Temple Owls | -112
+2026-11-11 | CBB |  | Owls +1.5 vs Cougars | -108
+2026-11-11 | CBB |  | Temple Owls +1.5 vs Charleston Cougars | -108
+2026-11-11 | CBB |  | Cougars ML at Owls | -125
+2026-11-11 | CBB |  | Charleston Cougars ML at Temple Owls | -125
+2026-11-11 | CBB |  | Owls ML vs Cougars | 105
+2026-11-11 | CBB |  | Temple Owls ML vs Charleston Cougars | 105
+2026-11-11 | CBB |  | Cougars at Owls Over 158.5 | -108
+2026-11-11 | CBB |  | Charleston Cougars at Temple Owls Over 158.5 | -108
+2026-11-11 | CBB |  | Cougars at Owls Under 158.5 | -112
+2026-11-11 | CBB |  | Charleston Cougars at Temple Owls Under 158.5 | -112
+2026-11-11 | CBB |  | Eagles +8.5 at Jaguars | -115
+2026-11-11 | CBB |  | Southern Indiana Screaming Eagles +8.5 at IU Indianapolis Jaguars | -115
+2026-11-11 | CBB |  | Jaguars -8.5 vs Eagles | -105
+2026-11-11 | CBB |  | IU Indianapolis Jaguars -8.5 vs Southern Indiana Screaming Eagles | -105
+2026-11-11 | CBB |  | Eagles ML at Jaguars | 280
+2026-11-11 | CBB |  | Southern Indiana Screaming Eagles ML at IU Indianapolis Jaguars | 280
+2026-11-11 | CBB |  | Jaguars ML vs Eagles | -355
+2026-11-11 | CBB |  | IU Indianapolis Jaguars ML vs Southern Indiana Screaming Eagles | -355
+2026-11-11 | CBB |  | Eagles at Jaguars Over 164.5 | -110
+2026-11-11 | CBB |  | Southern Indiana Screaming Eagles at IU Indianapolis Jaguars Over 164.5 | -110
+2026-11-11 | CBB |  | Eagles at Jaguars Under 164.5 | -110
+2026-11-11 | CBB |  | Southern Indiana Screaming Eagles at IU Indianapolis Jaguars Under 164.5 | -110
+2026-11-11 | CBB |  | Panthers +4.5 at Sycamores | -108
+2026-11-11 | CBB |  | Milwaukee Panthers +4.5 at Indiana State Sycamores | -108
+2026-11-11 | CBB |  | Sycamores -4.5 vs Panthers | -112
+2026-11-11 | CBB |  | Indiana State Sycamores -4.5 vs Milwaukee Panthers | -112
+2026-11-11 | CBB |  | Panthers ML at Sycamores | 170
+2026-11-11 | CBB |  | Milwaukee Panthers ML at Indiana State Sycamores | 170
+2026-11-11 | CBB |  | Sycamores ML vs Panthers | -205
+2026-11-11 | CBB |  | Indiana State Sycamores ML vs Milwaukee Panthers | -205
+2026-11-11 | CBB |  | Panthers at Sycamores Over 152.5 | -110
+2026-11-11 | CBB |  | Milwaukee Panthers at Indiana State Sycamores Over 152.5 | -110
+2026-11-11 | CBB |  | Panthers at Sycamores Under 152.5 | -110
+2026-11-11 | CBB |  | Milwaukee Panthers at Indiana State Sycamores Under 152.5 | -110
+2026-11-11 | CBB |  | Flashes +7.5 at Seahawks | -115
+2026-11-11 | CBB |  | Kent State Golden Flashes +7.5 at UNC Wilmington Seahawks | -115
+2026-11-11 | CBB |  | Seahawks -7.5 vs Flashes | -105
+2026-11-11 | CBB |  | UNC Wilmington Seahawks -7.5 vs Kent State Golden Flashes | -105
+2026-11-11 | CBB |  | Flashes ML at Seahawks | 245
+2026-11-11 | CBB |  | Kent State Golden Flashes ML at UNC Wilmington Seahawks | 245
+2026-11-11 | CBB |  | Seahawks ML vs Flashes | -305
+2026-11-11 | CBB |  | UNC Wilmington Seahawks ML vs Kent State Golden Flashes | -305
+2026-11-11 | CBB |  | Flashes at Seahawks Over 156.5 | -110
+2026-11-11 | CBB |  | Kent State Golden Flashes at UNC Wilmington Seahawks Over 156.5 | -110
+2026-11-11 | CBB |  | Flashes at Seahawks Under 156.5 | -110
+2026-11-11 | CBB |  | Kent State Golden Flashes at UNC Wilmington Seahawks Under 156.5 | -110
+2026-11-11 | CBB |  | Monarchs -6.5 at Spartans | -108
+2026-11-11 | CBB |  | Old Dominion Monarchs -6.5 at Norfolk State Spartans | -108
+2026-11-11 | CBB |  | Spartans +6.5 vs Monarchs | -112
+2026-11-11 | CBB |  | Norfolk State Spartans +6.5 vs Old Dominion Monarchs | -112
+2026-11-11 | CBB |  | Monarchs ML at Spartans | -278
+2026-11-11 | CBB |  | Old Dominion Monarchs ML at Norfolk State Spartans | -278
+2026-11-11 | CBB |  | Spartans ML vs Monarchs | 225
+2026-11-11 | CBB |  | Norfolk State Spartans ML vs Old Dominion Monarchs | 225
+2026-11-11 | CBB |  | Monarchs at Spartans Over 136.5 | -108
+2026-11-11 | CBB |  | Old Dominion Monarchs at Norfolk State Spartans Over 136.5 | -108
+2026-11-11 | CBB |  | Monarchs at Spartans Under 136.5 | -112
+2026-11-11 | CBB |  | Old Dominion Monarchs at Norfolk State Spartans Under 136.5 | -112
+2026-11-11 | CBB |  | Bulldogs +27.5 at Irish | -105
+2026-11-11 | CBB |  | South Carolina State Bulldogs +27.5 at Notre Dame Fighting Irish | -105
+2026-11-11 | CBB |  | Irish -27.5 vs Bulldogs | -115
+2026-11-11 | CBB |  | Notre Dame Fighting Irish -27.5 vs South Carolina State Bulldogs | -115
+2026-11-11 | CBB |  | Bulldogs ML at Irish | 4000
+2026-11-11 | CBB |  | South Carolina State Bulldogs ML at Notre Dame Fighting Irish | 4000
+2026-11-11 | CBB |  | Irish ML vs Bulldogs | -50000
+2026-11-11 | CBB |  | Notre Dame Fighting Irish ML vs South Carolina State Bulldogs | -50000
+2026-11-11 | CBB |  | Bulldogs at Irish Over 149.5 | -115
+2026-11-11 | CBB |  | South Carolina State Bulldogs at Notre Dame Fighting Irish Over 149.5 | -115
+2026-11-11 | CBB |  | Bulldogs at Irish Under 149.5 | -105
+2026-11-11 | CBB |  | South Carolina State Bulldogs at Notre Dame Fighting Irish Under 149.5 | -105
+2026-11-11 | CBB |  | Seawolves +4.5 at Tigers | -108
+2026-11-11 | CBB |  | Stony Brook Seawolves +4.5 at Princeton Tigers | -108
+2026-11-11 | CBB |  | Tigers -4.5 vs Seawolves | -112
+2026-11-11 | CBB |  | Princeton Tigers -4.5 vs Stony Brook Seawolves | -112
+2026-11-11 | CBB |  | Seawolves ML at Tigers | 180
+2026-11-11 | CBB |  | Stony Brook Seawolves ML at Princeton Tigers | 180
+2026-11-11 | CBB |  | Tigers ML vs Seawolves | -218
+2026-11-11 | CBB |  | Princeton Tigers ML vs Stony Brook Seawolves | -218
+2026-11-11 | CBB |  | Seawolves at Tigers Over 140.5 | -105
+2026-11-11 | CBB |  | Stony Brook Seawolves at Princeton Tigers Over 140.5 | -105
+2026-11-11 | CBB |  | Seawolves at Tigers Under 140.5 | -115
+2026-11-11 | CBB |  | Stony Brook Seawolves at Princeton Tigers Under 140.5 | -115
+2026-11-11 | CBB |  | Peacocks +21.5 at Gamecocks | -112
+2026-11-11 | CBB |  | Saint Peter's Peacocks +21.5 at South Carolina Gamecocks | -112
+2026-11-11 | CBB |  | Gamecocks -21.5 vs Peacocks | -108
+2026-11-11 | CBB |  | South Carolina Gamecocks -21.5 vs Saint Peter's Peacocks | -108
+2026-11-11 | CBB |  | Peacocks ML at Gamecocks | 1800
+2026-11-11 | CBB |  | Saint Peter's Peacocks ML at South Carolina Gamecocks | 1800
+2026-11-11 | CBB |  | Gamecocks ML vs Peacocks | -5000
+2026-11-11 | CBB |  | South Carolina Gamecocks ML vs Saint Peter's Peacocks | -5000
+2026-11-11 | CBB |  | Peacocks at Gamecocks Over 126.5 | -105
+2026-11-11 | CBB |  | Saint Peter's Peacocks at South Carolina Gamecocks Over 126.5 | -105
+2026-11-11 | CBB |  | Peacocks at Gamecocks Under 126.5 | -115
+2026-11-11 | CBB |  | Saint Peter's Peacocks at South Carolina Gamecocks Under 126.5 | -115
+2026-11-11 | CBB |  | Paladins -13.5 at Crusaders | -108
+2026-11-11 | CBB |  | Furman Paladins -13.5 at Holy Cross Crusaders | -108
+2026-11-11 | CBB |  | Crusaders +13.5 vs Paladins | -112
+2026-11-11 | CBB |  | Holy Cross Crusaders +13.5 vs Furman Paladins | -112
+2026-11-11 | CBB |  | Paladins ML at Crusaders | -950
+2026-11-11 | CBB |  | Furman Paladins ML at Holy Cross Crusaders | -950
+2026-11-11 | CBB |  | Crusaders ML vs Paladins | 625
+2026-11-11 | CBB |  | Holy Cross Crusaders ML vs Furman Paladins | 625
+2026-11-11 | CBB |  | Paladins at Crusaders Over 150.5 | -115
+2026-11-11 | CBB |  | Furman Paladins at Holy Cross Crusaders Over 150.5 | -115
+2026-11-11 | CBB |  | Paladins at Crusaders Under 150.5 | -105
+2026-11-11 | CBB |  | Furman Paladins at Holy Cross Crusaders Under 150.5 | -105
+2026-11-11 | CBB |  | Dukes -2.5 at Hens | -118
+2026-11-11 | CBB |  | James Madison Dukes -2.5 at Delaware Blue Hens | -118
+2026-11-11 | CBB |  | Hens +2.5 vs Dukes | -102
+2026-11-11 | CBB |  | Delaware Blue Hens +2.5 vs James Madison Dukes | -102
+2026-11-11 | CBB |  | Dukes ML at Hens | -155
+2026-11-11 | CBB |  | James Madison Dukes ML at Delaware Blue Hens | -155
+2026-11-11 | CBB |  | Hens ML vs Dukes | 130
+2026-11-11 | CBB |  | Delaware Blue Hens ML vs James Madison Dukes | 130
+2026-11-11 | CBB |  | Dukes at Hens Over 150.5 | -115
+2026-11-11 | CBB |  | James Madison Dukes at Delaware Blue Hens Over 150.5 | -115
+2026-11-11 | CBB |  | Dukes at Hens Under 150.5 | -105
+2026-11-11 | CBB |  | James Madison Dukes at Delaware Blue Hens Under 150.5 | -105
+2026-11-11 | CBB |  | Camels +4.5 at Buccaneers | -105
+2026-11-11 | CBB |  | Campbell Fighting Camels +4.5 at East Tennessee State Buccaneers | -105
+2026-11-11 | CBB |  | Buccaneers -4.5 vs Camels | -115
+2026-11-11 | CBB |  | East Tennessee State Buccaneers -4.5 vs Campbell Fighting Camels | -115
+2026-11-11 | CBB |  | Camels ML at Buccaneers | 185
+2026-11-11 | CBB |  | Campbell Fighting Camels ML at East Tennessee State Buccaneers | 185
+2026-11-11 | CBB |  | Buccaneers ML vs Camels | -225
+2026-11-11 | CBB |  | East Tennessee State Buccaneers ML vs Campbell Fighting Camels | -225
+2026-11-11 | CBB |  | Camels at Buccaneers Over 145.5 | -105
+2026-11-11 | CBB |  | Campbell Fighting Camels at East Tennessee State Buccaneers Over 145.5 | -105
+2026-11-11 | CBB |  | Camels at Buccaneers Under 145.5 | -115
+2026-11-11 | CBB |  | Campbell Fighting Camels at East Tennessee State Buccaneers Under 145.5 | -115
+2026-11-11 | CBB |  | Highlanders +33.5 at Rams | -108
+2026-11-11 | CBB |  | NJIT Highlanders +33.5 at VCU Rams | -108
+2026-11-11 | CBB |  | Rams -33.5 vs Highlanders | -112
+2026-11-11 | CBB |  | VCU Rams -33.5 vs NJIT Highlanders | -112
+2026-11-11 | CBB |  | Highlanders ML at Rams | 5000
+2026-11-11 | CBB |  | NJIT Highlanders ML at VCU Rams | 5000
+2026-11-11 | CBB |  | Rams ML vs Highlanders | -100000
+2026-11-11 | CBB |  | VCU Rams ML vs NJIT Highlanders | -100000
+2026-11-11 | CBB |  | Highlanders at Rams Over 149.5 | -115
+2026-11-11 | CBB |  | NJIT Highlanders at VCU Rams Over 149.5 | -115
+2026-11-11 | CBB |  | Highlanders at Rams Under 149.5 | -105
+2026-11-11 | CBB |  | NJIT Highlanders at VCU Rams Under 149.5 | -105
+2026-11-11 | CBB |  | Tribe +5.5 at Owls | -112
+2026-11-11 | CBB |  | William & Mary Tribe +5.5 at Florida Atlantic Owls | -112
+2026-11-11 | CBB |  | Owls -5.5 vs Tribe | -108
+2026-11-11 | CBB |  | Florida Atlantic Owls -5.5 vs William & Mary Tribe | -108
+2026-11-11 | CBB |  | Tribe ML at Owls | 195
+2026-11-11 | CBB |  | William & Mary Tribe ML at Florida Atlantic Owls | 195
+2026-11-11 | CBB |  | Owls ML vs Tribe | -238
+2026-11-11 | CBB |  | Florida Atlantic Owls ML vs William & Mary Tribe | -238
+2026-11-11 | CBB |  | Tribe at Owls Over 165.5 | -112
+2026-11-11 | CBB |  | William & Mary Tribe at Florida Atlantic Owls Over 165.5 | -112
+2026-11-11 | CBB |  | Tribe at Owls Under 165.5 | -108
+2026-11-11 | CBB |  | William & Mary Tribe at Florida Atlantic Owls Under 165.5 | -108
+2026-11-11 | CBB |  | Bulldogs +1.5 at Wolves | -102
+2026-11-11 | CBB |  | UNC Asheville Bulldogs +1.5 at West Georgia Wolves | -102
+2026-11-11 | CBB |  | Wolves -1.5 vs Bulldogs | -118
+2026-11-11 | CBB |  | West Georgia Wolves -1.5 vs UNC Asheville Bulldogs | -118
+2026-11-11 | CBB |  | Bulldogs ML at Wolves | 114
+2026-11-11 | CBB |  | UNC Asheville Bulldogs ML at West Georgia Wolves | 114
+2026-11-11 | CBB |  | Wolves ML vs Bulldogs | -135
+2026-11-11 | CBB |  | West Georgia Wolves ML vs UNC Asheville Bulldogs | -135
+2026-11-11 | CBB |  | Bulldogs at Wolves Over 149.5 | -110
+2026-11-11 | CBB |  | UNC Asheville Bulldogs at West Georgia Wolves Over 149.5 | -110
+2026-11-11 | CBB |  | Bulldogs at Wolves Under 149.5 | -110
+2026-11-11 | CBB |  | UNC Asheville Bulldogs at West Georgia Wolves Under 149.5 | -110
+2026-11-11 | CBB |  | Eagles +1.5 at Dragons | -115
+2026-11-11 | CBB |  | American University Eagles +1.5 at Drexel Dragons | -115
+2026-11-11 | CBB |  | Dragons -1.5 vs Eagles | -105
+2026-11-11 | CBB |  | Drexel Dragons -1.5 vs American University Eagles | -105
+2026-11-11 | CBB |  | Eagles ML at Dragons | -105
+2026-11-11 | CBB |  | American University Eagles ML at Drexel Dragons | -105
+2026-11-11 | CBB |  | Dragons ML vs Eagles | -115
+2026-11-11 | CBB |  | Drexel Dragons ML vs American University Eagles | -115
+2026-11-11 | CBB |  | Eagles at Dragons Over 138.5 | -105
+2026-11-11 | CBB |  | American University Eagles at Drexel Dragons Over 138.5 | -105
+2026-11-11 | CBB |  | Eagles at Dragons Under 138.5 | -115
+2026-11-11 | CBB |  | American University Eagles at Drexel Dragons Under 138.5 | -115
+2026-11-11 | CBB |  | Red +7.5 at Bonnies | -108
+2026-11-11 | CBB |  | Cornell Big Red +7.5 at St. Bonaventure Bonnies | -108
+2026-11-11 | CBB |  | Bonnies -7.5 vs Red | -112
+2026-11-11 | CBB |  | St. Bonaventure Bonnies -7.5 vs Cornell Big Red | -112
+2026-11-11 | CBB |  | Red ML at Bonnies | 280
+2026-11-11 | CBB |  | Cornell Big Red ML at St. Bonaventure Bonnies | 280
+2026-11-11 | CBB |  | Bonnies ML vs Red | -355
+2026-11-11 | CBB |  | St. Bonaventure Bonnies ML vs Cornell Big Red | -355
+2026-11-11 | CBB |  | Red at Bonnies Over 158.5 | -110
+2026-11-11 | CBB |  | Cornell Big Red at St. Bonaventure Bonnies Over 158.5 | -110
+2026-11-11 | CBB |  | Red at Bonnies Under 158.5 | -110
+2026-11-11 | CBB |  | Cornell Big Red at St. Bonaventure Bonnies Under 158.5 | -110
+2026-11-11 | CBB |  | Hawks +7.5 at Minutemen | -110
+2026-11-11 | CBB |  | UMass Lowell River Hawks +7.5 at Massachusetts Minutemen | -110
+2026-11-11 | CBB |  | Minutemen -7.5 vs Hawks | -110
+2026-11-11 | CBB |  | Massachusetts Minutemen -7.5 vs UMass Lowell River Hawks | -110
+2026-11-11 | CBB |  | Hawks ML at Minutemen | 280
+2026-11-11 | CBB |  | UMass Lowell River Hawks ML at Massachusetts Minutemen | 280
+2026-11-11 | CBB |  | Minutemen ML vs Hawks | -355
+2026-11-11 | CBB |  | Massachusetts Minutemen ML vs UMass Lowell River Hawks | -355
+2026-11-11 | CBB |  | Hawks at Minutemen Over 152.5 | -108
+2026-11-11 | CBB |  | UMass Lowell River Hawks at Massachusetts Minutemen Over 152.5 | -108
+2026-11-11 | CBB |  | Hawks at Minutemen Under 152.5 | -112
+2026-11-11 | CBB |  | UMass Lowell River Hawks at Massachusetts Minutemen Under 152.5 | -112
+2026-11-11 | CBB |  | Waves -2.5 at Bearkats | -115
+2026-11-11 | CBB |  | Pepperdine Waves -2.5 at Sam Houston Bearkats | -115
+2026-11-11 | CBB |  | Bearkats +2.5 vs Waves | -105
+2026-11-11 | CBB |  | Sam Houston Bearkats +2.5 vs Pepperdine Waves | -105
+2026-11-11 | CBB |  | Waves ML at Bearkats | -148
+2026-11-11 | CBB |  | Pepperdine Waves ML at Sam Houston Bearkats | -148
+2026-11-11 | CBB |  | Bearkats ML vs Waves | 124
+2026-11-11 | CBB |  | Sam Houston Bearkats ML vs Pepperdine Waves | 124
+2026-11-11 | CBB |  | Waves at Bearkats Over 159.5 | -115
+2026-11-11 | CBB |  | Pepperdine Waves at Sam Houston Bearkats Over 159.5 | -115
+2026-11-11 | CBB |  | Waves at Bearkats Under 159.5 | -105
+2026-11-11 | CBB |  | Pepperdine Waves at Sam Houston Bearkats Under 159.5 | -105
+2026-11-11 | CBB |  | Beacons -1.5 at Jackrabbits | -110
+2026-11-11 | CBB |  | Valparaiso Beacons -1.5 at South Dakota State Jackrabbits | -110
+2026-11-11 | CBB |  | Jackrabbits +1.5 vs Beacons | -110
+2026-11-11 | CBB |  | South Dakota State Jackrabbits +1.5 vs Valparaiso Beacons | -110
+2026-11-11 | CBB |  | Beacons ML at Jackrabbits | -122
+2026-11-11 | CBB |  | Valparaiso Beacons ML at South Dakota State Jackrabbits | -122
+2026-11-11 | CBB |  | Jackrabbits ML vs Beacons | 102
+2026-11-11 | CBB |  | South Dakota State Jackrabbits ML vs Valparaiso Beacons | 102
+2026-11-11 | CBB |  | Beacons at Jackrabbits Over 141.5 | -108
+2026-11-11 | CBB |  | Valparaiso Beacons at South Dakota State Jackrabbits Over 141.5 | -108
+2026-11-11 | CBB |  | Beacons at Jackrabbits Under 141.5 | -112
+2026-11-11 | CBB |  | Valparaiso Beacons at South Dakota State Jackrabbits Under 141.5 | -112
+2026-11-11 | CBB |  | Eagles +18.5 at Hurricane | -110
+2026-11-11 | CBB |  | Oral Roberts Golden Eagles +18.5 at Tulsa Golden Hurricane | -110
+2026-11-11 | CBB |  | Hurricane -18.5 vs Eagles | -110
+2026-11-11 | CBB |  | Tulsa Golden Hurricane -18.5 vs Oral Roberts Golden Eagles | -110
+2026-11-11 | CBB |  | Eagles ML at Hurricane | 1500
+2026-11-11 | CBB |  | Oral Roberts Golden Eagles ML at Tulsa Golden Hurricane | 1500
+2026-11-11 | CBB |  | Hurricane ML vs Eagles | -3600
+2026-11-11 | CBB |  | Tulsa Golden Hurricane ML vs Oral Roberts Golden Eagles | -3600
+2026-11-11 | CBB |  | Eagles at Hurricane Over 156.5 | -108
+2026-11-11 | CBB |  | Oral Roberts Golden Eagles at Tulsa Golden Hurricane Over 156.5 | -108
+2026-11-11 | CBB |  | Eagles at Hurricane Under 156.5 | -112
+2026-11-11 | CBB |  | Oral Roberts Golden Eagles at Tulsa Golden Hurricane Under 156.5 | -112
+2026-11-11 | CBB |  | Tigers +7.5 at Eagles | -105
+2026-11-11 | CBB |  | Jackson State Tigers +7.5 at Southern Miss Golden Eagles | -105
+2026-11-11 | CBB |  | Eagles -7.5 vs Tigers | -115
+2026-11-11 | CBB |  | Southern Miss Golden Eagles -7.5 vs Jackson State Tigers | -115
+2026-11-11 | CBB |  | Tigers ML at Eagles | 300
+2026-11-11 | CBB |  | Jackson State Tigers ML at Southern Miss Golden Eagles | 300
+2026-11-11 | CBB |  | Eagles ML vs Tigers | -380
+2026-11-11 | CBB |  | Southern Miss Golden Eagles ML vs Jackson State Tigers | -380
+2026-11-11 | CBB |  | Tigers at Eagles Over 148.5 | -112
+2026-11-11 | CBB |  | Jackson State Tigers at Southern Miss Golden Eagles Over 148.5 | -112
+2026-11-11 | CBB |  | Tigers at Eagles Under 148.5 | -108
+2026-11-11 | CBB |  | Jackson State Tigers at Southern Miss Golden Eagles Under 148.5 | -108
+2026-11-11 | CBB |  | Lumberjacks -6.5 at Wildcats | -105
+2026-11-11 | CBB |  | Stephen F. Austin Lumberjacks -6.5 at Abilene Christian Wildcats | -105
+2026-11-11 | CBB |  | Wildcats +6.5 vs Lumberjacks | -115
+2026-11-11 | CBB |  | Abilene Christian Wildcats +6.5 vs Stephen F. Austin Lumberjacks | -115
+2026-11-11 | CBB |  | Lumberjacks ML at Wildcats | -258
+2026-11-11 | CBB |  | Stephen F. Austin Lumberjacks ML at Abilene Christian Wildcats | -258
+2026-11-11 | CBB |  | Wildcats ML vs Lumberjacks | 210
+2026-11-11 | CBB |  | Abilene Christian Wildcats ML vs Stephen F. Austin Lumberjacks | 210
+2026-11-11 | CBB |  | Lumberjacks at Wildcats Over 142.5 | -110
+2026-11-11 | CBB |  | Stephen F. Austin Lumberjacks at Abilene Christian Wildcats Over 142.5 | -110
+2026-11-11 | CBB |  | Lumberjacks at Wildcats Under 142.5 | -110
+2026-11-11 | CBB |  | Stephen F. Austin Lumberjacks at Abilene Christian Wildcats Under 142.5 | -110
+2026-11-11 | CBB |  | Broncos -1.5 at Green | -110
+2026-11-11 | CBB |  | Santa Clara Broncos -1.5 at North Texas Mean Green | -110
+2026-11-11 | CBB |  | Green +1.5 vs Broncos | -110
+2026-11-11 | CBB |  | North Texas Mean Green +1.5 vs Santa Clara Broncos | -110
+2026-11-11 | CBB |  | Broncos ML at Green | -130
+2026-11-11 | CBB |  | Santa Clara Broncos ML at North Texas Mean Green | -130
+2026-11-11 | CBB |  | Green ML vs Broncos | 110
+2026-11-11 | CBB |  | North Texas Mean Green ML vs Santa Clara Broncos | 110
+2026-11-11 | CBB |  | Broncos at Green Over 156.5 | -105
+2026-11-11 | CBB |  | Santa Clara Broncos at North Texas Mean Green Over 156.5 | -105
+2026-11-11 | CBB |  | Broncos at Green Under 156.5 | -115
+2026-11-11 | CBB |  | Santa Clara Broncos at North Texas Mean Green Under 156.5 | -115
+2026-11-11 | CBB |  | Grizzlies +16.5 at Broncos | -112
+2026-11-11 | CBB |  | Oakland Golden Grizzlies +16.5 at Boise State Broncos | -112
+2026-11-11 | CBB |  | Broncos -16.5 vs Grizzlies | -108
+2026-11-11 | CBB |  | Boise State Broncos -16.5 vs Oakland Golden Grizzlies | -108
+2026-11-11 | CBB |  | Grizzlies ML at Broncos | 1000
+2026-11-11 | CBB |  | Oakland Golden Grizzlies ML at Boise State Broncos | 1000
+2026-11-11 | CBB |  | Broncos ML vs Grizzlies | -1800
+2026-11-11 | CBB |  | Boise State Broncos ML vs Oakland Golden Grizzlies | -1800
+2026-11-11 | CBB |  | Grizzlies at Broncos Over 159.5 | -115
+2026-11-11 | CBB |  | Oakland Golden Grizzlies at Boise State Broncos Over 159.5 | -115
+2026-11-11 | CBB |  | Grizzlies at Broncos Under 159.5 | -105
+2026-11-11 | CBB |  | Oakland Golden Grizzlies at Boise State Broncos Under 159.5 | -105
+2026-11-11 | CBB |  | Vikings +16.5 at Rams | -110
+2026-11-11 | CBB |  | Portland State Vikings +16.5 at Colorado State Rams | -110
+2026-11-11 | CBB |  | Rams -16.5 vs Vikings | -110
+2026-11-11 | CBB |  | Colorado State Rams -16.5 vs Portland State Vikings | -110
+2026-11-11 | CBB |  | Vikings ML at Rams | 1100
+2026-11-11 | CBB |  | Portland State Vikings ML at Colorado State Rams | 1100
+2026-11-11 | CBB |  | Rams ML vs Vikings | -2100
+2026-11-11 | CBB |  | Colorado State Rams ML vs Portland State Vikings | -2100
+2026-11-11 | CBB |  | Vikings at Rams Over 150.5 | -112
+2026-11-11 | CBB |  | Portland State Vikings at Colorado State Rams Over 150.5 | -112
+2026-11-11 | CBB |  | Vikings at Rams Under 150.5 | -108
+2026-11-11 | CBB |  | Portland State Vikings at Colorado State Rams Under 150.5 | -108
+2026-11-11 | CBB |  | Pack -1.5 at Gauchos | -102
+2026-11-11 | CBB |  | Nevada Wolf Pack -1.5 at UC Santa Barbara Gauchos | -102
+2026-11-11 | CBB |  | Gauchos +1.5 vs Pack | -118
+2026-11-11 | CBB |  | UC Santa Barbara Gauchos +1.5 vs Nevada Wolf Pack | -118
+2026-11-11 | CBB |  | Pack ML at Gauchos | -122
+2026-11-11 | CBB |  | Nevada Wolf Pack ML at UC Santa Barbara Gauchos | -122
+2026-11-11 | CBB |  | Gauchos ML vs Pack | 102
+2026-11-11 | CBB |  | UC Santa Barbara Gauchos ML vs Nevada Wolf Pack | 102
+2026-11-11 | CBB |  | Pack at Gauchos Over 146.5 | -110
+2026-11-11 | CBB |  | Nevada Wolf Pack at UC Santa Barbara Gauchos Over 146.5 | -110
+2026-11-11 | CBB |  | Pack at Gauchos Under 146.5 | -110
+2026-11-11 | CBB |  | Nevada Wolf Pack at UC Santa Barbara Gauchos Under 146.5 | -110
+2026-11-11 | CBB |  | Mustangs +18.5 at Lopes | -110
+2026-11-11 | CBB |  | Cal Poly Mustangs +18.5 at Grand Canyon Lopes | -110
+2026-11-11 | CBB |  | Lopes -18.5 vs Mustangs | -110
+2026-11-11 | CBB |  | Grand Canyon Lopes -18.5 vs Cal Poly Mustangs | -110
+2026-11-11 | CBB |  | Mustangs ML at Lopes | 1400
+2026-11-11 | CBB |  | Cal Poly Mustangs ML at Grand Canyon Lopes | 1400
+2026-11-11 | CBB |  | Lopes ML vs Mustangs | -3200
+2026-11-11 | CBB |  | Grand Canyon Lopes ML vs Cal Poly Mustangs | -3200
+2026-11-11 | CBB |  | Mustangs at Lopes Over 181.5 | -112
+2026-11-11 | CBB |  | Cal Poly Mustangs at Grand Canyon Lopes Over 181.5 | -112
+2026-11-11 | CBB |  | Mustangs at Lopes Under 181.5 | -108
+2026-11-11 | CBB |  | Cal Poly Mustangs at Grand Canyon Lopes Under 181.5 | -108
+2026-11-11 | CBB |  | Devils +33.5 at Ducks | -108
+2026-11-11 | CBB |  | Mississippi Valley State Delta Devils +33.5 at Oregon Ducks | -108
+2026-11-11 | CBB |  | Ducks -33.5 vs Devils | -112
+2026-11-11 | CBB |  | Oregon Ducks -33.5 vs Mississippi Valley State Delta Devils | -112
+2026-11-11 | CBB |  | Devils at Ducks Over 150.5 | -110
+2026-11-11 | CBB |  | Mississippi Valley State Delta Devils at Oregon Ducks Over 150.5 | -110
+2026-11-11 | CBB |  | Devils at Ducks Under 150.5 | -110
+2026-11-11 | CBB |  | Mississippi Valley State Delta Devils at Oregon Ducks Under 150.5 | -110
+2026-11-11 | CBB |  | Cougars +11.5 at Lancers | -118
+2026-11-11 | CBB |  | Chicago State Cougars +11.5 at California Baptist Lancers | -118
+2026-11-11 | CBB |  | Lancers -11.5 vs Cougars | -102
+2026-11-11 | CBB |  | California Baptist Lancers -11.5 vs Chicago State Cougars | -102
+2026-11-11 | CBB |  | Cougars ML at Lancers | 525
+2026-11-11 | CBB |  | Chicago State Cougars ML at California Baptist Lancers | 525
+2026-11-11 | CBB |  | Lancers ML vs Cougars | -750
+2026-11-11 | CBB |  | California Baptist Lancers ML vs Chicago State Cougars | -750
+2026-11-11 | CBB |  | Cougars at Lancers Over 136.5 | -108
+2026-11-11 | CBB |  | Chicago State Cougars at California Baptist Lancers Over 136.5 | -108
+2026-11-11 | CBB |  | Cougars at Lancers Under 136.5 | -112
+2026-11-11 | CBB |  | Chicago State Cougars at California Baptist Lancers Under 136.5 | -112
+2026-11-11 | CBB |  | Tigers -5.5 at Beach | -112
+2026-11-11 | CBB |  | Pacific Tigers -5.5 at Long Beach State Beach | -112
+2026-11-11 | CBB |  | Beach +5.5 vs Tigers | -108
+2026-11-11 | CBB |  | Long Beach State Beach +5.5 vs Pacific Tigers | -108
+2026-11-11 | CBB |  | Tigers ML at Beach | -238
+2026-11-11 | CBB |  | Pacific Tigers ML at Long Beach State Beach | -238
+2026-11-11 | CBB |  | Beach ML vs Tigers | 195
+2026-11-11 | CBB |  | Long Beach State Beach ML vs Pacific Tigers | 195
+2026-11-11 | CBB |  | Tigers at Beach Over 138.5 | -108
+2026-11-11 | CBB |  | Pacific Tigers at Long Beach State Beach Over 138.5 | -108
+2026-11-11 | CBB |  | Tigers at Beach Under 138.5 | -112
+2026-11-11 | CBB |  | Pacific Tigers at Long Beach State Beach Under 138.5 | -112
+2026-11-11 | CBB |  | Roadrunners +16.5 at Redhawks | -108
+2026-11-11 | CBB |  | UTSA Roadrunners +16.5 at Seattle U Redhawks | -108
+2026-11-11 | CBB |  | Redhawks -16.5 vs Roadrunners | -112
+2026-11-11 | CBB |  | Seattle U Redhawks -16.5 vs UTSA Roadrunners | -112
+2026-11-11 | CBB |  | Roadrunners ML at Redhawks | 1100
+2026-11-11 | CBB |  | UTSA Roadrunners ML at Seattle U Redhawks | 1100
+2026-11-11 | CBB |  | Redhawks ML vs Roadrunners | -2100
+2026-11-11 | CBB |  | Seattle U Redhawks ML vs UTSA Roadrunners | -2100
+2026-11-11 | CBB |  | Roadrunners at Redhawks Over 148.5 | -108
+2026-11-11 | CBB |  | UTSA Roadrunners at Seattle U Redhawks Over 148.5 | -108
+2026-11-11 | CBB |  | Roadrunners at Redhawks Under 148.5 | -112
+2026-11-11 | CBB |  | UTSA Roadrunners at Seattle U Redhawks Under 148.5 | -112
