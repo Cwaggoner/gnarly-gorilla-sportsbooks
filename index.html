@@ -2021,15 +2021,13 @@ function cardLines(text){
 }
 function isNoCard(row){ return /no picks|season ended/i.test((row[2] || "") + " " + (row[3] || "")); }
 function sportLean(rows){
-  const types = rows.map(r => (r[2] || "").toLowerCase());
-  const picks = rows.map(r => (r[3] || "").toLowerCase());
-  const bits = [];
-  if (types.some(t => t === "spread") || picks.some(p => /[+]\d/.test(p))) bits.push("dogs");
-  if (types.some(t => t === "total") || picks.some(p => /under|over/.test(p))) bits.push(picks.some(p => /under/.test(p)) ? "unders" : "totals");
-  if (types.some(t => t === "moneyline")) bits.push("moneylines");
-  if (types.some(t => /run line|puck line/.test(t))) bits.push("alt line");
-  if (types.some(t => t === "sgp")) bits.push("SGP");
-  return bits.length ? bits.join(" and ") : "posted plays";
+  const ml = rows.filter(r => /moneyline/i.test(r[2] || "") || /\bml\b/i.test(r[3] || ""));
+  const plus = ml.filter(r => Number(r[4]) > 0).length;
+  const fav = rows.filter(r => !ml.includes(r) && gorillaRank(r) > 0).length;
+  if (plus && fav) return "Dog moneylines, then a modest favorite";
+  if (plus) return "Dog moneylines";
+  if (fav) return "Modest favorites";
+  return "Posted plays";
 }
 function pendingCardRows(){
   const sports = {CBB:1, CFB:1, MLB:1, NBA:1, NFL:1, NHL:1};
@@ -2246,11 +2244,20 @@ function drawCardAnalysis(text){
   const day = (rows[0] && /^\d{4}-\d{2}-\d{2}$/.test(rows[0][0]) && rows[0][0]) || today;
   grid.innerHTML = sports.map(sport => {
     const mine = rows.filter(r => r[1] === sport);
-    const plays = mine.filter(r => !isNoCard(r));
+    const slateGames = ((pickSlate && pickSlate.games) || []).filter(g => String(g.sport || "").toUpperCase() === sport);
+    const chosen = [];
+    const seenPick = new Set();
+    slateGames.forEach(g => {
+      const row = gorillaChoice(g, day);
+      if (!row || seenPick.has(normPick(row[3]))) return;
+      seenPick.add(normPick(row[3]));
+      chosen.push(row);
+    });
+    const plays = chosen.length ? chosen : mine.filter(r => !isNoCard(r) && gorillaRank(r) > 0);
     if (!plays.length) {
       const ended = mine.some(r => /season ended/i.test((r[2] || "") + " " + (r[3] || ""))) || seasonEnded(sport);
-      const label = ended ? "Season Ended" : "No Picks";
-      return "<div class='analysis-cell'><b>" + sport + "</b><div class='meta'>" + label + "</div><p>" + (ended ? "Season is closed for this sport." : "No picks posted for this sport.") + "</p></div>";
+      const label = ended ? "Season Ended" : "No Play";
+      return "<div class='analysis-cell'><b>" + sport + "</b><div class='meta'>" + label + "</div><p>" + (ended ? "Season is closed for this sport." : "No play. Dog spreads and unders are off.") + "</p></div>";
     }
     const edges = plays.filter(r => /edge/i.test(r[5] || "") || /^high\b/i.test(r[5] || ""));
     const books = [...new Set(plays.map(r => r[6]).filter(Boolean))];
@@ -2284,7 +2291,7 @@ function sharpRead(rows){
   const edges = rows.filter(r => /edge/i.test(r[5] || "") || /^high\b/i.test(r[5] || ""));
   const names = edges.map(r => r[1] + " " + r[3]);
   const best = names.slice(0, 4).join(", ");
-  return "Play the price, not the name. The card is built the sharp way: dogs, named totals, and no short favorite. A play also has to clear turnovers and the bench. A team that gives it away, or has no second scorer, does not get a rest dog. Best use of the card: " + (best || "the posted edges") + ". Those are the only plays with a real number and a reason. Pass a medium dog under 5 points and pass an estimated same-game parlay unless the straight leg is already the play. Shop the -110. If the book is -115 or shorter, pass it. Two legs in the same game is the max. This is a read of the card, not a guarantee.";
+  return "Play the plus-money dog, not the points. Dog spreads on this ledger are 54-137. Unders are 21-36. The number that paid is the dog moneyline, from +100 to +220. A favorite spread is only used from -2.5 to -6.5, and only at -115 or longer. A moneyline shorter than -150 is a pass. Two legs is still the max. This is a read of the ledger, not a guarantee.";
 }
 function chartSlips(){
   return gradedPool().filter(b => b && b.pick && !isNoPick(b) && !/^RANGE$/i.test(b.pick) && (b.result === "win" || b.result === "loss" || b.result === "push")).slice().sort((a, b) => String(a.date).localeCompare(String(b.date)) || String(a.pick).localeCompare(String(b.pick)));
@@ -3456,7 +3463,7 @@ function drawPassedSlate(){
   if (!cardBox) return;
   const games = pickSlate && Array.isArray(pickSlate.games) ? pickSlate.games : [];
   const date = (pickSlate && pickSlate.date) || easternDay();
-  if (note) note.textContent = games.length ? "Posted matchups. Add puts the play on the Bet Slip. A game that is not on the card uses the posted spread." : "";
+  if (note) note.textContent = games.length ? "Posted matchups. Add puts Gnarly Gorilla's play on the Bet Slip. A dog spread or an under is not the play." : "";
   cardBox.innerHTML = games.length ? slateTable(games, date, true) : "";
 }
 function boardRow(list, game){
@@ -3529,6 +3536,7 @@ function addCardPlay(btn){
   const stamped = attrOf(btn, "pick");
   if (!plays.length && stamped) plays = [[date, sport, attrOf(btn, "type") || "Spread", stamped, attrOf(btn, "odds"), attrOf(btn, "notes"), attrOf(btn, "book")]];
   const book = (document.getElementById("cardbook") || {}).value || "BetMGM";
+  const chosen = gorillaChoice({sport: sport, game: game}, date);
   const finish = lookedUp => {
     let added = 0;
     plays.forEach(row => {
@@ -3544,14 +3552,8 @@ function addCardPlay(btn){
     });
     if (note) note.textContent = added ? "Added " + added + " play" + (added === 1 ? "" : "s") + " to the Bet Slip." + (lookedUp ? " That game was not on the card, so this is the posted spread." : " Add on the Bet Slip writes the Slips table.") : "That play is already on the Bet Slip.";
   };
-  if (plays.length) { finish(false); return; }
-  if (note) note.textContent = "Looking up " + game + ".";
-  spreadForGame(sport, game, date, book).then(found => {
-    if (found && found.final) { if (note) note.textContent = game + " is final. Nothing was added."; return; }
-    if (!found || !found.pick) { if (note) note.textContent = "No posted price for " + game + ". Nothing was added."; return; }
-    plays = [[date, sport, found.type || "Spread", found.pick, String(found.odds), found.notes || "", found.book || book]];
-    finish(true);
-  });
+  if (chosen) { plays = [chosen]; finish(false); return; }
+  if (note) note.textContent = game + " has no play. Dog spreads and unders are off, and there is no plus-money dog or a favorite from -2.5 to -6.5 at -115 or longer.";
 }
 function openGameBet(sport, game, date){
   const awayHome = String(game || "").split(/\s+at\s+/i);
@@ -3812,6 +3814,74 @@ function slatePlays(game, date){
     return {row: r, mark: Math.max(teamPickScore(sides.away.name, r[3]), teamPickScore(sides.home.name, r[3]))};
   }).filter(x => x.mark > 0).sort((a, b) => b.mark - a.mark).map(x => x.row);
 }
+function gorillaRank(row){
+  const pick = String(row && row[3] || "");
+  const type = String(row && row[2] || "");
+  const price = Number(String(row && row[4] || "").replace(/[^\d.+-]/g, ""));
+  if (!Number.isFinite(price) || Math.abs(price) < 100) return -1;
+  if (/\band\b/i.test(pick) || /parlay|sgp/i.test(type)) return -1;
+  if (/\b(over|under)\b/i.test(pick) || /total/i.test(type)) return -1;
+  const ml = /moneyline/i.test(type) || /\bml\b/i.test(pick);
+  const num = pick.match(/([+-]\d+(?:\.\d+)?)/);
+  const point = !ml && num ? Number(num[1]) : null;
+  if (ml && price >= 100 && price <= 220) return 100 + Math.min(price, 180) / 10;
+  if (ml && price > 220 && price <= 280) return 40;
+  if (ml && price < 0 && price > -150) return 25;
+  if (point != null && point <= -2.5 && point >= -6.5 && price >= -115) return 70;
+  return -1;
+}
+function bestBookSide(row, index){
+  const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
+  let best = null;
+  names.forEach(book => {
+    const sides = shopSides(row && row.books && row.books[book]);
+    if (!sides || !sides[index] || !Number.isFinite(sides[index].price)) return;
+    if (!best || sides[index].price > best.price) best = {book: book, price: sides[index].price, point: sides[index].point};
+  });
+  return best;
+}
+function boardCandidates(game, date){
+  const sport = String(game && game.sport || "").toUpperCase();
+  const day = String(date || "").slice(0, 10);
+  const label = String(game && game.game || "");
+  const block = window.__ggOddsBoard && window.__ggOddsBoard.days && window.__ggOddsBoard.days[day];
+  if (!block || !label) return [];
+  const want = {sport: sport, label: label};
+  const find = market => (block[market] || []).find(r => sameMatchup(r, want) || String(r.label || "").toLowerCase() === label.toLowerCase());
+  const parts = label.split(/\s+at\s+/i);
+  const away = (parts[0] || "").trim();
+  const home = (parts[1] || "").trim();
+  const nick = s => String(s || "").trim().split(/\s+/).slice(-1)[0] || s;
+  const rows = [];
+  const h2h = find("h2h");
+  const spreads = find("spreads");
+  [0, 1].forEach(index => {
+    const side = bestBookSide(h2h, index);
+    if (!side) return;
+    const name = nick(index ? home : away);
+    const pick = index ? name + " ML vs " + away : name + " ML at " + home;
+    rows.push([day, sport, "Moneyline", pick, String(side.price), "Plus-money dog. Dog spreads and unders are off this card.", side.book]);
+  });
+  [0, 1].forEach(index => {
+    const side = bestBookSide(spreads, index);
+    if (!side || side.point == null || side.point >= 0) return;
+    const name = nick(index ? home : away);
+    const shown = (side.point > 0 ? "+" : "") + side.point;
+    const pick = index ? name + " " + shown + " vs " + away : name + " " + shown + " at " + home;
+    rows.push([day, sport, "Spread", pick, String(side.price), "Modest favorite, -2.5 to -6.5, at -115 or longer.", side.book]);
+  });
+  return rows;
+}
+function gorillaChoice(game, date){
+  const all = slatePlays(game, date).concat(boardCandidates(game, date));
+  let best = null;
+  let rank = -1;
+  all.forEach(row => {
+    const n = gorillaRank(row);
+    if (n > rank) { rank = n; best = row; }
+  });
+  return rank > 0 ? best : null;
+}
 function priceTalk(row){
   const raw = String((row && row[5]) || "").replace(/\s+/g, " ").trim();
   const made = raw.match(/made\s+(.+?),\s*book\s+(.+?),\s*gap\s+([0-9]+(?:\.[0-9]+)?)\s*(cents)?/i);
@@ -3838,28 +3908,6 @@ function shopLine(row){
   if (n < 0) return " If the price is -115 or shorter, I pass.";
   return " I need the plus money to hold. If it flips to a short favorite, I pass.";
 }
-function recordLean(away, home, awayRec, homeRec){
-  const parse = rec => {
-    const m = String(rec || "").match(/(\d+)-(\d+)/);
-    return m ? {w: Number(m[1]), l: Number(m[2])} : null;
-  };
-  const a = parse(awayRec), h = parse(homeRec);
-  if (!a || !h) return "";
-  const aw = a.w / Math.max(1, a.w + a.l), hw = h.w / Math.max(1, h.w + h.l);
-  if (Math.abs(aw - hw) < 0.08) return "The records are close, so I would need a dog price, not a team name.";
-  if (hw > aw) return "The record leans " + home + ", which is how a short favorite gets born. I do not bet that lean unless the card prices a dog.";
-  return "The record leans " + away + " on the road. I still need the card to name a number.";
-}
-function passRule(sport){
-  const code = String(sport || "").toUpperCase();
-  if (code === "NBA") return "I want a dog spread at -110. A short favorite is a pass.";
-  if (code === "NHL") return "I want the dog moneyline or a puck line, not a short favorite.";
-  if (code === "NFL") return "I want the dog if the spread is a number, and I name the total.";
-  if (code === "CFB") return "A home dog of 7 or more gets the look. Inside a field goal I pass.";
-  if (code === "MLB") return "I want the dog or a run line, not a short moneyline.";
-  if (code === "CBB") return "I want a dog spread at -110, and I do not force a side.";
-  return "I want a dog at -110. I do not invent a price.";
-}
 function gorillaNote(game, date){
   const sides = slateSides(game);
   const away = sideNick(sides.away.name);
@@ -3870,22 +3918,19 @@ function gorillaNote(game, date){
   const city = noteCity(game && game.location);
   const where = city ? " in " + city : "";
   const day = String(date || "").slice(0, 10);
-  const plays = slatePlays(game, date);
-  if (!plays.length) {
+  const plays = gorillaChoice(game, date);
+  if (!plays) {
     const lines = cardLines(postedCard).filter(r => r[0] === day);
     const passed = lines.some(r => r[1] === String(game.sport || "").toUpperCase() && isNoCard(r));
-    const lean = recordLean(away, home, awayRec, homeRec);
     let body;
     if (seasonEnded(game.sport)) body = game.sport + " is closed. " + away + " at " + home + where + " can sit on the slate, but I do not price a sport after its last card.";
-    else if (passed) body = away + " at " + home + recBit + where + ". The card passed " + game.sport + " on purpose. " + (lean || "I am not adding a side the card refused.");
-    else if (!lines.length) body = away + " at " + home + recBit + where + ". The morning card has not priced this game. " + (lean || passRule(game.sport));
-    else body = away + " at " + home + recBit + where + ". It is on the slate and not on the card. " + (lean || passRule(game.sport));
+    else if (passed) body = away + " at " + home + recBit + where + ". The card passed " + game.sport + ". I am not adding a dog spread or an under.";
+    else body = away + " at " + home + recBit + where + ". I am passing. I need a plus-money dog from +100 to +220, or a favorite from -2.5 to -6.5 at -115 or longer.";
     return body.replace(/\s+/g, " ").trim();
   }
-  const main = plays[0];
+  const main = plays;
   const price = main[4] ? " (" + main[4] + ")" : "";
   let body = "I am on " + main[3] + price + ". " + priceTalk(main);
-  if (plays[1]) body += " Same game also has " + plays[1][3] + (plays[1][4] ? " (" + plays[1][4] + ")" : "") + ".";
   body += shopLine(main);
   return body.replace(/\s+/g, " ").trim();
 }
@@ -3905,8 +3950,8 @@ function slateTable(list, date, extra){
     const nick = name => String(name || "").split(/\s+/).slice(-1)[0] || "";
     const line = side => esc(nick(side.name) + " " + (side.record || "—"));
     const records = "<div>" + line(away) + "</div><div>" + line(home) + "</div>";
-    const plays = slatePlays(game, date);
-    const main = plays[0];
+    const plays = gorillaChoice(game, date);
+    const main = plays;
     const playAttr = main ? " data-type='" + encodeURIComponent(main[2] || "Spread") + "' data-pick='" + encodeURIComponent(main[3] || "") + "' data-odds='" + encodeURIComponent(String(main[4] || "")) + "' data-notes='" + encodeURIComponent(main[5] || "") + "' data-book='" + encodeURIComponent(main[6] || "") + "' data-edge='" + ((/edge/i.test(main[5] || "") || /^high\b/i.test(main[5] || "")) ? "1" : "0") + "'" : "";
     const add = extra ? "<button type='button' class='add-game' data-sport='" + encodeURIComponent(game.sport || "") + "' data-game='" + encodeURIComponent(game.game || "") + "' data-date='" + encodeURIComponent(date || "") + "'" + playAttr + ">Add</button>" : "";
     const spoken = gorillaNote(game, date);
