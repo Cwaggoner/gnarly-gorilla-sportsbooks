@@ -2232,7 +2232,8 @@ function drawCardAnalysis(text){
   posted.filter(isNoCard).forEach(r => { if (!rows.some(row => row[1] === r[1])) rows.push(r); });
   const title = document.querySelector("#cardanalysis h3");
   const read = document.getElementById("sharpread");
-  if (!rows.length) {
+  const slateReady = ((pickSlate && pickSlate.games) || []).length;
+  if (!rows.length && !slateReady) {
     grid.innerHTML = "<p class='warn'>Today's card is not posted yet. Yesterday's picks stay off this card.</p>";
     if (title) title.textContent = "Analysis · " + today;
     if (read) read.textContent = "No card is live yet. It posts with the morning picks. Yesterday is not carried onto this card.";
