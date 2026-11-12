@@ -163,8 +163,7 @@ html, body, .page, .page * { overflow-anchor:none; }
 #slips .score-copy > * + * { margin-top:2px; }
 #slips .score-copy :is(.slips-side, .api-note, .warn) { max-width:none; margin:0; }
 #slips .score-copy p:empty { display:none; }
-#slips .result-files { display:flex; align-items:flex-end; gap:8px; flex-wrap:wrap; min-width:0; max-width:100%; }
-#slips .result-files > :nth-child(2) { margin-left:2px; }
+#slips .result-files { display:flex; align-items:flex-end; gap:8px; flex-wrap:wrap; flex-basis:100%; min-width:0; max-width:100%; }
 .section-head h2 { margin:0; font-size:25px; }
 .slips-side { margin:0; text-align:left; max-width:62%; font-size:12px; }
 .nowrap { white-space:nowrap; }
@@ -1313,9 +1312,9 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <label>Sport<select id="fSport" class="sport-select"><option value="">All</option><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option></select></label>
 <label>Book<select id="fBook" class="book-select"><option value="" selected>All</option><option value="BetMGM">BetMGM</option><option>Caesars</option><option>DraftKings</option><option>Fanatics</option><option>FanDuel</option><option>HardRock</option></select></label>
 <label>Market<select id="fType"><option value="">All</option><option>Moneyline</option><option>Spread</option><option>Total</option><option>Prop</option><option>Parlay</option><option>SGP</option></select></label>
-<div class="result-files">
 <label>Result<select id="fResult"><option value="">All</option><option>pending</option><option>win</option><option>loss</option><option>push</option></select></label>
 <label>Date<select id="fDateSort"><option value="" selected>Unfiltered</option><option value="new">Newest</option><option value="old">Oldest</option></select></label>
+<div class="result-files">
 <label>Load Ledger<input type="file" id="loadledger" accept=".json,application/json"><span class="file-face">No File Chosen</span></label>
 <label>Import CSV<input type="file" id="import" accept=".csv,text/csv"><span class="file-face">No File Chosen</span></label>
 <button type="button" class="danger" id="clear">Clear Pending</button>
