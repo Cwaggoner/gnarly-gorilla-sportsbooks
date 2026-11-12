@@ -1,5 +1,6 @@
-# file: GG-CARD-2026-11-11
-2026-11-11 | CBB | No Picks
-2026-11-11 | CFB | Side | Sacramento State +18 | -110 | made -7.2, book -18, gap 10.8, reason confirmed starter change Angel Flores out for season (leading rusher), Glasser starting; Edge. Turnover: Sac State gives it away more (negative margin). Bench: Salazar Jr. backup QB.
-2026-11-11 | NBA | No Picks
-2026-11-11 | NHL | No Picks
+# file: GG-CARD-2026-11-12
+2026-11-12 | NHL | No Picks
+2026-11-12 | NBA | Spread | Washington Wizards +9.5 | -105 | made +2.67, book +9.5, gap 6.83, reason back-to-back for Wizards and Jalen Duren out for Pistons. Turnover line: Wizards give away 1.1 more than they take. Bench line: short second unit with key outs. Edge.
+2026-11-12 | NFL | Side | New York Giants -2 | -110 | made -6.25, book -2, gap 4.25, reason Commanders starting center Lucas Patrick out (concussion). Edge. Turnover: Giants -2 margin move 1.5 against. Bench: Commanders backup C Matt Gulbin.
+2026-11-12 | CBB | No Picks
+2026-11-12 | CFB | No Picks
