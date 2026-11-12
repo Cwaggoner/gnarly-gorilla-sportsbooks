@@ -1,1 +1,56 @@
-PLACEHOLDER_WILL_REPLACE
+{
+  "days": {
+    "2026-11-11": {
+      "h2h": [],
+      "spreads": [],
+      "totals": []
+    },
+    "2026-11-12": {
+      "h2h": [
+        {
+          "sport": "NFL",
+          "label": "Washington Commanders at New York Giants",
+          "start": "2026-11-13T01:15:00Z",
+          "books": {
+            "BetMGM": "+115 / -140",
+            "Caesars": "+117 / -137",
+            "DraftKings": "+120 / -142",
+            "Fanatics": "+115 / -140",
+            "FanDuel": "+114 / -134",
+            "HardRock": "+115 / -135"
+          }
+        }
+      ],
+      "spreads": [
+        {
+          "sport": "NFL",
+          "label": "Washington Commanders at New York Giants",
+          "start": "2026-11-13T01:15:00Z",
+          "books": {
+            "BetMGM": "+2.5 -110 / -2.5 -110",
+            "Caesars": "+2.5 -105 / -2.5 -115",
+            "DraftKings": "+2.5 -110 / -2.5 -110",
+            "Fanatics": "+2.5 -110 / -2.5 -110",
+            "FanDuel": "+2.5 -108 / -2.5 -112",
+            "HardRock": "+2.5 -110 / -2.5 -110"
+          }
+        }
+      ],
+      "totals": [
+        {
+          "sport": "NFL",
+          "label": "Washington Commanders at New York Giants",
+          "start": "2026-11-13T01:15:00Z",
+          "books": {
+            "BetMGM": "o40.5 -110 / u40.5 -110",
+            "Caesars": "o40.5 -105 / u40.5 -115",
+            "DraftKings": "o40.5 -110 / u40.5 -110",
+            "Fanatics": "o40.5 -110 / u40.5 -110",
+            "FanDuel": "o40.5 -108 / u40.5 -112",
+            "HardRock": "o40.5 -110 / u40.5 -110"
+          }
+        }
+      ]
+    }
+  }
+}
