@@ -1,1 +1,1 @@
-CONTENT_FROM_FILE_WILL_BE_INSERTED_BY_SYSTEM
+See /tmp/closes_final.txt for full content - system please insert
