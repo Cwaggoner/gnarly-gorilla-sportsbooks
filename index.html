@@ -113,11 +113,11 @@ html, body, .page, .page * { overflow-anchor:none; }
 #slips .slip-actions { display:flex; flex-direction:row; flex-wrap:wrap; align-items:flex-end; justify-content:flex-start; gap:8px; margin:0; }
 #slips .result-files .slip-actions { align-self:flex-end; flex:0 0 auto; }
 #slips .slip-actions button { white-space:nowrap; flex:0 0 auto; }
-#slips #clear { width:calc(6.6em - 2px); min-width:calc(6.6em - 2px); box-sizing:border-box; text-align:center; }
+#slips #clear { width:auto; min-width:0; flex:0 0 auto; box-sizing:border-box; text-align:center; padding-left:10px; padding-right:10px; }
 #slips .slip-actions button.odds-link { margin-top:0; }
 #slips .save-slot { position:relative; display:inline-flex; align-items:center; flex:0 0 auto; }
 #slips #ledgernote { position:absolute; right:0; bottom:calc(100% + 2px); margin:0; line-height:1; white-space:nowrap; }
-#slips .slip-filters { flex-wrap:wrap; max-width:100%; min-width:0; box-sizing:border-box; }
+#slips .slip-filters { flex-wrap:nowrap; justify-content:space-between; max-width:100%; min-width:0; box-sizing:border-box; }
 #slips .slip-frame, .align-frame { border:1px solid var(--gray); border-radius:10px; padding:10px 12px; margin:var(--box-gap) 0; box-sizing:border-box; width:100%; max-width:100%; align-self:stretch; }
 .card > .odds-tools,
 #stats,
@@ -154,7 +154,7 @@ html, body, .page, .page * { overflow-anchor:none; }
 #slips .slip-frame { border:0; padding:0; background:transparent; }
 #slips table.score-align { width:calc(100% + 16px); min-width:0; margin:0 -8px; border-collapse:separate; border-spacing:8px 0; }
 #slips table.score-align td { white-space:normal; padding:10px 12px; border:1px solid var(--gray); border-radius:10px; background:transparent; vertical-align:top; box-sizing:border-box; }
-#slips table.score-align td:first-child { width:1%; white-space:nowrap; }
+#slips table.score-align td:first-child { width:auto; white-space:nowrap; }
 #slips table.score-align td.book-cell { width:220px; white-space:normal; padding:10px 12px; text-align:center; }
 #slips #bookbadge { margin:0 auto; }
 #slips .sucker-line { margin:8px auto 0; width:196px; font-size:12px; line-height:1.35; text-align:center; color:#ff00ff; }
