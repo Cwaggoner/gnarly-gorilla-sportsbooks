@@ -4391,18 +4391,9 @@ function finishedOnBoard(game, board){
 }
 function dropFinishedFromSlate(board){
   if (!pickSlate || !board || !board.length) return 0;
-  const open = g => !finishedOnBoard(g, board);
-  const droppedGames = (pickSlate.games || []).concat(pickSlate.passed || []).filter(g => !open(g));
-  const before = (pickSlate.games || []).length + (pickSlate.passed || []).length;
-  pickSlate.games = (pickSlate.games || []).filter(open);
-  pickSlate.passed = (pickSlate.passed || []).filter(open);
-  const dropped = before - ((pickSlate.games || []).length + (pickSlate.passed || []).length);
-  if (dropped) {
-    rememberFinished(droppedGames);
-    drawPickSlate();
-    try { drawDashboard(); } catch (e) {}
-  }
-  return dropped;
+  const finished = ((pickSlate.games || []).concat(pickSlate.passed || [])).filter(g => finishedOnBoard(g, board));
+  if (finished.length) rememberFinished(finished);
+  return 0;
 }
 async function refreshSlateRecords(){
   const pending = gradedPool().filter(b => b && b.result === "pending" && !isNoPick(b) && inSlipWindow(b.date));
