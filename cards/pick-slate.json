@@ -1,89 +1,112 @@
 {
-  "date": "2026-11-12",
-  "source": "ESPN scoreboard, no odds key",
-  "passedNote": "Games being played that did not make the picks.",
+  "date": "2026-11-13",
+  "source": "ESPN scoreboard at 4:00 AM",
   "games": [
     {
-      "sport": "NBA",
-      "game": "Detroit Pistons at Washington Wizards",
-      "start": "2026-11-13T00:00:00Z",
-      "location": "Capital One Arena, Washington, District of Columbia",
-      "awayRecord": "7-3",
-      "homeRecord": "4-8"
+      "sport": "CBB",
+      "game": "North Alabama at Miami",
+      "start": "2026-11-14T00:00:00Z",
+      "location": "Watsco Center, Coral Gables, FL",
+      "records": {"North Alabama": "2-1", "Miami": "2-1"}
     },
     {
-      "sport": "NFL",
-      "game": "Washington Commanders at New York Giants",
-      "start": "2026-11-13T01:15:00Z",
-      "location": "MetLife Stadium, East Rutherford, New Jersey",
-      "awayRecord": "2-5-1",
-      "homeRecord": "5-2-1"
+      "sport": "CFB",
+      "game": "Florida State at Pittsburgh",
+      "start": "2026-11-14T00:00:00Z",
+      "location": "Acrisure Stadium, Pittsburgh, PA",
+      "records": {"Florida State": "4-5", "Pittsburgh": "6-3"}
+    },
+    {
+      "sport": "CFB",
+      "game": "Illinois at UCLA",
+      "start": "2026-11-14T02:00:00Z",
+      "location": "Rose Bowl, Pasadena, CA",
+      "records": {"Illinois": "6-3", "UCLA": "9-0"}
+    },
+    {
+      "sport": "CFB",
+      "game": "Houston at Colorado",
+      "start": "2026-11-14T03:15:00Z",
+      "location": "Folsom Field, Boulder, CO",
+      "records": {"Houston": "7-2", "Colorado": "3-6"}
+    },
+    {
+      "sport": "NBA",
+      "game": "Atlanta Hawks at Chicago Bulls",
+      "start": "2026-11-14T01:00:00Z",
+      "location": "United Center, Chicago, IL",
+      "records": {"Atlanta Hawks": "7-5", "Chicago Bulls": "1-9"}
+    },
+    {
+      "sport": "NBA",
+      "game": "Cleveland Cavaliers at Miami Heat",
+      "start": "2026-11-14T01:00:00Z",
+      "location": "Kaseya Center, Miami, FL",
+      "records": {"Cleveland Cavaliers": "6-6", "Miami Heat": "5-6"}
+    },
+    {
+      "sport": "NBA",
+      "game": "Golden State Warriors at San Antonio Spurs",
+      "start": "2026-11-14T02:30:00Z",
+      "location": "Frost Bank Center, San Antonio, TX",
+      "records": {"Golden State Warriors": "8-4", "San Antonio Spurs": "10-2"}
+    },
+    {
+      "sport": "NBA",
+      "game": "Memphis Grizzlies at New Orleans Pelicans",
+      "start": "2026-11-14T01:00:00Z",
+      "location": "Smoothie King Center, New Orleans, LA",
+      "records": {"Memphis Grizzlies": "7-4", "New Orleans Pelicans": "4-8"}
+    },
+    {
+      "sport": "NBA",
+      "game": "Milwaukee Bucks at Orlando Magic",
+      "start": "2026-11-14T00:00:00Z",
+      "location": "Kia Center, Orlando, FL",
+      "records": {"Milwaukee Bucks": "1-11", "Orlando Magic": "4-7"}
+    },
+    {
+      "sport": "NBA",
+      "game": "New York Knicks at Indiana Pacers",
+      "start": "2026-11-14T00:00:00Z",
+      "location": "Gainbridge Fieldhouse, Indianapolis, IN",
+      "records": {"New York Knicks": "6-5", "Indiana Pacers": "4-8"}
+    },
+    {
+      "sport": "NBA",
+      "game": "Oklahoma City Thunder at LA Clippers",
+      "start": "2026-11-14T03:30:00Z",
+      "location": "Intuit Dome, Inglewood, CA",
+      "records": {"Oklahoma City Thunder": "8-4", "LA Clippers": "2-8"}
+    },
+    {
+      "sport": "NBA",
+      "game": "Portland Trail Blazers at Sacramento Kings",
+      "start": "2026-11-14T03:00:00Z",
+      "location": "Golden 1 Center, Sacramento, CA",
+      "records": {"Portland Trail Blazers": "8-3", "Sacramento Kings": "1-10"}
+    },
+    {
+      "sport": "NBA",
+      "game": "Utah Jazz at Houston Rockets",
+      "start": "2026-11-14T01:30:00Z",
+      "location": "Toyota Center, Houston, TX",
+      "records": {"Utah Jazz": "1-11", "Houston Rockets": "9-3"}
+    },
+    {
+      "sport": "NHL",
+      "game": "Nashville Predators at Vegas Golden Knights",
+      "start": "2026-11-14T03:00:00Z",
+      "location": "T-Mobile Arena, Las Vegas, NV",
+      "records": {"Nashville Predators": "10-4-5", "Vegas Golden Knights": "13-5-2"}
+    },
+    {
+      "sport": "NHL",
+      "game": "New York Rangers at Vancouver Canucks",
+      "start": "2026-11-14T02:00:00Z",
+      "location": "Rogers Arena, Vancouver, BC",
+      "records": {"New York Rangers": "11-8-1", "Vancouver Canucks": "3-16-1"}
     }
   ],
-  "passed": [
-    {
-      "sport": "CBB",
-      "game": "Montana State at BYU",
-      "start": "2026-11-13T00:00:00Z",
-      "location": "Marriott Center, Provo, Utah",
-      "awayRecord": "1-1",
-      "homeRecord": "3-0"
-    },
-    {
-      "sport": "CFB",
-      "game": "Memphis at South Florida",
-      "start": "2026-11-13T01:00:00Z",
-      "location": "Raymond James Stadium, Tampa, Florida",
-      "awayRecord": "7-2",
-      "homeRecord": "6-3"
-    },
-    {
-      "sport": "CFB",
-      "game": "Louisiana at UL Monroe",
-      "start": "2026-11-13T02:00:00Z",
-      "location": "Malone Stadium, Monroe, Louisiana",
-      "awayRecord": "6-3",
-      "homeRecord": "2-7"
-    },
-    {
-      "sport": "NBA",
-      "game": "Toronto Raptors at Philadelphia 76ers",
-      "start": "2026-11-13T00:00:00Z",
-      "location": "Xfinity Mobile Arena, Philadelphia, Pennsylvania",
-      "awayRecord": "5-6",
-      "homeRecord": "9-3"
-    },
-    {
-      "sport": "NBA",
-      "game": "Dallas Mavericks at Minnesota Timberwolves",
-      "start": "2026-11-13T01:00:00Z",
-      "location": "Target Center, Minneapolis, Minnesota",
-      "awayRecord": "7-4",
-      "homeRecord": "8-3"
-    },
-    {
-      "sport": "NBA",
-      "game": "Charlotte Hornets at Phoenix Suns",
-      "start": "2026-11-13T02:00:00Z",
-      "location": "Mortgage Matchup Center, Phoenix, Arizona",
-      "awayRecord": "4-7",
-      "homeRecord": "4-6"
-    },
-    {
-      "sport": "NHL",
-      "game": "Carolina Hurricanes at Seattle Kraken",
-      "start": "2026-11-12T17:00:00Z",
-      "location": "Veikkaus Arena, Helsinki, Finland",
-      "awayRecord": "14-3-2",
-      "homeRecord": "9-6-1"
-    },
-    {
-      "sport": "NHL",
-      "game": "Montreal Canadiens at Boston Bruins",
-      "start": "2026-11-13T00:00:00Z",
-      "location": "TD Garden, Boston, Massachusetts",
-      "awayRecord": "11-3-4",
-      "homeRecord": "13-4-1"
-    }
-  ]
+  "passed": []
 }
