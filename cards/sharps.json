@@ -23,7 +23,7 @@
         "home": "Suns",
         "confidence": "High",
         "confidencePct": 65,
-        "result": "pending"
+        "result": "win"
       },
       {
         "id": "401862815",
@@ -44,7 +44,7 @@
         "home": "East Carolina",
         "confidence": "High",
         "confidencePct": 64,
-        "result": "pending"
+        "result": "win"
       },
       {
         "id": "401869944",
@@ -65,7 +65,7 @@
         "home": "Georgia St",
         "confidence": "High",
         "confidencePct": 61,
-        "result": "pending"
+        "result": "loss"
       },
       {
         "id": "401909285",
@@ -86,7 +86,7 @@
         "home": "Warriors",
         "confidence": "High",
         "confidencePct": 61,
-        "result": "pending"
+        "result": "loss"
       }
     ],
     "shark-vito": [
@@ -109,7 +109,7 @@
         "home": "N Dakota St",
         "confidence": "High",
         "confidencePct": 60,
-        "result": "pending"
+        "result": "win"
       },
       {
         "id": "401858508",
@@ -130,7 +130,7 @@
         "home": "UCLA",
         "confidence": "High",
         "confidencePct": 63,
-        "result": "pending"
+        "result": "loss"
       },
       {
         "id": "401858501",
@@ -151,7 +151,7 @@
         "home": "Indiana",
         "confidence": "High",
         "confidencePct": 63,
-        "result": "pending"
+        "result": "win"
       },
       {
         "id": "401858507",
@@ -172,7 +172,7 @@
         "home": "Rutgers",
         "confidence": "High",
         "confidencePct": 63,
-        "result": "pending"
+        "result": "win"
       }
     ],
     "shark-rocco": [
@@ -195,7 +195,7 @@
         "home": "Commanders",
         "confidence": "High",
         "confidencePct": 64,
-        "result": "pending"
+        "result": "loss"
       },
       {
         "id": "401909283",
@@ -216,7 +216,7 @@
         "home": "Mavericks",
         "confidence": "High",
         "confidencePct": 61,
-        "result": "pending"
+        "result": "win"
       },
       {
         "id": "401909284",
@@ -237,7 +237,7 @@
         "home": "Timberwolves",
         "confidence": "High",
         "confidencePct": 65,
-        "result": "pending"
+        "result": "loss"
       },
       {
         "id": "401873032",
@@ -258,7 +258,7 @@
         "home": "Rams",
         "confidence": "High",
         "confidencePct": 65,
-        "result": "pending"
+        "result": "loss"
       }
     ],
     "shark-paulie": [
@@ -281,7 +281,7 @@
         "home": "Navy",
         "confidence": "High",
         "confidencePct": 65,
-        "result": "pending"
+        "result": "win"
       },
       {
         "id": "401858283",
@@ -302,7 +302,7 @@
         "home": "Louisville",
         "confidence": "High",
         "confidencePct": 65,
-        "result": "pending"
+        "result": "loss"
       },
       {
         "id": "401864530",
@@ -323,7 +323,7 @@
         "home": "UNLV",
         "confidence": "High",
         "confidencePct": 65,
-        "result": "pending"
+        "result": "win"
       },
       {
         "id": "401856737",
@@ -344,7 +344,7 @@
         "home": "Texas",
         "confidence": "High",
         "confidencePct": 62,
-        "result": "pending"
+        "result": "loss"
       }
     ],
     "shark-gino": [
@@ -367,7 +367,7 @@
         "home": "Flames",
         "confidence": "High",
         "confidencePct": 64,
-        "result": "pending"
+        "result": "win"
       },
       {
         "id": "401892619",
@@ -388,7 +388,7 @@
         "home": "Sharks",
         "confidence": "High",
         "confidencePct": 64,
-        "result": "pending"
+        "result": "loss"
       },
       {
         "id": "401892615",
@@ -409,7 +409,7 @@
         "home": "Red Wings",
         "confidence": "High",
         "confidencePct": 64,
-        "result": "pending"
+        "result": "win"
       },
       {
         "id": "401892618",
@@ -430,7 +430,7 @@
         "home": "Kings",
         "confidence": "High",
         "confidencePct": 64,
-        "result": "pending"
+        "result": "win"
       }
     ]
   }

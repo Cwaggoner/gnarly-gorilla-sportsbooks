@@ -12339,6 +12339,28 @@ async function sharpGrade(card){
   });
   return card;
 }
+function sharpRate(w, l){
+  const n = (w || 0) + (l || 0);
+  if (!n) return "";
+  return " · " + Math.round((w || 0) / n * 100) + "%";
+}
+function sharpRecText(rec){
+  rec = rec || {w: 0, l: 0, p: 0};
+  return (rec.w || 0) + "-" + (rec.l || 0) + "-" + (rec.p || 0) + sharpRate(rec.w, rec.l);
+}
+async function gradeSharpBook(book){
+  book = book || {cards: {}};
+  book.cards = book.cards || {};
+  const dates = Object.keys(book.cards);
+  for (let i = 0; i < dates.length; i++) {
+    const card = book.cards[dates[i]];
+    if (!card || !card.sharps) continue;
+    const pending = SHARKS.some(shark => (card.sharps[shark.id] || []).some(p => p && !p.empty && p.result !== "win" && p.result !== "loss" && p.result !== "push"));
+    if (!pending) continue;
+    await sharpGrade(card);
+  }
+  return book;
+}
 function sharpTally(book){
   const tally = {};
   SHARKS.forEach(s => { tally[s.id] = {w: 0, l: 0, p: 0}; });
@@ -12382,16 +12404,18 @@ async function paintSharpTeam(){
       }
     }
   } catch (e) {}
+  await gradeSharpBook(book);
+  sharpWriteBook(book);
   const tally = sharpTally(book);
   let w = 0, l = 0, p = 0;
   Object.keys(tally).forEach(id => { w += tally[id].w || 0; l += tally[id].l || 0; p += tally[id].p || 0; });
-  el.textContent = w + "-" + l + "-" + p;
+  el.textContent = sharpRecText({w: w, l: l, p: p});
   const cash = document.getElementById("sharpteamwin");
   if (cash) cash.innerHTML = moneyHtml(sharpTeamCash(book));
   const list = document.getElementById("sharpeach");
   if (list) list.innerHTML = SHARKS.map(shark => {
     const rec = tally[shark.id] || {w: 0, l: 0, p: 0};
-    return "<li><b>" + esc(shark.name) + "</b><span>" + (rec.w || 0) + "-" + (rec.l || 0) + "-" + (rec.p || 0) + "</span></li>";
+    return "<li><b>" + esc(shark.name) + "</b><span>" + sharpRecText(rec) + "</span></li>";
   }).join("");
   sizeSharpTeam();
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(sizeSharpTeam);
@@ -12527,7 +12551,7 @@ function sharpPaint(card, book){
     }).join("");
     const four = sharpFourCash(card.sharps[shark.id]);
     const cash = "<div class='shark-cash'><p class='shark-allwin'><span>All Wins:</span>" + money(four.all) + "</p><p class='shark-actwin'><span>Actual Wins:</span>" + money(four.actual) + "</p></div>";
-    return "<article class='shark' id='" + shark.id + "'><div class='shark-face'><img src='" + shark.img + "' alt='" + esc(shark.alt) + "'><button type='button' class='shark-add-all' data-shark='" + shark.id + "'>Add All</button>" + cash + "</div><div><h3>" + esc(shark.name) + "</h3><p class='shark-record'>Record " + rec.w + "-" + rec.l + (rec.p ? "-" + rec.p : "") + "</p><p class='shark-rule'>" + esc(shark.rule) + "</p><div class='shark-picks'>" + picks + "</div><p class='shark-fee'>" + esc(shark.fee) + "</p></div></article>";
+    return "<article class='shark' id='" + shark.id + "'><div class='shark-face'><img src='" + shark.img + "' alt='" + esc(shark.alt) + "'><button type='button' class='shark-add-all' data-shark='" + shark.id + "'>Add All</button>" + cash + "</div><div><h3>" + esc(shark.name) + "</h3><p class='shark-record'>Record " + sharpRecText(rec) + "</p><p class='shark-rule'>" + esc(shark.rule) + "</p><div class='shark-picks'>" + picks + "</div><p class='shark-fee'>" + esc(shark.fee) + "</p></div></article>";
   }).join("");
 }
 async function refreshSharpGrades(){
@@ -12545,7 +12569,7 @@ async function refreshSharpGrades(){
     if (!article) return;
     const rec = tally[shark.id] || {w: 0, l: 0, p: 0};
     const line = article.querySelector(".shark-record");
-    if (line) line.textContent = "Record " + rec.w + "-" + rec.l + (rec.p ? "-" + rec.p : "");
+    if (line) line.textContent = "Record " + sharpRecText(rec);
     (card.sharps[shark.id] || []).forEach(t => {
       if (!t || t.empty || t.id == null) return;
       const result = t.result || "pending";
@@ -12597,6 +12621,7 @@ async function loadSharks(){
   card = sharpKeepGrades(card, book);
   card = await sharpGrade(card);
   book.cards[card.date] = card;
+  await gradeSharpBook(book);
   sharpWriteBook(book);
   window.__sharpCard = card;
   sharpPaint(card, book);
