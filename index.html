@@ -3559,19 +3559,15 @@ function addCardPlay(btn){
     let added = 0;
     plays.forEach(row => {
       let price = Number(String(row[4] || "").replace(/[^\d.+-]/g, ""));
-      if (!Number.isFinite(price)) {
-        const found = String(row[3] || "").match(/[+-]\d+(?:\.\d+)?/);
-        price = found ? Number(found[0]) : NaN;
-      }
-      if (!Number.isFinite(price) || !row[3]) return;
+      if (!Number.isFinite(price) || Math.abs(price) < 100 || !row[3]) return;
       const before = betSlip.length;
       addSlipLeg({date: row[0] || date, sport: row[1] || sport, type: row[2] || "Spread", pick: row[3], odds: price, book: row[6] || book, notes: row[5] || "", edge: /edge/i.test(row[5] || "") || /^high\b/i.test(row[5] || "") || attrOf(btn, "edge") === "1", game: game});
       if (betSlip.length > before) added += 1;
     });
     if (note) note.textContent = added ? "Added " + added + " play" + (added === 1 ? "" : "s") + " to the Bet Slip." + (lookedUp ? " That game was not on the card, so this is the posted spread." : " Add on the Bet Slip writes the Slips table.") : "That play is already on the Bet Slip.";
   };
-  if (chosen) { plays = [chosen]; finish(false); return; }
-  if (note) note.textContent = game + " has no play. Dog spreads and unders are off, and there is no plus-money dog or a favorite from -2.5 to -6.5 at -115 or longer.";
+  if (chosen && Number.isFinite(Number(String(chosen[4] || "").replace(/[^\d.+-]/g, "")))) { plays = [chosen]; finish(false); return; }
+  if (note) note.textContent = game + " has no posted price, so it was not added.";
 }
 function openGameBet(sport, game, date){
   const awayHome = String(game || "").split(/\s+at\s+/i);
@@ -3878,14 +3874,14 @@ function pricedSides(game, date, lines, book){
   const totals = shopSides(lines.totals);
   [0, 1].forEach(index => {
     const side = h2h && h2h[index];
-    if (!side || !Number.isFinite(side.price)) return;
+    if (!side || !Number.isFinite(side.price) || Math.abs(side.price) < 100) return;
     const name = nick(index ? home : away);
     const pick = index ? name + " ML vs " + away : name + " ML at " + home;
     rows.push([day, sport, "Moneyline", pick, String(side.price), "Best of the posted choices.", book || ""]);
   });
   [0, 1].forEach(index => {
     const side = spreads && spreads[index];
-    if (!side || side.point == null || !Number.isFinite(side.price)) return;
+    if (!side || side.point == null || !Number.isFinite(side.price) || Math.abs(side.price) < 100) return;
     const name = nick(index ? home : away);
     const shown = (side.point > 0 ? "+" : "") + side.point;
     const pick = index ? name + " " + shown + " vs " + away : name + " " + shown + " at " + home;
@@ -3893,7 +3889,7 @@ function pricedSides(game, date, lines, book){
   });
   if (totals && totals[0] && totals[1] && away && home) {
     const point = totals[0].point != null ? totals[0].point : totals[1].point;
-    if (point != null) {
+    if (point != null && Number.isFinite(totals[0].price) && Math.abs(totals[0].price) >= 100 && Number.isFinite(totals[1].price) && Math.abs(totals[1].price) >= 100) {
       rows.push([day, sport, "Total", away + " at " + home + " Over " + point, String(totals[0].price), "Best of the posted choices.", book || ""]);
       rows.push([day, sport, "Total", away + " at " + home + " Under " + point, String(totals[1].price), "Best of the posted choices.", book || ""]);
     }
@@ -3923,7 +3919,11 @@ function boardCandidates(game, date){
   return rows;
 }
 function gorillaChoice(game, date){
-  const all = slatePlays(game, date).concat(boardCandidates(game, date));
+  if (game && game.final) return null;
+  const all = boardCandidates(game, date).filter(row => {
+    const n = Number(String(row && row[4] || "").replace(/[^\d.+-]/g, ""));
+    return Number.isFinite(n) && Math.abs(n) >= 100;
+  });
   let best = null;
   let rank = -1;
   all.forEach(row => {
@@ -4003,7 +4003,7 @@ function slateTable(list, date, extra){
     const plays = gorillaChoice(game, date);
     const main = plays;
     const playAttr = main ? " data-type='" + encodeURIComponent(main[2] || "Spread") + "' data-pick='" + encodeURIComponent(main[3] || "") + "' data-odds='" + encodeURIComponent(String(main[4] || "")) + "' data-notes='" + encodeURIComponent(main[5] || "") + "' data-book='" + encodeURIComponent(main[6] || "") + "' data-edge='" + ((/edge/i.test(main[5] || "") || /^high\b/i.test(main[5] || "")) ? "1" : "0") + "'" : "";
-    const add = extra ? "<button type='button' class='add-game' data-sport='" + encodeURIComponent(game.sport || "") + "' data-game='" + encodeURIComponent(game.game || "") + "' data-date='" + encodeURIComponent(date || "") + "'" + playAttr + ">Add</button>" : "";
+    const add = extra && main ? "<button type='button' class='add-game' data-sport='" + encodeURIComponent(game.sport || "") + "' data-game='" + encodeURIComponent(game.game || "") + "' data-date='" + encodeURIComponent(date || "") + "'" + playAttr + ">Add</button>" : "";
     const spoken = gorillaNote(game, date);
     const note = "<td class='note-col' title='" + esc(spoken).replace(/'/g, "") + "'><p><b class='gg-name'>Gnarly Gorilla: </b>" + esc(spoken) + "</p></td>";
     const tone = game.onCard === false ? "slate-pass" : "slate-play";
@@ -4460,6 +4460,7 @@ async function refreshSlateRecords(){
     }
     const spot = hit.location || hit.venue || "";
     if (spot && g.location !== spot) { g.location = spot; changed = true; }
+    if (!!hit.final !== !!g.final) { g.final = !!hit.final; changed = true; }
   };
   if (pickSlate) {
     (pickSlate.games || []).forEach(apply);
