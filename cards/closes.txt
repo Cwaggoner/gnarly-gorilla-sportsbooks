@@ -1632,3 +1632,10 @@
 2026-11-12 | CBB |  | UC Riverside Highlanders at San José State Spartans Over 153.5 | -110
 2026-11-12 | CBB |  | Highlanders at Spartans Under 153.5 | -110
 2026-11-12 | CBB |  | UC Riverside Highlanders at San José State Spartans Under 153.5 | -110
+2026-11-05 | CBB | -110 | Wake Forest +17.5 | -115
+2026-11-05 | CBB | 7000 | Knights ML at Indiana Hoosiers | 7000
+2026-11-05 | CBB | -110 | UMass Lowell River Hawks at Merrimack Warriors Over 143.5 | -110
+2026-11-05 | NHL | 320 | Chicago Blackhawks +320 | 333
+2026-11-05 | NHL | 140 | Flyers ML at Rangers | 120
+2026-11-12 | NBA | -105 | Washington Wizards +9.5 | -105
+2026-11-12 | NFL | -110 | New York Giants -2 | -110
