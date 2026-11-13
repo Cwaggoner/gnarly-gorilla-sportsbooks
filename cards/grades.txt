@@ -54,3 +54,10 @@
 2026-11-11 | NHL | No Picks
 2026-11-11 | NFL | No Picks
 2026-11-11 | MLB | Season Ended
+2026-11-12 | RANGE | All Win 18.61 | All Lose -20.00
+2026-11-12 | NHL | No Picks
+2026-11-12 | NBA | Washington Wizards +9.5 | close -105 | win | 140-144 | 9.52
+2026-11-12 | NFL | New York Giants -2 | close -110 | loss | 21-24 | -10.00
+2026-11-12 | CBB | No Picks
+2026-11-12 | CFB | No Picks
+2026-11-12 | MLB | Season Ended
