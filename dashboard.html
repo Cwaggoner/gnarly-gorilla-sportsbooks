@@ -529,7 +529,8 @@ table.score-align .score-hold + .score-hold { margin-top:2px; }
 .season-hold td { height:18px; width:50%; }
 table.season-hold.filled { border:1px solid #39ff14; border-radius:10px; overflow:hidden; margin-top:8px; }
 table.season-hold.filled th, table.season-hold.filled td { border-bottom:1px solid #39ff14; height:auto; width:auto; color:#d6ffd0; font-size:13px; text-align:left; vertical-align:middle; padding:8px; }
-table.season-hold.filled th { color:#39ff14; background:#102010; }
+#todaycard table.season-hold.filled th.loc-col,
+#todaycard table.season-hold.filled td.loc-col { width:22%; min-width:9rem; white-space:normal; overflow-wrap:anywhere; }
 .gamehead { display:inline; }
 .gamehead .slate-date { color:#39ff14; font-weight:700; white-space:nowrap; }
 #reportDay { color-scheme:dark; }
@@ -4006,12 +4007,12 @@ function slateTable(list, date, extra){
     const spoken = gorillaNote(game, date);
     const note = "<td class='note-col' title='" + esc(spoken).replace(/'/g, "") + "'><p><b class='gg-name'>Gnarly Gorilla: </b>" + esc(spoken) + "</p></td>";
     const tone = game.onCard === false ? "slate-pass" : "slate-play";
-    return "<tr class='" + tone + "'><td>" + esc(game.sport + " " + game.game) + "</td><td>" + esc(when) + "</td><td>" + esc(slateLocation(game)) + "</td><td>" + records + "</td>" + note + (extra ? "<td class='add-col'>" + add + "</td>" : "") + "</tr>";
+    return "<tr class='" + tone + "'><td>" + esc(game.sport + " " + game.game) + "</td><td>" + esc(when) + "</td><td class='loc-col'>" + esc(slateLocation(game)) + "</td><td>" + records + "</td>" + note + (extra ? "<td class='add-col'>" + add + "</td>" : "") + "</tr>";
   }).join("");
   const label = slateDateLabel(date);
   const gameHead = label ? "<th><div class='gamehead'><span>Game</span><span class='slate-date'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + esc(label) + "</span></div></th>" : "<th>Game</th>";
   const addHead = extra ? "<th class='add-col'>Add</th>" : "";
-  return "<div class='table-wrap'><table class='season-hold filled'><thead><tr>" + gameHead + "<th>Time</th><th>Location</th><th>Record</th><th class='note-col'>Notes</th>" + addHead + "</tr></thead><tbody>" + rows + "</tbody></table></div>";
+  return "<div class='table-wrap'><table class='season-hold filled'><thead><tr>" + gameHead + "<th>Time</th><th class='loc-col'>Location</th><th>Record</th><th class='note-col'>Notes</th>" + addHead + "</tr></thead><tbody>" + rows + "</tbody></table></div>";
 }
 function cardSlips(){
   if (hotPool && hotPool.cards) return hotPool.cards;
@@ -4083,7 +4084,7 @@ async function attachSlipGames(){
     const away = game.away.shortDisplayName || game.away.name || game.away.displayName;
     const home = game.home.shortDisplayName || game.home.name || game.home.displayName;
     const label = away + " at " + home;
-    pickSlate.games.push({sport: sport, game: label, start: game.start ? new Date(game.start).toISOString() : "", location: game.venue || "", away: {name: away, record: game.away.record || ""}, home: {name: home, record: game.home.record || ""}, awayRecord: game.away.record || "", homeRecord: game.home.record || ""});
+    pickSlate.games.push({sport: sport, game: label, start: game.start ? new Date(game.start).toISOString() : "", location: game.location || game.venue || "", away: {name: away, record: game.away.record || ""}, home: {name: home, record: game.home.record || ""}, awayRecord: game.away.record || "", homeRecord: game.home.record || ""});
     added = true;
   });
   return added;
@@ -4457,6 +4458,8 @@ async function refreshSlateRecords(){
       g.lineBook = hit.lineBook || "";
       changed = true;
     }
+    const spot = hit.location || hit.venue || "";
+    if (spot && g.location !== spot) { g.location = spot; changed = true; }
   };
   if (pickSlate) {
     (pickSlate.games || []).forEach(apply);
@@ -4817,6 +4820,14 @@ function liveSide(row){
   });
   return {name: team.shortDisplayName || team.displayName || "", shortDisplayName: team.shortDisplayName || "", displayName: team.displayName || "", location: team.location || "", abbreviation: team.abbreviation || "", abbr: team.abbreviation || "", logo: team.logo || "", score: row && row.score != null && row.score !== "" ? String(row.score) : "", rec: rec && rec.summary || "", record: rec && rec.summary || "", lines: lineNums(row)};
 }
+function espnVenue(comp){
+  const venue = comp && comp.venue;
+  if (!venue) return "";
+  const name = venue.fullName || venue.shortName || "";
+  const addr = venue.address || {};
+  const place = [addr.city, addr.state].filter(Boolean).join(", ");
+  return [name, place].filter(Boolean).join(", ");
+}
 function liveGameFromEvent(sport, ev){
   const comp = (ev.competitions || [])[0] || {};
   const status = comp.status || ev.status || {};
@@ -4832,7 +4843,8 @@ function liveGameFromEvent(sport, ev){
   const odds = ((comp.odds || [])[0] || {}).details || "";
   const posted = typeof espnBoardLines === "function" ? espnBoardLines((comp.odds || [])[0]) : null;
   const final = state === "post" || type.completed === true;
-  return {sport: sport, id: ev.id, start: Date.parse(ev.date || comp.date || "") || 0, state: state, live: state === "in" && !final, final: final, postponed: /postpon|cancel|delay/i.test((type.name || "") + " " + (type.detail || "")), detail: type.shortDetail || type.detail || "", situation: sit.downDistanceText || sit.shortDownDistanceText || "", network: network, odds: odds, away: away, home: home, awayScore: Number(away.score), homeScore: Number(home.score), lineBook: posted && posted.book, lines: posted && posted.lines};
+  const location = espnVenue(comp);
+  return {sport: sport, id: ev.id, start: Date.parse(ev.date || comp.date || "") || 0, state: state, live: state === "in" && !final, final: final, postponed: /postpon|cancel|delay/i.test((type.name || "") + " " + (type.detail || "")), detail: type.shortDetail || type.detail || "", situation: sit.downDistanceText || sit.shortDownDistanceText || "", network: network, odds: odds, venue: location, location: location, away: away, home: home, awayScore: Number(away.score), homeScore: Number(home.score), lineBook: posted && posted.book, lines: posted && posted.lines};
 }
 function prettyDay(ymd){
   return new Date(String(ymd).slice(0, 10) + "T12:00:00Z").toLocaleDateString("en-US", {timeZone:"America/New_York", weekday:"short", month:"short", day:"numeric"});
