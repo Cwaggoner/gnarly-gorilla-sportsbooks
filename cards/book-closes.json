@@ -1,6 +1,6 @@
 {
   "source": "ESPN DraftKings close",
-  "saved": "2026-11-13T06:45:00.000Z",
+  "saved": "2026-11-13T09:17:13.000Z",
   "days": {
     "2026-10-29": {
       "NBA": [
@@ -5978,7 +5978,6 @@
         {
           "away": "Toronto Raptors",
           "home": "Philadelphia 76ers",
-          "commence": "2026-11-13T00:00:00Z",
           "books": {
             "DraftKings": {
               "spread": {
@@ -6010,7 +6009,6 @@
         {
           "away": "Detroit Pistons",
           "home": "Washington Wizards",
-          "commence": "2026-11-13T00:00:00Z",
           "books": {
             "DraftKings": {
               "spread": {
@@ -6042,7 +6040,6 @@
         {
           "away": "Dallas Mavericks",
           "home": "Minnesota Timberwolves",
-          "commence": "2026-11-13T01:00:00Z",
           "books": {
             "DraftKings": {
               "spread": {
@@ -6074,7 +6071,6 @@
         {
           "away": "Charlotte Hornets",
           "home": "Phoenix Suns",
-          "commence": "2026-11-13T02:00:00Z",
           "books": {
             "DraftKings": {
               "spread": {
@@ -6108,7 +6104,6 @@
         {
           "away": "Carolina Hurricanes",
           "home": "Seattle Kraken",
-          "commence": "2026-11-12T17:00:00Z",
           "books": {
             "DraftKings": {
               "spread": {
@@ -6140,7 +6135,6 @@
         {
           "away": "Montreal Canadiens",
           "home": "Boston Bruins",
-          "commence": "2026-11-13T00:00:00Z",
           "books": {
             "DraftKings": {
               "spread": {
@@ -6172,7 +6166,6 @@
         {
           "away": "Minnesota Wild",
           "home": "Toronto Maple Leafs",
-          "commence": "2026-11-13T00:00:00Z",
           "books": {
             "DraftKings": {
               "spread": {
@@ -6204,7 +6197,6 @@
         {
           "away": "Colorado Avalanche",
           "home": "Ottawa Senators",
-          "commence": "2026-11-13T00:00:00Z",
           "books": {
             "DraftKings": {
               "spread": {
@@ -6236,7 +6228,6 @@
         {
           "away": "Washington Capitals",
           "home": "New Jersey Devils",
-          "commence": "2026-11-13T00:00:00Z",
           "books": {
             "DraftKings": {
               "spread": {
@@ -6268,7 +6259,6 @@
         {
           "away": "Tampa Bay Lightning",
           "home": "Columbus Blue Jackets",
-          "commence": "2026-11-13T00:00:00Z",
           "books": {
             "DraftKings": {
               "spread": {
@@ -6300,7 +6290,6 @@
         {
           "away": "Detroit Red Wings",
           "home": "Florida Panthers",
-          "commence": "2026-11-13T00:30:00Z",
           "books": {
             "DraftKings": {
               "spread": {
@@ -6332,7 +6321,6 @@
         {
           "away": "Buffalo Sabres",
           "home": "Chicago Blackhawks",
-          "commence": "2026-11-13T01:00:00Z",
           "books": {
             "DraftKings": {
               "spread": {
@@ -6364,7 +6352,6 @@
         {
           "away": "Winnipeg Jets",
           "home": "Dallas Stars",
-          "commence": "2026-11-13T01:00:00Z",
           "books": {
             "DraftKings": {
               "spread": {
@@ -6396,7 +6383,6 @@
         {
           "away": "St. Louis Blues",
           "home": "Utah Mammoth",
-          "commence": "2026-11-13T02:00:00Z",
           "books": {
             "DraftKings": {
               "spread": {
@@ -6428,7 +6414,6 @@
         {
           "away": "New York Islanders",
           "home": "Los Angeles Kings",
-          "commence": "2026-11-13T03:00:00Z",
           "books": {
             "DraftKings": {
               "spread": {
@@ -6462,7 +6447,6 @@
         {
           "away": "Washington Commanders",
           "home": "New York Giants",
-          "commence": "2026-11-13T01:15:00Z",
           "books": {
             "DraftKings": {
               "spread": {
@@ -6496,7 +6480,6 @@
         {
           "away": "Memphis Tigers",
           "home": "South Florida Bulls",
-          "commence": "2026-11-13T01:00:00Z",
           "books": {
             "DraftKings": {
               "spread": {
@@ -6528,16 +6511,15 @@
         {
           "away": "Louisiana Ragin' Cajuns",
           "home": "UL Monroe Warhawks",
-          "commence": "2026-11-13T02:00:00Z",
           "books": {
             "DraftKings": {
               "spread": {
                 "away": {
-                  "point": -10.0,
+                  "point": -10,
                   "price": -108
                 },
                 "home": {
-                  "point": 10.0,
+                  "point": 10,
                   "price": -112
                 }
               },
@@ -6562,7 +6544,6 @@
         {
           "away": "Montana State Bobcats",
           "home": "BYU Cougars",
-          "commence": "2026-11-13T02:00:00Z",
           "books": {
             "DraftKings": {
               "spread": {
@@ -6587,742 +6568,6 @@
                 "point": 162.5,
                 "over": -115,
                 "under": -105
-              }
-            }
-          }
-        },
-        {
-          "away": "Kansas City Roos",
-          "home": "George Mason Patriots",
-          "commence": "2026-11-12T20:00:00Z",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 15.5,
-                  "price": -110
-                },
-                "home": {
-                  "point": -15.5,
-                  "price": -110
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 900
-                },
-                "home": {
-                  "price": -1600
-                }
-              },
-              "total": {
-                "point": 141.5,
-                "over": -110,
-                "under": -110
-              }
-            }
-          }
-        },
-        {
-          "away": "Bradley Braves",
-          "home": "Coppin State Eagles",
-          "commence": "2026-11-12T23:00:00Z",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": -13.5,
-                  "price": -105
-                },
-                "home": {
-                  "point": 13.5,
-                  "price": -115
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": -850
-                },
-                "home": {
-                  "price": 575
-                }
-              },
-              "total": {
-                "point": 131.5,
-                "over": -108,
-                "under": -112
-              }
-            }
-          }
-        },
-        {
-          "away": "Morgan State Bears",
-          "home": "UMBC Retrievers",
-          "commence": "2026-11-12T23:00:00Z",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 7.5,
-                  "price": -102
-                },
-                "home": {
-                  "point": -7.5,
-                  "price": -118
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 275
-                },
-                "home": {
-                  "price": -345
-                }
-              },
-              "total": {
-                "point": 159.5,
-                "over": -110,
-                "under": -110
-              }
-            }
-          }
-        },
-        {
-          "away": "Mercyhurst Lakers",
-          "home": "Penn State Nittany Lions",
-          "commence": "2026-11-12T23:30:00Z",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 19.5,
-                  "price": -102
-                },
-                "home": {
-                  "point": -19.5,
-                  "price": -118
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 1800
-                },
-                "home": {
-                  "price": -5000
-                }
-              },
-              "total": {
-                "point": 144.5,
-                "over": -115,
-                "under": -105
-              }
-            }
-          }
-        },
-        {
-          "away": "Tennessee Tech Golden Eagles",
-          "home": "Indiana Hoosiers",
-          "commence": "2026-11-12T23:30:00Z",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 24.5,
-                  "price": -108
-                },
-                "home": {
-                  "point": -24.5,
-                  "price": -112
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 2000
-                },
-                "home": {
-                  "price": -6500
-                }
-              },
-              "total": {
-                "point": 168.5,
-                "over": -110,
-                "under": -110
-              }
-            }
-          }
-        },
-        {
-          "away": "Western Michigan Broncos",
-          "home": "Purdue Fort Wayne Mastodons",
-          "commence": "2026-11-13T00:00:00Z",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": -2.5,
-                  "price": -102
-                },
-                "home": {
-                  "point": 2.5,
-                  "price": -118
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": -130
-                },
-                "home": {
-                  "price": 110
-                }
-              },
-              "total": {
-                "point": 152.5,
-                "over": -112,
-                "under": -108
-              }
-            }
-          }
-        },
-        {
-          "away": "Central Connecticut Blue Devils",
-          "home": "Sacred Heart Pioneers",
-          "commence": "2026-11-13T00:00:00Z",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 6.5,
-                  "price": -112
-                },
-                "home": {
-                  "point": -6.5,
-                  "price": -108
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 210
-                },
-                "home": {
-                  "price": -258
-                }
-              },
-              "total": {
-                "point": 144.5,
-                "over": -108,
-                "under": -112
-              }
-            }
-          }
-        },
-        {
-          "away": "Monmouth Hawks",
-          "home": "Quinnipiac Bobcats",
-          "commence": "2026-11-13T00:00:00Z",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 1.5,
-                  "price": -120
-                },
-                "home": {
-                  "point": -1.5,
-                  "price": 100
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": -105
-                },
-                "home": {
-                  "price": -115
-                }
-              },
-              "total": {
-                "point": 143.5,
-                "over": -112,
-                "under": -108
-              }
-            }
-          }
-        },
-        {
-          "away": "Stetson Hatters",
-          "home": "Howard Bison",
-          "commence": "2026-11-13T00:00:00Z",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 8.5,
-                  "price": -112
-                },
-                "home": {
-                  "point": -8.5,
-                  "price": -108
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 350
-                },
-                "home": {
-                  "price": -455
-                }
-              },
-              "total": {
-                "point": 148.5,
-                "over": -115,
-                "under": -105
-              }
-            }
-          }
-        },
-        {
-          "away": "Mercer Bears",
-          "home": "West Virginia Mountaineers",
-          "commence": "2026-11-13T00:00:00Z",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 24.5,
-                  "price": -112
-                },
-                "home": {
-                  "point": -24.5,
-                  "price": -108
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 2200
-                },
-                "home": {
-                  "price": -8000
-                }
-              },
-              "total": {
-                "point": 151.5,
-                "over": -108,
-                "under": -112
-              }
-            }
-          }
-        },
-        {
-          "away": "Loyola Maryland Greyhounds",
-          "home": "Towson Tigers",
-          "commence": "2026-11-13T00:00:00Z",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 13.5,
-                  "price": -110
-                },
-                "home": {
-                  "point": -13.5,
-                  "price": -110
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 700
-                },
-                "home": {
-                  "price": -1100
-                }
-              },
-              "total": {
-                "point": 133.5,
-                "over": -110,
-                "under": -110
-              }
-            }
-          }
-        },
-        {
-          "away": "Southern Utah Thunderbirds",
-          "home": "High Point Panthers",
-          "commence": "2026-11-13T00:00:00Z",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 22.5,
-                  "price": -112
-                },
-                "home": {
-                  "point": -22.5,
-                  "price": -108
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 3000
-                },
-                "home": {
-                  "price": -10000
-                }
-              },
-              "total": {
-                "point": 158.5,
-                "over": -115,
-                "under": -105
-              }
-            }
-          }
-        },
-        {
-          "away": "Cal State Bakersfield Roadrunners",
-          "home": "Western Illinois Leathernecks",
-          "commence": "2026-11-13T00:00:00Z",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": -8.5,
-                  "price": -118
-                },
-                "home": {
-                  "point": 8.5,
-                  "price": -102
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": -440
-                },
-                "home": {
-                  "price": 340
-                }
-              },
-              "total": {
-                "point": 147.5,
-                "over": -105,
-                "under": -115
-              }
-            }
-          }
-        },
-        {
-          "away": "Maryland Eastern Shore Hawks",
-          "home": "Rhode Island Rams",
-          "commence": "2026-11-13T00:00:00Z",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 23.5,
-                  "price": -115
-                },
-                "home": {
-                  "point": -23.5,
-                  "price": -105
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 2200
-                },
-                "home": {
-                  "price": -8000
-                }
-              },
-              "total": {
-                "point": 136.5,
-                "over": -105,
-                "under": -115
-              }
-            }
-          }
-        },
-        {
-          "away": "Canisius Golden Griffins",
-          "home": "Brown Bears",
-          "commence": "2026-11-13T00:00:00Z",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 13.5,
-                  "price": -118
-                },
-                "home": {
-                  "point": -13.5,
-                  "price": -102
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 575
-                },
-                "home": {
-                  "price": -850
-                }
-              },
-              "total": {
-                "point": 135.5,
-                "over": -115,
-                "under": -105
-              }
-            }
-          }
-        },
-        {
-          "away": "Niagara Purple Eagles",
-          "home": "Bowling Green Falcons",
-          "commence": "2026-11-13T00:00:00Z",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 15.5,
-                  "price": -115
-                },
-                "home": {
-                  "point": -15.5,
-                  "price": -105
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 950
-                },
-                "home": {
-                  "price": -1650
-                }
-              },
-              "total": {
-                "point": 144.5,
-                "over": -115,
-                "under": -112
-              }
-            }
-          }
-        },
-        {
-          "away": "West Florida Argonauts",
-          "home": "Alabama A&M Bulldogs",
-          "commence": "2026-11-13T01:00:00Z",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 4.5,
-                  "price": -112
-                },
-                "home": {
-                  "point": -4.5,
-                  "price": -108
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 164
-                },
-                "home": {
-                  "price": -198
-                }
-              },
-              "total": {
-                "point": 146.5,
-                "over": -112,
-                "under": -108
-              }
-            }
-          }
-        },
-        {
-          "away": "Oklahoma State Cowboys",
-          "home": "Texas A&M Aggies",
-          "commence": "2026-11-13T01:00:00Z",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 7.5,
-                  "price": -102
-                },
-                "home": {
-                  "point": -7.5,
-                  "price": -118
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 300
-                },
-                "home": {
-                  "price": -380
-                }
-              },
-              "total": {
-                "point": 179.5,
-                "over": -105,
-                "under": -115
-              }
-            }
-          }
-        },
-        {
-          "away": "Loyola Marymount Lions",
-          "home": "South Alabama Jaguars",
-          "commence": "2026-11-13T01:00:00Z",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": -1.5,
-                  "price": 105
-                },
-                "home": {
-                  "point": 1.5,
-                  "price": -125
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": -112
-                },
-                "home": {
-                  "price": -108
-                }
-              },
-              "total": {
-                "point": 141.5,
-                "over": -110,
-                "under": -110
-              }
-            }
-          }
-        },
-        {
-          "away": "Southern Jaguars",
-          "home": "Minnesota Golden Gophers",
-          "commence": "2026-11-13T01:00:00Z",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 26.5,
-                  "price": -112
-                },
-                "home": {
-                  "point": -26.5,
-                  "price": -108
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 3000
-                },
-                "home": {
-                  "price": -10000
-                }
-              },
-              "total": {
-                "point": 142.5,
-                "over": -105,
-                "under": -115
-              }
-            }
-          }
-        },
-        {
-          "away": "Richmond Spiders",
-          "home": "Southern Illinois Salukis",
-          "commence": "2026-11-13T01:00:00Z",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": -2.5,
-                  "price": -110
-                },
-                "home": {
-                  "point": 2.5,
-                  "price": -110
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": -148
-                },
-                "home": {
-                  "price": 124
-                }
-              },
-              "total": {
-                "point": 151.5,
-                "over": -105,
-                "under": -115
-              }
-            }
-          }
-        },
-        {
-          "away": "New Mexico State Aggies",
-          "home": "UTEP Miners",
-          "commence": "2026-11-13T02:00:00Z",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 4.5,
-                  "price": -110
-                },
-                "home": {
-                  "point": -4.5,
-                  "price": -110
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 170
-                },
-                "home": {
-                  "price": -205
-                }
-              },
-              "total": {
-                "point": 145.5,
-                "over": -108,
-                "under": -112
-              }
-            }
-          }
-        },
-        {
-          "away": "UC Riverside Highlanders",
-          "home": "San Jos\u00e9 State Spartans",
-          "commence": "2026-11-13T03:00:00Z",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 8.5,
-                  "price": -108
-                },
-                "home": {
-                  "point": -8.5,
-                  "price": -112
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 300
-                },
-                "home": {
-                  "price": -380
-                }
-              },
-              "total": {
-                "point": 153.5,
-                "over": -110,
-                "under": -110
               }
             }
           }
