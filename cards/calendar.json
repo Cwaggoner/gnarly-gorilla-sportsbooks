@@ -9,5 +9,6 @@
   "2026-11-08": {"pl": 0.00, "n": 0, "allWin": 0.00, "allLose": 0.00, "clv": "No Close Saved"},
   "2026-11-09": {"pl": 0.00, "n": 0, "allWin": 0.00, "allLose": 0.00, "clv": "No Close Saved"},
   "2026-11-10": {"pl": -10.00, "n": 1, "allWin": 9.09, "allLose": -10.00, "wins": 0, "losses": 1, "pushes": 0, "clv": 1.5},
-  "2026-11-11": {"pl": -10.00, "n": 1, "allWin": 9.09, "allLose": -10.00, "wins": 0, "losses": 1, "pushes": 0, "clv": -0.5}
+  "2026-11-11": {"pl": -10.00, "n": 1, "allWin": 9.09, "allLose": -10.00, "wins": 0, "losses": 1, "pushes": 0, "clv": -0.5},
+  "2026-11-12": {"pl": -0.48, "n": 2, "allWin": 18.61, "allLose": -20.00, "wins": 1, "losses": 1, "pushes": 0, "clv": 0}
 }
