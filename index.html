@@ -2264,7 +2264,7 @@ function drawCardAnalysis(text){
     const seenPick = new Set();
     slateGames.forEach(g => {
       const row = gorillaChoice(g, day);
-      if (!row || seenPick.has(normPick(row[3]))) return;
+      if (!row || gorillaRank(row) < 100 || seenPick.has(normPick(row[3]))) return;
       seenPick.add(normPick(row[3]));
       chosen.push(row);
     });
@@ -3480,7 +3480,7 @@ function drawPassedSlate(){
   const plays = ((pickSlate && pickSlate.games) || []).map(g => Object.assign({}, g, {onCard: true}));
   const rest = ((pickSlate && pickSlate.passed) || []).map(g => Object.assign({}, g, {onCard: false}));
   const games = plays.concat(rest);
-  if (note) note.innerHTML = games.length ? "<li class='key-play'>Neon green is on the card.</li><li class='key-pass'>Neon cyan is the rest of the slate. It is not the play.</li>" : "";
+  if (note) note.innerHTML = games.length ? "<li class='key-play'>Neon green is on the card.</li><li class='key-pass'>Neon cyan is the rest of the slate. He still takes the best price.</li>" : "";
   cardBox.innerHTML = games.length ? slateTable(games, date, true) : "";
 }
 function boardRow(list, game){
@@ -3837,15 +3837,20 @@ function gorillaRank(row){
   const price = Number(String(row && row[4] || "").replace(/[^\d.+-]/g, ""));
   if (!Number.isFinite(price) || Math.abs(price) < 100) return -1;
   if (/\band\b/i.test(pick) || /parlay|sgp/i.test(type)) return -1;
-  if (/\b(over|under)\b/i.test(pick) || /total/i.test(type)) return -1;
   const ml = /moneyline/i.test(type) || /\bml\b/i.test(pick);
+  const total = /\b(over|under)\b/i.test(pick) || /total/i.test(type);
   const num = pick.match(/([+-]\d+(?:\.\d+)?)/);
-  const point = !ml && num ? Number(num[1]) : null;
-  if (ml && price >= 100 && price <= 220) return 100 + Math.min(price, 180) / 10;
-  if (ml && price > 220 && price <= 280) return 40;
-  if (ml && price < 0 && price > -150) return 25;
-  if (point != null && point <= -2.5 && point >= -6.5 && price >= -115) return 70;
-  return -1;
+  const point = !ml && !total && num ? Number(num[1]) : null;
+  if (ml && price >= 100 && price <= 220) return 200 + Math.min(price, 180) / 10;
+  if (point != null && point <= -2.5 && point >= -6.5 && price >= -115) return 170;
+  if (ml && price > 220 && price <= 280) return 140;
+  if (ml && price < 0 && price > -150) return 120;
+  if (ml && price > 280) return 80 - Math.min(price, 800) / 100;
+  if (point != null && point < 0) return 90 + (price >= -115 ? 8 : 0) - Math.min(Math.abs(point + 4.5), 20);
+  if (ml && price <= -150) return 50 + Math.max(price, -500) / 40;
+  if (point != null && point > 0) return 30 + (price >= -115 ? 4 : 0) - Math.min(point, 30) / 10;
+  if (total) return 2;
+  return 1;
 }
 function bestBookSide(row, index){
   const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
@@ -3857,35 +3862,62 @@ function bestBookSide(row, index){
   });
   return best;
 }
-function boardCandidates(game, date){
+function pricedSides(game, date, lines, book){
   const sport = String(game && game.sport || "").toUpperCase();
   const day = String(date || "").slice(0, 10);
   const label = String(game && game.game || "");
-  const block = window.__ggOddsBoard && window.__ggOddsBoard.days && window.__ggOddsBoard.days[day];
-  if (!block || !label) return [];
-  const want = {sport: sport, label: label};
-  const find = market => (block[market] || []).find(r => sameMatchup(r, want) || String(r.label || "").toLowerCase() === label.toLowerCase());
+  if (!lines || !label) return [];
   const parts = label.split(/\s+at\s+/i);
   const away = (parts[0] || "").trim();
   const home = (parts[1] || "").trim();
   const nick = s => String(s || "").trim().split(/\s+/).slice(-1)[0] || s;
   const rows = [];
-  const h2h = find("h2h");
-  const spreads = find("spreads");
+  const h2h = shopSides(lines.h2h);
+  const spreads = shopSides(lines.spreads);
+  const totals = shopSides(lines.totals);
   [0, 1].forEach(index => {
-    const side = bestBookSide(h2h, index);
-    if (!side) return;
+    const side = h2h && h2h[index];
+    if (!side || !Number.isFinite(side.price)) return;
     const name = nick(index ? home : away);
     const pick = index ? name + " ML vs " + away : name + " ML at " + home;
-    rows.push([day, sport, "Moneyline", pick, String(side.price), "Plus-money dog. Dog spreads and unders are off this card.", side.book]);
+    rows.push([day, sport, "Moneyline", pick, String(side.price), "Best of the posted choices.", book || ""]);
   });
   [0, 1].forEach(index => {
-    const side = bestBookSide(spreads, index);
-    if (!side || side.point == null || side.point >= 0) return;
+    const side = spreads && spreads[index];
+    if (!side || side.point == null || !Number.isFinite(side.price)) return;
     const name = nick(index ? home : away);
     const shown = (side.point > 0 ? "+" : "") + side.point;
     const pick = index ? name + " " + shown + " vs " + away : name + " " + shown + " at " + home;
-    rows.push([day, sport, "Spread", pick, String(side.price), "Modest favorite, -2.5 to -6.5, at -115 or longer.", side.book]);
+    rows.push([day, sport, "Spread", pick, String(side.price), "Best of the posted choices.", book || ""]);
+  });
+  if (totals && totals[0] && totals[1] && away && home) {
+    const point = totals[0].point != null ? totals[0].point : totals[1].point;
+    if (point != null) {
+      rows.push([day, sport, "Total", away + " at " + home + " Over " + point, String(totals[0].price), "Best of the posted choices.", book || ""]);
+      rows.push([day, sport, "Total", away + " at " + home + " Under " + point, String(totals[1].price), "Best of the posted choices.", book || ""]);
+    }
+  }
+  return rows;
+}
+function boardCandidates(game, date){
+  const sport = String(game && game.sport || "").toUpperCase();
+  const day = String(date || "").slice(0, 10);
+  const label = String(game && game.game || "");
+  const rows = pricedSides(game, date, game && game.lines, (game && game.lineBook) || "");
+  const block = window.__ggOddsBoard && window.__ggOddsBoard.days && window.__ggOddsBoard.days[day];
+  if (!block || !label) return rows;
+  const want = {sport: sport, label: label};
+  const find = market => (block[market] || []).find(r => sameMatchup(r, want) || String(r.label || "").toLowerCase() === label.toLowerCase());
+  ["h2h", "spreads", "totals"].forEach(market => {
+    const row = find(market);
+    if (!row || !row.books) return;
+    ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"].forEach(book => {
+      const cell = row.books[book];
+      if (!cell || cell === "-") return;
+      const lines = {};
+      lines[market] = cell;
+      pricedSides(game, date, lines, book).forEach(item => rows.push(item));
+    });
   });
   return rows;
 }
@@ -3897,7 +3929,7 @@ function gorillaChoice(game, date){
     const n = gorillaRank(row);
     if (n > rank) { rank = n; best = row; }
   });
-  return rank > 0 ? best : null;
+  return best;
 }
 function priceTalk(row){
   const raw = String((row && row[5]) || "").replace(/\s+/g, " ").trim();
@@ -3942,7 +3974,7 @@ function gorillaNote(game, date){
     let body;
     if (seasonEnded(game.sport)) body = game.sport + " is closed. " + away + " at " + home + where + " can sit on the slate, but I do not price a sport after its last card.";
     else if (passed) body = away + " at " + home + recBit + where + ". The card passed " + game.sport + ". I am not adding a dog spread or an under.";
-    else body = away + " at " + home + recBit + where + ". I am passing. I need a plus-money dog from +100 to +220, or a favorite from -2.5 to -6.5 at -115 or longer.";
+    else body = away + " at " + home + recBit + where + ". No price is posted, so there is no choice on this game.";
     return body.replace(/\s+/g, " ").trim();
   }
   const main = plays;
@@ -4420,6 +4452,11 @@ async function refreshSlateRecords(){
       if (g.home) g.home.record = hit.home.record;
       changed = true;
     }
+    if (hit.lines && JSON.stringify(g.lines || null) !== JSON.stringify(hit.lines)) {
+      g.lines = hit.lines;
+      g.lineBook = hit.lineBook || "";
+      changed = true;
+    }
   };
   if (pickSlate) {
     (pickSlate.games || []).forEach(apply);
@@ -4427,7 +4464,7 @@ async function refreshSlateRecords(){
   }
   const dropped = dropFinishedFromSlate(found);
   const graded = applyFinalGrades(found);
-  if (changed && !dropped && !graded) drawPickSlate();
+  if (changed) drawPickSlate();
   return changed || dropped || graded;
 }
 function seasonNotStarted(sport){
