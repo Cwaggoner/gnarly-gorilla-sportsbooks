@@ -1,1 +1,1 @@
-PLACEHOLDER_WILL_REPLACE
+See /tmp/closes.txt for the full content which starts with # file: closes and ends with the new line 2026-11-13 | CBB | -110 | Ohio State +11.5 | -102
