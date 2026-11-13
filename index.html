@@ -529,14 +529,15 @@ table.score-align .score-hold + .score-hold { margin-top:2px; }
 .season-hold td { height:18px; width:50%; }
 table.season-hold.filled { border:1px solid #39ff14; border-radius:10px; overflow:hidden; margin-top:8px; }
 table.season-hold.filled th, table.season-hold.filled td { border-bottom:1px solid #39ff14; height:auto; width:auto; color:#d6ffd0; font-size:13px; text-align:left; vertical-align:middle; padding:8px; }
-#todaycard table.season-hold.filled { table-layout:fixed; width:100%; }
+#todaycard #cardgames .table-wrap { overflow-x:auto; }
+#todaycard table.season-hold.filled { table-layout:fixed; width:100%; overflow:visible; }
 #todaycard table.season-hold.filled th.loc-col,
-#todaycard table.season-hold.filled td.loc-col { width:18%; min-width:0; white-space:normal; overflow-wrap:anywhere; }
+#todaycard table.season-hold.filled td.loc-col { width:18%; min-width:0; white-space:normal; overflow-wrap:anywhere; overflow:hidden; }
 #todaycard table.season-hold.filled th.note-col,
-#todaycard table.season-hold.filled td.note-col { width:30%; min-width:0; max-width:none; white-space:normal; overflow-wrap:anywhere; word-break:break-word; }
-#todaycard table.season-hold.filled td.note-col p { display:block; white-space:normal; overflow-wrap:anywhere; word-break:break-word; overflow:visible; -webkit-line-clamp:unset; }
+#todaycard table.season-hold.filled td.note-col { width:30%; min-width:0; max-width:none; white-space:normal; overflow-wrap:anywhere; word-break:break-word; overflow:hidden; }
+#todaycard table.season-hold.filled td.note-col p { display:block; white-space:normal; overflow-wrap:anywhere; word-break:break-word; overflow:hidden; -webkit-line-clamp:unset; }
 #todaycard table.season-hold.filled th.add-col,
-#todaycard table.season-hold.filled td.add-col { width:4.75rem; min-width:4.75rem; max-width:4.75rem; white-space:nowrap; }
+#todaycard table.season-hold.filled td.add-col { width:4.75rem; min-width:4.75rem; max-width:4.75rem; white-space:nowrap; overflow:visible; }
 .gamehead { display:inline; }
 .gamehead .slate-date { color:#39ff14; font-weight:700; white-space:nowrap; }
 #reportDay { color-scheme:dark; }
