@@ -845,8 +845,9 @@ canvas { width:100%; height:auto; background:#0e0e0e; border:1px solid var(--lin
 #todaycard .slate-key .key-best::before { color:#ff00ff !important; }
 #todaycard tr.slate-play td.note-col,
 #todaycard tr.slate-play td.note-col p,
-#todaycard tr.slate-play td.note-col .best-price,
 #todaycard tr.slate-play td.note-col .gg-name { color:#39ff14 !important; }
+#todaycard tr.slate-play td.note-col .best-price,
+#todaycard tr.slate-pass td.note-col .best-price { color:#ff00ff !important; }
 .loss { color:var(--red) !important; }
 .state-block { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px 16px; }
 .state-block .card { max-width:640px; width:100%; margin:0 auto; padding:28px; text-align:center; }
@@ -4148,7 +4149,15 @@ function slateTable(list, date, extra){
     const playAttr = main ? " data-type='" + encodeURIComponent(main[2] || "Spread") + "' data-pick='" + encodeURIComponent(main[3] || "") + "' data-odds='" + encodeURIComponent(String(main[4] || "")) + "' data-notes='" + encodeURIComponent(main[5] || "") + "' data-book='" + encodeURIComponent(main[6] || "") + "' data-edge='" + ((/edge/i.test(main[5] || "") || /^high\b/i.test(main[5] || "")) ? "1" : "0") + "'" : "";
     const add = "<button type='button' class='add-game' data-sport='" + encodeURIComponent(game.sport || "") + "' data-game='" + encodeURIComponent(game.game || "") + "' data-date='" + encodeURIComponent(date || "") + "'" + playAttr + ">Add</button>";
     const spoken = gorillaNote(game, date);
-    const note = "<td class='note-col' title='" + esc(spoken).replace(/'/g, "") + "'><p><b class='gg-name'>Gnarly Gorilla: </b>" + esc(spoken) + "</p></td>";
+    const choice = gorillaChoice(game, date);
+    let noteHtml = esc(spoken);
+    const price = choice && String(choice[4] || "").trim();
+    if (price && slipBookBest({date: String(date || "").slice(0, 10), book: choice[6] || "", type: choice[2] || "", pick: choice[3] || ""})) {
+      const token = esc("(" + price + ")");
+      const marked = "(<span class='best-price'>" + esc(price) + "</span>)";
+      if (noteHtml.indexOf(token) >= 0) noteHtml = noteHtml.replace(token, marked);
+    }
+    const note = "<td class='note-col' title='" + esc(spoken).replace(/'/g, "") + "'><p><b class='gg-name'>Gnarly Gorilla: </b>" + noteHtml + "</p></td>";
     const tone = game.onCard === false ? "slate-pass" : "slate-play";
     return "<tr class='" + tone + "'><td class='game-col'>" + slateDot(game) + esc(game.sport + " " + game.game) + "</td><td class='date-col'>" + esc(day) + "</td><td class='time-col'>" + esc(when) + "</td><td class='score-col'>" + esc(slateScore(game)) + "</td><td class='loc-col'>" + esc(slateLocation(game)) + "</td><td class='rec-col'>" + records + "</td><td class='rank-col'>" + ranks + "</td>" + note + "<td class='add-col'>" + add + "</td></tr>";
   }).join("");
@@ -6026,6 +6035,9 @@ function rememberBoard(data){
   try { snapshotOpensFromBoard(data); } catch (e) {}
   if ((document.documentElement.dataset.page || "games") === "games") {
     try { drawGameBoard(); } catch (e) {}
+  }
+  if ((document.documentElement.dataset.page || "") === "todaycard") {
+    try { drawPassedSlate(); } catch (e) {}
   }
   return true;
 }
@@ -9378,7 +9390,7 @@ async function catchUp(){
 function pageNeeds(kind){
   const page = document.documentElement.dataset.page || "games";
   const map = {
-    odds: ["games","liveodds"],
+    odds: ["games","liveodds","todaycard"],
     ledger: ["slips","breaks"],
     seasons: ["seasons"],
     slate: ["todaycard"],
