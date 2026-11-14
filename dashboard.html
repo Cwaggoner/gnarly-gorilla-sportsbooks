@@ -2315,7 +2315,7 @@ function paintBetCounts(rows){
     if (seasonEnded(sport)) return "";
     const n = (rows || []).filter(r => r[1] === sport && !isNoCard(r) && r[3]).length;
     if (!n) return "";
-    return "<span>" + esc(sport) + " " + n + "</span>";
+    return "<span>" + esc(sport) + " - " + n + "</span>";
   }).filter(Boolean).join("");
   box.innerHTML = html;
 }
