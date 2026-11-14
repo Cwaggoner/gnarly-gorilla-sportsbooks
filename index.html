@@ -1923,6 +1923,11 @@ function publishedDashboard(only){
     const own = personal[date] && Number.isFinite(Number(personal[date].pl)) ? personal[date] : null;
     const day = own || published;
     const lines = slips.filter(b => String(b.date || "").slice(0, 10) === date);
+    lines.forEach(b => {
+      if (usableClose(b.odds)) return;
+      const price = ticketOdds(b);
+      if (usableClose(price)) b.odds = price;
+    });
     const fromLines = lines.length > 0;
     const profit = fromLines ? dayProfit(date, lines, day) : (Number.isFinite(Number(day.pl)) ? Number(day.pl) : null);
     const staked = fromLines ? lines.reduce((s, b) => s + (Number(b.stake) > 0 ? Number(b.stake) : UNIT), 0) : (Number(day.n) || 0) * UNIT;
@@ -2863,9 +2868,10 @@ function usableClose(n){
 }
 function clv(b){
   if (!b || b.result === "pending" || b.result === "void") return null;
-  if (!usableClose(b.close) || !usableClose(b.odds)) return null;
+  const price = ticketOdds(b);
+  if (!usableClose(b.close) || !usableClose(price)) return null;
   attachPair(b);
-  const got = decimal(b.odds);
+  const got = decimal(price);
   if (!got) return null;
   let fair = Number(b.fairClose);
   if (!(fair > 0.02 && fair < 0.98)) {
@@ -2879,7 +2885,7 @@ function clv(b){
 function clvText(b){
   if (!b || b.result === "pending" || b.result === "void") return "-";
   if (!usableClose(b.close)) return "No Close Saved";
-  if (!usableClose(b.odds)) return "No Bet Price";
+  if (!usableClose(ticketOdds(b))) return "No Bet Price";
   const cv = clv(b);
   if (cv == null) return "No Close Saved";
   return formatClv(cv);
@@ -9210,7 +9216,7 @@ function pageNeeds(kind){
     calendar: ["calendarcard","dashboard","charts"],
     report: ["reportcard"],
     books: ["breaks"],
-    closes: ["slips","reportcard"],
+    closes: ["slips","reportcard","dashboard"],
     profit: ["charts"],
     today: ["todaycard"],
     grades: ["slips","breaks","dashboard","reportcard","charts"],
