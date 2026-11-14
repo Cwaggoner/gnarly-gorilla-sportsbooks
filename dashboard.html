@@ -550,12 +550,12 @@ table.season-hold.filled th, table.season-hold.filled td { border-bottom:1px sol
 #todaycard table.season-hold.filled th.score-col { white-space:normal; }
 #todaycard table.season-hold.filled td.score-col { white-space:nowrap; }
 #todaycard table.season-hold.filled th.rec-col,
-#todaycard table.season-hold.filled td.rec-col { width:11rem; max-width:11rem; white-space:nowrap; overflow:hidden; }
+#todaycard table.season-hold.filled td.rec-col { width:12rem; max-width:12rem; white-space:normal; overflow:hidden; overflow-wrap:anywhere; }
 #todaycard table.season-hold.filled th.rank-col,
 #todaycard table.season-hold.filled td.rank-col { width:auto; max-width:none; text-align:center; white-space:nowrap; overflow:hidden; padding-left:4px; padding-right:4px; }
 #todaycard td.rec-col,
 #todaycard td.rank-col { vertical-align:top; }
-#todaycard td.rec-col div,
+#todaycard td.rec-col div { line-height:1.45; min-height:1.45em; white-space:normal; overflow-wrap:anywhere; }
 #todaycard td.rank-col div { line-height:1.45; min-height:1.45em; }
 #todaycard table.season-hold.filled th.add-col,
 #todaycard table.season-hold.filled td.add-col { width:4.75rem; min-width:4.75rem; max-width:4.75rem; white-space:nowrap; overflow:visible; }
@@ -4025,8 +4025,7 @@ function slateTable(list, date, extra){
     const home = sides.home;
     const when = slateStart(game) ? formatTime(slateStart(game), false) : "";
     const day = slateDate(game);
-    const nick = name => String(name || "").split(/\s+/).slice(-1)[0] || "";
-    const line = side => esc(nick(side.name) + " " + (side.record || "—"));
+    const line = side => esc((side.name || "Team") + " " + (side.record || "—"));
     const records = "<div>" + line(away) + "</div><div>" + line(home) + "</div>";
     const ranks = "<div>" + esc(slateRankBits(game.sport, away.name)) + "</div><div>" + esc(slateRankBits(game.sport, home.name)) + "</div>";
     const plays = gorillaChoice(game, date);
