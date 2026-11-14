@@ -527,9 +527,10 @@ table.score-align .score-hold + .score-hold { margin-top:2px; }
 table.season-hold.filled { border:1px solid #39ff14; border-radius:10px; overflow:hidden; margin-top:8px; }
 table.season-hold.filled th, table.season-hold.filled td { border-bottom:1px solid #39ff14; height:auto; width:auto; color:#d6ffd0; font-size:13px; text-align:left; vertical-align:middle; padding:8px; }
 #todaycard #cardgames .table-wrap { overflow-x:auto; overflow-y:hidden; border:1px solid #39ff14; border-radius:10px; background:#141414; }
-#todaycard #cardgames table.season-hold.filled { border:0; border-radius:0; margin:0; overflow:hidden; background:transparent; table-layout:auto; width:max-content; min-width:100%; }
+#todaycard #cardgames table.season-hold.filled { border:0; border-radius:0; margin:0; overflow:visible; background:transparent; table-layout:auto; width:max-content; min-width:100%; }
 #todaycard table.season-hold.filled th.game-col,
-#todaycard table.season-hold.filled td.game-col { width:auto; white-space:nowrap; word-break:normal; overflow-wrap:normal; overflow:visible; }
+#todaycard table.season-hold.filled td.game-col { position:sticky; left:0; z-index:2; width:auto; white-space:nowrap; word-break:normal; overflow-wrap:normal; overflow:visible; background:#141414; box-shadow:1px 0 0 #39ff14; }
+#todaycard table.season-hold.filled th.game-col { z-index:3; background:#102010; }
 #todaycard #cardgames table.season-hold.filled tr:last-child td { border-bottom:0; }
 #todaycard #injuryreport,
 #todaycard .injury-box,
