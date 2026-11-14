@@ -204,6 +204,7 @@ h2 :is(.warn, .api-note, .slips-side),
 .api-note { margin-top:18px; }
 .api-note button, .api-note select { font-size:13px; color:var(--text); }
 .injury-filters { margin:0; display:flex; gap:8px; align-items:center; flex-wrap:nowrap; }
+#todaycard .slate-sort { margin:8px 0; }
 button.odds-link { margin-top:8px; }
 .key-row button.odds-link { margin-top:0; }
 a, .api-note a, .warn a, .slips-side a { color:var(--title); }
@@ -1239,7 +1240,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </div>
 </div>
 <div class="align-frame"><table class="score-align"><tbody><tr><td></td><td class="score-copy"><p class="warn slips-side">Click a price to put it on the slip.</p></td></tr></tbody></table></div>
-<div class="card-analysis" id="cardanalysis"><h3 class="split-title">Analysis</h3><div class="analysis-body"><div class="analysis-grid" id="analysisgrid"></div></div><div class="sharp-read align-frame"><b>Analysis:</b><p id="sharpread"></p><ul class="slate-key" id="passednote"></ul></div><div id="cardgames"></div></div>
+<div class="card-analysis" id="cardanalysis"><h3 class="split-title">Analysis</h3><div class="analysis-body"><div class="analysis-grid" id="analysisgrid"></div></div><div class="sharp-read align-frame"><b>Analysis:</b><p id="sharpread"></p><ul class="slate-key" id="passednote"></ul></div><p class="injury-filters slate-sort"><label>Sport<select id="slatesport"><option value="" selected>All</option><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option></select></label></p><div id="cardgames"></div></div>
 <h2 class="split-title">Injury Reports</h2>
 <div class="align-frame"><table class="score-align"><tbody><tr><td><p class="injury-filters"><select id="injurysport"><option selected>All</option><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option></select><select id="injuryshow"><option value="posted" selected>Posted</option><option value="all">All rows</option><option value="out">Out</option><option value="maybe">May still play</option></select></p></td><td class="score-copy"><p class="warn slips-side">Red is out. Amber may still play. Times are Eastern.</p></td></tr></tbody></table></div>
 <div class="injury-box">
@@ -3544,9 +3545,10 @@ function drawPassedSlate(){
   const date = slateDayNow();
   const plays = ((pickSlate && pickSlate.games) || []).filter(onTodaySlate).map(g => Object.assign({}, g, {onCard: true}));
   const rest = ((pickSlate && pickSlate.passed) || []).filter(onTodaySlate).map(g => Object.assign({}, g, {onCard: false}));
-  const games = plays.concat(rest);
+  const sportPick = String((document.getElementById("slatesport") || {}).value || "").toUpperCase();
+  const games = plays.concat(rest).filter(g => !sportPick || String(g.sport || "").toUpperCase() === sportPick);
   if (note) note.innerHTML = games.length ? "<li class='key-play'>Neon green is on the card.</li><li class='key-pass'>Neon cyan is the rest of the slate. He still takes the best price.</li>" : "";
-  cardBox.innerHTML = games.length ? slateTable(games, date, true) : "<p class='api-note'>No games for " + esc(slateDateLabel(date)) + ". This table changes at 4:00 AM Eastern.</p>";
+  cardBox.innerHTML = games.length ? slateTable(games, date, true) : "<p class='api-note'>No " + (sportPick ? esc(sportPick) + " " : "") + "games for " + esc(slateDateLabel(date)) + ". This table changes at 4:00 AM Eastern.</p>";
   fitNoteColumn();
   if (games.length && !(recordRows.length && window.__ranksReady === recordsStamp()) && window.__rankAsk !== recordsStamp()) {
     window.__rankAsk = recordsStamp();
@@ -8389,6 +8391,7 @@ function refreshKeyStatus(force){
 document.getElementById("cardbook").onchange = () => {
   document.getElementById("pdfnote").textContent = document.getElementById("cardbook").value + " will be used when this card is loaded. Add A Bet drives the pick list.";
 };
+document.getElementById("slatesport").onchange = () => drawPassedSlate();
 
 async function loadPending(){
   const note = document.getElementById("pdfnote");
