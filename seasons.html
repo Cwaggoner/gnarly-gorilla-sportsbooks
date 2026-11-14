@@ -6379,43 +6379,33 @@ async function pullLiveBoard(key, sports, opts){
   const failed = [];
   let caesarsNote = false;
   const list = sports && sports.length ? sports : Object.keys(SPORT_KEY);
-  for (const sport of list) {
-    let caesarsLow = false;
-    let caesarsGames = null;
-    let caesarsMissed = false;
-    if (SPORT_KEY[sport]) {
-      const firstUrl = "https://api.the-odds-api.com/v4/sports/" + SPORT_KEY[sport] + "/odds?apiKey=" + encodeURIComponent(key) + "&regions=us&markets=h2h&oddsFormat=american&bookmakers=williamhill_us";
-      const first = await oddsMeta(firstUrl);
-      caesarsGames = first.games;
-      caesarsLow = !!first.low;
-      caesarsMissed = !!(first.failed || first.low);
-    }
-    const markets = "h2h,spreads,totals";
-    const url = "https://api.the-odds-api.com/v4/sports/" + SPORT_KEY[sport] + "/odds?apiKey=" + encodeURIComponent(key) + "&regions=us,us2&markets=" + markets + "&oddsFormat=american&bookmakers=" + ids;
-    let res;
-    try { res = await fetch(url); }
-    catch (e) {
-      try { res = await fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(url)); }
-      catch (err) { failed.push(sport); continue; }
-    }
-    if (!res || !res.ok) { failed.push(sport); continue; }
-    let list = [];
-    try { list = await res.json(); }
-    catch (e) { failed.push(sport); continue; }
-    if (!Array.isArray(list)) list = [];
-    if (Array.isArray(caesarsGames)) parkCaesarsMl(list, caesarsGames);
-    if (sport === "CBB" && !(opts && opts.skipExtra)) await fillSportMoneyline(list, sport, key);
+  const packs = await Promise.all(list.map(async sport => {
+    const sportKey = SPORT_KEY[sport];
+    if (!sportKey) return {sport: sport, failed: true, list: [], note: false};
+    const mainUrl = "https://api.the-odds-api.com/v4/sports/" + sportKey + "/odds?apiKey=" + encodeURIComponent(key) + "&regions=us,us2&markets=h2h,spreads,totals&oddsFormat=american&bookmakers=" + ids;
+    const caesarsUrl = "https://api.the-odds-api.com/v4/sports/" + sportKey + "/odds?apiKey=" + encodeURIComponent(key) + "&regions=us&markets=h2h&oddsFormat=american&bookmakers=williamhill_us";
+    const [first, raw] = await Promise.all([oddsMeta(caesarsUrl), oddsJson(mainUrl)]);
+    const rows = Array.isArray(raw) ? raw : null;
+    if (!rows) return {sport: sport, failed: true, list: [], note: true};
+    const caesarsLow = !!first.low;
+    let missed = !!(first.failed || first.low);
+    if (Array.isArray(first.games)) parkCaesarsMl(rows, first.games);
+    if (sport === "CBB" && !(opts && opts.skipExtra)) await fillSportMoneyline(rows, sport, key);
     if (!caesarsLow && !(opts && opts.skipExtra)) {
-      const more = await fillCaesarsMoneyline(list, SPORT_KEY[sport], key);
-      if (more && (more.failed || more.low)) caesarsMissed = true;
+      const more = await fillCaesarsMoneyline(rows, sportKey, key);
+      if (more && (more.failed || more.low)) missed = true;
     }
-    if (caesarsMissed && list.some(g => !caesarsMoneylineReady(g))) caesarsNote = true;
-    list.forEach(g => { g._sport = sport; games.push(g); });
-    try {
-      sessionStorage.setItem("gg-odds-all-" + SPORT_KEY[sport], JSON.stringify({at: Date.now(), games: list}));
-    } catch (e) {}
-  }
-  games.failed = failed;
+    rows.forEach(g => { g._sport = sport; });
+    try { sessionStorage.setItem("gg-odds-all-" + sportKey, JSON.stringify({at: Date.now(), games: rows})); } catch (e) {}
+    if (opts && opts.onSport) { try { opts.onSport(rows, sport); } catch (e) {} }
+    return {sport: sport, failed: false, list: rows, note: missed && rows.some(g => !caesarsMoneylineReady(g))};
+  }));
+  packs.forEach(pack => {
+    if (!pack || pack.failed) { failed.push(pack && pack.sport || ""); return; }
+    if (pack.note) caesarsNote = true;
+    pack.list.forEach(g => games.push(g));
+  });
+  games.failed = failed.filter(Boolean);
   games.caesarsNote = caesarsNote;
   return games;
 }
@@ -12131,15 +12121,29 @@ function savedOddsKey(){
   try { return (localStorage.getItem("gg-odds-key") || "").trim(); } catch (e) { return ""; }
 }
 async function loadGameDay(day, books){
+  const key = savedOddsKey();
+  const wantBooks = !!(key && (books || booksAreThin(day)));
+  let boardPaint = 0;
+  const paintSoon = () => {
+    if (boardPaint) return;
+    boardPaint = setTimeout(() => { boardPaint = 0; drawGameBoard(); }, 40);
+  };
+  const livePromise = wantBooks ? pullLiveBoard(key, null, {
+    skipExtra: !books,
+    onSport: list => {
+      ["h2h","spreads","totals"].forEach(market => mergeBoardRows(day, market, rowsFromLive(list, day, market), true));
+      paintSoon();
+    }
+  }) : null;
   const sports = Object.keys(SCORE_FEED);
   const packs = await Promise.all(sports.map(sport => scoreboard(sport, day).catch(() => [])));
   keepScoreDays(packs.flat(), day);
   seedBoardFromScores(window.__gameScores, day);
-  const key = savedOddsKey();
+  drawGameBoard();
   let pulled = true;
-  if (key && (books || booksAreThin(day))) {
+  if (livePromise) {
     try {
-      const live = await pullLiveBoard(key, null, books ? null : {skipExtra: true});
+      const live = await livePromise;
       ["h2h","spreads","totals"].forEach(market => mergeBoardRows(day, market, rowsFromLive(live, day, market), true));
       if (live && live.caesarsNote) setGameNote("Caesars moneyline did not come back.");
       else if (live && live.failed && live.failed.length) setGameNote("Some books did not come back.");
