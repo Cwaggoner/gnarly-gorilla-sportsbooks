@@ -925,7 +925,6 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .team-read > div + div { border-left:1px solid #39ff14; }
 .team-read h4 { margin:0 0 4px; color:#39ff14; font-size:12px; }
 .team-read p { margin:0; color:#d6ffd0; font-size:13px; line-height:1.45; white-space:normal; }
-.team-read .vol { color:#00e5ff; margin:0; }
 .mgm-form .inj-out, .mgm-hurt .inj-out { color:var(--red); font-weight:700; }
 .mgm-form .inj-maybe, .mgm-hurt .inj-maybe { color:var(--amber); font-weight:700; }
 .mgm-side { min-width:0; }
@@ -2953,34 +2952,18 @@ function splitApiCell(label, cell, b){
   return {close: mine, opp: other && other !== mine ? other : null};
 }
 function apiPairFor(b){
-  if (!b || !b.date || !b.pick) return null;
+  if (!b || !b.date || !b.pick || b.date !== LAST_API_DAY) return null;
   const type = betType(b);
   if (type === "SGP" || /\band\b/i.test(b.pick)) return null;
   const market = type === "Total" ? "totals" : type === "Moneyline" ? "h2h" : "spreads";
-  let fresh = [];
-  try {
-    const pack = JSON.parse(localStorage.getItem("gg-api-close") || "null");
-    if (pack && pack.rows) fresh = pack.rows.filter(r => r.day === b.date && r.market === market && r.betmgm && r.betmgm !== "-");
-  } catch (e) {}
-  const freshHit = fresh.find(r => teamHit(b.pick, r.label));
-  if (freshHit) return splitApiCell(freshHit.label, freshHit.betmgm, b);
-  if (b.date !== LAST_API_DAY) return null;
   const baked = LAST_API_ROWS.find(r => r.market === market && teamHit(b.pick, r.label));
   return baked ? splitApiCell(baked.label, baked.betmgm, b) : null;
 }
 function apiCloseFor(b){
-  if (!b || !b.date || !b.pick) return null;
+  if (!b || !b.date || !b.pick || b.date !== LAST_API_DAY) return null;
   const type = betType(b);
   if (type === "SGP" || /\band\b/i.test(b.pick)) return null;
   const market = type === "Total" ? "totals" : type === "Moneyline" ? "h2h" : "spreads";
-  let fresh = [];
-  try {
-    const pack = JSON.parse(localStorage.getItem("gg-api-close") || "null");
-    if (pack && pack.rows) fresh = pack.rows.filter(r => r.day === b.date && r.market === market && r.betmgm && r.betmgm !== "-");
-  } catch (e) {}
-  const freshHit = fresh.find(r => teamHit(b.pick, r.label));
-  if (freshHit) return rowApiPrice(freshHit.label, freshHit.betmgm, b);
-  if (b.date !== LAST_API_DAY) return null;
   const baked = LAST_API_ROWS.find(r => r.market === market && teamHit(b.pick, r.label));
   return baked ? rowApiPrice(baked.label, baked.betmgm, b) : null;
 }
@@ -3524,50 +3507,6 @@ function attrOf(el, key){
   if (raw == null) return "";
   try { return decodeURIComponent(raw); } catch (e) { return raw; }
 }
-function spreadForGame(sport, game, date, book){
-  const awayHome = String(game || "").split(/\s+at\s+/i);
-  const awayName = (awayHome[0] || "").trim();
-  const homeName = (awayHome[1] || "").trim();
-  const nick = s => String(s || "").trim().split(/\s+/).slice(-1)[0] || s;
-  const shown = n => (n > 0 ? "+" : "") + n;
-  const fromCell = cell => {
-    const sides = String(cell || "").split("/").map(s => s.trim());
-    const read = text => {
-      const hit = String(text || "").match(/([+-]?\d+(?:\.\d+)?)\s+([+-]\d+)/);
-      return hit ? {point: Number(hit[1]), price: Number(hit[2])} : null;
-    };
-    const away = read(sides[0]);
-    const home = read(sides[1]);
-    if (!away || !home || !Number.isFinite(away.price) || !Number.isFinite(home.price)) return null;
-    const fav = away.point <= home.point ? "away" : "home";
-    const side = fav === "home" ? home : away;
-    const pick = fav === "home" ? nick(homeName) + " " + shown(side.point) + " vs " + awayName : nick(awayName) + " " + shown(side.point) + " at " + homeName;
-    return {type: "Spread", pick: pick, odds: side.price, book: book || "", notes: ""};
-  };
-  const day = (window.__ggOddsBoard && window.__ggOddsBoard.days && window.__ggOddsBoard.days[String(date || "").slice(0, 10)]) || {};
-  const row = boardRow(day.spreads, game);
-  const books = (row && row.books) || {};
-  const cell = book && books[book] && books[book] !== "-" ? books[book] : (books.BetMGM && books.BetMGM !== "-" ? books.BetMGM : "");
-  const posted = fromCell(cell);
-  if (posted) return Promise.resolve(posted);
-  if (typeof SCORE_FEED === "undefined" || !SCORE_FEED[sport]) return Promise.resolve(null);
-  return scoreboard(sport, date).then(rows => {
-    const hit = (rows || []).find(g => g && sameClub(g.away && (g.away.displayName || g.away.name || g.away.shortDisplayName), awayName) && sameClub(g.home && (g.home.displayName || g.home.name || g.home.shortDisplayName), homeName));
-    if (!hit) return null;
-    if (hit.final) return {final: true};
-    const lined = fromCell(hit.lines && hit.lines.spreads);
-    if (lined) { lined.book = knownBook(hit.lineBook) || book || ""; return lined; }
-    const detail = String(hit.odds || "").match(/([A-Za-z&]+)\s+([+-]?\d+(?:\.\d+)?)/);
-    if (!detail) return null;
-    const point = Number(detail[2]);
-    if (!Number.isFinite(point)) return null;
-    const abbr = detail[1].toLowerCase();
-    const homeAbbr = String(hit.home && (hit.home.abbreviation || hit.home.abbr) || "").toLowerCase();
-    const side = abbr && abbr === homeAbbr ? "home" : "away";
-    const pick = side === "home" ? nick(homeName) + " " + shown(point) + " vs " + awayName : nick(awayName) + " " + shown(point) + " at " + homeName;
-    return {type: "Spread", pick: pick, odds: -110, book: book || "", notes: "ESPN spread. Juice was not posted, so this is -110."};
-  }).catch(() => null);
-}
 function addCardPlay(btn){
   const sport = attrOf(btn, "sport");
   const game = attrOf(btn, "game");
@@ -3878,16 +3817,6 @@ function gorillaRank(row){
   if (point != null && point > 0) return 30 + (price >= -115 ? 4 : 0) - Math.min(point, 30) / 10;
   if (total) return 2;
   return 1;
-}
-function bestBookSide(row, index){
-  const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
-  let best = null;
-  names.forEach(book => {
-    const sides = shopSides(row && row.books && row.books[book]);
-    if (!sides || !sides[index] || !Number.isFinite(sides[index].price)) return;
-    if (!best || sides[index].price > best.price) best = {book: book, price: sides[index].price, point: sides[index].point};
-  });
-  return best;
 }
 function pricedSides(game, date, lines, book){
   const sport = String(game && game.sport || "").toUpperCase();
@@ -5805,13 +5734,6 @@ function blockHasLines(block){
   if (!block) return false;
   return ["h2h","spreads","totals"].some(market => (block[market] || []).some(row => row && row.label && Object.keys(row.books || {}).some(book => row.books[book] && row.books[book] !== "-" && row.books[book] !== "No ML")));
 }
-function boardPriceCount(block){
-  let n = 0;
-  ["h2h","spreads","totals"].forEach(market => (block && block[market] || []).forEach(row => {
-    Object.keys(row && row.books || {}).forEach(book => { if (row.books[book] && row.books[book] !== "-" && row.books[book] !== "No ML") n += 1; });
-  }));
-  return n;
-}
 function slimBoard(data){
   const keep = {};
   [easternDay(), shiftDate(easternDay(), -1)].forEach(day => {
@@ -6471,7 +6393,6 @@ function applyGameStarts(){
   });
   saveGameStarts(map);
 }
-function paintOddsTimes(){ applyGameStarts(); }
 function placeOddsTools(){
   const tools = document.getElementById("compareday");
   if (!tools || tools.closest("table.score-align")) return;
@@ -6531,7 +6452,7 @@ function wireCompare(){
   const sel = document.getElementById("comparemarket");
   if (sel && !sel.dataset.wired) {
     sel.dataset.wired = "1";
-    sel.onchange = () => { localStorage.setItem("gg-compare-market", sel.value); drawOddsCompare(false).catch(() => {}); };
+    sel.onchange = () => { drawOddsCompare(false).catch(() => {}); };
   }
   const sport = document.getElementById("comparesport");
   if (sport && !sport.dataset.wired) {
@@ -7903,7 +7824,6 @@ async function fetchBook(sport, bookKey, key, fresh){
   for (const sportKey of keys) {
     games = await fetchOne(sportKey, bookKey, key, fresh);
     if (games && games.length) {
-      localStorage.setItem("gg-active-key-" + name, sportKey);
       return games;
     }
   }
@@ -8363,7 +8283,6 @@ function refreshKeyStatus(force){
       localStorage.setItem("gg-key-plan", plan);
       localStorage.setItem("gg-key-plan-for", mark);
       if (left !== "") localStorage.setItem("gg-key-left", left);
-      localStorage.setItem("gg-paid-key", plan === "paid" ? "1" : "");
       paintKeyStatus(plan, left);
     } else paintKeyStatus(saved);
   })().finally(() => { keyPlanFlight = null; });
