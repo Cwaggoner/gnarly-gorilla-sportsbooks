@@ -560,7 +560,8 @@ table.season-hold.filled th, table.season-hold.filled td { border-bottom:1px sol
 #todaycard td.rec-col div { line-height:1.45; min-height:1.45em; white-space:normal; overflow-wrap:anywhere; }
 #todaycard td.rank-col div { line-height:1.45; min-height:1.45em; }
 #todaycard table.season-hold.filled th.add-col,
-#todaycard table.season-hold.filled td.add-col { width:4.75rem; min-width:4.75rem; max-width:4.75rem; white-space:nowrap; overflow:visible; }
+#todaycard table.season-hold.filled td.add-col { position:sticky; right:0; z-index:2; width:4.75rem; min-width:4.75rem; max-width:4.75rem; white-space:nowrap; overflow:visible; background:#141414; box-shadow:-1px 0 0 #39ff14; }
+#todaycard table.season-hold.filled th.add-col { z-index:3; background:#102010; }
 .gamehead { display:inline; }
 .gamehead .slate-date { color:#39ff14; font-weight:700; white-space:nowrap; }
 #reportDay { color-scheme:dark; }
@@ -4033,15 +4034,15 @@ function slateTable(list, date, extra){
     const plays = gorillaChoice(game, date);
     const main = plays;
     const playAttr = main ? " data-type='" + encodeURIComponent(main[2] || "Spread") + "' data-pick='" + encodeURIComponent(main[3] || "") + "' data-odds='" + encodeURIComponent(String(main[4] || "")) + "' data-notes='" + encodeURIComponent(main[5] || "") + "' data-book='" + encodeURIComponent(main[6] || "") + "' data-edge='" + ((/edge/i.test(main[5] || "") || /^high\b/i.test(main[5] || "")) ? "1" : "0") + "'" : "";
-    const add = extra && main ? "<button type='button' class='add-game' data-sport='" + encodeURIComponent(game.sport || "") + "' data-game='" + encodeURIComponent(game.game || "") + "' data-date='" + encodeURIComponent(date || "") + "'" + playAttr + ">Add</button>" : "";
+    const add = "<button type='button' class='add-game' data-sport='" + encodeURIComponent(game.sport || "") + "' data-game='" + encodeURIComponent(game.game || "") + "' data-date='" + encodeURIComponent(date || "") + "'" + playAttr + ">Add</button>";
     const spoken = gorillaNote(game, date);
     const note = "<td class='note-col' title='" + esc(spoken).replace(/'/g, "") + "'><p><b class='gg-name'>Gnarly Gorilla: </b>" + esc(spoken) + "</p></td>";
     const tone = game.onCard === false ? "slate-pass" : "slate-play";
-    return "<tr class='" + tone + "'><td class='game-col'>" + slateDot(game) + esc(game.sport + " " + game.game) + "</td><td class='date-col'>" + esc(day) + "</td><td class='time-col'>" + esc(when) + "</td><td class='score-col'>" + esc(slateScore(game)) + "</td><td class='loc-col'>" + esc(slateLocation(game)) + "</td><td class='rec-col'>" + records + "</td><td class='rank-col'>" + ranks + "</td>" + note + (extra ? "<td class='add-col'>" + add + "</td>" : "") + "</tr>";
+    return "<tr class='" + tone + "'><td class='game-col'>" + slateDot(game) + esc(game.sport + " " + game.game) + "</td><td class='date-col'>" + esc(day) + "</td><td class='time-col'>" + esc(when) + "</td><td class='score-col'>" + esc(slateScore(game)) + "</td><td class='loc-col'>" + esc(slateLocation(game)) + "</td><td class='rec-col'>" + records + "</td><td class='rank-col'>" + ranks + "</td>" + note + "<td class='add-col'>" + add + "</td></tr>";
   }).join("");
   const label = slateDateLabel(date);
   const gameHead = label ? "<th class='game-col'><div class='gamehead'><span>Game</span><span class='slate-date'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + esc(label) + "</span></div></th>" : "<th class='game-col'>Game</th>";
-  const addHead = extra ? "<th class='add-col'>Add</th>" : "";
+  const addHead = "<th class='add-col'>Add</th>";
   return "<div class='table-wrap'><table class='season-hold filled'><thead><tr>" + gameHead + "<th class='date-col'>Date</th><th class='time-col'>Time</th><th class='score-col'>Final Score</th><th class='loc-col'>Location</th><th class='rec-col'>Record</th><th class='rank-col'>Ranking</th><th class='note-col'>Notes</th>" + addHead + "</tr></thead><tbody>" + rows + "</tbody></table></div>";
 }
 function cardSlips(){
