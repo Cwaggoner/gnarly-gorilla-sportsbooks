@@ -13257,6 +13257,14 @@ function armScreen(){
     setInterval(() => { if ((document.documentElement.dataset.page || "") === "dashboard") refreshDashboardLive(); }, 30000);
   });
 }
+function collapseSlip(){
+  const slip = document.getElementById("sgpbox");
+  const dock = document.getElementById("slipdock");
+  if (!slip || slip.classList.contains("slip-closed")) return;
+  slip.classList.add("slip-min");
+  if (dock) dock.textContent = "Show";
+  if (window.ggHoldSlip) window.ggHoldSlip();
+}
 function showView(id){
   if (window.__stateBlocked) return;
   const screens = ["games","seasons","dashboard","todaycard","liveodds","slips","reportcard","charts","breaks","addbet","calendarcard","scoreboard","sharks","about"];
@@ -13265,6 +13273,8 @@ function showView(id){
   const parent = screens.indexOf(id) >= 0 ? null : box.closest(".view");
   const screen = screens.indexOf(id) >= 0 ? id : (parent && screens.indexOf(parent.id) >= 0 ? parent.id : "");
   if (!screen) return;
+  const prev = document.documentElement.dataset.page || "";
+  if (prev && prev !== screen) collapseSlip();
   document.documentElement.dataset.page = screen;
   showPageLoad(screen);
   armScreen();
