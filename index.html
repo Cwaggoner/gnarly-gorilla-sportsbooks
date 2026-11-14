@@ -10501,8 +10501,8 @@ if (pageNeeds("closes")) fetch("cards/closes.txt?ts=" + Date.now()).then(r => r.
   const bets = load();
   if (applySavedCloses(bets)) save(bets);
   render();
-  fetch(cardUrl("cards/book-closes.json")).then(r => r.ok ? r.json() : null).then(data => { takeBookCloseFile(data); render(); }).catch(() => {});
-}).catch(() => {});
+  fetch(cardUrl("cards/book-closes.json")).then(r => r.ok ? r.json() : null).then(data => { takeBookCloseFile(data); render(); armClosePull(); }).catch(() => { armClosePull(); });
+}).catch(() => { armClosePull(); });
 
 function mgmBlank(){
   return "<span class='mgm-odd empty'><b>—</b><span></span></span>";
@@ -10638,6 +10638,163 @@ function fillMissingCloses(extra){
 function takeBookCloseFile(data){
   if (data && data.days) bookCloses = data;
   fillMissingCloses(loadBookClosesLocal());
+}
+function espnJuice(v){
+  const n = Number(v);
+  if (!Number.isFinite(n) || Math.abs(n) < 100) return null;
+  return Math.round(n);
+}
+function espnPoint(v){
+  const n = Number(v);
+  if (!Number.isFinite(n)) return null;
+  const r = Math.round(n * 2) / 2;
+  return Math.abs(r - Math.round(r)) < 0.001 ? Math.round(r) : r;
+}
+function espnBookFromOdd(odd){
+  if (!odd) return null;
+  const spread = Number(odd.spread);
+  const away = odd.awayTeamOdds || {};
+  const home = odd.homeTeamOdds || {};
+  let aPt = null, hPt = null;
+  if (Number.isFinite(spread)) {
+    const mag = Math.abs(spread);
+    if (mag < 0.001) { aPt = 0; hPt = 0; }
+    else if (away.favorite) { aPt = espnPoint(-mag); hPt = espnPoint(mag); }
+    else { aPt = espnPoint(mag); hPt = espnPoint(-mag); }
+  }
+  const built = {};
+  const aJ = espnJuice(away.spreadOdds), hJ = espnJuice(home.spreadOdds);
+  const aMl = espnJuice(away.moneyLine), hMl = espnJuice(home.moneyLine);
+  const total = espnPoint(odd.overUnder);
+  const over = espnJuice(odd.overOdds), under = espnJuice(odd.underOdds);
+  if (aPt != null && hPt != null && aJ && hJ) built.spread = {away: {point: aPt, price: aJ}, home: {point: hPt, price: hJ}};
+  if (aMl && hMl) built.h2h = {away: {price: aMl}, home: {price: hMl}};
+  if (total != null && over && under) built.total = {point: Math.abs(total), over: over, under: under};
+  return Object.keys(built).length ? built : null;
+}
+function closePairHit(row, away, home){
+  if (!row) return false;
+  return (sideHit(away, row.away) && sideHit(home, row.home)) || (sideHit(row.away, away) && sideHit(row.home, home));
+}
+function closeAlready(day, sport, away, home){
+  const list = (((bookCloses.days || {})[day] || {})[sport]) || [];
+  const hit = list.find(row => closePairHit(row, away, home));
+  const dk = hit && hit.books && hit.books.DraftKings;
+  if (!dk) return false;
+  const sp = dk.spread && dk.spread.away && dk.spread.home && usableClose(dk.spread.away.price) && usableClose(dk.spread.home.price);
+  const ml = dk.h2h && dk.h2h.away && dk.h2h.home && usableClose(dk.h2h.away.price) && usableClose(dk.h2h.home.price);
+  return !!(sp && ml);
+}
+function putEspnClose(day, sport, away, home, commence, built){
+  if (!built) return false;
+  if (!bookCloses.days) bookCloses.days = {};
+  const dest = bookCloses.days[day] || (bookCloses.days[day] = {});
+  const list = dest[sport] || (dest[sport] = []);
+  let hit = list.find(row => closePairHit(row, away, home));
+  if (!hit) { hit = {away: away, home: home, books: {}}; list.push(hit); }
+  if (commence && !hit.commence) hit.commence = commence;
+  hit.books = hit.books || {};
+  const dk = hit.books.DraftKings || (hit.books.DraftKings = {});
+  let wrote = false;
+  ["spread", "h2h"].forEach(market => {
+    if (!built[market]) return;
+    const cur = dk[market];
+    const have = cur && cur.away && cur.home && usableClose(cur.away.price) && usableClose(cur.home.price);
+    if (have) return;
+    dk[market] = built[market];
+    wrote = true;
+  });
+  if (built.total && !(dk.total && dk.total.point != null && usableClose(dk.total.over) && usableClose(dk.total.under))) {
+    dk.total = built.total;
+    wrote = true;
+  }
+  return wrote;
+}
+async function espnFinals(sport, ymd){
+  const path = STAND_PATH[sport];
+  if (!path) return [];
+  const stamp = String(ymd || "").replace(/-/g, "");
+  const packs = await Promise.all(scoreGroups(sport).map(g => fetch("https://site.api.espn.com/apis/site/v2/sports/" + path + "/scoreboard?dates=" + stamp + "&limit=400" + (g ? "&groups=" + g : "")).then(r => r.ok ? r.json() : null).catch(() => null)));
+  const seen = new Set();
+  const out = [];
+  packs.forEach(data => ((data && data.events) || []).forEach(ev => {
+    if (!ev || seen.has(String(ev.id))) return;
+    const game = liveGameFromEvent(sport, ev);
+    if (!game || !game.final || game.postponed) return;
+    seen.add(String(ev.id));
+    out.push(game);
+  }));
+  return out;
+}
+async function espnSummaryClose(sport, id){
+  const path = STAND_PATH[sport];
+  if (!path || !id) return null;
+  const data = await fetch("https://site.api.espn.com/apis/site/v2/sports/" + path + "/summary?event=" + encodeURIComponent(id)).then(r => r.ok ? r.json() : null).catch(() => null);
+  const odd = data && ((data.pickcenter || data.odds || [])[0]);
+  return espnBookFromOdd(odd);
+}
+let espnCloseFlight = null;
+async function pullMissingCloses(){
+  if (espnCloseFlight) return espnCloseFlight;
+  espnCloseFlight = (async () => {
+    const days = [shiftDate(easternDay(), -1), easternDay()];
+    const sports = ["CBB", "CFB", "NBA", "NFL", "NHL", "MLB"].filter(s => !(s === "MLB" && seasonEnded(s)));
+    let wrote = 0;
+    for (const day of days) {
+      for (const sport of sports) {
+        const games = await espnFinals(sport, day).catch(() => []);
+        const need = games.filter(g => {
+          const away = g.away && (g.away.displayName || g.away.name);
+          const home = g.home && (g.home.displayName || g.home.name);
+          return away && home && g.id && !closeAlready(day, sport, away, home);
+        }).slice(0, 80);
+        for (let i = 0; i < need.length; i += 6) {
+          const batch = need.slice(i, i + 6);
+          const built = await Promise.all(batch.map(g => espnSummaryClose(sport, g.id)));
+          batch.forEach((g, n) => {
+            if (!built[n]) return;
+            const away = g.away.displayName || g.away.name;
+            const home = g.home.displayName || g.home.name;
+            const commence = Number.isFinite(g.start) ? new Date(g.start).toISOString() : "";
+            if (putEspnClose(day, sport, away, home, commence, built[n])) wrote++;
+          });
+        }
+      }
+    }
+    if (wrote) {
+      saveBookClosesLocal();
+      try {
+        const bets = load();
+        bets.forEach(stampFileClose);
+        save(bets);
+      } catch (e) {}
+      try { if (typeof render === "function" && pageNeeds("closes")) render(); } catch (e) {}
+    }
+    try { localStorage.setItem("gg-close-pull", easternDay() + "|" + zoneClock(new Date()).hour); } catch (e) {}
+    return wrote;
+  })().finally(() => { espnCloseFlight = null; });
+  return espnCloseFlight;
+}
+function closePullDue(){
+  const clock = zoneClock(new Date());
+  const after = clock.hour > 0 || (clock.hour === 0 && clock.minute >= 45);
+  if (!after) return false;
+  let stamp = "";
+  try { stamp = localStorage.getItem("gg-close-pull") || ""; } catch (e) {}
+  if (clock.hour < 2) return stamp !== easternDay() + "|" + clock.hour;
+  return stamp.indexOf(easternDay() + "|") !== 0;
+}
+function nextClosePullAt(){
+  const clock = zoneClock(new Date());
+  const hit = instantAt(clock.date, 0, 45);
+  if (Date.now() < hit) return hit;
+  return instantAt(shiftDate(clock.date, 1), 0, 45);
+}
+function armClosePull(){
+  clearTimeout(window.__closePullTimer);
+  if (closePullDue()) pullMissingCloses();
+  const wait = Math.max(5000, nextClosePullAt() - Date.now() + 1500);
+  window.__closePullTimer = setTimeout(() => { pullMissingCloses().finally(armClosePull); }, Math.min(wait, 2147483647));
 }
 function snapshotBookCloses(){
   return {source: "Frozen at game start from the loaded board. DraftKings may also come from the ESPN close when this browser was closed. A book is never filled from another book.", saved: new Date().toISOString(), days: (bookCloses && bookCloses.days) || {}};
@@ -12953,8 +13110,8 @@ function armScreen(){
     const bets = load();
     if (applySavedCloses(bets)) save(bets);
     render();
-    fetch(cardUrl("cards/book-closes.json")).then(r => r.ok ? r.json() : null).then(data => { takeBookCloseFile(data); render(); }).catch(() => {});
-  }).catch(() => {}));
+    fetch(cardUrl("cards/book-closes.json")).then(r => r.ok ? r.json() : null).then(data => { takeBookCloseFile(data); render(); armClosePull(); }).catch(() => { armClosePull(); });
+  }).catch(() => { armClosePull(); }));
   if (pageNeeds("ledger") || pageNeeds("grades") || pageNeeds("dashfile")) onceKind(catchKey(), () => catchUp());
   if (pageNeeds("dashfile")) onceKind("dashlive", () => {
     refreshDashboardLive();
