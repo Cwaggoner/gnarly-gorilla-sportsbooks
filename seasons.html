@@ -11722,6 +11722,8 @@ function mgmGameCard(g, day, book, withClose){
   const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
   const when = g.start ? formatTime(g.start, false) : "";
   const teams = String(g.label || "").split(/\s+at\s+/i);
+  const awayName = (teams[0] || "").trim();
+  const homeName = (teams[1] || "").trim();
   const scored = boardGame(g.sport, g.label);
   const face = team => {
     const logo = team && teamLogo(team.logo) ? "<img src='" + esc(teamLogo(team.logo)) + "' alt='' width='28' height='28' decoding='async' loading='lazy'>" : "<span class='mgm-logo'></span>";
