@@ -526,8 +526,16 @@ table.score-align .score-hold + .score-hold { margin-top:2px; }
 .season-hold td { height:18px; width:50%; }
 table.season-hold.filled { border:1px solid #39ff14; border-radius:10px; overflow:hidden; margin-top:8px; }
 table.season-hold.filled th, table.season-hold.filled td { border-bottom:1px solid #39ff14; height:auto; width:auto; color:#d6ffd0; font-size:13px; text-align:left; vertical-align:middle; padding:8px; }
-#todaycard #cardgames .table-wrap { overflow-x:auto; }
-#todaycard table.season-hold.filled { table-layout:fixed; width:100%; overflow:visible; }
+#todaycard #cardgames .table-wrap { overflow:hidden; border:1px solid #39ff14; border-radius:10px; background:#141414; }
+#todaycard #cardgames table.season-hold.filled { border:0; border-radius:0; margin:0; overflow:hidden; background:transparent; table-layout:fixed; width:100%; }
+#todaycard #cardgames table.season-hold.filled tr:last-child td { border-bottom:0; }
+#todaycard #injuryreport,
+#todaycard .injury-box,
+#todaycard .payout-box,
+#todaycard .align-frame,
+#todaycard .section-head,
+#todaycard h2.split-title,
+#todaycard h3.split-title { overflow:hidden; }
 #todaycard table.season-hold.filled th.loc-col,
 #todaycard table.season-hold.filled td.loc-col { width:18%; min-width:0; white-space:normal; overflow-wrap:anywhere; overflow:hidden; }
 #todaycard table.season-hold.filled th.note-col,
@@ -1017,7 +1025,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
     max-width:100%;
     min-width:0;
     box-sizing:border-box;
-    overflow:visible;
+    overflow:hidden;
   }
   #todaycard #cardgames .table-wrap,
   #todaycard #injuryreport,
@@ -1607,6 +1615,14 @@ function zoneClock(date){
   const parts = new Intl.DateTimeFormat("en-US", {timeZone: "America/New_York", year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit", hourCycle:"h23"}).formatToParts(date || new Date());
   const get = k => parts.find(p => p.type === k).value;
   return {date: get("year") + "-" + get("month") + "-" + get("day"), hour: Number(get("hour")), minute: Number(get("minute"))};
+}
+function slateDayNow(){
+  return slateDateOf(Date.now());
+}
+function onTodaySlate(game){
+  const start = slateStart(game);
+  if (!start) return false;
+  return slateDateOf(start) === slateDayNow();
 }
 function slateDateOf(iso){
   const ms = typeof iso === "number" ? iso : Date.parse(iso || "");
@@ -3500,12 +3516,12 @@ function drawPassedSlate(){
   const cardBox = document.getElementById("cardgames");
   const note = document.getElementById("passednote");
   if (!cardBox) return;
-  const date = (pickSlate && pickSlate.date) || easternDay();
-  const plays = ((pickSlate && pickSlate.games) || []).map(g => Object.assign({}, g, {onCard: true}));
-  const rest = ((pickSlate && pickSlate.passed) || []).map(g => Object.assign({}, g, {onCard: false}));
+  const date = slateDayNow();
+  const plays = ((pickSlate && pickSlate.games) || []).filter(onTodaySlate).map(g => Object.assign({}, g, {onCard: true}));
+  const rest = ((pickSlate && pickSlate.passed) || []).filter(onTodaySlate).map(g => Object.assign({}, g, {onCard: false}));
   const games = plays.concat(rest);
   if (note) note.innerHTML = games.length ? "<li class='key-play'>Neon green is on the card.</li><li class='key-pass'>Neon cyan is the rest of the slate. He still takes the best price.</li>" : "";
-  cardBox.innerHTML = games.length ? slateTable(games, date, true) : "";
+  cardBox.innerHTML = games.length ? slateTable(games, date, true) : "<p class='api-note'>No games for " + esc(slateDateLabel(date)) + ". This table changes at 4:00 AM Eastern.</p>";
   if (games.length && !(recordRows.length && window.__ranksReady === recordsStamp()) && window.__rankAsk !== recordsStamp()) {
     window.__rankAsk = recordsStamp();
     ensureRanks().then(() => {
@@ -4404,12 +4420,43 @@ async function readJson(url){
   if (!text.trim()) return null;
   try { return JSON.parse(text); } catch (err) { return null; }
 }
+async function pullTodaySlate(day){
+  const sports = ["CBB","CFB","MLB","NBA","NFL","NHL"].filter(s => SCORE_FEED[s] && !seasonEnded(s));
+  const found = (await Promise.all(sports.map(s => scoreboard(s, day).catch(() => [])))).flat();
+  const games = [];
+  const seen = new Set();
+  found.forEach(game => {
+    if (!game || gameSlateDay(game) !== day) return;
+    const away = (game.away && (game.away.shortDisplayName || game.away.name || game.away.displayName)) || "";
+    const home = (game.home && (game.home.shortDisplayName || game.home.name || game.home.displayName)) || "";
+    if (!away || !home) return;
+    const label = away + " at " + home;
+    const key = String(game.sport || "") + "|" + label;
+    if (seen.has(key)) return;
+    seen.add(key);
+    games.push({sport: game.sport, game: label, start: game.start ? new Date(game.start).toISOString() : "", location: game.location || game.venue || "", away: {name: away, record: (game.away && game.away.record) || ""}, home: {name: home, record: (game.home && game.home.record) || ""}, awayRecord: (game.away && game.away.record) || "", homeRecord: (game.home && game.home.record) || "", live: !!game.live && !game.final, final: !!game.final, awayScore: game.awayScore, homeScore: game.homeScore, lines: game.lines || null, lineBook: game.lineBook || ""});
+  });
+  return {date: day, games: games, passed: []};
+}
 async function loadPickSlate(){
   cardFileSeen = true;
   try {
+    const day = slateDayNow();
     let data = await readJson("cards/pick-slate.json");
-    if (!data || !Array.isArray(data.games) || !data.games.length) data = await readJson("cards/scoreboard.json");
-    if (!data || !Array.isArray(data.games)) data = {date: easternDay(), games: [], passed: []};
+    const fileDay = data && String(data.date || "").slice(0, 10);
+    const fileGames = data && Array.isArray(data.games) ? data.games : null;
+    if (!data || fileDay !== day || !fileGames || !fileGames.length) {
+      const board = await readJson("cards/scoreboard.json");
+      const boardDay = board && String(board.date || "").slice(0, 10);
+      if (board && boardDay === day && Array.isArray(board.games) && board.games.length) data = board;
+      else if (pickSlate && pickSlate._shown === day && window.__slatePullDay === day && Date.now() - (window.__slatePullAt || 0) < 5 * 60 * 1000) data = {date: day, games: pickSlate.games || [], passed: pickSlate.passed || []};
+      else {
+        data = await pullTodaySlate(day);
+        window.__slatePullDay = day;
+        window.__slatePullAt = Date.now();
+      }
+    }
+    if (!data.passed) data.passed = [];
     const card = await fetch("cards/today.txt?ts=" + Date.now()).then(r => r.ok ? r.text() : "").catch(() => "");
     if (card && !postedCard) postedCard = card;
     applyPostedCard(data, card);
@@ -4417,15 +4464,23 @@ async function loadPickSlate(){
     const prev = pickSlate;
     pickSlate = data;
     await attachSlipGames();
-    if (!(pickSlate.games || []).length && !(pickSlate.passed || []).length) { if (postedCard && document.getElementById("analysisgrid")) drawCardAnalysis(postedCard); later(() => { drawInjuryReport().catch(() => {}); }); return; }
+    if (!(pickSlate.games || []).length && !(pickSlate.passed || []).length) {
+      drawPassedSlate();
+      armSlateDay();
+      if (postedCard && document.getElementById("analysisgrid")) drawCardAnalysis(postedCard);
+      later(() => { drawInjuryReport().catch(() => {}); });
+      return;
+    }
     const stamp = JSON.stringify([pickSlate.date, pickSlate.games, pickSlate.passed || []]);
-    const same = prev && prev._stamp === stamp;
+    const same = prev && prev._stamp === stamp && prev._shown === day;
     pickSlate._stamp = stamp;
+    pickSlate._shown = day;
     later(() => { drawInjuryReport().catch(() => {}); });
     if (postedCard && document.getElementById("analysisgrid")) drawCardAnalysis(postedCard);
     if (!same) drawCalendar();
     refreshSlateRecords().then(updated => { if (!same && !updated) drawPickSlate(); }).catch(() => { if (!same) drawPickSlate(); });
     armHourlyScores();
+    armSlateDay();
   } catch (err) {}
   settleCardLoad();
 }
@@ -4499,6 +4554,13 @@ async function refreshSlateRecords(){
   if (changed) drawPickSlate();
   armSlateScores();
   return changed || dropped || graded;
+}
+function armSlateDay(){
+  clearTimeout(window.__slateDayTimer);
+  if ((document.documentElement.dataset.page || "") !== "todaycard") return;
+  const next = slateCutoff(slateDayNow());
+  const wait = Math.max(1000, next - Date.now() + 500);
+  window.__slateDayTimer = setTimeout(() => { loadPickSlate(); }, wait);
 }
 function armSlateScores(){
   clearTimeout(window.__slateScoreTimer);
