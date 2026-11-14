@@ -1240,7 +1240,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </div>
 </div>
 <div class="align-frame"><table class="score-align"><tbody><tr><td></td><td class="score-copy"><p class="warn slips-side">Click a price to put it on the slip.</p></td></tr></tbody></table></div>
-<div class="card-analysis" id="cardanalysis"><h3 class="split-title">Analysis</h3><div class="analysis-body"><div class="analysis-grid" id="analysisgrid"></div></div><div class="sharp-read align-frame"><b>Analysis:</b><p id="sharpread"></p><ul class="slate-key" id="passednote"></ul></div><p class="injury-filters slate-sort"><label>Sport<select id="slatesport"><option value="" selected>All</option><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option></select></label></p><div id="cardgames"></div></div>
+<div class="card-analysis" id="cardanalysis"><h3 class="split-title">Analysis</h3><div class="analysis-body"><div class="analysis-grid" id="analysisgrid"></div></div><div class="sharp-read align-frame"><b>Analysis:</b><p id="sharpread"></p><ul class="slate-key" id="passednote"></ul></div><p class="injury-filters slate-sort"><label>Sport<select id="slatesport"><option value="" selected>All</option><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option></select></label><label>Start<select id="slatetime"><option value="" selected>All</option><option value="am">Before 12 PM</option><option value="mid">12–4 PM</option><option value="early">4–7 PM</option><option value="night">7 PM on</option></select></label></p><div id="cardgames"></div></div>
 <h2 class="split-title">Injury Reports</h2>
 <div class="align-frame"><table class="score-align"><tbody><tr><td><p class="injury-filters"><select id="injurysport"><option selected>All</option><option>CBB</option><option>CFB</option><option>MLB</option><option>NBA</option><option>NFL</option><option>NHL</option></select><select id="injuryshow"><option value="posted" selected>Posted</option><option value="all">All rows</option><option value="out">Out</option><option value="maybe">May still play</option></select></p></td><td class="score-copy"><p class="warn slips-side">Red is out. Amber may still play. Times are Eastern.</p></td></tr></tbody></table></div>
 <div class="injury-box">
@@ -3546,9 +3546,11 @@ function drawPassedSlate(){
   const plays = ((pickSlate && pickSlate.games) || []).filter(onTodaySlate).map(g => Object.assign({}, g, {onCard: true}));
   const rest = ((pickSlate && pickSlate.passed) || []).filter(onTodaySlate).map(g => Object.assign({}, g, {onCard: false}));
   const sportPick = String((document.getElementById("slatesport") || {}).value || "").toUpperCase();
-  const games = plays.concat(rest).filter(g => !sportPick || String(g.sport || "").toUpperCase() === sportPick);
+  const timePick = String((document.getElementById("slatetime") || {}).value || "");
+  const timeName = timePick ? ((document.querySelector("#slatetime option:checked") || {}).textContent || "") : "";
+  const games = plays.concat(rest).filter(g => (!sportPick || String(g.sport || "").toUpperCase() === sportPick) && slateInWindow(g, timePick));
   if (note) note.innerHTML = games.length ? "<li class='key-play'>Neon green is on the card.</li><li class='key-pass'>Neon cyan is the rest of the slate. He still takes the best price.</li>" : "";
-  cardBox.innerHTML = games.length ? slateTable(games, date, true) : "<p class='api-note'>No " + (sportPick ? esc(sportPick) + " " : "") + "games for " + esc(slateDateLabel(date)) + ". This table changes at 4:00 AM Eastern.</p>";
+  cardBox.innerHTML = games.length ? slateTable(games, date, true) : "<p class='api-note'>No " + (sportPick ? esc(sportPick) + " " : "") + (timeName ? esc(timeName) + " " : "") + "games for " + esc(slateDateLabel(date)) + ". This table changes at 4:00 AM Eastern.</p>";
   fitNoteColumn();
   if (games.length && !(recordRows.length && window.__ranksReady === recordsStamp()) && window.__rankAsk !== recordsStamp()) {
     window.__rankAsk = recordsStamp();
@@ -3813,6 +3815,23 @@ function slateDateLabel(date){
 }
 function slateStart(game){
   return (game && (game.start || game.startTimeUTC || game.commence_time || game.startTime)) || "";
+}
+function slateHour(game){
+  const ms = Date.parse(slateStart(game) || "");
+  if (!Number.isFinite(ms)) return -1;
+  const part = new Intl.DateTimeFormat("en-US", {timeZone: siteZone(), hour:"numeric", hourCycle:"h23"}).formatToParts(new Date(ms)).find(p => p.type === "hour");
+  const hour = Number(part && part.value);
+  if (!Number.isFinite(hour)) return -1;
+  return hour === 24 ? 0 : hour;
+}
+function slateInWindow(game, key){
+  if (!key) return true;
+  const hour = slateHour(game);
+  if (hour < 0) return false;
+  if (key === "am") return hour < 12;
+  if (key === "mid") return hour >= 12 && hour < 16;
+  if (key === "early") return hour >= 16 && hour < 19;
+  return hour >= 19;
 }
 function slateLocation(game){
   if (!game) return "";
@@ -8392,6 +8411,7 @@ document.getElementById("cardbook").onchange = () => {
   document.getElementById("pdfnote").textContent = document.getElementById("cardbook").value + " will be used when this card is loaded. Add A Bet drives the pick list.";
 };
 document.getElementById("slatesport").onchange = () => drawPassedSlate();
+document.getElementById("slatetime").onchange = () => drawPassedSlate();
 
 async function loadPending(){
   const note = document.getElementById("pdfnote");
