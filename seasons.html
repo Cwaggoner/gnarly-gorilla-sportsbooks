@@ -4772,9 +4772,13 @@ function paintRecords(){
   const note = document.getElementById("recnote");
   if (!body) return;
   paintRecordFilters();
-  const sport = document.getElementById("recsport").value;
-  const conf = document.getElementById("recconf").value;
-  const div = document.getElementById("recdiv").value;
+  const sportEl = document.getElementById("recsport");
+  const confEl = document.getElementById("recconf");
+  const divEl = document.getElementById("recdiv");
+  if (!sportEl || !confEl || !divEl) return;
+  const sport = sportEl.value;
+  const conf = confEl.value;
+  const div = divEl.value;
   const list = recordRows.filter(r => (!sport || r.sport === sport) && (!conf || r.conference === conf) && (!div || r.division === div));
   let last = "";
   body.innerHTML = list.map(r => {
@@ -5325,8 +5329,7 @@ async function loadLiveBoard(){
   liveBoardGames = games;
   if (!packs.some(p => !p || !p.ok)) {
     window.__boardOk = Object.assign({}, window.__boardOk, {[liveBoardDate]: true});
-    window.__gameScores = games.filter(g => g && !g.why);
-    window.__gameScoresAt = Date.now();
+    keepScoreDays(games, liveBoardDate);
     showClock();
   }
   paintLiveBoard();
@@ -10171,15 +10174,26 @@ function scoresWanted(){
   const page = document.documentElement.dataset.page || "games";
   return page === "games" || page === "liveodds" || page === "slips" || page === "reportcard" || page === "todaycard" || page === "dashboard";
 }
-function applyBoardScores(games, days){
-  if (!games.length) return;
-  const prior = window.__gameScores || [];
-  const seen = new Set(games.map(g => g.sport + "|" + g.id));
-  prior.forEach(g => { if (g && !seen.has(g.sport + "|" + g.id)) games.push(g); });
-  window.__gameScores = games;
+function keepScoreDays(fresh, day){
+  const next = (fresh || []).filter(g => g && !g.why).map(g => day && !String(g.date || "").slice(0, 10) ? Object.assign({}, g, {date: day}) : g);
+  if (!next.length) return;
+  const ids = new Set(next.filter(g => g.id).map(g => g.sport + "|" + g.id));
+  const hold = (window.__gameScores || []).filter(g => {
+    if (!g || g.why) return false;
+    if (g.id && ids.has(g.sport + "|" + g.id)) return false;
+    const played = String(g.date || "").slice(0, 10);
+    if (day && played === day) return false;
+    return true;
+  });
+  window.__gameScores = next.concat(hold);
   window.__gameScoresAt = Date.now();
+}
+function applyBoardScores(games, days){
+  const day = days && days.length === 1 ? days[0] : "";
+  keepScoreDays(games, day);
+  if (!days || !days.length) return;
   const ok = Object.assign({}, window.__boardOk);
-  days.forEach(day => { ok[day] = true; });
+  days.forEach(d => { ok[d] = true; });
   window.__boardOk = ok;
 }
 function syncBoardLive(){
@@ -11464,8 +11478,7 @@ function armLiveExtras(games){
       needInj.length ? Promise.all(needInj.map(sport => fetch("https://site.api.espn.com/apis/site/v2/sports/" + SCORE_FEED[sport] + "/injuries").then(r => r.ok ? r.json() : null).catch(() => null))) : Promise.resolve(null)
     ]).then(([packs, inj]) => {
       if (packs) {
-        window.__gameScores = packs.flat();
-        window.__gameScoresAt = Date.now();
+        keepScoreDays(packs.flat(), easternDay());
       }
       let keptInj = false;
       if (inj) needInj.forEach((sport, i) => { if (keepInjuryFeed(sport, inj[i])) keptInj = true; });
@@ -11818,8 +11831,7 @@ function refreshGameScores(games){
   const day = easternDay();
   if (!sports.length) return;
   gameScoreFlight = Promise.all(sports.map(sport => scoreboard(sport, day).catch(() => []))).then(async packs => {
-    window.__gameScores = packs.flat();
-    window.__gameScoresAt = Date.now();
+    keepScoreDays(packs.flat(), day);
     const kept = (window.__slipGames || []).filter(g => String(g.date || "").slice(0, 10) !== day);
     window.__slipGames = kept.concat(window.__gameScores);
     const page = document.documentElement.dataset.page || "games";
@@ -11908,8 +11920,7 @@ function savedOddsKey(){
 async function loadGameDay(day, books){
   const sports = Object.keys(SCORE_FEED);
   const packs = await Promise.all(sports.map(sport => scoreboard(sport, day).catch(() => [])));
-  window.__gameScores = packs.flat();
-  window.__gameScoresAt = Date.now();
+  keepScoreDays(packs.flat(), day);
   seedBoardFromScores(window.__gameScores, day);
   const key = savedOddsKey();
   let pulled = true;
@@ -13000,8 +13011,7 @@ function armScreen(){
   if (pageNeeds("profit")) onceKind("chartgames", () => {
     const day = easternDay();
     Promise.all(Object.keys(SCORE_FEED).map(sport => scoreboard(sport, day).catch(() => []))).then(packs => {
-      window.__gameScores = (packs || []).flat();
-      window.__gameScoresAt = Date.now();
+      keepScoreDays((packs || []).flat(), day);
       drawCharts();
     }).catch(() => {}).finally(() => hidePageLoad("charts"));
   });
