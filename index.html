@@ -665,6 +665,8 @@ label:has(#loadcal) { gap:0; }
 #todaycard .slate-key .key-play::before { color:#39ff14; }
 #todaycard .slate-key .key-pass { color:#00e5ff; }
 #todaycard .slate-key .key-pass::before { color:#00e5ff; }
+#todaycard .slate-key .key-best { color:#ff00ff; }
+#todaycard .slate-key .key-best::before { color:#ff00ff; }
 #todaycard tr.slate-play td,
 #todaycard tr.slate-play td.note-col,
 #todaycard tr.slate-play td.note-col p { color:#39ff14; }
@@ -3555,7 +3557,7 @@ function drawPassedSlate(){
   const games = pool.filter(g => slateIsStatus(g, statusPick));
   const anyBetter = pool.some(g => g.onCard);
   const anyTie = pool.some(g => g.betterTie);
-  const key = !pool.length ? "" : anyTie && !anyBetter ? "<li class='key-pass'>Neon cyan means nothing in this set is a better number. The prices are the same kind.</li>" : !anyBetter ? "<li class='key-pass'>Neon cyan means no posted price is better than the others yet.</li>" : "<li class='key-play'>Neon green is the better pick in this set.</li><li class='key-pass'>Neon cyan is a weaker number. It stays so you can see what it lost to.</li>";
+  const key = !pool.length ? "" : (anyTie && !anyBetter ? "<li class='key-pass'>Neon cyan means nothing in this set is a better number. The prices are the same kind.</li>" : !anyBetter ? "<li class='key-pass'>Neon cyan means no posted price is better than the others yet.</li>" : "<li class='key-play'>Neon green is the better pick in this set.</li><li class='key-pass'>Neon cyan is a weaker number. It stays so you can see what it lost to.</li>") + "<li class='key-best'>Magenta is the better pick, at the best price on that number.</li>";
   if (note) note.innerHTML = key;
   cardBox.innerHTML = games.length ? slateTable(games, date, true) : "<p class='api-note'>No " + (sportPick ? esc(sportPick) + " " : "") + (timeName ? esc(timeName) + " " : "") + (statusName ? esc(statusName) + " " : "") + "games for " + esc(slateDateLabel(date)) + ". This table changes at 4:00 AM Eastern.</p>";
   fitNoteColumn();
