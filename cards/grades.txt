@@ -61,3 +61,10 @@
 2026-11-12 | CBB | No Picks
 2026-11-12 | CFB | No Picks
 2026-11-12 | MLB | Season Ended
+2026-11-13 | RANGE | All Win 9.09 | All Lose -10.00
+2026-11-13 | CBB | Ohio State +11.5 | close 12.5 | loss | 68-84 | -10.00 EDGE
+2026-11-13 | CFB | No Picks
+2026-11-13 | NBA | No Picks
+2026-11-13 | NHL | No Picks
+2026-11-13 | NFL | No Picks
+2026-11-13 | MLB | Season Ended
