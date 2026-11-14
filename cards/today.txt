@@ -1,5 +1,5 @@
-# file: GG-CARD-2026-11-13
-2026-11-13 | CBB | Side | Ohio State +11.5 | -110 | made -5.7, book -11.5, gap 5.8, reason Nik Khamenia out foot surgery. Edge.
-2026-11-13 | CFB | No Picks
-2026-11-13 | NBA | No Picks
-2026-11-13 | NHL | No Picks
+# file: GG-CARD-2026-11-14
+2026-11-14 | CBB | No Picks
+2026-11-14 | CFB | No Picks
+2026-11-14 | NBA | No Picks
+2026-11-14 | NHL | No Picks
