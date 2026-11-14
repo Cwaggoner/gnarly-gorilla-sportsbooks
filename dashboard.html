@@ -2281,9 +2281,9 @@ function drawCardAnalysis(text){
   const grid = document.getElementById("analysisgrid");
   if (!grid) return;
   const all = cardLines(text);
-  const today = easternDay();
+  const today = slateDayNow();
   const dated = all.filter(p => /^\d{4}-\d{2}-\d{2}$/.test(p[0]));
-  const posted = dated.length ? dated.filter(p => p[0] === today) : all;
+  const posted = dated.length ? dated.filter(p => p[0] === today) : [];
   const cardBook = ((document.getElementById("cardbook") || {}).value) || "BetMGM";
   const seen = new Set();
   const rows = [];
@@ -2296,13 +2296,12 @@ function drawCardAnalysis(text){
     row[6] = named;
     rows.push(row);
   };
-  pendingCardRows().forEach(r => take(r, r[6]));
+  pendingCardRows().filter(r => r[0] === today).forEach(r => take(r, r[6]));
   posted.filter(r => !isNoCard(r)).forEach(r => take(r, r[6] || cardBook));
   posted.filter(isNoCard).forEach(r => { if (!rows.some(row => row[1] === r[1])) rows.push(r); });
   const title = document.querySelector("#cardanalysis h3");
   const read = document.getElementById("sharpread");
-  const slateReady = ((pickSlate && pickSlate.games) || []).length;
-  if (!rows.length && !slateReady) {
+  if (!rows.length) {
     grid.innerHTML = "<p class='warn'>Today's card is not posted yet. Yesterday's picks stay off this card.</p>";
     if (title) title.textContent = "Analysis · " + today;
     if (read) read.textContent = "No card is live yet. It posts with the morning picks. Yesterday is not carried onto this card.";
@@ -2314,16 +2313,7 @@ function drawCardAnalysis(text){
   const day = (rows[0] && /^\d{4}-\d{2}-\d{2}$/.test(rows[0][0]) && rows[0][0]) || today;
   grid.innerHTML = sports.map(sport => {
     const mine = rows.filter(r => r[1] === sport);
-    const slateGames = ((pickSlate && pickSlate.games) || []).filter(g => String(g.sport || "").toUpperCase() === sport);
-    const chosen = [];
-    const seenPick = new Set();
-    slateGames.forEach(g => {
-      const row = gorillaChoice(g, day);
-      if (!row || gorillaRank(row) < 100 || seenPick.has(normPick(row[3]))) return;
-      seenPick.add(normPick(row[3]));
-      chosen.push(row);
-    });
-    const plays = chosen.length ? chosen : mine.filter(r => !isNoCard(r) && gorillaRank(r) > 0);
+    const plays = mine.filter(r => !isNoCard(r) && r[3]);
     if (!plays.length) {
       const ended = mine.some(r => /season ended/i.test((r[2] || "") + " " + (r[3] || ""))) || seasonEnded(sport);
       const label = ended ? "Season Ended" : "No Play";
