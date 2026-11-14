@@ -937,7 +937,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 .league-marks { display:inline-flex; align-items:center; gap:6px; flex:0 0 auto; }
 .league-marks img, button.league img { width:20px; height:20px; flex:0 0 20px; display:block; object-fit:contain; }
 #gamenote { position:absolute; margin:0; white-space:nowrap; line-height:1; z-index:5; pointer-events:none; transform:translate(-50%, -100%); }
-.mgm-card { display:grid; grid-template-columns:minmax(230px, max-content) minmax(0,1fr) max-content; align-items:center; column-gap:12px; width:100%; max-width:100%; box-sizing:border-box; border:1px solid var(--gray); border-radius:10px; background:#0e0e0e; margin:var(--box-gap) 0; padding:8px 10px; }
+.mgm-card { display:grid; grid-template-columns:minmax(230px, max-content) minmax(0,1fr) max-content; align-items:center; column-gap:12px; width:100%; max-width:100%; box-sizing:border-box; border:1px solid var(--gray); border-radius:10px; background:#0e0e0e; margin:var(--box-gap) 0; padding:8px 10px; content-visibility:auto; contain-intrinsic-size:auto 168px; }
 #oddscompare .mgm-card.sport-off { display:none !important; }
 .mgm-card.no-close { grid-template-columns:minmax(210px, max-content) minmax(0,1fr) minmax(250px, 300px); align-items:start; }
 .sharp-shop { border:1px solid #39ff14; border-radius:8px; background:rgba(57,255,20,.08); padding:8px 10px; min-width:0; }
@@ -6396,7 +6396,10 @@ async function pullLiveBoard(key, sports, opts){
       if (more && (more.failed || more.low)) missed = true;
     }
     rows.forEach(g => { g._sport = sport; });
-    try { sessionStorage.setItem("gg-odds-all-" + sportKey, JSON.stringify({at: Date.now(), games: rows})); } catch (e) {}
+    try {
+      const packed = JSON.stringify({at: Date.now(), games: rows});
+      if (packed.length < 1200000) sessionStorage.setItem("gg-odds-all-" + sportKey, packed);
+    } catch (e) {}
     if (opts && opts.onSport) { try { opts.onSport(rows, sport); } catch (e) {} }
     return {sport: sport, failed: false, list: rows, note: missed && rows.some(g => !caesarsMoneylineReady(g))};
   }));
@@ -10690,7 +10693,15 @@ function mgmOpen(g, market, day, book, names){
     return [mark, mark];
   }
   const sides = text && text !== "-" ? shopSides(text) : null;
-  const flags = sides ? ((bestPriceFlags(posted, names)[book]) || [false, false]) : [false, false];
+  let flags = [false, false];
+  if (sides) {
+    let hot = boardFlagCache && boardFlagCache.get(posted);
+    if (!hot) {
+      hot = bestPriceFlags(posted, names);
+      if (boardFlagCache) boardFlagCache.set(posted, hot);
+    }
+    flags = hot[book] || flags;
+  }
   if (!sides) return [mgmLock("Not posted"), mgmLock("Not posted")];
   return [0, 1].map(index => {
     const side = sides[index];
@@ -11690,15 +11701,30 @@ function armLiveExtras(games){
     }).finally(() => { liveExtraFlight = null; });
   });
 }
+let boardFlagCache = null;
+let boardScoresBySport = null;
+let boardScoreHit = null;
+function scoresFor(sport){
+  const code = String(sport || "").toUpperCase();
+  if (!boardScoresBySport) return (window.__gameScores || []).filter(x => x.sport === code);
+  return boardScoresBySport[code] || [];
+}
+function boardGame(sport, label){
+  const code = String(sport || "").toUpperCase();
+  if (!boardScoreHit) return findFinalGame(scoresFor(code), label);
+  const key = code + "|" + String(label || "").toLowerCase();
+  if (boardScoreHit.has(key)) return boardScoreHit.get(key);
+  const hit = findFinalGame(scoresFor(code), label) || null;
+  boardScoreHit.set(key, hit);
+  return hit;
+}
 function mgmGameCard(g, day, book, withClose){
   const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
   const when = g.start ? formatTime(g.start, false) : "";
   const teams = String(g.label || "").split(/\s+at\s+/i);
-  const awayName = (teams[0] || "").trim();
-  const homeName = (teams[1] || "").trim();
-  const scored = findFinalGame((window.__gameScores || []).filter(x => x.sport === String(g.sport || "").toUpperCase()), g.label);
+  const scored = boardGame(g.sport, g.label);
   const face = team => {
-    const logo = team && teamLogo(team.logo) ? "<img src='" + esc(teamLogo(team.logo)) + "' alt='' width='28' height='28' decoding='async'>" : "<span class='mgm-logo'></span>";
+    const logo = team && teamLogo(team.logo) ? "<img src='" + esc(teamLogo(team.logo)) + "' alt='' width='28' height='28' decoding='async' loading='lazy'>" : "<span class='mgm-logo'></span>";
     const rec = team && (team.rec || team.record) ? "<i>" + esc(team.rec || team.record) + "</i>" : "";
     const score = team && team.score ? "<b class='mgm-score'>" + esc(team.score) + "</b>" : "";
     return "<div class='mgm-team'>" + logo + "<span>" + esc((team && (team.name || team.abbr)) || "") + rec + "</span>" + score + "</div>";
@@ -11712,7 +11738,7 @@ function mgmGameCard(g, day, book, withClose){
   const soon = !tag && startingInText(g.start);
   const soonHtml = startIso && !tag ? "<span class='mgm-start' data-start='" + esc(startIso) + "'" + (soon ? "" : " hidden") + ">" + esc(soon) + "</span>" : "";
   const sideFace = name => {
-    const pool = (window.__gameScores || []).filter(x => x.sport === String(g.sport || "").toUpperCase());
+    const pool = scoresFor(g.sport);
     let best = null, score = 0, ties = 0;
     pool.forEach(row => [row.away, row.home].forEach(team => {
       const n = mentionScore(name, team);
@@ -11799,6 +11825,26 @@ function applyFeedCache(day){
   });
 }
 function drawGameBoard(){
+  if (drawGameBoard.busy) { drawGameBoard.again = true; return; }
+  drawGameBoard.busy = true;
+  boardFlagCache = new WeakMap();
+  boardScoreHit = new Map();
+  boardScoresBySport = {};
+  (window.__gameScores || []).forEach(g => {
+    const code = String(g && g.sport || "").toUpperCase();
+    if (!code) return;
+    (boardScoresBySport[code] || (boardScoresBySport[code] = [])).push(g);
+  });
+  try { paintGameBoard(); }
+  finally {
+    boardFlagCache = null;
+    boardScoreHit = null;
+    boardScoresBySport = null;
+    drawGameBoard.busy = false;
+    if (drawGameBoard.again) { drawGameBoard.again = false; setTimeout(drawGameBoard, 250); }
+  }
+}
+function paintGameBoard(){
   const box = document.getElementById("gameboard");
   if (!box) return;
   const bookEl = document.getElementById("gamebook");
@@ -11806,14 +11852,12 @@ function drawGameBoard(){
   const book = bookEl ? bookEl.value : "BetMGM";
   const sport = sportBtn ? sportBtn.dataset.sport : "All";
   const day = easternDay();
-  applyFeedCache(day);
   ensureGameDay();
   if (!dayHasLines(day)) {
     clearInterval(startClock);
     box.innerHTML = emptyBoardNote(day) + lockedBookRow();
     const pull = document.getElementById("pulltoday");
     if (pull) pull.onclick = () => pullTodayBoard();
-    alignSportBrackets();
     requestAnimationFrame(alignSportBrackets);
     return;
   }
@@ -11842,35 +11886,27 @@ function drawGameBoard(){
     box.innerHTML = emptyBoardNote(day) + lockedBookRow();
     const pull = document.getElementById("pulltoday");
     if (pull) pull.onclick = () => pullTodayBoard();
-    alignSportBrackets();
     requestAnimationFrame(alignSportBrackets);
     return;
   }
   box.innerHTML = games.map(g => mgmGameCard(g, g.boardDay || slateDateOf(g.start) || day, book, true)).join("");
   armGameScores(games);
   armStartingIn();
-  alignSportBrackets();
   requestAnimationFrame(alignSportBrackets);
 }
 function lockOutcomeWidth(){
   if ((document.documentElement.dataset.page || "games") !== "games") return;
-  const lines = [...document.querySelectorAll("#gameboard .mgm-line")];
-  let width = 0;
-  let found = false;
-  lines.forEach(line => {
-    const books = line.querySelector(".mgm-books");
-    const close = line.querySelector(".mgm-set.mgm-close");
-    if (!books || !close) return;
-    const hard = [...books.querySelectorAll(".mgm-set.mgm-book")].find(set => /hardrock/i.test(((set.querySelector(".mgm-group b") || {}).textContent || "")));
-    if (!hard) return;
-    const money = hard.querySelectorAll(".mgm-h")[2];
-    if (!money) return;
-    const edge = money.getBoundingClientRect().right - books.getBoundingClientRect().left + books.scrollLeft;
-    const next = Math.round(line.clientWidth - close.offsetWidth - edge - 8);
-    if (!found || next < width) width = next;
-    found = true;
-  });
-  if (!found) return;
+  const line = document.querySelector("#gameboard .mgm-line");
+  if (!line) return;
+  const books = line.querySelector(".mgm-books");
+  const close = line.querySelector(".mgm-set.mgm-close");
+  if (!books || !close) return;
+  const hard = [...books.querySelectorAll(".mgm-set.mgm-book")].find(set => /hardrock/i.test(((set.querySelector(".mgm-group b") || {}).textContent || "")));
+  if (!hard) return;
+  const money = hard.querySelectorAll(".mgm-h")[2];
+  if (!money) return;
+  const edge = money.getBoundingClientRect().right - books.getBoundingClientRect().left + books.scrollLeft;
+  let width = Math.round(line.clientWidth - close.offsetWidth - edge - 8);
   if (width < 64) width = 64;
   document.documentElement.style.setProperty("--outcome-w", width + "px");
 }
@@ -11891,15 +11927,12 @@ function alignSportBrackets(){
     return true;
   };
   if (sport !== "All" && hold()) return;
-  const spans = [...document.querySelectorAll("#gameboard .mgm-card")].map(card => {
-    const books = [...card.querySelectorAll(".mgm-set.mgm-book")];
-    if (!books.length) return null;
-    const left = books[0].getBoundingClientRect().left;
-    const right = books[books.length - 1].getBoundingClientRect().right;
-    return {left: left, right: right, n: books.length};
-  }).filter(Boolean);
-  if (!spans.length) { if (hold()) return; group.style.width = ""; group.style.flexBasis = ""; group.style.marginLeft = ""; placeGameNotes(); return; }
-  const best = spans.slice().sort((a, b) => (b.right - b.left) - (a.right - a.left) || b.n - a.n)[0];
+  const card = document.querySelector("#gameboard .mgm-card");
+  const books = card ? [...card.querySelectorAll(".mgm-set.mgm-book")] : [];
+  if (books.length < 2) { if (hold()) return; group.style.width = ""; group.style.flexBasis = ""; group.style.marginLeft = ""; placeGameNotes(); return; }
+  const left = books[0].getBoundingClientRect().left;
+  const right = books[books.length - 1].getBoundingClientRect().right;
+  const best = {left: left, right: right, n: books.length};
   const width = Math.max(0, Math.round(best.right - best.left));
   group.style.minWidth = "0px";
   group.style.width = width + "px";
@@ -12002,16 +12035,15 @@ function armGameScores(games){
   if (!onBoard || !games || !games.length) return;
   const scores = window.__gameScores || [];
   const open = games.some(g => {
-    const hit = findFinalGame(scores.filter(x => x.sport === String(g.sport || "").toUpperCase()), g.label);
+    const hit = boardGame(g.sport, g.label);
     return !hit || !hit.final;
   });
   const live = games.some(g => {
-    const hit = findFinalGame(scores.filter(x => x.sport === String(g.sport || "").toUpperCase()), g.label);
+    const hit = boardGame(g.sport, g.label);
     return hit && hit.live && !hit.final;
   });
   const wait = !scores.length || live ? 15000 : open ? 30000 : 120000;
   gameScoreTimer = setTimeout(() => { refreshGameScores(games); }, wait);
-  if ((document.documentElement.dataset.page || "") !== "liveodds" && Date.now() - (window.__gameScoresAt || 0) > 12000) refreshGameScores(games);
 }
 let scoreFillFlight = null;
 let scoreFillAt = 0;
@@ -12121,6 +12153,7 @@ function savedOddsKey(){
   try { return (localStorage.getItem("gg-odds-key") || "").trim(); } catch (e) { return ""; }
 }
 async function loadGameDay(day, books){
+  applyFeedCache(day);
   const key = savedOddsKey();
   const wantBooks = !!(key && (books || booksAreThin(day)));
   let boardPaint = 0;
