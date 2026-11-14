@@ -1240,7 +1240,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 </div>
 </div>
 <div class="align-frame"><table class="score-align"><tbody><tr><td></td><td class="score-copy"><p class="warn slips-side">Click a price to put it on the slip.</p></td></tr></tbody></table></div>
-<div class="card-analysis" id="cardanalysis"><h3 class="split-title">Analysis</h3><div class="analysis-body"><div class="analysis-grid" id="analysisgrid"></div></div><div class="sharp-read align-frame"><b>Analysis:</b><p id="sharpread"></p><ul class="slate-key" id="passednote"></ul></div><p class="injury-filters slate-sort"><label>Sport<select id="slatesport"><option value="">All</option><option selected>NBA</option><option>CBB</option><option>CFB</option><option>MLB</option><option>NFL</option><option>NHL</option></select></label><label>Start<select id="slatetime"><option value="" selected>All</option><option value="am">Before 12 PM</option><option value="mid">12–4 PM</option><option value="early">4–7 PM</option><option value="night">7 PM on</option></select></label><label>Status<select id="slatestatus"><option value="" selected>All</option><option value="upcoming">Upcoming</option><option value="live">Live</option><option value="final">Final</option><option value="card">On the card</option><option value="rest">Rest of slate</option></select></label></p><div id="cardgames"></div></div>
+<div class="card-analysis" id="cardanalysis"><h3 class="split-title">Analysis</h3><div class="analysis-body"><div class="analysis-grid" id="analysisgrid"></div></div><div class="sharp-read align-frame"><b>Analysis:</b><p id="sharpread"></p><ul class="slate-key" id="passednote"></ul></div><p class="injury-filters slate-sort"><label>Sport<select id="slatesport"><option value="">All</option><option selected>NBA</option><option>CBB</option><option>CFB</option><option>MLB</option><option>NFL</option><option>NHL</option></select></label><label>Start<select id="slatetime"><option value="" selected>All</option><option value="am">Before 12 PM</option><option value="mid">12–4 PM</option><option value="early">4–7 PM</option><option value="night">7 PM on</option></select></label><label>Status<select id="slatestatus"><option value="" selected>All</option><option value="upcoming">Upcoming</option><option value="live">Live</option><option value="final">Final</option><option value="card">Better</option><option value="rest">The rest</option></select></label></p><div id="cardgames"></div></div>
 <h2 class="split-title">Injury Reports</h2>
 <div class="align-frame"><table class="score-align"><tbody><tr><td><p class="injury-filters"><select id="injurysport"><option>All</option><option>CBB</option><option>CFB</option><option>MLB</option><option selected>NBA</option><option>NFL</option><option>NHL</option></select><select id="injuryshow"><option value="posted" selected>Posted</option><option value="all">All rows</option><option value="out">Out</option><option value="maybe">May still play</option></select></p></td><td class="score-copy"><p class="warn slips-side">Red is out. Amber may still play. Times are Eastern.</p></td></tr></tbody></table></div>
 <div class="injury-box">
@@ -3543,15 +3543,20 @@ function drawPassedSlate(){
   const note = document.getElementById("passednote");
   if (!cardBox) return;
   const date = slateDayNow();
-  const plays = ((pickSlate && pickSlate.games) || []).filter(onTodaySlate).map(g => Object.assign({}, g, {onCard: true}));
-  const rest = ((pickSlate && pickSlate.passed) || []).filter(onTodaySlate).map(g => Object.assign({}, g, {onCard: false}));
+  const plays = ((pickSlate && pickSlate.games) || []).filter(onTodaySlate).map(g => Object.assign({}, g));
+  const rest = ((pickSlate && pickSlate.passed) || []).filter(onTodaySlate).map(g => Object.assign({}, g));
   const sportPick = String((document.getElementById("slatesport") || {}).value || "").toUpperCase();
   const timePick = String((document.getElementById("slatetime") || {}).value || "");
   const timeName = timePick ? ((document.querySelector("#slatetime option:checked") || {}).textContent || "") : "";
   const statusPick = String((document.getElementById("slatestatus") || {}).value || "");
   const statusName = statusPick ? ((document.querySelector("#slatestatus option:checked") || {}).textContent || "") : "";
-  const games = plays.concat(rest).filter(g => (!sportPick || String(g.sport || "").toUpperCase() === sportPick) && slateInWindow(g, timePick) && slateIsStatus(g, statusPick));
-  if (note) note.innerHTML = games.length ? "<li class='key-play'>Neon green is on the card.</li><li class='key-pass'>Neon cyan is the rest of the slate. He still takes the best price.</li>" : "";
+  const pool = plays.concat(rest).filter(g => (!sportPick || String(g.sport || "").toUpperCase() === sportPick) && slateInWindow(g, timePick));
+  markBetterPlays(pool, date);
+  const games = pool.filter(g => slateIsStatus(g, statusPick));
+  const anyBetter = pool.some(g => g.onCard);
+  const anyTie = pool.some(g => g.betterTie);
+  const key = !pool.length ? "" : anyTie && !anyBetter ? "<li class='key-pass'>Neon cyan means nothing in this set is a better number. The prices are the same kind.</li>" : !anyBetter ? "<li class='key-pass'>Neon cyan means no posted price is better than the others yet.</li>" : "<li class='key-play'>Neon green is the better pick in this set.</li><li class='key-pass'>Neon cyan is a weaker number. It stays so you can see what it lost to.</li>";
+  if (note) note.innerHTML = key;
   cardBox.innerHTML = games.length ? slateTable(games, date, true) : "<p class='api-note'>No " + (sportPick ? esc(sportPick) + " " : "") + (timeName ? esc(timeName) + " " : "") + (statusName ? esc(statusName) + " " : "") + "games for " + esc(slateDateLabel(date)) + ". This table changes at 4:00 AM Eastern.</p>";
   fitNoteColumn();
   if (games.length && !(recordRows.length && window.__ranksReady === recordsStamp()) && window.__rankAsk !== recordsStamp()) {
@@ -3846,6 +3851,28 @@ function slateIsStatus(game, key){
   if (key === "rest") return !!(game && game.onCard === false);
   return true;
 }
+function markBetterPlays(games, date){
+  const scored = (games || []).map(game => {
+    const row = gorillaChoice(game, date);
+    game.onCard = false;
+    game.betterTie = false;
+    return {game: game, rank: row ? gorillaRank(row) : -1};
+  });
+  const priced = scored.filter(x => x.rank >= 0).sort((a, b) => a.rank - b.rank);
+  if (!priced.length) return;
+  if (priced.length === 1) { priced[0].game.onCard = true; return; }
+  const best = priced[priced.length - 1].rank;
+  const worst = priced[0].rank;
+  if (best === worst) {
+    priced.forEach(x => { x.game.betterTie = true; });
+    return;
+  }
+  const mid = priced[Math.floor((priced.length - 1) / 2)].rank;
+  let picks = priced.filter(x => x.rank >= 100 && x.rank > mid);
+  if (!picks.length) picks = priced.filter(x => x.rank === best);
+  if (picks.length === priced.length) picks = priced.filter(x => x.rank === best && best > worst);
+  picks.forEach(x => { x.game.onCard = true; });
+}
 function slateLocation(game){
   if (!game) return "";
   if (game.location) return game.location;
@@ -4034,6 +4061,9 @@ function gorillaNote(game, date){
   const price = main[4] ? " (" + main[4] + ")" : "";
   let body = "I am on " + main[3] + price + ". " + priceTalk(main);
   body += shopLine(main);
+  if (game && game.betterTie) body += " Nothing in this set is better. These numbers are the same kind.";
+  else if (game && game.onCard) body += " This is the better pick in the set.";
+  else body += " This is a weaker number than the green games.";
   return body.replace(/\s+/g, " ").trim();
 }
 function slateDate(game){
