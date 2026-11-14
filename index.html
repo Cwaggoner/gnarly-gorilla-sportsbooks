@@ -42,7 +42,7 @@
 <meta name="theme-color" content="#0a0a0a">
 <link rel="canonical" href="https://cwaggoner.github.io/gnarly-gorilla-sportsbooks/">
 <link rel="icon" href="gg-icon.png" type="image/png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://site.api.espn.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&display=swap" rel="stylesheet"></noscript>
@@ -10167,32 +10167,53 @@ hourBtn.onclick = () => {
 showClock();
 setInterval(showClock, 1000);
 let boardSyncFlight = null;
+function scoresWanted(){
+  const page = document.documentElement.dataset.page || "games";
+  return page === "games" || page === "liveodds" || page === "slips" || page === "reportcard" || page === "todaycard" || page === "dashboard";
+}
+function applyBoardScores(games, days){
+  if (!games.length) return;
+  const prior = window.__gameScores || [];
+  const seen = new Set(games.map(g => g.sport + "|" + g.id));
+  prior.forEach(g => { if (g && !seen.has(g.sport + "|" + g.id)) games.push(g); });
+  window.__gameScores = games;
+  window.__gameScoresAt = Date.now();
+  const ok = Object.assign({}, window.__boardOk);
+  days.forEach(day => { ok[day] = true; });
+  window.__boardOk = ok;
+}
 function syncBoardLive(){
-  if (boardSyncFlight || scorePage()) return;
-  const sports = Object.keys(SCORE_FEED);
-  const days = [shiftDate(easternDay(), -1), easternDay()];
-  boardSyncFlight = Promise.all(sports.map(sport => Promise.all(days.map(day => fetchScoreDay(sport, day).catch(() => null))))).then(packs => {
+  if (boardSyncFlight || scorePage() || !scoresWanted()) return;
+  const sports = Object.keys(SCORE_FEED).filter(s => !seasonEnded(s));
+  const today = easternDay();
+  const yday = shiftDate(today, -1);
+  const pull = day => Promise.all(sports.map(sport => fetchScoreDay(sport, day).catch(() => null))).then(packs => {
     const games = [];
-    const ok = Object.assign({}, window.__boardOk);
-    days.forEach(day => { ok[day] = true; });
-    packs.forEach(sportPacks => {
-      (sportPacks || []).forEach((pack, j) => {
-        const day = days[j];
-        if (!pack || !pack.ok) { ok[day] = false; return; }
-        (pack.games || []).forEach(g => { if (g && !g.why) games.push(Object.assign({}, g, {date: day})); });
-      });
+    let ok = true;
+    packs.forEach(pack => {
+      if (!pack || !pack.ok) { ok = false; return; }
+      (pack.games || []).forEach(g => { if (g && !g.why) games.push(Object.assign({}, g, {date: day})); });
     });
-    window.__boardOk = ok;
-    if (games.length) {
-      window.__gameScores = games;
-      window.__gameScoresAt = Date.now();
-    }
+    return {games: games, ok: ok};
+  });
+  boardSyncFlight = pull(today).then(pack => {
+    applyBoardScores(pack.games, pack.ok ? [today] : []);
+    const page = document.documentElement.dataset.page || "";
+    if (!rendering && (page === "games" || page === "liveodds" || page === "slips" || page === "reportcard")) render();
+    return pull(yday);
+  }).then(pack => {
+    applyBoardScores(pack.games, pack.ok ? [yday] : []);
     showClock();
     const page = document.documentElement.dataset.page || "";
     if (!rendering && (page === "slips" || page === "reportcard" || page === "games" || page === "liveodds")) render();
   }).catch(() => {}).finally(() => { boardSyncFlight = null; });
 }
-syncBoardLive();
+function queueBoardSync(){
+  clearTimeout(window.__boardSyncWait);
+  if (!scoresWanted() || scorePage()) return;
+  if (window.__gameScoresAt && Date.now() - window.__gameScoresAt < 20000) return;
+  window.__boardSyncWait = setTimeout(syncBoardLive, 700);
+}
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState !== "visible") return;
   if (scorePage()) loadLiveBoard();
@@ -13048,6 +13069,7 @@ function showView(id){
   document.documentElement.dataset.page = screen;
   showPageLoad(screen);
   armScreen();
+  queueBoardSync();
   render();
   screens.forEach(key => {
     const el = document.getElementById(key);
@@ -13099,10 +13121,12 @@ window.addEventListener("popstate", () => showView(screenNow()));
 rememberBoot();
 setTimeout(() => {
   showView(screenNow());
+  queueBoardSync();
   restoreForm();
   pinOffset();
   placeGameNotes();
   paintLeagueMarks(document.getElementById(document.documentElement.dataset.page || "games"));
+  document.querySelectorAll("img:not([decoding])").forEach(img => { img.decoding = "async"; });
 }, 0);
 const gamebook = document.getElementById("gamebook");
 if (gamebook) gamebook.onchange = () => {
