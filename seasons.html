@@ -526,8 +526,10 @@ table.score-align .score-hold + .score-hold { margin-top:2px; }
 .season-hold td { height:18px; width:50%; }
 table.season-hold.filled { border:1px solid #39ff14; border-radius:10px; overflow:hidden; margin-top:8px; }
 table.season-hold.filled th, table.season-hold.filled td { border-bottom:1px solid #39ff14; height:auto; width:auto; color:#d6ffd0; font-size:13px; text-align:left; vertical-align:middle; padding:8px; }
-#todaycard #cardgames .table-wrap { overflow:hidden; border:1px solid #39ff14; border-radius:10px; background:#141414; }
-#todaycard #cardgames table.season-hold.filled { border:0; border-radius:0; margin:0; overflow:hidden; background:transparent; table-layout:fixed; width:100%; }
+#todaycard #cardgames .table-wrap { overflow-x:auto; overflow-y:hidden; border:1px solid #39ff14; border-radius:10px; background:#141414; }
+#todaycard #cardgames table.season-hold.filled { border:0; border-radius:0; margin:0; overflow:hidden; background:transparent; table-layout:auto; width:max-content; min-width:100%; }
+#todaycard table.season-hold.filled th.game-col,
+#todaycard table.season-hold.filled td.game-col { width:auto; white-space:nowrap; word-break:normal; overflow-wrap:normal; overflow:visible; }
 #todaycard #cardgames table.season-hold.filled tr:last-child td { border-bottom:0; }
 #todaycard #injuryreport,
 #todaycard .injury-box,
@@ -537,9 +539,9 @@ table.season-hold.filled th, table.season-hold.filled td { border-bottom:1px sol
 #todaycard h2.split-title,
 #todaycard h3.split-title { overflow:hidden; }
 #todaycard table.season-hold.filled th.loc-col,
-#todaycard table.season-hold.filled td.loc-col { width:18%; min-width:0; white-space:normal; overflow-wrap:anywhere; overflow:hidden; }
+#todaycard table.season-hold.filled td.loc-col { width:14rem; max-width:14rem; white-space:normal; overflow-wrap:anywhere; overflow:hidden; }
 #todaycard table.season-hold.filled th.note-col,
-#todaycard table.season-hold.filled td.note-col { width:30%; min-width:0; max-width:none; white-space:normal; overflow-wrap:anywhere; word-break:break-word; overflow:hidden; }
+#todaycard table.season-hold.filled td.note-col { width:22rem; max-width:22rem; white-space:normal; overflow-wrap:anywhere; word-break:break-word; overflow:hidden; }
 #todaycard table.season-hold.filled td.note-col p { display:block; white-space:normal; overflow-wrap:anywhere; word-break:break-word; overflow:hidden; -webkit-line-clamp:unset; }
 #todaycard table.season-hold.filled th.date-col,
 #todaycard table.season-hold.filled td.date-col { width:4.4rem; max-width:4.4rem; white-space:nowrap; text-align:center; overflow:hidden; padding-left:4px; padding-right:4px; }
@@ -552,7 +554,7 @@ table.season-hold.filled th, table.season-hold.filled td { border-bottom:1px sol
 #todaycard table.season-hold.filled th.rec-col,
 #todaycard table.season-hold.filled td.rec-col { width:12rem; max-width:12rem; white-space:normal; overflow:hidden; overflow-wrap:anywhere; }
 #todaycard table.season-hold.filled th.rank-col,
-#todaycard table.season-hold.filled td.rank-col { width:auto; max-width:none; text-align:center; white-space:nowrap; overflow:hidden; padding-left:4px; padding-right:4px; }
+#todaycard table.season-hold.filled td.rank-col { width:7rem; max-width:7rem; text-align:center; white-space:nowrap; overflow:hidden; padding-left:4px; padding-right:4px; }
 #todaycard td.rec-col,
 #todaycard td.rank-col { vertical-align:top; }
 #todaycard td.rec-col div { line-height:1.45; min-height:1.45em; white-space:normal; overflow-wrap:anywhere; }
@@ -4035,10 +4037,10 @@ function slateTable(list, date, extra){
     const spoken = gorillaNote(game, date);
     const note = "<td class='note-col' title='" + esc(spoken).replace(/'/g, "") + "'><p><b class='gg-name'>Gnarly Gorilla: </b>" + esc(spoken) + "</p></td>";
     const tone = game.onCard === false ? "slate-pass" : "slate-play";
-    return "<tr class='" + tone + "'><td>" + slateDot(game) + esc(game.sport + " " + game.game) + "</td><td class='date-col'>" + esc(day) + "</td><td class='time-col'>" + esc(when) + "</td><td class='score-col'>" + esc(slateScore(game)) + "</td><td class='loc-col'>" + esc(slateLocation(game)) + "</td><td class='rec-col'>" + records + "</td><td class='rank-col'>" + ranks + "</td>" + note + (extra ? "<td class='add-col'>" + add + "</td>" : "") + "</tr>";
+    return "<tr class='" + tone + "'><td class='game-col'>" + slateDot(game) + esc(game.sport + " " + game.game) + "</td><td class='date-col'>" + esc(day) + "</td><td class='time-col'>" + esc(when) + "</td><td class='score-col'>" + esc(slateScore(game)) + "</td><td class='loc-col'>" + esc(slateLocation(game)) + "</td><td class='rec-col'>" + records + "</td><td class='rank-col'>" + ranks + "</td>" + note + (extra ? "<td class='add-col'>" + add + "</td>" : "") + "</tr>";
   }).join("");
   const label = slateDateLabel(date);
-  const gameHead = label ? "<th><div class='gamehead'><span>Game</span><span class='slate-date'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + esc(label) + "</span></div></th>" : "<th>Game</th>";
+  const gameHead = label ? "<th class='game-col'><div class='gamehead'><span>Game</span><span class='slate-date'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + esc(label) + "</span></div></th>" : "<th class='game-col'>Game</th>";
   const addHead = extra ? "<th class='add-col'>Add</th>" : "";
   return "<div class='table-wrap'><table class='season-hold filled'><thead><tr>" + gameHead + "<th class='date-col'>Date</th><th class='time-col'>Time</th><th class='score-col'>Final Score</th><th class='loc-col'>Location</th><th class='rec-col'>Record</th><th class='rank-col'>Ranking</th><th class='note-col'>Notes</th>" + addHead + "</tr></thead><tbody>" + rows + "</tbody></table></div>";
 }
