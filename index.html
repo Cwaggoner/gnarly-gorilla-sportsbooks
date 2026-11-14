@@ -4010,10 +4010,10 @@ function slateDate(game){
   return date.toLocaleDateString("en-US", {timeZone: siteZone(), month: "short", day: "numeric"});
 }
 function slateScore(game){
-  if (!game || (!game.live && !game.final)) return "—";
+  if (!game || (!game.live && !game.final)) return "0-0";
   const away = Number(game.awayScore);
   const home = Number(game.homeScore);
-  if (!Number.isFinite(away) || !Number.isFinite(home)) return "—";
+  if (!Number.isFinite(away) || !Number.isFinite(home)) return "0-0";
   return away + "–" + home;
 }
 function slateDot(game){
