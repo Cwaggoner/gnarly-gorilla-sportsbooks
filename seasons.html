@@ -1169,7 +1169,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <p id="gamenote" class="warn" hidden></p>
 <div class="align-frame"><table class="score-align"><tbody><tr><td><div class="odds-tools">
 <p class="warn game-pin" id="gamepinleft">Tap a price. Final scores post when the game ends.</p>
-<p class="warn game-pin" id="gamepinright"><span class="best-price">Magenta</span> is the best price on that same number.</p>
+<p class="warn game-pin" id="gamepinright"><span class="best-price">Magenta</span> is the better pick, at the best price on that number.</p>
 <label><span id="booktag">Book</span><select id="gamebook" class="book-select"><option>BetMGM</option><option>Caesars</option><option>DraftKings</option><option>Fanatics</option><option>FanDuel</option><option>HardRock</option></select></label>
 <div class="sport-bar" id="sportbar">
 <button type="button" class="on" data-sport="All">All</button>
@@ -10640,7 +10640,57 @@ function mgmButton(top, price, hot, data){
   const attrs = Object.keys(data || {}).map(key => " data-" + key + "='" + encodeURIComponent(String(data[key])) + "'").join("");
   return "<button type='button' class='mgm-odd board-price" + (hot ? " best-price" : "") + "'" + attrs + "><b>" + esc(top) + "</b><span>" + esc(mgmMoney(price)) + "</span></button>";
 }
-function mgmOpen(g, market, day, book, names){
+function rowMarket(row){
+  const type = String(row && row[2] || "");
+  if (/total/i.test(type)) return "totals";
+  if (/money/i.test(type)) return "h2h";
+  return "spreads";
+}
+function rowPoint(row){
+  if (rowMarket(row) === "h2h") return null;
+  const nums = String(row && row[3] || "").match(/[+-]?\d+(?:\.\d+)?/g) || [];
+  const point = nums.map(Number).find(n => Number.isFinite(n) && Math.abs(n) < 100);
+  return Number.isFinite(point) ? point : null;
+}
+function betterSideIndex(row){
+  const pick = String(row && row[3] || "");
+  if (rowMarket(row) === "totals") return /\bunder\b/i.test(pick) ? 1 : 0;
+  return /\bvs\b/i.test(pick) ? 1 : 0;
+}
+function gameBetterSide(g, day){
+  const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
+  const rows = [];
+  names.forEach(book => {
+    ["h2h","spreads","totals"].forEach(market => {
+      const text = g && g.markets && g.markets[market] && g.markets[market].books && g.markets[market].books[book];
+      if (!text || text === "-" || text === "No ML") return;
+      const lines = {};
+      lines[market] = text;
+      pricedSides({sport: g.sport, game: g.label}, day, lines, book).forEach(row => rows.push(row));
+    });
+  });
+  const ranked = rows.map(row => ({row: row, rank: gorillaRank(row)})).filter(x => x.rank >= 0);
+  if (!ranked.length) return null;
+  const best = Math.max.apply(null, ranked.map(x => x.rank));
+  const winners = ranked.filter(x => x.rank === best);
+  const keys = new Set(winners.map(x => rowMarket(x.row) + "|" + betterSideIndex(x.row) + "|" + String(rowPoint(x.row))));
+  if (keys.size !== 1) return null;
+  const win = winners[0];
+  return {market: rowMarket(win.row), index: betterSideIndex(win.row), point: rowPoint(win.row)};
+}
+function priceIsBest(posted, names, index, book, side){
+  const flags = ((bestPriceFlags(posted, names)[book]) || [false, false])[index];
+  if (flags) return true;
+  const mates = names.filter(name => {
+    const sides = shopSides(posted[name]);
+    if (!sides || !sides[index]) return false;
+    const point = sides[index].point;
+    if (side.point == null) return point == null;
+    return Number(point) === Number(side.point);
+  });
+  return mates.length === 1 && mates[0] === book;
+}
+function mgmOpen(g, market, day, book, names, better){
   const row = g.markets && g.markets[market];
   const posted = (row && row.books) || {};
   const text = posted[book];
@@ -10649,7 +10699,6 @@ function mgmOpen(g, market, day, book, names){
     return [mark, mark];
   }
   const sides = text && text !== "-" ? shopSides(text) : null;
-  const flags = sides ? ((bestPriceFlags(posted, names)[book]) || [false, false]) : [false, false];
   if (!sides) return [mgmLock("Not posted"), mgmLock("Not posted")];
   return [0, 1].map(index => {
     const side = sides[index];
@@ -10658,7 +10707,9 @@ function mgmOpen(g, market, day, book, names){
     let top = "ML";
     if (market === "totals") top = (index === 0 ? "O " : "U ") + (point == null ? "" : point);
     else if (market === "spreads") top = point == null ? "—" : ((point > 0 ? "+" : "") + point);
-    return mgmButton(top, side.price, flags[index], {sport: g.sport || "", game: g.label || "", market: market, book: book || "", price: String(side.price), point: point == null ? "" : String(point), side: String(index), date: day || ""});
+    const sameNumber = !!(better && better.market === market && better.index === index && (better.point == null ? side.point == null : Number(side.point) === Number(better.point)));
+    const hot = sameNumber && priceIsBest(posted, names, index, book, side);
+    return mgmButton(top, side.price, hot, {sport: g.sport || "", game: g.label || "", market: market, book: book || "", price: String(side.price), point: point == null ? "" : String(point), side: String(index), date: day || ""});
   });
 }
 function postedToClose(g, book){
@@ -11651,6 +11702,7 @@ function armLiveExtras(games){
 }
 function mgmGameCard(g, day, book, withClose){
   const names = ["BetMGM","Caesars","DraftKings","Fanatics","FanDuel","HardRock"];
+  const better = gameBetterSide(g, day);
   const when = g.start ? formatTime(g.start, false) : "";
   const teams = String(g.label || "").split(/\s+at\s+/i);
   const awayName = (teams[0] || "").trim();
@@ -11662,7 +11714,7 @@ function mgmGameCard(g, day, book, withClose){
     const score = team && team.score ? "<b class='mgm-score'>" + esc(team.score) + "</b>" : "";
     return "<div class='mgm-team'>" + logo + "<span>" + esc((team && (team.name || team.abbr)) || "") + rec + "</span>" + score + "</div>";
   };
-  const sets = names.map(name => mgmSet(name, ["Spread", "Total", "Money"], [mgmOpen(g, "spreads", day, name, names), mgmOpen(g, "totals", day, name, names), mgmOpen(g, "h2h", day, name, names)], "book")).join("");
+  const sets = names.map(name => mgmSet(name, ["Spread", "Total", "Money"], [mgmOpen(g, "spreads", day, name, names, better), mgmOpen(g, "totals", day, name, names, better), mgmOpen(g, "h2h", day, name, names, better)], "book")).join("");
   const close = withClose ? mgmSet("Close", ["Spread", "Total", "Money"], [mgmClose(gameClosePack(g, day, book), "spreads"), mgmClose(gameClosePack(g, day, book), "totals"), mgmClose(gameClosePack(g, day, book), "h2h")], "close") : "";
   const tag = scored && scored.live && !scored.final ? (scored.detail || "Live") : (scored && scored.final ? "Final" : "");
   const dot = "<span class='" + (scored && scored.live && !scored.final ? "live-dot" : "status-dot" + (scored && scored.final ? " final" : "")) + "'></span>";
