@@ -702,7 +702,7 @@ table.season-hold.filled td.note-col p { margin:0; display:-webkit-box; -webkit-
 #dashboard.card { border:0; background:transparent; box-shadow:none; }
 #dashboard.view.on { display:flex; flex-direction:column; }
 #dashboard.view:not(.on) { display:none !important; }
-#dashboard .dash-row { display:flex; align-items:stretch; gap:12px; width:100%; max-width:100%; min-width:0; margin:var(--box-gap) 0; }
+#dashboard .dash-row { display:flex; align-items:flex-start; gap:12px; width:100%; max-width:100%; min-width:0; margin:var(--box-gap) 0; }
 #dashboard .dash-row > .align-frame { flex:1 1 0; width:auto; min-width:0; margin:0; }
 #dashboard .dash-row .dash-tools { margin:0; border:0; padding:0; flex-wrap:wrap; align-items:flex-start; }
 #dashboard .dash-notes > b,
@@ -1247,6 +1247,37 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <div class="align-frame dash-notes"><b>Notes:</b><ul class="odds-notes">
 <li>Last 7 days on this card.</li>
 <li>The full history stays in the saved file.</li>
+<li>12hr/24hr Toggle switches the clock. It sits in the header on every page.</li>
+<li>On Games, All and the sport buttons show one sport or the whole board.</li>
+<li>Refresh reloads today's board. It is on Games.</li>
+<li>A price on Games, Analysis, Today, or Sharps goes to the Bet Slip. It does not go straight to the Slips table.</li>
+<li>Pull, with the day's date, loads a missing board. It shows on Games only when the board is empty.</li>
+<li>Yesterday and Today switch the board day. They are on Analysis.</li>
+<li>Refresh pulls the live price from each book. It is on Analysis and needs the Odds Key.</li>
+<li>Add, with a book name, sends that sharp's number to the Bet Slip. It is on Analysis.</li>
+<li>Add to Slip sends that pick to the Bet Slip. Add All sends that sharp's picks. Both are on Sharps.</li>
+<li>Add sends that card pick to the Bet Slip. It is on Today.</li>
+<li>Load Card to Bet Slip loads the pasted or uploaded card onto the Bet Slip. Load Drive Card loads the Drive card. Both are on Today.</li>
+<li>Add to Bet Slip writes the form onto the Bet Slip. Clear empties the form. Cancel Edit stops an edit. All three are on Add Bet.</li>
+<li>Load Picks fills the pick box from the boxes to the left. The gorilla icon loads every book. It is on Add Bet.</li>
+<li>Commit saves the Odds Key in this browser. It is on Add Bet.</li>
+<li>Open API opens the Odds API site. It is on Add Bet and on Slips.</li>
+<li>Pull Odds & Close uses the Odds API key and stores the Pinnacle close with the other books. Odds is the price at the start of the game. Close is the next price after it starts. Sharp CLV is that price against Pinnacle with the juice removed. This button is on the Slips page.</li>
+<li>Check Live Scores grades open slips from the live score. It is on Slips.</li>
+<li>Sync Ledger pulls the saved ledger. Save Ledger writes the ledger file. Both are on Slips.</li>
+<li>Export PDF downloads the slips as a PDF. Export Spreadsheet downloads them as a spreadsheet. Both are on Slips.</li>
+<li>Clear removes the pending slips. It is on Slips.</li>
+<li>Page 1 and Page 2 open the print pages. Copy Report copies the report. Print Report prints it. Save PNG saves it as an image. All are on Report Card.</li>
+<li>Report returns to the report. Save PDF saves Page 1 as a PDF. Both are on the Report Card print pages.</li>
+<li>Plot draws profit and CLV from settled slips. Previous and Next move the sport chart one day. All are on Charts.</li>
+<li>Save Dashboard saves this 7-day card. Reset clears a loaded file and returns to the posted card. Both are on Dashboard.</li>
+<li>Prev and Next change the month. Use Shared Calendar leaves a personal file and shows the shared calendar. All are on Calendar.</li>
+<li>Close closes a day. It is on Calendar.</li>
+<li>On Seasons, All and the sport buttons filter the live scores. Prev, Next, and Today change the score day.</li>
+<li>Show answer reveals the trivia answer. It is on Seasons.</li>
+<li>On Scoreboard, the arrows change the day. All, Live, Upcoming, and Final filter the games.</li>
+<li>Show opens the floating Bet Slip. Close collapses it. Bet Slip reopens it. They sit on Games, Analysis, Today, Add Bet, Sharps, and Slips.</li>
+<li>Add on the Bet Slip writes the legs to the Slips table as a single, an SGP, or a parlay. Save Image saves the slip. Clear Slip empties it. Remove takes one leg off.</li>
 </ul>
 <ul class="odds-notes" id="sharpcheck"></ul></div>
 <div class="align-frame bet-times"><b>Best Times Placing Bets:</b><ul class="odds-notes" id="bettimes"><li>Checking today's games.</li></ul></div>
