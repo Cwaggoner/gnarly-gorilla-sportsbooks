@@ -706,6 +706,10 @@ table.season-hold.filled td.note-col p { margin:0; display:-webkit-box; -webkit-
 #dashboard .align-frame table.score-align td { vertical-align:top; }
 #dashboard .align-frame .odds-notes { margin:0; }
 #dashboard .align-frame .score-copy { display:flex; flex-direction:column; align-items:flex-start; gap:2px; }
+#dashboard .dash-split { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; width:100%; }
+#dashboard .dash-notes { flex:1 1 auto; min-width:0; }
+#dashboard .bet-times { flex:0 1 46%; border:0; background:transparent; text-align:left; }
+#dashboard .bet-times .odds-notes { margin:0; }
 #dashChart { border:1px solid #39ff14; border-radius:8px; margin:var(--box-gap) 0; }
 #report table, #report th, #report td { border:0; background:transparent; box-shadow:none; }
 #report th { color:var(--title); font-weight:700; }
@@ -1239,11 +1243,11 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <label>Load Dashboard<input type="file" id="loaddash" accept=".txt,text/plain"><span class="file-face">No File Chosen</span></label>
 <div class="btn-pair"><span>Data Save/Reset</span><div><button type="button" id="savedash">Save Dashboard</button><button type="button" id="resetdash">Reset</button></div></div>
 <span id="dashnote" class="warn"></span>
-</div><ul class="odds-notes" id="bettimes"><li>Checking today's games.</li></ul></td><td class="score-copy"><ul class="odds-notes">
+</div></td><td class="score-copy"><div class="dash-split"><div class="dash-notes"><ul class="odds-notes">
 <li>Last 7 days on this card.</li>
 <li>The full history stays in the saved file.</li>
 </ul>
-<ul class="odds-notes" id="sharpcheck"></ul></td></tr></tbody></table></div>
+<ul class="odds-notes" id="sharpcheck"></ul></div><div class="bet-times"><ul class="odds-notes" id="bettimes"><li>Checking today's games.</li></ul></div></div></td></tr></tbody></table></div>
 </section>
 <section class="card view" id="liveodds"><div class="section-head"><h2>Live Odds Analysis</h2></div><div class="align-frame"><table class="score-align"><tbody><tr><td><div class="odds-tools" id="compareday"><button type="button" id="day-yesterday">Yesterday</button><button type="button" id="day-today">Today</button><select id="comparesport"><option value="All" selected>All</option><option value="CBB">CBB</option><option value="CFB">CFB</option><option value="MLB">MLB</option><option value="NBA">NBA</option><option value="NFL">NFL</option><option value="NHL">NHL</option></select><button type="button" id="refreshodds">Refresh</button><div class="game-sharps"><a class="crew-hit" href="index.html?page=sharks#shark-gorilla" data-jump="sharks" data-sharp="shark-gorilla" title="Gnarly Gorilla"><img src="about-gorilla.jpg" alt="Gnarly Gorilla" width="32" height="32" decoding="async" loading="lazy"></a><a class="crew-hit" href="index.html?page=sharks#shark-vito" data-jump="sharks" data-sharp="shark-vito" title="Vito the Spot"><img src="jungle-leopard.jpg" alt="Vito the Spot" width="32" height="32" decoding="async" loading="lazy"></a><a class="crew-hit" href="index.html?page=sharks#shark-rocco" data-jump="sharks" data-sharp="shark-rocco" title="Rocco No Chase"><img src="jungle-rhino.jpg" alt="Rocco No Chase" width="32" height="32" decoding="async" loading="lazy"></a><a class="crew-hit" href="index.html?page=sharks#shark-paulie" data-jump="sharks" data-sharp="shark-paulie" title="Paulie the Fade"><img src="jungle-hyena.jpg" alt="Paulie the Fade" width="32" height="32" decoding="async" loading="lazy"></a><a class="crew-hit" href="index.html?page=sharks#shark-gino" data-jump="sharks" data-sharp="shark-gino" title="Gino the Wire"><img src="jungle-bird.jpg" alt="Gino the Wire" width="32" height="32" decoding="async" loading="lazy"></a></div></div></td><td class="score-copy"><p class="warn slips-side">Moneyline, spread, and total across books. Refresh pulls the live price.</p><div id="oddslead"></div></td></tr></tbody></table></div><div id="oddscompare"></div></section>
 <section class="card view" id="todaycard">
