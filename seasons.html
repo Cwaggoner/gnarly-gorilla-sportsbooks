@@ -1239,7 +1239,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <label>Load Dashboard<input type="file" id="loaddash" accept=".txt,text/plain"><span class="file-face">No File Chosen</span></label>
 <div class="btn-pair"><span>Data Save/Reset</span><div><button type="button" id="savedash">Save Dashboard</button><button type="button" id="resetdash">Reset</button></div></div>
 <span id="dashnote" class="warn"></span>
-</div></td><td class="score-copy"><ul class="odds-notes">
+</div><ul class="odds-notes" id="bettimes"><li>Checking today's games.</li></ul></td><td class="score-copy"><ul class="odds-notes">
 <li>Last 7 days on this card.</li>
 <li>The full history stays in the saved file.</li>
 </ul>
@@ -2111,6 +2111,72 @@ function drawDashboard(history, manual){
     ctx.fillText(label, x(i), h - 6);
   });
   ctx.textAlign = "left";
+}
+let betTimeStamp = "";
+let betTimeFlight = null;
+function betWindowWhen(start){
+  const begin = start - 60 * 60 * 1000;
+  const end = start - 15 * 60 * 1000;
+  const now = Date.now();
+  if (now >= start) return "";
+  if (now >= end) return "Now, before " + formatTime(start, false);
+  if (now >= begin) return "Now until " + formatTime(end, false);
+  return formatTime(begin, false) + " to " + formatTime(end, false);
+}
+function paintBetTimes(games){
+  const box = document.getElementById("bettimes");
+  if (!box) return;
+  const open = (games || []).filter(g => g && g.start > Date.now() && !g.final && !g.live && !g.postponed).sort((a, b) => a.start - b.start);
+  if (!open.length) {
+    box.innerHTML = "<li>No games left to bet. This list rolls at 4:00 AM Eastern.</li>";
+    return;
+  }
+  const groups = [];
+  open.forEach(g => {
+    const hit = groups.find(row => Math.abs(row.start - g.start) < 20 * 60 * 1000);
+    if (hit) hit.games.push(g);
+    else groups.push({start: g.start, games: [g]});
+  });
+  box.innerHTML = groups.map(row => {
+    const when = betWindowWhen(row.start);
+    if (!when) return "";
+    const names = row.games.map(g => {
+      const away = g.away && (g.away.shortDisplayName || g.away.name) || "";
+      const home = g.home && (g.home.shortDisplayName || g.home.name) || "";
+      return away && home ? away + " at " + home : "";
+    }).filter(Boolean);
+    const sports = [...new Set(row.games.map(g => g.sport))];
+    const who = names.length && names.length <= 3 ? names.join(", ") : sports.map(s => s + " " + row.games.filter(g => g.sport === s).length).join(", ");
+    return "<li>" + esc(when) + " — " + esc(who) + ". Tip " + esc(formatTime(row.start, false)) + ".</li>";
+  }).filter(Boolean).join("");
+}
+function loadBetTimes(){
+  const key = slateDayNow() + "|" + zoneClock().hour;
+  if (betTimeStamp === key && Array.isArray(window.__betTimes)) return Promise.resolve(window.__betTimes);
+  if (betTimeFlight) return betTimeFlight;
+  const day = slateDayNow();
+  const sports = ["CBB","CFB","MLB","NBA","NFL","NHL"].filter(s => SCORE_FEED[s] && !seasonEnded(s) && !seasonNotStarted(s));
+  betTimeFlight = Promise.all([day, shiftDate(day, 1)].map(date => Promise.all(sports.map(sport => scoreboard(sport, date).catch(() => []))))).then(packs => {
+    const games = packs.flat(2).filter(g => g && onTodaySlate(g) && !g.postponed && !g.final && !g.live && g.start > Date.now());
+    const seen = new Set();
+    window.__betTimes = games.filter(g => {
+      const id = g.id || (g.sport + "|" + g.start);
+      if (seen.has(id)) return false;
+      seen.add(id);
+      return true;
+    });
+    betTimeStamp = key;
+    return window.__betTimes;
+  }).finally(() => { betTimeFlight = null; });
+  return betTimeFlight;
+}
+function armBetTimes(){
+  clearTimeout(window.__betTimeTimer);
+  const paint = games => { if ((document.documentElement.dataset.page || "") === "dashboard") paintBetTimes(games); };
+  loadBetTimes().then(paint).catch(() => paint([]));
+  const clock = zoneClock();
+  const next = clock.hour === 23 ? instantAt(shiftDate(clock.date, 1), 0, 0) : instantAt(clock.date, clock.hour + 1, 0);
+  window.__betTimeTimer = setTimeout(() => { betTimeStamp = ""; armBetTimes(); }, Math.max(60000, next - Date.now() + 1500));
 }
 
 function cardLines(text){
@@ -13365,7 +13431,7 @@ function showView(id){
   if (screen === "scoreboard") loadLiveBoard();
   if (screen === "sharks") loadSharks();
   if (screen === "about") { paintSharpTeam(); requestAnimationFrame(sizeSharpTeam); }
-  if (screen === "dashboard") { try { drawDashboard(); } catch (e) {} }
+  if (screen === "dashboard") { try { drawDashboard(); armBetTimes(); } catch (e) {} }
   if (screen === "addbet") { try { refreshKeyStatus(false); } catch (e) {} }
   if (screen === "charts") { try { drawCharts(); } catch (e) {} }
   if (screen === "calendarcard") { try { drawCalendar(); } catch (e) {} }
