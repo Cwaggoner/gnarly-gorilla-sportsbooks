@@ -708,6 +708,7 @@ table.season-hold.filled td.note-col p { margin:0; display:-webkit-box; -webkit-
 #dashboard .align-frame .score-copy { display:flex; flex-direction:column; align-items:flex-start; gap:2px; }
 #dashboard .dash-split { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; width:100%; }
 #dashboard .dash-notes { flex:1 1 auto; min-width:0; }
+#dashboard .dash-notes > b { display:block; color:#39ff14; font-size:12px; margin:0 0 4px; }
 #dashboard .bet-times { flex:0 1 46%; border:0; background:transparent; text-align:left; }
 #dashboard .bet-times b { display:block; color:#39ff14; font-size:12px; margin:0 0 4px; }
 #dashboard .bet-times .odds-notes { margin:0; }
@@ -1244,7 +1245,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <label>Load Dashboard<input type="file" id="loaddash" accept=".txt,text/plain"><span class="file-face">No File Chosen</span></label>
 <div class="btn-pair"><span>Data Save/Reset</span><div><button type="button" id="savedash">Save Dashboard</button><button type="button" id="resetdash">Reset</button></div></div>
 <span id="dashnote" class="warn"></span>
-</div></td><td class="score-copy"><div class="dash-split"><div class="dash-notes"><ul class="odds-notes">
+</div></td><td class="score-copy"><div class="dash-split"><div class="dash-notes"><b>Notes:</b><ul class="odds-notes">
 <li>Last 7 days on this card.</li>
 <li>The full history stays in the saved file.</li>
 </ul>
