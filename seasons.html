@@ -709,6 +709,7 @@ table.season-hold.filled td.note-col p { margin:0; display:-webkit-box; -webkit-
 #dashboard .bet-times > b,
 #dashboard .dash-controls > b { display:block; color:#39ff14; font-size:12px; margin:0 0 4px; }
 #dashboard .dash-row .odds-notes { margin:0; }
+#dashboard .dash-controls > .odds-notes { margin-top:8px; }
 #dashChart { border:1px solid #39ff14; border-radius:8px; margin:var(--box-gap) 0; }
 #report table, #report th, #report td { border:0; background:transparent; box-shadow:none; }
 #report th { color:var(--title); font-weight:700; }
@@ -1243,10 +1244,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <label>Load Dashboard<input type="file" id="loaddash" accept=".txt,text/plain"><span class="file-face">No File Chosen</span></label>
 <div class="btn-pair"><span>Data Save/Reset</span><div><button type="button" id="savedash">Save Dashboard</button><button type="button" id="resetdash">Reset</button></div></div>
 <span id="dashnote" class="warn"></span>
-</div></div>
-<div class="align-frame dash-notes"><b>Notes:</b><ul class="odds-notes">
-<li>Last 7 days on this card.</li>
-<li>The full history stays in the saved file.</li>
+</div><ul class="odds-notes">
 <li>12hr/24hr Toggle switches the clock. It sits in the header on every page.</li>
 <li>On Games, All and the sport buttons show one sport or the whole board.</li>
 <li>Refresh reloads today's board. It is on Games.</li>
@@ -1278,6 +1276,10 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <li>On Scoreboard, the arrows change the day. All, Live, Upcoming, and Final filter the games.</li>
 <li>Show opens the floating Bet Slip. Close collapses it. Bet Slip reopens it. They sit on Games, Analysis, Today, Add Bet, Sharps, and Slips.</li>
 <li>Add on the Bet Slip writes the legs to the Slips table as a single, an SGP, or a parlay. Save Image saves the slip. Clear Slip empties it. Remove takes one leg off.</li>
+</ul></div>
+<div class="align-frame dash-notes"><b>Notes:</b><ul class="odds-notes">
+<li>Last 7 days on this card.</li>
+<li>The full history stays in the saved file.</li>
 </ul>
 <ul class="odds-notes" id="sharpcheck"></ul></div>
 <div class="align-frame bet-times"><b>Best Times Placing Bets:</b><ul class="odds-notes" id="bettimes"><li>Checking today's games.</li></ul></div>
