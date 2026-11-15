@@ -706,7 +706,8 @@ table.season-hold.filled td.note-col p { margin:0; display:-webkit-box; -webkit-
 #dashboard .dash-row > .align-frame { flex:1 1 0; width:auto; min-width:0; margin:0; }
 #dashboard .dash-row .dash-tools { margin:0; border:0; padding:0; flex-wrap:wrap; align-items:flex-start; }
 #dashboard .dash-notes > b,
-#dashboard .bet-times > b { display:block; color:#39ff14; font-size:12px; margin:0 0 4px; }
+#dashboard .bet-times > b,
+#dashboard .dash-controls > b { display:block; color:#39ff14; font-size:12px; margin:0 0 4px; }
 #dashboard .dash-row .odds-notes { margin:0; }
 #dashChart { border:1px solid #39ff14; border-radius:8px; margin:var(--box-gap) 0; }
 #report table, #report th, #report td { border:0; background:transparent; box-shadow:none; }
@@ -1238,7 +1239,7 @@ html[data-page]:not([data-page="games"]):not([data-page="liveodds"]):not([data-p
 <tbody id="dashrows"></tbody>
 </table>
 <div class="dash-row">
-<div class="align-frame"><div class="tools dash-tools">
+<div class="align-frame dash-controls"><b>Controls:</b><div class="tools dash-tools">
 <label>Load Dashboard<input type="file" id="loaddash" accept=".txt,text/plain"><span class="file-face">No File Chosen</span></label>
 <div class="btn-pair"><span>Data Save/Reset</span><div><button type="button" id="savedash">Save Dashboard</button><button type="button" id="resetdash">Reset</button></div></div>
 <span id="dashnote" class="warn"></span>
