@@ -1567,9 +1567,27 @@ function flashNav(screen){
     if (card) card.hidden = false;
   }
 }
+let navToken = 0;
+function dropPageWork(){
+  navToken += 1;
+  clearTimeout(gameScoreTimer);
+  clearInterval(startClock);
+  clearTimeout(drawGameBoard.wait);
+  drawGameBoard.again = false;
+  clearTimeout(window.__closePullTimer);
+  clearTimeout(window.__betTimeTimer);
+  clearTimeout(window.__boardSyncWait);
+  clearInterval(activeBackClock);
+  clearTimeout(window.__slateScoreTimer);
+  clearTimeout(window.__slateDayTimer);
+  clearTimeout(liveBoardTimer);
+  clearTimeout(recordTimer);
+  clearTimeout(gradeTimer);
+  clearTimeout(window.__sharpGradeTimer);
+}
 document.addEventListener("pointerdown", e => {
   const btn = e.target.closest("#sitenav a[data-jump]");
-  if (!btn || e.button) return;
+  if (!btn || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
   flashNav(btn.getAttribute("data-jump"));
 }, true);
 document.addEventListener("click", e => {
@@ -1583,8 +1601,9 @@ document.addEventListener("click", e => {
     const sharp = btn.getAttribute("data-sharp");
     if (sharp) window.__sharpLand = sharp;
     if (btn.closest("#sitenav")) {
+      dropPageWork();
       flashNav(jump);
-      requestAnimationFrame(() => requestAnimationFrame(() => goPage(jump)));
+      goPage(jump);
       return;
     }
     goPage(jump);
@@ -6539,6 +6558,7 @@ async function drawOddsCompare(force){
   finally { hidePageLoad("liveodds"); }
 }
 async function renderOddsCompare(force){
+  if ((document.documentElement.dataset.page || "") !== "liveodds") return;
   const key = ((document.getElementById("oddskey") || {}).value || "").trim();
   const box = document.getElementById("oddscompare");
   if (!box) return;
@@ -6564,6 +6584,7 @@ async function renderOddsCompare(force){
     wireCompare();
     try {
       const games = await pullLiveBoard(key);
+      if ((document.documentElement.dataset.page || "") !== "liveodds") return;
       storeLiveBoard({at: Date.now(), games: games.map(g => ({_sport: g._sport, away_team: g.away_team, home_team: g.home_team, commence_time: g.commence_time, bookmakers: g.bookmakers || []}))});
       absorbLiveBoard(window.__ggLiveBoard);
     } catch (err) {
@@ -11933,6 +11954,7 @@ function applyFeedCache(day){
   });
 }
 function drawGameBoard(){
+  if ((document.documentElement.dataset.page || "games") !== "games") { drawGameBoard.again = false; return; }
   if (drawGameBoard.busy) { drawGameBoard.again = true; return; }
   drawGameBoard.busy = true;
   boardFlagCache = new WeakMap();
@@ -11949,7 +11971,11 @@ function drawGameBoard(){
     boardScoreHit = null;
     boardScoresBySport = null;
     drawGameBoard.busy = false;
-    if (drawGameBoard.again) { drawGameBoard.again = false; setTimeout(drawGameBoard, 250); }
+    if (drawGameBoard.again && (document.documentElement.dataset.page || "games") === "games") {
+      drawGameBoard.again = false;
+      clearTimeout(drawGameBoard.wait);
+      drawGameBoard.wait = setTimeout(drawGameBoard, 250);
+    } else drawGameBoard.again = false;
   }
 }
 function paintGameBoard(){
@@ -13445,10 +13471,6 @@ function showView(id){
   const prev = document.documentElement.dataset.page || "";
   if (prev && prev !== screen) collapseSlip();
   document.documentElement.dataset.page = screen;
-  showPageLoad(screen);
-  armScreen();
-  queueBoardSync();
-  render();
   screens.forEach(key => {
     const el = document.getElementById(key);
     if (!el) return;
@@ -13460,25 +13482,8 @@ function showView(id){
   document.querySelectorAll("#sitenav [data-jump]").forEach(btn => {
     const on = btn.getAttribute("data-jump") === screen;
     btn.classList.toggle("on", on);
-    if (!on) return;
-    const scroller = btn.parentElement;
-    if (!scroller) return;
-    const left = btn.offsetLeft - (scroller.clientWidth - btn.offsetWidth) / 2;
-    try { scroller.scrollTo({left: Math.max(0, left), behavior:"smooth"}); } catch (e) {}
   });
-  if (screen === "games") requestAnimationFrame(alignSportBrackets);
-  paintLeagueMarks(document.getElementById(screen));
-  if (screen === "scoreboard") loadLiveBoard();
-  if (screen === "sharks") loadSharks();
-  if (screen === "about") { paintSharpTeam(); requestAnimationFrame(sizeSharpTeam); }
-  if (screen === "dashboard") { try { drawDashboard(); armBetTimes(); } catch (e) {} }
-  if (screen === "addbet") { try { refreshKeyStatus(false); } catch (e) {} }
-  if (screen === "charts") { try { drawCharts(); } catch (e) {} }
-  if (screen === "calendarcard") { try { drawCalendar(); } catch (e) {} }
-  if (screen === "liveodds") {
-    try { parkOddsTools(); } catch (e) {}
-    drawOddsCompare(false).catch(() => {});
-  }
+  showPageLoad(screen);
   const titles = {games:"Games", seasons:"Season Dates", dashboard:"Dashboard", todaycard:"Today's Card", liveodds:"Analysis", slips:"Slips", reportcard:"Report Card", charts:"Charts", breaks:"Books", addbet:"Add Bet", calendarcard:"Calendar", scoreboard:"Scoreboard", sharks:"Sports Sharps", about:"About"};
   document.title = (titles[screen] || "Ledger") + " | Gnarly Gorilla Sportsbooks";
   const canon = document.querySelector('link[rel="canonical"]');
@@ -13489,8 +13494,34 @@ function showView(id){
     const bar = document.querySelector(".topbar");
     const barH = bar ? bar.offsetHeight : 0;
     const y = box.getBoundingClientRect().top + window.pageYOffset - barH - 8;
-    window.scrollTo({top: Math.max(0, y), behavior:"smooth"});
+    window.scrollTo({top: Math.max(0, y), behavior:"auto"});
   }
+  const token = navToken;
+  requestAnimationFrame(() => {
+    if (token !== navToken || (document.documentElement.dataset.page || "") !== screen) return;
+    armScreen();
+    queueBoardSync();
+    render();
+    const current = document.querySelector("#sitenav [data-jump].on");
+    const scroller = current && current.parentElement;
+    if (scroller) {
+      const left = current.offsetLeft - (scroller.clientWidth - current.offsetWidth) / 2;
+      try { scroller.scrollTo({left: Math.max(0, left), behavior:"auto"}); } catch (e) {}
+    }
+    if (screen === "games") requestAnimationFrame(alignSportBrackets);
+    paintLeagueMarks(document.getElementById(screen));
+    if (screen === "scoreboard") loadLiveBoard();
+    if (screen === "sharks") loadSharks();
+    if (screen === "about") { paintSharpTeam(); requestAnimationFrame(sizeSharpTeam); }
+    if (screen === "dashboard") { try { drawDashboard(); armBetTimes(); } catch (e) {} }
+    if (screen === "addbet") { try { refreshKeyStatus(false); } catch (e) {} }
+    if (screen === "charts") { try { drawCharts(); } catch (e) {} }
+    if (screen === "calendarcard") { try { drawCalendar(); } catch (e) {} }
+    if (screen === "liveodds") {
+      try { parkOddsTools(); } catch (e) {}
+      drawOddsCompare(false).catch(() => {});
+    }
+  });
 }
 function jumpToCard(id){
   goPage(id);
