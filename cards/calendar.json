@@ -1,16 +1,122 @@
 {
-  "2026-11-01": {"pl": -25.11, "n": 17, "allWin": 150.00, "allLose": -170.00, "clv": "Close Not On File"},
-  "2026-11-02": {"pl": -0.74, "n": 2, "allWin": 18.00, "allLose": -20.00, "clv": "Close Not On File"},
-  "2026-11-03": {"pl": -20.85, "n": 10, "allWin": 90.00, "allLose": -100.00, "clv": 3},
-  "2026-11-04": {"pl": 38.53, "n": 9, "allWin": 120.00, "allLose": -90.00, "clv": "Close Not On File"},
-  "2026-11-05": {"pl": -2.24, "n": 8, "allWin": 80.00, "allLose": -80.00, "clv": 6.5},
-  "2026-11-06": {"pl": -0.91, "n": 2, "allWin": 9.09, "allLose": -10.00, "clv": 0.25},
-  "2026-11-07": {"pl": -10.00, "n": 1, "allWin": 9.09, "allLose": -10.00, "clv": 0},
-  "2026-11-08": {"pl": 0.00, "n": 0, "allWin": 0.00, "allLose": 0.00, "clv": "No Close Saved"},
-  "2026-11-09": {"pl": 0.00, "n": 0, "allWin": 0.00, "allLose": 0.00, "clv": "No Close Saved"},
-  "2026-11-10": {"pl": -10.00, "n": 1, "allWin": 9.09, "allLose": -10.00, "wins": 0, "losses": 1, "pushes": 0, "clv": 1.5},
-  "2026-11-11": {"pl": -10.00, "n": 1, "allWin": 9.09, "allLose": -10.00, "wins": 0, "losses": 1, "pushes": 0, "clv": -0.5},
-  "2026-11-12": {"pl": -0.48, "n": 2, "allWin": 18.61, "allLose": -20.00, "wins": 1, "losses": 1, "pushes": 0, "clv": 0},
-  "2026-11-13": {"pl": -10.00, "n": 1, "allWin": 9.09, "allLose": -10.00, "wins": 0, "losses": 1, "pushes": 0, "clv": 1.0},
-  "2026-11-14": {"pl": 0.00, "n": 0, "allWin": 0.00, "allLose": 0.00, "clv": "No Close Saved"}
+  "2026-11-01": {
+    "pl": -25.11,
+    "n": 17,
+    "allWin": 150.0,
+    "allLose": -170.0,
+    "clv": "Close Not On File"
+  },
+  "2026-11-02": {
+    "pl": -0.74,
+    "n": 2,
+    "allWin": 18.0,
+    "allLose": -20.0,
+    "clv": "Close Not On File"
+  },
+  "2026-11-03": {
+    "pl": -20.85,
+    "n": 10,
+    "allWin": 90.0,
+    "allLose": -100.0,
+    "clv": 3
+  },
+  "2026-11-04": {
+    "pl": 38.53,
+    "n": 9,
+    "allWin": 120.0,
+    "allLose": -90.0,
+    "clv": "Close Not On File"
+  },
+  "2026-11-05": {
+    "pl": -2.24,
+    "n": 8,
+    "allWin": 80.0,
+    "allLose": -80.0,
+    "clv": 6.5
+  },
+  "2026-11-06": {
+    "pl": -0.91,
+    "n": 2,
+    "allWin": 9.09,
+    "allLose": -10.0,
+    "clv": 0.25
+  },
+  "2026-11-07": {
+    "pl": -10.0,
+    "n": 1,
+    "allWin": 9.09,
+    "allLose": -10.0,
+    "clv": 0
+  },
+  "2026-11-08": {
+    "pl": 0.0,
+    "n": 0,
+    "allWin": 0.0,
+    "allLose": 0.0,
+    "clv": "No Close Saved"
+  },
+  "2026-11-09": {
+    "pl": 0.0,
+    "n": 0,
+    "allWin": 0.0,
+    "allLose": 0.0,
+    "clv": "No Close Saved"
+  },
+  "2026-11-10": {
+    "pl": -10.0,
+    "n": 1,
+    "allWin": 9.09,
+    "allLose": -10.0,
+    "wins": 0,
+    "losses": 1,
+    "pushes": 0,
+    "clv": 1.5
+  },
+  "2026-11-11": {
+    "pl": -10.0,
+    "n": 1,
+    "allWin": 9.09,
+    "allLose": -10.0,
+    "wins": 0,
+    "losses": 1,
+    "pushes": 0,
+    "clv": -0.5
+  },
+  "2026-11-12": {
+    "pl": -0.48,
+    "n": 2,
+    "allWin": 18.61,
+    "allLose": -20.0,
+    "wins": 1,
+    "losses": 1,
+    "pushes": 0,
+    "clv": 0
+  },
+  "2026-11-13": {
+    "pl": -10.0,
+    "n": 1,
+    "allWin": 9.09,
+    "allLose": -10.0,
+    "wins": 0,
+    "losses": 1,
+    "pushes": 0,
+    "clv": 1.0
+  },
+  "2026-11-14": {
+    "pl": 0.0,
+    "n": 0,
+    "allWin": 0.0,
+    "allLose": 0.0,
+    "clv": "No Close Saved"
+  },
+  "2026-11-15": {
+    "pl": -10.0,
+    "n": 1,
+    "allWin": 9.09,
+    "allLose": -10.0,
+    "wins": 0,
+    "losses": 1,
+    "pushes": 0,
+    "clv": 1.0
+  }
 }

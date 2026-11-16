@@ -5927,3 +5927,4 @@
 2026-11-15 | NHL |  | Nashville Predators at San Jose Sharks Over 6.5 | -102
 2026-11-15 | NHL |  | Predators at Sharks Under 6.5 | -118
 2026-11-15 | NHL |  | Nashville Predators at San Jose Sharks Under 6.5 | -118
+2026-11-15 | NBA | -105 | Dallas Mavericks +13.5 | 14.5
