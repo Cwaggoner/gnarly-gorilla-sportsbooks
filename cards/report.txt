@@ -1,7 +1,7 @@
 # file: report
-2026-11-15 | CBB | No Picks
-2026-11-15 | CFB | No Picks
-2026-11-15 | NBA | Dallas Mavericks +13.5 | close 14.5 | loss | 94-131 | -10.00 EDGE
-2026-11-15 | NFL | No Picks
-2026-11-15 | NHL | No Picks
-2026-11-15 | MLB | Season Ended
+2026-11-16 | CBB | No Picks
+2026-11-16 | CFB | No Picks
+2026-11-16 | NBA | No Picks
+2026-11-16 | NFL | No Picks
+2026-11-16 | NHL | No Picks
+2026-11-16 | MLB | Season Ended
