@@ -1,1 +1,318 @@
-PLACEHOLDER
+{
+  "days": {
+    "2026-11-17": {
+      "h2h": [
+        {
+          "sport": "NBA",
+          "label": "New York Knicks at Toronto Raptors",
+          "start": "2026-11-18T00:30:00Z",
+          "books": {
+            "BetMGM": "-155 / +125",
+            "Caesars": "-150 / +126",
+            "DraftKings": "-152 / +128",
+            "Fanatics": "-150 / +125",
+            "FanDuel": "-158 / +134",
+            "HardRock": "-155 / +130"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "Detroit Pistons at San Antonio Spurs",
+          "start": "2026-11-18T01:00:00Z",
+          "books": {
+            "BetMGM": "+300 / -375",
+            "Caesars": "+310 / -400",
+            "DraftKings": "+295 / -371",
+            "Fanatics": "+310 / -400",
+            "FanDuel": "+310 / -390",
+            "HardRock": "+300 / -400"
+          }
+        },
+        {
+          "sport": "NHL",
+          "label": "Edmonton Oilers at Florida Panthers",
+          "start": "2026-11-18T00:08:00Z",
+          "books": {
+            "BetMGM": "+100 / -120",
+            "Caesars": "-102 / -117",
+            "DraftKings": "+100 / -120",
+            "Fanatics": "+100 / -120",
+            "FanDuel": "+100 / -120",
+            "HardRock": "+100 / -120"
+          }
+        }
+      ],
+      "spreads": [
+        {
+          "sport": "NBA",
+          "label": "New York Knicks at Toronto Raptors",
+          "start": "2026-11-18T00:30:00Z",
+          "books": {
+            "BetMGM": "-3.5 -102 / +3.5 -114",
+            "Caesars": "-3 -110 / +3 -110",
+            "DraftKings": "-2.5 -115 / +2.5 -105",
+            "Fanatics": "-3 -110 / +3 -110",
+            "FanDuel": "-3.5 -106 / +3.5 -114",
+            "HardRock": "-3.5 -105 / +3.5 -115"
+          }
+        }
+      ],
+      "totals": []
+    },
+    "2026-11-18": {
+      "h2h": [
+        {
+          "sport": "NBA",
+          "label": "Atlanta Hawks at Oklahoma City Thunder",
+          "start": "2026-11-19T01:00:00Z",
+          "books": {
+            "BetMGM": "+225 / -285",
+            "Caesars": "+222 / -278",
+            "DraftKings": "+218 / -265",
+            "Fanatics": "+220 / -275",
+            "FanDuel": "+235 / -290",
+            "HardRock": "+230 / -275"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "Boston Celtics at Denver Nuggets",
+          "start": "2026-11-19T02:30:00Z",
+          "books": {
+            "BetMGM": "-140 / +115",
+            "Caesars": "-140 / +118",
+            "DraftKings": "-135 / +114",
+            "Fanatics": "-140 / +115",
+            "FanDuel": "-144 / +122",
+            "HardRock": "-145 / +125"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "Chicago Bulls at Brooklyn Nets",
+          "start": "2026-11-19T00:30:00Z",
+          "books": {
+            "BetMGM": "+125 / -150",
+            "Caesars": "+122 / -145",
+            "DraftKings": "+128 / -152",
+            "Fanatics": "+120 / -145",
+            "FanDuel": "+130 / -154",
+            "HardRock": "+130 / -155"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "Detroit Pistons at New Orleans Pelicans",
+          "start": "2026-11-19T01:00:00Z",
+          "books": {
+            "BetMGM": "-285 / +225",
+            "Caesars": "-285 / +228",
+            "DraftKings": "-277 / +227",
+            "Fanatics": "-285 / +230",
+            "FanDuel": "-270 / +220",
+            "HardRock": "-300 / +230"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "Golden State Warriors at Dallas Mavericks",
+          "start": "2026-11-19T01:00:00Z",
+          "books": {
+            "BetMGM": "+190 / -235",
+            "Caesars": "+185 / -225",
+            "DraftKings": "+184 / -222",
+            "Fanatics": "+190 / -235",
+            "FanDuel": "+184 / -220",
+            "HardRock": "+190 / -230"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "Houston Rockets at Indiana Pacers",
+          "start": "2026-11-19T00:00:00Z",
+          "books": {
+            "BetMGM": "-285 / +230",
+            "Caesars": "-278 / +222",
+            "DraftKings": "-279 / +228",
+            "Fanatics": "-285 / +230",
+            "FanDuel": "-290 / +235",
+            "HardRock": "-275 / +220"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "Memphis Grizzlies at Cleveland Cavaliers",
+          "start": "2026-11-19T00:00:00Z",
+          "books": {
+            "BetMGM": "+165 / -200",
+            "Caesars": "+162 / -195",
+            "DraftKings": "+171 / -205",
+            "Fanatics": "+165 / -200",
+            "FanDuel": "+162 / -194",
+            "HardRock": "+165 / -200"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "Milwaukee Bucks at Miami Heat",
+          "start": "2026-11-19T00:00:00Z",
+          "books": {
+            "BetMGM": "+575 / -900",
+            "Caesars": "+550 / -800",
+            "DraftKings": "+558 / -800",
+            "Fanatics": "+550 / -800",
+            "FanDuel": "+530 / -750",
+            "HardRock": "+575 / -850"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "Philadelphia 76ers at Orlando Magic",
+          "start": "2026-11-19T00:00:00Z",
+          "books": {
+            "BetMGM": "-135 / +110",
+            "Caesars": "-125 / +105",
+            "DraftKings": "-135 / +114",
+            "Fanatics": "-130 / +110",
+            "FanDuel": "-124 / +106",
+            "HardRock": "-125 / +105"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "Phoenix Suns at Sacramento Kings",
+          "start": "2026-11-19T03:00:00Z",
+          "books": {
+            "BetMGM": "-275 / +220",
+            "Caesars": "-260 / +210",
+            "DraftKings": "-269 / +220",
+            "Fanatics": "-275 / +220",
+            "FanDuel": "-255 / +210",
+            "HardRock": "-260 / +220"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "Utah Jazz at Los Angeles Lakers",
+          "start": "2026-11-19T03:00:00Z",
+          "books": {
+            "BetMGM": "+360 / -480",
+            "Caesars": "+360 / -480",
+            "DraftKings": "+371 / -484",
+            "Fanatics": "+360 / -475",
+            "FanDuel": "+360 / -460",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "Washington Wizards at Toronto Raptors",
+          "start": "2026-11-19T00:30:00Z",
+          "books": {
+            "BetMGM": "+195 / -235",
+            "Caesars": "+210 / -260",
+            "DraftKings": "+205 / -249",
+            "Fanatics": "+210 / -260",
+            "FanDuel": "+205 / -250",
+            "HardRock": "+210 / -260"
+          }
+        },
+        {
+          "sport": "NHL",
+          "label": "Boston Bruins at Detroit Red Wings",
+          "start": "2026-11-19T00:30:00Z",
+          "books": {
+            "BetMGM": "-110 / -110",
+            "Caesars": "-105 / -113",
+            "DraftKings": "-105 / -115",
+            "Fanatics": "-110 / -110",
+            "FanDuel": "-102 / -118",
+            "HardRock": "-110 / -110"
+          }
+        },
+        {
+          "sport": "NHL",
+          "label": "Colorado Avalanche at Utah Mammoth",
+          "start": "2026-11-19T03:00:00Z",
+          "books": {
+            "BetMGM": "-105 / -115",
+            "Caesars": "-112 / -105",
+            "DraftKings": "-112 / -108",
+            "Fanatics": "-105 / -115",
+            "FanDuel": "-102 / -118",
+            "HardRock": "-105 / -115"
+          }
+        },
+        {
+          "sport": "NHL",
+          "label": "Montreal Canadiens at New Jersey Devils",
+          "start": "2026-11-19T00:30:00Z",
+          "books": {
+            "BetMGM": "+140 / -170",
+            "Caesars": "+139 / -164",
+            "DraftKings": "+136 / -162",
+            "Fanatics": "+140 / -170",
+            "FanDuel": "+146 / -176",
+            "HardRock": "+145 / -170"
+          }
+        }
+      ],
+      "spreads": [
+        {
+          "sport": "NBA",
+          "label": "Houston Rockets at Indiana Pacers",
+          "start": "2026-11-19T00:00:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-7.5 -105 / +7.5 -115",
+            "DraftKings": "-7.5 -107 / +7.5 -113",
+            "Fanatics": "-7.5 -105 / +7.5 -115",
+            "FanDuel": "-7.5 -106 / +7.5 -114",
+            "HardRock": "-7.5 -110 / +7.5 -110"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "Memphis Grizzlies at Cleveland Cavaliers",
+          "start": "2026-11-19T00:00:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "+5 -110 / -5 -110",
+            "DraftKings": "+4.5 -104 / -4.5 -117",
+            "Fanatics": "+5 -110 / -5 -110",
+            "FanDuel": "+5.5 -115 / -5.5 -105",
+            "HardRock": "+5.5 -115 / -5.5 -105"
+          }
+        },
+        {
+          "sport": "NHL",
+          "label": "Boston Bruins at Detroit Red Wings",
+          "start": "2026-11-19T00:30:00Z",
+          "books": {
+            "BetMGM": "+1.5 -250 / -1.5 +220",
+            "Caesars": "-",
+            "DraftKings": "+1.5 -270 / -1.5 +220",
+            "Fanatics": "+1.5 -270 / -1.5 +210",
+            "FanDuel": "+1.5 -265 / -1.5 +210",
+            "HardRock": "+1.5 -250 / -1.5 +200"
+          }
+        }
+      ],
+      "totals": [
+        {
+          "sport": "NBA",
+          "label": "Houston Rockets at Indiana Pacers",
+          "start": "2026-11-19T00:00:00Z",
+          "books": {
+            "BetMGM": "o226.5 +100 / u226.5 -120",
+            "Caesars": "o224.5 -115 / u224.5 -105",
+            "DraftKings": "o224.5 -114 / u224.5 -106",
+            "Fanatics": "o225 -105 / u225 -115",
+            "FanDuel": "-",
+            "HardRock": "o224.5 -115 / u224.5 -105"
+          }
+        }
+      ]
+    }
+  }
+}
