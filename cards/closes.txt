@@ -1,1 +1,15 @@
-PLACEHOLDER_TXT
+# file: closes
+# Per-slip closing price. Format: date | sport | odds | pick | close
+# Do not write a line before the listed start. A pre-game price is not a close.
+# If no price was captured after the start, leave the close off. Do not copy the bet price.
+# A missing close must not block the grade, the calendar, or the ledger.
+2026-11-17 | NBA |  | New York Knicks -2.5 at Toronto Raptors | -103
+2026-11-17 | NBA |  | Knicks -2.5 | -103
+2026-11-17 | NBA |  | Toronto Raptors +2.5 vs New York Knicks | -117
+2026-11-17 | NBA |  | Raptors +2.5 | -117
+2026-11-17 | NBA |  | New York Knicks ML at Toronto Raptors | -135
+2026-11-17 | NBA |  | New York Knicks ML | -135
+2026-11-17 | NBA |  | Toronto Raptors ML vs New York Knicks | +114
+2026-11-17 | NBA |  | Toronto Raptors ML | +114
+2026-11-17 | NBA |  | New York Knicks at Toronto Raptors Over 215.5 | -115
+2026-11-17 | NBA |  | New York Knicks at Toronto Raptors Under 215.5 | -106
