@@ -1,1 +1,25 @@
-PLACEHOLDER_TXT
+# file: closes
+# Per-slip closing price. Format: date | sport | odds | pick | close
+# Do not write a line before the listed start. A pre-game price is not a close.
+# If no price was captured after the start, leave the close off. Do not copy the bet price.
+# A missing close must not block the grade, the calendar, or the ledger.
+2026-11-17 | NBA |  | New York Knicks -2.5 at Toronto Raptors | -103
+2026-11-17 | NBA |  | Knicks -2.5 | -103
+2026-11-17 | NBA |  | Toronto Raptors +2.5 vs New York Knicks | -117
+2026-11-17 | NBA |  | Raptors +2.5 | -117
+2026-11-17 | NBA |  | New York Knicks ML at Toronto Raptors | -135
+2026-11-17 | NBA |  | New York Knicks ML | -135
+2026-11-17 | NBA |  | Toronto Raptors ML vs New York Knicks | +114
+2026-11-17 | NBA |  | Toronto Raptors ML | +114
+2026-11-17 | NBA |  | New York Knicks at Toronto Raptors Over 215.5 | -115
+2026-11-17 | NBA |  | New York Knicks at Toronto Raptors Under 215.5 | -106
+2026-11-18 | NBA |  | Memphis Grizzlies +4.5 at Cleveland Cavaliers | -107
+2026-11-18 | NBA |  | Grizzlies +4.5 | -107
+2026-11-18 | NBA |  | Cleveland Cavaliers -4.5 vs Memphis Grizzlies | -113
+2026-11-18 | NBA |  | Cavaliers -4.5 | -113
+2026-11-18 | NBA |  | Memphis Grizzlies ML at Cleveland Cavaliers | +155
+2026-11-18 | NBA |  | Memphis Grizzlies ML | +155
+2026-11-18 | NBA |  | Cleveland Cavaliers ML vs Memphis Grizzlies | -185
+2026-11-18 | NBA |  | Cleveland Cavaliers ML | -185
+2026-11-18 | NBA |  | Memphis Grizzlies at Cleveland Cavaliers Over 239.5 | -109
+2026-11-18 | NBA |  | Memphis Grizzlies at Cleveland Cavaliers Under 239.5 | -111

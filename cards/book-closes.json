@@ -1,1 +1,112 @@
-PLACEHOLDER_JSON
+{
+  "source": "ESPN DraftKings close",
+  "days": {
+    "2026-11-16": {
+      "NBA": [
+        {
+          "away": "Orlando Magic",
+          "home": "Boston Celtics",
+          "commence": "2026-11-17T00:00Z",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 8.5,
+                  "price": -112.0
+                },
+                "home": {
+                  "point": -8.5,
+                  "price": -108.0
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 286
+                },
+                "home": {
+                  "price": -358
+                }
+              },
+              "total": {
+                "point": 212.5,
+                "over": -113.0,
+                "under": -107.0
+              }
+            }
+          }
+        }
+      ]
+    },
+    "2026-11-17": {
+      "NBA": [
+        {
+          "away": "New York Knicks",
+          "home": "Toronto Raptors",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": -2.5,
+                  "price": -103
+                },
+                "home": {
+                  "point": 2.5,
+                  "price": -117
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -135
+                },
+                "home": {
+                  "price": 114
+                }
+              },
+              "total": {
+                "point": 215.5,
+                "over": -115,
+                "under": -106
+              }
+            }
+          }
+        }
+      ]
+    },
+    "2026-11-18": {
+      "NBA": [
+        {
+          "away": "Memphis Grizzlies",
+          "home": "Cleveland Cavaliers",
+          "commence": "2026-11-19T00:00Z",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 4.5,
+                  "price": -107
+                },
+                "home": {
+                  "point": -4.5,
+                  "price": -113
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 155
+                },
+                "home": {
+                  "price": -185
+                }
+              },
+              "total": {
+                "point": 239.5,
+                "over": -109,
+                "under": -111
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
