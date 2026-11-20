@@ -1,1 +1,41 @@
-PLACEHOLDER
+{
+  "source": "ESPN DraftKings close",
+  "days": {
+    "2026-11-16": {
+      "NBA": [
+        {
+          "away": "Orlando Magic",
+          "home": "Boston Celtics",
+          "commence": "2026-11-17T00:00Z",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 8.5,
+                  "price": -112.0
+                },
+                "home": {
+                  "point": -8.5,
+                  "price": -108.0
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 286
+                },
+                "home": {
+                  "price": -358
+                }
+              },
+              "total": {
+                "point": 212.5,
+                "over": -113.0,
+                "under": -107.0
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
