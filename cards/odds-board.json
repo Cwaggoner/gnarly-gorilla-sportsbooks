@@ -1,1 +1,42 @@
-PLACEHOLDER_WILL_REPLACE
+{
+  "days": {
+    "2026-11-19": {
+      "h2h": [],
+      "spreads": [
+        {
+          "sport": "NBA",
+          "label": "Golden State Warriors at Memphis Grizzlies",
+          "start": "2026-11-20T01:10:00Z",
+          "books": {
+            "BetMGM": "+4.5 +105 / -6.5 +105",
+            "Caesars": "+5.5 -110 / -5.5 -110",
+            "DraftKings": "+5.5 -109 / -5.5 -111",
+            "Fanatics": "+5.5 -110 / -5.5 -110",
+            "FanDuel": "+5.5 -106 / -5.5 -114",
+            "HardRock": "+5.5 -105 / -5.5 -115"
+          }
+        }
+      ],
+      "totals": []
+    },
+    "2026-11-20": {
+      "h2h": [
+        {
+          "sport": "NBA",
+          "label": "Charlotte Hornets at Atlanta Hawks",
+          "start": "2026-11-21T00:10:00Z",
+          "books": {
+            "BetMGM": "+195 / -235",
+            "Caesars": "+185 / -225",
+            "DraftKings": "+191 / -230",
+            "Fanatics": "+190 / -235",
+            "FanDuel": "+205 / -250",
+            "HardRock": "+190 / -230"
+          }
+        }
+      ],
+      "spreads": [],
+      "totals": []
+    }
+  }
+}
