@@ -1,1 +1,31 @@
-PLACEHOLDER
+{
+  "date": "2026-11-20",
+  "source": "ESPN scoreboard at 4:00 AM",
+  "games": [
+    {
+      "sport": "CBB",
+      "game": "Manhattan at Miami",
+      "start": "2026-11-20T23:00:00Z",
+      "location": "Watsco Center, Coral Gables, FL",
+      "awayRecord": "1-4",
+      "homeRecord": "4-1"
+    },
+    {
+      "sport": "CFB",
+      "game": "Oregon at Michigan State",
+      "start": "2026-11-21T01:00:00Z",
+      "location": "Spartan Stadium, East Lansing, MI",
+      "awayRecord": "7-3",
+      "homeRecord": "3-7"
+    },
+    {
+      "sport": "NBA",
+      "game": "Charlotte Hornets at Atlanta Hawks",
+      "start": "2026-11-21T00:10:00Z",
+      "location": "State Farm Arena, Atlanta, GA",
+      "awayRecord": "4-10",
+      "homeRecord": "9-6"
+    }
+  ],
+  "passed": []
+}
