@@ -1,1 +1,176 @@
-PLACEHOLDER_AGAIN
+{
+  "date": "2026-11-20",
+  "source": "ESPN scoreboard, no odds key",
+  "passedNote": "Games being played that did not make the picks.",
+  "games": [],
+  "passed": [
+    {
+      "sport": "CBB",
+      "game": "Coastal Carolina Chanticleers at Tennessee Volunteers",
+      "start": "2026-11-21T00:00Z",
+      "location": "Food City Center, Knoxville, TN",
+      "awayRecord": "2-3",
+      "homeRecord": "4-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Eastern Illinois Panthers at Illinois Fighting Illini",
+      "start": "2026-11-21T02:00Z",
+      "location": "State Farm Center, Champaign, IL",
+      "awayRecord": "1-5",
+      "homeRecord": "4-1"
+    },
+    {
+      "sport": "CBB",
+      "game": "Loyola Maryland Greyhounds at Virginia Cavaliers",
+      "start": "2026-11-21T00:00Z",
+      "location": "John Paul Jones Arena, Charlottesville, VA",
+      "awayRecord": "1-4",
+      "homeRecord": "6-0"
+    },
+    {
+      "sport": "CBB",
+      "game": "Manhattan Jaspers at Miami Hurricanes",
+      "start": "2026-11-20T22:00Z",
+      "location": "Watsco Center, Coral Gables, FL",
+      "awayRecord": "1-4",
+      "homeRecord": "4-1"
+    },
+    {
+      "sport": "CBB",
+      "game": "Mississippi Valley State Delta Devils at Arkansas Razorbacks",
+      "start": "2026-11-21T01:00Z",
+      "location": "Bud Walton Arena, Fayetteville, AR",
+      "awayRecord": "0-4",
+      "homeRecord": "3-2"
+    },
+    {
+      "sport": "CBB",
+      "game": "UCF Knights at Vanderbilt Commodores",
+      "start": "2026-11-21T01:00Z",
+      "location": "Memorial Gymnasium (TN), Nashville, TN",
+      "awayRecord": "4-1",
+      "homeRecord": "5-0"
+    },
+    {
+      "sport": "CFB",
+      "game": "Bowling Green Falcons at Toledo Rockets",
+      "start": "2026-11-21T00:30Z",
+      "location": "Glass Bowl, Toledo, OH",
+      "awayRecord": "3-7",
+      "homeRecord": "8-2"
+    },
+    {
+      "sport": "CFB",
+      "game": "Clemson Tigers at Duke Blue Devils",
+      "start": "2026-11-21T00:30Z",
+      "location": "Wallace Wade Stadium, Durham, NC",
+      "awayRecord": "6-4",
+      "homeRecord": "7-3"
+    },
+    {
+      "sport": "CFB",
+      "game": "Iowa State Cyclones at UCF Knights",
+      "start": "2026-11-20T23:00Z",
+      "location": "Acrisure Bounce House, Orlando, FL",
+      "awayRecord": "5-5",
+      "homeRecord": "5-5"
+    },
+    {
+      "sport": "CFB",
+      "game": "New Mexico Lobos at Wyoming Cowboys",
+      "start": "2026-11-21T02:00Z",
+      "location": "War Memorial Stadium, Laramie, WY",
+      "awayRecord": "2-8",
+      "homeRecord": "4-6"
+    },
+    {
+      "sport": "CFB",
+      "game": "Oregon Ducks at Michigan State Spartans",
+      "start": "2026-11-21T01:00Z",
+      "location": "Spartan Stadium, East Lansing, MI",
+      "awayRecord": "7-3",
+      "homeRecord": "3-7"
+    },
+    {
+      "sport": "CFB",
+      "game": "UTEP Miners at Air Force Falcons",
+      "start": "2026-11-21T01:00Z",
+      "location": "Falcon Stadium, USAF Academy, CO",
+      "awayRecord": "1-9",
+      "homeRecord": "8-2"
+    },
+    {
+      "sport": "NBA",
+      "game": "Charlotte Hornets at Atlanta Hawks",
+      "start": "2026-11-21T00:00Z",
+      "location": "State Farm Arena, Atlanta, GA",
+      "awayRecord": "4-10",
+      "homeRecord": "9-6"
+    },
+    {
+      "sport": "NBA",
+      "game": "Houston Rockets at Denver Nuggets",
+      "start": "2026-11-21T03:00Z",
+      "location": "Ball Arena, Denver, CO",
+      "awayRecord": "12-4",
+      "homeRecord": "8-5"
+    },
+    {
+      "sport": "NBA",
+      "game": "Indiana Pacers at Cleveland Cavaliers",
+      "start": "2026-11-21T00:30Z",
+      "location": "Rocket Arena, Cleveland, OH",
+      "awayRecord": "5-10",
+      "homeRecord": "8-8"
+    },
+    {
+      "sport": "NBA",
+      "game": "New Orleans Pelicans at Oklahoma City Thunder",
+      "start": "2026-11-21T01:00Z",
+      "location": "Paycom Center, Oklahoma City, OK",
+      "awayRecord": "5-11",
+      "homeRecord": "9-6"
+    },
+    {
+      "sport": "NBA",
+      "game": "Orlando Magic at Brooklyn Nets",
+      "start": "2026-11-21T00:30Z",
+      "location": "Barclays Center, Brooklyn, NY",
+      "awayRecord": "6-8",
+      "homeRecord": "3-11"
+    },
+    {
+      "sport": "NBA",
+      "game": "Phoenix Suns at Utah Jazz",
+      "start": "2026-11-21T02:30Z",
+      "location": "Delta Center, Salt Lake City, UT",
+      "awayRecord": "7-7",
+      "homeRecord": "3-13"
+    },
+    {
+      "sport": "NBA",
+      "game": "Sacramento Kings at Los Angeles Lakers",
+      "start": "2026-11-21T03:00Z",
+      "location": "crypto.com Arena, Los Angeles, CA",
+      "awayRecord": "1-13",
+      "homeRecord": "13-3"
+    },
+    {
+      "sport": "NBA",
+      "game": "Toronto Raptors at Detroit Pistons",
+      "start": "2026-11-21T00:30Z",
+      "location": "Little Caesars Arena, Detroit, MI",
+      "awayRecord": "5-10",
+      "homeRecord": "10-4"
+    },
+    {
+      "sport": "NBA",
+      "game": "Washington Wizards at Chicago Bulls",
+      "start": "2026-11-21T01:00Z",
+      "location": "United Center, Chicago, IL",
+      "awayRecord": "5-11",
+      "homeRecord": "4-10"
+    }
+  ]
+}
