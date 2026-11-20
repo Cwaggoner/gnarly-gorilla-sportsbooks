@@ -1,1 +1,7 @@
-PLACEHOLDER
+# file: report
+2026-11-19 | CBB | No Picks
+2026-11-19 | CFB | No Picks
+2026-11-19 | NBA | No Picks
+2026-11-19 | NFL | No Picks
+2026-11-19 | NHL | No Picks
+2026-11-19 | MLB | Season Ended
