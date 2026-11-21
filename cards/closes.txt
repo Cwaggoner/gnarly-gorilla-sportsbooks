@@ -1,1 +1,2 @@
-PLACEHOLDER_TXT
+# file: closes
+2026-11-21 | NBA | -110 | Kings +13.5 | -110
