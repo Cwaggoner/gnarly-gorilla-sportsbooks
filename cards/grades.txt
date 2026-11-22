@@ -120,7 +120,7 @@
 2026-11-21 | RANGE | All Win 9.09 | All Lose -10.00
 2026-11-21 | CBB | No Picks
 2026-11-21 | CFB | No Picks
-2026-11-21 | NBA | Kings +13.5 | close 13.5 | win | 77-76 | 9.09 EDGE
+2026-11-21 | NBA | Kings +13.5 | close 12.5 | win | 97-96 | 9.09 EDGE
 2026-11-21 | NHL | No Picks
 2026-11-21 | NFL | No Picks
 2026-11-21 | MLB | Season Ended
