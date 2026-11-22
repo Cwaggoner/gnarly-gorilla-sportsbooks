@@ -1,9 +1,9 @@
-# GG dashboard 2026-11-21
+# GG dashboard 2026-11-22
 Date | Record | Profit | ROI | Units | Pending | Avg CLV
-2026-11-14 | 0-0-0 | $0.00 | 0.0% | 0.00u | 0 | No Close Saved
 2026-11-15 | 0-1-0 | -$10.00 | -100.0% | -1.00u | 0 | +1.0
 2026-11-16 | 0-0-0 | $0.00 | 0.0% | 0.00u | 0 | No Close Saved
 2026-11-17 | 0-0-0 | $0.00 | 0.0% | 0.00u | 0 | No Close Saved
 2026-11-18 | 0-0-0 | $0.00 | 0.0% | 0.00u | 0 | No Close Saved
 2026-11-19 | 0-0-0 | $0.00 | 0.0% | 0.00u | 0 | No Close Saved
 2026-11-20 | 0-0-0 | $0.00 | 0.0% | 0.00u | 0 | No Close Saved
+2026-11-21 | 1-0-0 | $9.09 | 90.9% | 0.91u | 0 | Matched Bet Price
