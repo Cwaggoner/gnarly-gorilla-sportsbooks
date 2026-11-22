@@ -1,7 +1,7 @@
 # file: report
-2026-11-20 | CBB | No Picks
-2026-11-20 | CFB | No Picks
-2026-11-20 | NBA | No Picks
-2026-11-20 | NFL | No Picks
-2026-11-20 | NHL | No Picks
-2026-11-20 | MLB | Season Ended
+2026-11-21 | CBB | No Picks
+2026-11-21 | CFB | No Picks
+2026-11-21 | NBA | Kings +13.5 | close 13.5 | win | 77-76 | 9.09 EDGE
+2026-11-21 | NFL | No Picks
+2026-11-21 | NHL | No Picks
+2026-11-21 | MLB | Season Ended
