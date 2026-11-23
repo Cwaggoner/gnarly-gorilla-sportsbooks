@@ -1,5 +1,5 @@
-# file: GG-CARD-2026-11-22
-2026-11-22 | CBB | No Picks
-2026-11-22 | NBA | No Picks
-2026-11-22 | NFL | Side | Arizona Cardinals +15 at Kansas City Chiefs | -110 | made KC -9.2, book KC -15, gap 5.8, reason Kenneth Walker III (lead back) out and two OL (Trey Smith, Jaylon Moore) out. Book has not fully priced the absences. Turnover line: ARI minus 1 giveaways vs KC plus 6. Side is giveaway team, moved 1.5 against. Bench line: ARI Josh Johnson starting at QB (Beck out); KC Emmett Johnson at RB. Stake $10. Edge.
-2026-11-22 | NHL | No Picks
+# file: GG-CARD-2026-11-23
+2026-11-23 | NHL | No Picks
+2026-11-23 | NBA | Side | Cleveland Cavaliers -8.5 | -110 | made -1.8, book -8.5, gap 6.7, reason back-to-back Chicago Bulls. Edge
+2026-11-23 | NFL | No Picks
+2026-11-23 | CBB | No Picks
