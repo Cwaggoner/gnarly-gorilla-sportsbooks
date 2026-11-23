@@ -163,5 +163,15 @@
     "losses": 0,
     "pushes": 0,
     "clv": 1.0
+  },
+  "2026-11-22": {
+    "pl": -10.0,
+    "n": 1,
+    "allWin": 9.09,
+    "allLose": -10.0,
+    "wins": 0,
+    "losses": 1,
+    "pushes": 0,
+    "clv": 0.5
   }
 }
