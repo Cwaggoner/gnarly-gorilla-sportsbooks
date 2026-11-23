@@ -1,1 +1,570 @@
-$(cat /workspace/artifacts/closes_updated.txt)
+# file: closes
+2026-11-22 | NBA |  | Detroit -2.5 | -106
+2026-11-22 | NBA |  | Pistons -2.5 | -106
+2026-11-22 | NBA |  | Atlanta +2.5 | -114
+2026-11-22 | NBA |  | Hawks +2.5 | -114
+2026-11-22 | NBA |  | Detroit | -135
+2026-11-22 | NBA |  | Pistons | -135
+2026-11-22 | NBA |  | Atlanta | 114
+2026-11-22 | NBA |  | Hawks | 114
+2026-11-22 | NBA |  | Over 224.5 | -113
+2026-11-22 | NBA |  | Under 224.5 | -107
+2026-11-22 | NBA |  | Oklahoma City +4.5 | -106
+2026-11-22 | NBA |  | Thunder +4.5 | -106
+2026-11-22 | NBA |  | Miami -4.5 | -114
+2026-11-22 | NBA |  | Heat -4.5 | -114
+2026-11-22 | NBA |  | Oklahoma City | 154
+2026-11-22 | NBA |  | Thunder | 154
+2026-11-22 | NBA |  | Miami | -184
+2026-11-22 | NBA |  | Heat | -184
+2026-11-22 | NBA |  | Over 225.5 | -112
+2026-11-22 | NBA |  | Under 225.5 | -108
+2026-11-22 | NBA |  | Orlando -4.5 | -112
+2026-11-22 | NBA |  | Magic -4.5 | -112
+2026-11-22 | NBA |  | Washington +4.5 | -108
+2026-11-22 | NBA |  | Wizards +4.5 | -108
+2026-11-22 | NBA |  | Orlando | -196
+2026-11-22 | NBA |  | Magic | -196
+2026-11-22 | NBA |  | Washington | 164
+2026-11-22 | NBA |  | Wizards | 164
+2026-11-22 | NBA |  | Over 220.5 | -108
+2026-11-22 | NBA |  | Under 220.5 | -112
+2026-11-22 | NBA |  | Denver -9.5 | -117
+2026-11-22 | NBA |  | Nuggets -9.5 | -117
+2026-11-22 | NBA |  | Chicago +9.5 | -104
+2026-11-22 | NBA |  | Bulls +9.5 | -104
+2026-11-22 | NBA |  | Denver | -419
+2026-11-22 | NBA |  | Nuggets | -419
+2026-11-22 | NBA |  | Chicago | 328
+2026-11-22 | NBA |  | Bulls | 328
+2026-11-22 | NBA |  | Over 237.5 | -112
+2026-11-22 | NBA |  | Under 237.5 | -108
+2026-11-22 | NBA |  | Dallas -2.5 | -106
+2026-11-22 | NBA |  | Mavericks -2.5 | -106
+2026-11-22 | NBA |  | Utah +2.5 | -114
+2026-11-22 | NBA |  | Jazz +2.5 | -114
+2026-11-22 | NBA |  | Dallas | -135
+2026-11-22 | NBA |  | Mavericks | -135
+2026-11-22 | NBA |  | Utah | 114
+2026-11-22 | NBA |  | Jazz | 114
+2026-11-22 | NBA |  | Indiana +6.5 | -116
+2026-11-22 | NBA |  | Pacers +6.5 | -116
+2026-11-22 | NBA |  | New York -6.5 | -105
+2026-11-22 | NBA |  | Knicks -6.5 | -105
+2026-11-22 | NBA |  | Indiana | 196
+2026-11-22 | NBA |  | Pacers | 196
+2026-11-22 | NBA |  | New York | -237
+2026-11-22 | NBA |  | Knicks | -237
+2026-11-22 | NBA |  | Over 215.5 | -105
+2026-11-22 | NBA |  | Under 215.5 | -115
+2026-11-22 | NBA |  | Boston -8.5 | -106
+2026-11-22 | NBA |  | Celtics -8.5 | -106
+2026-11-22 | NBA |  | Golden State +8.5 | -114
+2026-11-22 | NBA |  | Warriors +8.5 | -114
+2026-11-22 | NBA |  | Boston | -336
+2026-11-22 | NBA |  | Celtics | -336
+2026-11-22 | NBA |  | Golden State | 270
+2026-11-22 | NBA |  | Warriors | 270
+2026-11-22 | NBA |  | Over 211.5 | -112
+2026-11-22 | NBA |  | Under 211.5 | -108
+2026-11-22 | NHL |  | Carolina -1.5 | 145
+2026-11-22 | NHL |  | Hurricanes -1.5 | 145
+2026-11-22 | NHL |  | New York +1.5 | -175
+2026-11-22 | NHL |  | Rangers +1.5 | -175
+2026-11-22 | NHL |  | Carolina | -162
+2026-11-22 | NHL |  | Hurricanes | -162
+2026-11-22 | NHL |  | New York | 136
+2026-11-22 | NHL |  | Rangers | 136
+2026-11-22 | NHL |  | Over 6.5 | 105
+2026-11-22 | NHL |  | Under 6.5 | -125
+2026-11-22 | NHL |  | Buffalo +1.5 | -142
+2026-11-22 | NHL |  | Sabres +1.5 | -142
+2026-11-22 | NHL |  | Tampa Bay -1.5 | 120
+2026-11-22 | NHL |  | Lightning -1.5 | 120
+2026-11-22 | NHL |  | Buffalo | 180
+2026-11-22 | NHL |  | Sabres | 180
+2026-11-22 | NHL |  | Tampa Bay | -218
+2026-11-22 | NHL |  | Lightning | -218
+2026-11-22 | NHL |  | Over 6.5 | -108
+2026-11-22 | NHL |  | Under 6.5 | -112
+2026-11-22 | NHL |  | Edmonton +1.5 | -258
+2026-11-22 | NHL |  | Oilers +1.5 | -258
+2026-11-22 | NHL |  | St. Louis -1.5 | 210
+2026-11-22 | NHL |  | Blues -1.5 | 210
+2026-11-22 | NHL |  | Edmonton | 105
+2026-11-22 | NHL |  | Oilers | 105
+2026-11-22 | NHL |  | St. Louis | -125
+2026-11-22 | NHL |  | Blues | -125
+2026-11-22 | NHL |  | Over 5.5 | -122
+2026-11-22 | NHL |  | Under 5.5 | 102
+2026-11-22 | NHL |  | Pittsburgh +1.5 | -130
+2026-11-22 | NHL |  | Penguins +1.5 | -130
+2026-11-22 | NHL |  | Dallas -1.5 | 110
+2026-11-22 | NHL |  | Stars -1.5 | 110
+2026-11-22 | NHL |  | Pittsburgh | 190
+2026-11-22 | NHL |  | Penguins | 190
+2026-11-22 | NHL |  | Dallas | -230
+2026-11-22 | NHL |  | Stars | -230
+2026-11-22 | NHL |  | Over 6.5 | 110
+2026-11-22 | NHL |  | Under 6.5 | -130
+2026-11-22 | NHL |  | Chicago -1.5 | 215
+2026-11-22 | NHL |  | Blackhawks -1.5 | 215
+2026-11-22 | NHL |  | Vancouver +1.5 | -265
+2026-11-22 | NHL |  | Canucks +1.5 | -265
+2026-11-22 | NHL |  | Chicago | -115
+2026-11-22 | NHL |  | Blackhawks | -115
+2026-11-22 | NHL |  | Vancouver | -105
+2026-11-22 | NHL |  | Canucks | -105
+2026-11-22 | NFL |  | Miami +16.5 | -114
+2026-11-22 | NFL |  | Dolphins +16.5 | -114
+2026-11-22 | NFL |  | Buffalo -16.5 | -105
+2026-11-22 | NFL |  | Bills -16.5 | -105
+2026-11-22 | NFL |  | Miami | 930
+2026-11-22 | NFL |  | Dolphins | 930
+2026-11-22 | NFL |  | Buffalo | -1660
+2026-11-22 | NFL |  | Bills | -1660
+2026-11-22 | NFL |  | Over 45.5 | -115
+2026-11-22 | NFL |  | Under 45.5 | -104
+2026-11-22 | NFL |  | New Orleans +12.5 | -112
+2026-11-22 | NFL |  | Saints +12.5 | -112
+2026-11-22 | NFL |  | Chicago -12.5 | -107
+2026-11-22 | NFL |  | Bears -12.5 | -107
+2026-11-22 | NFL |  | New Orleans | 505
+2026-11-22 | NFL |  | Saints | 505
+2026-11-22 | NFL |  | Chicago | -700
+2026-11-22 | NFL |  | Bears | -700
+2026-11-22 | NFL |  | Over 48.5 | -104
+2026-11-22 | NFL |  | Under 48.5 | -116
+2026-11-22 | NFL |  | Tennessee +7.5 | -111
+2026-11-22 | NFL |  | Titans +7.5 | -111
+2026-11-22 | NFL |  | Dallas -7.5 | -109
+2026-11-22 | NFL |  | Cowboys -7.5 | -109
+2026-11-22 | NFL |  | Tennessee | 297
+2026-11-22 | NFL |  | Titans | 297
+2026-11-22 | NFL |  | Dallas | -373
+2026-11-22 | NFL |  | Cowboys | -373
+2026-11-22 | NFL |  | Over 54.5 | -117
+2026-11-22 | NFL |  | Under 54.5 | -103
+2026-11-22 | NFL |  | Tampa Bay +4.5 | -116
+2026-11-22 | NFL |  | Buccaneers +4.5 | -116
+2026-11-22 | NFL |  | Detroit -4.5 | -103
+2026-11-22 | NFL |  | Lions -4.5 | -103
+2026-11-22 | NFL |  | Tampa Bay | 182
+2026-11-22 | NFL |  | Buccaneers | 182
+2026-11-22 | NFL |  | Detroit | -219
+2026-11-22 | NFL |  | Lions | -219
+2026-11-22 | NFL |  | Over 48.5 | -106
+2026-11-22 | NFL |  | Under 48.5 | -113
+2026-11-22 | NFL |  | Arizona +14.5 | -105
+2026-11-22 | NFL |  | Cardinals +14.5 | -105
+2026-11-22 | NFL |  | Kansas City -14.5 | -114
+2026-11-22 | NFL |  | Chiefs -14.5 | -114
+2026-11-22 | NFL |  | Arizona | 830
+2026-11-22 | NFL |  | Cardinals | 830
+2026-11-22 | NFL |  | Kansas City | -1400
+2026-11-22 | NFL |  | Chiefs | -1400
+2026-11-22 | NFL |  | Over 40.5 | -108
+2026-11-22 | NFL |  | Under 40.5 | -112
+2026-11-22 | NFL |  | Pittsburgh -3.5 | -114
+2026-11-22 | NFL |  | Steelers -3.5 | -114
+2026-11-22 | NFL |  | Philadelphia +3.5 | -105
+2026-11-22 | NFL |  | Eagles +3.5 | -105
+2026-11-22 | NFL |  | Pittsburgh | -201
+2026-11-22 | NFL |  | Steelers | -201
+2026-11-22 | NFL |  | Philadelphia | 168
+2026-11-22 | NFL |  | Eagles | 168
+2026-11-22 | NFL |  | Over 37.5 | -107
+2026-11-22 | NFL |  | Under 37.5 | -112
+2026-11-22 | NFL |  | Baltimore +2.5 | -110
+2026-11-22 | NFL |  | Ravens +2.5 | -110
+2026-11-22 | NFL |  | Carolina -2.5 | -109
+2026-11-22 | NFL |  | Panthers -2.5 | -109
+2026-11-22 | NFL |  | Baltimore | 114
+2026-11-22 | NFL |  | Ravens | 114
+2026-11-22 | NFL |  | Carolina | -135
+2026-11-22 | NFL |  | Panthers | -135
+2026-11-22 | NFL |  | Over 44.5 | -104
+2026-11-22 | NFL |  | Under 44.5 | -115
+2026-11-22 | NFL |  | New York +3 | -108
+2026-11-22 | NFL |  | Jets +3 | -108
+2026-11-22 | NFL |  | Los Angeles -3 | -111
+2026-11-22 | NFL |  | Chargers -3 | -111
+2026-11-22 | NFL |  | New York | 140
+2026-11-22 | NFL |  | Jets | 140
+2026-11-22 | NFL |  | Los Angeles | -167
+2026-11-22 | NFL |  | Chargers | -167
+2026-11-22 | NFL |  | Over 43.5 | -117
+2026-11-22 | NFL |  | Under 43.5 | -103
+2026-11-22 | NFL |  | Las Vegas +11.5 | -111
+2026-11-22 | NFL |  | Raiders +11.5 | -111
+2026-11-22 | NFL |  | Denver -11.5 | -108
+2026-11-22 | NFL |  | Broncos -11.5 | -108
+2026-11-22 | NFL |  | Las Vegas | 481
+2026-11-22 | NFL |  | Raiders | 481
+2026-11-22 | NFL |  | Denver | -660
+2026-11-22 | NFL |  | Broncos | -660
+2026-11-22 | NFL |  | Over 41.5 | -105
+2026-11-22 | NFL |  | Under 41.5 | -114
+2026-11-22 | NFL |  | Jacksonville -6 | -111
+2026-11-22 | NFL |  | Jaguars -6 | -111
+2026-11-22 | NFL |  | New York +6 | -108
+2026-11-22 | NFL |  | Giants +6 | -108
+2026-11-22 | NFL |  | Jacksonville | -256
+2026-11-22 | NFL |  | Jaguars | -256
+2026-11-22 | NFL |  | New York | 211
+2026-11-22 | NFL |  | Giants | 211
+2026-11-22 | NFL |  | Over 44.5 | -110
+2026-11-22 | NFL |  | Under 44.5 | -109
+2026-11-22 | NFL |  | Minnesota +3.5 | -104
+2026-11-22 | NFL |  | Vikings +3.5 | -104
+2026-11-22 | NFL |  | San Francisco -3.5 | -115
+2026-11-22 | NFL |  | 49ers -3.5 | -115
+2026-11-22 | NFL |  | Minnesota | 166
+2026-11-22 | NFL |  | Vikings | 166
+2026-11-22 | NFL |  | San Francisco | -198
+2026-11-22 | NFL |  | 49ers | -198
+2026-11-22 | NFL |  | Over 45.5 | -104
+2026-11-22 | NFL |  | Under 45.5 | -115
+2026-11-22 | CBB |  | Delaware Blue +30.5 | -110
+2026-11-22 | CBB |  | Hens +30.5 | -110
+2026-11-22 | CBB |  | UCLA -30.5 | -110
+2026-11-22 | CBB |  | Bruins -30.5 | -110
+2026-11-22 | CBB |  | Delaware Blue | 3500
+2026-11-22 | CBB |  | Hens | 3500
+2026-11-22 | CBB |  | UCLA | -20000
+2026-11-22 | CBB |  | Bruins | -20000
+2026-11-22 | CBB |  | Over 144.5 | -108
+2026-11-22 | CBB |  | Under 144.5 | -112
+2026-11-22 | CBB |  | Louisiana Ragin' +31.5 | -110
+2026-11-22 | CBB |  | Cajuns +31.5 | -110
+2026-11-22 | CBB |  | USC -31.5 | -110
+2026-11-22 | CBB |  | Trojans -31.5 | -110
+2026-11-22 | CBB |  | Louisiana Ragin' | 1600
+2026-11-22 | CBB |  | Cajuns | 1600
+2026-11-22 | CBB |  | USC | -4000
+2026-11-22 | CBB |  | Trojans | -4000
+2026-11-22 | CBB |  | Over 145.5 | -108
+2026-11-22 | CBB |  | Under 145.5 | -112
+2026-11-22 | CBB |  | Nebraska -12.5 | -110
+2026-11-22 | CBB |  | Cornhuskers -12.5 | -110
+2026-11-22 | CBB |  | Butler +12.5 | -110
+2026-11-22 | CBB |  | Bulldogs +12.5 | -110
+2026-11-22 | CBB |  | Nebraska | -750
+2026-11-22 | CBB |  | Cornhuskers | -750
+2026-11-22 | CBB |  | Butler | 525
+2026-11-22 | CBB |  | Bulldogs | 525
+2026-11-22 | CBB |  | Over 155.5 | -110
+2026-11-22 | CBB |  | Under 155.5 | -110
+2026-11-22 | CBB |  | Miami (OH) +1.5 | -105
+2026-11-22 | CBB |  | RedHawks +1.5 | -105
+2026-11-22 | CBB |  | UIC -1.5 | -115
+2026-11-22 | CBB |  | Flames -1.5 | -115
+2026-11-22 | CBB |  | Miami (OH) | -102
+2026-11-22 | CBB |  | RedHawks | -102
+2026-11-22 | CBB |  | UIC | -118
+2026-11-22 | CBB |  | Flames | -118
+2026-11-22 | CBB |  | Over 148.5 | -108
+2026-11-22 | CBB |  | Under 148.5 | -112
+2026-11-22 | CBB |  | Western Illinois +3.5 | -108
+2026-11-22 | CBB |  | Leathernecks +3.5 | -108
+2026-11-22 | CBB |  | Canisius Golden -3.5 | -112
+2026-11-22 | CBB |  | Griffins -3.5 | -112
+2026-11-22 | CBB |  | Western Illinois | 145
+2026-11-22 | CBB |  | Leathernecks | 145
+2026-11-22 | CBB |  | Canisius Golden | -175
+2026-11-22 | CBB |  | Griffins | -175
+2026-11-22 | CBB |  | Over 139.5 | -110
+2026-11-22 | CBB |  | Under 139.5 | -110
+2026-11-22 | CBB |  | Dayton -3.5 | -105
+2026-11-22 | CBB |  | Flyers -3.5 | -105
+2026-11-22 | CBB |  | Northwestern +3.5 | -115
+2026-11-22 | CBB |  | Wildcats +3.5 | -115
+2026-11-22 | CBB |  | Dayton | -162
+2026-11-22 | CBB |  | Flyers | -162
+2026-11-22 | CBB |  | Northwestern | 136
+2026-11-22 | CBB |  | Wildcats | 136
+2026-11-22 | CBB |  | Over 134.5 | -115
+2026-11-22 | CBB |  | Under 134.5 | -105
+2026-11-22 | CBB |  | Fairfield +2.5 | -108
+2026-11-22 | CBB |  | Stags +2.5 | -108
+2026-11-22 | CBB |  | Long Island University -2.5 | -112
+2026-11-22 | CBB |  | Sharks -2.5 | -112
+2026-11-22 | CBB |  | Fairfield | 124
+2026-11-22 | CBB |  | Stags | 124
+2026-11-22 | CBB |  | Long Island University | -148
+2026-11-22 | CBB |  | Sharks | -148
+2026-11-22 | CBB |  | Over 143.5 | -112
+2026-11-22 | CBB |  | Under 143.5 | -108
+2026-11-22 | CBB |  | Towson +1.5 | -115
+2026-11-22 | CBB |  | Tigers +1.5 | -115
+2026-11-22 | CBB |  | American University -1.5 | -105
+2026-11-22 | CBB |  | Eagles -1.5 | -105
+2026-11-22 | CBB |  | Towson | -105
+2026-11-22 | CBB |  | Tigers | -105
+2026-11-22 | CBB |  | American University | -115
+2026-11-22 | CBB |  | Eagles | -115
+2026-11-22 | CBB |  | Over 132.5 | -108
+2026-11-22 | CBB |  | Under 132.5 | -112
+2026-11-22 | CBB |  | George Washington -3.5 | -105
+2026-11-22 | CBB |  | Revolutionaries -3.5 | -105
+2026-11-22 | CBB |  | Western Kentucky +3.5 | -115
+2026-11-22 | CBB |  | Hilltoppers +3.5 | -115
+2026-11-22 | CBB |  | George Washington | -166
+2026-11-22 | CBB |  | Revolutionaries | -166
+2026-11-22 | CBB |  | Western Kentucky | 140
+2026-11-22 | CBB |  | Hilltoppers | 140
+2026-11-22 | CBB |  | South Dakota +1.5 | -102
+2026-11-22 | CBB |  | Coyotes +1.5 | -102
+2026-11-22 | CBB |  | Utah Tech -1.5 | -118
+2026-11-22 | CBB |  | Trailblazers -1.5 | -118
+2026-11-22 | CBB |  | South Dakota | 105
+2026-11-22 | CBB |  | Coyotes | 105
+2026-11-22 | CBB |  | Utah Tech | -125
+2026-11-22 | CBB |  | Trailblazers | -125
+2026-11-22 | CBB |  | Over 153.5 | -110
+2026-11-22 | CBB |  | Under 153.5 | -110
+2026-11-22 | CBB |  | UMass Lowell River +30.5 | -108
+2026-11-22 | CBB |  | Hawks +30.5 | -108
+2026-11-22 | CBB |  | Cincinnati -30.5 | -112
+2026-11-22 | CBB |  | Bearcats -30.5 | -112
+2026-11-22 | CBB |  | UMass Lowell River | 5000
+2026-11-22 | CBB |  | Hawks | 5000
+2026-11-22 | CBB |  | Cincinnati | -100000
+2026-11-22 | CBB |  | Bearcats | -100000
+2026-11-22 | CBB |  | Over 150.5 | -108
+2026-11-22 | CBB |  | Under 150.5 | -112
+2026-11-22 | CBB |  | Wyoming -4.5 | -108
+2026-11-22 | CBB |  | Cowboys -4.5 | -108
+2026-11-22 | CBB |  | Duquesne +4.5 | -112
+2026-11-22 | CBB |  | Dukes +4.5 | -112
+2026-11-22 | CBB |  | Wyoming | -185
+2026-11-22 | CBB |  | Cowboys | -185
+2026-11-22 | CBB |  | Duquesne | 154
+2026-11-22 | CBB |  | Dukes | 154
+2026-11-22 | CBB |  | Over 136.5 | -108
+2026-11-22 | CBB |  | Under 136.5 | -112
+2026-11-22 | CBB |  | Evansville Purple +19.5 | -105
+2026-11-22 | CBB |  | Aces +19.5 | -105
+2026-11-22 | CBB |  | Memphis -19.5 | -115
+2026-11-22 | CBB |  | Tigers -19.5 | -115
+2026-11-22 | CBB |  | Evansville Purple | 1600
+2026-11-22 | CBB |  | Aces | 1600
+2026-11-22 | CBB |  | Memphis | -4000
+2026-11-22 | CBB |  | Tigers | -4000
+2026-11-22 | CBB |  | Over 155.5 | -108
+2026-11-22 | CBB |  | Under 155.5 | -112
+2026-11-22 | CBB |  | William & Mary -2.5 | -118
+2026-11-22 | CBB |  | Tribe -2.5 | -118
+2026-11-22 | CBB |  | Youngstown State +2.5 | -102
+2026-11-22 | CBB |  | Penguins +2.5 | -102
+2026-11-22 | CBB |  | William & Mary | -148
+2026-11-22 | CBB |  | Tribe | -148
+2026-11-22 | CBB |  | Youngstown State | 124
+2026-11-22 | CBB |  | Penguins | 124
+2026-11-22 | CBB |  | Over 162.5 | -115
+2026-11-22 | CBB |  | Under 162.5 | -105
+2026-11-22 | CBB |  | Fordham -1.5 | -115
+2026-11-22 | CBB |  | Rams -1.5 | -115
+2026-11-22 | CBB |  | San Diego +1.5 | -105
+2026-11-22 | CBB |  | Toreros +1.5 | -105
+2026-11-22 | CBB |  | Fordham | -130
+2026-11-22 | CBB |  | Rams | -130
+2026-11-22 | CBB |  | San Diego | 110
+2026-11-22 | CBB |  | Toreros | 110
+2026-11-22 | CBB |  | Over 142.5 | -105
+2026-11-22 | CBB |  | Under 142.5 | -115
+2026-11-22 | CBB |  | Robert Morris +1.5 | -105
+2026-11-22 | CBB |  | Colonials +1.5 | -105
+2026-11-22 | CBB |  | New Mexico State -1.5 | -115
+2026-11-22 | CBB |  | Aggies -1.5 | -115
+2026-11-22 | CBB |  | Robert Morris | 105
+2026-11-22 | CBB |  | Colonials | 105
+2026-11-22 | CBB |  | New Mexico State | -125
+2026-11-22 | CBB |  | Aggies | -125
+2026-11-22 | CBB |  | Troy -5.5 | -112
+2026-11-22 | CBB |  | Trojans -5.5 | -112
+2026-11-22 | CBB |  | Nicholls +5.5 | -108
+2026-11-22 | CBB |  | Colonels +5.5 | -108
+2026-11-22 | CBB |  | Troy | -245
+2026-11-22 | CBB |  | Trojans | -245
+2026-11-22 | CBB |  | Nicholls | 200
+2026-11-22 | CBB |  | Colonels | 200
+2026-11-22 | CBB |  | Over 137.5 | -105
+2026-11-22 | CBB |  | Under 137.5 | -115
+2026-11-22 | CBB |  | West Florida +5.5 | -105
+2026-11-22 | CBB |  | Argonauts +5.5 | -105
+2026-11-22 | CBB |  | South Alabama -5.5 | -115
+2026-11-22 | CBB |  | Jaguars -5.5 | -115
+2026-11-22 | CBB |  | West Florida | 190
+2026-11-22 | CBB |  | Argonauts | 190
+2026-11-22 | CBB |  | South Alabama | -230
+2026-11-22 | CBB |  | Jaguars | -230
+2026-11-22 | CBB |  | Over 139.5 | -108
+2026-11-22 | CBB |  | Under 139.5 | -112
+2026-11-22 | CBB |  | McNeese +2.5 | -112
+2026-11-22 | CBB |  | Cowboys +2.5 | -112
+2026-11-22 | CBB |  | Texas State -2.5 | -108
+2026-11-22 | CBB |  | Bobcats -2.5 | -108
+2026-11-22 | CBB |  | McNeese | 120
+2026-11-22 | CBB |  | Cowboys | 120
+2026-11-22 | CBB |  | Texas State | -142
+2026-11-22 | CBB |  | Bobcats | -142
+2026-11-22 | CBB |  | Over 141.5 | -110
+2026-11-22 | CBB |  | Under 141.5 | -110
+2026-11-22 | CBB |  | Mercyhurst -1.5 | -105
+2026-11-22 | CBB |  | Lakers -1.5 | -105
+2026-11-22 | CBB |  | UAlbany Great +1.5 | -115
+2026-11-22 | CBB |  | Danes +1.5 | -115
+2026-11-22 | CBB |  | Mercyhurst | -120
+2026-11-22 | CBB |  | Lakers | -120
+2026-11-22 | CBB |  | UAlbany Great | 100
+2026-11-22 | CBB |  | Danes | 100
+2026-11-22 | CBB |  | Over 132.5 | -115
+2026-11-22 | CBB |  | Under 132.5 | -105
+2026-11-22 | CBB |  | Virginia Tech -1.5 | -105
+2026-11-22 | CBB |  | Hokies -1.5 | -105
+2026-11-22 | CBB |  | Oklahoma State +1.5 | -115
+2026-11-22 | CBB |  | Cowboys +1.5 | -115
+2026-11-22 | CBB |  | Virginia Tech | -125
+2026-11-22 | CBB |  | Hokies | -125
+2026-11-22 | CBB |  | Oklahoma State | 105
+2026-11-22 | CBB |  | Cowboys | 105
+2026-11-22 | CBB |  | Over 158.5 | -112
+2026-11-22 | CBB |  | Under 158.5 | -108
+2026-11-22 | CBB |  | Richmond -1.5 | 105
+2026-11-22 | CBB |  | Spiders -1.5 | 105
+2026-11-22 | CBB |  | Liberty +1.5 | -125
+2026-11-22 | CBB |  | Flames +1.5 | -125
+2026-11-22 | CBB |  | Richmond | -118
+2026-11-22 | CBB |  | Spiders | -118
+2026-11-22 | CBB |  | Liberty | -102
+2026-11-22 | CBB |  | Flames | -102
+2026-11-22 | CBB |  | Over 141.5 | -105
+2026-11-22 | CBB |  | Under 141.5 | -115
+2026-11-22 | CBB |  | IU Indianapolis -10.5 | -110
+2026-11-22 | CBB |  | Jaguars -10.5 | -110
+2026-11-22 | CBB |  | Maryland Eastern Shore +10.5 | -110
+2026-11-22 | CBB |  | Hawks +10.5 | -110
+2026-11-22 | CBB |  | IU Indianapolis | -600
+2026-11-22 | CBB |  | Jaguars | -600
+2026-11-22 | CBB |  | Maryland Eastern Shore | 440
+2026-11-22 | CBB |  | Hawks | 440
+2026-11-22 | CBB |  | Loyola Marymount +1.5 | -105
+2026-11-22 | CBB |  | Lions +1.5 | -105
+2026-11-22 | CBB |  | UC Irvine -1.5 | -115
+2026-11-22 | CBB |  | Anteaters -1.5 | -115
+2026-11-22 | CBB |  | Loyola Marymount | 105
+2026-11-22 | CBB |  | Lions | 105
+2026-11-22 | CBB |  | UC Irvine | -125
+2026-11-22 | CBB |  | Anteaters | -125
+2026-11-22 | CBB |  | Over 136.5 | -110
+2026-11-22 | CBB |  | Under 136.5 | -110
+2026-11-22 | CBB |  | Rice +2.5 | -115
+2026-11-22 | CBB |  | Owls +2.5 | -115
+2026-11-22 | CBB |  | Lamar -2.5 | -105
+2026-11-22 | CBB |  | Cardinals -2.5 | -105
+2026-11-22 | CBB |  | Rice | 124
+2026-11-22 | CBB |  | Owls | 124
+2026-11-22 | CBB |  | Lamar | -148
+2026-11-22 | CBB |  | Cardinals | -148
+2026-11-22 | CBB |  | Over 162.5 | -108
+2026-11-22 | CBB |  | Under 162.5 | -112
+2026-11-22 | CBB |  | UNC Asheville +10.5 | -110
+2026-11-22 | CBB |  | Bulldogs +10.5 | -110
+2026-11-22 | CBB |  | Samford -10.5 | -110
+2026-11-22 | CBB |  | Bulldogs -10.5 | -110
+2026-11-22 | CBB |  | UNC Asheville | 380
+2026-11-22 | CBB |  | Bulldogs | 380
+2026-11-22 | CBB |  | Samford | -500
+2026-11-22 | CBB |  | Bulldogs | -500
+2026-11-22 | CBB |  | Over 155.5 | -105
+2026-11-22 | CBB |  | Under 155.5 | -115
+2026-11-22 | CBB |  | Cal State Fullerton +4.5 | -105
+2026-11-22 | CBB |  | Titans +4.5 | -105
+2026-11-22 | CBB |  | Portland State -4.5 | -115
+2026-11-22 | CBB |  | Vikings -4.5 | -115
+2026-11-22 | CBB |  | Cal State Fullerton | 170
+2026-11-22 | CBB |  | Titans | 170
+2026-11-22 | CBB |  | Portland State | -205
+2026-11-22 | CBB |  | Vikings | -205
+2026-11-22 | CBB |  | Over 163.5 | -110
+2026-11-22 | CBB |  | Under 163.5 | -110
+2026-11-22 | CBB |  | NJIT +22.5 | -105
+2026-11-22 | CBB |  | Highlanders +22.5 | -105
+2026-11-22 | CBB |  | Boston College -22.5 | -115
+2026-11-22 | CBB |  | Eagles -22.5 | -115
+2026-11-22 | CBB |  | NJIT | 2000
+2026-11-22 | CBB |  | Highlanders | 2000
+2026-11-22 | CBB |  | Boston College | -6500
+2026-11-22 | CBB |  | Eagles | -6500
+2026-11-22 | CBB |  | Over 137.5 | -108
+2026-11-22 | CBB |  | Under 137.5 | -112
+2026-11-22 | CBB |  | Temple -1.5 | -120
+2026-11-22 | CBB |  | Owls -1.5 | -120
+2026-11-22 | CBB |  | Stephen F. Austin +1.5 | 100
+2026-11-22 | CBB |  | Lumberjacks +1.5 | 100
+2026-11-22 | CBB |  | Temple | -125
+2026-11-22 | CBB |  | Owls | -125
+2026-11-22 | CBB |  | Stephen F. Austin | 105
+2026-11-22 | CBB |  | Lumberjacks | 105
+2026-11-22 | CBB |  | Southern Miss Golden +9.5 | -115
+2026-11-22 | CBB |  | Eagles +9.5 | -115
+2026-11-22 | CBB |  | Valparaiso -9.5 | -105
+2026-11-22 | CBB |  | Beacons -9.5 | -105
+2026-11-22 | CBB |  | Southern Miss Golden | 310
+2026-11-22 | CBB |  | Eagles | 310
+2026-11-22 | CBB |  | Valparaiso | -395
+2026-11-22 | CBB |  | Beacons | -395
+2026-11-22 | CBB |  | Over 143.5 | -105
+2026-11-22 | CBB |  | Under 143.5 | -115
+2026-11-22 | CBB |  | Utah +9.5 | -108
+2026-11-22 | CBB |  | Utes +9.5 | -108
+2026-11-22 | CBB |  | Minnesota Golden -9.5 | -112
+2026-11-22 | CBB |  | Gophers -9.5 | -112
+2026-11-22 | CBB |  | Utah | 390
+2026-11-22 | CBB |  | Utes | 390
+2026-11-22 | CBB |  | Minnesota Golden | -520
+2026-11-22 | CBB |  | Gophers | -520
+2026-11-22 | CBB |  | Over 132.5 | -110
+2026-11-22 | CBB |  | Under 132.5 | -110
+2026-11-22 | CBB |  | Portland -5.5 | -115
+2026-11-22 | CBB |  | Pilots -5.5 | -115
+2026-11-22 | CBB |  | California Baptist +5.5 | -105
+2026-11-22 | CBB |  | Lancers +5.5 | -105
+2026-11-22 | CBB |  | Portland | -270
+2026-11-22 | CBB |  | Pilots | -270
+2026-11-22 | CBB |  | California Baptist | 220
+2026-11-22 | CBB |  | Lancers | 220
+2026-11-22 | CBB |  | Over 145.5 | -112
+2026-11-22 | CBB |  | Under 145.5 | -108
+2026-11-22 | CBB |  | Rhode Island -2.5 | -105
+2026-11-22 | CBB |  | Rams -2.5 | -105
+2026-11-22 | CBB |  | UAB +2.5 | -115
+2026-11-22 | CBB |  | Blazers +2.5 | -115
+2026-11-22 | CBB |  | Rhode Island | -148
+2026-11-22 | CBB |  | Rams | -148
+2026-11-22 | CBB |  | UAB | 124
+2026-11-22 | CBB |  | Blazers | 124
+2026-11-22 | CBB |  | Over 151.5 | -115
+2026-11-22 | CBB |  | Under 151.5 | -105
+2026-11-22 | CBB |  | UT Martin +6.5 | -110
+2026-11-22 | CBB |  | Skyhawks +6.5 | -110
+2026-11-22 | CBB |  | Utah Valley -6.5 | -110
+2026-11-22 | CBB |  | Wolverines -6.5 | -110
+2026-11-22 | CBB |  | UT Martin | 245
+2026-11-22 | CBB |  | Skyhawks | 245
+2026-11-22 | CBB |  | Utah Valley | -305
+2026-11-22 | CBB |  | Wolverines | -305
+2026-11-22 | CBB |  | Over 144.5 | -115
+2026-11-22 | CBB |  | Under 144.5 | -105
+2026-11-22 | CBB |  | UC San Diego +1.5 | -125
+2026-11-22 | CBB |  | Tritons +1.5 | -125
+2026-11-22 | CBB |  | Seattle U -1.5 | 105
+2026-11-22 | CBB |  | Redhawks -1.5 | 105
+2026-11-22 | CBB |  | UC San Diego | -105
+2026-11-22 | CBB |  | Tritons | -105
+2026-11-22 | CBB |  | Seattle U | -115
+2026-11-22 | CBB |  | Redhawks | -115
+2026-11-22 | CBB |  | Over 149.5 | -105
+2026-11-22 | CBB |  | Under 149.5 | -115
+2026-11-23 | NBA | -110 | Cleveland Cavaliers -8.5 | -110
