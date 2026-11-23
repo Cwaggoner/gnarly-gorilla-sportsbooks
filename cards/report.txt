@@ -1,1 +1,7 @@
-PLACEHOLDER_WILL_REPLACE
+# file: report
+2026-11-22 | CBB | No Picks
+2026-11-22 | CFB | No Picks
+2026-11-22 | NBA | No Picks
+2026-11-22 | NFL | Arizona Cardinals +15 at Kansas City Chiefs | close 15.5 | loss | 7-34 | -10.00 EDGE
+2026-11-22 | NHL | No Picks
+2026-11-22 | MLB | Season Ended

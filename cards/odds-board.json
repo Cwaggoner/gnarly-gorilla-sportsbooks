@@ -1,1 +1,176 @@
-PLACEHOLDER_WILL_REPLACE
+{
+  "days": {
+    "2026-11-22": {
+      "h2h": [
+        {
+          "sport": "NBA",
+          "label": "Detroit Pistons at Atlanta Hawks",
+          "start": "2026-11-22T20:40:00Z",
+          "books": {
+            "BetMGM": "-135 / +110",
+            "Caesars": "-130 / +110",
+            "DraftKings": "-130 / +110",
+            "Fanatics": "-130 / +110",
+            "FanDuel": "-134 / +114",
+            "HardRock": "-130 / +110"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "Oklahoma City Thunder at Miami Heat",
+          "start": "2026-11-22T23:10:00Z",
+          "books": {
+            "BetMGM": "+118 / -145",
+            "Caesars": "+122 / -145",
+            "DraftKings": "+117 / -139",
+            "Fanatics": "+120 / -145",
+            "FanDuel": "+122 / -144",
+            "HardRock": "+120 / -140"
+          }
+        },
+        {
+          "sport": "NHL",
+          "label": "Carolina Hurricanes at New York Rangers",
+          "start": "2026-11-22T17:40:00Z",
+          "books": {
+            "BetMGM": "-160 / +135",
+            "Caesars": "-154 / +130",
+            "DraftKings": "-155 / +130",
+            "Fanatics": "-155 / +130",
+            "FanDuel": "-162 / +134",
+            "HardRock": "-150 / +130"
+          }
+        }
+      ],
+      "spreads": [
+        {
+          "sport": "NBA",
+          "label": "Detroit Pistons at Atlanta Hawks",
+          "start": "2026-11-22T20:40:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-2 -115 / +2 -105",
+            "DraftKings": "-2.5 -107 / +2.5 -113",
+            "Fanatics": "-2 -110 / +2 -110",
+            "FanDuel": "-2.5 -104 / +2.5 -118",
+            "HardRock": "-2.5 -105 / +2.5 -115"
+          }
+        },
+        {
+          "sport": "NHL",
+          "label": "Carolina Hurricanes at New York Rangers",
+          "start": "2026-11-22T17:40:00Z",
+          "books": {
+            "BetMGM": "-1.5 +145 / +1.5 -180",
+            "Caesars": "-",
+            "DraftKings": "-1.5 +164 / +1.5 -198",
+            "Fanatics": "-1.5 +155 / +1.5 -190",
+            "FanDuel": "-1.5 +152 / +1.5 -188",
+            "HardRock": "-"
+          }
+        }
+      ],
+      "totals": [
+        {
+          "sport": "NBA",
+          "label": "Detroit Pistons at Atlanta Hawks",
+          "start": "2026-11-22T20:40:00Z",
+          "books": {
+            "BetMGM": "o224.5 -120 / u224.5 +100",
+            "Caesars": "o225.5 -110 / u225.5 -110",
+            "DraftKings": "o226.5 -105 / u226.5 -115",
+            "Fanatics": "o226 -110 / u226 -110",
+            "FanDuel": "-",
+            "HardRock": "o225.5 -110 / u225.5 -110"
+          }
+        },
+        {
+          "sport": "NHL",
+          "label": "Carolina Hurricanes at New York Rangers",
+          "start": "2026-11-22T17:40:00Z",
+          "books": {
+            "BetMGM": "o6 -120 / u6 +100",
+            "Caesars": "o6 -124 / u6 +101",
+            "DraftKings": "o6.5 +105 / u6.5 -125",
+            "Fanatics": "o6.5 +105 / u6.5 -125",
+            "FanDuel": "o6.5 +106 / u6.5 -130",
+            "HardRock": "-"
+          }
+        }
+      ]
+    },
+    "2026-11-23": {
+      "h2h": [
+        {
+          "sport": "NBA",
+          "label": "Memphis Grizzlies at Charlotte Hornets",
+          "start": "2026-11-24T00:00Z",
+          "books": {
+            "BetMGM": "-165 / +135",
+            "Caesars": "-165 / +140",
+            "DraftKings": "-162 / +136",
+            "Fanatics": "-170 / +140",
+            "FanDuel": "-158 / +134",
+            "HardRock": "-165 / +140"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "Portland Trail Blazers at Philadelphia 76ers",
+          "start": "2026-11-24T00:00Z",
+          "books": {
+            "BetMGM": "+140 / -170",
+            "Caesars": "+140 / -165",
+            "DraftKings": "+142 / -169",
+            "Fanatics": "+140 / -170",
+            "FanDuel": "+138 / -164",
+            "HardRock": "+135 / -165"
+          }
+        },
+        {
+          "sport": "NHL",
+          "label": "Columbus Blue Jackets at New Jersey Devils",
+          "start": "2026-11-24T00:00Z",
+          "books": {
+            "BetMGM": "+170 / -210",
+            "Caesars": "+171 / -205",
+            "DraftKings": "+170 / -205",
+            "Fanatics": "+170 / -205",
+            "FanDuel": "+168 / -205",
+            "HardRock": "-"
+          }
+        }
+      ],
+      "spreads": [
+        {
+          "sport": "NHL",
+          "label": "Columbus Blue Jackets at New Jersey Devils",
+          "start": "2026-11-24T00:00Z",
+          "books": {
+            "BetMGM": "+1.5 -140 / -1.5 +115",
+            "Caesars": "-",
+            "DraftKings": "+1.5 -148 / -1.5 +124",
+            "Fanatics": "+1.5 -150 / -1.5 +125",
+            "FanDuel": "+1.5 -152 / -1.5 +124",
+            "HardRock": "-"
+          }
+        }
+      ],
+      "totals": [
+        {
+          "sport": "NHL",
+          "label": "Columbus Blue Jackets at New Jersey Devils",
+          "start": "2026-11-24T00:00Z",
+          "books": {
+            "BetMGM": "o6 -115 / u6 -105",
+            "Caesars": "o6 -114 / u6 -108",
+            "DraftKings": "o6.5 +110 / u6.5 -130",
+            "Fanatics": "o6.5 +110 / u6.5 -135",
+            "FanDuel": "o6.5 +112 / u6.5 -138",
+            "HardRock": "o6.5 +110 / u6.5 -140"
+          }
+        }
+      ]
+    }
+  }
+}
