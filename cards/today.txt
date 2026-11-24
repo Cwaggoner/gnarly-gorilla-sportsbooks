@@ -1,5 +1,5 @@
-# file: GG-CARD-2026-11-23
-2026-11-23 | NHL | No Picks
-2026-11-23 | NBA | Side | Cleveland Cavaliers -8.5 | -110 | made -1.8, book -8.5, gap 6.7, reason back-to-back Chicago Bulls. Edge
-2026-11-23 | NFL | No Picks
-2026-11-23 | CBB | No Picks
+# file: GG-CARD-2026-11-24
+2026-11-24 | CBB | No Picks
+2026-11-24 | CFB | No Picks
+2026-11-24 | NBA | No Picks
+2026-11-24 | NHL | No Picks
