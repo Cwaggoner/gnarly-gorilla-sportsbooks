@@ -1,119 +1,144 @@
 {
   "date": "2026-11-24",
-  "source": "ESPN scoreboard at 4:00 AM",
-  "games": [
+  "source": "ESPN scoreboard, no odds key",
+  "passedNote": "Games being played that did not make the picks.",
+  "games": [],
+  "passed": [
     {
       "sport": "CBB",
-      "game": "Baylor at Alabama",
-      "start": "2026-11-25T03:00:00Z",
-      "location": "T-Mobile Arena, Las Vegas, NV",
+      "game": "Baylor Bears at Alabama Crimson Tide",
+      "start": "2026-11-25T03:00Z",
+      "location": "T-Mobile Arena, Las Vegas, Nevada",
       "away_record": "4-1",
       "home_record": "5-0"
     },
     {
       "sport": "CBB",
-      "game": "Jacksonville at Indiana",
-      "start": "2026-11-25T00:00:00Z",
-      "location": "Simon Skjodt Assembly Hall, Bloomington, IN",
+      "game": "Gonzaga Bulldogs at Kansas State Wildcats",
+      "start": "2026-11-25T05:30Z",
+      "location": "T-Mobile Arena, Las Vegas, Nevada",
+      "away_record": "3-1",
+      "home_record": "3-2"
+    },
+    {
+      "sport": "CBB",
+      "game": "Jacksonville Dolphins at Indiana Hoosiers",
+      "start": "2026-11-25T00:00Z",
+      "location": "Simon Skjodt Assembly Hall, Bloomington, Indiana",
       "away_record": "2-4",
       "home_record": "6-0"
     },
     {
       "sport": "CBB",
-      "game": "Miami at TCU",
-      "start": "2026-11-25T20:00:00Z",
-      "location": "T-Mobile Arena, Las Vegas, NV",
+      "game": "Miami Hurricanes at TCU Horned Frogs",
+      "start": "2026-11-24T20:00Z",
+      "location": "T-Mobile Arena, Las Vegas, Nevada",
       "away_record": "5-1",
       "home_record": "4-1"
     },
     {
       "sport": "CBB",
-      "game": "Milwaukee at Florida",
-      "start": "2026-11-25T00:00:00Z",
-      "location": "Exactech Arena at Stephen C. O'Connell Center, Gainesville, FL",
+      "game": "Milwaukee Panthers at Florida Gators",
+      "start": "2026-11-25T00:00Z",
+      "location": "Tower Hill Arena, Gainesville, Florida",
       "away_record": "2-4",
       "home_record": "6-1"
     },
     {
       "sport": "CBB",
-      "game": "Ole Miss at BYU",
-      "start": "2026-11-25T19:30:00Z",
-      "location": "Lahaina Civic Center, Maui, HI",
+      "game": "Ole Miss Rebels at BYU Cougars",
+      "start": "2026-11-24T19:30Z",
+      "location": "Lahaina Civic Center, Maui, Hawaii",
       "away_record": "5-0",
       "home_record": "6-0"
     },
     {
       "sport": "CBB",
-      "game": "Oregon at St. John's",
-      "start": "2026-11-25T03:30:00Z",
-      "location": "Michelob ULTRA Arena, Las Vegas, NV",
+      "game": "Oregon Ducks at St. John's Red Storm",
+      "start": "2026-11-25T03:30Z",
+      "location": "Michelob ULTRA Arena, Las Vegas, Nevada",
       "away_record": "3-1",
       "home_record": "5-0"
     },
     {
       "sport": "CBB",
-      "game": "Providence at Arizona",
-      "start": "2026-11-25T22:00:00Z",
-      "location": "Lahaina Civic Center, Maui, HI",
+      "game": "Providence Friars at Arizona Wildcats",
+      "start": "2026-11-24T22:00Z",
+      "location": "Lahaina Civic Center, Maui, Hawaii",
       "away_record": "5-1",
       "home_record": "5-1"
     },
     {
       "sport": "CBB",
-      "game": "Tennessee at Maryland",
-      "start": "2026-11-25T20:00:00Z",
-      "location": "Michelob ULTRA Arena, Las Vegas, NV",
+      "game": "Tennessee Volunteers at Maryland Terrapins",
+      "start": "2026-11-24T20:00Z",
+      "location": "Michelob ULTRA Arena, Las Vegas, Nevada",
       "away_record": "5-0",
       "home_record": "3-2"
     },
     {
       "sport": "CBB",
-      "game": "Texas Tech at Louisville",
-      "start": "2026-11-25T01:00:00Z",
-      "location": "Michelob ULTRA Arena, Las Vegas, NV",
+      "game": "Texas Tech Red Raiders at Louisville Cardinals",
+      "start": "2026-11-25T01:00Z",
+      "location": "Michelob ULTRA Arena, Las Vegas, Nevada",
       "away_record": "5-0",
       "home_record": "3-1"
     },
     {
       "sport": "CBB",
-      "game": "Vanderbilt at Ohio State",
-      "start": "2026-11-25T00:00:00Z",
-      "location": "Value City Arena at Schottenstein Center, Columbus, OH",
+      "game": "Vanderbilt Commodores at Ohio State Buckeyes",
+      "start": "2026-11-25T00:00Z",
+      "location": "Schottenstein Center, Columbus, Ohio",
       "away_record": "6-0",
       "home_record": "4-2"
     },
     {
+      "sport": "CFB",
+      "game": "Kent State Golden Flashes at Eastern Michigan Eagles",
+      "start": "2026-11-25T00:00Z",
+      "location": "Rynearson Stadium, Ypsilanti, Michigan",
+      "away_record": "3-8",
+      "home_record": "4-7"
+    },
+    {
+      "sport": "CFB",
+      "game": "Miami (OH) RedHawks at Western Michigan Broncos",
+      "start": "2026-11-25T00:00Z",
+      "location": "Waldo Stadium, Kalamazoo, Michigan",
+      "away_record": "7-4",
+      "home_record": "8-3"
+    },
+    {
       "sport": "NBA",
       "game": "Boston Celtics at Washington Wizards",
-      "start": "2026-11-25T01:00:00Z",
-      "location": "Capital One Arena, Washington, DC",
+      "start": "2026-11-25T01:00Z",
+      "location": "Capital One Arena, Washington, District of Columbia",
       "away_record": "11-6",
       "home_record": "7-11"
     },
     {
       "sport": "NBA",
       "game": "Dallas Mavericks at Denver Nuggets",
-      "start": "2026-11-25T03:00:00Z",
-      "location": "Ball Arena, Denver, CO",
+      "start": "2026-11-25T03:00Z",
+      "location": "Ball Arena, Denver, Colorado",
       "away_record": "10-7",
       "home_record": "10-5"
     },
     {
       "sport": "NBA",
       "game": "Detroit Pistons at Orlando Magic",
-      "start": "2026-11-25T00:00:00Z",
-      "location": "Kia Center, Orlando, FL",
+      "start": "2026-11-25T00:00Z",
+      "location": "Kia Center, Orlando, Florida",
       "away_record": "10-6",
       "home_record": "7-9"
     },
     {
       "sport": "NHL",
       "game": "Vegas Golden Knights at Edmonton Oilers",
-      "start": "2026-11-25T01:00:00Z",
-      "location": "Rogers Place, Edmonton, AB",
+      "start": "2026-11-25T01:00Z",
+      "location": "Rogers Place, Edmonton, Alberta",
       "away_record": "14-6-5",
       "home_record": "17-5-4"
     }
-  ],
-  "passed": []
+  ]
 }
