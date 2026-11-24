@@ -131,3 +131,10 @@
 2026-11-22 | NFL | Arizona Cardinals +15 at Kansas City Chiefs | close 15.5 | loss | 7-34 | -10.00 EDGE
 2026-11-22 | NHL | No Picks
 2026-11-22 | MLB | Season Ended
+2026-11-23 | RANGE | All Win 9.09 | All Lose -10.00
+2026-11-23 | CBB | No Picks
+2026-11-23 | CFB | No Picks
+2026-11-23 | NBA | Cleveland Cavaliers -8.5 | close -8.5 | loss | 108-122 | -10.00 EDGE
+2026-11-23 | NFL | No Picks
+2026-11-23 | NHL | No Picks
+2026-11-23 | MLB | Season Ended
