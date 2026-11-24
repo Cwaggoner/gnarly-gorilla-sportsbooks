@@ -1,1 +1,41 @@
-PLACEHOLDER
+{
+  "source": "ESPN DraftKings close",
+  "days": {
+    "2026-11-21": {
+      "NBA": [
+        {
+          "away": "Milwaukee Bucks",
+          "home": "Philadelphia 76ers",
+          "commence": "2026-11-21T18:00Z",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 11.5,
+                  "price": -114
+                },
+                "home": {
+                  "point": -11.5,
+                  "price": -106
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 455
+                },
+                "home": {
+                  "price": -620
+                }
+              },
+              "total": {
+                "point": 231.5,
+                "over": -107,
+                "under": -113
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
