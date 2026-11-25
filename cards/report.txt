@@ -1,7 +1,7 @@
 # file: report
-2026-11-23 | CBB | No Picks
-2026-11-23 | CFB | No Picks
-2026-11-23 | NBA | Cleveland Cavaliers -8.5 | close -8.5 | loss | 108-122 | -10.00 EDGE
-2026-11-23 | NFL | No Picks
-2026-11-23 | NHL | No Picks
-2026-11-23 | MLB | Season Ended
+2026-11-24 | CBB | No Picks
+2026-11-24 | CFB | No Picks
+2026-11-24 | NBA | No Picks
+2026-11-24 | NFL | No Picks
+2026-11-24 | NHL | No Picks
+2026-11-24 | MLB | Season Ended

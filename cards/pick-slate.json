@@ -1,144 +1,223 @@
 {
-  "date": "2026-11-24",
-  "source": "ESPN scoreboard, no odds key",
-  "passedNote": "Games being played that did not make the picks.",
-  "games": [],
-  "passed": [
+  "date": "2026-11-25",
+  "source": "ESPN scoreboard at 4:00 AM",
+  "games": [
     {
       "sport": "CBB",
-      "game": "Baylor Bears at Alabama Crimson Tide",
-      "start": "2026-11-25T03:00Z",
-      "location": "T-Mobile Arena, Las Vegas, Nevada",
-      "away_record": "4-1",
-      "home_record": "5-0"
+      "game": "Virginia Cavaliers at Marquette Golden Eagles",
+      "start": "2026-11-25T17:00:00Z",
+      "location": "Imperial Arena, Nassau, Bahamas",
+      "awayRecord": "7-0",
+      "homeRecord": "4-2"
     },
     {
       "sport": "CBB",
-      "game": "Gonzaga Bulldogs at Kansas State Wildcats",
-      "start": "2026-11-25T05:30Z",
-      "location": "T-Mobile Arena, Las Vegas, Nevada",
-      "away_record": "3-1",
-      "home_record": "3-2"
+      "game": "Arizona State Sun Devils at LSU Tigers",
+      "start": "2026-11-25T18:00:00Z",
+      "location": "Acrisure Arena, Palm Springs, CA",
+      "awayRecord": "5-0",
+      "homeRecord": "6-0"
     },
     {
       "sport": "CBB",
-      "game": "Jacksonville Dolphins at Indiana Hoosiers",
-      "start": "2026-11-25T00:00Z",
-      "location": "Simon Skjodt Assembly Hall, Bloomington, Indiana",
-      "away_record": "2-4",
-      "home_record": "6-0"
-    },
-    {
-      "sport": "CBB",
-      "game": "Miami Hurricanes at TCU Horned Frogs",
-      "start": "2026-11-24T20:00Z",
-      "location": "T-Mobile Arena, Las Vegas, Nevada",
-      "away_record": "5-1",
-      "home_record": "4-1"
-    },
-    {
-      "sport": "CBB",
-      "game": "Milwaukee Panthers at Florida Gators",
-      "start": "2026-11-25T00:00Z",
-      "location": "Tower Hill Arena, Gainesville, Florida",
-      "away_record": "2-4",
-      "home_record": "6-1"
-    },
-    {
-      "sport": "CBB",
-      "game": "Ole Miss Rebels at BYU Cougars",
-      "start": "2026-11-24T19:30Z",
-      "location": "Lahaina Civic Center, Maui, Hawaii",
-      "away_record": "5-0",
-      "home_record": "6-0"
-    },
-    {
-      "sport": "CBB",
-      "game": "Oregon Ducks at St. John's Red Storm",
-      "start": "2026-11-25T03:30Z",
-      "location": "Michelob ULTRA Arena, Las Vegas, Nevada",
-      "away_record": "3-1",
-      "home_record": "5-0"
-    },
-    {
-      "sport": "CBB",
-      "game": "Providence Friars at Arizona Wildcats",
-      "start": "2026-11-24T22:00Z",
-      "location": "Lahaina Civic Center, Maui, Hawaii",
-      "away_record": "5-1",
-      "home_record": "5-1"
-    },
-    {
-      "sport": "CBB",
-      "game": "Tennessee Volunteers at Maryland Terrapins",
-      "start": "2026-11-24T20:00Z",
-      "location": "Michelob ULTRA Arena, Las Vegas, Nevada",
-      "away_record": "5-0",
-      "home_record": "3-2"
-    },
-    {
-      "sport": "CBB",
-      "game": "Texas Tech Red Raiders at Louisville Cardinals",
-      "start": "2026-11-25T01:00Z",
-      "location": "Michelob ULTRA Arena, Las Vegas, Nevada",
-      "away_record": "5-0",
-      "home_record": "3-1"
-    },
-    {
-      "sport": "CBB",
-      "game": "Vanderbilt Commodores at Ohio State Buckeyes",
-      "start": "2026-11-25T00:00Z",
-      "location": "Schottenstein Center, Columbus, Ohio",
-      "away_record": "6-0",
-      "home_record": "4-2"
-    },
-    {
-      "sport": "CFB",
-      "game": "Kent State Golden Flashes at Eastern Michigan Eagles",
-      "start": "2026-11-25T00:00Z",
-      "location": "Rynearson Stadium, Ypsilanti, Michigan",
-      "away_record": "3-8",
-      "home_record": "4-7"
-    },
-    {
-      "sport": "CFB",
-      "game": "Miami (OH) RedHawks at Western Michigan Broncos",
-      "start": "2026-11-25T00:00Z",
-      "location": "Waldo Stadium, Kalamazoo, Michigan",
-      "away_record": "7-4",
-      "home_record": "8-3"
+      "game": "Ole Miss Rebels at Arizona Wildcats",
+      "start": "2026-11-25T19:30:00Z",
+      "location": "Lahaina Civic Center, Maui, HI",
+      "awayRecord": "6-0",
+      "homeRecord": "6-1"
     },
     {
       "sport": "NBA",
-      "game": "Boston Celtics at Washington Wizards",
-      "start": "2026-11-25T01:00Z",
-      "location": "Capital One Arena, Washington, District of Columbia",
-      "away_record": "11-6",
-      "home_record": "7-11"
+      "game": "Miami Heat at Philadelphia 76ers",
+      "start": "2026-11-25T22:00:00Z",
+      "location": "Xfinity Mobile Arena, Philadelphia, PA",
+      "awayRecord": "10-6",
+      "homeRecord": "14-4"
     },
     {
       "sport": "NBA",
-      "game": "Dallas Mavericks at Denver Nuggets",
-      "start": "2026-11-25T03:00Z",
-      "location": "Ball Arena, Denver, Colorado",
-      "away_record": "10-7",
-      "home_record": "10-5"
+      "game": "Chicago Bulls at Charlotte Hornets",
+      "start": "2026-11-26T00:00:00Z",
+      "location": "Spectrum Center, Charlotte, NC",
+      "awayRecord": "5-12",
+      "homeRecord": "4-12"
     },
     {
       "sport": "NBA",
-      "game": "Detroit Pistons at Orlando Magic",
-      "start": "2026-11-25T00:00Z",
-      "location": "Kia Center, Orlando, Florida",
-      "away_record": "10-6",
-      "home_record": "7-9"
+      "game": "Cleveland Cavaliers at New York Knicks",
+      "start": "2026-11-26T00:30:00Z",
+      "location": "Madison Square Garden, New York, NY",
+      "awayRecord": "9-9",
+      "homeRecord": "11-6"
+    },
+    {
+      "sport": "NBA",
+      "game": "Minnesota Timberwolves at Oklahoma City Thunder",
+      "start": "2026-11-26T00:30:00Z",
+      "location": "Paycom Center, Oklahoma City, OK",
+      "awayRecord": "13-5",
+      "homeRecord": "10-8"
+    },
+    {
+      "sport": "NBA",
+      "game": "Brooklyn Nets at Milwaukee Bucks",
+      "start": "2026-11-26T01:00:00Z",
+      "location": "Fiserv Forum, Milwaukee, WI",
+      "awayRecord": "3-13",
+      "homeRecord": "2-16"
+    },
+    {
+      "sport": "NBA",
+      "game": "LA Clippers at Memphis Grizzlies",
+      "start": "2026-11-26T01:00:00Z",
+      "location": "FedExForum, Memphis, TN",
+      "awayRecord": "4-12",
+      "homeRecord": "13-5"
+    },
+    {
+      "sport": "NBA",
+      "game": "Phoenix Suns at Houston Rockets",
+      "start": "2026-11-26T01:30:00Z",
+      "location": "Toyota Center, Houston, TX",
+      "awayRecord": "9-7",
+      "homeRecord": "13-5"
+    },
+    {
+      "sport": "NBA",
+      "game": "Sacramento Kings at Golden State Warriors",
+      "start": "2026-11-26T03:00:00Z",
+      "location": "Chase Center, San Francisco, CA",
+      "awayRecord": "2-15",
+      "homeRecord": "9-8"
+    },
+    {
+      "sport": "NBA",
+      "game": "San Antonio Spurs at Portland Trail Blazers",
+      "start": "2026-11-26T03:00:00Z",
+      "location": "Moda Center, Portland, OR",
+      "awayRecord": "15-3",
+      "homeRecord": "11-6"
+    },
+    {
+      "sport": "NFL",
+      "game": "Green Bay Packers at Los Angeles Rams",
+      "start": "2026-11-26T01:00:00Z",
+      "location": "SoFi Stadium, Inglewood, CA",
+      "awayRecord": "6-4",
+      "homeRecord": "6-4"
     },
     {
       "sport": "NHL",
-      "game": "Vegas Golden Knights at Edmonton Oilers",
-      "start": "2026-11-25T01:00Z",
-      "location": "Rogers Place, Edmonton, Alberta",
-      "away_record": "14-6-5",
-      "home_record": "17-5-4"
+      "game": "Winnipeg Jets at Boston Bruins",
+      "start": "2026-11-25T23:00:00Z",
+      "location": "TD Garden, Boston, MA",
+      "awayRecord": "12-9-4",
+      "homeRecord": "15-7-1"
+    },
+    {
+      "sport": "NHL",
+      "game": "New York Rangers at Buffalo Sabres",
+      "start": "2026-11-25T23:00:00Z",
+      "location": "KeyBank Center, Buffalo, NY",
+      "awayRecord": "13-9-1",
+      "homeRecord": "10-10-4"
+    },
+    {
+      "sport": "NHL",
+      "game": "Carolina Hurricanes at Tampa Bay Lightning",
+      "start": "2026-11-25T23:00:00Z",
+      "location": "Benchmark International Arena, Tampa, FL",
+      "awayRecord": "18-3-3",
+      "homeRecord": "15-6-2"
+    },
+    {
+      "sport": "NHL",
+      "game": "Ottawa Senators at Florida Panthers",
+      "start": "2026-11-25T23:00:00Z",
+      "location": "Amerant Bank Arena, Sunrise, FL",
+      "awayRecord": "16-6-3",
+      "homeRecord": "13-8-3"
+    },
+    {
+      "sport": "NHL",
+      "game": "St. Louis Blues at New York Islanders",
+      "start": "2026-11-25T23:00:00Z",
+      "location": "UBS Arena, Elmont, NY",
+      "awayRecord": "13-9-2",
+      "homeRecord": "11-7-5"
+    },
+    {
+      "sport": "NHL",
+      "game": "Calgary Flames at Pittsburgh Penguins",
+      "start": "2026-11-25T23:00:00Z",
+      "location": "PPG Paints Arena, Pittsburgh, PA",
+      "awayRecord": "10-13-2",
+      "homeRecord": "7-14-2"
+    },
+    {
+      "sport": "NHL",
+      "game": "Philadelphia Flyers at Washington Capitals",
+      "start": "2026-11-25T23:00:00Z",
+      "location": "Capital One Arena, Washington, DC",
+      "awayRecord": "9-11-6",
+      "homeRecord": "10-11-0"
+    },
+    {
+      "sport": "NHL",
+      "game": "New Jersey Devils at Columbus Blue Jackets",
+      "start": "2026-11-25T23:00:00Z",
+      "location": "Nationwide Arena, Columbus, OH",
+      "awayRecord": "16-8-0",
+      "homeRecord": "9-13-0"
+    },
+    {
+      "sport": "NHL",
+      "game": "Vancouver Canucks at Detroit Red Wings",
+      "start": "2026-11-26T00:30:00Z",
+      "location": "Little Caesars Arena, Detroit, MI",
+      "awayRecord": "6-19-1",
+      "homeRecord": "8-12-3"
+    },
+    {
+      "sport": "NHL",
+      "game": "Nashville Predators at Dallas Stars",
+      "start": "2026-11-26T01:00:00Z",
+      "location": "American Airlines Center, Dallas, TX",
+      "awayRecord": "12-6-5",
+      "homeRecord": "15-6-2"
+    },
+    {
+      "sport": "NHL",
+      "game": "Utah Mammoth at Minnesota Wild",
+      "start": "2026-11-26T01:00:00Z",
+      "location": "Grand Casino Arena, Saint Paul, MN",
+      "awayRecord": "12-10-3",
+      "homeRecord": "18-3-5"
+    },
+    {
+      "sport": "NHL",
+      "game": "Montreal Canadiens at Colorado Avalanche",
+      "start": "2026-11-26T02:30:00Z",
+      "location": "Ball Arena, Denver, CO",
+      "awayRecord": "14-7-4",
+      "homeRecord": "13-7-3"
+    },
+    {
+      "sport": "NHL",
+      "game": "Chicago Blackhawks at Seattle Kraken",
+      "start": "2026-11-26T02:40:00Z",
+      "location": "Climate Pledge Arena, Seattle, WA",
+      "awayRecord": "8-14-2",
+      "homeRecord": "11-9-1"
+    },
+    {
+      "sport": "NHL",
+      "game": "San Jose Sharks at Anaheim Ducks",
+      "start": "2026-11-26T03:00:00Z",
+      "location": "Honda Center, Anaheim, CA",
+      "awayRecord": "11-13-2",
+      "homeRecord": "11-13-1"
     }
-  ]
+  ],
+  "passed": []
 }
