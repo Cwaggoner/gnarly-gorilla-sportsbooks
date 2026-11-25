@@ -1,5 +1,4 @@
-# file: GG-CARD-2026-11-24
-2026-11-24 | CBB | No Picks
-2026-11-24 | CFB | No Picks
-2026-11-24 | NBA | No Picks
-2026-11-24 | NHL | No Picks
+# file: GG-CARD-2026-11-25
+2026-11-25 | CBB | No Picks
+2026-11-25 | NBA | No Picks
+2026-11-25 | NHL | No Picks
