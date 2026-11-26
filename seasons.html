@@ -3651,6 +3651,11 @@ async function nightlyUpdate(){
   }
 }
 function inSlipWindow(date){ date = String(date || "").slice(0, 10); const east = easternDay(); return date === east || date === shiftDate(east, -1); }
+function slipKeepWindow(date){
+  date = String(date || "").slice(0, 10);
+  if (inSlipWindow(date)) return true;
+  return date === shiftDate(easternDay(), -2);
+}
 let pinnedSlipDates = new Set();
 let dupSlipId = "";
 function pinSlipDate(date){
@@ -5781,9 +5786,9 @@ function dropMatchedPending(rows){
 }
 function clearStalePending(){
   const bets = dropUnchosenCard(dropMatchedPending(load()));
-  const older = bets.filter(b => !inSlipWindow(b.date) && b.result !== "pending");
+  const older = bets.filter(b => !slipKeepWindow(b.date) && b.result !== "pending");
   if (older.length) archiveSlips(older);
-  const kept = bets.filter(b => inSlipWindow(b.date) || b.result === "pending");
+  const kept = bets.filter(b => slipKeepWindow(b.date) || b.result === "pending");
   if (kept.length !== load().length) save(kept);
 }
 function gradeNote(b){
@@ -5910,7 +5915,6 @@ function render(){
   }
   if (page === "seasons") { try { paintSeasonStatus(); } catch (err) {} }
   if (page === "about") { try { paintSharpCheck(); } catch (err) {} }
-  if (page === "liveodds") drawOddsCompare(false).catch(() => {});
   return;
   }
   const stored = load();
@@ -8925,7 +8929,7 @@ async function applyGrades(ready){
   rules.forEach(rule => {
     bets.forEach(b => apply(b, rule));
     graded.forEach(b => apply(b, rule));
-    if (!inSlipWindow(rule.date)) return;
+    if (!slipKeepWindow(rule.date)) return;
     if (!graded.some(b => sameSlip(b, rule))) graded.push({id: Date.now() + Math.random(), date: rule.date, book: "BetMGM", sport: rule.sport, type: betType({pick: rule.pick}), pick: rule.pick, odds: rule.odds, close: rule.close, stake: 10, result: rule.result, profit: rule.profit, realClose: rule.realClose, notes: "Graded"});
   });
   localStorage.setItem(GRADE_KEY, JSON.stringify(graded));
@@ -9498,28 +9502,33 @@ async function catchUp(){
     if (dash) localStorage.setItem("gg-dashboard-published", dash);
   } catch (err) {}
   if (wantLedger && localStorage.getItem("gg-hold-ledger") !== "1") {
-    const keepLive = b => b && !isNoPick(b) && (b.manual || String(b.sport || "").toUpperCase() === "MUL" || betType(b) === "Parlay" || isColtsCard(b)) && (inSlipWindow(b.date) || b.result === "pending");
-    const kept = dropUnchosenCard(load().filter(keepLive));
+    const local = dropUnchosenCard(load().filter(b => b && !isNoPick(b)));
+    const kept = [];
+    const bookOf = b => (typeof knownBook === "function" ? knownBook(b.book) : "") || String(b.book || "");
+    const has = b => kept.some(x => sameSlip(x, b) && bookOf(x) === bookOf(b));
+    const take = b => { if (b && !isNoPick(b) && !has(b)) kept.push(b); };
     try {
       const data = await ledgerP;
-      if (data) {
-        const published = (Array.isArray(data) ? data : (data.bets || [])).filter(b => b && inSlipWindow(b.date) && !isNoPick(b));
-        published.forEach(b => { if (b.fromCard && !b.manual && b.result === "pending") return; if (!kept.some(x => sameSlip(x, b))) kept.push(b); });
-      }
+      const published = data ? (Array.isArray(data) ? data : (data.bets || [])).filter(b => b && !isNoPick(b)) : [];
+      archiveSlips(published.filter(b => b.result && b.result !== "pending"));
+      published.filter(b => slipKeepWindow(b.date) || b.result === "pending").forEach(b => {
+        if (b.fromCard && !b.manual && b.result === "pending") return;
+        take(b);
+      });
     } catch (err) {}
+    archiveSlips(local.filter(b => b.result && b.result !== "pending" && !slipKeepWindow(b.date)));
+    local.forEach(b => {
+      if (b.result === "pending" || slipKeepWindow(b.date)) take(b);
+    });
     pinThisMul(kept);
     parkColtsCaesars(kept);
-    load().forEach(b => {
-      if (!keepLive(b)) return;
-      if (!kept.some(x => sameSlip(x, b) && (knownBook(x.book) || "") === (knownBook(b.book) || ""))) kept.push(b);
-    });
     localStorage.setItem(KEY, JSON.stringify(kept));
   }
   if (document.documentElement.dataset.page === "reportcard") {
     try {
       const data = await fetch(cardUrl("cards/ledger.json")).then(r => r.ok ? r.json() : null);
       const bets = data && (Array.isArray(data) ? data : data.bets) || [];
-      takeGradeFile(bets.filter(b => b && inSlipWindow(b.date) && !isNoPick(b)));
+      takeGradeFile(bets.filter(b => b && !isNoPick(b) && b.result && b.result !== "pending"));
     } catch (e) {}
   }
   if (wantGrades) await applyGrades(gradesText).catch(() => {});
@@ -10075,14 +10084,17 @@ document.getElementById("loadledger").onchange = e => {
       const data = JSON.parse(String(reader.result));
       const bets = Array.isArray(data) ? data : data.bets;
       if (!Array.isArray(bets)) throw new Error("That file has no slips.");
-      const kept = bets.filter(b => !isNoPick(b) && inSlipWindow(b.date));
+      const all = bets.filter(b => b && !isNoPick(b));
+      archiveSlips(all.filter(b => b.result && b.result !== "pending"));
+      const kept = all.filter(b => slipKeepWindow(b.date) || b.result === "pending");
       kept.forEach(b => { keepClose(b); markEdge(b); });
       save(kept);
       document.getElementById("reportDay").value = "";
       localStorage.setItem("gg-hold-ledger", "1");
       render();
       requestAnimationFrame(render);
-    note.textContent = "Loaded " + bets.length + " slips.";
+      const older = all.length - kept.length;
+      note.textContent = "Loaded " + kept.length + " slips." + (older ? " " + older + " older graded slips stayed in the record." : "");
       goPage("slips");
     } catch (err) {
       note.textContent = "Load failed. Use a Save Ledger JSON file.";
@@ -10125,6 +10137,7 @@ document.getElementById("syncledger").onclick = async () => {
     const filled = load();
     filled.forEach(keepClose);
     save(filled);
+    clearStalePending();
     const graded = filled.concat(loadGrade()).concat(gradeFile).filter(b => b.result === "win" || b.result === "loss" || b.result === "push");
     note.textContent = "Synced ledger. " + bets.length + " slips loaded. " + graded.length + " graded slips are in the Slips card." + (added ? " " + added + " saved slips were not on the site. They stayed on this Chromebook. The public file was not changed." : " The saved slips are already on the site.");
     goPage("slips");
