@@ -1,7 +1,7 @@
 # file: report
-2026-11-24 | CBB | No Picks
-2026-11-24 | CFB | No Picks
-2026-11-24 | NBA | No Picks
-2026-11-24 | NFL | No Picks
-2026-11-24 | NHL | No Picks
-2026-11-24 | MLB | Season Ended
+2026-11-25 | CBB | No Picks
+2026-11-25 | CFB | No Picks
+2026-11-25 | NBA | No Picks
+2026-11-25 | NFL | No Picks
+2026-11-25 | NHL | No Picks
+2026-11-25 | MLB | Season Ended

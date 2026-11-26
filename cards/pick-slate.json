@@ -1,1 +1,22 @@
-PLACEHOLDER
+{
+  "date": "2026-11-26",
+  "games": [
+    {"sport": "CBB", "game": "Alabama at Kansas State", "start": "2026-11-27T02:00:00Z", "location": "Las Vegas, NV", "records": {"Alabama": "5-1", "Kansas State": "3-3"}},
+    {"sport": "CBB", "game": "Arkansas at Michigan State", "start": "2026-11-26T21:30:00Z", "location": "Detroit, MI", "records": {"Arkansas": "4-2", "Michigan State": "5-1"}},
+    {"sport": "CBB", "game": "Baylor at Gonzaga", "start": "2026-11-27T04:30:00Z", "location": "Las Vegas, NV", "records": {"Baylor": "5-1", "Gonzaga": "4-1"}},
+    {"sport": "CBB", "game": "Georgetown at Texas", "start": "2026-11-26T19:30:00Z", "location": "San Diego, CA", "records": {"Georgetown": "6-0", "Texas": "6-0"}},
+    {"sport": "CBB", "game": "Louisville at St. John's", "start": "2026-11-27T02:00:00Z", "location": "Las Vegas, NV", "records": {"Louisville": "4-1", "St. John's": "6-0"}},
+    {"sport": "CBB", "game": "Miami at Michigan", "start": "2026-11-26T20:30:00Z", "location": "Las Vegas, NV", "records": {"Miami": "5-2", "Michigan": "3-3"}},
+    {"sport": "CBB", "game": "Saint Mary's at UCLA", "start": "2026-11-26T22:00:00Z", "location": "San Diego, CA", "records": {"Saint Mary's": "6-1", "UCLA": "6-0"}},
+    {"sport": "CBB", "game": "SMU at LSU", "start": "2026-11-27T00:00:00Z", "location": "Palm Springs, CA", "records": {"SMU": "6-0", "LSU": "7-0"}},
+    {"sport": "CBB", "game": "Tennessee at Iowa State", "start": "2026-11-26T20:30:00Z", "location": "Las Vegas, NV", "records": {"Tennessee": "6-0", "Iowa State": "4-1"}},
+    {"sport": "CBB", "game": "Texas Tech at Oregon", "start": "2026-11-27T04:30:00Z", "location": "Las Vegas, NV", "records": {"Texas Tech": "5-1", "Oregon": "3-2"}},
+    {"sport": "CBB", "game": "Utah State at USC", "start": "2026-11-26T21:30:00Z", "location": "Palm Springs, CA", "records": {"Utah State": "5-0", "USC": "7-0"}},
+    {"sport": "CFB", "game": "TCU at Texas Tech", "start": "2026-11-27T01:00:00Z", "location": "Lubbock, TX", "records": {"TCU": "5-6", "Texas Tech": "10-1"}},
+    {"sport": "NFL", "game": "Chicago Bears at Detroit Lions", "start": "2026-11-26T18:00:00Z", "location": "Detroit, MI", "records": {"Chicago Bears": "8-2", "Detroit Lions": "8-2"}},
+    {"sport": "NFL", "game": "Kansas City Chiefs at Buffalo Bills", "start": "2026-11-27T01:20:00Z", "location": "Orchard Park, NY", "records": {"Kansas City Chiefs": "8-2", "Buffalo Bills": "9-1"}},
+    {"sport": "NFL", "game": "Philadelphia Eagles at Dallas Cowboys", "start": "2026-11-26T21:30:00Z", "location": "Arlington, TX", "records": {"Philadelphia Eagles": "3-7", "Dallas Cowboys": "5-6"}}
+  ],
+  "passed": [],
+  "source": "ESPN scoreboard at 4:00 AM. No odds key. Picks post at 9:00 AM."
+}
