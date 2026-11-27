@@ -1,1 +1,2018 @@
-PLACEHOLDER
+{
+  "source": "ESPN DraftKings close",
+  "days": {
+    "2026-11-24": {
+      "NBA": [
+        {
+          "away": "Detroit Pistons",
+          "home": "Orlando Magic",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 3.5,
+                  "price": -114
+                },
+                "home": {
+                  "point": -3.5,
+                  "price": -106
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 126
+                },
+                "home": {
+                  "price": -150
+                }
+              },
+              "total": {
+                "point": 210.5,
+                "over": -110,
+                "under": -110
+              }
+            }
+          }
+        },
+        {
+          "away": "Boston Celtics",
+          "home": "Washington Wizards",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": -10.5,
+                  "price": -116
+                },
+                "home": {
+                  "point": 10.5,
+                  "price": -104
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -452
+                },
+                "home": {
+                  "price": 351
+                }
+              },
+              "total": {
+                "point": 218.5,
+                "over": -112,
+                "under": -108
+              }
+            }
+          }
+        },
+        {
+          "away": "Dallas Mavericks",
+          "home": "Denver Nuggets",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 7.5,
+                  "price": -107
+                },
+                "home": {
+                  "point": -7.5,
+                  "price": -113
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 227
+                },
+                "home": {
+                  "price": -277
+                }
+              },
+              "total": {
+                "point": 234.5,
+                "over": -108,
+                "under": -112
+              }
+            }
+          }
+        }
+      ],
+      "NHL": [
+        {
+          "away": "Vegas Golden Knights",
+          "home": "Edmonton Oilers",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": -1.5,
+                  "price": 210
+                },
+                "home": {
+                  "point": 1.5,
+                  "price": -258
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -120
+                },
+                "home": {
+                  "price": 100
+                }
+              },
+              "total": {
+                "point": 6.5,
+                "over": -120,
+                "under": 100
+              }
+            }
+          }
+        }
+      ],
+      "CFB": [
+        {
+          "away": "Kent State Golden Flashes",
+          "home": "Eastern Michigan Eagles",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 7,
+                  "price": -112
+                },
+                "home": {
+                  "point": -7,
+                  "price": -108
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 210
+                },
+                "home": {
+                  "price": -258
+                }
+              },
+              "total": {
+                "point": 46.5,
+                "over": -108,
+                "under": -112
+              }
+            }
+          }
+        },
+        {
+          "away": "Miami (OH) RedHawks",
+          "home": "Western Michigan Broncos",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 4,
+                  "price": -110
+                },
+                "home": {
+                  "point": -4,
+                  "price": -110
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 164
+                },
+                "home": {
+                  "price": -198
+                }
+              },
+              "total": {
+                "point": 44.5,
+                "over": -108,
+                "under": -112
+              }
+            }
+          }
+        }
+      ],
+      "CBB": [
+        {
+          "away": "Milwaukee Panthers",
+          "home": "Florida Gators",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 34.5,
+                  "price": -105
+                },
+                "home": {
+                  "point": -34.5,
+                  "price": -115
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": null
+                },
+                "home": {
+                  "price": null
+                }
+              },
+              "total": {
+                "point": 153.5,
+                "over": -108,
+                "under": -112
+              }
+            }
+          }
+        },
+        {
+          "away": "Texas Tech Red Raiders",
+          "home": "Louisville Cardinals",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": -2.5,
+                  "price": -112
+                },
+                "home": {
+                  "point": 2.5,
+                  "price": -108
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -162
+                },
+                "home": {
+                  "price": 136
+                }
+              },
+              "total": {
+                "point": 153.5,
+                "over": -108,
+                "under": -112
+              }
+            }
+          }
+        },
+        {
+          "away": "Providence Friars",
+          "home": "Arizona Wildcats",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 7.5,
+                  "price": -110
+                },
+                "home": {
+                  "point": -7.5,
+                  "price": -110
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 270
+                },
+                "home": {
+                  "price": -340
+                }
+              },
+              "total": {
+                "point": 157.5,
+                "over": -105,
+                "under": -115
+              }
+            }
+          }
+        },
+        {
+          "away": "Tennessee Volunteers",
+          "home": "Maryland Terrapins",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": -2.5,
+                  "price": -102
+                },
+                "home": {
+                  "point": 2.5,
+                  "price": -118
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -148
+                },
+                "home": {
+                  "price": 124
+                }
+              },
+              "total": {
+                "point": 148.5,
+                "over": -110,
+                "under": -110
+              }
+            }
+          }
+        },
+        {
+          "away": "Oregon Ducks",
+          "home": "St. John's Red Storm",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 10.5,
+                  "price": -105
+                },
+                "home": {
+                  "point": -10.5,
+                  "price": -115
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 425
+                },
+                "home": {
+                  "price": -575
+                }
+              },
+              "total": {
+                "point": 157.5,
+                "over": -108,
+                "under": -112
+              }
+            }
+          }
+        },
+        {
+          "away": "Vanderbilt Commodores",
+          "home": "Ohio State Buckeyes",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": -2.5,
+                  "price": 102
+                },
+                "home": {
+                  "point": 2.5,
+                  "price": -122
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -130
+                },
+                "home": {
+                  "price": 110
+                }
+              },
+              "total": {
+                "point": 156.5,
+                "over": -110,
+                "under": -110
+              }
+            }
+          }
+        },
+        {
+          "away": "Baylor Bears",
+          "home": "Alabama Crimson Tide",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 1.5,
+                  "price": -105
+                },
+                "home": {
+                  "point": -1.5,
+                  "price": -115
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 105
+                },
+                "home": {
+                  "price": -125
+                }
+              },
+              "total": {
+                "point": 174.5,
+                "over": -108,
+                "under": -112
+              }
+            }
+          }
+        },
+        {
+          "away": "Miami Hurricanes",
+          "home": "TCU Horned Frogs",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": -5.5,
+                  "price": -105
+                },
+                "home": {
+                  "point": 5.5,
+                  "price": -115
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -225
+                },
+                "home": {
+                  "price": 185
+                }
+              },
+              "total": {
+                "point": 153.5,
+                "over": -112,
+                "under": -108
+              }
+            }
+          }
+        },
+        {
+          "away": "Ole Miss Rebels",
+          "home": "BYU Cougars",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": -2.5,
+                  "price": -102
+                },
+                "home": {
+                  "point": 2.5,
+                  "price": -118
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -135
+                },
+                "home": {
+                  "price": 114
+                }
+              },
+              "total": {
+                "point": 158.5,
+                "over": -110,
+                "under": -110
+              }
+            }
+          }
+        },
+        {
+          "away": "Gonzaga Bulldogs",
+          "home": "Kansas State Wildcats",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": -14.5,
+                  "price": -110
+                },
+                "home": {
+                  "point": 14.5,
+                  "price": -110
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -1450
+                },
+                "home": {
+                  "price": 850
+                }
+              },
+              "total": {
+                "point": 157.5,
+                "over": -112,
+                "under": -108
+              }
+            }
+          }
+        },
+        {
+          "away": "Jacksonville Dolphins",
+          "home": "Indiana Hoosiers",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 27.5,
+                  "price": -102
+                },
+                "home": {
+                  "point": -27.5,
+                  "price": -118
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 4000
+                },
+                "home": {
+                  "price": -50000
+                }
+              },
+              "total": {
+                "point": 146.5,
+                "over": -108,
+                "under": -112
+              }
+            }
+          }
+        }
+      ]
+    },
+    "2026-11-25": {
+      "NBA": [
+        {
+          "away": "Miami Heat",
+          "home": "Philadelphia 76ers",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": -1.5,
+                  "price": 100
+                },
+                "home": {
+                  "point": 1.5,
+                  "price": -121
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -109
+                },
+                "home": {
+                  "price": -108
+                }
+              },
+              "total": {
+                "point": 237.5,
+                "over": -110,
+                "under": -110
+              }
+            }
+          }
+        },
+        {
+          "away": "Chicago Bulls",
+          "home": "Charlotte Hornets",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 4.5,
+                  "price": -108
+                },
+                "home": {
+                  "point": -4.5,
+                  "price": -112
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 151
+                },
+                "home": {
+                  "price": -180
+                }
+              },
+              "total": {
+                "point": 217.5,
+                "over": -115,
+                "under": -106
+              }
+            }
+          }
+        },
+        {
+          "away": "Cleveland Cavaliers",
+          "home": "New York Knicks",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 4.5,
+                  "price": -113
+                },
+                "home": {
+                  "point": -4.5,
+                  "price": -107
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 151
+                },
+                "home": {
+                  "price": -180
+                }
+              },
+              "total": {
+                "point": 221.5,
+                "over": -105,
+                "under": -116
+              }
+            }
+          }
+        },
+        {
+          "away": "Minnesota Timberwolves",
+          "home": "Oklahoma City Thunder",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 2.5,
+                  "price": -111
+                },
+                "home": {
+                  "point": -2.5,
+                  "price": -109
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 114
+                },
+                "home": {
+                  "price": -135
+                }
+              },
+              "total": {
+                "point": 223.5,
+                "over": -110,
+                "under": -110
+              }
+            }
+          }
+        },
+        {
+          "away": "LA Clippers",
+          "home": "Memphis Grizzlies",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 7.5,
+                  "price": -108
+                },
+                "home": {
+                  "point": -7.5,
+                  "price": -112
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 220
+                },
+                "home": {
+                  "price": -269
+                }
+              },
+              "total": {
+                "point": 227.5,
+                "over": -110,
+                "under": -110
+              }
+            }
+          }
+        },
+        {
+          "away": "Brooklyn Nets",
+          "home": "Milwaukee Bucks",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 1.5,
+                  "price": -115
+                },
+                "home": {
+                  "point": -1.5,
+                  "price": -105
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -101
+                },
+                "home": {
+                  "price": -117
+                }
+              },
+              "total": {
+                "point": 233.5,
+                "over": -107,
+                "under": -113
+              }
+            }
+          }
+        },
+        {
+          "away": "Phoenix Suns",
+          "home": "Houston Rockets",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 8.5,
+                  "price": -105
+                },
+                "home": {
+                  "point": -8.5,
+                  "price": -115
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 300
+                },
+                "home": {
+                  "price": -378
+                }
+              },
+              "total": {
+                "point": 222.5,
+                "over": -111,
+                "under": -109
+              }
+            }
+          }
+        },
+        {
+          "away": "Sacramento Kings",
+          "home": "Golden State Warriors",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 8.5,
+                  "price": -105
+                },
+                "home": {
+                  "point": -8.5,
+                  "price": -115
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 261
+                },
+                "home": {
+                  "price": -324
+                }
+              },
+              "total": {
+                "point": 216.5,
+                "over": -107,
+                "under": -113
+              }
+            }
+          }
+        },
+        {
+          "away": "San Antonio Spurs",
+          "home": "Portland Trail Blazers",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": -3.5,
+                  "price": -110
+                },
+                "home": {
+                  "point": 3.5,
+                  "price": -110
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -162
+                },
+                "home": {
+                  "price": 136
+                }
+              },
+              "total": {
+                "point": 224.5,
+                "over": -110,
+                "under": -110
+              }
+            }
+          }
+        }
+      ],
+      "NHL": [
+        {
+          "away": "Winnipeg Jets",
+          "home": "Boston Bruins",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 1.5,
+                  "price": -175
+                },
+                "home": {
+                  "point": -1.5,
+                  "price": 145
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 142
+                },
+                "home": {
+                  "price": -170
+                }
+              },
+              "total": {
+                "point": 6.5,
+                "over": -105,
+                "under": -115
+              }
+            }
+          }
+        },
+        {
+          "away": "New York Rangers",
+          "home": "Buffalo Sabres",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 1.5,
+                  "price": -225
+                },
+                "home": {
+                  "point": -1.5,
+                  "price": 185
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 114
+                },
+                "home": {
+                  "price": -135
+                }
+              },
+              "total": {
+                "point": 6.5,
+                "over": -102,
+                "under": -118
+              }
+            }
+          }
+        },
+        {
+          "away": "Carolina Hurricanes",
+          "home": "Tampa Bay Lightning",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": -1.5,
+                  "price": 210
+                },
+                "home": {
+                  "point": 1.5,
+                  "price": -258
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -120
+                },
+                "home": {
+                  "price": 100
+                }
+              },
+              "total": {
+                "point": 6.5,
+                "over": 100,
+                "under": -120
+              }
+            }
+          }
+        },
+        {
+          "away": "Ottawa Senators",
+          "home": "Florida Panthers",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 1.5,
+                  "price": -250
+                },
+                "home": {
+                  "point": -1.5,
+                  "price": 205
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 105
+                },
+                "home": {
+                  "price": -125
+                }
+              },
+              "total": {
+                "point": 5.5,
+                "over": -108,
+                "under": -112
+              }
+            }
+          }
+        },
+        {
+          "away": "St. Louis Blues",
+          "home": "New York Islanders",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 1.5,
+                  "price": -238
+                },
+                "home": {
+                  "point": -1.5,
+                  "price": 195
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 114
+                },
+                "home": {
+                  "price": -135
+                }
+              },
+              "total": {
+                "point": 5.5,
+                "over": -135,
+                "under": 114
+              }
+            }
+          }
+        },
+        {
+          "away": "Calgary Flames",
+          "home": "Pittsburgh Penguins",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 1.5,
+                  "price": -185
+                },
+                "home": {
+                  "point": -1.5,
+                  "price": 154
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 145
+                },
+                "home": {
+                  "price": -175
+                }
+              },
+              "total": {
+                "point": 6.5,
+                "over": 114,
+                "under": -135
+              }
+            }
+          }
+        },
+        {
+          "away": "Philadelphia Flyers",
+          "home": "Washington Capitals",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 1.5,
+                  "price": -185
+                },
+                "home": {
+                  "point": -1.5,
+                  "price": 154
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 140
+                },
+                "home": {
+                  "price": -166
+                }
+              },
+              "total": {
+                "point": 6.5,
+                "over": -108,
+                "under": -112
+              }
+            }
+          }
+        },
+        {
+          "away": "New Jersey Devils",
+          "home": "Columbus Blue Jackets",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": -1.5,
+                  "price": 170
+                },
+                "home": {
+                  "point": 1.5,
+                  "price": -205
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -148
+                },
+                "home": {
+                  "price": 124
+                }
+              },
+              "total": {
+                "point": 6.5,
+                "over": 110,
+                "under": -130
+              }
+            }
+          }
+        },
+        {
+          "away": "Vancouver Canucks",
+          "home": "Detroit Red Wings",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 1.5,
+                  "price": -130
+                },
+                "home": {
+                  "point": -1.5,
+                  "price": 110
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 190
+                },
+                "home": {
+                  "price": -230
+                }
+              },
+              "total": {
+                "point": 6.5,
+                "over": 105,
+                "under": -125
+              }
+            }
+          }
+        },
+        {
+          "away": "Nashville Predators",
+          "home": "Dallas Stars",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 1.5,
+                  "price": -198
+                },
+                "home": {
+                  "point": -1.5,
+                  "price": 164
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 142
+                },
+                "home": {
+                  "price": -170
+                }
+              },
+              "total": {
+                "point": 5.5,
+                "over": -122,
+                "under": 102
+              }
+            }
+          }
+        },
+        {
+          "away": "Utah Mammoth",
+          "home": "Minnesota Wild",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 1.5,
+                  "price": -198
+                },
+                "home": {
+                  "point": -1.5,
+                  "price": 164
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 124
+                },
+                "home": {
+                  "price": -148
+                }
+              },
+              "total": {
+                "point": 6.5,
+                "over": 114,
+                "under": -135
+              }
+            }
+          }
+        },
+        {
+          "away": "Montreal Canadiens",
+          "home": "Colorado Avalanche",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 1.5,
+                  "price": -225
+                },
+                "home": {
+                  "point": -1.5,
+                  "price": 185
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 100
+                },
+                "home": {
+                  "price": -120
+                }
+              },
+              "total": {
+                "point": 6.5,
+                "over": -102,
+                "under": -118
+              }
+            }
+          }
+        },
+        {
+          "away": "Chicago Blackhawks",
+          "home": "Seattle Kraken",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 1.5,
+                  "price": -192
+                },
+                "home": {
+                  "point": -1.5,
+                  "price": 160
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 130
+                },
+                "home": {
+                  "price": -155
+                }
+              },
+              "total": {
+                "point": 6.5,
+                "over": -102,
+                "under": -118
+              }
+            }
+          }
+        },
+        {
+          "away": "San Jose Sharks",
+          "home": "Anaheim Ducks",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 1.5,
+                  "price": -205
+                },
+                "home": {
+                  "point": -1.5,
+                  "price": 170
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 114
+                },
+                "home": {
+                  "price": -135
+                }
+              },
+              "total": {
+                "point": 6.5,
+                "over": -142,
+                "under": 120
+              }
+            }
+          }
+        }
+      ],
+      "NFL": [
+        {
+          "away": "Green Bay Packers",
+          "home": "Los Angeles Rams",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 2.5,
+                  "price": -104
+                },
+                "home": {
+                  "point": -2.5,
+                  "price": -115
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 120
+                },
+                "home": {
+                  "price": -142
+                }
+              },
+              "total": {
+                "point": 43.5,
+                "over": -118,
+                "under": -102
+              }
+            }
+          }
+        }
+      ],
+      "CBB": [
+        {
+          "away": "Virginia Cavaliers",
+          "home": "Marquette Golden Eagles",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": -5.5,
+                  "price": -115
+                },
+                "home": {
+                  "point": 5.5,
+                  "price": -105
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -285
+                },
+                "home": {
+                  "price": 230
+                }
+              },
+              "total": {
+                "point": 151.5,
+                "over": -112,
+                "under": -108
+              }
+            }
+          }
+        },
+        {
+          "away": "Ole Miss Rebels",
+          "home": "Arizona Wildcats",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 5.5,
+                  "price": -112
+                },
+                "home": {
+                  "point": -5.5,
+                  "price": -108
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 190
+                },
+                "home": {
+                  "price": -230
+                }
+              },
+              "total": {
+                "point": 153.5,
+                "over": -108,
+                "under": -112
+              }
+            }
+          }
+        },
+        {
+          "away": "Duke Blue Devils",
+          "home": "UConn Huskies",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 1.5,
+                  "price": -122
+                },
+                "home": {
+                  "point": -1.5,
+                  "price": 102
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -105
+                },
+                "home": {
+                  "price": -115
+                }
+              },
+              "total": {
+                "point": 145.5,
+                "over": -115,
+                "under": -105
+              }
+            }
+          }
+        },
+        {
+          "away": "South Carolina Gamecocks",
+          "home": "USC Trojans",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 9.5,
+                  "price": -108
+                },
+                "home": {
+                  "point": -9.5,
+                  "price": -112
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 370
+                },
+                "home": {
+                  "price": -485
+                }
+              },
+              "total": {
+                "point": 144.5,
+                "over": -112,
+                "under": -108
+              }
+            }
+          }
+        },
+        {
+          "away": "BYU Cougars",
+          "home": "Providence Friars",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": -2.5,
+                  "price": -108
+                },
+                "home": {
+                  "point": 2.5,
+                  "price": -112
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -142
+                },
+                "home": {
+                  "price": 120
+                }
+              },
+              "total": {
+                "point": 154.5,
+                "over": -110,
+                "under": -110
+              }
+            }
+          }
+        },
+        {
+          "away": "LSU Tigers",
+          "home": "Arizona State Sun Devils",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": -3.5,
+                  "price": -112
+                },
+                "home": {
+                  "point": 3.5,
+                  "price": -108
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -175
+                },
+                "home": {
+                  "price": 145
+                }
+              },
+              "total": {
+                "point": 145.5,
+                "over": -110,
+                "under": -110
+              }
+            }
+          }
+        },
+        {
+          "away": "Southern Jaguars",
+          "home": "Nebraska Cornhuskers",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 34.5,
+                  "price": -112
+                },
+                "home": {
+                  "point": -34.5,
+                  "price": -108
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": null
+                },
+                "home": {
+                  "price": null
+                }
+              },
+              "total": {
+                "point": 149.5,
+                "over": -110,
+                "under": -110
+              }
+            }
+          }
+        },
+        {
+          "away": "Memphis Tigers",
+          "home": "Penn State Nittany Lions",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": -4.5,
+                  "price": -112
+                },
+                "home": {
+                  "point": 4.5,
+                  "price": -108
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -185
+                },
+                "home": {
+                  "price": 154
+                }
+              },
+              "total": {
+                "point": 162.5,
+                "over": -110,
+                "under": -110
+              }
+            }
+          }
+        }
+      ]
+    },
+    "2026-11-26": {
+      "NFL": [
+        {
+          "away": "Chicago Bears",
+          "home": "Detroit Lions",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": -1.5,
+                  "price": -113
+                },
+                "home": {
+                  "point": 1.5,
+                  "price": -107
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -128
+                },
+                "home": {
+                  "price": 108
+                }
+              },
+              "total": {
+                "point": 56.5,
+                "over": -113,
+                "under": -106
+              }
+            }
+          }
+        },
+        {
+          "away": "Philadelphia Eagles",
+          "home": "Dallas Cowboys",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 9.5,
+                  "price": -110
+                },
+                "home": {
+                  "point": -9.5,
+                  "price": -109
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 391
+                },
+                "home": {
+                  "price": -512
+                }
+              },
+              "total": {
+                "point": 49.5,
+                "over": -118,
+                "under": -102
+              }
+            }
+          }
+        },
+        {
+          "away": "Kansas City Chiefs",
+          "home": "Buffalo Bills",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 3,
+                  "price": -112
+                },
+                "home": {
+                  "point": -3,
+                  "price": -107
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 137
+                },
+                "home": {
+                  "price": -163
+                }
+              },
+              "total": {
+                "point": 46.5,
+                "over": -107,
+                "under": -112
+              }
+            }
+          }
+        }
+      ],
+      "CFB": [
+        {
+          "away": "TCU Horned Frogs",
+          "home": "Texas Tech Red Raiders",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 13.5,
+                  "price": -105
+                },
+                "home": {
+                  "point": -13.5,
+                  "price": -115
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 440
+                },
+                "home": {
+                  "price": -600
+                }
+              },
+              "total": {
+                "point": 46.5,
+                "over": -115,
+                "under": -105
+              }
+            }
+          }
+        }
+      ],
+      "CBB": [
+        {
+          "away": "Texas Tech Red Raiders",
+          "home": "Oregon Ducks",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": -10.5,
+                  "price": -115
+                },
+                "home": {
+                  "point": 10.5,
+                  "price": -105
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -550
+                },
+                "home": {
+                  "price": 410
+                }
+              },
+              "total": {
+                "point": 149.5,
+                "over": -110,
+                "under": -110
+              }
+            }
+          }
+        },
+        {
+          "away": "UCLA Bruins",
+          "home": "Saint Mary's Gaels",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": -7.5,
+                  "price": -112
+                },
+                "home": {
+                  "point": 7.5,
+                  "price": -108
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -410
+                },
+                "home": {
+                  "price": 320
+                }
+              },
+              "total": {
+                "point": 152.5,
+                "over": -105,
+                "under": -115
+              }
+            }
+          }
+        },
+        {
+          "away": "Georgetown Hoyas",
+          "home": "Texas Longhorns",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 8.5,
+                  "price": -112
+                },
+                "home": {
+                  "point": -8.5,
+                  "price": -108
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 310
+                },
+                "home": {
+                  "price": -395
+                }
+              },
+              "total": {
+                "point": 153.5,
+                "over": -112,
+                "under": -108
+              }
+            }
+          }
+        },
+        {
+          "away": "Tennessee Volunteers",
+          "home": "Iowa State Cyclones",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 5.5,
+                  "price": -112
+                },
+                "home": {
+                  "point": -5.5,
+                  "price": -108
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 210
+                },
+                "home": {
+                  "price": -258
+                }
+              },
+              "total": {
+                "point": 138.5,
+                "over": -108,
+                "under": -112
+              }
+            }
+          }
+        },
+        {
+          "away": "Arkansas Razorbacks",
+          "home": "Michigan State Spartans",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 5.5,
+                  "price": -110
+                },
+                "home": {
+                  "point": -5.5,
+                  "price": -110
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 185
+                },
+                "home": {
+                  "price": -225
+                }
+              },
+              "total": {
+                "point": 147.5,
+                "over": -110,
+                "under": -110
+              }
+            }
+          }
+        },
+        {
+          "away": "Louisville Cardinals",
+          "home": "St. John's Red Storm",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 1.5,
+                  "price": -112
+                },
+                "home": {
+                  "point": -1.5,
+                  "price": -108
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 105
+                },
+                "home": {
+                  "price": -125
+                }
+              },
+              "total": {
+                "point": 159.5,
+                "over": -115,
+                "under": -105
+              }
+            }
+          }
+        },
+        {
+          "away": "Alabama Crimson Tide",
+          "home": "Kansas State Wildcats",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": -13.5,
+                  "price": -112
+                },
+                "home": {
+                  "point": 13.5,
+                  "price": -108
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -1200
+                },
+                "home": {
+                  "price": 750
+                }
+              },
+              "total": {
+                "point": 170.5,
+                "over": -110,
+                "under": -110
+              }
+            }
+          }
+        },
+        {
+          "away": "Miami Hurricanes",
+          "home": "Michigan Wolverines",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": -1.5,
+                  "price": -105
+                },
+                "home": {
+                  "point": 1.5,
+                  "price": -115
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -115
+                },
+                "home": {
+                  "price": -105
+                }
+              },
+              "total": {
+                "point": 161.5,
+                "over": -105,
+                "under": -115
+              }
+            }
+          }
+        },
+        {
+          "away": "USC Trojans",
+          "home": "Utah State Aggies",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": -1.5,
+                  "price": -110
+                },
+                "home": {
+                  "point": 1.5,
+                  "price": -110
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -122
+                },
+                "home": {
+                  "price": 102
+                }
+              },
+              "total": {
+                "point": 156.5,
+                "over": -110,
+                "under": -110
+              }
+            }
+          }
+        },
+        {
+          "away": "LSU Tigers",
+          "home": "SMU Mustangs",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": -6.5,
+                  "price": -108
+                },
+                "home": {
+                  "point": 6.5,
+                  "price": -112
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": -305
+                },
+                "home": {
+                  "price": 245
+                }
+              },
+              "total": {
+                "point": 155.5,
+                "over": -108,
+                "under": -112
+              }
+            }
+          }
+        },
+        {
+          "away": "Baylor Bears",
+          "home": "Gonzaga Bulldogs",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 2.5,
+                  "price": -115
+                },
+                "home": {
+                  "point": -2.5,
+                  "price": -105
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 120
+                },
+                "home": {
+                  "price": -142
+                }
+              },
+              "total": {
+                "point": 153.5,
+                "over": -108,
+                "under": -112
+              }
+            }
+          }
+        }
+      ]
+    },
+    "2026-11-27": {}
+  }
+}
