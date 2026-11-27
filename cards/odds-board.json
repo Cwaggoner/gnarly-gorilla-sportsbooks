@@ -1,1 +1,70 @@
-PLACEHOLDER_WILL_REPLACE
+{
+  "days": {
+    "2026-11-26": {
+      "h2h": [
+        {
+          "sport": "CFB",
+          "label": "TCU at Texas Tech",
+          "start": "2026-11-27T01:00:00Z",
+          "books": {
+            "BetMGM": "+525 / -700",
+            "Caesars": "+500 / -750",
+            "DraftKings": "+500 / -700",
+            "Fanatics": "+500 / -700",
+            "FanDuel": "+570 / -800",
+            "HardRock": "+525 / -850"
+          }
+        }
+      ],
+      "spreads": [],
+      "totals": []
+    },
+    "2026-11-27": {
+      "h2h": [
+        {
+          "sport": "NBA",
+          "label": "Miami Heat at New York Knicks",
+          "start": "2026-11-28T00:00:00Z",
+          "books": {
+            "BetMGM": "+150 / -185",
+            "Caesars": "+148 / -175",
+            "DraftKings": "+146 / -174",
+            "Fanatics": "+145 / -175",
+            "FanDuel": "+140 / -166",
+            "HardRock": "+140 / -165"
+          }
+        }
+      ],
+      "spreads": [
+        {
+          "sport": "NBA",
+          "label": "Miami Heat at New York Knicks",
+          "start": "2026-11-28T00:00:00Z",
+          "books": {
+            "BetMGM": "+3.5 -105 / -3.5 -105",
+            "Caesars": "+3.5 -105 / -3.5 -115",
+            "DraftKings": "+3.5 -105 / -3.5 -115",
+            "Fanatics": "+3.5 -105 / -3.5 -115",
+            "FanDuel": "+3.5 -102 / -3.5 -120",
+            "HardRock": "+4.5 -115 / -4.5 -105"
+          }
+        }
+      ],
+      "totals": [
+        {
+          "sport": "NBA",
+          "label": "Miami Heat at New York Knicks",
+          "start": "2026-11-28T00:00:00Z",
+          "books": {
+            "BetMGM": "o224.5 -105 / u224.5 -115",
+            "Caesars": "o223.5 -115 / u223.5 -105",
+            "DraftKings": "o223.5 -115 / u223.5 -105",
+            "Fanatics": "o224 -110 / u224 -110",
+            "FanDuel": "-",
+            "HardRock": "o224.5 -105 / u224.5 -115"
+          }
+        }
+      ]
+    }
+  }
+}
