@@ -601,3 +601,234 @@ PLACEHOLDER
 2026-11-25 | CBB |  | Buffaloes ML 360 | close
 2026-11-25 | CBB |  | Over 152.5 -110.0 | close
 2026-11-25 | CBB |  | Under 152.5 -110.0 | close
+
+2026-11-26 | NFL |  | Chicago -1.5 | close
+2026-11-26 | NFL |  | Bears -1.5 | close
+2026-11-26 | NFL |  | Detroit +1.5 | close
+2026-11-26 | NFL |  | Lions +1.5 | close
+2026-11-26 | NFL |  | Chicago ML -128 | close
+2026-11-26 | NFL |  | Bears ML -128 | close
+2026-11-26 | NFL |  | Detroit ML 108 | close
+2026-11-26 | NFL |  | Lions ML 108 | close
+2026-11-26 | NFL |  | Over 56.5 -113.0 | close
+2026-11-26 | NFL |  | Under 56.5 -106.0 | close
+2026-11-26 | NFL |  | Philadelphia +9.5 | close
+2026-11-26 | NFL |  | Eagles +9.5 | close
+2026-11-26 | NFL |  | Dallas -9.5 | close
+2026-11-26 | NFL |  | Cowboys -9.5 | close
+2026-11-26 | NFL |  | Philadelphia ML 391 | close
+2026-11-26 | NFL |  | Eagles ML 391 | close
+2026-11-26 | NFL |  | Dallas ML -512 | close
+2026-11-26 | NFL |  | Cowboys ML -512 | close
+2026-11-26 | NFL |  | Over 49.5 -118.0 | close
+2026-11-26 | NFL |  | Under 49.5 -102.0 | close
+2026-11-26 | NFL |  | Kansas City +3 | close
+2026-11-26 | NFL |  | Chiefs +3 | close
+2026-11-26 | NFL |  | Buffalo -3 | close
+2026-11-26 | NFL |  | Bills -3 | close
+2026-11-26 | NFL |  | Kansas City ML 137 | close
+2026-11-26 | NFL |  | Chiefs ML 137 | close
+2026-11-26 | NFL |  | Buffalo ML -163 | close
+2026-11-26 | NFL |  | Bills ML -163 | close
+2026-11-26 | NFL |  | Over 46.5 -107.0 | close
+2026-11-26 | NFL |  | Under 46.5 -112.0 | close
+2026-11-26 | CFB |  | TCU +13.5 | close
+2026-11-26 | CFB |  | Horned Frogs +13.5 | close
+2026-11-26 | CFB |  | Texas Tech -13.5 | close
+2026-11-26 | CFB |  | Red Raiders -13.5 | close
+2026-11-26 | CFB |  | TCU ML 440 | close
+2026-11-26 | CFB |  | Horned Frogs ML 440 | close
+2026-11-26 | CFB |  | Texas Tech ML -600 | close
+2026-11-26 | CFB |  | Red Raiders ML -600 | close
+2026-11-26 | CFB |  | Over 46.5 -115.0 | close
+2026-11-26 | CFB |  | Under 46.5 -105.0 | close
+2026-11-26 | CBB |  | UCLA -7.5 | close
+2026-11-26 | CBB |  | Bruins -7.5 | close
+2026-11-26 | CBB |  | Saint Mary's +7.5 | close
+2026-11-26 | CBB |  | Gaels +7.5 | close
+2026-11-26 | CBB |  | UCLA ML -410 | close
+2026-11-26 | CBB |  | Bruins ML -410 | close
+2026-11-26 | CBB |  | Saint Mary's ML 320 | close
+2026-11-26 | CBB |  | Gaels ML 320 | close
+2026-11-26 | CBB |  | Over 152.5 -105.0 | close
+2026-11-26 | CBB |  | Under 152.5 -115.0 | close
+2026-11-26 | CBB |  | Georgetown +8.5 | close
+2026-11-26 | CBB |  | Hoyas +8.5 | close
+2026-11-26 | CBB |  | Texas -8.5 | close
+2026-11-26 | CBB |  | Longhorns -8.5 | close
+2026-11-26 | CBB |  | Georgetown ML 310 | close
+2026-11-26 | CBB |  | Hoyas ML 310 | close
+2026-11-26 | CBB |  | Texas ML -395 | close
+2026-11-26 | CBB |  | Longhorns ML -395 | close
+2026-11-26 | CBB |  | Over 153.5 -112.0 | close
+2026-11-26 | CBB |  | Under 153.5 -108.0 | close
+2026-11-26 | CBB |  | Tennessee +5.5 | close
+2026-11-26 | CBB |  | Volunteers +5.5 | close
+2026-11-26 | CBB |  | Iowa State -5.5 | close
+2026-11-26 | CBB |  | Cyclones -5.5 | close
+2026-11-26 | CBB |  | Tennessee ML 210 | close
+2026-11-26 | CBB |  | Volunteers ML 210 | close
+2026-11-26 | CBB |  | Iowa State ML -258 | close
+2026-11-26 | CBB |  | Cyclones ML -258 | close
+2026-11-26 | CBB |  | Over 138.5 -108.0 | close
+2026-11-26 | CBB |  | Under 138.5 -112.0 | close
+2026-11-26 | CBB |  | Arkansas +5.5 | close
+2026-11-26 | CBB |  | Razorbacks +5.5 | close
+2026-11-26 | CBB |  | Michigan State -5.5 | close
+2026-11-26 | CBB |  | Spartans -5.5 | close
+2026-11-26 | CBB |  | Arkansas ML 185 | close
+2026-11-26 | CBB |  | Razorbacks ML 185 | close
+2026-11-26 | CBB |  | Michigan State ML -225 | close
+2026-11-26 | CBB |  | Spartans ML -225 | close
+2026-11-26 | CBB |  | Over 147.5 -110.0 | close
+2026-11-26 | CBB |  | Under 147.5 -110.0 | close
+2026-11-26 | CBB |  | Louisville +1.5 | close
+2026-11-26 | CBB |  | Cardinals +1.5 | close
+2026-11-26 | CBB |  | St. John's -1.5 | close
+2026-11-26 | CBB |  | Red Storm -1.5 | close
+2026-11-26 | CBB |  | Louisville ML 105 | close
+2026-11-26 | CBB |  | Cardinals ML 105 | close
+2026-11-26 | CBB |  | St. John's ML -125 | close
+2026-11-26 | CBB |  | Red Storm ML -125 | close
+2026-11-26 | CBB |  | Over 159.5 -115.0 | close
+2026-11-26 | CBB |  | Under 159.5 -105.0 | close
+2026-11-26 | CBB |  | Alabama -13.5 | close
+2026-11-26 | CBB |  | Crimson Tide -13.5 | close
+2026-11-26 | CBB |  | Kansas State +13.5 | close
+2026-11-26 | CBB |  | Wildcats +13.5 | close
+2026-11-26 | CBB |  | Alabama ML -1200 | close
+2026-11-26 | CBB |  | Crimson Tide ML -1200 | close
+2026-11-26 | CBB |  | Kansas State ML 750 | close
+2026-11-26 | CBB |  | Wildcats ML 750 | close
+2026-11-26 | CBB |  | Over 170.5 -110.0 | close
+2026-11-26 | CBB |  | Under 170.5 -110.0 | close
+2026-11-26 | CBB |  | Miami -1.5 | close
+2026-11-26 | CBB |  | Hurricanes -1.5 | close
+2026-11-26 | CBB |  | Michigan +1.5 | close
+2026-11-26 | CBB |  | Wolverines +1.5 | close
+2026-11-26 | CBB |  | Miami ML -115 | close
+2026-11-26 | CBB |  | Hurricanes ML -115 | close
+2026-11-26 | CBB |  | Michigan ML -105 | close
+2026-11-26 | CBB |  | Wolverines ML -105 | close
+2026-11-26 | CBB |  | Over 161.5 -105.0 | close
+2026-11-26 | CBB |  | Under 161.5 -115.0 | close
+2026-11-26 | CBB |  | USC -1.5 | close
+2026-11-26 | CBB |  | Trojans -1.5 | close
+2026-11-26 | CBB |  | Utah State +1.5 | close
+2026-11-26 | CBB |  | Aggies +1.5 | close
+2026-11-26 | CBB |  | USC ML -122 | close
+2026-11-26 | CBB |  | Trojans ML -122 | close
+2026-11-26 | CBB |  | Utah State ML 102 | close
+2026-11-26 | CBB |  | Aggies ML 102 | close
+2026-11-26 | CBB |  | Over 156.5 -110.0 | close
+2026-11-26 | CBB |  | Under 156.5 -110.0 | close
+2026-11-26 | CBB |  | LSU -6.5 | close
+2026-11-26 | CBB |  | Tigers -6.5 | close
+2026-11-26 | CBB |  | SMU +6.5 | close
+2026-11-26 | CBB |  | Mustangs +6.5 | close
+2026-11-26 | CBB |  | LSU ML -305 | close
+2026-11-26 | CBB |  | Tigers ML -305 | close
+2026-11-26 | CBB |  | SMU ML 245 | close
+2026-11-26 | CBB |  | Mustangs ML 245 | close
+2026-11-26 | CBB |  | Over 155.5 -108.0 | close
+2026-11-26 | CBB |  | Under 155.5 -112.0 | close
+2026-11-26 | CBB |  | Georgia +3.5 | close
+2026-11-26 | CBB |  | Bulldogs +3.5 | close
+2026-11-26 | CBB |  | Cincinnati -3.5 | close
+2026-11-26 | CBB |  | Bearcats -3.5 | close
+2026-11-26 | CBB |  | Georgia ML 142 | close
+2026-11-26 | CBB |  | Bulldogs ML 142 | close
+2026-11-26 | CBB |  | Cincinnati ML -170 | close
+2026-11-26 | CBB |  | Bearcats ML -170 | close
+2026-11-26 | CBB |  | Over 156.5 -110.0 | close
+2026-11-26 | CBB |  | Under 156.5 -110.0 | close
+2026-11-26 | CBB |  | Army +10.5 | close
+2026-11-26 | CBB |  | Black Knights +10.5 | close
+2026-11-26 | CBB |  | UTSA -10.5 | close
+2026-11-26 | CBB |  | Roadrunners -10.5 | close
+2026-11-26 | CBB |  | Army ML 550 | close
+2026-11-26 | CBB |  | Black Knights ML 550 | close
+2026-11-26 | CBB |  | UTSA ML -800 | close
+2026-11-26 | CBB |  | Roadrunners ML -800 | close
+2026-11-26 | CBB |  | Over 149.5 -110.0 | close
+2026-11-26 | CBB |  | Under 149.5 -110.0 | close
+2026-11-26 | CBB |  | Oklahoma +5.5 | close
+2026-11-26 | CBB |  | Sooners +5.5 | close
+2026-11-26 | CBB |  | Purdue -5.5 | close
+2026-11-26 | CBB |  | Boilermakers -5.5 | close
+2026-11-26 | CBB |  | Oklahoma ML 180 | close
+2026-11-26 | CBB |  | Sooners ML 180 | close
+2026-11-26 | CBB |  | Purdue ML -218 | close
+2026-11-26 | CBB |  | Boilermakers ML -218 | close
+2026-11-26 | CBB |  | Over 139.5 -112.0 | close
+2026-11-26 | CBB |  | Under 139.5 -108.0 | close
+2026-11-26 | CBB |  | Maryland -5.5 | close
+2026-11-26 | CBB |  | Terrapins -5.5 | close
+2026-11-26 | CBB |  | San Diego State +5.5 | close
+2026-11-26 | CBB |  | Aztecs +5.5 | close
+2026-11-26 | CBB |  | Maryland ML -218 | close
+2026-11-26 | CBB |  | Terrapins ML -218 | close
+2026-11-26 | CBB |  | San Diego State ML 180 | close
+2026-11-26 | CBB |  | Aztecs ML 180 | close
+2026-11-26 | CBB |  | Over 153.5 -105.0 | close
+2026-11-26 | CBB |  | Under 153.5 -115.0 | close
+2026-11-26 | CBB |  | Boston College +1.5 | close
+2026-11-26 | CBB |  | Eagles +1.5 | close
+2026-11-26 | CBB |  | UCF -1.5 | close
+2026-11-26 | CBB |  | Knights -1.5 | close
+2026-11-26 | CBB |  | Boston College ML -102 | close
+2026-11-26 | CBB |  | Eagles ML -102 | close
+2026-11-26 | CBB |  | UCF ML -118 | close
+2026-11-26 | CBB |  | Knights ML -118 | close
+2026-11-26 | CBB |  | Over 147.5 -112.0 | close
+2026-11-26 | CBB |  | Under 147.5 -108.0 | close
+2026-11-26 | CBB |  | Arizona State -5.5 | close
+2026-11-26 | CBB |  | Sun Devils -5.5 | close
+2026-11-26 | CBB |  | South Carolina +5.5 | close
+2026-11-26 | CBB |  | Gamecocks +5.5 | close
+2026-11-26 | CBB |  | Arizona State ML -198 | close
+2026-11-26 | CBB |  | Sun Devils ML -198 | close
+2026-11-26 | CBB |  | South Carolina ML 164 | close
+2026-11-26 | CBB |  | Gamecocks ML 164 | close
+2026-11-26 | CBB |  | Over 139.5 -108.0 | close
+2026-11-26 | CBB |  | Under 139.5 -112.0 | close
+2026-11-26 | CBB |  | TCU +1.5 | close
+2026-11-26 | CBB |  | Horned Frogs +1.5 | close
+2026-11-26 | CBB |  | Creighton -1.5 | close
+2026-11-26 | CBB |  | Bluejays -1.5 | close
+2026-11-26 | CBB |  | TCU ML 110 | close
+2026-11-26 | CBB |  | Horned Frogs ML 110 | close
+2026-11-26 | CBB |  | Creighton ML -130 | close
+2026-11-26 | CBB |  | Bluejays ML -130 | close
+2026-11-26 | CBB |  | Over 153.5 -105.0 | close
+2026-11-26 | CBB |  | Under 153.5 -115.0 | close
+2026-11-26 | CBB |  | DePaul -1.5 | close
+2026-11-26 | CBB |  | Blue Demons -1.5 | close
+2026-11-26 | CBB |  | Pittsburgh +1.5 | close
+2026-11-26 | CBB |  | Panthers +1.5 | close
+2026-11-26 | CBB |  | DePaul ML -122 | close
+2026-11-26 | CBB |  | Blue Demons ML -122 | close
+2026-11-26 | CBB |  | Pittsburgh ML 102 | close
+2026-11-26 | CBB |  | Panthers ML 102 | close
+2026-11-26 | CBB |  | Over 137.5 -112.0 | close
+2026-11-26 | CBB |  | Under 137.5 -108.0 | close
+2026-11-26 | CBB |  | UC Davis +3.5 | close
+2026-11-26 | CBB |  | Aggies +3.5 | close
+2026-11-26 | CBB |  | Jacksonville State -3.5 | close
+2026-11-26 | CBB |  | Gamecocks -3.5 | close
+2026-11-26 | CBB |  | UC Davis ML 142 | close
+2026-11-26 | CBB |  | Aggies ML 142 | close
+2026-11-26 | CBB |  | Jacksonville State ML -170 | close
+2026-11-26 | CBB |  | Gamecocks ML -170 | close
+2026-11-26 | CBB |  | Over 136.5 -115.0 | close
+2026-11-26 | CBB |  | Under 136.5 -105.0 | close
+2026-11-26 | CBB |  | Pacific -7.5 | close
+2026-11-26 | CBB |  | Tigers -7.5 | close
+2026-11-26 | CBB |  | Omaha +7.5 | close
+2026-11-26 | CBB |  | Mavericks +7.5 | close
+2026-11-26 | CBB |  | Pacific ML -345 | close
+2026-11-26 | CBB |  | Tigers ML -345 | close
+2026-11-26 | CBB |  | Omaha ML 275 | close
+2026-11-26 | CBB |  | Mavericks ML 275 | close
+2026-11-26 | CBB |  | Over 139.5 -115.0 | close
+2026-11-26 | CBB |  | Under 139.5 -105.0 | close
