@@ -2023,11 +2023,11 @@
               "spread": {
                 "away": {
                   "point": 2.5,
-                  "price": -112.0
+                  "price": -112
                 },
                 "home": {
                   "point": -2.5,
-                  "price": -108.0
+                  "price": -108
                 }
               },
               "h2h": {
@@ -2040,8 +2040,8 @@
               },
               "total": {
                 "point": 221.5,
-                "over": -110.0,
-                "under": -110.0
+                "over": -110,
+                "under": -110
               }
             }
           },
@@ -2055,11 +2055,11 @@
               "spread": {
                 "away": {
                   "point": 9.5,
-                  "price": -108.0
+                  "price": -108
                 },
                 "home": {
                   "point": -9.5,
-                  "price": -112.0
+                  "price": -112
                 }
               },
               "h2h": {
@@ -2072,8 +2072,8 @@
               },
               "total": {
                 "point": 218.5,
-                "over": -113.0,
-                "under": -107.0
+                "over": -113,
+                "under": -107
               }
             }
           },
@@ -2087,11 +2087,11 @@
               "spread": {
                 "away": {
                   "point": -3.5,
-                  "price": -115.0
+                  "price": -115
                 },
                 "home": {
                   "point": 3.5,
-                  "price": -105.0
+                  "price": -105
                 }
               },
               "h2h": {
@@ -2104,8 +2104,8 @@
               },
               "total": {
                 "point": 230.5,
-                "over": -108.0,
-                "under": -112.0
+                "over": -108,
+                "under": -112
               }
             }
           },
@@ -2119,11 +2119,11 @@
               "spread": {
                 "away": {
                   "point": 9.5,
-                  "price": -112.0
+                  "price": -112
                 },
                 "home": {
                   "point": -9.5,
-                  "price": -108.0
+                  "price": -108
                 }
               },
               "h2h": {
@@ -2136,8 +2136,8 @@
               },
               "total": {
                 "point": 218.5,
-                "over": -113.0,
-                "under": -107.0
+                "over": -113,
+                "under": -107
               }
             }
           },
@@ -2151,11 +2151,11 @@
               "spread": {
                 "away": {
                   "point": 9.5,
-                  "price": -118.0
+                  "price": -118
                 },
                 "home": {
                   "point": -9.5,
-                  "price": -103.0
+                  "price": -103
                 }
               },
               "h2h": {
@@ -2168,8 +2168,8 @@
               },
               "total": {
                 "point": 224.5,
-                "over": -113.0,
-                "under": -107.0
+                "over": -113,
+                "under": -107
               }
             }
           },
@@ -2183,11 +2183,11 @@
               "spread": {
                 "away": {
                   "point": 2.5,
-                  "price": -108.0
+                  "price": -108
                 },
                 "home": {
                   "point": -2.5,
-                  "price": -112.0
+                  "price": -112
                 }
               },
               "h2h": {
@@ -2200,8 +2200,8 @@
               },
               "total": {
                 "point": 220.5,
-                "over": -105.0,
-                "under": -115.0
+                "over": -105,
+                "under": -115
               }
             }
           },
@@ -2215,11 +2215,11 @@
               "spread": {
                 "away": {
                   "point": 4.5,
-                  "price": -115.0
+                  "price": -115
                 },
                 "home": {
                   "point": -4.5,
-                  "price": -105.0
+                  "price": -105
                 }
               },
               "h2h": {
@@ -2232,8 +2232,8 @@
               },
               "total": {
                 "point": 224.5,
-                "over": -115.0,
-                "under": -105.0
+                "over": -115,
+                "under": -105
               }
             }
           },
@@ -2247,11 +2247,11 @@
               "spread": {
                 "away": {
                   "point": 6.5,
-                  "price": -105.0
+                  "price": -105
                 },
                 "home": {
                   "point": -6.5,
-                  "price": -115.0
+                  "price": -115
                 }
               },
               "h2h": {
@@ -2264,8 +2264,8 @@
               },
               "total": {
                 "point": 227.5,
-                "over": -112.0,
-                "under": -108.0
+                "over": -112,
+                "under": -108
               }
             }
           },
@@ -2279,11 +2279,11 @@
               "spread": {
                 "away": {
                   "point": -9.5,
-                  "price": -112.0
+                  "price": -112
                 },
                 "home": {
                   "point": 9.5,
-                  "price": -108.0
+                  "price": -108
                 }
               },
               "h2h": {
@@ -2296,8 +2296,8 @@
               },
               "total": {
                 "point": 231.5,
-                "over": -110.0,
-                "under": -110.0
+                "over": -110,
+                "under": -110
               }
             }
           },
@@ -2311,11 +2311,11 @@
               "spread": {
                 "away": {
                   "point": 1.5,
-                  "price": -105.0
+                  "price": -105
                 },
                 "home": {
                   "point": -1.5,
-                  "price": -115.0
+                  "price": -115
                 }
               },
               "h2h": {
@@ -2328,8 +2328,8 @@
               },
               "total": {
                 "point": 229.5,
-                "over": -114.0,
-                "under": -106.0
+                "over": -114,
+                "under": -106
               }
             }
           },
@@ -2343,11 +2343,11 @@
               "spread": {
                 "away": {
                   "point": 8.5,
-                  "price": -112.0
+                  "price": -112
                 },
                 "home": {
                   "point": -8.5,
-                  "price": -108.0
+                  "price": -108
                 }
               },
               "h2h": {
@@ -2360,8 +2360,8 @@
               },
               "total": {
                 "point": 215.5,
-                "over": -111.0,
-                "under": -109.0
+                "over": -111,
+                "under": -109
               }
             }
           },
@@ -2377,11 +2377,11 @@
               "spread": {
                 "away": {
                   "point": 1.5,
-                  "price": -180.0
+                  "price": -180
                 },
                 "home": {
                   "point": -1.5,
-                  "price": 150.0
+                  "price": 150
                 }
               },
               "h2h": {
@@ -2394,8 +2394,8 @@
               },
               "total": {
                 "point": 6.5,
-                "over": -115.0,
-                "under": -105.0
+                "over": -115,
+                "under": -105
               }
             }
           },
@@ -2409,11 +2409,11 @@
               "spread": {
                 "away": {
                   "point": 1.5,
-                  "price": -125.0
+                  "price": -125
                 },
                 "home": {
                   "point": -1.5,
-                  "price": 105.0
+                  "price": 105
                 }
               },
               "h2h": {
@@ -2426,8 +2426,8 @@
               },
               "total": {
                 "point": 6.5,
-                "over": -102.0,
-                "under": -118.0
+                "over": -102,
+                "under": -118
               }
             }
           },
@@ -2441,11 +2441,11 @@
               "spread": {
                 "away": {
                   "point": -1.5,
-                  "price": 200.0
+                  "price": 200
                 },
                 "home": {
                   "point": 1.5,
-                  "price": -245.0
+                  "price": -245
                 }
               },
               "h2h": {
@@ -2458,8 +2458,8 @@
               },
               "total": {
                 "point": 6.5,
-                "over": -115.0,
-                "under": -105.0
+                "over": -115,
+                "under": -105
               }
             }
           },
@@ -2473,11 +2473,11 @@
               "spread": {
                 "away": {
                   "point": -1.5,
-                  "price": 195.0
+                  "price": 195
                 },
                 "home": {
                   "point": 1.5,
-                  "price": -238.0
+                  "price": -238
                 }
               },
               "h2h": {
@@ -2490,8 +2490,8 @@
               },
               "total": {
                 "point": 5.5,
-                "over": -115.0,
-                "under": -105.0
+                "over": -115,
+                "under": -105
               }
             }
           },
@@ -2505,11 +2505,11 @@
               "spread": {
                 "away": {
                   "point": 1.5,
-                  "price": -245.0
+                  "price": -245
                 },
                 "home": {
                   "point": -1.5,
-                  "price": 200.0
+                  "price": 200
                 }
               },
               "h2h": {
@@ -2522,8 +2522,8 @@
               },
               "total": {
                 "point": 6.5,
-                "over": 114.0,
-                "under": -135.0
+                "over": 114,
+                "under": -135
               }
             }
           },
@@ -2537,11 +2537,11 @@
               "spread": {
                 "away": {
                   "point": 1.5,
-                  "price": -125.0
+                  "price": -125
                 },
                 "home": {
                   "point": -1.5,
-                  "price": 105.0
+                  "price": 105
                 }
               },
               "h2h": {
@@ -2554,8 +2554,8 @@
               },
               "total": {
                 "point": 6.5,
-                "over": 110.0,
-                "under": -130.0
+                "over": 110,
+                "under": -130
               }
             }
           },
@@ -2569,11 +2569,11 @@
               "spread": {
                 "away": {
                   "point": -1.5,
-                  "price": 205.0
+                  "price": 205
                 },
                 "home": {
                   "point": 1.5,
-                  "price": -250.0
+                  "price": -250
                 }
               },
               "h2h": {
@@ -2586,8 +2586,8 @@
               },
               "total": {
                 "point": 6.5,
-                "over": -102.0,
-                "under": -118.0
+                "over": -102,
+                "under": -118
               }
             }
           },
@@ -2601,11 +2601,11 @@
               "spread": {
                 "away": {
                   "point": 1.5,
-                  "price": -205.0
+                  "price": -205
                 },
                 "home": {
                   "point": -1.5,
-                  "price": 170.0
+                  "price": 170
                 }
               },
               "h2h": {
@@ -2618,8 +2618,8 @@
               },
               "total": {
                 "point": 5.5,
-                "over": -125.0,
-                "under": 105.0
+                "over": -125,
+                "under": 105
               }
             }
           },
@@ -2633,11 +2633,11 @@
               "spread": {
                 "away": {
                   "point": 1.5,
-                  "price": -238.0
+                  "price": -238
                 },
                 "home": {
                   "point": -1.5,
-                  "price": 195.0
+                  "price": 195
                 }
               },
               "h2h": {
@@ -2650,8 +2650,8 @@
               },
               "total": {
                 "point": 6.5,
-                "over": 114.0,
-                "under": -135.0
+                "over": 114,
+                "under": -135
               }
             }
           },
@@ -2665,11 +2665,11 @@
               "spread": {
                 "away": {
                   "point": -1.5,
-                  "price": 205.0
+                  "price": 205
                 },
                 "home": {
                   "point": 1.5,
-                  "price": -250.0
+                  "price": -250
                 }
               },
               "h2h": {
@@ -2682,8 +2682,8 @@
               },
               "total": {
                 "point": 6.5,
-                "over": -108.0,
-                "under": -112.0
+                "over": -108,
+                "under": -112
               }
             }
           },
@@ -2697,11 +2697,11 @@
               "spread": {
                 "away": {
                   "point": -1.5,
-                  "price": 114.0
+                  "price": 114
                 },
                 "home": {
                   "point": 1.5,
-                  "price": -135.0
+                  "price": -135
                 }
               },
               "h2h": {
@@ -2714,8 +2714,8 @@
               },
               "total": {
                 "point": 6.5,
-                "over": -118.0,
-                "under": -102.0
+                "over": -118,
+                "under": -102
               }
             }
           },
@@ -2729,11 +2729,11 @@
               "spread": {
                 "away": {
                   "point": -1.5,
-                  "price": 145.0
+                  "price": 145
                 },
                 "home": {
                   "point": 1.5,
-                  "price": -175.0
+                  "price": -175
                 }
               },
               "h2h": {
@@ -2746,8 +2746,8 @@
               },
               "total": {
                 "point": 6.5,
-                "over": 114.0,
-                "under": -135.0
+                "over": 114,
+                "under": -135
               }
             }
           },
@@ -2761,11 +2761,11 @@
               "spread": {
                 "away": {
                   "point": 1.5,
-                  "price": -238.0
+                  "price": -238
                 },
                 "home": {
                   "point": -1.5,
-                  "price": 195.0
+                  "price": 195
                 }
               },
               "h2h": {
@@ -2778,8 +2778,8 @@
               },
               "total": {
                 "point": 6.5,
-                "over": -110.0,
-                "under": -110.0
+                "over": -110,
+                "under": -110
               }
             }
           },
@@ -2793,11 +2793,11 @@
               "spread": {
                 "away": {
                   "point": 1.5,
-                  "price": -198.0
+                  "price": -198
                 },
                 "home": {
                   "point": -1.5,
-                  "price": 164.0
+                  "price": 164
                 }
               },
               "h2h": {
@@ -2810,8 +2810,8 @@
               },
               "total": {
                 "point": 6.5,
-                "over": -120.0,
-                "under": 100.0
+                "over": -120,
+                "under": 100
               }
             }
           },
@@ -2825,11 +2825,11 @@
               "spread": {
                 "away": {
                   "point": 1.5,
-                  "price": -135.0
+                  "price": -135
                 },
                 "home": {
                   "point": -1.5,
-                  "price": 114.0
+                  "price": 114
                 }
               },
               "h2h": {
@@ -2842,8 +2842,8 @@
               },
               "total": {
                 "point": 6.5,
-                "over": -102.0,
-                "under": -118.0
+                "over": -102,
+                "under": -118
               }
             }
           },
@@ -2859,11 +2859,11 @@
               "spread": {
                 "away": {
                   "point": -4.5,
-                  "price": -115.0
+                  "price": -115
                 },
                 "home": {
                   "point": 4.5,
-                  "price": -104.0
+                  "price": -104
                 }
               },
               "h2h": {
@@ -2876,8 +2876,8 @@
               },
               "total": {
                 "point": 36.5,
-                "over": -115.0,
-                "under": -104.0
+                "over": -115,
+                "under": -104
               }
             }
           },
@@ -2893,11 +2893,11 @@
               "spread": {
                 "away": {
                   "point": 24.5,
-                  "price": -118.0
+                  "price": -118
                 },
                 "home": {
                   "point": -24.5,
-                  "price": -102.0
+                  "price": -102
                 }
               },
               "h2h": {
@@ -2910,8 +2910,8 @@
               },
               "total": {
                 "point": 65.5,
-                "over": -110.0,
-                "under": -110.0
+                "over": -110,
+                "under": -110
               }
             }
           },
@@ -2924,12 +2924,12 @@
             "DraftKings": {
               "spread": {
                 "away": {
-                  "point": -10.0,
-                  "price": -105.0
+                  "point": -10,
+                  "price": -105
                 },
                 "home": {
-                  "point": 10.0,
-                  "price": -115.0
+                  "point": 10,
+                  "price": -115
                 }
               },
               "h2h": {
@@ -2942,8 +2942,8 @@
               },
               "total": {
                 "point": 41.5,
-                "over": -112.0,
-                "under": -108.0
+                "over": -112,
+                "under": -108
               }
             }
           },
@@ -2957,11 +2957,11 @@
               "spread": {
                 "away": {
                   "point": 3.5,
-                  "price": -118.0
+                  "price": -118
                 },
                 "home": {
                   "point": -3.5,
-                  "price": -102.0
+                  "price": -102
                 }
               },
               "h2h": {
@@ -2974,8 +2974,8 @@
               },
               "total": {
                 "point": 40.5,
-                "over": -108.0,
-                "under": -112.0
+                "over": -108,
+                "under": -112
               }
             }
           },
@@ -2989,11 +2989,11 @@
               "spread": {
                 "away": {
                   "point": -6.5,
-                  "price": -118.0
+                  "price": -118
                 },
                 "home": {
                   "point": 6.5,
-                  "price": -102.0
+                  "price": -102
                 }
               },
               "h2h": {
@@ -3006,8 +3006,8 @@
               },
               "total": {
                 "point": 54.5,
-                "over": -112.0,
-                "under": -108.0
+                "over": -112,
+                "under": -108
               }
             }
           },
@@ -3021,11 +3021,11 @@
               "spread": {
                 "away": {
                   "point": 17.5,
-                  "price": -112.0
+                  "price": -112
                 },
                 "home": {
                   "point": -17.5,
-                  "price": -108.0
+                  "price": -108
                 }
               },
               "h2h": {
@@ -3038,8 +3038,8 @@
               },
               "total": {
                 "point": 56.5,
-                "over": -110.0,
-                "under": -110.0
+                "over": -110,
+                "under": -110
               }
             }
           },
@@ -3053,11 +3053,11 @@
               "spread": {
                 "away": {
                   "point": -1.5,
-                  "price": 100.0
+                  "price": 100
                 },
                 "home": {
                   "point": 1.5,
-                  "price": -120.0
+                  "price": -120
                 }
               },
               "h2h": {
@@ -3070,8 +3070,8 @@
               },
               "total": {
                 "point": 55.5,
-                "over": -105.0,
-                "under": -115.0
+                "over": -105,
+                "under": -115
               }
             }
           },
@@ -3085,11 +3085,11 @@
               "spread": {
                 "away": {
                   "point": -7.5,
-                  "price": 100.0
+                  "price": 100
                 },
                 "home": {
                   "point": 7.5,
-                  "price": -120.0
+                  "price": -120
                 }
               },
               "h2h": {
@@ -3102,8 +3102,8 @@
               },
               "total": {
                 "point": 50.5,
-                "over": -108.0,
-                "under": -112.0
+                "over": -108,
+                "under": -112
               }
             }
           },
@@ -3117,11 +3117,11 @@
               "spread": {
                 "away": {
                   "point": -3.5,
-                  "price": -115.0
+                  "price": -115
                 },
                 "home": {
                   "point": 3.5,
-                  "price": -105.0
+                  "price": -105
                 }
               },
               "h2h": {
@@ -3134,8 +3134,8 @@
               },
               "total": {
                 "point": 44.5,
-                "over": -115.0,
-                "under": -105.0
+                "over": -115,
+                "under": -105
               }
             }
           },
@@ -3149,11 +3149,11 @@
               "spread": {
                 "away": {
                   "point": 3.5,
-                  "price": -115.0
+                  "price": -115
                 },
                 "home": {
                   "point": -3.5,
-                  "price": -105.0
+                  "price": -105
                 }
               },
               "h2h": {
@@ -3166,8 +3166,8 @@
               },
               "total": {
                 "point": 56.5,
-                "over": -110.0,
-                "under": -110.0
+                "over": -110,
+                "under": -110
               }
             }
           },
@@ -3181,11 +3181,11 @@
               "spread": {
                 "away": {
                   "point": 19.5,
-                  "price": -115.0
+                  "price": -115
                 },
                 "home": {
                   "point": -19.5,
-                  "price": -105.0
+                  "price": -105
                 }
               },
               "h2h": {
@@ -3198,8 +3198,8 @@
               },
               "total": {
                 "point": 66.5,
-                "over": -105.0,
-                "under": -115.0
+                "over": -105,
+                "under": -115
               }
             }
           },
@@ -3213,11 +3213,11 @@
               "spread": {
                 "away": {
                   "point": -10.5,
-                  "price": -105.0
+                  "price": -105
                 },
                 "home": {
                   "point": 10.5,
-                  "price": -115.0
+                  "price": -115
                 }
               },
               "h2h": {
@@ -3230,8 +3230,8 @@
               },
               "total": {
                 "point": 40.5,
-                "over": -115.0,
-                "under": -105.0
+                "over": -115,
+                "under": -105
               }
             }
           },
@@ -3244,12 +3244,12 @@
             "DraftKings": {
               "spread": {
                 "away": {
-                  "point": 7.0,
-                  "price": -102.0
+                  "point": 7,
+                  "price": -102
                 },
                 "home": {
-                  "point": -7.0,
-                  "price": -118.0
+                  "point": -7,
+                  "price": -118
                 }
               },
               "h2h": {
@@ -3262,8 +3262,8 @@
               },
               "total": {
                 "point": 42.5,
-                "over": -110.0,
-                "under": -110.0
+                "over": -110,
+                "under": -110
               }
             }
           },
@@ -3277,11 +3277,11 @@
               "spread": {
                 "away": {
                   "point": 8.5,
-                  "price": -112.0
+                  "price": -112
                 },
                 "home": {
                   "point": -8.5,
-                  "price": -108.0
+                  "price": -108
                 }
               },
               "h2h": {
@@ -3294,8 +3294,8 @@
               },
               "total": {
                 "point": 36.5,
-                "over": -112.0,
-                "under": -108.0
+                "over": -112,
+                "under": -108
               }
             }
           },
@@ -3304,6 +3304,38 @@
       ],
       "CBB": [
         {
+          "away": "Oakland Golden Grizzlies",
+          "home": "Houston Cougars",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 37.5,
+                  "price": -114
+                },
+                "home": {
+                  "point": -37.5,
+                  "price": -106
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": null
+                },
+                "home": {
+                  "price": null
+                }
+              },
+              "total": {
+                "point": 144.5,
+                "over": -106,
+                "under": -114
+              }
+            }
+          },
+          "commence": "2026-11-28T00:30Z"
+        },
+        {
           "away": "Virginia Cavaliers",
           "home": "Xavier Musketeers",
           "books": {
@@ -3311,11 +3343,11 @@
               "spread": {
                 "away": {
                   "point": -6.5,
-                  "price": -110.0
+                  "price": -110
                 },
                 "home": {
                   "point": 6.5,
-                  "price": -110.0
+                  "price": -110
                 }
               },
               "h2h": {
@@ -3328,8 +3360,8 @@
               },
               "total": {
                 "point": 153.5,
-                "over": -110.0,
-                "under": -110.0
+                "over": -110,
+                "under": -110
               }
             }
           },
@@ -3343,11 +3375,11 @@
               "spread": {
                 "away": {
                   "point": 27.5,
-                  "price": -116.0
+                  "price": -116
                 },
                 "home": {
                   "point": -27.5,
-                  "price": -104.0
+                  "price": -104
                 }
               },
               "h2h": {
@@ -3360,12 +3392,44 @@
               },
               "total": {
                 "point": 176.5,
-                "over": -109.0,
-                "under": -111.0
+                "over": -109,
+                "under": -111
               }
             }
           },
           "commence": "2026-11-27T23:00Z"
+        },
+        {
+          "away": "San Diego State Aztecs",
+          "home": "Texas Tech Red Raiders",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 9.5,
+                  "price": -111
+                },
+                "home": {
+                  "point": -9.5,
+                  "price": -109
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 330
+                },
+                "home": {
+                  "price": -425
+                }
+              },
+              "total": {
+                "point": 142.5,
+                "over": -107,
+                "under": -113
+              }
+            }
+          },
+          "commence": "2026-11-28T04:30Z"
         },
         {
           "away": "Georgetown Hoyas",
@@ -3375,11 +3439,11 @@
               "spread": {
                 "away": {
                   "point": 7.5,
-                  "price": -106.0
+                  "price": -106
                 },
                 "home": {
                   "point": -7.5,
-                  "price": -115.0
+                  "price": -115
                 }
               },
               "h2h": {
@@ -3392,8 +3456,8 @@
               },
               "total": {
                 "point": 149.5,
-                "over": -110.0,
-                "under": -110.0
+                "over": -110,
+                "under": -110
               }
             }
           },
@@ -3407,11 +3471,11 @@
               "spread": {
                 "away": {
                   "point": -7.5,
-                  "price": -112.0
+                  "price": -112
                 },
                 "home": {
                   "point": 7.5,
-                  "price": -108.0
+                  "price": -108
                 }
               },
               "h2h": {
@@ -3424,8 +3488,8 @@
               },
               "total": {
                 "point": 160.5,
-                "over": -105.0,
-                "under": -115.0
+                "over": -105,
+                "under": -115
               }
             }
           },
@@ -3439,11 +3503,11 @@
               "spread": {
                 "away": {
                   "point": 3.5,
-                  "price": -109.0
+                  "price": -109
                 },
                 "home": {
                   "point": -3.5,
-                  "price": -111.0
+                  "price": -111
                 }
               },
               "h2h": {
@@ -3456,8 +3520,8 @@
               },
               "total": {
                 "point": 149.5,
-                "over": -112.0,
-                "under": -108.0
+                "over": -112,
+                "under": -108
               }
             }
           },
@@ -3471,11 +3535,11 @@
               "spread": {
                 "away": {
                   "point": 10.5,
-                  "price": -105.0
+                  "price": -105
                 },
                 "home": {
                   "point": -10.5,
-                  "price": -116.0
+                  "price": -116
                 }
               },
               "h2h": {
@@ -3488,8 +3552,8 @@
               },
               "total": {
                 "point": 159.5,
-                "over": -104.0,
-                "under": -116.0
+                "over": -104,
+                "under": -116
               }
             }
           },
@@ -3503,11 +3567,11 @@
               "spread": {
                 "away": {
                   "point": 1.5,
-                  "price": -120.0
+                  "price": -120
                 },
                 "home": {
                   "point": -1.5,
-                  "price": -101.0
+                  "price": -101
                 }
               },
               "h2h": {
@@ -3520,12 +3584,44 @@
               },
               "total": {
                 "point": 151.5,
-                "over": -112.0,
-                "under": -108.0
+                "over": -112,
+                "under": -108
               }
             }
           },
           "commence": "2026-11-27T18:00Z"
+        },
+        {
+          "away": "Southern Jaguars",
+          "home": "Vanderbilt Commodores",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 38.5,
+                  "price": -114
+                },
+                "home": {
+                  "point": -38.5,
+                  "price": -106
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": null
+                },
+                "home": {
+                  "price": null
+                }
+              },
+              "total": {
+                "point": 153.5,
+                "over": -105,
+                "under": -115
+              }
+            }
+          },
+          "commence": "2026-11-27T19:00Z"
         },
         {
           "away": "Miami Hurricanes",
@@ -3535,11 +3631,11 @@
               "spread": {
                 "away": {
                   "point": -1.5,
-                  "price": -117.0
+                  "price": -117
                 },
                 "home": {
                   "point": 1.5,
-                  "price": -103.0
+                  "price": -103
                 }
               },
               "h2h": {
@@ -3552,12 +3648,44 @@
               },
               "total": {
                 "point": 168.5,
-                "over": -113.0,
-                "under": -107.0
+                "over": -113,
+                "under": -107
               }
             }
           },
           "commence": "2026-11-28T01:30Z"
+        },
+        {
+          "away": "Creighton Bluejays",
+          "home": "Gonzaga Bulldogs",
+          "books": {
+            "DraftKings": {
+              "spread": {
+                "away": {
+                  "point": 6.5,
+                  "price": -114
+                },
+                "home": {
+                  "point": -6.5,
+                  "price": -106
+                }
+              },
+              "h2h": {
+                "away": {
+                  "price": 215
+                },
+                "home": {
+                  "price": -265
+                }
+              },
+              "total": {
+                "point": 160.5,
+                "over": -109,
+                "under": -111
+              }
+            }
+          },
+          "commence": "2026-11-28T04:15Z"
         },
         {
           "away": "Bowling Green Falcons",
@@ -3567,11 +3695,11 @@
               "spread": {
                 "away": {
                   "point": 22.5,
-                  "price": -108.0
+                  "price": -108
                 },
                 "home": {
                   "point": -22.5,
-                  "price": -112.0
+                  "price": -112
                 }
               },
               "h2h": {
@@ -3584,8 +3712,8 @@
               },
               "total": {
                 "point": 151.5,
-                "over": -110.0,
-                "under": -110.0
+                "over": -110,
+                "under": -110
               }
             }
           },
@@ -3599,11 +3727,11 @@
               "spread": {
                 "away": {
                   "point": 1.5,
-                  "price": -130.0
+                  "price": -130
                 },
                 "home": {
                   "point": -1.5,
-                  "price": 108.0
+                  "price": 108
                 }
               },
               "h2h": {
@@ -3616,1100 +3744,12 @@
               },
               "total": {
                 "point": 152.5,
-                "over": -107.0,
-                "under": -113.0
+                "over": -107,
+                "under": -113
               }
             }
           },
           "commence": "2026-11-27T18:30Z"
-        },
-        {
-          "away": "St. Thomas Tommies",
-          "home": "Liberty Flames",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": -1.5,
-                  "price": 110.0
-                },
-                "home": {
-                  "point": 1.5,
-                  "price": -130.0
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": -115
-                },
-                "home": {
-                  "price": -105
-                }
-              },
-              "total": {
-                "point": 143.5,
-                "over": -110.0,
-                "under": -110.0
-              }
-            }
-          },
-          "commence": "2026-11-27T17:00Z"
-        },
-        {
-          "away": "Merrimack Warriors",
-          "home": "Vermont Catamounts",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 1.5,
-                  "price": -104.0
-                },
-                "home": {
-                  "point": -1.5,
-                  "price": -116.0
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 105
-                },
-                "home": {
-                  "price": -125
-                }
-              },
-              "total": {
-                "point": 128.5,
-                "over": -110.0,
-                "under": -110.0
-              }
-            }
-          },
-          "commence": "2026-11-27T18:00Z"
-        },
-        {
-          "away": "UMass Lowell River Hawks",
-          "home": "Hampton Pirates",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": -1.5,
-                  "price": -114.0
-                },
-                "home": {
-                  "point": 1.5,
-                  "price": -106.0
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": -122
-                },
-                "home": {
-                  "price": 102
-                }
-              },
-              "total": {
-                "point": 139.5,
-                "over": -105.0,
-                "under": -116.0
-              }
-            }
-          },
-          "commence": "2026-11-27T18:00Z"
-        },
-        {
-          "away": "Fresno State Bulldogs",
-          "home": "South Alabama Jaguars",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 1.5,
-                  "price": -106.0
-                },
-                "home": {
-                  "point": -1.5,
-                  "price": -114.0
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 110
-                },
-                "home": {
-                  "price": -130
-                }
-              },
-              "total": {
-                "point": 144.5,
-                "over": -108.0,
-                "under": -111.0
-              }
-            }
-          },
-          "commence": "2026-11-27T19:00Z"
-        },
-        {
-          "away": "Navy Midshipmen",
-          "home": "Fairfield Stags",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 5.5,
-                  "price": -108.0
-                },
-                "home": {
-                  "point": -5.5,
-                  "price": -112.0
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 185
-                },
-                "home": {
-                  "price": -225
-                }
-              },
-              "total": {
-                "point": 133.5,
-                "over": -116.0,
-                "under": -105.0
-              }
-            }
-          },
-          "commence": "2026-11-27T19:00Z"
-        },
-        {
-          "away": "Maine Black Bears",
-          "home": "Le Moyne Dolphins",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 1.5,
-                  "price": -106.0
-                },
-                "home": {
-                  "point": -1.5,
-                  "price": -114.0
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 110
-                },
-                "home": {
-                  "price": -130
-                }
-              },
-              "total": {
-                "point": 138.5,
-                "over": -114.0,
-                "under": -107.0
-              }
-            }
-          },
-          "commence": "2026-11-27T19:00Z"
-        },
-        {
-          "away": "Texas State Bobcats",
-          "home": "Louisiana Tech Bulldogs",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": -3.5,
-                  "price": -117.0
-                },
-                "home": {
-                  "point": 3.5,
-                  "price": -104.0
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": -180
-                },
-                "home": {
-                  "price": 150
-                }
-              },
-              "total": {
-                "point": 137.5,
-                "over": -111.0,
-                "under": -108.0
-              }
-            }
-          },
-          "commence": "2026-11-27T20:00Z"
-        },
-        {
-          "away": "Princeton Tigers",
-          "home": "UNC Wilmington Seahawks",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 7.5,
-                  "price": -106.0
-                },
-                "home": {
-                  "point": -7.5,
-                  "price": -114.0
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 260
-                },
-                "home": {
-                  "price": -325
-                }
-              },
-              "total": {
-                "point": 150.5,
-                "over": -113.0,
-                "under": -107.0
-              }
-            }
-          },
-          "commence": "2026-11-27T20:00Z"
-        },
-        {
-          "away": "TCU Horned Frogs",
-          "home": "Baylor Bears",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 4.5,
-                  "price": -111.0
-                },
-                "home": {
-                  "point": -4.5,
-                  "price": -109.0
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 160
-                },
-                "home": {
-                  "price": -192
-                }
-              },
-              "total": {
-                "point": 148.5,
-                "over": -108.0,
-                "under": -112.0
-              }
-            }
-          },
-          "commence": "2026-11-27T20:00Z"
-        },
-        {
-          "away": "Bellarmine Knights",
-          "home": "Butler Bulldogs",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 19.5,
-                  "price": -109.0
-                },
-                "home": {
-                  "point": -19.5,
-                  "price": -111.0
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 1500
-                },
-                "home": {
-                  "price": -3600
-                }
-              },
-              "total": {
-                "point": 149.5,
-                "over": -111.0,
-                "under": -109.0
-              }
-            }
-          },
-          "commence": "2026-11-27T20:00Z"
-        },
-        {
-          "away": "La Salle Explorers",
-          "home": "Bucknell Bison",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": -9.5,
-                  "price": -112.0
-                },
-                "home": {
-                  "point": 9.5,
-                  "price": -108.0
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": -470
-                },
-                "home": {
-                  "price": 360
-                }
-              },
-              "total": {
-                "point": 148.5,
-                "over": -111.0,
-                "under": -108.0
-              }
-            }
-          },
-          "commence": "2026-11-27T20:30Z"
-        },
-        {
-          "away": "Colgate Raiders",
-          "home": "Hofstra Pride",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 1.5,
-                  "price": -113.0
-                },
-                "home": {
-                  "point": -1.5,
-                  "price": -107.0
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 105
-                },
-                "home": {
-                  "price": -125
-                }
-              },
-              "total": {
-                "point": 137.5,
-                "over": -112.0,
-                "under": -108.0
-              }
-            }
-          },
-          "commence": "2026-11-27T20:30Z"
-        },
-        {
-          "away": "Maryland Terrapins",
-          "home": "Oregon Ducks",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": -3.5,
-                  "price": -113.0
-                },
-                "home": {
-                  "point": 3.5,
-                  "price": -107.0
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": -175
-                },
-                "home": {
-                  "price": 145
-                }
-              },
-              "total": {
-                "point": 148.5,
-                "over": -111.0,
-                "under": -109.0
-              }
-            }
-          },
-          "commence": "2026-11-27T20:30Z"
-        },
-        {
-          "away": "Radford Highlanders",
-          "home": "American University Eagles",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 6.5,
-                  "price": -106.0
-                },
-                "home": {
-                  "point": -6.5,
-                  "price": -114.0
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 245
-                },
-                "home": {
-                  "price": -305
-                }
-              },
-              "total": {
-                "point": 141.5,
-                "over": -113.0,
-                "under": -107.0
-              }
-            }
-          },
-          "commence": "2026-11-27T21:00Z"
-        },
-        {
-          "away": "UMBC Retrievers",
-          "home": "George Washington Revolutionaries",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 21.5,
-                  "price": -106.0
-                },
-                "home": {
-                  "point": -21.5,
-                  "price": -114.0
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 1700
-                },
-                "home": {
-                  "price": -4500
-                }
-              },
-              "total": {
-                "point": 151.5,
-                "over": -107.0,
-                "under": -113.0
-              }
-            }
-          },
-          "commence": "2026-11-27T21:00Z"
-        },
-        {
-          "away": "Cincinnati Bearcats",
-          "home": "Boston College Eagles",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": -8.5,
-                  "price": -112.0
-                },
-                "home": {
-                  "point": 8.5,
-                  "price": -108.0
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": -410
-                },
-                "home": {
-                  "price": 320
-                }
-              },
-              "total": {
-                "point": 139.5,
-                "over": -110.0,
-                "under": -109.0
-              }
-            }
-          },
-          "commence": "2026-11-27T21:30Z"
-        },
-        {
-          "away": "Niagara Purple Eagles",
-          "home": "Lafayette Leopards",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 5.5,
-                  "price": -107.0
-                },
-                "home": {
-                  "point": -5.5,
-                  "price": -113.0
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 230
-                },
-                "home": {
-                  "price": -285
-                }
-              },
-              "total": {
-                "point": 140.5,
-                "over": -111.0,
-                "under": -109.0
-              }
-            }
-          },
-          "commence": "2026-11-27T21:30Z"
-        },
-        {
-          "away": "Marquette Golden Eagles",
-          "home": "Texas A&M Aggies",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": -1.5,
-                  "price": -121.0
-                },
-                "home": {
-                  "point": 1.5,
-                  "price": 100.0
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": -135
-                },
-                "home": {
-                  "price": 114
-                }
-              },
-              "total": {
-                "point": 160.5,
-                "over": -110.0,
-                "under": -110.0
-              }
-            }
-          },
-          "commence": "2026-11-27T22:00Z"
-        },
-        {
-          "away": "Old Dominion Monarchs",
-          "home": "Virginia Tech Hokies",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 17.5,
-                  "price": -108.0
-                },
-                "home": {
-                  "point": -17.5,
-                  "price": -112.0
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 1300
-                },
-                "home": {
-                  "price": -2800
-                }
-              },
-              "total": {
-                "point": 140.5,
-                "over": -116.0,
-                "under": -105.0
-              }
-            }
-          },
-          "commence": "2026-11-27T22:00Z"
-        },
-        {
-          "away": "Drake Bulldogs",
-          "home": "Boise State Broncos",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 6.5,
-                  "price": -107.0
-                },
-                "home": {
-                  "point": -6.5,
-                  "price": -113.0
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 215
-                },
-                "home": {
-                  "price": -265
-                }
-              },
-              "total": {
-                "point": 157.5,
-                "over": -115.0,
-                "under": -105.0
-              }
-            }
-          },
-          "commence": "2026-11-27T22:30Z"
-        },
-        {
-          "away": "Michigan Wolverines",
-          "home": "Kansas State Wildcats",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": -10.5,
-                  "price": -109.0
-                },
-                "home": {
-                  "point": 10.5,
-                  "price": -111.0
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": -485
-                },
-                "home": {
-                  "price": 370
-                }
-              },
-              "total": {
-                "point": 165.5,
-                "over": -115.0,
-                "under": -105.0
-              }
-            }
-          },
-          "commence": "2026-11-27T22:41Z"
-        },
-        {
-          "away": "Towson Tigers",
-          "home": "Pennsylvania Quakers",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 3.5,
-                  "price": -111.0
-                },
-                "home": {
-                  "point": -3.5,
-                  "price": -109.0
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 160
-                },
-                "home": {
-                  "price": -192
-                }
-              },
-              "total": {
-                "point": 143.5,
-                "over": -115.0,
-                "under": -105.0
-              }
-            }
-          },
-          "commence": "2026-11-27T23:40Z"
-        },
-        {
-          "away": "UCF Knights",
-          "home": "Georgia Bulldogs",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 5.5,
-                  "price": -112.0
-                },
-                "home": {
-                  "point": -5.5,
-                  "price": -108.0
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 190
-                },
-                "home": {
-                  "price": -230
-                }
-              },
-              "total": {
-                "point": 162.5,
-                "over": -105.0,
-                "under": -115.0
-              }
-            }
-          },
-          "commence": "2026-11-28T00:00Z"
-        },
-        {
-          "away": "Lehigh Mountain Hawks",
-          "home": "UC Santa Barbara Gauchos",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 13.5,
-                  "price": -116.0
-                },
-                "home": {
-                  "point": -13.5,
-                  "price": -104.0
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 675
-                },
-                "home": {
-                  "price": -1050
-                }
-              },
-              "total": {
-                "point": 144.5,
-                "over": -107.0,
-                "under": -113.0
-              }
-            }
-          },
-          "commence": "2026-11-28T00:00Z"
-        },
-        {
-          "away": "West Virginia Mountaineers",
-          "home": "North Carolina Tar Heels",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": -3.5,
-                  "price": -101.0
-                },
-                "home": {
-                  "point": 3.5,
-                  "price": -120.0
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": -162
-                },
-                "home": {
-                  "price": 136
-                }
-              },
-              "total": {
-                "point": 149.5,
-                "over": -108.0,
-                "under": -112.0
-              }
-            }
-          },
-          "commence": "2026-11-28T00:00Z"
-        },
-        {
-          "away": "Charleston Southern Buccaneers",
-          "home": "East Tennessee State Buccaneers",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 9.5,
-                  "price": -111.0
-                },
-                "home": {
-                  "point": -9.5,
-                  "price": -108.0
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 410
-                },
-                "home": {
-                  "price": -550
-                }
-              },
-              "total": {
-                "point": 141.5,
-                "over": -114.0,
-                "under": -106.0
-              }
-            }
-          },
-          "commence": "2026-11-28T00:00Z"
-        },
-        {
-          "away": "Penn State Nittany Lions",
-          "home": "Mississippi State Bulldogs",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 6.5,
-                  "price": -108.0
-                },
-                "home": {
-                  "point": -6.5,
-                  "price": -112.0
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 240
-                },
-                "home": {
-                  "price": -298
-                }
-              },
-              "total": {
-                "point": 156.5,
-                "over": -105.0,
-                "under": -115.0
-              }
-            }
-          },
-          "commence": "2026-11-28T00:30Z"
-        },
-        {
-          "away": "Missouri State Bears",
-          "home": "Oral Roberts Golden Eagles",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 4.5,
-                  "price": -114.0
-                },
-                "home": {
-                  "point": -4.5,
-                  "price": -106.0
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 160
-                },
-                "home": {
-                  "price": -192
-                }
-              },
-              "total": {
-                "point": 142.5,
-                "over": -107.0,
-                "under": -113.0
-              }
-            }
-          },
-          "commence": "2026-11-28T01:00Z"
-        },
-        {
-          "away": "North Dakota State Bison",
-          "home": "North Texas Mean Green",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 5.5,
-                  "price": -107.0
-                },
-                "home": {
-                  "point": -5.5,
-                  "price": -112.0
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 205
-                },
-                "home": {
-                  "price": -250
-                }
-              },
-              "total": {
-                "point": 142.5,
-                "over": -105.0,
-                "under": -115.0
-              }
-            }
-          },
-          "commence": "2026-11-28T01:00Z"
-        },
-        {
-          "away": "Idaho Vandals",
-          "home": "Washington State Cougars",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 11.5,
-                  "price": -103.0
-                },
-                "home": {
-                  "point": -11.5,
-                  "price": -117.0
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 550
-                },
-                "home": {
-                  "price": -800
-                }
-              },
-              "total": {
-                "point": 148.5,
-                "over": -111.0,
-                "under": -108.0
-              }
-            }
-          },
-          "commence": "2026-11-28T01:00Z"
-        },
-        {
-          "away": "Northeastern Huskies",
-          "home": "Northwestern Wildcats",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 11.5,
-                  "price": -102.0
-                },
-                "home": {
-                  "point": -11.5,
-                  "price": -118.0
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 600
-                },
-                "home": {
-                  "price": -900
-                }
-              },
-              "total": {
-                "point": 146.5,
-                "over": -113.0,
-                "under": -107.0
-              }
-            }
-          },
-          "commence": "2026-11-28T01:00Z"
-        },
-        {
-          "away": "Pacific Tigers",
-          "home": "UC Davis Aggies",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": -6.5,
-                  "price": -110.0
-                },
-                "home": {
-                  "point": 6.5,
-                  "price": -110.0
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": -285
-                },
-                "home": {
-                  "price": 230
-                }
-              },
-              "total": {
-                "point": 136.5,
-                "over": -107.0,
-                "under": -113.0
-              }
-            }
-          },
-          "commence": "2026-11-28T01:00Z"
-        },
-        {
-          "away": "Wichita State Shockers",
-          "home": "Kentucky Wildcats",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 4.5,
-                  "price": -104.0
-                },
-                "home": {
-                  "point": -4.5,
-                  "price": -117.0
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 170
-                },
-                "home": {
-                  "price": -205
-                }
-              },
-              "total": {
-                "point": 157.5,
-                "over": -112.0,
-                "under": -108.0
-              }
-            }
-          },
-          "commence": "2026-11-28T02:00Z"
-        },
-        {
-          "away": "Omaha Mavericks",
-          "home": "Jacksonville State Gamecocks",
-          "books": {
-            "DraftKings": {
-              "spread": {
-                "away": {
-                  "point": 4.5,
-                  "price": -102.0
-                },
-                "home": {
-                  "point": -4.5,
-                  "price": -119.0
-                }
-              },
-              "h2h": {
-                "away": {
-                  "price": 195
-                },
-                "home": {
-                  "price": -238
-                }
-              },
-              "total": {
-                "point": 138.5,
-                "over": -107.0,
-                "under": -113.0
-              }
-            }
-          },
-          "commence": "2026-11-28T03:30Z"
         }
       ]
     },
