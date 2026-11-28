@@ -1,24 +1,5 @@
 {
   "days": {
-    "2026-11-26": {
-      "h2h": [
-        {
-          "sport": "CFB",
-          "label": "TCU at Texas Tech",
-          "start": "2026-11-27T01:00:00Z",
-          "books": {
-            "BetMGM": "+525 / -700",
-            "Caesars": "+500 / -750",
-            "DraftKings": "+500 / -700",
-            "Fanatics": "+500 / -700",
-            "FanDuel": "+570 / -800",
-            "HardRock": "+525 / -850"
-          }
-        }
-      ],
-      "spreads": [],
-      "totals": []
-    },
     "2026-11-27": {
       "h2h": [
         {
@@ -62,6 +43,105 @@
             "Fanatics": "o224 -110 / u224 -110",
             "FanDuel": "-",
             "HardRock": "o224.5 -105 / u224.5 -115"
+          }
+        }
+      ]
+    },
+    "2026-11-28": {
+      "h2h": [
+        {
+          "sport": "NBA",
+          "label": "Orlando Magic at Washington Wizards",
+          "start": "2026-11-28T22:10:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "-",
+            "Fanatics": "-",
+            "FanDuel": "-180 / +152",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NBA",
+          "label": "Brooklyn Nets at Charlotte Hornets",
+          "start": "2026-11-28T23:10:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "-",
+            "Fanatics": "-",
+            "FanDuel": "+200 / -245",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NHL",
+          "label": "Montreal Canadiens at Vegas Golden Knights",
+          "start": "2026-11-28T21:00:00Z",
+          "books": {
+            "BetMGM": "+100 / -120",
+            "Caesars": "+103 / -121",
+            "DraftKings": "+102 / -122",
+            "Fanatics": "+100 / -120",
+            "FanDuel": "+104 / -125",
+            "HardRock": "-"
+          }
+        }
+      ],
+      "spreads": [
+        {
+          "sport": "NBA",
+          "label": "Orlando Magic at Washington Wizards",
+          "start": "2026-11-28T22:10:00Z",
+          "books": {
+            "BetMGM": "-4.5 +105 / +2.5 +110",
+            "Caesars": "-4 -110 / +4 -110",
+            "DraftKings": "-3.5 -110 / +3.5 -110",
+            "Fanatics": "-4 -110 / +4 -110",
+            "FanDuel": "-3.5 -118 / +3.5 -104",
+            "HardRock": "-3.5 -115 / +3.5 -105"
+          }
+        },
+        {
+          "sport": "NHL",
+          "label": "Montreal Canadiens at Vegas Golden Knights",
+          "start": "2026-11-28T21:00:00Z",
+          "books": {
+            "BetMGM": "+1.5 -235 / -1.5 +195",
+            "Caesars": "-",
+            "DraftKings": "+1.5 -250 / -1.5 +205",
+            "Fanatics": "+1.5 -255 / -1.5 +200",
+            "FanDuel": "+1.5 -265 / -1.5 +210",
+            "HardRock": "+1.5 -260 / -1.5 +210"
+          }
+        }
+      ],
+      "totals": [
+        {
+          "sport": "NBA",
+          "label": "Orlando Magic at Washington Wizards",
+          "start": "2026-11-28T22:10:00Z",
+          "books": {
+            "BetMGM": "-",
+            "Caesars": "-",
+            "DraftKings": "-",
+            "Fanatics": "-",
+            "FanDuel": "-",
+            "HardRock": "-"
+          }
+        },
+        {
+          "sport": "NHL",
+          "label": "Montreal Canadiens at Vegas Golden Knights",
+          "start": "2026-11-28T21:00:00Z",
+          "books": {
+            "BetMGM": "o6 -130 / u6 +105",
+            "Caesars": "o6.5 -105 / u6.5 -118",
+            "DraftKings": "o6.5 -105 / u6.5 -115",
+            "Fanatics": "o6.5 -105 / u6.5 -115",
+            "FanDuel": "o6.5 +100 / u6.5 -122",
+            "HardRock": "o6.5 -105 / u6.5 -120"
           }
         }
       ]
